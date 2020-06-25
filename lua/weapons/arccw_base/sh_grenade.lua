@@ -57,7 +57,7 @@ function SWEP:Throw()
             self:GetOwner():StripWeapon(self:GetClass())
         end
     end)
-    self:SetTimer(self:GetAnimTime("throw"), function()
+    self:SetTimer(self:GetAnimKeyTime("throw"), function()
         self:PlayAnimation("draw")
     end)
 

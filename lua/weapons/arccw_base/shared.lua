@@ -368,7 +368,7 @@ SWEP.Animations = {
     --     Time = 10
     -- },
     -- ["draw"] = {
-    --     RestoreAmmo = 1, -- only used by shotgun reload
+    --     RestoreAmmo = 1, -- only used by shotgun empty insert reload
     --     Source = "deploy",
     --     RareSource = "", -- 1/100 chance of playing this animation instead
     --     Time = 0.5,

@@ -11,6 +11,8 @@ end
 
 end
 
+SWEP.LastAnimStartTime = 0
+
 function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
     mult = mult or 1
     pred = pred or false
@@ -20,9 +22,11 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
 
     if !self.Animations[key] then return end
 
+    if self:GetNWBool("reloading", false) then return end
+
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
-    -- print(key)
+    print(key)
 
     local anim = self.Animations[key]
 
@@ -86,11 +90,11 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
 
     self:KillTimer("idlereset")
 
-    self:GetAnimTime(key)
+    self:GetAnimKeyTime(key)
 
     local ttime = (anim.Time * mult) - startfrom
 
-    if startfrom > anim.Time then return end
+    if startfrom > (anim.Time * mult) then return end
 
     if tt then
         self:SetNextPrimaryFire(CurTime() + ttime)
@@ -99,17 +103,17 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
     if anim.LHIK then
         self.LHIKTimeline = {
             CurTime() - startfrom,
-            CurTime() - startfrom + (anim.LHIKIn or 0.1) * mult,
-            CurTime() - startfrom + ttime - (anim.LHIKOut or 0.1) * mult,
+            CurTime() - startfrom + ((anim.LHIKIn or 0.1) * mult),
+            CurTime() - startfrom + ttime - ((anim.LHIKOut or 0.1) * mult),
             CurTime() - startfrom + ttime
         }
 
-        if !anim.LHIKIn or anim.LHIKIn == 0 then
+        if anim.LHIKIn == 0 then
             self.LHIKTimeline[1] = 0
             self.LHIKTimeline[2] = 0
         end
 
-        if !anim.LHIKOut or anim.LHIKOut == 0 then
+        if anim.LHIKOut == 0 then
             self.LHIKTimeline[3] = math.huge
             self.LHIKTimeline[4] = math.huge
         end
@@ -135,7 +139,9 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
         seq = vm:LookupSequence(seq)
     end
 
-    vm:SendViewModelMatchingSequence(seq)
+    -- if !game.SinglePlayer() and CLIENT then
+        vm:SendViewModelMatchingSequence(seq)
+    -- end
 
     local framestorealtime = 1
 
@@ -166,9 +172,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
     end
 
     if CLIENT then
-        if startfrom >= 0 then
-            vm:SetAnimTime(CurTime() - startfrom)
-        end
+        vm:SetAnimTime(CurTime() - startfrom)
     end
 
     if anim.TPAnim then
@@ -233,10 +237,11 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
     end
 end
 
-function SWEP:GetAnimTime(key)
+function SWEP:GetAnimKeyTime(key)
+    local vm = self:GetOwner():GetViewModel()
     local anim = self.Animations[key]
 
-    if !anim then return end
+    if !anim then anim.Time = 1 return 1 end
 
     if !anim.Time then
         local tseq = anim.Source

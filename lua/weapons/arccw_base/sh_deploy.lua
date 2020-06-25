@@ -23,7 +23,7 @@ function SWEP:Deploy()
         self:ProceduralDraw()
         self:SetNWBool("reloading", true)
 
-        self:SetTimer((self:GetAnimTime(self.CheckpointAnimation) * self:GetBuff_Mult("Mult_ReloadTime")) - self.CheckpointTime,
+        self:SetTimer((self:GetAnimKeyTime(self.CheckpointAnimation) * self:GetBuff_Mult("Mult_ReloadTime")) - self.CheckpointTime,
         function()
             self:SetNWBool("reloading", false)
             self.CheckpointAnimation = nil
@@ -37,7 +37,7 @@ function SWEP:Deploy()
 
             self:SetNWBool("reloading", true)
 
-            self:SetTimer(self:GetAnimTime("ready"),
+            self:SetTimer(self:GetAnimKeyTime("ready"),
             function()
                 self:SetNWBool("reloading", false)
             end)
@@ -51,7 +51,7 @@ function SWEP:Deploy()
 
             self:SetNWBool("reloading", true)
 
-            self:SetTimer(self:GetAnimTime("draw_empty") * self:GetBuff_Mult("Mult_DrawTime"),
+            self:SetTimer(self:GetAnimKeyTime("draw_empty") * self:GetBuff_Mult("Mult_DrawTime"),
             function()
                     self:SetNWBool("reloading", false)
             end)
@@ -62,7 +62,7 @@ function SWEP:Deploy()
 
             self:SetNWBool("reloading", true)
 
-            self:SetTimer(self:GetAnimTime("draw") * self:GetBuff_Mult("Mult_DrawTime"),
+            self:SetTimer(self:GetAnimKeyTime("draw") * self:GetBuff_Mult("Mult_DrawTime"),
             function()
                     self:SetNWBool("reloading", false)
             end)

@@ -51,3 +51,16 @@ net.Receive("arccw_sp_loadautosave", function(len, ply)
 
     wpn:LoadPreset()
 end)
+
+local lastwpn = nil
+
+hook.Add("Think", "ArcCW_FixDeploy", function()
+
+    local wpn = LocalPlayer():GetActiveWeapon()
+
+    if wpn.ArcCW and wpn != lastwpn then
+        wpn:Deploy()
+    end
+
+    lastwpn = wpn
+end)

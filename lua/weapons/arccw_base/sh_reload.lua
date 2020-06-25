@@ -35,7 +35,6 @@ function SWEP:Reload()
         self.Sighted = false
     end
 
-    self:SetNWBool("reloading", true)
     self:SetNWBool("reqend", false)
     self.BurstCount = 0
 
@@ -79,7 +78,7 @@ function SWEP:Reload()
 
         self:PlayAnimation(anim, mult, true, 0, true)
 
-        self:SetTimer(self:GetAnimTime(anim) * mult,
+        self:SetTimer(self:GetAnimKeyTime(anim) * mult,
         function()
             self:ReloadInsert(empty)
         end)
@@ -93,7 +92,7 @@ function SWEP:Reload()
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
         self:PlayAnimation(anim, mult, true, 0, true)
-        self:SetTimer(self:GetAnimTime(anim) * mult,
+        self:SetTimer(self:GetAnimKeyTime(anim) * mult,
         function()
             self:SetNWBool("reloading", false)
         end)
@@ -112,7 +111,9 @@ function SWEP:Reload()
         end
     end
 
-   self.Primary.Automatic = false
+    self:SetNWBool("reloading", true)
+
+    self.Primary.Automatic = false
 end
 
 local lastframeclip1 = 0
@@ -172,6 +173,8 @@ function SWEP:ReloadInsert(empty)
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
 
+    self:SetNWBool("reloading", false)
+
     if self:Clip1() >= total or self:Ammo1() == 0 or self:GetNWBool("reqend", false) then
         local ret = "sgreload_finish"
 
@@ -185,7 +188,7 @@ function SWEP:ReloadInsert(empty)
         ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
         self:PlayAnimation(ret, mult, true, 0, true)
-            self:SetTimer(self:GetAnimTime(ret) * mult,
+            self:SetTimer(self:GetAnimKeyTime(ret) * mult,
             function()
                 self:SetNWBool("reloading", false)
             end)
@@ -206,11 +209,13 @@ function SWEP:ReloadInsert(empty)
         self:SetClip1(self:Clip1() + insertcount)
 
         self:PlayAnimation(insertanim, mult, true, 0, true)
-        self:SetTimer(self:GetAnimTime(insertanim) * mult,
+        self:SetTimer(self:GetAnimKeyTime(insertanim) * mult,
         function()
             self:ReloadInsert(empty)
         end)
     end
+
+    self:SetNWBool("reloading", true)
 end
 
 function SWEP:GetCapacity()

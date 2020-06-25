@@ -193,17 +193,17 @@ function SWEP:Think()
         end
     end
 
-    if CLIENT then
-        if !IsValid(ArcCW.InvHUD) then
-            gui.EnableScreenClicker(false)
-        end
+    -- if CLIENT then
+        -- if !IsValid(ArcCW.InvHUD) then
+        --     gui.EnableScreenClicker(false)
+        -- end
 
-        if self:GetState() != ArcCW.STATE_CUSTOMIZE then
-            self:CloseCustomizeHUD()
-        else
-            self:OpenCustomizeHUD()
-        end
-    end
+        -- if self:GetState() != ArcCW.STATE_CUSTOMIZE then
+        --     self:CloseCustomizeHUD()
+        -- else
+        --     self:OpenCustomizeHUD()
+        -- end
+    -- end
 
     if SERVER then
         if self.Throwing then

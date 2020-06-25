@@ -64,6 +64,8 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
     mult = mult or 1
     mult = 1 / mult
     startfrom = startfrom or 0
+
+    self:KillTimer("soundtable")
     for k, v in pairs(soundtable) do
 
         if !v.t then continue end
@@ -90,7 +92,7 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
                     self:EmitSound(v.s, vol, pitch, 1, CHAN_AUTO)
                 end)
             else
-                self:SetTimer(st, function() self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO) end, id)
+                self:SetTimer(st, function() self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO) end, "soundtable")
             end
         end
     end
