@@ -1,0 +1,11 @@
+
+VertexLitGeneric
+{
+
+	$basetexture				models/items/arccw/rifle_ammo_nocss
+	$bumpmap					dev/bump_normal
+
+	$halflambert				1
+	$ambientocclusion			1
+
+}

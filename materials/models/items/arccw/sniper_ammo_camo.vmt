@@ -1,0 +1,10 @@
+VertexLitGeneric
+{
+
+	$basetexture				models/items/arccw/sniper_ammo_camo
+	$bumpmap					dev/bump_normal
+
+	$halflambert				1
+	$ambientocclusion			1
+
+}

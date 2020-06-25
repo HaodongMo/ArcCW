@@ -1,0 +1,7 @@
+"VertexLitGeneric"
+{
+	"$basetexture"	"models\weapons\arcticcw\atts\glockstock"
+	$envmapmask		models\weapons\arcticcw\atts\glockstock_s
+	$envmap env_cubemap
+	$envmaptint .5 .5 .5
+}	
