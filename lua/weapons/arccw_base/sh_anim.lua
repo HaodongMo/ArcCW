@@ -26,7 +26,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
-    print(key)
+    -- print(key)
 
     local anim = self.Animations[key]
 
