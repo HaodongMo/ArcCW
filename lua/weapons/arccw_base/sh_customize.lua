@@ -138,7 +138,7 @@ function SWEP:CreateCustomizeHUD()
         end
     end
     ArcCW.InvHUD.OnRemove = function()
-        if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        if self:IsValid() and self:GetState() == ArcCW.STATE_CUSTOMIZE then
             net.Start("arccw_togglecustomize")
             net.WriteBool(false)
             net.SendToServer()

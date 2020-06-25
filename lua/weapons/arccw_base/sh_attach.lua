@@ -672,6 +672,10 @@ function SWEP:Attach(slot, attname, silent)
         self:SetupModel(false)
         self:SetupModel(true)
         ArcCW:PlayerSendAttInv(self:GetOwner())
+
+        if engine.ActiveGamemode() == "terrortown" then
+            self:TTT_PostAttachments()
+        end
     else
         self:SetupActiveSights()
 
@@ -715,7 +719,7 @@ function SWEP:Detach(slot, silent)
     if !self.Attachments[slot] then return end
 
     if !ArcCW.EnableCustomization or !GetConVar("arccw_enable_customization"):GetBool() then
-        if CLIENT then
+        if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
         return
@@ -773,6 +777,10 @@ function SWEP:Detach(slot, silent)
         self:SetupModel(false)
         self:SetupModel(true)
         ArcCW:PlayerSendAttInv(self:GetOwner())
+
+        if engine.ActiveGamemode() == "terrortown" then
+            self:TTT_PostAttachments()
+        end
     end
 
     self:RefreshBGs()
@@ -786,8 +794,11 @@ function SWEP:AdjustAtts()
 
         if self:Clip1() > self:GetCapacity() + cs then
             local diff = self:Clip1() - (self:GetCapacity() + cs)
-            self:GetOwner():GiveAmmo(diff, self.Primary.Ammo, true)
             self:SetClip1(self:GetCapacity() + cs)
+
+            if self:GetOwner():IsValid() then
+                self:GetOwner():GiveAmmo(diff, self.Primary.Ammo, true)
+            end
         end
     end
 

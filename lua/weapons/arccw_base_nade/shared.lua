@@ -1,6 +1,7 @@
 SWEP.Base = "arccw_base"
 
 SWEP.Throwing = true
+SWEP.Singleton = false -- for grenades, means that weapons ARE ammo; hold one, use one.
 
 SWEP.NotForNPCs = true
 
@@ -62,4 +63,11 @@ SWEP.Secondary.Automatic = true
 
 function SWEP:SecondaryAttack()
     self:PrimaryAttack()
+end
+
+function SWEP:OnRemove()
+    if engine.ActiveGamemode() != "terrortown" then return end
+    if CLIENT and IsValid(self:GetOwner()) and self:GetOwner() == LocalPlayer() and self:GetOwner():Alive() then
+        RunConsoleCommand("use", "weapon_ttt_unarmed")
+    end
 end

@@ -1,0 +1,6 @@
+{
+"title" : "ArcCW",
+"type" : "weapon",
+"tags" : ["realism","roleplay"],
+"ignore" : ["*.psd", "*.vcproj", "*.svn*"]
+}

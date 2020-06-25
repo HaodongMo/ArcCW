@@ -559,6 +559,7 @@ function SWEP:DrawCustomModel(wm)
 
         if bpos == vm:GetPos() then
             bpos = vm:GetBoneMatrix(boneindex):GetTranslation()
+            bang = vm:GetBoneMatrix(boneindex):GetAngles()
         end
 
         local offset = k.OffsetPos

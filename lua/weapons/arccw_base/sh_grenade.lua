@@ -50,7 +50,7 @@ function SWEP:Throw()
 
         self:TakePrimaryAmmo(1)
 
-        if self:Clip1() == 0 and self:Ammo1() >= 1 then
+        if self:Clip1() == 0 and self:Ammo1() >= 1 and !self.Singleton then
             self:SetClip1(1)
             self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
         else

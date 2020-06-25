@@ -6,6 +6,7 @@ function SWEP:GetSightTime()
 end
 
 function SWEP:EnterSprint()
+    if engine.ActiveGamemode() == "terrortown" then return end
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
     self:SetState(ArcCW.STATE_SPRINT)
     self.Sighted = false

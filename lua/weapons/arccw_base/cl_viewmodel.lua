@@ -19,6 +19,7 @@ local function ApproachAngleA(vec1, vec2, d)
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
+    if !self:GetOwner():IsValid() or !self:GetOwner():Alive() then return end
     local oldpos = Vector()
     local oldang = Angle()
 

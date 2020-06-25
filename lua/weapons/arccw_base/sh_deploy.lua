@@ -140,6 +140,10 @@ function SWEP:Initialize()
     self.OldPrintName = self.PrintName
 
     self:InitTimers()
+
+    if engine.ActiveGamemode() == "terrortown" then
+        self:TTT_Init()
+    end
 end
 
 SWEP.FullyHolstered = false

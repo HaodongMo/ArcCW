@@ -33,7 +33,7 @@ function SWEP:NPC_Initialize()
 end
 
 function SWEP:NPC_SetupAttachments()
-    if !GetConVar("arccw_npc_atts"):GetBool() then return end
+    if self:GetOwner():IsNPC() and !GetConVar("arccw_npc_atts"):GetBool() then return end
 
     local pick = GetConVar("arccw_atts_pickx"):GetInt()
 
@@ -79,6 +79,13 @@ function SWEP:NPC_SetupAttachments()
 
         n = n + 1
     end
+
+    if self:GetBuff_Override("UBGL") then
+        self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
+    end
+
+    self:AdjustAtts()
+    self:NetworkWeapon()
 end
 
 function SWEP:NPC_Shoot()

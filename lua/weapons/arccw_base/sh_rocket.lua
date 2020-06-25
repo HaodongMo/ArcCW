@@ -16,7 +16,7 @@ function SWEP:FireRocket(ent, vel, ang)
     constraint.NoCollide(self:GetOwner(), rocket, 0, 0)
     rocket:GetPhysicsObject():SetVelocity(self:GetOwner():GetAbsVelocity())
     rocket:GetPhysicsObject():SetVelocityInstantaneous(ang:Forward() * vel)
-    rocket:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
+    rocket:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
 
     rocket.Owner = self:GetOwner()
 

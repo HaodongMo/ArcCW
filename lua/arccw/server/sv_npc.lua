@@ -25,7 +25,7 @@ net.Receive("arccw_npcgivereturn", function(len, ply)
     end
 end)
 
-function ArcCW:GetRandomWeapon(wpn)
+function ArcCW:GetRandomWeapon(wpn, nades)
     local tbl = {}
     local wgt = 0
 
@@ -33,7 +33,8 @@ function ArcCW:GetRandomWeapon(wpn)
         if !weapons.IsBasedOn(k.ClassName, "arccw_base") then continue end
         if k.PrimaryBash then continue end
         if !k.Spawnable then continue end
-        if k.NotForNPCs then continue end
+        if !nades and k.NotForNPCs then continue end
+        if nades and k.AutoSpawnable == false then continue end
 
         if GetConVar("arccw_limityear_enable"):GetBool() then
             local year = GetConVar("arccw_limityear"):GetInt()
@@ -43,7 +44,9 @@ function ArcCW:GetRandomWeapon(wpn)
             end
         end
 
-        if k.NPCWeaponType then
+        local weight = (k.NPCWeight or 100)
+
+        if wpn and k.NPCWeaponType then
             if isstring(k.NPCWeaponType) then
                 if k.NPCWeaponType != wpn then continue end
             elseif istable(k.NPCWeaponType) then
@@ -53,9 +56,10 @@ function ArcCW:GetRandomWeapon(wpn)
             local og = weapons.Get(wpn)
 
             if og and og.ArcCW then continue end
+            weight = 10
         end
 
-        wgt = wgt + (k.NPCWeight or 100)
+        wgt = wgt + weight
 
         table.insert(tbl, {k.ClassName, wgt})
     end
@@ -71,7 +75,8 @@ end
 
 hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
     if CLIENT then return end
-    if !GetConVar("arccw_npc_replace"):GetBool() then return end
+    if engine.ActiveGamemode() != "terrortown" and !GetConVar("arccw_npc_replace"):GetBool() then return end
+    if engine.ActiveGamemode() == "terrortown" and !GetConVar("arccw_ttt_replace"):GetBool() then return end
     timer.Simple(0, function()
         if !ent:IsValid() then return end
         if !ent:IsNPC() then return end
@@ -89,6 +94,10 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
 
         local wpn = ArcCW:GetRandomWeapon(class)
 
+        if engine.ActiveGamemode() == "terrortown" then
+            wpn = ArcCW:TTT_GetRandomWeapon(class)
+        end
+
         if wpn then
             ent:Give(wpn)
         end
@@ -96,11 +105,15 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
     timer.Simple(0, function()
         if !ent:IsValid() then return end
         if !ent:IsWeapon() then return end
-        if ent:GetOwner() then return end
+        if ent:GetOwner():IsValid() then return end
 
         local class = ent:GetClass()
 
         local wpn = ArcCW:GetRandomWeapon(class)
+
+        if engine.ActiveGamemode() == "terrortown" then
+            wpn = ArcCW:TTT_GetRandomWeapon(class)
+        end
 
         if wpn then
             local wpnent = ents.Create(wpn)
@@ -110,6 +123,10 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
             wpnent:NPC_Initialize()
 
             wpnent:Spawn()
+
+            if GetConVar("arccw_ttt_atts"):GetBool() then
+                wpnent:NPC_SetupAttachments()
+            end
 
             timer.Simple(0, function()
                 if !ent:IsValid() then return end
@@ -123,6 +140,8 @@ end)
 hook.Add("PlayerCanPickupWeapon", "ArcCW_PlayerCanPickupWeapon", function(ply, wep)
     if !wep.ArcCW then return end
     if !ply:HasWeapon(wep:GetClass()) then return end
+
+    if !ArcCW.EnableCustomization or !GetConVar("arccw_enable_customization"):GetBool() then return end
 
     for _, i in pairs(wep.Attachments) do
         if i.Installed then

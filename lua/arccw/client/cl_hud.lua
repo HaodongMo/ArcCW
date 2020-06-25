@@ -18,6 +18,7 @@ hook.Add("HUDShouldDraw", "ArcCW_HideHUD", function(name)
     if !LocalPlayer():GetActiveWeapon().ArcCW then return end
     if ArcCW.PollingDefaultHUDElements then return end
     if ArcCW.HUDElementConVars[name] and ArcCW.HUDElementConVars[name]:GetBool() == false then return end
+    if engine.ActiveGamemode() == "terrortown" then return end
 
     return false
 end)
@@ -26,6 +27,8 @@ ArcCW.PollingDefaultHUDElements = false
 
 function ArcCW:ShouldDrawHUDElement(ele)
     if !GetConVar("cl_drawhud"):GetBool() then return false end
+
+    if engine.ActiveGamemode() == "terrortown" then return false end
 
     if ArcCW.HUDElementConVars[ele] and !ArcCW.HUDElementConVars[ele]:GetBool() then
         return false
