@@ -124,7 +124,7 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
 
             wpnent:Spawn()
 
-            if GetConVar("arccw_ttt_atts"):GetBool() then
+            if GetConVar("arccw_ttt_atts") and GetConVar("arccw_ttt_atts"):GetBool() then
                 wpnent:NPC_SetupAttachments()
             end
 
@@ -140,6 +140,8 @@ end)
 hook.Add("PlayerCanPickupWeapon", "ArcCW_PlayerCanPickupWeapon", function(ply, wep)
     if !wep.ArcCW then return end
     if !ply:HasWeapon(wep:GetClass()) then return end
+
+    if wep.Singleton then return false end
 
     if !ArcCW.EnableCustomization or !GetConVar("arccw_enable_customization"):GetBool() then return end
 
