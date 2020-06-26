@@ -35,3 +35,4 @@ CreateClientConVar("arccw_vm_up", "0")
 CreateClientConVar("arccw_vm_forward", "0")
 
 CreateClientConVar("arccw_toggleads", "0", true, true)
+CreateClientConVar("arccw_altubglkey", "1", true, true)
