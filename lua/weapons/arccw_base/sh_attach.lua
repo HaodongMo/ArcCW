@@ -796,7 +796,7 @@ function SWEP:AdjustAtts()
             local diff = self:Clip1() - (self:GetCapacity() + cs)
             self:SetClip1(self:GetCapacity() + cs)
 
-            if self:GetOwner():IsValid() and self:GetOwner():IsNPC() then
+            if self:GetOwner():IsValid() and !self:GetOwner():IsNPC() then
                 self:GetOwner():GiveAmmo(diff, self.Primary.Ammo, true)
             end
         end
