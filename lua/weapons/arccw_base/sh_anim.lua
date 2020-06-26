@@ -238,10 +238,14 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
 end
 
 function SWEP:GetAnimKeyTime(key)
+    if !self:GetOwner() then return 1 end
     local vm = self:GetOwner():GetViewModel()
+
+    if !vm or !IsValid(vm) then return 1 end
+
     local anim = self.Animations[key]
 
-    if !anim then anim.Time = 1 return 1 end
+    if !anim then return 1 end
 
     if !anim.Time then
         local tseq = anim.Source
