@@ -4,6 +4,7 @@ ArcCW.LastWeapon = nil
 
 end
 
+local lastUBGL = 0
 function SWEP:Think()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then return end
 
@@ -85,7 +86,25 @@ function SWEP:Think()
         self:ExitSprint()
     end
 
-    if self:GetOwner():GetInfoNum("arccw_toggleads", 0) == 0 then
+    if self:GetOwner():GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
+        if self:GetOwner():KeyPressed(IN_ATTACK2) and CLIENT then
+            if (lastUBGL or 0) + 0.25 > CurTime() then return end
+            lastUBGL = CurTime()
+            if self:GetNWBool("ubgl") then
+                net.Start("arccw_ubgl")
+                net.WriteBool(false)
+                net.SendToServer()
+
+                self:DeselectUBGL()
+            else
+                net.Start("arccw_ubgl")
+                net.WriteBool(true)
+                net.SendToServer()
+
+                self:SelectUBGL()
+            end
+        end
+    elseif self:GetOwner():GetInfoNum("arccw_toggleads", 0) == 0 then
         if self:GetOwner():KeyDown(IN_ATTACK2) and self:GetState() != ArcCW.STATE_SIGHTS then
             self:EnterSights()
         elseif !self:GetOwner():KeyDown(IN_ATTACK2) and self:GetState() == ArcCW.STATE_SIGHTS then
