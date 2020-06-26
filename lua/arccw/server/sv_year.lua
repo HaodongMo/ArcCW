@@ -10,5 +10,8 @@ hook.Add( "PlayerGiveSWEP", "ArcCW_YearLimiter", function( ply, class, swep )
     if !wep.Trivia_Year then return end
     if !isnumber(wep.Trivia_Year) then return end
 
-    if wep.Trivia_Year > year then return false end
+    if wep.Trivia_Year > year then
+        ply:ChatPrint( wep.PrintName .. " is outside the year limit! (" .. wep.Trivia_Year .. " > " .. year .. ")")
+        return false
+    end
 end )
