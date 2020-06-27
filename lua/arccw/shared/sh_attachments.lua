@@ -258,6 +258,32 @@ net.Receive("arccw_asktodetach", function(len, ply)
     wpn:Detach(slot)
 end)
 
+net.Receive("arccw_asktodrop", function(len, ply)
+
+    local attid = net.ReadUInt(24)
+    local att = ArcCW.AttachmentIDTable[attid]
+
+    if GetConVar("arccw_attinv_free"):GetBool() then return end
+    if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+    if !att then return end
+    if ArcCW.AttachmentTable[att].Free then return end
+    if ArcCW:PlayerGetAtts(ply, att) < 1 then return end
+
+    local ent = ents.Create("acwatt_" .. att)
+    if !IsValid(ent) then return end
+    ent:SetPos(ply:EyePos() + ply:EyeAngles():Forward() * 32)
+    ent:Spawn()
+    timer.Simple(0, function()
+        local phys = ent:GetPhysicsObject()
+        if phys:IsValid() then
+            phys:SetVelocity(ply:EyeAngles():Forward() * 32 * math.max(phys:GetMass(), 4))
+        end
+    end)
+    ArcCW:PlayerTakeAtt(ply, att, 1)
+    ArcCW:PlayerSendAttInv(ply)
+    ply:ViewPunch(Angle(-0.5, 0, 0))
+end)
+
 function ArcCW:PlayerSendAttInv(ply)
     if GetConVar("arccw_attinv_free"):GetBool() then return end
 
