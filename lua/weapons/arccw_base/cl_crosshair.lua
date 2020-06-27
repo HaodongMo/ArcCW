@@ -3,7 +3,7 @@ local size = 0
 local cw = nil
 
 function SWEP:ShouldDrawCrosshair()
-    if !GetConVar("arccw_override_crosshair_off") then return false end
+    if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
     if !GetConVar("arccw_crosshair"):GetBool() then return false end
     if self:GetNWBool("reloading") then return false end
     local asight = self:GetActiveSights()
