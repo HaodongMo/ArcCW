@@ -199,46 +199,40 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end, key)
     if key != "idle" then
         self:SetTimer(ttime, function()
-            local anim = "idle"
+            local ianim = "idle"
             if self:GetState() == ArcCW.STATE_SPRINT and self.Animations.idle_sprint then
                 if self:Clip1() == 0 and self.Animations.idle_sprint_empty then
-                    anim = "idle_sprint_empty"
+                    ianim = "idle_sprint_empty"
                 else
-                    anim = "idle_sprint"
+                    ianim = "idle_sprint"
                 end
-
-                return
             end
 
             if self:InBipod() and self.Animations.idle_bipod then
                 if self:Clip1() == 0 and self.Animations.idle_bipod_empty then
-                    anim = "idle_bipod_empty"
+                    ianim = "idle_bipod_empty"
                 else
-                    anim = "idle_bipod"
+                    ianim = "idle_bipod"
                 end
-
-                return
             end
 
             if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.idle_sights then
                 if self:Clip1() == 0 and self.Animations.idle_sights_empty then
-                    anim = "idle_sights_empty"
+                    ianim = "idle_sights_empty"
                 else
-                    anim = "idle_sprint"
+                    ianim = "idle_sprint"
                 end
-
-                return
             end
 
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
 
             if self:Clip1() == 0 and self.Animations.idle_empty then
-                anim = "idle_empty"
+                ianim = "idle_empty"
             else
-                anim = "idle"
+                ianim = "idle"
             end
 
-            self:PlayAnimation(anim, 1, pred, nil, nil, nil, true)
+            self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
         end, "idlereset")
     end
 end
