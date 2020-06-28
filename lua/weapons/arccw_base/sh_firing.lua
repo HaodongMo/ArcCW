@@ -468,6 +468,7 @@ function SWEP:GetShootSrc()
 end
 
 function SWEP:GetShotgunSpreadOffset(n)
+    local r = Angle(0, 0, 0)
     local sp = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern or {}
     local spo = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun or {Angle(0, 0, 0)}
 
@@ -478,14 +479,18 @@ function SWEP:GetShotgunSpreadOffset(n)
         if spo then
             n = n - #sp
             n = math.fmod(n, #spo) + 1
-            return spo[n]
+            r = spo[n]
         else
             n = math.fmod(n, #sp) + 1
-            return sp[n]
+            r = sp[n]
         end
     else
-        return sp[n]
+        r = sp[n]
     end
+
+    r = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", {n = n, ang = r})
+
+    return r or Angle(0, 0, 0)
 end
 
 function SWEP:GetDispersion()
