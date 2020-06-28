@@ -95,7 +95,7 @@ function SWEP:DrawHUD()
 
         local muzz = self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1
 
-        local suckitYurie = GetConVar("arccw_hud_3dfun"):GetBool()
+        local yuriewantsbabynapnaptimewaawaawaaa = GetConVar("arccw_hud_3dfun"):GetBool()
 
         local vm = self.Owner:GetViewModel()
 
@@ -105,7 +105,7 @@ function SWEP:DrawHUD()
             angpos = vm:GetAttachment(muzz)
         end
 
-        if suckitYurie and muzz and angpos then
+        if yuriewantsbabynapnaptimewaawaawaaa and muzz and angpos then
 
             local visible = (lastinfotime + 4 > curTime or lastinfotime - 0.5 > curTime)
 
@@ -344,7 +344,7 @@ function SWEP:DrawHUD()
 
     if ArcCW:ShouldDrawHUDElement("CHudHealth") then
 
-        local colhp = col2
+        local colhp = Color(255, 255, 255, 255)
 
         if LocalPlayer():Health() <= 30 then
             colhp = col3

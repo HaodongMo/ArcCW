@@ -672,6 +672,8 @@ function SWEP:CreateCustomizeHUD()
                         net.Start("arccw_asktodrop")
                             net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)
                         net.SendToServer()
+
+                        ArcCW:PlayerTakeAtt(self:GetOwner(), spaa.AttName)
                     end
 
                     attcatb_regen(span)
