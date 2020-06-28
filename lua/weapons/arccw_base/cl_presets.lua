@@ -265,6 +265,37 @@ function SWEP:CreatePresetMenu()
             surface.SetFont("ArcCW_12")
             surface.DrawText(string.upper(spaa.PresetName))
         end
+
+        local close = vgui.Create("DButton", preset)
+        close:SetSize(ScreenScale(16), ScreenScale(16))
+        close:SetText("")
+        close:Dock(RIGHT)
+
+        close.OnMousePressed = function(spaa, kc)
+            local filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. k
+            file.Delete(filename)
+            preset:Remove()
+        end
+
+        close.Paint = function(spaa, w, h)
+            if !self:IsValid() or preset:IsHovered() then return end
+            local Bfg_col = Color(255, 255, 255, 255)
+            local Bbg_col = Color(0, 0, 0, 100)
+
+            if spaa:IsHovered() then
+                Bbg_col = Color(255, 255, 255, 100)
+                Bfg_col = Color(0, 0, 0, 255)
+            end
+
+            surface.SetDrawColor(Bbg_col)
+            surface.DrawRect(0, 0, w, h)
+
+            local w_x, h_x = surface.GetTextSize("×")
+            surface.SetTextColor(Bfg_col)
+            surface.SetTextPos((ScreenScale(16) - w_x) / 2, (ScreenScale(16) - h_x) / 2)
+            surface.SetFont("ArcCW_12")
+            surface.DrawText("×")
+        end
         c = c + 1
     end
 

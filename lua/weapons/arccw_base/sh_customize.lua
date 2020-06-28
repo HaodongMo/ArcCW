@@ -664,8 +664,11 @@ function SWEP:CreateCustomizeHUD()
                             self:DetachAllMergeSlots(span.AttIndex, true)
                             self:Attach(aslot, spaa.AttName)
                         end
-                    else
-                        self:DetachAllMergeSlots(span.AttIndex)
+                    elseif kc2 == MOUSE_RIGHT and spaa.AttName ~= "" then
+                        -- Drop attachment
+                        net.Start("arccw_asktodrop")
+                            net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)
+                        net.SendToServer()
                     end
 
                     attcatb_regen(span)
