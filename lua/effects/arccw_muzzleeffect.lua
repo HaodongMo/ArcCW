@@ -27,6 +27,8 @@ function EFFECT:Init(data)
 
     local mdl = wpn:GetMuzzleDevice(wm)
 
+    if !IsValid(mdl) then return end
+
     ParticleEffectAttach(muzzle, PATTACH_POINT_FOLLOW, mdl, att)
 
     pos = (mdl:GetAttachment(att) or {}).Pos

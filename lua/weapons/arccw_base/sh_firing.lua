@@ -513,7 +513,7 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject()
-    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     if !IsValid(self:GetOwner()) then return end
 

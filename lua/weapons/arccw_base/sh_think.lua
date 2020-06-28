@@ -80,9 +80,9 @@ function SWEP:Think()
         end
     end
 
-    if self:InSprint() and self:GetState() != ArcCW.STATE_SPRINT then
+    if self:InSprint() and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT) then
         self:EnterSprint()
-    elseif !self:InSprint() and self:GetState() == ArcCW.STATE_SPRINT then
+    elseif !self:InSprint() and (self.Sprinted or self:GetState() == ArcCW.STATE_SPRINT) then
         self:ExitSprint()
     end
 
@@ -105,14 +105,14 @@ function SWEP:Think()
             end
         end
     elseif self:GetOwner():GetInfoNum("arccw_toggleads", 0) == 0 then
-        if self:GetOwner():KeyDown(IN_ATTACK2) and self:GetState() != ArcCW.STATE_SIGHTS then
+        if self:GetOwner():KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
             self:EnterSights()
-        elseif !self:GetOwner():KeyDown(IN_ATTACK2) and self:GetState() == ArcCW.STATE_SIGHTS then
+        elseif !self:GetOwner():KeyDown(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
             self:ExitSights()
         end
     else
         if self:GetOwner():KeyPressed(IN_ATTACK2) then
-            if self:GetState() != ArcCW.STATE_SIGHTS then
+            if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
                 self:EnterSights()
             else
                 self:ExitSights()

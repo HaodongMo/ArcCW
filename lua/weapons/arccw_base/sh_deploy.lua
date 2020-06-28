@@ -27,6 +27,7 @@ function SWEP:Deploy()
         function()
             self:SetNWBool("reloading", false)
             self.CheckpointAnimation = nil
+            self.CheckpointTime = 0
         end)
     else
         local prd = false

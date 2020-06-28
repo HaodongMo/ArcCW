@@ -13,16 +13,17 @@ end
 
 SWEP.LastAnimStartTime = 0
 
-function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
+function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorereload)
     mult = mult or 1
     pred = pred or false
     startfrom = startfrom or 0
     tt = tt or false
     skipholster = skipholster or false
+    ignorereload = ignorereload or false
 
     if !self.Animations[key] then return end
 
-    if self:GetNWBool("reloading", false) then return end
+    if self:GetNWBool("reloading", false) and !ignorereload then return end
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
@@ -198,11 +199,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
     end, key)
     if key != "idle" then
         self:SetTimer(ttime, function()
+            local anim = "idle"
             if self:GetState() == ArcCW.STATE_SPRINT and self.Animations.idle_sprint then
                 if self:Clip1() == 0 and self.Animations.idle_sprint_empty then
-                    self:PlayAnimation("idle_sprint_empty", 1, pred)
+                    anim = "idle_sprint_empty"
                 else
-                    self:PlayAnimation("idle_sprint", 1, pred)
+                    anim = "idle_sprint"
                 end
 
                 return
@@ -210,9 +212,9 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
 
             if self:InBipod() and self.Animations.idle_bipod then
                 if self:Clip1() == 0 and self.Animations.idle_bipod_empty then
-                    self:PlayAnimation("idle_bipod_empty", 1, pred)
+                    anim = "idle_bipod_empty"
                 else
-                    self:PlayAnimation("idle_bipod", 1, pred)
+                    anim = "idle_bipod"
                 end
 
                 return
@@ -220,32 +222,39 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster)
 
             if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.idle_sights then
                 if self:Clip1() == 0 and self.Animations.idle_sights_empty then
-                    self:PlayAnimation("idle_sights_empty", 1, pred)
+                    anim = "idle_sights_empty"
                 else
-                    self:PlayAnimation("idle_sights", 1, pred)
+                    anim = "idle_sprint"
                 end
 
                 return
             end
 
+            -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
+
             if self:Clip1() == 0 and self.Animations.idle_empty then
-                self:PlayAnimation("idle_empty", 1, pred)
+                anim = "idle_empty"
             else
-                self:PlayAnimation("idle", 1, pred)
+                anim = "idle"
             end
+
+            self:PlayAnimation(anim, 1, pred, nil, nil, nil, true)
         end, "idlereset")
     end
 end
 
 function SWEP:GetAnimKeyTime(key)
     if !self:GetOwner() then return 1 end
-    local vm = self:GetOwner():GetViewModel()
-
-    if !vm or !IsValid(vm) then return 1 end
 
     local anim = self.Animations[key]
 
     if !anim then return 1 end
+
+    if self:GetOwner():IsNPC() then return anim.Time or 1 end
+
+    local vm = self:GetOwner():GetViewModel()
+
+    if !vm or !IsValid(vm) then return 1 end
 
     if !anim.Time then
         local tseq = anim.Source
