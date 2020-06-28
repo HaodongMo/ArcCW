@@ -98,6 +98,8 @@ function ArcCW:PlayerGiveAtt(ply, att, amt)
 
     local atttbl = ArcCW.AttachmentTable[att]
 
+    if !atttbl then print("Invalid att " .. att) return end
+
     if atttbl.InvAtt then att = atttbl.InvAtt end
 
     if GetConVar("arccw_attinv_lockmode"):GetBool() then
@@ -278,8 +280,12 @@ net.Receive("arccw_asktodrop", function(len, ply)
     if !IsValid(ent) then return end
     ent:SetPos(ply:EyePos() + ply:EyeAngles():Forward() * 32)
 
-    ent.GiveAttachments = {att = 1}
+    ent:SetNWInt("attid", attid)
+
+    ent.GiveAttachments = {[att] = 1}
     ent.Model = atttbl.DroppedModel or atttbl.Model or "models/Items/BoxSRounds.mdl"
+    ent.Icon = atttbl.Icon
+    ent.PrintName = atttbl.PrintName or att
 
     ent:Spawn()
     timer.Simple(0, function()
@@ -290,7 +296,6 @@ net.Receive("arccw_asktodrop", function(len, ply)
     end)
     ArcCW:PlayerTakeAtt(ply, att, 1)
     ArcCW:PlayerSendAttInv(ply)
-    ply:ViewPunch(Angle(-0.5, 0, 0))
 end)
 
 function ArcCW:PlayerSendAttInv(ply)
