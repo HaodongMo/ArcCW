@@ -190,7 +190,7 @@ function SWEP:PrimaryAttack()
                 for n = 1, btabl.Num do
                     btabl.Num = 1
                     local ang
-                    if self:GetBuff_Hook("Override_ShotgunSpreadDispersion") or self.ShotgunSpreadDispersion then
+                    if self:GetBuff_Override("Override_ShotgunSpreadDispersion") or self.ShotgunSpreadDispersion then
                         ang = self:GetOwner():EyeAngles() + (self:GetShotgunSpreadOffset(n) * self:GetDispersion() / 60)
                     else
                         ang = self:GetOwner():EyeAngles() + self:GetShotgunSpreadOffset(n) + spd
@@ -472,23 +472,25 @@ function SWEP:GetShotgunSpreadOffset(n)
     local sp = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern or {}
     local spo = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun or {Angle(0, 0, 0)}
 
-    sp["BaseClass"] = nil
-    spo["BaseClass"] = nil
+    if istable(sp) and istable(spo) then
+        sp["BaseClass"] = nil
+        spo["BaseClass"] = nil
 
-    if n > #sp then
-        if spo then
-            n = n - #sp
-            n = math.fmod(n, #spo) + 1
-            r = spo[n]
+        if n > #sp then
+            if spo then
+                n = n - #sp
+                n = math.fmod(n, #spo) + 1
+                r = spo[n]
+            else
+                n = math.fmod(n, #sp) + 1
+                r = sp[n]
+            end
         else
-            n = math.fmod(n, #sp) + 1
             r = sp[n]
         end
-    else
-        r = sp[n]
     end
 
-    r = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", {n = n, ang = r})
+    r = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", {n = n, ang = r}).ang
 
     return r or Angle(0, 0, 0)
 end

@@ -48,6 +48,9 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         net.WriteString(key)
         net.WriteFloat(mult)
         net.WriteFloat(startfrom)
+        net.WriteBool(tt)
+        net.WriteBool(skipholster)
+        net.WriteBool(ignorereload)
         net.Send(self:GetOwner())
     end
 
@@ -110,8 +113,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         }
 
         if anim.LHIKIn == 0 then
-            self.LHIKTimeline[1] = 0
-            self.LHIKTimeline[2] = 0
+            self.LHIKTimeline[1] = -math.huge
+            self.LHIKTimeline[2] = -math.huge
         end
 
         if anim.LHIKOut == 0 then

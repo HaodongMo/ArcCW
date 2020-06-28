@@ -2,12 +2,15 @@ net.Receive("arccw_sp_anim", function(len, ply)
     local key = net.ReadString()
     local mult = net.ReadFloat()
     local sf = net.ReadFloat()
+    local tt = net.ReadBool()
+    local skip = net.ReadBool()
+    local ignore = net.ReadBool()
 
     local wpn = LocalPlayer():GetActiveWeapon()
 
     if !wpn.ArcCW then return end
 
-    wpn:PlayAnimation(key, mult, false, sf)
+    wpn:PlayAnimation(key, mult, false, sf, tt, skip, ignore)
 end)
 
 net.Receive("arccw_sp_lhikanim", function(len, ply)
