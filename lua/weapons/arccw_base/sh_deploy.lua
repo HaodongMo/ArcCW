@@ -127,10 +127,21 @@ function SWEP:Initialize()
         local addons = engine.GetAddons()
         for _, addon in pairs(addons) do
             if ArcCW.IncompatibleAddons[tostring(addon.wsid)] then
-                table.insert(incompatList, addon)
+                incompatList[tostring(addon.wsid)] = addon
             end
         end
-        if #incompatList > 0 then
+        -- If never show again is on, verify we have no new addons
+        if file.Exists("arccw_incompatible.txt", "DATA") then
+            local shouldDoAnyways = false
+            local oldTbl = util.JSONToTable(file.Read("arccw_incompatible.txt"))
+            for id, addon in pairs(incompatList) do
+                if !oldTbl[id] then shouldDoAnyways = true break end
+            end
+            -- If none is found, stop; otherwise wipe the old file and warn
+            if !shouldDoAnyways then return end
+            file.Delete("arccw_incompatible.txt")
+        end
+        if table.Count(incompatList) > 0 then
             ArcCW.MakeIncompatibleWindow(incompatList)
         end
     end
