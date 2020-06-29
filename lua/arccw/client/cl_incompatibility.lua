@@ -56,7 +56,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
             file.Write("arccw_incompatible.txt", util.TableToJSON(simpleTbl))
             window:Close()
             window:Remove()
-            chat.AddText(Color(255,0,0),"You have chosen to never show incompatible warnings again. If you encounter errors or broken behaviour, it is your own responsibility.")
+            chat.AddText(Color(255,0,0),"You have chosen to never show incompatiblity warnings again. If you encounter errors or broken behaviour, it is your own responsibility.")
         end
     end
     neverAgain.Paint = function(spaa, w, h)
@@ -65,7 +65,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
 
         if CurTime() > startTime + 10 and spaa:IsHovered() then
             Bbg_col = Color(255, 100, 100, 100)
-            Bfg_col = Color(255, 0, 0, 255)
+            Bfg_col = Color(255, 255, 255, 255)
         end
 
         surface.SetDrawColor(Bbg_col)
