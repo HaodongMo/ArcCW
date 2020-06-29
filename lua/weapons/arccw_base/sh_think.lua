@@ -239,9 +239,7 @@ function SWEP:Think()
 
     self:GetBuff_Override("Hook_Think")
 
-    if SERVER or !game.SinglePlayer() then
-        self:ProcessTimers()
-    end
+    self:ProcessTimers()
 end
 
 function SWEP:InSprint()

@@ -27,8 +27,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
-    -- print(key)
-
     local anim = self.Animations[key]
 
     local tranim = self:GetBuff_Hook("Hook_TranslateAnimation", key)
@@ -202,7 +200,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end, key)
     if key != "idle" then
         self:SetTimer(ttime, function()
-            local ianim = "idle"
+            local ianim
             if self:GetState() == ArcCW.STATE_SPRINT and self.Animations.idle_sprint then
                 if self:Clip1() == 0 and self.Animations.idle_sprint_empty then
                     ianim = "idle_sprint_empty"
@@ -219,20 +217,20 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 end
             end
 
-            if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.idle_sights then
+            if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) and self.Animations.idle_sights then
                 if self:Clip1() == 0 and self.Animations.idle_sights_empty then
                     ianim = "idle_sights_empty"
                 else
-                    ianim = "idle_sprint"
+                    ianim = "idle_sights"
                 end
             end
 
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
 
             if self:Clip1() == 0 and self.Animations.idle_empty then
-                ianim = "idle_empty"
+                ianim = ianim or "idle_empty"
             else
-                ianim = "idle"
+                ianim = ianim or "idle"
             end
 
             self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
