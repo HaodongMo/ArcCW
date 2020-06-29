@@ -13,6 +13,7 @@ CreateConVar("arccw_npc_atts", 1, FCVAR_ARCHIVE, "Randomly give NPC weapons atta
 
 CreateConVar("arccw_truenames", 0, FCVAR_ARCHIVE, "Use true names instead of fake names, where applicable. Requires restart.")
 
+CreateConVar("arccw_equipmentsingleton", 0, FCVAR_ARCHIVE, "Make grenades and equipment not use ammo, and remove themselves on use.", 0, 1)
 CreateConVar("arccw_equipmenttime", 180, FCVAR_ARCHIVE, "How long equipment such as Claymores will remain on the map before self-destructing.")
 
 CreateConVar("arccw_mult_damage", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for damage done by all ArcCW weapons.")

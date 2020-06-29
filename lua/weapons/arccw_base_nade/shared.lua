@@ -21,6 +21,11 @@ SWEP.HoldtypeActive = "grenade"
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.Ammo = "grenade"
 
+if GetConVar("arccw_equipmentsingleton"):GetBool() then
+    SWEP.Primary.ClipSize = -1
+    SWEP.Primary.Ammo = ""
+end
+
 SWEP.Animations = {
     -- ["draw"] = {
     --     Source = "draw",
