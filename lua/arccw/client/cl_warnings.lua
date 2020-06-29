@@ -159,3 +159,13 @@ function ArcCW.MakeIncompatibleWindow(tbl)
         end
     end
 end
+
+hook.Add("InitPostEntity", "ArcCW_CheckContent", function()
+    for _, k in pairs(weapons.GetList()) do
+        if weapons.IsBasedOn(k.ClassName, "arccw_base") and k.ClassName ~= "arccw_base" then
+            return
+        end
+    end
+    chat.AddText(Color(255,255,255), "You have installed ArcCW Base but have no content packs installed. Perhaps you want to install the CS+ pack?")
+    chat.AddText(Color(255,255,255), "https://steamcommunity.com/sharedfiles/filedetails/?id=2131058270")
+end)
