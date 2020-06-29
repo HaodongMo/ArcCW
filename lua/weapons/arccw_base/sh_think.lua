@@ -224,22 +224,19 @@ function SWEP:Think()
         -- end
     -- end
 
-    if SERVER then
-        if self.Throwing then
-            if self:Clip1() == 0 then
-            if self:Ammo1() > 0 then
-                self:SetClip1(1)
-                self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
-            end
-            end
-        end
+    if SERVER and self.Throwing and self:Clip1() == 0 and self:Ammo1() > 0 then
+        self:SetClip1(1)
+        self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
     end
 
     -- self:RefreshBGs()
 
     self:GetBuff_Override("Hook_Think")
 
-    self:ProcessTimers()
+    -- Running this only serverside in SP breaks animation processing and causes CheckpointAnimation to not reset.
+    --if SERVER or !game.SinglePlayer() then
+        self:ProcessTimers()
+    --end
 end
 
 function SWEP:InSprint()
