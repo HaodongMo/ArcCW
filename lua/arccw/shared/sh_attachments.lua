@@ -267,6 +267,9 @@ net.Receive("arccw_asktodrop", function(len, ply)
 
     if GetConVar("arccw_attinv_free"):GetBool() then return end
     if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+    if !GetConVar("arccw_enable_customization"):GetBool() then return end
+    if !!GetConVar("arccw_enable_dropping"):GetBool() then return end
+
     if !att then return end
 
     local atttbl = ArcCW.AttachmentTable[att]

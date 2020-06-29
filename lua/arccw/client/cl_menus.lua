@@ -87,6 +87,7 @@ function ArcCW_Options_Atts( CPanel )
     CPanel:AddControl("Checkbox", {Label = "Lose Attachments on Death", Command = "arccw_attinv_loseondie" })
     CPanel:AddControl("Header", {Description = "Pick X behaviour allows you to set a limit on attachments that can be placed on any weapon. 0 = unlimited."})
     CPanel:AddControl("Slider", {Label = "Pick X", Command = "arccw_atts_pickx", Min = 0, Max = 25, Type = "int" })
+    CPanel:AddControl("Checkbox", {Label = "Attachment Dropping", Command = "arccw_enable_dropping" })
     CPanel:AddControl("color", {Label = "Sight Color",
         Red = "arccw_scope_r",
         Green = "arccw_scope_g",

@@ -668,6 +668,8 @@ function SWEP:CreateCustomizeHUD()
                         -- Drop attachment
                         if GetConVar("arccw_attinv_free"):GetBool() then return end
                         if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+                        if !!GetConVar("arccw_enable_customization"):GetBool() then return end
+                        if !!GetConVar("arccw_enable_dropping"):GetBool() then return end
 
                         net.Start("arccw_asktodrop")
                             net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)

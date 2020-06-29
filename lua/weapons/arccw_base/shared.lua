@@ -309,8 +309,8 @@ SWEP.Attachments = {}
 --         wang = Angle(0, 0, 0)
 --     },
 --     RejectAttachments = {}, -- specific blacklist of attachments this slot cannot accept. Needs to be like {"optic_mrs" = true}
---     VScale = Vector(1, 1, 1),
---     WScale = Vector(1, 1, 1),
+--     VMScale = Vector(1, 1, 1),
+--     WMScale = Vector(1, 1, 1),
 --     LHIKOutTime = 0.5, -- how much time we should blend out any left hand IK for
 --     LHIKInTime = 0.5, -- ditto
 --     SlideAmount = { -- how far this attachment can slide in both directions.
