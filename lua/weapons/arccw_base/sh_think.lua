@@ -239,9 +239,10 @@ function SWEP:Think()
 
     self:GetBuff_Override("Hook_Think")
 
-    if SERVER or !game.SinglePlayer() then
+    -- Running this only serverside in SP breaks animation processing and causes CheckpointAnimation to not reset.
+    --if SERVER or !game.SinglePlayer() then
         self:ProcessTimers()
-    end
+    --end
 end
 
 function SWEP:InSprint()
