@@ -11,6 +11,24 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_Penetration"] = "arccw_mult_penetration"
 }
 
+SWEP.TickCache_Overrides = {}
+SWEP.TickCache_Adds = {}
+SWEP.TickCache_Mults = {}
+
+SWEP.TickCache_Tick_Overrides = {}
+SWEP.TickCache_Tick_Adds = {}
+SWEP.TickCache_Tick_Mults = {}
+
+function SWEP:RecalcAllBuffs()
+    self.TickCache_Overrides = {}
+    self.TickCache_Adds = {}
+    self.TickCache_Mults = {}
+
+    self.TickCache_Tick_Overrides = {}
+    self.TickCache_Tick_Adds = {}
+    self.TickCache_Tick_Mults = {}
+end
+
 function SWEP:GetBuff_Hook(buff, data)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
@@ -85,6 +103,10 @@ function SWEP:GetBuff_Override(buff)
     local current = nil
     local winningslot = nil
 
+    if self.TickCache_Overrides[buff] and self.TickCache_Tick_Overrides[buff] and self.TickCache_Tick_Overrides[buff] == CurTime() then
+        return self.TickCache_Overrides[buff][1], self.TickCache_Overrides[buff][2]
+    end
+
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
@@ -155,11 +177,18 @@ function SWEP:GetBuff_Override(buff)
 
     end
 
+    self.TickCache_Tick_Overrides[buff] = CurTime()
+    self.TickCache_Overrides[buff] = {current, winningslot}
+
     return current, winningslot
 end
 
 function SWEP:GetBuff_Mult(buff)
     local mult = 1
+
+    if self.TickCache_Mults[buff] and self.TickCache_Tick_Mults[buff] and self.TickCache_Tick_Mults[buff] == CurTime() then
+        return self.TickCache_Mults[buff]
+    end
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -209,12 +238,18 @@ function SWEP:GetBuff_Mult(buff)
         ArcCW.BuffStack = false
 
     end
+    self.TickCache_Tick_Mults[buff] = CurTime()
+    self.TickCache_Mults[buff] = mult
 
     return mult
 end
 
 function SWEP:GetBuff_Add(buff)
     local add = 0
+
+    if self.TickCache_Adds[buff] and self.TickCache_Tick_Adds[buff] and self.TickCache_Tick_Adds[buff] == CurTime() then
+        return self.TickCache_Adds[buff]
+    end
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -256,6 +291,9 @@ function SWEP:GetBuff_Add(buff)
         ArcCW.BuffStack = false
 
     end
+
+    self.TickCache_Tick_Adds[buff] = CurTime()
+    self.TickCache_Adds[buff] = add
 
     return add
 end
@@ -801,6 +839,8 @@ function SWEP:AdjustAtts()
             end
         end
     end
+
+    self:RecalcAllBuffs()
 
     if self:GetBuff_Override("UBGL_Capacity") then
         self.Secondary.ClipSize = self:GetBuff_Override("UBGL_Capacity")

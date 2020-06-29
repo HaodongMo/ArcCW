@@ -24,7 +24,7 @@ CreateClientConVar("arccw_scope_r", "255")
 CreateClientConVar("arccw_scope_g", "0")
 CreateClientConVar("arccw_scope_b", "0")
 
-CreateClientConVar("arccw_blur", "1")
+CreateClientConVar("arccw_blur", "0")
 
 CreateClientConVar("arccw_glare", "1")
 

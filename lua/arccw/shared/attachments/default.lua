@@ -140,6 +140,10 @@ att.Override_Firemodes = {}
 
 -- all hooks, mults, and adds will work on fire modes
 
+-- allows you to return a shotgun spread offset
+-- {n = int number, ang = angle offset}
+att.Hook_ShotgunSpreadOffset = function(wep, data) end
+
 -- done before playing an effect
 -- return false to prevent playing
 -- fx: {fx = EffectData()}

@@ -74,9 +74,10 @@ function ENT:Use(activator, caller)
     end
 end
 
-end
+else
 
 local defaulticon = Material("hud/atts/default.png")
+
 
 function ENT:DrawTranslucent()
 
@@ -88,6 +89,19 @@ function ENT:Draw()
     self:DrawModel()
 
     if !GetConVar("arccw_2d3d"):GetBool() then return end
+
+    if self.PrintName == "Base Dropped Attachment" and self:GetNWInt("attid", -1) != -1 then
+        local att = ArcCW.AttachmentIDTable[self:GetNWInt("attid", -1)]
+
+        if !att then return end
+
+        local atttbl = ArcCW.AttachmentTable[att]
+
+        if !atttbl then return end
+
+        self.PrintName = atttbl.PrintName or att
+        self.Icon = atttbl.Icon or defaulticon
+    end
 
     if (EyePos() - self:GetPos()):LengthSqr() <= 262144 then -- 512^2
         local ang = LocalPlayer():EyeAngles()
@@ -111,4 +125,6 @@ function ENT:Draw()
             surface.DrawTexturedRect(-iw / 2, -iw - 8, iw, iw)
         cam.End3D2D()
     end
+end
+
 end

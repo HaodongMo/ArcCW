@@ -98,6 +98,8 @@ function ArcCW:PlayerGiveAtt(ply, att, amt)
 
     local atttbl = ArcCW.AttachmentTable[att]
 
+    if !atttbl then print("Invalid att " .. att) return end
+
     if atttbl.InvAtt then att = atttbl.InvAtt end
 
     if GetConVar("arccw_attinv_lockmode"):GetBool() then
@@ -265,13 +267,29 @@ net.Receive("arccw_asktodrop", function(len, ply)
 
     if GetConVar("arccw_attinv_free"):GetBool() then return end
     if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+    if !GetConVar("arccw_enable_customization"):GetBool() then return end
+    if !!GetConVar("arccw_enable_dropping"):GetBool() then return end
+
     if !att then return end
-    if ArcCW.AttachmentTable[att].Free then return end
+
+    local atttbl = ArcCW.AttachmentTable[att]
+
+    if !atttbl then return end
+    if atttbl.Free then return end
     if ArcCW:PlayerGetAtts(ply, att) < 1 then return end
 
-    local ent = ents.Create("acwatt_" .. att)
+    -- better to do it like this in case you don't want to generate the attachment entities
+    local ent = ents.Create("arccw_att_base")
     if !IsValid(ent) then return end
     ent:SetPos(ply:EyePos() + ply:EyeAngles():Forward() * 32)
+
+    ent:SetNWInt("attid", attid)
+
+    ent.GiveAttachments = {[att] = 1}
+    ent.Model = atttbl.DroppedModel or atttbl.Model or "models/Items/BoxSRounds.mdl"
+    ent.Icon = atttbl.Icon
+    ent.PrintName = atttbl.PrintName or att
+
     ent:Spawn()
     timer.Simple(0, function()
         local phys = ent:GetPhysicsObject()
@@ -281,7 +299,6 @@ net.Receive("arccw_asktodrop", function(len, ply)
     end)
     ArcCW:PlayerTakeAtt(ply, att, 1)
     ArcCW:PlayerSendAttInv(ply)
-    ply:ViewPunch(Angle(-0.5, 0, 0))
 end)
 
 function ArcCW:PlayerSendAttInv(ply)

@@ -187,7 +187,7 @@ function SWEP:ReloadInsert(empty)
 
         ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
-        self:PlayAnimation(ret, mult, true, 0, true)
+        self:PlayAnimation(ret, mult, true, 0, true, nil, true)
             self:SetTimer(self:GetAnimKeyTime(ret) * mult,
             function()
                 self:SetNWBool("reloading", false)
@@ -208,7 +208,7 @@ function SWEP:ReloadInsert(empty)
         self:GetOwner():SetAmmo(self:Ammo1() - insertcount, self.Primary.Ammo)
         self:SetClip1(self:Clip1() + insertcount)
 
-        self:PlayAnimation(insertanim, mult, true, 0, true)
+        self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(self:GetAnimKeyTime(insertanim) * mult,
         function()
             self:ReloadInsert(empty)
