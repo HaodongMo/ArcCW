@@ -153,7 +153,7 @@ function SWEP:Initialize()
 
     if GetConVar("arccw_mult_defaultclip"):GetInt() < 0 then
         self.Primary.DefaultClip = self.Primary.ClipSize * 3
-        if ent.Primary.ClipSize >= 100 then
+        if self.Primary.ClipSize >= 100 then
             self.Primary.DefaultClip = self.Primary.ClipSize * 2
         end
     else
