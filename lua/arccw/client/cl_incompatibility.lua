@@ -1,0 +1,130 @@
+ArcCW.IncompatibleAddons = {
+    --["2140007767"] = "Not incompatible - this is a test line (but what if it is very long?)",
+    --["2131161276"] = "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues.",
+    ["2137567877"] = "Causes viewmodel flickering with LHIK attachments",
+    ["847269692"] = "Causes viewmodel flickering, may crash when customization menu opens"
+}
+
+function ArcCW.MakeIncompatibleWindow(tbl)
+    local startTime = CurTime()
+
+    local window = vgui.Create( "DFrame" )
+    window:SetSize( ScrW() * 0.6, ScrH() * 0.6)
+    window:Center()
+    window:SetTitle("")
+    window:SetDraggable(false)
+    window:SetVisible(true)
+    window:ShowCloseButton(false)
+    window:MakePopup()
+    window.Paint = function(self, w, h)
+        surface.SetDrawColor(0, 0, 0, 200)
+        surface.DrawRect(0, 0, w, h)
+    end
+
+    local title = vgui.Create("DLabel", window)
+    title:SetSize(ScreenScale(256), ScreenScale(26))
+    title:Dock(TOP)
+    title:SetFont("ArcCW_24")
+    title:SetText("ArcCW: INCOMPATIBLE ADDONS")
+    title:DockMargin(ScreenScale(4), 0, ScreenScale(4), ScreenScale(8))
+
+    local desc = vgui.Create("DLabel", window)
+    desc:SetSize(ScreenScale(256), ScreenScale(12))
+    desc:Dock(TOP)
+    desc:DockMargin(ScreenScale(4), 0, ScreenScale(4), 0)
+    desc:SetFont("ArcCW_12")
+    desc:SetText("You have some addons that are known to not work with ArcCW.")
+    desc:SetContentAlignment(5)
+
+    local desc2 = vgui.Create("DLabel", window)
+    desc2:SetSize(ScreenScale(256), ScreenScale(12))
+    desc2:Dock(TOP)
+    desc2:DockMargin(ScreenScale(4), 0, ScreenScale(4), ScreenScale(4))
+    desc2:SetFont("ArcCW_12")
+    desc2:SetText("Disable them or expect broken behavior!")
+    desc2:SetContentAlignment(5)
+
+    local accept = vgui.Create("DButton", window)
+    accept:SetSize(ScreenScale(256), ScreenScale(20))
+    accept:SetText("")
+    accept:Dock(BOTTOM)
+    accept:DockMargin(ScreenScale(48), ScreenScale(8), ScreenScale(48), ScreenScale(8))
+
+    accept.OnMousePressed = function(spaa, kc)
+        if CurTime() > startTime + 5 then
+            window:Close()
+            window:Remove()
+        end
+    end
+
+    accept.Paint = function(spaa, w, h)
+        local Bfg_col = Color(255, 255, 255, 255)
+        local Bbg_col = Color(0, 0, 0, 200)
+
+        if CurTime() > startTime + 5 and spaa:IsHovered() then
+            Bbg_col = Color(255, 255, 255, 100)
+            Bfg_col = Color(0, 0, 0, 255)
+        end
+
+        surface.SetDrawColor(Bbg_col)
+        surface.DrawRect(0, 0, w, h)
+
+        local txt = (CurTime() > startTime + 5) and "Acknowledge" or ("Wait - " .. math.ceil(startTime + 5 - CurTime()))
+        -- local textW, textH = surface.GetTextSize(txt)
+
+        surface.SetTextColor(Bfg_col)
+        surface.SetTextPos(ScreenScale(8), ScreenScale(2))
+        surface.SetFont("ArcCW_12")
+        surface.DrawText(txt)
+    end
+
+    local addonList = vgui.Create("DScrollPanel", window)
+    addonList:SetText("")
+    addonList:Dock(FILL)
+    addonList.Paint = function(span, w, h) end
+    local sbar = addonList:GetVBar()
+    sbar.Paint = function() end
+    sbar.btnUp.Paint = function(span, w, h) end
+    sbar.btnDown.Paint = function(span, w, h) end
+    sbar.btnGrip.Paint = function(span, w, h)
+        surface.SetDrawColor(255, 255, 255, 255)
+        surface.DrawRect(0, 0, w, h)
+    end
+
+    for _, addon in pairs(tbl) do
+        local addonBtn = vgui.Create("DButton", window)
+        addonBtn:SetSize(ScreenScale(256), ScreenScale(28))
+        addonBtn:Dock(TOP)
+        addonBtn:DockMargin(ScreenScale(36), ScreenScale(2), ScreenScale(36), ScreenScale(2))
+        addonBtn:SetFont("ArcCW_12")
+        addonBtn:SetText("")
+        addonBtn:SetContentAlignment(5)
+        addonBtn.Paint = function(spaa, w, h)
+            local Bfg_col = Color(255, 255, 255, 255)
+            local Bbg_col = Color(0, 0, 0, 200)
+
+            if spaa:IsHovered() then
+                Bbg_col = Color(255, 255, 255, 100)
+                Bfg_col = Color(0, 0, 0, 255)
+            end
+
+            surface.SetDrawColor(Bbg_col)
+            surface.DrawRect(0, 0, w, h)
+
+            local txt = addon.title
+            surface.SetTextColor(Bfg_col)
+            surface.SetTextPos(ScreenScale(18), ScreenScale(2))
+            surface.SetFont("ArcCW_12")
+            surface.DrawText(txt)
+
+            local txt2 = ArcCW.IncompatibleAddons[tostring(addon.wsid)]
+            surface.SetTextColor(Bfg_col)
+            surface.SetTextPos(ScreenScale(18), ScreenScale(16))
+            surface.SetFont("ArcCW_8")
+            surface.DrawText(txt2)
+        end
+        addonBtn.OnMousePressed = function(spaa, kc)
+            gui.OpenURL("https://steamcommunity.com/sharedfiles/filedetails/?id=" .. tostring(addon.wsid))
+        end
+    end
+end

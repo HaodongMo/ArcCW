@@ -119,6 +119,20 @@ function SWEP:Initialize()
             end
 
         end
+
+        -- Check for incompatibile addons once 
+        if LocalPlayer().ArcCW_IncompatibilityCheck == true then return end
+        LocalPlayer().ArcCW_IncompatibilityCheck = true
+        local incompatList = {}
+        local addons = engine.GetAddons()
+        for _, addon in pairs(addons) do
+            if ArcCW.IncompatibleAddons[tostring(addon.wsid)] then
+                table.insert(incompatList, addon)
+            end
+        end
+        if #incompatList > 0 then
+            ArcCW.MakeIncompatibleWindow(incompatList)
+        end
     end
 
     self:SetState(0)
