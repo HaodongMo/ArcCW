@@ -9,3 +9,9 @@ hook.Add( "OnEntityCreated", "ArcCW_DefaultClip", function(ent)
       ent.Primary.DefaultClip = ent.Primary.ClipSize * 2
    end
 end)
+
+hook.Add( "PlayerCanPickupWeapon", "ArcCW_EquipmentSingleton", function(ply, wep)
+   if wep.ArcCW and wep.Throwing and wep.Singleton and ply:HasWeapon(wep:GetClass()) then
+      return false
+   end
+end)

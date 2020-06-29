@@ -21,11 +21,6 @@ SWEP.HoldtypeActive = "grenade"
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.Ammo = "grenade"
 
-if GetConVar("arccw_equipmentsingleton"):GetBool() then
-    SWEP.Primary.ClipSize = -1
-    SWEP.Primary.Ammo = ""
-end
-
 SWEP.Animations = {
     -- ["draw"] = {
     --     Source = "draw",
@@ -75,4 +70,10 @@ function SWEP:OnRemove()
     if CLIENT and IsValid(self:GetOwner()) and self:GetOwner() == LocalPlayer() and self:GetOwner():Alive() then
         RunConsoleCommand("use", "weapon_ttt_unarmed")
     end
+end
+
+if GetConVar("arccw_equipmentsingleton"):GetBool() then
+    SWEP.Singleton = true
+    SWEP.Primary.ClipSize = -1
+    SWEP.Primary.Ammo = ""
 end

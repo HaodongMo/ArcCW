@@ -61,9 +61,5 @@ function SWEP:Throw()
         self:PlayAnimation("draw")
     end)
 
-    if GetConVar("arccw_equipmentsingleton"):GetBool() then
-        SafeRemoveEntityDelayed(self, 1)
-    end
-
     self:SetNextPrimaryFire(CurTime() + 1)
 end
