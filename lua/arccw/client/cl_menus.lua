@@ -68,6 +68,7 @@ function ArcCW_Options_Mults( CPanel )
     CPanel:AddControl("Slider", {Label = "Move Dispersion", Command = "arccw_mult_movedisp", Min = 0, Max = 100, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Reload Time", Command = "arccw_mult_reloadtime", Min = 0.01, Max = 10, Type = "float" })
     CPanel:AddControl("Slider", {Label = "ADS Time", Command = "arccw_mult_sighttime", Min = 0.1, Max = 10, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Default Clip", Command = "arccw_mult_defaultclip", Min = -1, Max = 10, Type = "float" })
 end
 
 function ArcCW_Options_NPC( CPanel )
