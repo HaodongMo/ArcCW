@@ -332,25 +332,26 @@ local function ShouldCheapWorldModel()
 end
 
 function SWEP:DrawWorldModel()
-    if !IsValid(self:GetOwner()) and GetConVar("arccw_2d3d"):GetBool() then
-        if (EyePos() - self:GetPos()):LengthSqr() <= 262144 then -- 512^2
-            local ang = LocalPlayer():EyeAngles()
+    if !IsValid(self:GetOwner()) and GetConVar("arccw_2d3d"):GetBool()
+            and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then -- 512^2
+        local ang = LocalPlayer():EyeAngles()
 
-            ang:RotateAroundAxis(ang:Forward(), 180)
-            ang:RotateAroundAxis(ang:Right(), 90)
-            ang:RotateAroundAxis(ang:Up(), 90)
+        ang:RotateAroundAxis(ang:Forward(), 180)
+        ang:RotateAroundAxis(ang:Right(), 90)
+        ang:RotateAroundAxis(ang:Up(), 90)
 
-            cam.Start3D2D(self:GetPos() + Vector(0, 0, 16), ang, 0.1)
-                surface.SetFont("ArcCW_32_Unscaled")
+        cam.Start3D2D(self:WorldSpaceCenter() + Vector(0, 0, 16), ang, 0.1)
+            surface.SetFont("ArcCW_32_Unscaled")
 
-                local w = surface.GetTextSize(self.PrintName)
+            local w = surface.GetTextSize(self.PrintName)
 
-                surface.SetTextPos(-w / 2, 0)
-                surface.SetTextColor(255, 255, 255, 255)
-                surface.DrawText(self.PrintName)
+            surface.SetTextPos(-w / 2, 0)
+            surface.SetTextColor(255, 255, 255, 255)
+            surface.DrawText(self.PrintName)
 
-                surface.SetFont("ArcCW_24_Unscaled")
+            surface.SetFont("ArcCW_24_Unscaled")
 
+            if #self.Attachments > 0 then
                 local t = tostring(self:CountAttachments()) .. " Attachments"
 
                 w = surface.GetTextSize(t)
@@ -358,8 +359,8 @@ function SWEP:DrawWorldModel()
                 surface.SetTextPos(-w / 2, 32)
                 surface.SetTextColor(255, 255, 255, 255)
                 surface.DrawText(t)
-            cam.End3D2D()
-        end
+            end
+        cam.End3D2D()
     end
 
     if ShouldCheapWorldModel() then
