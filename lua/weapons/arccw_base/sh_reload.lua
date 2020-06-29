@@ -30,11 +30,6 @@ function SWEP:Reload()
 
     if load <= self:Clip1() then return end
 
-    if !self.ReloadInSights then
-        self:ExitSights()
-        self.Sighted = false
-    end
-
     self:SetNWBool("reqend", false)
     self.BurstCount = 0
 
@@ -112,6 +107,11 @@ function SWEP:Reload()
     end
 
     self:SetNWBool("reloading", true)
+
+    if !self.ReloadInSights then
+        self:ExitSights()
+        self.Sighted = false
+    end
 
     self.Primary.Automatic = false
 end

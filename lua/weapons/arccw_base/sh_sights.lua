@@ -62,7 +62,7 @@ function SWEP:EnterSights()
     local asight = self:GetActiveSights()
     if !asight then return end
     if self:GetState() != ArcCW.STATE_IDLE then return end
-    if !self.ReloadInSights and self:GetNWBool("reloading", false) then return end
+    if !self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD)) then return end
 
     self:SetupActiveSights()
 
@@ -82,7 +82,7 @@ function SWEP:EnterSights()
     self.LastEnterSightTime = CurTime()
 
     if self.Animations.enter_sight then
-        self:PlayAnimation("enter_sight", self:GetSightTime())
+        self:PlayAnimation("enter_sight", self:GetSightTime(), true, nil, nil, nil, false)
     end
 end
 
