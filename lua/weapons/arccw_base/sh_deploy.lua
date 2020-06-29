@@ -121,28 +121,28 @@ function SWEP:Initialize()
         end
 
         -- Check for incompatibile addons once 
-        if LocalPlayer().ArcCW_IncompatibilityCheck == true then return end
-        LocalPlayer().ArcCW_IncompatibilityCheck = true
-        local incompatList = {}
-        local addons = engine.GetAddons()
-        for _, addon in pairs(addons) do
-            if ArcCW.IncompatibleAddons[tostring(addon.wsid)] then
-                incompatList[tostring(addon.wsid)] = addon
+        if LocalPlayer().ArcCW_IncompatibilityCheck ~= true then
+            LocalPlayer().ArcCW_IncompatibilityCheck = true
+            local incompatList = {}
+            local addons = engine.GetAddons()
+            for _, addon in pairs(addons) do
+                if ArcCW.IncompatibleAddons[tostring(addon.wsid)] then
+                    incompatList[tostring(addon.wsid)] = addon
+                end
             end
-        end
-        -- If never show again is on, verify we have no new addons
-        if file.Exists("arccw_incompatible.txt", "DATA") then
-            local shouldDoAnyways = false
-            local oldTbl = util.JSONToTable(file.Read("arccw_incompatible.txt"))
-            for id, addon in pairs(incompatList) do
-                if !oldTbl[id] then shouldDoAnyways = true break end
+            local shouldDo = true
+            -- If never show again is on, verify we have no new addons
+            if file.Exists("arccw_incompatible.txt", "DATA") then
+                shouldDo = false
+                local oldTbl = util.JSONToTable(file.Read("arccw_incompatible.txt"))
+                for id, addon in pairs(incompatList) do
+                    if !oldTbl[id] then shouldDo = true break end
+                end
+                if shouldDo then file.Delete("arccw_incompatible.txt") end
             end
-            -- If none is found, stop; otherwise wipe the old file and warn
-            if !shouldDoAnyways then return end
-            file.Delete("arccw_incompatible.txt")
-        end
-        if table.Count(incompatList) > 0 then
-            ArcCW.MakeIncompatibleWindow(incompatList)
+            if shouldDo and table.Count(incompatList) > 0 then
+                ArcCW.MakeIncompatibleWindow(incompatList)
+            end
         end
     end
 
