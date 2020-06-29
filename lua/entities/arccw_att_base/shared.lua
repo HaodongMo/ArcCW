@@ -103,14 +103,14 @@ function ENT:Draw()
         self.Icon = atttbl.Icon or defaulticon
     end
 
-    if (EyePos() - self:GetPos()):LengthSqr() <= 262144 then -- 512^2
+    if (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then -- 512^2
         local ang = LocalPlayer():EyeAngles()
 
         ang:RotateAroundAxis(ang:Forward(), 180)
         ang:RotateAroundAxis(ang:Right(), 90)
         ang:RotateAroundAxis(ang:Up(), 90)
 
-        cam.Start3D2D(self:GetPos() + Vector(0, 0, 16), ang, 0.1)
+        cam.Start3D2D(self:WorldSpaceCenter() + Vector(0, 0, 16), ang, 0.1)
             surface.SetFont("ArcCW_32_Unscaled")
 
             local w = surface.GetTextSize(self.PrintName)
