@@ -204,7 +204,9 @@ end)
 elseif SERVER then
 
 hook.Add("PlayerDeath", "ArcCW_DeathAttInv", function(ply)
-    if table.Count(ply.ArcCW_AttInv) > 0 and GetConVar("arccw_attinv_loseondie"):GetInt() >= 2 then
+    if table.Count(ply.ArcCW_AttInv) > 0
+            and GetConVar("arccw_attinv_loseondie"):GetInt() >= 2
+            and !GetConVar("arccw_attinv_free"):GetBool() then
         local boxEnt = ents.Create("arccw_att_dropped")
         boxEnt:SetPos(ply:GetPos() + Vector(0, 0, 4))
         boxEnt.GiveAttachments = ply.ArcCW_AttInv
