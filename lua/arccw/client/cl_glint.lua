@@ -7,7 +7,7 @@ hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
 
     for _, ply in pairs(e) do
         if !IsValid(ply) then continue end
-        if !ply:ShouldDrawLocalPlayer() then continue end
+        if ply == LocalPlayer() and !ply:ShouldDrawLocalPlayer() then continue end
 
         local wpn = ply:GetActiveWeapon()
 
