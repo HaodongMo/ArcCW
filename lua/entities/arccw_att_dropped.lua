@@ -2,7 +2,7 @@ AddCSLuaFile()
 
 ENT.Base = "arccw_att_base"
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
-ENT.Category			= "ArcCW - Attachments"
+ENT.Category = "ArcCW - Attachments"
 ENT.PrintName = "Attachment Box"
 ENT.Spawnable = false
 
@@ -20,19 +20,20 @@ function ENT:Draw()
         ang:RotateAroundAxis(ang:Right(), 90)
         ang:RotateAroundAxis(ang:Up(), 90)
 
-        cam.Start3D2D(self:WorldSpaceCenter() + Vector(0, 0, 16), ang, 0.1)
+        cam.Start3D2D(self:WorldSpaceCenter() + Vector(0, 0, 14), ang, 0.1)
             surface.SetFont("ArcCW_32_Unscaled")
 
-            local w = surface.GetTextSize(self.PrintName)
+            local w = surface.GetTextSize(self:GetNWString("boxname", nil) or self.PrintName)
             surface.SetTextPos(-w / 2, 0)
             surface.SetTextColor(255, 255, 255, 255)
             surface.DrawText(self:GetNWString("boxname", nil) or self.PrintName)
 
-            local count = #self.GiveAttachments
-            local w2 = surface.GetTextSize(count)
-            surface.SetTextPos(-w2 / 2, 0)
+            local count = self:GetNWInt("boxcount", 0)
+            local str = count .. " Attachment" .. (count ~= 1 and "s" or "")
+            local w2 = surface.GetTextSize(str)
+            surface.SetTextPos(-w2 / 2, 20)
             surface.SetTextColor(255, 255, 255, 255)
-            surface.DrawText(count .. " Attachment" .. (count ~= 1 and "s" or ""))
+            surface.DrawText(str)
         cam.End3D2D()
     end
 end
