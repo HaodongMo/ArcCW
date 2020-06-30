@@ -324,6 +324,7 @@ end
 
 function SWEP:DoPenetration(tr, penleft, alreadypenned)
     if CLIENT then return end
+    alreadypenned = alreadypenned or {}
     if penleft <= 0 then return end
 
     if tr.HitSky then return end

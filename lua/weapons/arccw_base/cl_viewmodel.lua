@@ -46,8 +46,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     local vm_up = GetConVar("arccw_vm_up"):GetFloat()
     local vm_forward = GetConVar("arccw_vm_forward"):GetFloat()
 
-    target.pos = target.pos + Vector(vm_right, vm_forward, vm_up)
-
     local state = self:GetState()
 
     if self:GetOwner():Crouching() then
@@ -62,6 +60,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos = target.pos + ((self.BipodAngle - self:GetOwner():EyeAngles()):Right() * -4)
         target.sway = 0.2
     end
+
+    target.pos = target.pos + Vector(vm_right, vm_forward, vm_up)
 
     local sighted = self.Sighted or state == ArcCW.STATE_SIGHTS
     if game.SinglePlayer() then
@@ -99,12 +99,16 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     elseif (sprinted or (self:GetCurrentFiremode().Mode == 0 and !sighted)) and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then
         target = {
-            pos = self.HolsterPos,
+            pos = Vector(),
             ang = Angle(),
             down = 1,
             sway = 4,
             bob = 5,
         }
+
+        target.pos:Set(self.HolsterPos)
+
+        target.pos = target.pos + Vector(vm_right, vm_forward, vm_up)
 
         target.ang:Set(self.HolsterAng)
 
