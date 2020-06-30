@@ -1363,8 +1363,8 @@ function SWEP:CreateCustomizeHUD()
                     local seq, seq2 = h and self:Hook_SelectReloadAnimation("reload") or "reload", h and self:Hook_SelectReloadAnimation("reload_empty") or "reload_empty"
                     local rCur = self.Animations[seq].Time * mult
                     local r2Cur = self.Animations[seq2] and self.Animations[seq2].Time * mult
-                    return math.Round(r, 2) .. "s" .. (r2 and "/" .. math.Round(r2, 2) .. "s"),
-                            math.Round(rCur, 2) .. "s" .. (r2Cur and "/" .. math.Round(r2Cur, 2) .. "s")
+                    return math.Round(r, 1) .. "s" .. (r2 and "/" .. math.Round(r2, 1) .. "s" or ""),
+                            math.Round(rCur, 1) .. "s" .. (r2Cur and "/" .. math.Round(r2Cur, 1) .. "s" or "")
                 end,
                 function()
                     local mult = self:GetBuff_Mult("Mult_ReloadTime")
@@ -1435,12 +1435,10 @@ function SWEP:CreateCustomizeHUD()
             stat_panel:SetText("")
             stat_panel:DockMargin( 0, 0, 0, ScreenScale(2) )
             stat_panel.Paint = function(spaa, w, h)
-                local Bfg_col = Color(255, 255, 255, 255)
                 local Bbg_col = Color(0, 0, 0, 50)
 
                 if spaa:IsHovered() then
                     Bbg_col = Color(100, 100, 100, 50)
-                    Bfg_col = Color(0, 0, 0, 255)
                 end
 
                 surface.SetDrawColor(Bbg_col)
