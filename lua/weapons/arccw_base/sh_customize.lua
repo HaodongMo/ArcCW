@@ -757,11 +757,21 @@ function SWEP:CreateCustomizeHUD()
                     end
 
                     if !owned then
-                        Bbg_col = Color(20, 20, 20, 150)
-                        Bfg_col = Color(100, 100, 100, 255)
+                        if spaa:IsHovered() then
+                            Bbg_col = Color(50, 50, 50, 150)
+                            Bfg_col = Color(150, 150, 150, 255)
+                        else
+                            Bbg_col = Color(20, 20, 20, 150)
+                            Bfg_col = Color(150, 150, 150, 255)
+                        end
                     elseif !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then
-                        Bbg_col = Color(75, 0, 0, 150)
-                        Bfg_col = Color(150, 50, 50, 255)
+                        if spaa:IsHovered() then
+                            Bbg_col = Color(125, 25, 25, 150)
+                            Bfg_col = Color(150, 50, 50, 255)
+                        else
+                            Bbg_col = Color(75, 0, 0, 150)
+                            Bfg_col = Color(150, 50, 50, 255)
+                        end
                     end
 
                     surface.SetDrawColor(Bbg_col)
