@@ -756,7 +756,10 @@ function SWEP:CreateCustomizeHUD()
                         atttrivia_do(spaa.AttName)
                     end
 
-                    if !owned or !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then
+                    if !owned then
+                        Bbg_col = Color(20, 20, 20, 150)
+                        Bfg_col = Color(100, 100, 100, 255)
+                    elseif !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then
                         Bbg_col = Color(75, 0, 0, 150)
                         Bfg_col = Color(150, 50, 50, 255)
                     end
