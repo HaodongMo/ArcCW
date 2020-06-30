@@ -1400,32 +1400,13 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultStatFunc("BarrelLength","HU") end,
                 function() return defaultBetterFunc("BarrelLength", true) end,
             },
+            {"Penetration", "How much material can this weapon penetrate.",
+                function() return defaultStatFunc("Penetration","mm") end,
+                function() return defaultBetterFunc("Penetration") end,
+            },
         }
 
         statbox:Clear()
-
-        local stat_wpnnamelabel = vgui.Create("DLabel", statbox)
-        stat_wpnnamelabel:SetSize(barsize, buttonsize)
-        stat_wpnnamelabel:Dock(TOP)
-        stat_wpnnamelabel:DockMargin( 0, 0, 0, smallgap )
-        stat_wpnnamelabel:SetText("")
-        stat_wpnnamelabel.Paint = function(span, w, h)
-            if !IsValid(self) then return end
-            local txt = self.PrintName
-
-            surface.SetFont("ArcCW_20")
-            local tw, th = surface.GetTextSize(txt)
-
-            surface.SetFont("ArcCW_20_Glow")
-            surface.SetTextPos((w - tw) / 2, th / 2)
-            surface.SetTextColor(Color(0, 0, 0))
-            surface.DrawText(txt)
-
-            surface.SetFont("ArcCW_20")
-            surface.SetTextPos((w - tw) / 2, th / 2)
-            surface.SetTextColor(fg_col)
-            surface.DrawText(txt)
-        end
 
         for _, i in pairs(statList) do
             if !i then continue end
@@ -1433,7 +1414,7 @@ function SWEP:CreateCustomizeHUD()
             stat_panel:SetSize(barsize, ScreenScale(10))
             stat_panel:Dock(TOP)
             stat_panel:SetText("")
-            stat_panel:DockMargin( 0, 0, 0, ScreenScale(2) )
+            stat_panel:DockMargin( 0, ScreenScale(1), 0, ScreenScale(1) )
             stat_panel.Paint = function(spaa, w, h)
                 local Bbg_col = Color(0, 0, 0, 50)
 
