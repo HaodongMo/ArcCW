@@ -100,7 +100,7 @@ function SWEP:MeleeAttack(melee2)
     -- We need the second part for single player because SWEP:Think is ran shared in SP
     if !(game.SinglePlayer() and CLIENT) then
         if tr.Hit then
-            if tr.Entity:IsNPC() or tr.Entity:IsPlayer() then
+            if tr.Entity:IsNPC() or tr.Entity:IsNextBot() or tr.Entity:IsPlayer() then
                 self:EmitSound(self.MeleeHitNPCSound, 75, 100, 1, CHAN_USER_BASE + 2)
             else
                 self:EmitSound(self.MeleeHitSound, 75, 100, 1, CHAN_USER_BASE + 2)
@@ -139,6 +139,10 @@ function SWEP:MeleeAttack(melee2)
         SuppressHostEvents(NULL)
         tr.Entity:TakeDamageInfo(dmginfo)
         SuppressHostEvents(self:GetOwner())
+
+        if tr.Entity:GetClass() == "func_breakable_surf" then
+            tr.Entity:Fire("Shatter", "0.5 0.5 256")
+        end
 
     end
 
