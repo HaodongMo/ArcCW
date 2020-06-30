@@ -71,9 +71,3 @@ function SWEP:OnRemove()
         RunConsoleCommand("use", "weapon_ttt_unarmed")
     end
 end
-
-if GetConVar("arccw_equipmentsingleton"):GetBool() then
-    SWEP.Singleton = true
-    SWEP.Primary.ClipSize = -1
-    SWEP.Primary.Ammo = ""
-end

@@ -121,6 +121,12 @@ function SWEP:Initialize()
         end
     end
 
+    if GetConVar("arccw_equipmentsingleton"):GetBool() and self.Throwing then
+        self.Singleton = true
+        self.Primary.ClipSize = -1
+        self.Primary.Ammo = ""
+    end
+
     self:SetState(0)
     self:SetClip2(0)
 
