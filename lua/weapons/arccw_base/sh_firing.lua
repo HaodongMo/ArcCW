@@ -671,7 +671,7 @@ function SWEP:GetDamage(range)
     local dmult = 1
 
     if num then
-        dmult = self.Num / dmult
+        dmult = num / dmult
     end
 
     local dmgmax = self.Damage * self:GetBuff_Mult("Mult_Damage") * dmult
