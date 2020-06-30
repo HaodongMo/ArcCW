@@ -169,7 +169,7 @@ function SWEP:PrimaryAttack()
                     end
                 end
 
-                self:DoPenetration(tr, ret.penleft)
+                self:DoPenetration(tr, ret.penleft, {tr.Entity})
             end
         }
 
@@ -322,8 +322,9 @@ function SWEP:PrimaryAttack()
     math.randomseed(CurTime() + (self:EntIndex() % 31259))
 end
 
-function SWEP:DoPenetration(tr, penleft)
+function SWEP:DoPenetration(tr, penleft, alreadypenned)
     if CLIENT then return end
+    alreadypenned = alreadypenned or {}
     if penleft <= 0 then return end
 
     if tr.HitSky then return end
@@ -373,7 +374,7 @@ function SWEP:DoPenetration(tr, penleft)
             dmg:SetDamage(self:GetDamage(dist) * pdelta)
             dmg:SetDamagePosition(ptr.HitPos)
 
-            if IsValid(ptr.Entity) then
+            if IsValid(ptr.Entity) and !table.HasValue(alreadypenned, ptr.Entity) then
                 ptr.Entity:TakeDamageInfo(dmg)
             end
 
@@ -414,7 +415,7 @@ function SWEP:DoPenetration(tr, penleft)
 
         self:GetOwner():FireBullets( {
             Attacker = self:GetOwner(),
-            Damage = self.Damage * pdelta,
+            Damage = 0,
             Force = 0,
             Distance = 33000,
             Num = 1,
@@ -426,8 +427,12 @@ function SWEP:DoPenetration(tr, penleft)
             Callback = function(att, btr, dmg)
                 local dist = (btr.HitPos - endpos):Length() * ArcCW.HUToM
 
-                dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-                dmg:SetDamage(self:GetDamage(dist) * pdelta)
+                if table.HasValue(alreadypenned, ptr.Entity) then
+                    dmg:SetDamage(0)
+                else
+                    dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
+                    dmg:SetDamage(self:GetDamage(dist) * pdelta)
+                end
 
                 self:DoPenetration(btr, penleft)
             end
