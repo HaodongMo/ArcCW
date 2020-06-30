@@ -119,6 +119,31 @@ function SWEP:Initialize()
             end
 
         end
+
+        -- Check for incompatibile addons once 
+        if LocalPlayer().ArcCW_IncompatibilityCheck ~= true then
+            LocalPlayer().ArcCW_IncompatibilityCheck = true
+            local incompatList = {}
+            local addons = engine.GetAddons()
+            for _, addon in pairs(addons) do
+                if ArcCW.IncompatibleAddons[tostring(addon.wsid)] then
+                    incompatList[tostring(addon.wsid)] = addon
+                end
+            end
+            local shouldDo = true
+            -- If never show again is on, verify we have no new addons
+            if file.Exists("arccw_incompatible.txt", "DATA") then
+                shouldDo = false
+                local oldTbl = util.JSONToTable(file.Read("arccw_incompatible.txt"))
+                for id, addon in pairs(incompatList) do
+                    if !oldTbl[id] then shouldDo = true break end
+                end
+                if shouldDo then file.Delete("arccw_incompatible.txt") end
+            end
+            if shouldDo and table.Count(incompatList) > 0 then
+                ArcCW.MakeIncompatibleWindow(incompatList)
+            end
+        end
     end
 
     if GetConVar("arccw_equipmentsingleton"):GetBool() and self.Throwing then
@@ -132,10 +157,13 @@ function SWEP:Initialize()
 
     self.Attachments["BaseClass"] = nil
 
-    self.Primary.DefaultClip = self.Primary.ClipSize * 3
-
-    if self.Primary.ClipSize >= 100 then
-        self.Primary.DefaultClip = self.Primary.ClipSize * 2
+    if GetConVar("arccw_mult_defaultclip"):GetInt() < 0 then
+        self.Primary.DefaultClip = self.Primary.ClipSize * 3
+        if self.Primary.ClipSize >= 100 then
+            self.Primary.DefaultClip = self.Primary.ClipSize * 2
+        end
+    else
+        self.Primary.DefaultClip = self.Primary.ClipSize * GetConVar("arccw_mult_defaultclip"):GetInt()
     end
 
     self:SetHoldType(self.HoldtypeActive)

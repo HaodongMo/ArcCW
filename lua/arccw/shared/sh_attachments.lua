@@ -203,10 +203,23 @@ end)
 
 elseif SERVER then
 
+hook.Add("PlayerDeath", "ArcCW_DeathAttInv", function(ply)
+    if table.Count(ply.ArcCW_AttInv) > 0 and GetConVar("arccw_attinv_loseondie"):GetInt() >= 2 then
+        local boxEnt = ents.Create("arccw_att_dropped")
+        boxEnt:SetPos(ply:GetPos() + Vector(0, 0, 4))
+        boxEnt.GiveAttachments = ply.ArcCW_AttInv
+        boxEnt:Spawn()
+        boxEnt:SetNWString("boxname", ply:GetName() .. "'s Death Box")
+        local count = 0
+        for i, v in pairs(boxEnt.GiveAttachments) do count = count + v end
+        boxEnt:SetNWInt("boxcount", count)
+    end
+end)
+
 hook.Add("PlayerSpawn", "ArcCW_SpawnAttInv", function(ply, trans)
     if trans then return end
 
-    if GetConVar("arccw_attinv_loseondie"):GetBool() then
+    if GetConVar("arccw_attinv_loseondie"):GetInt() >= 1 then
         ply.ArcCW_AttInv = {}
 
         ArcCW:PlayerSendAttInv(ply)
