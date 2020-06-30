@@ -290,6 +290,16 @@ function SWEP:CreateCustomizeHUD()
         end
     end
 
+    local statbox = vgui.Create("DScrollPanel", ArcCW.InvHUD)
+    statbox:SetText("")
+    statbox:SetSize(barsize, ScrH() - ScreenScale(64) - (3 * airgap))
+    statbox:SetPos(ScrW() - barsize - airgap, 2 * airgap)
+    statbox.Paint = function(span, w, h)
+        surface.SetDrawColor(bg_col)
+        surface.DrawRect(0, 0, w, h)
+    end
+    statbox:Hide()
+
     local attmenuh = ScrH() - (2 * airgap)
 
     local attmenu = vgui.Create("DScrollPanel", ArcCW.InvHUD)
@@ -812,6 +822,7 @@ function SWEP:CreateCustomizeHUD()
                 if activeslot == span.AttIndex then
                     activeslot = nil
                     triviabox:Show()
+                    statbox:Hide()
                     attmenu:Hide()
                     self.InAttMenu = false
                     atttrivia:Hide()
@@ -819,6 +830,7 @@ function SWEP:CreateCustomizeHUD()
                 else
                     activeslot = span.AttIndex
                     triviabox:Hide()
+                    statbox:Hide()
                     attmenu:Show()
                     attslider:SetSlideX(self.Attachments[span.AttIndex].SlidePos)
                     lastslidepos = self.Attachments[span.AttIndex].SlidePos
@@ -1066,157 +1078,373 @@ function SWEP:CreateCustomizeHUD()
     table.insert(adesctext, "")
 
     local triv_desc = vgui.Create("DLabel", triviabox)
-        triv_desc:SetSize(barsize, ScreenScale(8) * (table.Count(adesctext) + 1))
-        triv_desc:SetText("")
-        triv_desc:Dock(TOP)
-        triv_desc.Paint = function(span, w, h)
-            local y = ScreenScale(8)
-            for _, line in pairs(adesctext) do
-                surface.SetFont("ArcCW_8")
-                surface.SetTextPos(smallgap, y)
-                surface.SetTextColor(fg_col)
-                surface.DrawText(line)
-                y = y + ScreenScale(8)
-            end
-        end
-
-    if self.ShootEntity then return end
-    if self.PrimaryBash then return end
-    if self.Throwing then return end
-    if self.NoRangeGraph then return end
-
-    local rangegraph = vgui.Create("DLabel", triviabox)
-    rangegraph:SetSize(barsize, ScreenScale(64))
-    rangegraph:SetText("")
-    rangegraph:Dock(TOP)
-    rangegraph.Paint = function(span, w, h)
-        if !IsValid(self) then return end
-        local sidegap = 0
-        local gx, gy = 0, smallgap
-        local gw, gh = w - (2 * sidegap), h - smallgap - ScreenScale(6)
-
-        local dmgmax = math.Round(self:GetDamage(0))
-        local dmgmin = math.Round(self:GetDamage(self.Range))
-
-        local grsh = math.max(dmgmax, dmgmin)
-
-        grsh = math.ceil((grsh / 25) + 1) * 25
-
-        local maxgr = (self.Range * self:GetBuff_Mult("Mult_Range"))
-
-        if dmgmax < dmgmin then
-            maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
-        end
-
-        maxgr = math.Round(maxgr)
-
-        local grsw = math.ceil((maxgr / 50) + 1) * 50
-
-        local convw = gw / grsw
-        local convh = gh / grsh
-
-        local starty = gh - (dmgmax * convh)
-        local endy = gh - (dmgmin * convh)
-        local startx = 0
-        local endx = maxgr * convw
-
-        surface.SetDrawColor(bg_col)
-        surface.DrawRect(gx, gy, gw, gh)
-
-        surface.SetDrawColor(fg_col)
-        surface.DrawLine(gx + startx, gy + starty, gx + endx, gy + endy)
-        surface.DrawLine(gx + endx, gy + endy, gx + gw, gy + endy)
-
-        -- start dmg
-        surface.SetTextColor(fg_col)
-        surface.SetFont("ArcCW_6")
-        surface.SetTextPos(gx + startx, gy + starty - ScreenScale(7) - 1)
-        surface.DrawText(tostring(dmgmax) .. "DMG")
-
-        -- end dmg
-        surface.SetTextColor(fg_col)
-        surface.SetFont("ArcCW_6")
-
-        local dtw = surface.GetTextSize(tostring(dmgmin) .. "DMG")
-        surface.SetTextPos(gx + gw - dtw, gy + endy - ScreenScale(7) - 1)
-        surface.DrawText(tostring(dmgmin) .. "DMG")
-
-        -- start range
-        surface.SetTextColor(fg_col)
-        surface.SetFont("ArcCW_6")
-        surface.SetTextPos(sidegap, smallgap + gh)
-        surface.DrawText("0m")
-
-        -- mid range
-        surface.SetTextColor(fg_col)
-        surface.SetFont("ArcCW_6")
-        local mtw = surface.GetTextSize(tostring(maxgr) .. "m")
-        surface.SetTextPos(gx + endx - (mtw / 2), smallgap + gh)
-        surface.DrawText(tostring(maxgr) .. "m")
-
-        -- end range
-        surface.SetTextColor(fg_col)
-        surface.SetFont("ArcCW_6")
-        local rtw = surface.GetTextSize(tostring(grsw) .. "m")
-        surface.SetTextPos(w - sidegap - rtw, smallgap + gh)
-        surface.DrawText(tostring(grsw) .. "m")
-
-        local mousex, mousey = span:CursorPos()
-
-        if mousex > gx and mousex < (gx + gw) and
-            (mousey > gy and mousey < (gy + gh)) then
-            local mouser = (mousex - gx) / convw
-
-            local shy
-            local shdmg
-
-            if mouser < maxgr then
-                local delta = mouser / maxgr
-                shy = Lerp(delta, starty, endy)
-                shdmg = Lerp(delta, dmgmax, dmgmin)
-            else
-                shy = endy
-                shdmg = dmgmin
-            end
-
-            surface.SetDrawColor(Color(fg_col.r, fg_col.g, fg_col.b, 150))
-            surface.DrawLine(gx, gy + shy, gw, gy + shy)
-            surface.DrawLine(mousex, gy, mousex, gh + gy)
-
-            shy = shy + ScreenScale(4)
-
-            mouser = math.Round(mouser)
-            shdmg = math.Round(shdmg)
-
-            local alignleft = true
-
-            surface.SetFont("ArcCW_6")
-            local twmr = surface.GetTextSize(tostring(mouser) .. "m")
-            local twmb = surface.GetTextSize(tostring(shdmg) .. "DMG")
-
-            if mousex < math.max(twmr, twmb) + ScreenScale(2) then
-                alignleft = false
-            end
-
+    triv_desc:SetSize(barsize, ScreenScale(8) * (table.Count(adesctext) + 1))
+    triv_desc:SetText("")
+    triv_desc:Dock(TOP)
+    triv_desc.Paint = function(span, w, h)
+        local y = ScreenScale(8)
+        for _, line in pairs(adesctext) do
+            surface.SetFont("ArcCW_8")
+            surface.SetTextPos(smallgap, y)
             surface.SetTextColor(fg_col)
-            surface.SetFont("ArcCW_6")
-            if alignleft then
-                surface.SetTextPos(mousex - ScreenScale(2) - twmr, shy)
-            else
-                surface.SetTextPos(mousex + ScreenScale(2), shy)
-            end
-            surface.DrawText(tostring(mouser) .. "m")
-
-            surface.SetTextColor(fg_col)
-            surface.SetFont("ArcCW_6")
-            if alignleft then
-                surface.SetTextPos(mousex - ScreenScale(2) - twmb, ScreenScale(2) + gy)
-            else
-                surface.SetTextPos(mousex + ScreenScale(2), ScreenScale(2) + gy)
-            end
-            surface.DrawText(tostring(shdmg) .. "DMG")
+            surface.DrawText(line)
+            y = y + ScreenScale(8)
         end
     end
+
+    if !self.ShootEntity and !self.PrimaryBash and !self.Throwing and !self.NoRangeGraph then
+        local rangegraph = vgui.Create("DLabel", triviabox)
+        rangegraph:SetSize(barsize, ScreenScale(64))
+        rangegraph:SetText("")
+        rangegraph:Dock(TOP)
+        rangegraph.Paint = function(span, w, h)
+            if !IsValid(self) then return end
+            local sidegap = 0
+            local gx, gy = 0, smallgap
+            local gw, gh = w - (2 * sidegap), h - smallgap - ScreenScale(6)
+
+            local dmgmax = math.Round(self:GetDamage(0))
+            local dmgmin = math.Round(self:GetDamage(self.Range))
+
+            local grsh = math.max(dmgmax, dmgmin)
+
+            grsh = math.ceil((grsh / 25) + 1) * 25
+
+            local maxgr = (self.Range * self:GetBuff_Mult("Mult_Range"))
+
+            if dmgmax < dmgmin then
+                maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
+            end
+
+            maxgr = math.Round(maxgr)
+
+            local grsw = math.ceil((maxgr / 50) + 1) * 50
+
+            local convw = gw / grsw
+            local convh = gh / grsh
+
+            local starty = gh - (dmgmax * convh)
+            local endy = gh - (dmgmin * convh)
+            local startx = 0
+            local endx = maxgr * convw
+
+            surface.SetDrawColor(bg_col)
+            surface.DrawRect(gx, gy, gw, gh)
+
+            surface.SetDrawColor(fg_col)
+            surface.DrawLine(gx + startx, gy + starty, gx + endx, gy + endy)
+            surface.DrawLine(gx + endx, gy + endy, gx + gw, gy + endy)
+
+            -- start dmg
+            surface.SetTextColor(fg_col)
+            surface.SetFont("ArcCW_6")
+            surface.SetTextPos(gx + startx, gy + starty - ScreenScale(7) - 1)
+            surface.DrawText(tostring(dmgmax) .. "DMG")
+
+            -- end dmg
+            surface.SetTextColor(fg_col)
+            surface.SetFont("ArcCW_6")
+
+            local dtw = surface.GetTextSize(tostring(dmgmin) .. "DMG")
+            surface.SetTextPos(gx + gw - dtw, gy + endy - ScreenScale(7) - 1)
+            surface.DrawText(tostring(dmgmin) .. "DMG")
+
+            -- start range
+            surface.SetTextColor(fg_col)
+            surface.SetFont("ArcCW_6")
+            surface.SetTextPos(sidegap, smallgap + gh)
+            surface.DrawText("0m")
+
+            -- mid range
+            surface.SetTextColor(fg_col)
+            surface.SetFont("ArcCW_6")
+            local mtw = surface.GetTextSize(tostring(maxgr) .. "m")
+            surface.SetTextPos(gx + endx - (mtw / 2), smallgap + gh)
+            surface.DrawText(tostring(maxgr) .. "m")
+
+            -- end range
+            surface.SetTextColor(fg_col)
+            surface.SetFont("ArcCW_6")
+            local rtw = surface.GetTextSize(tostring(grsw) .. "m")
+            surface.SetTextPos(w - sidegap - rtw, smallgap + gh)
+            surface.DrawText(tostring(grsw) .. "m")
+
+            local mousex, mousey = span:CursorPos()
+
+            if mousex > gx and mousex < (gx + gw) and
+                    (mousey > gy and mousey < (gy + gh)) then
+                local mouser = (mousex - gx) / convw
+
+                local shy
+                local shdmg
+
+                if mouser < maxgr then
+                    local delta = mouser / maxgr
+                    shy = Lerp(delta, starty, endy)
+                    shdmg = Lerp(delta, dmgmax, dmgmin)
+                else
+                    shy = endy
+                    shdmg = dmgmin
+                end
+
+                surface.SetDrawColor(Color(fg_col.r, fg_col.g, fg_col.b, 150))
+                surface.DrawLine(gx, gy + shy, gw, gy + shy)
+                surface.DrawLine(mousex, gy, mousex, gh + gy)
+
+                shy = shy + ScreenScale(4)
+
+                mouser = math.Round(mouser)
+                shdmg = math.Round(shdmg)
+
+                local alignleft = true
+
+                surface.SetFont("ArcCW_6")
+                local twmr = surface.GetTextSize(tostring(mouser) .. "m")
+                local twmb = surface.GetTextSize(tostring(shdmg) .. "DMG")
+
+                if mousex < math.max(twmr, twmb) + ScreenScale(2) then
+                    alignleft = false
+                end
+
+                surface.SetTextColor(fg_col)
+                surface.SetFont("ArcCW_6")
+                if alignleft then
+                    surface.SetTextPos(mousex - ScreenScale(2) - twmr, shy)
+                else
+                    surface.SetTextPos(mousex + ScreenScale(2), shy)
+                end
+                surface.DrawText(tostring(mouser) .. "m")
+
+                surface.SetTextColor(fg_col)
+                surface.SetFont("ArcCW_6")
+                if alignleft then
+                    surface.SetTextPos(mousex - ScreenScale(2) - twmb, ScreenScale(2) + gy)
+                else
+                    surface.SetTextPos(mousex + ScreenScale(2), ScreenScale(2) + gy)
+                end
+                surface.DrawText(tostring(shdmg) .. "DMG")
+            end
+        end
+    end
+
+    local function defaultStatFunc(name, unit)
+        return self[name] .. (unit or ""), self[name] * self:GetBuff_Mult("Mult_" .. name) .. (unit or "")
+    end
+
+    local function defaultBetterFunc(name, inverse)
+        local mult = self:GetBuff_Mult("Mult_" .. name)
+        if inverse then mult = 1 / mult end
+        if mult > 1 then return true
+        elseif mult < 1 then return false
+        else return nil end
+    end
+
+    local function defaultOverrideBetterFunc(name, inverse)
+        local override, _ = self:GetBuff_Override("Override_" .. name)
+        local stat = self[name]
+        if isbool(override) then
+            override = override and 1 or 0
+            stat = stat and 1 or 0
+        end
+        if !override then return nil
+        else return inverse and override < stat or override > stat end
+    end
+
+    local statList
+    local function regenStatList()
+        statList = {
+            {"Stat", "",
+                function() return "Original", "Current" end,
+                function() return nil end,
+            },
+            {"Close Range Damage", "How much damage this weapon does at point blank.",
+                function()
+                    local mult = self:GetBuff_Mult("Mult_Damage")
+                    local curNum = self:GetBuff_Override("Override_Num") or self.Num
+                    local orig = math.Round(self.Damage) .. (self.Num != 1 and ("×" .. self.Num) or "")
+                    local cur = math.Round(self.Damage * mult) .. (curNum != 1 and ("×" .. curNum) or "")
+                    return orig, cur
+                end,
+                function()
+                    local mult = self:GetBuff_Mult("Mult_Damage")
+                    local orig = self.Damage  * self.Num
+                    local cur = self.Damage * mult * (self:GetBuff_Override("Override_Num") or self.Num)
+                    if orig == cur then return nil else return cur > orig end
+                end,
+            },
+            {"Long Range Damage", "How much damage this weapon does beyond its range.",
+                function()
+                    local mult = self:GetBuff_Mult("Mult_DamageMin")
+                    local curNum = self:GetBuff_Override("Override_Num") or self.Num
+                    local orig = math.Round(self.DamageMin) .. (self.Num != 1 and ("×" .. self.Num) or "")
+                    local cur = math.Round(self.DamageMin * mult) .. (curNum != 1 and ("×" .. curNum) or "")
+                    return orig, cur
+                end,
+                function()
+                    local mult = self:GetBuff_Mult("Mult_DamageMin")
+                    local orig = self.DamageMin  * self.Num
+                    local cur = self.DamageMin * mult * (self:GetBuff_Override("Override_Num") or self.Num)
+                    if orig == cur then return nil else return cur > orig end
+                end,
+            },
+            {"Range", "The distance between which close range damage turns to long range damage, in meters.",
+                function() return defaultStatFunc("Range", "m") end,
+                function() return defaultBetterFunc("Range") end,
+            },
+            {"Fire Rate", "The rate at which this weapon cycles at, in rounds per minute.",
+                function() return math.ceil(60 / self.Delay / 25) * 25 .. "RPM",
+                        math.ceil(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 25) * 25 .. "RPM" end,
+                function() return defaultBetterFunc("RPM") end,
+            },
+            {"Precision", "How precise the weapon is when still and aimed, in minutes of arc.",
+                function() return defaultStatFunc("AccuracyMOA", " MOA") end,
+                function() return defaultBetterFunc("AccuracyMOA", true) end,
+            },
+            --[[]
+            {"Sighted Dispersion", "How much imprecision there is when the weapon is sighted.",
+                function() return defaultStatFunc("SightsDispersion") end,
+                function() return defaultBetterFunc("SightsDispersion", true) end,
+            },
+            ]]
+            {"Hip Dispersion", "How much imprecision there is when the weapon is hipfired.",
+                function() return defaultStatFunc("HipDispersion", " MOA") end,
+                function() return defaultBetterFunc("HipDispersion", true) end,
+            },
+            {"Moving Accuracy", "How much imprecision is added when the gun is used while moving.",
+                function() return defaultStatFunc("MoveDispersion", " MOA") end,
+                function() return defaultBetterFunc("MoveDispersion", true) end,
+            },
+            {"Weapon Volume", "How loud the weapon is, in decibels.",
+                function() return defaultStatFunc("ShootVol","dB") end,
+                function() return defaultBetterFunc("ShootVol", true) end,
+            },
+        }
+
+        statbox:Clear()
+
+        local stat_wpnnamelabel = vgui.Create("DLabel", statbox)
+        stat_wpnnamelabel:SetSize(barsize, buttonsize)
+        stat_wpnnamelabel:Dock(TOP)
+        stat_wpnnamelabel:DockMargin( 0, 0, 0, smallgap )
+        stat_wpnnamelabel:SetText("")
+        stat_wpnnamelabel.Paint = function(span, w, h)
+            if !IsValid(self) then return end
+            local txt = self.PrintName
+
+            surface.SetFont("ArcCW_20")
+            local tw, th = surface.GetTextSize(txt)
+
+            surface.SetFont("ArcCW_20_Glow")
+            surface.SetTextPos((w - tw) / 2, th / 2)
+            surface.SetTextColor(Color(0, 0, 0))
+            surface.DrawText(txt)
+
+            surface.SetFont("ArcCW_20")
+            surface.SetTextPos((w - tw) / 2, th / 2)
+            surface.SetTextColor(fg_col)
+            surface.DrawText(txt)
+        end
+
+        for _, i in pairs(statList) do
+            if !i then continue end
+            local stat_panel = vgui.Create("DPanel", statbox)
+            stat_panel:SetSize(barsize, ScreenScale(10))
+            stat_panel:Dock(TOP)
+            stat_panel:SetText("")
+            stat_panel:DockMargin( 0, 0, 0, ScreenScale(2) )
+            stat_panel.Paint = function(spaa, w, h)
+                local Bfg_col = Color(255, 255, 255, 255)
+                local Bbg_col = Color(0, 0, 0, 50)
+
+                if spaa:IsHovered() then
+                    Bbg_col = Color(100, 100, 100, 50)
+                    Bfg_col = Color(0, 0, 0, 255)
+                end
+
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+            end
+
+            local stat_title = vgui.Create("DLabel", stat_panel)
+            stat_title:SetSize(barsize * 0.5, ScreenScale(10))
+            stat_title:SetText("")
+            stat_title:Dock(LEFT)
+            stat_title.Paint = function(span, w, h)
+                surface.SetFont("ArcCW_8")
+                surface.SetTextPos(smallgap, 0)
+                surface.SetTextColor(fg_col)
+                surface.DrawText(i[1])
+            end
+
+            local origStat, curStat = i[3]()
+            local better = i[4]()
+            local stat_orig = vgui.Create("DLabel", stat_panel)
+            stat_orig:SetSize(barsize * 0.25, ScreenScale(10))
+            stat_orig:SetText("")
+            stat_orig:Dock(LEFT)
+            stat_orig.Paint = function(span, w, h)
+                surface.SetFont("ArcCW_8")
+                surface.SetTextPos(smallgap, 0)
+                surface.SetTextColor(fg_col)
+                surface.DrawText(origStat)
+            end
+            local stat_cur = vgui.Create("DLabel", stat_panel)
+            stat_cur:SetSize(barsize * 0.25, ScreenScale(10))
+            stat_cur:SetText("")
+            stat_cur:Dock(LEFT)
+            stat_cur.Paint = function(span, w, h)
+                local color = better == true and Color(150, 255, 150) or better == false and Color(255, 150, 150) or fg_col
+
+                surface.SetFont("ArcCW_8")
+                surface.SetTextPos(smallgap, 0)
+                surface.SetTextColor(color)
+                surface.DrawText(curStat)
+            end
+        end
+    end
+
+    local togglestat = vgui.Create("DButton", ArcCW.InvHUD)
+    togglestat:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+    togglestat:SetText("")
+    togglestat:SetPos(ScrW() - (barsize / 2) + ScreenScale(1) - airgap, ScrH() - ScreenScale(64) - (1 * airgap) + ScreenScale(2))
+
+    togglestat.OnMousePressed = function(spaa, kc)
+        if statbox:IsVisible() then
+            statbox:Hide()
+            triviabox:Show()
+        else
+            regenStatList()
+            statbox:Show()
+            triviabox:Hide()
+            attmenu:Hide()
+            self.InAttMenu = false
+            atttrivia:Hide()
+            attslidebox:Hide()
+        end
+    end
+
+    togglestat.Paint = function(spaa, w, h)
+        if !self:IsValid() then return end
+        if !self.Attachments then return end
+        local Bfg_col = Color(255, 255, 255, 255)
+        local Bbg_col = Color(0, 0, 0, 100)
+
+        if spaa:IsHovered() then
+            Bbg_col = Color(255, 255, 255, 100)
+            Bfg_col = Color(0, 0, 0, 255)
+        end
+
+        surface.SetDrawColor(Bbg_col)
+        surface.DrawRect(0, 0, w, h)
+
+        local txt = statbox:IsVisible() and "Trivia" or "Stats"
+
+        surface.SetTextColor(Bfg_col)
+        surface.SetTextPos(smallgap, ScreenScale(1))
+        surface.SetFont("ArcCW_12")
+        surface.DrawText(txt)
+    end
+
 end
 
 end
