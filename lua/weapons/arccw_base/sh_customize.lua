@@ -300,6 +300,20 @@ function SWEP:CreateCustomizeHUD()
     end
     statbox:Hide()
 
+    local sbar3 = statbox:GetVBar()
+    sbar3.Paint = function() end
+
+    sbar3.btnUp.Paint = function(span, w, h)
+    end
+
+    sbar3.btnDown.Paint = function(span, w, h)
+    end
+
+    sbar3.btnGrip.Paint = function(span, w, h)
+        surface.SetDrawColor(fg_col)
+        surface.DrawRect(0, 0, w, h)
+    end
+
     local attmenuh = ScrH() - (2 * airgap)
 
     local attmenu = vgui.Create("DScrollPanel", ArcCW.InvHUD)
@@ -570,9 +584,11 @@ function SWEP:CreateCustomizeHUD()
     end
 
     ArcCW.InvHUD.OnMousePressed = function(span, kc)
-        if kc == MOUSE_LEFT or kc == MOUSE_RIGHT then
+        if (kc == MOUSE_LEFT or kc == MOUSE_RIGHT) and
+                !triviabox:IsVisible() and !statbox:IsVisible() then
             activeslot = nil
             triviabox:Show()
+            statbox:Hide()
             attmenu:Hide()
             self.InAttMenu = false
             atttrivia:Hide()
@@ -1227,8 +1243,9 @@ function SWEP:CreateCustomizeHUD()
         end
     end
 
-    local function defaultStatFunc(name, unit)
-        return self[name] .. (unit or ""), self[name] * self:GetBuff_Mult("Mult_" .. name) .. (unit or "")
+    local function defaultStatFunc(name, unit, round)
+        return math.Round((unit == "%" and 100 or 1) * self[name], round) .. (unit or ""), 
+                math.Round((unit == "%" and 100 or 1) * self[name] * self:GetBuff_Mult("Mult_" .. name), round) .. (unit or "")
     end
 
     local function defaultBetterFunc(name, inverse)
@@ -1296,16 +1313,26 @@ function SWEP:CreateCustomizeHUD()
                         math.ceil(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 25) * 25 .. "RPM" end,
                 function() return defaultBetterFunc("RPM") end,
             },
+            {"Capacity", "How many rounds this weapon can hold.",
+                function()
+                    local m = self.RegularClipSize
+                    local m2 = self.Primary.ClipSize
+                    local cs = self.ChamberSize
+                    local cs2 = self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize
+                    return m .. (cs > 0 and " +" .. cs or ""), m2 .. (cs2 > 0 and " +" .. cs2 or "")
+                end,
+                function()
+                    local m = self.RegularClipSize
+                    local m2 = self.Primary.ClipSize
+                    local cs = self.ChamberSize
+                    local cs2 = self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize
+                    return m + cs < m2 + cs2
+                end,
+            },
             {"Precision", "How precise the weapon is when still and aimed, in minutes of arc.",
                 function() return defaultStatFunc("AccuracyMOA", " MOA") end,
                 function() return defaultBetterFunc("AccuracyMOA", true) end,
             },
-            --[[]
-            {"Sighted Dispersion", "How much imprecision there is when the weapon is sighted.",
-                function() return defaultStatFunc("SightsDispersion") end,
-                function() return defaultBetterFunc("SightsDispersion", true) end,
-            },
-            ]]
             {"Hip Dispersion", "How much imprecision there is when the weapon is hipfired.",
                 function() return defaultStatFunc("HipDispersion", " MOA") end,
                 function() return defaultBetterFunc("HipDispersion", true) end,
@@ -1314,9 +1341,63 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultStatFunc("MoveDispersion", " MOA") end,
                 function() return defaultBetterFunc("MoveDispersion", true) end,
             },
+            {"Recoil", "The amount of kick produced each shot.",
+                function() return defaultStatFunc("Recoil", nil, 2) end,
+                function() return defaultBetterFunc("Recoil", true) end,
+            },
+            {"Side Recoil", "The amount of horizontal kick produced each shot.",
+                function() return defaultStatFunc("RecoilSide", nil, 2) end,
+                function() return defaultBetterFunc("RecoilSide", true) end,
+            },
+            {"Sight Time", "How long does it take to aim with this weapon.",
+                function() return defaultStatFunc("SightTime", "s", 2) end,
+                function() return defaultBetterFunc("SightTime", true) end,
+            },
+            {"Reload Time", "How long does it take to perform a tactical/dry reload.",
+                function()
+                    local mult = self:GetBuff_Mult("Mult_ReloadTime")
+                    local r = self.Animations["reload"].Time
+                    local r2 = self.Animations["reload_empty"] and self.Animations["reload_empty"].Time
+                    local h = self.Hook_SelectReloadAnimation
+                    local seq, seq2 = h and self:Hook_SelectReloadAnimation("reload") or "reload", h and self:Hook_SelectReloadAnimation("reload_empty") or "reload_empty"
+                    local rCur = self.Animations[seq].Time * mult
+                    local r2Cur = self.Animations[seq2] and self.Animations[seq2].Time * mult
+                    return math.Round(r, 2) .. "s" .. (r2 and "/" .. math.Round(r2, 2) .. "s"),
+                            math.Round(rCur, 2) .. "s" .. (r2Cur and "/" .. math.Round(r2Cur, 2) .. "s")
+                end,
+                function()
+                    local mult = self:GetBuff_Mult("Mult_ReloadTime")
+                    local r = self.Animations["reload"].Time
+                    local h = self.Hook_SelectReloadAnimation
+                    local seq = h and self:Hook_SelectReloadAnimation("reload") or "reload"
+                    local rCur = self.Animations[seq].Time * mult
+                    if r == rCur then return nil
+                    else return r > rCur end
+                end,
+            },
+            {"Move Speed", "The speed at which you move with the gun, in percentage of original speed.",
+                function() return defaultStatFunc("SpeedMult","%") end,
+                function() return defaultBetterFunc("SpeedMult") end,
+            },
+            {"Sighted Strafe Speed", "The additional slowdown applied when you are moving with sights down.",
+                function() return defaultStatFunc("SightedSpeedMult","%") end,
+                function() return defaultBetterFunc("SightedSpeedMult") end,
+            },
+            {"Bash Damage", "How much damage the melee bash causes.",
+                function() return defaultStatFunc("MeleeDamage") end,
+                function() return defaultBetterFunc("MeleeDamage") end,
+            },
+            {"Bash Time", "The time it takes to do a melee bash.",
+                function() return defaultStatFunc("MeleeTime", "s", 2) end,
+                function() return defaultBetterFunc("MeleeTime", true) end,
+            },
             {"Weapon Volume", "How loud the weapon is, in decibels.",
                 function() return defaultStatFunc("ShootVol","dB") end,
                 function() return defaultBetterFunc("ShootVol", true) end,
+            },
+            {"Barrel Length", "The length of the barrel, in Hammer Units.",
+                function() return defaultStatFunc("BarrelLength","HU") end,
+                function() return defaultBetterFunc("BarrelLength", true) end,
             },
         }
 
