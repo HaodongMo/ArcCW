@@ -204,6 +204,7 @@ end)
 elseif SERVER then
 
 hook.Add("PlayerDeath", "ArcCW_DeathAttInv", function(ply)
+    ply.ArcCW_AttInv = ply.ArcCW_AttInv or {}
     if table.Count(ply.ArcCW_AttInv) > 0
             and GetConVar("arccw_attinv_loseondie"):GetInt() >= 2
             and !GetConVar("arccw_attinv_free"):GetBool() then

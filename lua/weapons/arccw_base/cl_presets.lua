@@ -31,6 +31,8 @@ function SWEP:LoadPreset(filename)
 
     if !f then return end
 
+    local ver = 1
+
     for i = 1, table.Count(self.Attachments) do
         local att = f:ReadLine()
 
@@ -38,9 +40,15 @@ function SWEP:LoadPreset(filename)
 
         att = string.Trim(att, "\n")
 
+        if att == "v2" then ver = 2 continue end
+
         if !att then continue end
 
         if !self.Attachments[i] then continue end
+
+        -- last 5 chars = slide pos
+        -- next last 5 chars = magnification
+
         if att == self.Attachments[i].Installed then continue end
 
         self:Detach(i, true)
