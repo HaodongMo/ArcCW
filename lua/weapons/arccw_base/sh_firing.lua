@@ -225,7 +225,10 @@ function SWEP:PrimaryAttack()
                     self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang)
                 end
             elseif num > 0 then
-                self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"))
+                local spd = AngleRand() * self:GetDispersion() / 360 / 60
+                local ang = self:GetOwner():EyeAngles() + (AngleRand() * spread / 10)
+
+                self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang + spd)
             end
         else
             btabl = self:GetBuff_Hook("Hook_FireBullets", btabl)
