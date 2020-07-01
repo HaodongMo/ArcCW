@@ -1354,28 +1354,28 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultStatFunc("SightTime", "s", 2) end,
                 function() return defaultBetterFunc("SightTime", true) end,
             },
-            {"Reload Time", "How long does it take to perform a tactical/dry reload.",
-                function()
-                    local mult = self:GetBuff_Mult("Mult_ReloadTime")
-                    local r = self.Animations["reload"].Time
-                    local r2 = self.Animations["reload_empty"] and self.Animations["reload_empty"].Time
-                    local h = self.Hook_SelectReloadAnimation
-                    local seq, seq2 = h and self:Hook_SelectReloadAnimation("reload") or "reload", h and self:Hook_SelectReloadAnimation("reload_empty") or "reload_empty"
-                    local rCur = self.Animations[seq].Time * mult
-                    local r2Cur = self.Animations[seq2] and self.Animations[seq2].Time * mult
-                    return math.Round(r, 1) .. "s" .. (r2 and "/" .. math.Round(r2, 1) .. "s" or ""),
-                            math.Round(rCur, 1) .. "s" .. (r2Cur and "/" .. math.Round(r2Cur, 1) .. "s" or "")
-                end,
-                function()
-                    local mult = self:GetBuff_Mult("Mult_ReloadTime")
-                    local r = self.Animations["reload"].Time
-                    local h = self.Hook_SelectReloadAnimation
-                    local seq = h and self:Hook_SelectReloadAnimation("reload") or "reload"
-                    local rCur = self.Animations[seq].Time * mult
-                    if r == rCur then return nil
-                    else return r > rCur end
-                end,
-            },
+            -- {"Reload Time", "How long does it take to perform a tactical/dry reload.",
+            --     function()
+            --         local mult = self:GetBuff_Mult("Mult_ReloadTime")
+            --         local r = self.Animations["reload"].Time
+            --         local r2 = self.Animations["reload_empty"] and self.Animations["reload_empty"].Time
+            --         local h = self.Hook_SelectReloadAnimation
+            --         local seq, seq2 = h and self:Hook_SelectReloadAnimation("reload") or "reload", h and self:Hook_SelectReloadAnimation("reload_empty") or "reload_empty"
+            --         local rCur = self.Animations[seq].Time * mult
+            --         local r2Cur = self.Animations[seq2] and self.Animations[seq2].Time * mult
+            --         return math.Round(r, 1) .. "s" .. (r2 and "/" .. math.Round(r2, 1) .. "s" or ""),
+            --                 math.Round(rCur, 1) .. "s" .. (r2Cur and "/" .. math.Round(r2Cur, 1) .. "s" or "")
+            --     end,
+            --     function()
+            --         local mult = self:GetBuff_Mult("Mult_ReloadTime")
+            --         local r = self.Animations["reload"].Time
+            --         local h = self.Hook_SelectReloadAnimation
+            --         local seq = h and self:Hook_SelectReloadAnimation("reload") or "reload"
+            --         local rCur = self.Animations[seq].Time * mult
+            --         if r == rCur then return nil
+            --         else return r > rCur end
+            --     end,
+            -- },
             {"Move Speed", "The speed at which you move with the gun, in percentage of original speed.",
                 function() return defaultStatFunc("SpeedMult","%") end,
                 function() return defaultBetterFunc("SpeedMult") end,
@@ -1397,10 +1397,10 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("ShootVol", true) end,
             },
             {"Barrel Length", "The length of the barrel, in Hammer Units.",
-                function() return defaultStatFunc("BarrelLength","HU") end,
+                function() return defaultStatFunc("BarrelLength","in") end,
                 function() return defaultBetterFunc("BarrelLength", true) end,
             },
-            {"Penetration", "How much material can this weapon penetrate.",
+            {"Penetration", "How much steel this weapon can penetrate.",
                 function() return defaultStatFunc("Penetration","mm") end,
                 function() return defaultBetterFunc("Penetration") end,
             },
@@ -1467,7 +1467,7 @@ function SWEP:CreateCustomizeHUD()
     local togglestat = vgui.Create("DButton", ArcCW.InvHUD)
     togglestat:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
     togglestat:SetText("")
-    togglestat:SetPos(ScrW() - (barsize / 2) + ScreenScale(1) - airgap, ScrH() - ScreenScale(64) - (1 * airgap) + ScreenScale(2))
+    togglestat:SetPos(ScrW() - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap)
 
     togglestat.OnMousePressed = function(spaa, kc)
         if statbox:IsVisible() then
