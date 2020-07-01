@@ -1357,21 +1357,21 @@ function SWEP:CreateCustomizeHUD()
             {"Reload Time", "How long does it take to perform a tactical/dry reload.",
                 function()
                     local mult = self:GetBuff_Mult("Mult_ReloadTime")
-                    local r = self.Animations["reload"].Time
+                    local r = self.Animations["reload"] and self.Animations["reload"].Time or self.Animations["reload_empty"].Time
                     local r2 = self.Animations["reload_empty"] and self.Animations["reload_empty"].Time
                     local h = self.Hook_SelectReloadAnimation
                     local seq, seq2 = h and self:Hook_SelectReloadAnimation("reload") or "reload", h and self:Hook_SelectReloadAnimation("reload_empty") or "reload_empty"
-                    local rCur = self.Animations[seq].Time * mult
+                    local rCur = self.Animations[seq] and self.Animations[seq].Time * mult or self.Animations[seq2].Time * mult
                     local r2Cur = self.Animations[seq2] and self.Animations[seq2].Time * mult
                     return math.Round(r, 1) .. "s" .. (r2 and "/" .. math.Round(r2, 1) .. "s" or ""),
                             math.Round(rCur, 1) .. "s" .. (r2Cur and "/" .. math.Round(r2Cur, 1) .. "s" or "")
                 end,
                 function()
                     local mult = self:GetBuff_Mult("Mult_ReloadTime")
-                    local r = self.Animations["reload"].Time
+                    local r = self.Animations["reload"] and self.Animations["reload"].Time or self.Animations["reload_empty"].Time
                     local h = self.Hook_SelectReloadAnimation
-                    local seq = h and self:Hook_SelectReloadAnimation("reload") or "reload"
-                    local rCur = self.Animations[seq].Time * mult
+                    local seq, seq2 = h and self:Hook_SelectReloadAnimation("reload") or "reload", h and self:Hook_SelectReloadAnimation("reload_empty") or "reload_empty"
+                    local rCur = (self.Animations[seq] and self.Animations[seq].Time or self.Animations[seq2].Time) * mult
                     if r == rCur then return nil
                     else return r > rCur end
                 end,
