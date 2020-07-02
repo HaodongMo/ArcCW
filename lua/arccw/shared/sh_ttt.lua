@@ -7,7 +7,7 @@ ArcCW.TTTAmmo_To_Ent = {
 }
 ArcCW.Ammo_To_TTTAmmo = {
     ["357"] = "AlyxGun",
-    ["SniperPenetratedAmmo"] = "357",
+    ["SniperPenetratedRound"] = "357",
     ["ar2"] = "smg1",
 }
 
