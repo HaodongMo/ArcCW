@@ -629,7 +629,7 @@ function SWEP:Attach(slot, attname, silent)
     if !attslot then return end
     if attslot.Installed == attname then return end
 
-    if !ArcCW:PlayerCanAttach(ply, self, attname, slot) then
+    if !ArcCW:PlayerCanAttach(self:GetOwner(), self, attname, slot) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
@@ -758,7 +758,7 @@ function SWEP:Detach(slot, silent)
 
     if !self.Attachments[slot].Installed then return end
 
-    if !ArcCW:PlayerCanDetach(ply, self, slot, self.Attachments[slot].Installed) then
+    if !ArcCW:PlayerCanDetach(self:GetOwner(), self, slot, self.Attachments[slot].Installed) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
