@@ -85,6 +85,8 @@ function SWEP:Deploy()
         self:SetupShields()
         self:NetworkWeapon()
     end
+
+    return true
 end
 
 function SWEP:Initialize()
