@@ -15,8 +15,8 @@ end
 
 function SWEP:LoadPreset(filename)
     filename = filename or "autosave"
-    if !GetConVar("arccw_autosave"):GetBool() then
-        if filename == "autosave" then return end
+    if !GetConVar("arccw_autosave"):GetBool() and filename == "autosave" then
+        return
     end
 
     if filename != "autosave" then
@@ -28,22 +28,26 @@ function SWEP:LoadPreset(filename)
     if !file.Exists(filename, "DATA") then return end
 
     local f = file.Open(filename, "r", "DATA")
-
     if !f then return end
 
-    local ver = 1
+    local presetTbl = {}
 
+    -- Pre-check all preset attachmnts and ensure we own them
     for i = 1, table.Count(self.Attachments) do
-        local att = f:ReadLine()
+        local line = f:ReadLine()
+        if not line then continue end
+        presetTbl[i] = string.Trim(line, "\n")
+        -- Do not attempt to recreate a preset if it's not possible
+        if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end
+    end
 
+    local ver = 1
+    for i = 1, table.Count(self.Attachments) do
+        local att = presetTbl[i]
         if !att then continue end
-
-        att = string.Trim(att, "\n")
 
         if att == "v2" then ver = 2 continue end
-
         if !att then continue end
-
         if !self.Attachments[i] then continue end
 
         -- last 5 chars = slide pos
