@@ -37,19 +37,14 @@ function SWEP:NPC_SetupAttachments()
 
     local pick = GetConVar("arccw_atts_pickx"):GetInt()
 
-    local chance = 25
-
+    local chance = 25 * GetConVar("arccw_mult_attchance"):GetFloat()
     local chancestep = 0
 
     if pick > 0 then
-
         chancestep = chance / pick
-        chance = chancestep
-
+        --chance = chancestep
     else
-
         pick = 1000
-
     end
 
     local n = 0
@@ -60,14 +55,12 @@ function SWEP:NPC_SetupAttachments()
         if math.Rand(0, 100) > (chance * (slot.RandomChance or 1)) then continue end
 
         if slot.DoNotRandomize then continue end
-
         if slot.Installed then continue end
 
         local atts = ArcCW:GetAttsForSlot(slot.Slot, self)
-
         if #atts <= 0 then continue end
 
-        chance = chance + chancestep
+        chance = chance - chancestep
 
         slot.Installed = table.Random(atts)
 

@@ -70,6 +70,7 @@ function ArcCW_Options_Mults( CPanel )
     CPanel:AddControl("Slider", {Label = "Reload Time", Command = "arccw_mult_reloadtime", Min = 0.01, Max = 10, Type = "float" })
     CPanel:AddControl("Slider", {Label = "ADS Time", Command = "arccw_mult_sighttime", Min = 0.1, Max = 10, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Default Clip", Command = "arccw_mult_defaultclip", Min = -1, Max = 10})
+    CPanel:AddControl("Slider", {Label = "Random Att. Chance", Command = "arccw_mult_attchance", Min = 0, Max = 10, Type = "float"})
 end
 
 function ArcCW_Options_NPC( CPanel )
@@ -89,7 +90,7 @@ function ArcCW_Options_Atts( CPanel )
     CPanel:AddControl("Header", {Description = "Lose Attachments Mode: 0 = Disable; 1 = Removed on death, 2 = Drop Attachment Box on death"})
     CPanel:AddControl("Slider", {Label = "Lose Attachments Mode", Command = "arccw_attinv_loseondie", Min = 0, Max = 2, Type = "int" })
     CPanel:AddControl("Header", {Description = "Pick X behaviour allows you to set a limit on attachments that can be placed on any weapon. 0 = unlimited."})
-    CPanel:AddControl("Slider", {Label = "Pick X", Command = "arccw_atts_pickx", Min = 0, Max = 25, Type = "int" })
+    CPanel:AddControl("Slider", {Label = "Pick X", Command = "arccw_atts_pickx", Min = 0, Max = 15, Type = "int" })
     CPanel:AddControl("Checkbox", {Label = "Attachment Dropping", Command = "arccw_enable_dropping" })
     CPanel:AddControl("color", {Label = "Sight Color",
         Red = "arccw_scope_r",
