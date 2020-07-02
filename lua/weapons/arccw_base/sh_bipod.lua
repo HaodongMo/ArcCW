@@ -41,7 +41,7 @@ function SWEP:CanBipod()
         start = pos,
         endpos = pos + (angle:Forward() * 48 * rangemult),
         filter = self:GetOwner(),
-        mask = MASK_SOLID
+        mask = MASK_PLAYERSOLID
     })
 
     if tr.Hit then -- check for stuff in front of us
@@ -59,7 +59,7 @@ function SWEP:CanBipod()
         filter = self:GetOwner(),
         maxs = maxs,
         mins = mins,
-        mask = MASK_SOLID
+        mask = MASK_PLAYERSOLID
     })
 
     self.CachedCanBipodTime = CurTime()
@@ -76,7 +76,7 @@ end
 function SWEP:EnterBipod()
     if self:GetNWBool("bipod", false) then return end
     if !self:CanBipod() then return end
-    if CurTime() < self:GetNextSecondaryFire() then return end
+    --if CurTime() < self:GetNextSecondaryFire() then return end
 
     if self.Bipod_Integral then
         if self.Animations.enter_bipod then
@@ -90,7 +90,7 @@ function SWEP:EnterBipod()
     self.BipodPos = self:GetOwner():EyePos()
     self.BipodAngle = self:GetOwner():EyeAngles()
 
-    self:SetNextSecondaryFire(CurTime() + 0.075)
+    --self:SetNextSecondaryFire(CurTime() + 0.075)
 
     self:SetNWBool("bipod", true)
 end

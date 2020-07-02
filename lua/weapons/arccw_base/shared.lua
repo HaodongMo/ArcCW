@@ -4,7 +4,7 @@ SWEP.Spawnable = false -- this obviously has to be set to true
 SWEP.Category = "ArcCW - Firearms" -- edit this if you like
 SWEP.AdminOnly = false
 
-SWEP.PrintName = "MP-K1"
+SWEP.PrintName = "ArcCW Base"
 SWEP.Trivia_Class = nil -- "Submachine Gun"
 SWEP.Trivia_Desc = nil -- "Ubiquitous 9mm SMG. Created as a response to the need for a faster-firing and more reliable submachine gun than existing options at the time."
 SWEP.Trivia_Manufacturer = nil -- "Auschen Waffenfabrik"

@@ -39,8 +39,8 @@ function ArcCW:GetRandomWeapon(wpn, nades)
         if GetConVar("arccw_limityear_enable"):GetBool() then
             local year = GetConVar("arccw_limityear"):GetInt()
 
-            if k.Trivia_Year and isnumber(k.Trivia_Year) then
-                if k.Trivia_Year > year then continue end
+            if k.Trivia_Year and isnumber(k.Trivia_Year) and k.Trivia_Year > year then
+                continue
             end
         end
 
