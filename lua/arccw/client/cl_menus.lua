@@ -29,6 +29,7 @@ function ArcCW_Options_HUD( CPanel )
     CPanel:AddControl("Checkbox", {Label = "Show Health", Command = "arccw_hud_showhealth" })
     CPanel:AddControl("Checkbox", {Label = "Show Ammo", Command = "arccw_hud_showammo" })
     CPanel:AddControl("Checkbox", {Label = "Hide Unowned Attachments", Command = "arccw_attinv_hideunowned" })
+    CPanel:AddControl("Checkbox", {Label = "Grey Out Unowned Attachments", Command = "arccw_attinv_darkunowned" })
     CPanel:AddControl("Checkbox", {Label = "Hide Customization UI", Command = "arccw_attinv_onlyinspect" })
     CPanel:AddControl("Checkbox", {Label = "Simple Pros And Cons", Command = "arccw_attinv_simpleproscons" })
 end

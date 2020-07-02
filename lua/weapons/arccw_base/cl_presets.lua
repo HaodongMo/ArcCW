@@ -35,7 +35,7 @@ function SWEP:LoadPreset(filename)
     -- Pre-check all preset attachmnts and ensure we own them
     for i = 1, table.Count(self.Attachments) do
         local line = f:ReadLine()
-        if not line then continue end
+        if !line then continue end
         presetTbl[i] = string.Trim(line, "\n")
         -- Do not attempt to recreate a preset if it's not possible
         if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end

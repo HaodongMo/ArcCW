@@ -107,6 +107,7 @@ function SWEP:CloseCustomizeHUD()
 end
 
 local defaultatticon = Material("hud/atts/default.png")
+local blockedatticon = Material("hud/atts/blocked.png")
 local activeslot = nil
 
 SWEP.InAttMenu = false
@@ -743,6 +744,7 @@ function SWEP:CreateCustomizeHUD()
                     end
 
                     local installed = false
+                    local blocked = !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
 
                     if span.AttSlot.Installed == spaa.AttName then
                         installed = true
@@ -782,7 +784,7 @@ function SWEP:CreateCustomizeHUD()
                         atttrivia_do(spaa.AttName)
                     end
 
-                    if !owned then
+                    if !owned and GetConVar("arccw_attinv_darkunowned"):GetBool() then
                         if spaa:IsHovered() then
                             Bbg_col = Color(50, 50, 50, 150)
                             Bfg_col = Color(150, 150, 150, 255)
@@ -790,7 +792,7 @@ function SWEP:CreateCustomizeHUD()
                             Bbg_col = Color(20, 20, 20, 150)
                             Bfg_col = Color(150, 150, 150, 255)
                         end
-                    elseif !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then
+                    elseif !owned or blocked then
                         if spaa:IsHovered() then
                             Bbg_col = Color(125, 25, 25, 150)
                             Bfg_col = Color(150, 50, 50, 255)
@@ -821,6 +823,12 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetDrawColor(Bfg_col)
                     surface.SetMaterial(atttbl.Icon or defaultatticon)
                     surface.DrawTexturedRect(h / 4, 0, h, h)
+
+                    if blocked then
+                        surface.SetDrawColor(color_white)
+                        surface.SetMaterial(blockedatticon)
+                        surface.DrawTexturedRect(h / 4 - h * 0.1, - h * 0.1, h * 1.2, h * 1.2)
+                    end
                 end
             end
 
