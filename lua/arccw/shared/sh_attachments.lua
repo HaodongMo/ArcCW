@@ -155,11 +155,9 @@ end
 
 net.Receive("arccw_networkatts", function(len, ply)
     local wpn = net.ReadEntity()
-
     if !IsValid(wpn) then return end
 
     local attnum = net.ReadUInt(8)
-
     wpn.Attachments = wpn.Attachments or {}
 
     for i = 1, attnum do
@@ -173,7 +171,6 @@ net.Receive("arccw_networkatts", function(len, ply)
         end
 
         local att = ArcCW.AttachmentIDTable[attid]
-
         wpn.Attachments[i].Installed = att
 
         if wpn.Attachments[i].SlideAmount then

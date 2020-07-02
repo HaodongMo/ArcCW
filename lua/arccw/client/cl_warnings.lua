@@ -2,7 +2,8 @@ ArcCW.IncompatibleAddons = {
     --["2140007767"] = "Not incompatible - this is a test line (but what if it is very long?)",
     --["2131161276"] = "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues.",
     ["2137567877"] = "Causes viewmodel flickering with LHIK attachments",
-    ["847269692"] = "Causes viewmodel flickering, may crash when customization menu opens"
+    ["847269692"] = "Causes viewmodel flickering, may crash when customization menu opens",
+    ["1875551051"] = "Breaks LHIK attachments"
 }
 
 function ArcCW.MakeIncompatibleWindow(tbl)

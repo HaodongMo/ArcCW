@@ -5,6 +5,7 @@ CreateClientConVar("arccw_crosshair", "1")
 CreateClientConVar("arccw_attinv_simpleproscons", "0")
 CreateClientConVar("arccw_attinv_onlyinspect", "0")
 CreateClientConVar("arccw_attinv_hideunowned", "0")
+CreateClientConVar("arccw_attinv_darkunowned", "0")
 
 CreateClientConVar("arccw_cheapscopes", "1")
 CreateClientConVar("arccw_cheapscopesautoconfig", "0")

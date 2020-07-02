@@ -29,6 +29,7 @@ function ArcCW_Options_HUD( CPanel )
     CPanel:AddControl("Checkbox", {Label = "Show Health", Command = "arccw_hud_showhealth" })
     CPanel:AddControl("Checkbox", {Label = "Show Ammo", Command = "arccw_hud_showammo" })
     CPanel:AddControl("Checkbox", {Label = "Hide Unowned Attachments", Command = "arccw_attinv_hideunowned" })
+    CPanel:AddControl("Checkbox", {Label = "Grey Out Unowned Attachments", Command = "arccw_attinv_darkunowned" })
     CPanel:AddControl("Checkbox", {Label = "Hide Customization UI", Command = "arccw_attinv_onlyinspect" })
     CPanel:AddControl("Checkbox", {Label = "Simple Pros And Cons", Command = "arccw_attinv_simpleproscons" })
 end
@@ -54,6 +55,11 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Slider", {Label = "Viewmodel Forward", Command = "arccw_vm_forward", Min = -5, Max = 5, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Viewmodel Up", Command = "arccw_vm_up", Min = -5, Max = 5, Type = "float" })
     CPanel:AddControl("Header", {Description = "  Warning! Viewmodel offset settings may cause clipping or other undesired effects!"})
+    CPanel:AddControl("color", {Label = "Sight Color",
+        Red = "arccw_scope_r",
+        Green = "arccw_scope_g",
+        Blue = "arccw_scope_b",
+    })
 end
 
 function ArcCW_Options_Mults( CPanel )
@@ -69,6 +75,7 @@ function ArcCW_Options_Mults( CPanel )
     CPanel:AddControl("Slider", {Label = "Reload Time", Command = "arccw_mult_reloadtime", Min = 0.01, Max = 10, Type = "float" })
     CPanel:AddControl("Slider", {Label = "ADS Time", Command = "arccw_mult_sighttime", Min = 0.1, Max = 10, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Default Clip", Command = "arccw_mult_defaultclip", Min = -1, Max = 10})
+    CPanel:AddControl("Slider", {Label = "Random Att. Chance", Command = "arccw_mult_attchance", Min = 0, Max = 10, Type = "float"})
 end
 
 function ArcCW_Options_NPC( CPanel )
@@ -88,13 +95,9 @@ function ArcCW_Options_Atts( CPanel )
     CPanel:AddControl("Header", {Description = "Lose Attachments Mode: 0 = Disable; 1 = Removed on death, 2 = Drop Attachment Box on death"})
     CPanel:AddControl("Slider", {Label = "Lose Attachments Mode", Command = "arccw_attinv_loseondie", Min = 0, Max = 2, Type = "int" })
     CPanel:AddControl("Header", {Description = "Pick X behaviour allows you to set a limit on attachments that can be placed on any weapon. 0 = unlimited."})
-    CPanel:AddControl("Slider", {Label = "Pick X", Command = "arccw_atts_pickx", Min = 0, Max = 25, Type = "int" })
+    CPanel:AddControl("Slider", {Label = "Pick X", Command = "arccw_atts_pickx", Min = 0, Max = 15, Type = "int" })
     CPanel:AddControl("Checkbox", {Label = "Attachment Dropping", Command = "arccw_enable_dropping" })
-    CPanel:AddControl("color", {Label = "Sight Color",
-        Red = "arccw_scope_r",
-        Green = "arccw_scope_g",
-        Blue = "arccw_scope_b",
-    })
+    CPanel:AddControl("Checkbox", {Label = "Random Attachments on Spawn", Command = "arccw_atts_spawnrand" })
 end
 
 function ArcCW_Options_Server( CPanel )

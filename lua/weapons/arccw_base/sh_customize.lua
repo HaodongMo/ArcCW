@@ -106,7 +106,8 @@ function SWEP:CloseCustomizeHUD()
     end
 end
 
-local defaultatticon = Material("hud/atts/default.png")
+local defaultatticon = Material("hud/atts/default.png", "mips")
+local blockedatticon = Material("hud/atts/blocked.png", "mips")
 local activeslot = nil
 
 SWEP.InAttMenu = false
@@ -299,6 +300,7 @@ function SWEP:CreateCustomizeHUD()
         surface.DrawRect(0, 0, w, h)
     end
     statbox:Hide()
+    local regenStatList -- early definition so category unequiping can update
 
     local sbar3 = statbox:GetVBar()
     sbar3.Paint = function() end
@@ -691,17 +693,22 @@ function SWEP:CreateCustomizeHUD()
                             self:Attach(aslot, spaa.AttName)
                         end
                     elseif kc2 == MOUSE_RIGHT and spaa.AttName != "" then
-                        -- Drop attachment
-                        if GetConVar("arccw_attinv_free"):GetBool() then return end
-                        if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
-                        if !GetConVar("arccw_enable_customization"):GetBool() then return end
-                        if !GetConVar("arccw_enable_dropping"):GetBool() then return end
+                        if span.AttSlot.Installed == spaa.AttName then
+                            -- Unequip
+                            self:DetachAllMergeSlots(span.AttIndex)
+                        else
+                            -- Drop attachment
+                            if GetConVar("arccw_attinv_free"):GetBool() then return end
+                            if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+                            if !GetConVar("arccw_enable_customization"):GetBool() then return end
+                            if !GetConVar("arccw_enable_dropping"):GetBool() then return end
 
-                        net.Start("arccw_asktodrop")
-                            net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)
-                        net.SendToServer()
+                            net.Start("arccw_asktodrop")
+                                net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)
+                            net.SendToServer()
 
-                        ArcCW:PlayerTakeAtt(self:GetOwner(), spaa.AttName)
+                            ArcCW:PlayerTakeAtt(self:GetOwner(), spaa.AttName)
+                        end
                     end
 
                     attcatb_regen(span)
@@ -743,6 +750,7 @@ function SWEP:CreateCustomizeHUD()
                     end
 
                     local installed = false
+                    local blocked = !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
 
                     if span.AttSlot.Installed == spaa.AttName then
                         installed = true
@@ -782,7 +790,7 @@ function SWEP:CreateCustomizeHUD()
                         atttrivia_do(spaa.AttName)
                     end
 
-                    if !owned then
+                    if !owned and GetConVar("arccw_attinv_darkunowned"):GetBool() then
                         if spaa:IsHovered() then
                             Bbg_col = Color(50, 50, 50, 150)
                             Bfg_col = Color(150, 150, 150, 255)
@@ -790,7 +798,7 @@ function SWEP:CreateCustomizeHUD()
                             Bbg_col = Color(20, 20, 20, 150)
                             Bfg_col = Color(150, 150, 150, 255)
                         end
-                    elseif !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then
+                    elseif !owned or blocked then
                         if spaa:IsHovered() then
                             Bbg_col = Color(125, 25, 25, 150)
                             Bfg_col = Color(150, 50, 50, 255)
@@ -821,6 +829,12 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetDrawColor(Bfg_col)
                     surface.SetMaterial(atttbl.Icon or defaultatticon)
                     surface.DrawTexturedRect(h / 4, 0, h, h)
+
+                    if blocked then
+                        surface.SetDrawColor(color_white)
+                        surface.SetMaterial(blockedatticon)
+                        surface.DrawTexturedRect(h / 4 - h * 0.1, - h * 0.1, h * 1.2, h * 1.2)
+                    end
                 end
             end
 
@@ -861,6 +875,9 @@ function SWEP:CreateCustomizeHUD()
             elseif kc == MOUSE_RIGHT then
                 self:DetachAllMergeSlots(span.AttIndex)
                 attcatb_regen(span)
+                if statbox:IsVisible() then
+                    regenStatList()
+                end
             end
         end
 
@@ -1268,7 +1285,7 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local statList
-    local function regenStatList()
+    regenStatList = function()
         statList = {
             {"Stat", "",
                 function() return "Original", "Current" end,

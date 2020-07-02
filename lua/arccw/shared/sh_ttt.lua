@@ -56,6 +56,12 @@ function ArcCW:TTT_GetRandomWeapon(class)
 end
 
 hook.Add("InitPostEntity", "ArcCW_TTT", function()
+
+    if weapons.GetStored("arccw_base") then
+        -- Blocks TTT from autospawning the base, which it like to do
+        weapons.GetStored("arccw_base").AutoSpawnable = false
+    end
+
     for i, wep in pairs(weapons.GetList()) do
         if !weapons.IsBasedOn(wep.ClassName, "arccw_base") then continue end
 
@@ -64,5 +70,30 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         end
 
         wep.AmmoEnt = ArcCW.TTTAmmo_To_Ent[wep.Primary.Ammo] or ""
+
+        wep.AllowDrop = wep.AllowDrop or true
+
+        -- We have to do this here because TTT2 does a check for .Kind in WeaponEquip,
+        -- earlier than Initialize() which assigns .Kind
+        if !wep.Kind and !wep.CanBuy then
+            if wep.Throwing then
+                wep.Slot = 3
+                wep.Kind = WEAPON_NADE
+            elseif wep.Slot == 0 then
+                -- melee weapons
+                wep.Slot = 6
+                wep.Kind = WEAPON_EQUIP1
+            elseif wep.Slot == 1 then
+                -- sidearms
+                wep.Kind = WEAPON_PISTOL
+            elseif wep.Slot == 2 or wep.Slot == 3 then
+                -- primaries
+                wep.Kind = WEAPON_HEAVY
+            else
+                -- weird slots, let's assume they're a main weapon
+                wep.Slot = 2
+                wep.Kind = WEAPON_HEAVY
+            end
+        end
     end
 end)

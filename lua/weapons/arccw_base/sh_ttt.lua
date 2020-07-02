@@ -119,6 +119,7 @@ function SWEP:TTT_Init()
 
     if self.ForgetDefaultBehavior then return end
 
+    --[[]
     if self.Kind != WEAPON_EQUIP1 and self.Kind != WEAPON_EQUIP2 then
         if !self.CanBuy then
             if self.Slot == 0 then
@@ -143,12 +144,11 @@ function SWEP:TTT_Init()
             end
         end
     end
-
+    ]]
     -- if ArcCW.Ammo_To_TTTAmmo[self.Primary.Ammo] then
     --     self.Primary.Ammo = ArcCW.Ammo_To_TTTAmmo[self.Primary.Ammo]
     -- end
-
-    self.AmmoEnt = ArcCW.TTTAmmo_To_Ent[self.Primary.Ammo] or ""
+    --self.AmmoEnt = ArcCW.TTTAmmo_To_Ent[self.Primary.Ammo] or ""
 
     self.Primary.ClipMax = ArcCW.TTTAmmo_To_ClipMax[self.Primary.Ammo] or self.RegularClipSize or self.Primary.ClipSize
 
