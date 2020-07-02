@@ -1,3 +1,30 @@
+function ArcCW:PlayerCanAttach(ply, wep, attname, slot)
+
+    -- The global variable takes priority over everything
+    if !ArcCW.EnableCustomization then return false end
+
+    -- Followed by convar
+    if !GetConVar("arccw_enable_customization"):GetBool() and !ply.ArcCW_AllowCustomize then return false end
+    if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_nocustomize"):GetBool() and !ply.ArcCW_AllowCustomize then return false end
+
+    -- Allow hooks to block attachment usage as well
+    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot) or true
+
+    return ret
+end
+
+function ArcCW:PlayerCanDetach(ply, wep, attname, slot)
+
+    if !ArcCW.EnableCustomization then return false end
+
+    if !GetConVar("arccw_enable_customization"):GetBool() and !ply.ArcCW_AllowCustomize then return false end
+    if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_nocustomize"):GetBool() and !ply.ArcCW_AllowCustomize then return false end
+
+    local ret = hook.Run("ArcCW_PlayerCanDetach", ply, wep, attname, slot) or true
+
+    return ret
+end
+
 function ArcCW:GetAttsForSlot(slot, wep)
     local ret = {}
 
@@ -72,10 +99,8 @@ function ArcCW:PlayerGetAtts(ply, att)
 
     if !IsValid(ply) then return 0 end
 
-    if !ply:IsAdmin() then
-        if atttbl.AdminOnly then
-            return 0
-        end
+    if !ply:IsAdmin() and atttbl.AdminOnly then
+        return 0
     end
 
     if atttbl.InvAtt then att = atttbl.InvAtt end

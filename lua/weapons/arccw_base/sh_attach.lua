@@ -629,7 +629,7 @@ function SWEP:Attach(slot, attname, silent)
     if !attslot then return end
     if attslot.Installed == attname then return end
 
-    if !ArcCW.EnableCustomization or !GetConVar("arccw_enable_customization"):GetBool() then
+    if !ArcCW:PlayerCanAttach(ply, self, attname, slot) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
@@ -756,14 +756,14 @@ function SWEP:Detach(slot, silent)
     if !slot then return end
     if !self.Attachments[slot] then return end
 
-    if !ArcCW.EnableCustomization or !GetConVar("arccw_enable_customization"):GetBool() then
+    if !self.Attachments[slot].Installed then return end
+
+    if !ArcCW:PlayerCanDetatch(ply, self, slot, self.Attachments[slot].Installed) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
         return
     end
-
-    if !self.Attachments[slot].Installed then return end
 
     local previnstall = self.Attachments[slot].Installed
 
