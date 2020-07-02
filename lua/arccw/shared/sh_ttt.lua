@@ -65,6 +65,8 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
 
         wep.AmmoEnt = ArcCW.TTTAmmo_To_Ent[wep.Primary.Ammo] or ""
 
+        wep.AllowDrop = wep.AllowDrop or true
+
         -- We have to do this here because TTT2 does a check for .Kind in WeaponEquip,
         -- earlier than Initialize() which assigns .Kind
         if !wep.Kind and !wep.CanBuy then
