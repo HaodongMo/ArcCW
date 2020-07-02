@@ -170,3 +170,19 @@ hook.Add("onDarkRPWeaponDropped", "ArcCW_DarkRP", function(ply, spawned_weapon, 
         ArcCW:PlayerSendAttInv(ply)
     end
 end)
+
+hook.Add("PlayerGiveSWEP", "ArcCW_SpawnRandomAttachments", function(ply, class, tbl)
+    if tbl.ArcCW and GetConVar("arccw_atts_spawnrand"):GetBool() then
+        timer.Simple(0, function()
+            if IsValid(ply) and IsValid(ply:GetWeapon(class)) then
+                ply:GetWeapon(class):NPC_SetupAttachments()
+            end
+        end)
+    end
+end)
+
+hook.Add("PlayerSpawnedSWEP", "ArcCW_SpawnRandomAttachments", function(ply, wep)
+    if wep.ArcCW and GetConVar("arccw_atts_spawnrand"):GetBool() then
+        wep:NPC_SetupAttachments()
+    end
+end)

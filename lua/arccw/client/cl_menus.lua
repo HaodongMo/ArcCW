@@ -55,6 +55,11 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Slider", {Label = "Viewmodel Forward", Command = "arccw_vm_forward", Min = -5, Max = 5, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Viewmodel Up", Command = "arccw_vm_up", Min = -5, Max = 5, Type = "float" })
     CPanel:AddControl("Header", {Description = "  Warning! Viewmodel offset settings may cause clipping or other undesired effects!"})
+    CPanel:AddControl("color", {Label = "Sight Color",
+        Red = "arccw_scope_r",
+        Green = "arccw_scope_g",
+        Blue = "arccw_scope_b",
+    })
 end
 
 function ArcCW_Options_Mults( CPanel )
@@ -92,11 +97,7 @@ function ArcCW_Options_Atts( CPanel )
     CPanel:AddControl("Header", {Description = "Pick X behaviour allows you to set a limit on attachments that can be placed on any weapon. 0 = unlimited."})
     CPanel:AddControl("Slider", {Label = "Pick X", Command = "arccw_atts_pickx", Min = 0, Max = 15, Type = "int" })
     CPanel:AddControl("Checkbox", {Label = "Attachment Dropping", Command = "arccw_enable_dropping" })
-    CPanel:AddControl("color", {Label = "Sight Color",
-        Red = "arccw_scope_r",
-        Green = "arccw_scope_g",
-        Blue = "arccw_scope_b",
-    })
+    CPanel:AddControl("Checkbox", {Label = "Random Attachments on Spawn", Command = "arccw_atts_spawnrand" })
 end
 
 function ArcCW_Options_Server( CPanel )
