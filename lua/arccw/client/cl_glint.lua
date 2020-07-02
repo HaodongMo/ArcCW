@@ -33,7 +33,7 @@ hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
         if scope_i then
             local wme = (wpn.Attachments[scope_i].WElement or {}).Model
 
-            if wme then
+            if wme and IsValid(wme) then
                 local att = wme:LookupAttachment("holosight")
 
                 if !att then
