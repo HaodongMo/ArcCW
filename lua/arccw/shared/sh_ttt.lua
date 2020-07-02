@@ -133,7 +133,9 @@ if CLIENT then
         end
     end)
 
-    hook.Add("TTTBodySearchPopulate", "ArcCW_DetectiveSeeAtts", function(processed, raw)
+    hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
+
+        -- Attachment Info
         local mode = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
         if Entity(raw.eidx).ArcCW_AttInfo and (mode == 2 or (mode == 1 and raw.detective_search)) then
             local finalTbl = {
@@ -151,6 +153,15 @@ if CLIENT then
             finalTbl.text = finalTbl.text .. "."
             processed.arccw_atts = finalTbl
         end
+
+        -- Buckshot kill info
+        if bit.band(raw.dmg, DMG_BUCKSHOT) == DMG_BUCKSHOT then
+            processed.dmg.text = LANG.GetTranslation("search_dmg_buckshot")
+            processed.dmg.img = "arccw/ttticons/kill_buckshot.png"
+        end
     end)
+
+    -- Language for buckshot death
+    LANG.AddToLanguage("English", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
 
 end
