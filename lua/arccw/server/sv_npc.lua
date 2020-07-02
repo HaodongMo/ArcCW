@@ -30,7 +30,6 @@ function ArcCW:GetRandomWeapon(wpn, nades)
     local wgt = 0
 
     for i, k in pairs(weapons.GetList()) do
-        if k.ClassName == "arccw_base" then continue end
         if !weapons.IsBasedOn(k.ClassName, "arccw_base") then continue end
         if k.PrimaryBash then continue end
         if !k.Spawnable then continue end

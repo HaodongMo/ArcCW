@@ -56,6 +56,12 @@ function ArcCW:TTT_GetRandomWeapon(class)
 end
 
 hook.Add("InitPostEntity", "ArcCW_TTT", function()
+
+    if weapons.GetStored("arccw_base") then
+        -- Blocks TTT from autospawning the base, which it like to do
+        weapons.GetStored("arccw_base").AutoSpawnable = false
+    end
+
     for i, wep in pairs(weapons.GetList()) do
         if !weapons.IsBasedOn(wep.ClassName, "arccw_base") then continue end
 
