@@ -145,9 +145,9 @@ function SWEP:TTT_Init()
         end
     end
     ]]
-    -- if ArcCW.Ammo_To_TTTAmmo[self.Primary.Ammo] then
-    --     self.Primary.Ammo = ArcCW.Ammo_To_TTTAmmo[self.Primary.Ammo]
-    -- end
+    if ArcCW.Ammo_To_TTTAmmo[self.Primary.Ammo] then
+        self.Primary.Ammo = ArcCW.Ammo_To_TTTAmmo[self.Primary.Ammo]
+    end
     --self.AmmoEnt = ArcCW.TTTAmmo_To_Ent[self.Primary.Ammo] or ""
 
     self.Primary.ClipMax = ArcCW.TTTAmmo_To_ClipMax[self.Primary.Ammo] or self.RegularClipSize or self.Primary.ClipSize

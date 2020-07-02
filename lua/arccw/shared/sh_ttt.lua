@@ -40,6 +40,8 @@ if engine.ActiveGamemode() != "terrortown" then return end
 CreateConVar("arccw_ttt_replace", 1, FCVAR_ARCHIVE, "Use custom code to forcefully replace TTT weapons with ArcCW ones.", 0, 1)
 CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE, "Automatically set up ArcCW weapons with an attachment loadout.", 0, 1)
 CreateConVar("arccw_ttt_nocustomize", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable all customization features on ArcCW weapons.", 0, 1)
+CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
+
 
 function ArcCW:TTT_GetRandomWeapon(class)
     if class and ArcCW.TTTReplaceTable[class] then
@@ -97,3 +99,58 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         end
     end
 end)
+
+hook.Add("DoPlayerDeath", "ArcCW_DetectiveSeeAtts", function(ply, attacker, dmginfo)
+    local wep = util.WeaponFromDamage(dmginfo)
+    timer.Simple(0, function()
+        if GetConVar("arccw_ttt_bodyattinfo"):GetInt() > 0 and ply.server_ragdoll and IsValid(wep) and wep:IsWeapon() and wep.ArcCW then
+            net.Start("arccw_ttt_bodyattinfo")
+                net.WriteEntity(ply.server_ragdoll)
+                net.WriteUInt(table.Count(wep.Attachments), 8)
+                for i, info in pairs(wep.Attachments) do
+                    if info.Installed then
+                        net.WriteUInt(ArcCW.AttachmentTable[info.Installed].ID, ArcCW.GetBitNecessity())
+                    else
+                        net.WriteUInt(0, ArcCW.GetBitNecessity())
+                    end
+                end
+            net.Broadcast()
+        end
+    end)
+end)
+
+if CLIENT then
+
+    net.Receive("arccw_ttt_bodyattinfo", function()
+        local rag = net.ReadEntity()
+        rag.ArcCW_AttInfo = {}
+        local atts = net.ReadUInt(8)
+        for i = 1, atts do
+            local id = net.ReadUInt(ArcCW.GetBitNecessity())
+            if id != 0 then
+                rag.ArcCW_AttInfo[i] = ArcCW.AttachmentIDTable[id]
+            end
+        end
+    end)
+
+    hook.Add("TTTBodySearchPopulate", "ArcCW_DetectiveSeeAtts", function(processed, raw)
+        local mode = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
+        if Entity(raw.eidx).ArcCW_AttInfo and (mode == 2 or (mode == 1 and raw.detective_search)) then
+            local finalTbl = {
+                img	= "vgui/ttt/icon_nades",
+                p = 10,
+                text = (mode == 1 and "With your detective skills, you" or "You") .. " deduce the murder weapon had these attachments: "
+            }
+            local comma = false
+            for i, v in pairs(Entity(raw.eidx).ArcCW_AttInfo) do
+                if v and ArcCW.AttachmentTable[v] then
+                    finalTbl.text = finalTbl.text .. (comma and ", " or "") .. ArcCW.AttachmentTable[v].PrintName
+                    comma = true
+                end
+            end
+            finalTbl.text = finalTbl.text .. "."
+            processed.arccw_atts = finalTbl
+        end
+    end)
+
+end
