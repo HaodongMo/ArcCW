@@ -1293,31 +1293,31 @@ function SWEP:CreateCustomizeHUD()
             },
             {"Close Range Damage", "How much damage this weapon does at point blank.",
                 function()
-                    local mult = self:GetBuff_Mult("Mult_Damage")
-                    local curNum = self:GetBuff_Override("Override_Num") or self.Num
+                    local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
                     local orig = math.Round(self.Damage) .. (self.Num != 1 and ("×" .. self.Num) or "")
-                    local cur = math.Round(self.Damage * mult) .. (curNum != 1 and ("×" .. curNum) or "")
+                    local cur = math.Round(self:GetDamage(0) / curNum) .. (curNum != 1 and ("×" .. curNum) or "")
                     return orig, cur
                 end,
                 function()
-                    local mult = self:GetBuff_Mult("Mult_Damage")
                     local orig = self.Damage  * self.Num
-                    local cur = self.Damage * mult * (self:GetBuff_Override("Override_Num") or self.Num)
+                    local cur = self:GetDamage(0)
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
             {"Long Range Damage", "How much damage this weapon does beyond its range.",
                 function()
-                    local mult = self:GetBuff_Mult("Mult_DamageMin")
-                    local curNum = self:GetBuff_Override("Override_Num") or self.Num
+                    local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
                     local orig = math.Round(self.DamageMin) .. (self.Num != 1 and ("×" .. self.Num) or "")
-                    local cur = math.Round(self.DamageMin * mult) .. (curNum != 1 and ("×" .. curNum) or "")
+                    local cur = math.Round(self:GetDamage(self.Range) / curNum) .. (curNum != 1 and ("×" .. curNum) or "")
                     return orig, cur
                 end,
                 function()
-                    local mult = self:GetBuff_Mult("Mult_DamageMin")
-                    local orig = self.DamageMin  * self.Num
-                    local cur = self.DamageMin * mult * (self:GetBuff_Override("Override_Num") or self.Num)
+                    local orig = self.DamageMin * self.Num
+                    local maxgr = (self.Range * self:GetBuff_Mult("Mult_Range"))
+                    if math.Round(self:GetDamage(self.Range)) < math.Round(self:GetDamage(0)) then
+                        maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
+                    end
+                    local cur = self:GetDamage(maxgr)
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
