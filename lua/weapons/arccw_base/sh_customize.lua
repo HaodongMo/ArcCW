@@ -300,6 +300,7 @@ function SWEP:CreateCustomizeHUD()
         surface.DrawRect(0, 0, w, h)
     end
     statbox:Hide()
+    local regenStatList -- early definition so category unequiping can update
 
     local sbar3 = statbox:GetVBar()
     sbar3.Paint = function() end
@@ -869,6 +870,9 @@ function SWEP:CreateCustomizeHUD()
             elseif kc == MOUSE_RIGHT then
                 self:DetachAllMergeSlots(span.AttIndex)
                 attcatb_regen(span)
+                if statbox:IsVisible() then
+                    regenStatList()
+                end
             end
         end
 
@@ -1276,7 +1280,7 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local statList
-    local function regenStatList()
+    regenStatList = function()
         statList = {
             {"Stat", "",
                 function() return "Original", "Current" end,
