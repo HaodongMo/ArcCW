@@ -104,12 +104,15 @@ function SWEP:TTT_Init()
         local class = self:GetClass()
         local path = "arccw/weaponicons/" .. class
         local path2 = "arccw/ttticons/" .. class
+        local path3 = "vgui/ttt/" .. class
         local mat2 = Material(path2)
 
         if !mat2:IsError() then
             self.Icon = path2
         elseif !Material(path):IsError() then
             self.Icon = path
+        elseif !Material(path3):IsError() then
+            self.Icon = path3
         end
     end
 
