@@ -73,8 +73,6 @@ function SWEP:NPC_SetupAttachments()
         n = n + 1
     end
 
-    for i, s in pairs(self.Attachments) do print(i, s.Installed or "none") end
-
     if self:GetBuff_Override("UBGL") then
         self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
     end
