@@ -693,17 +693,22 @@ function SWEP:CreateCustomizeHUD()
                             self:Attach(aslot, spaa.AttName)
                         end
                     elseif kc2 == MOUSE_RIGHT and spaa.AttName != "" then
-                        -- Drop attachment
-                        if GetConVar("arccw_attinv_free"):GetBool() then return end
-                        if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
-                        if !GetConVar("arccw_enable_customization"):GetBool() then return end
-                        if !GetConVar("arccw_enable_dropping"):GetBool() then return end
+                        if span.AttSlot.Installed == spaa.AttName then
+                            -- Unequip
+                            self:DetachAllMergeSlots(span.AttIndex)
+                        else
+                            -- Drop attachment
+                            if GetConVar("arccw_attinv_free"):GetBool() then return end
+                            if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+                            if !GetConVar("arccw_enable_customization"):GetBool() then return end
+                            if !GetConVar("arccw_enable_dropping"):GetBool() then return end
 
-                        net.Start("arccw_asktodrop")
-                            net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)
-                        net.SendToServer()
+                            net.Start("arccw_asktodrop")
+                                net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)
+                            net.SendToServer()
 
-                        ArcCW:PlayerTakeAtt(self:GetOwner(), spaa.AttName)
+                            ArcCW:PlayerTakeAtt(self:GetOwner(), spaa.AttName)
+                        end
                     end
 
                     attcatb_regen(span)
