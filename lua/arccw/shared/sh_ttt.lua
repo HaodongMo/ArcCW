@@ -137,8 +137,8 @@ if CLIENT then
         local mode = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
         if Entity(raw.eidx).ArcCW_AttInfo and (mode == 2 or (mode == 1 and raw.detective_search)) then
             local finalTbl = {
-                img	= "vgui/ttt/icon_nades",
-                p = 10,
+                img	= "arccw/ttticons/arccw_dropattinfo.png",
+                p = 10.5, -- Right after the murder weapon
                 text = (mode == 1 and "With your detective skills, you" or "You") .. " deduce the murder weapon had these attachments: "
             }
             local comma = false
