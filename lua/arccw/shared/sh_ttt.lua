@@ -64,5 +64,28 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         end
 
         wep.AmmoEnt = ArcCW.TTTAmmo_To_Ent[wep.Primary.Ammo] or ""
+
+        -- We have to do this here because TTT2 does a check for .Kind in WeaponEquip,
+        -- earlier than Initialize() which assigns .Kind
+        if !wep.Kind and !wep.CanBuy then
+            if wep.Throwing then
+                wep.Slot = 3
+                wep.Kind = WEAPON_NADE
+            elseif wep.Slot == 0 then
+                -- melee weapons
+                wep.Slot = 6
+                wep.Kind = WEAPON_EQUIP1
+            elseif wep.Slot == 1 then
+                -- sidearms
+                wep.Kind = WEAPON_PISTOL
+            elseif wep.Slot == 2 or wep.Slot == 3 then
+                -- primaries
+                wep.Kind = WEAPON_HEAVY
+            else
+                -- weird slots, let's assume they're a main weapon
+                wep.Slot = 2
+                wep.Kind = WEAPON_HEAVY
+            end
+        end
     end
 end)
