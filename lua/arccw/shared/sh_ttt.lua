@@ -48,7 +48,7 @@ if engine.ActiveGamemode() != "terrortown" then return end
 CreateConVar("arccw_ttt_replace", 1, FCVAR_ARCHIVE, "Use custom code to forcefully replace TTT weapons with ArcCW ones.", 0, 1)
 CreateConVar("arccw_ttt_replaceammo", 1, FCVAR_ARCHIVE, "Forcefully replace TTT ammo boxes with ArcCW ones.", 0, 1)
 CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE, "Automatically set up ArcCW weapons with an attachment loadout.", 0, 1)
-CreateConVar("arccw_ttt_nocustomize", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable all customization features on ArcCW weapons.", 0, 1)
+CreateConVar("arccw_ttt_nocustomize", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable all customization features on ArcCW weapons. If set to 2, players can customize during setup and postgame.", 0, 2)
 CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
 
 
