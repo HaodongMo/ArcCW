@@ -520,14 +520,14 @@ function SWEP:GetDispersion()
     end
 
     local spd = self:GetOwner():GetAbsVelocity():Length()
+    local maxspeed = self:GetOwner():GetWalkSpeed() * self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
+    if self:GetState() == ArcCW.STATE_SIGHTS then
+        maxspeed = maxspeed * self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult")
+    end
 
-    spd = spd / self:GetOwner():GetWalkSpeed()
-
-    spd = math.Clamp(spd, 0, 2)
+    spd = math.Clamp(spd / maxspeed, 0, 2)
 
     hip = hip + (spd * self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
-
-    print(hip)
     return hip
 end
 
