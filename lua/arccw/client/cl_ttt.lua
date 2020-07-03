@@ -206,8 +206,8 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
         ns:SetTooltip("If enabled, players lose attachment on death and round end.")
         dgui2:Help("0 - Persistent; 1 - Remove on death; 2 - Drop box on death")
 
-        ns = dgui2:NumSlider("Pick X Mode", "arccw_atts_pickx", 0, 15, 0)
-        ns:SetTooltip("Enable to have a limit on how many attachment a gun can have.")
+        ns = dgui2:NumSlider("Pick X", "arccw_atts_pickx", 0, 15, 0)
+        ns:SetTooltip("Enable to have a limit on how many attachment a gun can have. 0 disables.")
 
         ns = dgui2:NumSlider("Ammo Detonation Mode", "arccw_ammo_detonationmode", -1, 2, 0)
         ns:SetTooltip("Determines what happens if ammo boxes are destroyed.")
