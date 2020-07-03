@@ -1,7 +1,7 @@
 AddCSLuaFile()
 
 ENT.Type 					= "anim"
-ENT.Base 					= "base_gmodentity"
+ENT.Base 					= "base_entity"
 ENT.RenderGroup             = RENDERGROUP_TRANSLUCENT
 
 ENT.PrintName 				= "Base Ammo"
