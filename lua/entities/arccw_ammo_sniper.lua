@@ -11,6 +11,9 @@ ENT.Model 					= "models/items/arccw/sniper_ammo.mdl"
 ENT.AmmoType = "SniperPenetratedRound"
 ENT.AmmoCount = 10
 ENT.MaxHealth = 20
+if engine.ActiveGamemode() == "terrortown" then
+    ENT.AmmoType = "357"
+end
 
 ENT.DetonationDamage = 80
 ENT.DetonationRadius = 128

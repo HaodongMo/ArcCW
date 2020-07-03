@@ -11,6 +11,11 @@ ENT.Model 					= "models/items/arccw/magnum_ammo.mdl"
 
 ENT.AmmoType = "357"
 ENT.AmmoCount = 12
+if engine.ActiveGamemode() == "terrortown" then
+    ENT.AmmoType = "AlyxGun"
+    ENT.AmmoCount = 18
+end
+
 
 ENT.DetonationDamage = 50
 ENT.DetonationRadius = 128

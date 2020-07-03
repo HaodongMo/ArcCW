@@ -19,6 +19,14 @@ ArcCW.TTTAmmo_To_ClipMax = {
     ["buckshot"] = 24
 }
 
+ArcCW.TTTAmmoEnt_To_ArcCW = {
+    ["item_ammo_pistol_ttt"] = "arccw_ammo_pistol",
+    ["item_ammo_smg1_ttt"] = "arccw_ammo_smg1",
+    ["item_ammo_revolver_ttt"] = "arccw_ammo_357",
+    ["item_ammo_357_ttt"] = "item_ammo_sniper",
+    ["item_box_buckshot_ttt"] = "arccw_ammo_buckshot"
+}
+
 -- translate TTT weapons to HL2 weapons, in order to recognize NPC weapon replacements.
 ArcCW.TTTReplaceTable = {
     ["weapon_ttt_glock"] = "weapon_pistol",
@@ -38,6 +46,7 @@ ArcCW.TTTReplaceTable = {
 if engine.ActiveGamemode() != "terrortown" then return end
 
 CreateConVar("arccw_ttt_replace", 1, FCVAR_ARCHIVE, "Use custom code to forcefully replace TTT weapons with ArcCW ones.", 0, 1)
+CreateConVar("arccw_ttt_replaceammo", 1, FCVAR_ARCHIVE, "Forcefully replace TTT ammo boxes with ArcCW ones.", 0, 1)
 CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE, "Automatically set up ArcCW weapons with an attachment loadout.", 0, 1)
 CreateConVar("arccw_ttt_nocustomize", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable all customization features on ArcCW weapons.", 0, 1)
 CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
@@ -60,7 +69,7 @@ end
 hook.Add("InitPostEntity", "ArcCW_TTT", function()
 
     if weapons.GetStored("arccw_base") then
-        -- Blocks TTT from autospawning the base, which it like to do
+        -- Blocks TTT from autospawning the base, which it likes to do
         weapons.GetStored("arccw_base").AutoSpawnable = false
     end
 
@@ -98,6 +107,9 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
             end
         end
     end
+
+    -- Language string(s)
+    LANG.AddToLanguage("English", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
 end)
 
 hook.Add("DoPlayerDeath", "ArcCW_DetectiveSeeAtts", function(ply, attacker, dmginfo)
@@ -119,6 +131,20 @@ hook.Add("DoPlayerDeath", "ArcCW_DetectiveSeeAtts", function(ply, attacker, dmgi
     end)
 end)
 
+if SERVER then
+    hook.Add( "OnEntityCreated", "ArcCW_TTTAmmoReplacement", function(ent)
+        if GetConVar("arccw_ttt_replaceammo"):GetBool() and ArcCW.TTTAmmoEnt_To_ArcCW[ent:GetClass()] then
+            timer.Simple(0, function()
+                if !IsValid(ent) then return end
+                local ammoent = ents.Create(ArcCW.TTTAmmoEnt_To_ArcCW[ent:GetClass()])
+                ammoent:SetPos(ent:GetPos())
+                ammoent:SetAngles(ent:GetAngles())
+                ammoent:Spawn()
+                SafeRemoveEntityDelayed(ent, 0) -- remove next tick
+            end)
+        end
+    end)
+end
 if CLIENT then
 
     net.Receive("arccw_ttt_bodyattinfo", function()
@@ -160,8 +186,5 @@ if CLIENT then
             processed.dmg.img = "arccw/ttticons/kill_buckshot.png"
         end
     end)
-
-    -- Language for buckshot death
-    LANG.AddToLanguage("English", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
 
 end

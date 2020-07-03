@@ -38,6 +38,10 @@ function ENT:Initialize()
     self.AmmoCount = self.AmmoCount * GetConVar("arccw_mult_ammoamount"):GetFloat()
     self.MaxAmmoCount = self.AmmoCount
 
+    if engine.ActiveGamemode() == "terrortown" and ArcCW.TTTReplaceTable then
+        self.AmmoType = ArcCW.TTTReplaceTable[self.AmmoType] or self.AmmoType
+    end
+
     if self.Scale ~= 1 then
         self:SetModelScale(self.Scale)
     end
@@ -62,11 +66,73 @@ function ENT:Initialize()
     end
 end
 
+-- Adapted from TTT's ammo - we don't use it otherwise
+function ENT:TTT_PlayerCanPickup(ply)
+    if ply == self:GetOwner() then return false end
+
+    local result = hook.Call("TTTCanPickupAmmo", nil, ply, self)
+    if result then
+        return result
+    end
+
+    local ent = self
+    local phys = ent:GetPhysicsObject()
+    local spos = phys:IsValid() and phys:GetPos() or ent:OBBCenter()
+    local epos = ply:GetShootPos()
+
+    local tr = util.TraceLine({start = spos, endpos = epos, filter = {ply, ent}, mask = MASK_SOLID})
+
+    -- can pickup if trace was not stopped
+    return tr.Fraction == 1.0
+end
+
+-- Ditto - unused outside of TTT
+function ENT:TTT_CheckForWeapon(ply)
+    if not self.CachedWeapons then
+        local tbl = {}
+        for k,v in pairs(weapons.GetList()) do
+            if v and v.Primary.Ammo == self.AmmoType then
+                tbl[v.ClassName] = true -- WEPS.GetClass(v)
+            end
+        end
+        self.CachedWeapons = tbl
+    end
+
+    for _, wep in pairs(ply:GetWeapons()) do
+        if self.CachedWeapons[wep:GetClass()] then return true end
+        -- Perform a special check for UBGLs
+        if wep.ArcCW and wep:GetBuff_Override("UBGL_Ammo") == self.AmmoType then
+            return true
+        end
+    end
+    return false
+end
+
 function ENT:ApplyAmmo(ply)
     if self.USED then return end
-    self.USED = true -- Prevent multiple uses
-    ply:GiveAmmo(self.AmmoCount, self.AmmoType)
-    self:Remove()
+    if engine.ActiveGamemode() == "terrortown" then
+        -- Stupid checks mate... but we'll play along
+        if not self:TTT_PlayerCanPickup(ply) or not self:TTT_CheckForWeapon(ply) then return end
+
+        local giveCount = math.min(self.AmmoCount, ArcCW.TTTAmmo_To_ClipMax[string.lower(self.AmmoType)] - ply:GetAmmoCount(self.AmmoType))
+        if giveCount <= 0 then return end
+
+        self.AmmoCount = self.AmmoCount - giveCount
+        ply:GiveAmmo(giveCount, self.AmmoType)
+
+        -- Ugly hack to let client update ammo count
+        -- Why not just use NWInts or NetworkVars to begin with? Good question!
+        self:SetNWInt("truecount", self.AmmoCount)
+
+        if self.AmmoCount <= 0 then
+            self.USED = true
+            self:Remove()
+        end
+    else
+        self.USED = true -- Prevent multiple uses
+        ply:GiveAmmo(self.AmmoCount, self.AmmoType)
+        self:Remove()
+    end
 end
 
 function ENT:DetonateRound()
@@ -197,6 +263,10 @@ if SERVER then
 
 elseif CLIENT then
 
+    function ENT:DrawTranslucent()
+        self:Draw()
+    end
+
     function ENT:Draw()
         self:DrawModel()
 
@@ -218,16 +288,12 @@ elseif CLIENT then
                 surface.SetTextColor(255, 255, 255, 255)
                 surface.DrawText(self.PrintName)
 
-                if self.AmmoCount > 1 then
-                    w = surface.GetTextSize("×" .. self.AmmoCount)
+                local ammo = self:GetNWInt("truecount", -1) ~= -1 and self:GetNWInt("truecount", -1) or self.AmmoCount
+                if ammo then
+                    w = surface.GetTextSize("×" .. ammo)
                     surface.SetTextPos(-w / 2, 25)
-                    surface.DrawText("×" .. self.AmmoCount)
+                    surface.DrawText("×" .. ammo)
                 end
-
-                --surface.SetDrawColor(255, 255, 255)
-                --surface.SetMaterial(self.Icon or defaulticon)
-                --local iw = 64
-                --surface.DrawTexturedRect(-iw / 2, -iw - 8, iw, iw)
             cam.End3D2D()
         end
     end

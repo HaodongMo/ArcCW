@@ -10,6 +10,9 @@ ENT.Model 					= "models/items/arccw/smg_ammo.mdl"
 
 ENT.AmmoType = "smg1"
 ENT.AmmoCount = 60
+if engine.ActiveGamemode() == "terrortown" then
+    ENT.AmmoCount = 30
+end
 
 ENT.DetonationDamage = 30
 ENT.DetonationRadius = 256
