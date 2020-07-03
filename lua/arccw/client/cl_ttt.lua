@@ -151,8 +151,13 @@ concommand.Add("arccw_ttt_info", function()
     CreateInfoBox(20)
 end, nil, "Shows a panel detailing current ArcCW settings.")
 
+local turnoff = true
 hook.Add("TTTPrepareRound", "ArcCW_TTT_Info", function()
     if GetConVar("arccw_ttt_inforoundstart"):GetBool() then
         CreateInfoBox(15)
+        if turnoff then
+            turnoff = false
+            chat.AddText(Color(255,255,255), "To turn off ArcCW config info, type 'arccw_ttt_inforoundstart 0' in console.")
+        end
     end
 end)
