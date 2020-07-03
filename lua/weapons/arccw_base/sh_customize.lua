@@ -1355,7 +1355,7 @@ function SWEP:CreateCustomizeHUD()
                 end,
             },
             {"Precision", "How precise the weapon is when still and aimed, in minutes of arc.",
-                function() return defaultStatFunc("AccuracyMOA", " MOA") end,
+                function() return defaultStatFunc("AccuracyMOA", " MOA", 3) end,
                 function() return defaultBetterFunc("AccuracyMOA", true) end,
             },
             {"Hip Dispersion", "How much imprecision there is when the weapon is hipfired.",
