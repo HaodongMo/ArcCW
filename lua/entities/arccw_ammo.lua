@@ -23,7 +23,8 @@ ENT.ShellModel = "models/shells/shell_9mm.mdl"
 ENT.ShellScale = 1.5
 
 ENT.ResistanceMult = {
-    [DMG_BURN] = 5,
+    [DMG_BURN] = 3,
+    [DMG_DIRECT] = 3, -- This is also fire
     [DMG_BLAST] = 2,
     [DMG_BULLET] = 0.5,
     [DMG_BUCKSHOT] = 0.5,
@@ -98,6 +99,7 @@ function ENT:TTT_CheckForWeapon(ply)
         self.CachedWeapons = tbl
     end
 
+    -- Why does TTT not iterate over the player's weapons? This is obviously faster
     for _, wep in pairs(ply:GetWeapons()) do
         if self.CachedWeapons[wep:GetClass()] then return true end
         -- Perform a special check for UBGLs

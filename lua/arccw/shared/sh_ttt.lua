@@ -23,7 +23,7 @@ ArcCW.TTTAmmoEnt_To_ArcCW = {
     ["item_ammo_pistol_ttt"] = "arccw_ammo_pistol",
     ["item_ammo_smg1_ttt"] = "arccw_ammo_smg1",
     ["item_ammo_revolver_ttt"] = "arccw_ammo_357",
-    ["item_ammo_357_ttt"] = "item_ammo_sniper",
+    ["item_ammo_357_ttt"] = "arccw_ammo_sniper",
     ["item_box_buckshot_ttt"] = "arccw_ammo_buckshot"
 }
 
