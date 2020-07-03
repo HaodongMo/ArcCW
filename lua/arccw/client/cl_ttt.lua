@@ -197,7 +197,7 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
         cb:SetTooltip("If enabled, players have access to all attachments.\nCustomization mode may still restrict them from using them.")
         cb = dgui2:CheckBox("Attachment Locking", "arccw_attinv_lockmode")
         cb:SetTooltip("If enabled, picking up one attachment unlocks it for every weapon, a-la CW2.")
-    
+
         local ns = dgui2:NumSlider("Body Attachment Info", "arccw_ttt_bodyattinfo", 0, 2, 0)
         ns:SetTooltip("If enabled, searching a body will reveal the attachments on the weapon used to kill someone.")
         dgui2:Help("0 - Off; 1 - Detectives can see; 2 - Everyone can see")
@@ -205,6 +205,9 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
         ns = dgui2:NumSlider("Lose Attachments", "arccw_attinv_loseondie", 0, 2, 0)
         ns:SetTooltip("If enabled, players lose attachment on death and round end.")
         dgui2:Help("0 - Persistent; 1 - Remove on death; 2 - Drop box on death")
+
+        ns = dgui2:NumSlider("Pick X Mode", "arccw_atts_pickx", 0, 15, 0)
+        ns:SetTooltip("Enable to have a limit on how many attachment a gun can have.")
 
         ns = dgui2:NumSlider("Ammo Detonation Mode", "arccw_ammo_detonationmode", -1, 2, 0)
         ns:SetTooltip("Determines what happens if ammo boxes are destroyed.")
@@ -216,8 +219,6 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
 
         ns = dgui2:NumSlider("Equipment Lifetime", "arccw_equipmenttime", 60, 600, 0)
         ns:SetTooltip("Applies to deployable equipment like Claymores, in seconds.")
-
-
 
         panellist:AddItem(dgui2)
     end
