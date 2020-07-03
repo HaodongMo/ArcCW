@@ -113,8 +113,8 @@ end
 function ENT:ApplyAmmo(ply)
     if self.USED then return end
     if engine.ActiveGamemode() == "terrortown" then
-        -- Stupid checks mate... but we'll play along
-        if not self:TTT_PlayerCanPickup(ply) or not self:TTT_CheckForWeapon(ply) then return end
+        -- Stupid checks mate... but we'll play along unless an override exists
+        if not self.IgnoreTTTChecks and not self:TTT_PlayerCanPickup(ply) or not self:TTT_CheckForWeapon(ply) then return end
 
         local giveCount = math.min(self.AmmoCount, ArcCW.TTTAmmo_To_ClipMax[string.lower(self.AmmoType)] - ply:GetAmmoCount(self.AmmoType))
         if giveCount <= 0 then return end

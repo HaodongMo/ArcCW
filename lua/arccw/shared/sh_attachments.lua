@@ -246,6 +246,7 @@ hook.Add("PlayerSpawn", "ArcCW_SpawnAttInv", function(ply, trans)
 
     if GetConVar("arccw_attinv_loseondie"):GetInt() >= 1 then
         ply.ArcCW_AttInv = {}
+        ply.ArcCW_AllowCustomize = false
 
         ArcCW:PlayerSendAttInv(ply)
     end
