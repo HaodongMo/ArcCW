@@ -105,6 +105,21 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
                 wep.Kind = WEAPON_HEAVY
             end
         end
+
+        local class = wep.ClassName
+        local path = "arccw/weaponicons/" .. class
+        local path2 = "arccw/ttticons/" .. class
+        local path3 = "vgui/ttt/" .. class
+        local mat2 = Material(path2)
+
+        if !mat2:IsError() then
+            wep.Icon = path2
+        elseif !Material(path3):IsError() then
+            wep.Icon = path3
+        elseif !Material(path):IsError() then
+            wep.Icon = path
+        end
+
     end
 
     -- Language string(s)
