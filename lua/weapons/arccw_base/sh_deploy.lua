@@ -128,7 +128,7 @@ function SWEP:Initialize()
             local incompatList = {}
             local addons = engine.GetAddons()
             for _, addon in pairs(addons) do
-                if ArcCW.IncompatibleAddons[tostring(addon.wsid)] then
+                if ArcCW.IncompatibleAddons[tostring(addon.wsid)] and addon.mounted then
                     incompatList[tostring(addon.wsid)] = addon
                 end
             end
