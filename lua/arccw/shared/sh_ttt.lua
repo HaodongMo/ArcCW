@@ -45,12 +45,11 @@ ArcCW.TTTReplaceTable = {
 
 if engine.ActiveGamemode() != "terrortown" then return end
 
-CreateConVar("arccw_ttt_replace", 1, FCVAR_ARCHIVE, "Use custom code to forcefully replace TTT weapons with ArcCW ones.", 0, 1)
-CreateConVar("arccw_ttt_replaceammo", 1, FCVAR_ARCHIVE, "Forcefully replace TTT ammo boxes with ArcCW ones.", 0, 1)
-CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE, "Automatically set up ArcCW weapons with an attachment loadout.", 0, 1)
+CreateConVar("arccw_ttt_replace", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Use custom code to forcefully replace TTT weapons with ArcCW ones.", 0, 1)
+CreateConVar("arccw_ttt_replaceammo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Forcefully replace TTT ammo boxes with ArcCW ones.", 0, 1)
+CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Automatically set up ArcCW weapons with an attachment loadout.", 0, 1)
 CreateConVar("arccw_ttt_customizemode", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable all customization features on ArcCW weapons. If set to 2, players can customize during setup and postgame. If set to 3, only T and Ds can customize.", 0, 3)
 CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
-
 
 function ArcCW:TTT_GetRandomWeapon(class)
     if class and ArcCW.TTTReplaceTable[class] then
@@ -145,47 +144,4 @@ if SERVER then
             end)
         end
     end)
-end
-if CLIENT then
-
-    net.Receive("arccw_ttt_bodyattinfo", function()
-        local rag = net.ReadEntity()
-        rag.ArcCW_AttInfo = {}
-        local atts = net.ReadUInt(8)
-        for i = 1, atts do
-            local id = net.ReadUInt(ArcCW.GetBitNecessity())
-            if id != 0 then
-                rag.ArcCW_AttInfo[i] = ArcCW.AttachmentIDTable[id]
-            end
-        end
-    end)
-
-    hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
-
-        -- Attachment Info
-        local mode = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
-        if Entity(raw.eidx).ArcCW_AttInfo and (mode == 2 or (mode == 1 and raw.detective_search)) then
-            local finalTbl = {
-                img	= "arccw/ttticons/arccw_dropattinfo.png",
-                p = 10.5, -- Right after the murder weapon
-                text = (mode == 1 and "With your detective skills, you" or "You") .. " deduce the murder weapon had these attachments: "
-            }
-            local comma = false
-            for i, v in pairs(Entity(raw.eidx).ArcCW_AttInfo) do
-                if v and ArcCW.AttachmentTable[v] then
-                    finalTbl.text = finalTbl.text .. (comma and ", " or "") .. ArcCW.AttachmentTable[v].PrintName
-                    comma = true
-                end
-            end
-            finalTbl.text = finalTbl.text .. "."
-            processed.arccw_atts = finalTbl
-        end
-
-        -- Buckshot kill info
-        if bit.band(raw.dmg, DMG_BUCKSHOT) == DMG_BUCKSHOT then
-            processed.dmg.text = LANG.GetTranslation("search_dmg_buckshot")
-            processed.dmg.img = "arccw/ttticons/kill_buckshot.png"
-        end
-    end)
-
 end
