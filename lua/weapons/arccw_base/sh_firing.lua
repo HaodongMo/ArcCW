@@ -508,12 +508,15 @@ function SWEP:GetDispersion()
 
     local hip = delta * self:GetBuff_Mult("Mult_HipDispersion") * self.HipDispersion
 
+
     if self:InBipod() then
         hip = hip * (self:GetBuff_Mult("Mult_BipodDispersion") or 0.1)
     end
 
-    if self:GetState() == ArcCW.STATE_SIGHTS then
+    if self:GetState() == ArcCW.STATE_SIGHTS and delta <= 0.1 then
         hip = self.SightsDispersion * self:GetBuff_Mult("Mult_SightsDispersion")
+    elseif self:GetState() != ArcCW.STATE_SIGHTS then
+        hip = self:GetBuff_Mult("Mult_HipDispersion") * self.HipDispersion
     end
 
     local spd = self:GetOwner():GetAbsVelocity():Length()
@@ -524,6 +527,7 @@ function SWEP:GetDispersion()
 
     hip = hip + (spd * self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
 
+    print(hip)
     return hip
 end
 

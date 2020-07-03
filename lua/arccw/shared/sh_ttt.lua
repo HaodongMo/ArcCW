@@ -98,6 +98,7 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
                 wep.Kind = WEAPON_PISTOL
             elseif wep.Slot == 2 or wep.Slot == 3 then
                 -- primaries
+                wep.Slot = 2
                 wep.Kind = WEAPON_HEAVY
             else
                 -- weird slots, let's assume they're a main weapon
