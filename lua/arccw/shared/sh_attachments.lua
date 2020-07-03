@@ -6,9 +6,10 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot)
     -- Followed by convar
     if !GetConVar("arccw_enable_customization"):GetBool() and !ply.ArcCW_AllowCustomize then return false end
     if engine.ActiveGamemode() == "terrortown" then
-        local mode = GetConVar("arccw_ttt_nocustomize"):GetInt()
+        local mode = GetConVar("arccw_ttt_customizemode"):GetInt()
         if mode == 1 and !ply.ArcCW_AllowCustomize then return false
-        elseif mode == 2 and !ply.ArcCW_AllowCustomize and GetRoundState() ~= ROUND_ACTIVE then return false end
+        elseif mode == 2 and !ply.ArcCW_AllowCustomize and GetRoundState() == ROUND_ACTIVE then return false
+        elseif mode == 3 and !ply.ArcCW_AllowCustomize and !ply:IsActiveTraitor() and !ply:IsActiveDetective() then return false end
     end
 
     -- Allow hooks to block attachment usage as well
@@ -23,9 +24,10 @@ function ArcCW:PlayerCanDetach(ply, wep, attname, slot)
 
     if !GetConVar("arccw_enable_customization"):GetBool() and !ply.ArcCW_AllowCustomize then return false end
     if engine.ActiveGamemode() == "terrortown" then
-        local mode = GetConVar("arccw_ttt_nocustomize"):GetInt()
+        local mode = GetConVar("arccw_ttt_customizemode"):GetInt()
         if mode == 1 and !ply.ArcCW_AllowCustomize then return false
-        elseif mode == 2 and !ply.ArcCW_AllowCustomize and GetRoundState() ~= ROUND_ACTIVE then return false end
+        elseif mode == 2 and !ply.ArcCW_AllowCustomize and GetRoundState() == ROUND_ACTIVE then return false
+        elseif mode == 3 and !ply.ArcCW_AllowCustomize and !ply:IsActiveTraitor() and !ply:IsActiveDetective() then return false end
     end
 
     local ret = hook.Run("ArcCW_PlayerCanDetach", ply, wep, attname, slot) or true
