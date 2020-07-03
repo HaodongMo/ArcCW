@@ -506,28 +506,31 @@ end
 function SWEP:GetDispersion()
     local delta = self:GetSightDelta()
 
+    -- This number now only applies when partially scoping in
+    -- If you unscope partway through, GetSightDelta treats your progress as zero,
+    -- effectively giving you a window to "quickscope". None of that!
     local hip = delta * self:GetBuff_Mult("Mult_HipDispersion") * self.HipDispersion
 
-
-    if self:InBipod() then
-        hip = hip * (self:GetBuff_Mult("Mult_BipodDispersion") or 0.1)
-    end
-
-    if self:GetState() == ArcCW.STATE_SIGHTS and delta <= 0.1 then
+    if self:GetState() == ArcCW.STATE_SIGHTS and delta <= 0 then
         hip = self.SightsDispersion * self:GetBuff_Mult("Mult_SightsDispersion")
-    elseif self:GetState() != ArcCW.STATE_SIGHTS then
+    elseif self:GetState() != ArcCW.STATE_SIGHTS then -- Ignore delta when zooming out
         hip = self:GetBuff_Mult("Mult_HipDispersion") * self.HipDispersion
     end
 
+    -- Move Dispersion
     local spd = self:GetOwner():GetAbsVelocity():Length()
     local maxspeed = self:GetOwner():GetWalkSpeed() * self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
     if self:GetState() == ArcCW.STATE_SIGHTS then
         maxspeed = maxspeed * self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult")
     end
-
     spd = math.Clamp(spd / maxspeed, 0, 2)
-
     hip = hip + (spd * self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
+
+    -- Bipod
+    if self:InBipod() then
+        hip = hip * (self:GetBuff_Mult("Mult_BipodDispersion") or 0.1)
+    end
+
     return hip
 end
 
