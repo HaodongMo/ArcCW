@@ -76,7 +76,7 @@ local function CreateInfoBox(t)
     label:DockMargin(ScreenScale(4), ScreenScale(2), ScreenScale(4), ScreenScale(2))
     label:SetTextColor(Color(255,255,255,255))
     label:SetFont("ArcCW_12")
-    label:SetText("ArcCW Current Config")
+    label:SetText("ArcCW Configuration")
 
     if GetConVar("arccw_ttt_replace"):GetBool() then
         AddLine(infoBox, "Auto-replace TTT weapons")

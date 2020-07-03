@@ -108,7 +108,7 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
 
         local class = wep.ClassName
         local path = "arccw/weaponicons/" .. class
-        local path2 = "arccw/ttticons/" .. class
+        local path2 = "arccw/ttticons/" .. class .. ".png"
         local path3 = "vgui/ttt/" .. class
         local mat2 = Material(path2)
 
