@@ -150,10 +150,6 @@ function SWEP:Think()
 
         self:GetOwner():SetEyeAngles(newang)
 
-        for i = 1, vm:GetBoneCount() do
-            vm:ManipulateBoneScale(i, Vector(1, 1, 1) )
-        end
-
         local rpb = self.RecoilPunchBack
         local rps = self.RecoilPunchSide
         local rpu = self.RecoilPunchUp
@@ -170,46 +166,52 @@ function SWEP:Think()
             self.RecoilPunchUp = math.Approach(rpu, 0, ft * rpu * 5)
         end
 
-        local vec1 = Vector(1, 1, 1)
-        local vec0 = vec1 * 0
+        if IsValid(vm) then
+            local vec1 = Vector(1, 1, 1)
+            local vec0 = vec1 * 0
 
-        for i, k in pairs(self.CaseBones or {}) do
-            if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
-
-            if !bone then continue end
-
-            vm:ManipulateBoneScale(bone, vec0)
-        end
-
-        for i, k in pairs(self.BulletBones or {}) do
-            if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
-
-            if !bone then continue end
-
-            vm:ManipulateBoneScale(bone, vec0)
-        end
-
-        for i, k in pairs(self.CaseBones or {}) do
-            if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
-
-            if !bone then continue end
-
-            if self:GetVisualClip() >= i then
-            vm:ManipulateBoneScale(bone, vec1)
+            for i = 1, vm:GetBoneCount() do
+                vm:ManipulateBoneScale(i, vec1 )
             end
-        end
 
-        for i, k in pairs(self.BulletBones or {}) do
-            if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
+            for i, k in pairs(self.CaseBones or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
 
-            if !bone then continue end
+                if !bone then continue end
 
-            if self:GetVisualBullets() >= i then
-            vm:ManipulateBoneScale(bone, vec1)
+                vm:ManipulateBoneScale(bone, vec0)
+            end
+
+            for i, k in pairs(self.BulletBones or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                vm:ManipulateBoneScale(bone, vec0)
+            end
+
+            for i, k in pairs(self.CaseBones or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualClip() >= i then
+                vm:ManipulateBoneScale(bone, vec1)
+                end
+            end
+
+            for i, k in pairs(self.BulletBones or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualBullets() >= i then
+                vm:ManipulateBoneScale(bone, vec1)
+                end
             end
         end
     end
