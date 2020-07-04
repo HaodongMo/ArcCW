@@ -838,6 +838,19 @@ function SWEP:AdjustAtts()
                 self:GetOwner():GiveAmmo(diff, self.Primary.Ammo, true)
             end
         end
+    else
+        local se = self:GetBuff_Override("Override_ShootEntity")
+        if se then
+            local path = "arccw/weaponicons/" .. self:GetClass()
+            local mat = Material(path)
+
+            if !mat:IsError() then
+                local tex = mat:GetTexture("$basetexture")
+                local texpath = tex:GetName()
+
+                killicon.Add(se, texpath, Color(255, 255, 255))
+            end
+        end
     end
 
     self:RecalcAllBuffs()
