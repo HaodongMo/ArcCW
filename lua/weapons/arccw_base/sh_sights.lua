@@ -58,7 +58,7 @@ SWEP.LastEnterSightTime = 0
 SWEP.LastExitSightTime = 0
 
 function SWEP:EnterSights()
-    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+    -- if !game.SinglePlayer() and IsFirstTimePredicted() then return end
     local asight = self:GetActiveSights()
     if !asight then return end
     if self:GetState() != ArcCW.STATE_IDLE then return end
@@ -79,7 +79,7 @@ function SWEP:EnterSights()
 
     self:EmitSound(asight.SwitchToSound or "weapons/arccw/movement1.wav", 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
 
-    self.LastEnterSightTime = CurTime()
+    self.LastEnterSightTime = UnPredictedCurTime()
 
     if self.Animations.enter_sight then
         self:PlayAnimation("enter_sight", self:GetSightTime(), true, nil, nil, nil, false)
@@ -108,7 +108,7 @@ function SWEP:ExitSights()
 
     self:EmitSound(asight.SwitchFromSound or "weapons/arccw/movement1.wav", 75, math.Rand(80, 90), 0.5, CHAN_VOICE2)
 
-    self.LastExitSightTime = CurTime()
+    self.LastExitSightTime = UnPredictedCurTime()
 
     if self.Animations.exit_sight then
         self:PlayAnimation("exit_sight", self:GetSightTime())

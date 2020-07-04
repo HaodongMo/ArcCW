@@ -6,6 +6,8 @@ function SWEP:Reload()
     if self:GetNextPrimaryFire() >= CurTime() then return end
     if self:GetNextSecondaryFire() > CurTime() then return end
 
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
     if self.Throwing then return end
     if self.PrimaryBash then return end
 
@@ -164,6 +166,8 @@ end
 
 function SWEP:ReloadInsert(empty)
     local total = self:GetCapacity()
+
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     if !empty then
         total = total + (self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize)

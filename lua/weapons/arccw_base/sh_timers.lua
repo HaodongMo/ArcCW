@@ -3,10 +3,10 @@ function SWEP:InitTimers()
 end
 
 function SWEP:SetTimer(time, callback, id)
-    -- if !IsFirstTimePredicted() then return end
+    if !IsFirstTimePredicted() then return end
     -- if time < 0 then return end
     id = id or ""
-    table.insert(self.ActiveTimers, {time + CurTime(), id, callback})
+    table.insert(self.ActiveTimers, {time + UnPredictedCurTime(), id, callback})
 end
 
 function SWEP:TimerExists(id)
@@ -35,8 +35,14 @@ function SWEP:KillTimers()
     self.ActiveTimers = {}
 end
 
+local tick = 0
+
 function SWEP:ProcessTimers()
-    local ct = CurTime()
+    local ct = UnPredictedCurTime()
+
+    if CLIENT then
+        if ct == tick then return end
+    end
 
     if !self.ActiveTimers then
         self:InitTimers()
