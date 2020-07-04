@@ -41,7 +41,7 @@ function SWEP:DoLHIKAnimation(key, time)
     if !time then time = lhik_model:SequenceDuration(seq) end
 
     self.LHIKAnimation = seq
-    self.LHIKAnimationStart = CurTime()
+    self.LHIKAnimationStart = UnPredictedCurTime()
     self.LHIKAnimationTime = time
 
     self.LHIKAnimation_IsIdle = false
@@ -57,7 +57,7 @@ SWEP.LHIKDeltaAng = {}
 SWEP.ViewModel_Hit = Vector(0, 0, 0)
 
 function SWEP:GetLHIKAnim()
-    local cyc = (CurTime() - self.LHIKAnimationStart) / self.LHIKAnimationTime
+    local cyc = (UnPredictedCurTime() - self.LHIKAnimationStart) / self.LHIKAnimationTime
 
     if cyc > 1 then return nil end
     if self.LHIKAnimation_IsIdle then return nil end
@@ -91,12 +91,12 @@ function SWEP:DoLHIK()
     if self.LHIKTimeline then
         local tl = self.LHIKTimeline
 
-        if tl[4] <= CurTime() then
+        if tl[4] <= UnPredictedCurTime() then
             -- it's over
             delta = 1
-        elseif tl[3] <= CurTime() then
+        elseif tl[3] <= UnPredictedCurTime() then
             -- transition back to 1
-            delta = (CurTime() - tl[3]) / (tl[4] - tl[3])
+            delta = (UnPredictedCurTime() - tl[3]) / (tl[4] - tl[3])
             delta = qerp(delta, 0, 1)
 
             if lhik_model and IsValid(lhik_model) then
@@ -113,12 +113,12 @@ function SWEP:DoLHIK()
                     lhik_model:SetCycle(delta)
                 end
             end
-        elseif tl[2] <= CurTime() then
+        elseif tl[2] <= UnPredictedCurTime() then
             -- hold 0
             delta = 0
-        elseif tl[1] <= CurTime() then
+        elseif tl[1] <= UnPredictedCurTime() then
             -- transition to 0
-            delta = (CurTime() - tl[1]) / (tl[2] - tl[1])
+            delta = (UnPredictedCurTime() - tl[1]) / (tl[2] - tl[1])
             delta = qerp(delta, 1, 0)
 
             if lhik_model and IsValid(lhik_model) then
@@ -166,7 +166,7 @@ function SWEP:DoLHIK()
 
     lhik_model:SetupBones()
 
-    local cyc = (CurTime() - self.LHIKAnimationStart) / self.LHIKAnimationTime
+    local cyc = (UnPredictedCurTime() - self.LHIKAnimationStart) / self.LHIKAnimationTime
 
     if self.LHIKAnimation and cyc < 1 then
         lhik_model:SetSequence(self.LHIKAnimation)

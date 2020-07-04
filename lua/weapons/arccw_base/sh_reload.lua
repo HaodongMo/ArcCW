@@ -6,6 +6,8 @@ function SWEP:Reload()
     if self:GetNextPrimaryFire() >= CurTime() then return end
     if self:GetNextSecondaryFire() > CurTime() then return end
 
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
     if self.Throwing then return end
     if self.PrimaryBash then return end
 
@@ -90,6 +92,9 @@ function SWEP:Reload()
         self:SetTimer(self:GetAnimKeyTime(anim) * mult,
         function()
             self:SetNWBool("reloading", false)
+            if self:GetOwner():KeyDown(IN_ATTACK2) then
+                self:EnterSights()
+            end
         end)
         self.CheckpointAnimation = anim
         self.CheckpointTime = 0
@@ -165,6 +170,8 @@ end
 function SWEP:ReloadInsert(empty)
     local total = self:GetCapacity()
 
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
     if !empty then
         total = total + (self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize)
     end
@@ -191,6 +198,9 @@ function SWEP:ReloadInsert(empty)
             self:SetTimer(self:GetAnimKeyTime(ret) * mult,
             function()
                 self:SetNWBool("reloading", false)
+                if self:GetOwner():KeyDown(IN_ATTACK2) then
+                    self:EnterSights()
+                end
             end)
 
         self:SetNWBool("reqend", false)
