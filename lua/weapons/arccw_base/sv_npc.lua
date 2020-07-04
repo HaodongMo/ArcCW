@@ -167,6 +167,7 @@ function SWEP:NPC_Shoot()
 
     local sp = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
     local spo = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun
+    local se = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
 
     if sp or spo then
         btabl = self:GetBuff_Hook("Hook_FireBullets", btabl)
