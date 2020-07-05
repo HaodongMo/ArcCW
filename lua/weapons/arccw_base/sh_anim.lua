@@ -141,9 +141,9 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         seq = vm:LookupSequence(seq)
     end
 
-    -- if !game.SinglePlayer() and CLIENT then
+    if seq then --!game.SinglePlayer() and CLIENT
         vm:SendViewModelMatchingSequence(seq)
-    -- end
+    end
 
     local framestorealtime = 1
 
