@@ -6,6 +6,7 @@ hook.Add( "PopulateToolMenu", "ArcCW_Options", function()
     spawnmenu.AddToolMenuOption( "Options", "ArcCW", "ArcCW_Options_NPC", "NPCs", "", "", ArcCW_Options_NPC)
     spawnmenu.AddToolMenuOption( "Options", "ArcCW", "ArcCW_Options_Atts", "Attachments", "", "", ArcCW_Options_Atts)
     spawnmenu.AddToolMenuOption( "Options", "ArcCW", "ArcCW_Options_Ammo", "Ammo", "", "", ArcCW_Options_Ammo)
+    spawnmenu.AddToolMenuOption( "Options", "ArcCW", "ArcCW_Options_Crosshair", "Crosshair", "", "", ArcCW_Options_Crosshair)
 end )
 
 function ArcCW_Options_Ammo( CPanel )
@@ -25,7 +26,6 @@ function ArcCW_Options_HUD( CPanel )
     CPanel:AddControl("Header", {Description = "All options in this menu can be customized by players, and do not need admin privileges."})
     CPanel:AddControl("Header", {Description = ""})
     CPanel:AddControl("Checkbox", {Label = "3D Alt HUD", Command = "arccw_hud_3dfun" })
-    CPanel:AddControl("Checkbox", {Label = "Show Crosshair", Command = "arccw_crosshair" })
     CPanel:AddControl("Checkbox", {Label = "Show Health", Command = "arccw_hud_showhealth" })
     CPanel:AddControl("Checkbox", {Label = "Show Ammo", Command = "arccw_hud_showammo" })
     CPanel:AddControl("Checkbox", {Label = "Hide Unowned Attachments", Command = "arccw_attinv_hideunowned" })
@@ -56,6 +56,33 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Slider", {Label = "Viewmodel Forward", Command = "arccw_vm_forward", Min = -5, Max = 5, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Viewmodel Up", Command = "arccw_vm_up", Min = -5, Max = 5, Type = "float" })
     CPanel:AddControl("Header", {Description = "  Warning! Viewmodel offset settings may cause clipping or other undesired effects!"})
+end
+
+function ArcCW_Options_Crosshair( CPanel )
+    CPanel:AddControl("Header", {Description = "All options in this menu can be customized by players, and do not need admin privileges."})
+    CPanel:AddControl("Header", {Description = ""})
+    CPanel:AddControl("Checkbox", {Label = "Show Crosshair", Command = "arccw_crosshair" })
+    CPanel:AddControl("Slider", {Label = "Crosshair Length", Command = "arccw_crosshair_length", Min = 0, Max = 10, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Crosshair Thickness", Command = "arccw_crosshair_thickness", Min = 0, Max = 4, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Crosshair Gap Scale", Command = "arccw_crosshair_gap", Min = 0, Max = 2, Type = "float" })
+    CPanel:AddControl("Checkbox", {Label = "Show Center Dot", Command = "arccw_crosshair_dot" })
+    CPanel:AddControl("Checkbox", {Label = "Use Shotgun Prongs", Command = "arccw_crosshair_shotgun" })
+    CPanel:AddControl("Checkbox", {Label = "Show Equipment Prongs", Command = "arccw_crosshair_equip" })
+    CPanel:AddControl("color", {Label = "Crosshair Color",
+        Red = "arccw_crosshair_clr_r",
+        Green = "arccw_crosshair_clr_g",
+        Blue = "arccw_crosshair_clr_b",
+        Alpha = "arccw_crosshair_clr_a"
+    })
+
+    CPanel:AddControl("Slider", {Label = "Outline Size", Command = "arccw_crosshair_outline", Min = 0, Max = 4, Type = "float" })
+    CPanel:AddControl("color", {Label = "Outline Color",
+        Red = "arccw_crosshair_outline_r",
+        Green = "arccw_crosshair_outline_g",
+        Blue = "arccw_crosshair_outline_b",
+        Alpha = "arccw_crosshair_outline_a"
+    })
+
     CPanel:AddControl("color", {Label = "Sight Color",
         Red = "arccw_scope_r",
         Green = "arccw_scope_g",

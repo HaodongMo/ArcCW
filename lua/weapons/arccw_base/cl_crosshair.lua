@@ -24,7 +24,13 @@ function SWEP:DoDrawCrosshair(x, y)
     local prong_right = true
     local prong_down = true
 
-    local clr = Color(255, 255, 255)
+    local prong_len = GetConVar("arccw_crosshair_length"):GetFloat()
+    local prong_wid = GetConVar("arccw_crosshair_thickness"):GetFloat()
+    local prong_out = GetConVar("arccw_crosshair_outline"):GetInt()
+
+    local clr = Color(GetConVar("arccw_crosshair_clr_r"):GetInt(),
+            GetConVar("arccw_crosshair_clr_g"):GetInt(),
+            GetConVar("arccw_crosshair_clr_b"):GetInt())
     if GetConVar("arccw_ttt_rolecrosshair") and GetConVar("arccw_ttt_rolecrosshair"):GetBool() then
         if LocalPlayer():IsActiveTraitor() then
             clr = Color(255, 50, 50)
@@ -34,12 +40,19 @@ function SWEP:DoDrawCrosshair(x, y)
             clr = Color(50, 255, 50)
         end
     end
+    clr.a = GetConVar("arccw_crosshair_clr_a"):GetInt()
 
-    local gap = ScreenScale(24) * math.Clamp(self:GetDispersion() / 1000, 0.1, 100)
+    local outlineClr = Color(GetConVar("arccw_crosshair_outline_r"):GetInt(),
+            GetConVar("arccw_crosshair_outline_g"):GetInt(),
+            GetConVar("arccw_crosshair_outline_b"):GetInt(),
+            GetConVar("arccw_crosshair_outline_a"):GetInt())
 
+    local gap = ScreenScale(24) * math.Clamp(self:GetDispersion() / 1000, 0.1, 100) * GetConVar("arccw_crosshair_gap"):GetFloat()
     gap = gap + ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1)
 
-    local prong = ScreenScale(4)
+    local prong = ScreenScale(prong_len)
+    local p_w = ScreenScale(prong_wid)
+    local p_w2 = p_w + prong_out
 
     cw = cw or self
 
@@ -57,30 +70,27 @@ function SWEP:DoDrawCrosshair(x, y)
         delta = math.Approach(delta, 0, RealFrameTime() * 1 / st)
     end
 
-    local p_w = ScreenScale(1)
-    local p_w2 = p_w + 2
-
-    if self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity then
+    if GetConVar("arccw_crosshair_equip"):GetBool() and (self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity) then
         gap = gap * 1.5
-        prong = ScreenScale(1)
-        p_w = ScreenScale(1)
-        p_w2 = p_w + 2
+        prong = ScreenScale(prong_wid)
+        p_w = ScreenScale(prong_wid)
+        p_w2 = p_w + prong_out
     end
 
-    if self.PrimaryBash then
+    if GetConVar("arccw_crosshair_equip"):GetBool() and self.PrimaryBash then
         dot = false
         gap = gap * 2
-        prong = ScreenScale(1)
-        p_w = ScreenScale(1)
-        p_w2 = p_w + 2
+        prong = ScreenScale(prong_wid)
+        p_w = ScreenScale(prong_wid)
+        p_w2 = p_w + prong_out
     end
 
-    if dot then
+    if GetConVar("arccw_crosshair_dot"):GetBool() and dot then
 
-        surface.SetDrawColor(0, 0, 0, 150 * delta)
+        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
         surface.DrawRect(x - p_w2 / 2, y - p_w2 / 2, p_w2, p_w2)
 
-        surface.SetDrawColor(clr.r, clr.g, clr.b, 255 * delta)
+        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
         surface.DrawRect(x - p_w / 2, y - p_w / 2, p_w, p_w)
 
     end
@@ -98,35 +108,35 @@ function SWEP:DoDrawCrosshair(x, y)
 
     gap = size
 
-    if num > 1 then
+    if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
         dot = false
         gap = gap * 2.5
-        prong = ScreenScale(1)
-        p_w = ScreenScale(10)
-        p_w2 = p_w + 2
+        prong = ScreenScale(prong_wid)
+        p_w = ScreenScale(prong_len)
+        p_w2 = p_w + prong_out
     end
 
-    local prong2 = prong + 2
+    local prong2 = prong + prong_out
 
-    surface.SetDrawColor(0, 0, 0, 150 * delta)
+    surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
 
     if prong_left then
-        surface.DrawRect(x - gap - prong2 + 1, y - p_w2 / 2, prong2, p_w2)
+        surface.DrawRect(x - gap - prong2 + prong_out / 2, y - p_w2 / 2, prong2, p_w2)
     end
 
     if prong_right then
-        surface.DrawRect(x + gap - 1, y - p_w2 / 2, prong2, p_w2)
+        surface.DrawRect(x + gap - prong_out / 2, y - p_w2 / 2, prong2, p_w2)
     end
 
     if prong_top then
-    surface.DrawRect(x - p_w2 / 2, y - gap - prong2 + 1, p_w2, prong2)
+    surface.DrawRect(x - p_w2 / 2, y - gap - prong2 + prong_out / 2, p_w2, prong2)
     end
 
     if prong_down then
-        surface.DrawRect(x - p_w2 / 2, y + gap - 1, p_w2, prong2)
+        surface.DrawRect(x - p_w2 / 2, y + gap - prong_out / 2, p_w2, prong2)
     end
 
-    surface.SetDrawColor(clr.r, clr.g, clr.b, 255 * delta)
+    surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
 
     if prong_left then
         surface.DrawRect(x - gap - prong, y - p_w / 2, prong, p_w)

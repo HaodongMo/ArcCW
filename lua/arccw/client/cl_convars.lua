@@ -2,6 +2,25 @@
 
 CreateClientConVar("arccw_crosshair", "1")
 
+CreateClientConVar("arccw_crosshair_clr_r", "255")
+CreateClientConVar("arccw_crosshair_clr_g", "255")
+CreateClientConVar("arccw_crosshair_clr_b", "255")
+CreateClientConVar("arccw_crosshair_clr_a", "255")
+
+CreateClientConVar("arccw_crosshair_length", "4")
+CreateClientConVar("arccw_crosshair_thickness", "1")
+CreateClientConVar("arccw_crosshair_gap", "1")
+
+CreateClientConVar("arccw_crosshair_outline", "2")
+CreateClientConVar("arccw_crosshair_outline_r", "0")
+CreateClientConVar("arccw_crosshair_outline_g", "0")
+CreateClientConVar("arccw_crosshair_outline_b", "0")
+CreateClientConVar("arccw_crosshair_outline_a", "255")
+
+CreateClientConVar("arccw_crosshair_dot", "1")
+CreateClientConVar("arccw_crosshair_shotgun", "1")
+CreateClientConVar("arccw_crosshair_equip", "1")
+
 CreateClientConVar("arccw_attinv_simpleproscons", "0")
 CreateClientConVar("arccw_attinv_onlyinspect", "0")
 CreateClientConVar("arccw_attinv_hideunowned", "0")
