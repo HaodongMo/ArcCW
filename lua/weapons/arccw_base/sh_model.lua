@@ -85,7 +85,7 @@ function SWEP:AddElement(elementname, wm)
         model:EnableMatrix("RenderMultiply", scale)
         model:SetupBones()
         element.Model = model
-        element.RenderFunc = i.RenderFunc
+        element.DrawFunc = i.DrawFunc
         element.WM = wm or false
         element.Bone = i.Bone
         element.NoDraw = i.NoDraw or false
@@ -284,7 +284,7 @@ function SWEP:SetupModel(wm)
         model:SetupBones()
         model:EnableMatrix("RenderMultiply", scale)
         element.Model = model
-        element.RenderFunc = atttbl.RenderFunc
+        element.DrawFunc = atttbl.DrawFunc
         element.WM = wm or false
         element.Bone = repbone or k.Bone
         element.NoDraw = atttbl.NoDraw or false
@@ -308,6 +308,39 @@ function SWEP:SetupModel(wm)
         end
 
         table.insert(elements, element)
+
+        if atttbl.Charm and atttbl.CharmModel then
+            local charmmodel = ClientsideModel(atttbl.CharmModel)
+
+            local charmscale = Matrix()
+
+            if wm then
+                charmscale:Scale((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+            else
+                charmscale:Scale((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+            end
+
+            charmscale:Scale(atttbl.CharmScale or Vector(1, 1, 1))
+
+            if charmmodel then
+                charmmodel:SetNoDraw(ArcCW.NoDraw)
+                charmmodel:DrawShadow(true)
+                charmmodel:SetupBones()
+                charmmodel:EnableMatrix("RenderMultiply", charmscale)
+                charmmodel:SetSkin(atttbl.CharmSkin or 0)
+                charmmodel:SetBodyGroups(atttbl.CharmBodygroups or "")
+
+                local charmelement = {}
+                charmelement.Model = charmmodel
+                charmelement.CharmOffset = atttbl.CharmOffset or Vector(0, 0, 0)
+                charmelement.CharmAngle = atttbl.CharmAngle or Angle(0, 0, 0)
+                charmelement.CharmAtt = atttbl.CharmAtt or "charm"
+                charmelement.CharmParent = element
+                charmelement.SubModel = true
+
+                table.insert(elements, charmelement)
+            end
+        end
 
         if atttbl.IsMuzzleDevice or atttbl.UBGL then
             local hspmodel = ClientsideModel(atttbl.Model)
@@ -543,92 +576,118 @@ function SWEP:DrawCustomModel(wm)
             bonename = k.WMBone or "ValveBiped.Bip01_R_Hand"
         end
 
-        if !bonename then continue end
+        if k.SubModel then bonename = nil end
 
         local bpos, bang
-
-        local boneindex = vm:LookupBone(bonename)
-
-        if selfmode then
-            boneindex = 0
-        end
-
-        if !boneindex then continue end
-
-        bpos, bang = vm:GetBonePosition(boneindex)
-
-        if bpos == vm:GetPos() then
-            bpos = vm:GetBoneMatrix(boneindex):GetTranslation()
-            bang = vm:GetBoneMatrix(boneindex):GetAngles()
-        end
-
         local offset = k.OffsetPos
 
-        if k.Slot then
+        if bonename then
+            local boneindex = vm:LookupBone(bonename)
 
-            local attslot = self.Attachments[k.Slot]
-
-            local delta = attslot.SlidePos or 0.5
-
-            local vmelemod = nil
-            local wmelemod = nil
-            local slidemod = nil
-
-            for _, e in pairs(self:GetActiveElements()) do
-                local ele = self.AttachmentElements[e]
-
-                if !ele then continue end
-
-                if ((ele.AttPosMods or {})[k.Slot] or {}).vpos then
-                    vmelemod = ele.AttPosMods[k.Slot].vpos
-                end
-
-                if ((ele.AttPosMods or {})[k.Slot] or {}).wpos then
-                    wmelemod = ele.AttPosMods[k.Slot].wpos
-                end
-
-                if ((ele.AttPosMods or {})[k.Slot] or {}).slide then
-                    slidemod = ele.AttPosMods[k.Slot].slide
-                end
+            if selfmode then
+                boneindex = 0
             end
 
-            if wm then
-                offset = wmelemod or (attslot.Offset or {}).wpos or Vector(0, 0, 0)
+            if !boneindex then continue end
 
-                if attslot.SlideAmount then
-                    offset = LerpVector(delta, (slidemod or attslot.SlideAmount).wmin or Vector(0, 0, 0), (slidemod or attslot.SlideAmount).wmax or Vector(0, 0, 0))
+            bpos, bang = vm:GetBonePosition(boneindex)
+
+            if bpos == vm:GetPos() then
+                bpos = vm:GetBoneMatrix(boneindex):GetTranslation()
+                bang = vm:GetBoneMatrix(boneindex):GetAngles()
+            end
+
+            if k.Slot then
+
+                local attslot = self.Attachments[k.Slot]
+
+                local delta = attslot.SlidePos or 0.5
+
+                local vmelemod = nil
+                local wmelemod = nil
+                local slidemod = nil
+
+                for _, e in pairs(self:GetActiveElements()) do
+                    local ele = self.AttachmentElements[e]
+
+                    if !ele then continue end
+
+                    if ((ele.AttPosMods or {})[k.Slot] or {}).vpos then
+                        vmelemod = ele.AttPosMods[k.Slot].vpos
+                    end
+
+                    if ((ele.AttPosMods or {})[k.Slot] or {}).wpos then
+                        wmelemod = ele.AttPosMods[k.Slot].wpos
+                    end
+
+                    if ((ele.AttPosMods or {})[k.Slot] or {}).slide then
+                        slidemod = ele.AttPosMods[k.Slot].slide
+                    end
                 end
-            else
-                offset = vmelemod or (attslot.Offset or {}).vpos or Vector(0, 0, 0)
 
-                if attslot.SlideAmount then
-                    offset = LerpVector(delta, (slidemod or attslot.SlideAmount).vmin or Vector(0, 0, 0), (slidemod or attslot.SlideAmount).vmax or Vector(0, 0, 0))
+                if wm then
+                    offset = wmelemod or (attslot.Offset or {}).wpos or Vector(0, 0, 0)
+
+                    if attslot.SlideAmount then
+                        offset = LerpVector(delta, (slidemod or attslot.SlideAmount).wmin or Vector(0, 0, 0), (slidemod or attslot.SlideAmount).wmax or Vector(0, 0, 0))
+                    end
+                else
+                    offset = vmelemod or (attslot.Offset or {}).vpos or Vector(0, 0, 0)
+
+                    if attslot.SlideAmount then
+                        offset = LerpVector(delta, (slidemod or attslot.SlideAmount).vmin or Vector(0, 0, 0), (slidemod or attslot.SlideAmount).vmax or Vector(0, 0, 0))
+                    end
+
+                    attslot.VMOffsetPos = offset
                 end
 
-                attslot.VMOffsetPos = offset
             end
 
         end
 
-        local pos = offset or Vector(0, 0, 0)
-        local ang = k.OffsetAng or Angle(0, 0, 0)
+        local apos, aang
 
-        local moffset = (k.ModelOffset or Vector(0, 0, 0))
+        if bang and bpos then
 
-        apos = bpos + bang:Forward() * pos.x
-        apos = apos + bang:Right() * pos.y
-        apos = apos + bang:Up() * pos.z
+            local pos = offset or Vector(0, 0, 0)
+            local ang = k.OffsetAng or Angle(0, 0, 0)
 
-        local aang = Angle()
-        aang:Set(bang)
+            local moffset = (k.ModelOffset or Vector(0, 0, 0))
 
-        aang:RotateAroundAxis(aang:Right(), ang.p)
-        aang:RotateAroundAxis(aang:Up(), ang.y)
-        aang:RotateAroundAxis(aang:Forward(), ang.r)
+            apos = bpos + bang:Forward() * pos.x
+            apos = apos + bang:Right() * pos.y
+            apos = apos + bang:Up() * pos.z
 
-        apos = apos + aang:Forward() * moffset.x
-        apos = apos + aang:Right() * moffset.y
-        apos = apos + aang:Up() * moffset.z
+            aang = Angle()
+            aang:Set(bang)
+
+            aang:RotateAroundAxis(aang:Right(), ang.p)
+            aang:RotateAroundAxis(aang:Up(), ang.y)
+            aang:RotateAroundAxis(aang:Forward(), ang.r)
+
+            apos = apos + aang:Forward() * moffset.x
+            apos = apos + aang:Right() * moffset.y
+            apos = apos + aang:Up() * moffset.z
+
+        elseif k.CharmParent and IsValid(k.CharmParent.Model) then
+            local cm = k.CharmParent.Model
+            local boneindex = cm:LookupAttachment(k.CharmAtt)
+            local angpos = cm:GetAttachment(boneindex)
+            apos, aang = angpos.Pos, angpos.Ang
+
+            local pos = k.CharmOffset
+            local ang = k.CharmAngle
+
+            apos = apos + aang:Forward() * pos.x
+            apos = apos + aang:Right() * pos.y
+            apos = apos + aang:Up() * pos.z
+
+            aang:RotateAroundAxis(aang:Right(), ang.p)
+            aang:RotateAroundAxis(aang:Up(), ang.y)
+            aang:RotateAroundAxis(aang:Forward(), ang.r)
+        else
+            continue
+        end
 
         k.Model:SetPos(apos)
         k.Model:SetAngles(aang)

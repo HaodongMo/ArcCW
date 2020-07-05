@@ -30,6 +30,15 @@ att.ModelSkin = 0
 att.ModelScale = 1
 att.ModelOffset = Vector(0, 0, 0)
 att.ModelIsShield = false
+att.DrawFunc = function(self, element, wm) end
+
+att.Charm = false
+att.CharmBone = "Charm"
+att.CharmModel = ""
+att.CharmOffset = Vector(0, 0, 0)
+att.CharmScale = Vector(1, 1, 1)
+att.CharmSkin = 0
+att.CharmBodygroups = ""
 
 att.Breakable = false
 att.Health = 0 -- for shields
