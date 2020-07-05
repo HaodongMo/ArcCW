@@ -208,7 +208,7 @@ if SERVER then
 
         if self:Health() <= 0 or self.USED then return end
 
-        self:TakePhysicsDamage(dmginfo)
+        --self:TakePhysicsDamage(dmginfo)
         self:SetHealth(self:Health() - dmginfo:GetDamage())
 
         if self:Health() <= 0 then
