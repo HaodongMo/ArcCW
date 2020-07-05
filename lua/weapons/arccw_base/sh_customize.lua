@@ -526,61 +526,66 @@ function SWEP:CreateCustomizeHUD()
             end
         end
 
-        local triv_pros = vgui.Create("DLabel", atttrivia)
-        triv_pros:SetSize(barsize, ScreenScale(10))
-        triv_pros:SetText("")
-        triv_pros:Dock(TOP)
-        triv_pros.Paint = function(span, w, h)
-            surface.SetDrawColor(Color(0, 50, 0, 100))
-            surface.DrawRect(0, 0, w, h)
-
-            surface.SetTextColor(Color(125, 200, 125))
-            surface.SetFont("ArcCW_8")
-            surface.SetTextPos(smallgap, 0)
-            surface.DrawText("POSITIVES:")
-        end
-
         local pros, cons = ArcCW:GetProsCons(atttbl)
 
-        for _, i in pairs(pros) do
-            local triv_pro = vgui.Create("DLabel", atttrivia)
-            triv_pro:SetSize(barsize, ScreenScale(10))
-            triv_pro:SetText("")
-            triv_pro:Dock(TOP)
-            triv_pro.Paint = function(span, w, h)
+        if #pros > 0 then
 
-                surface.SetTextColor(Color(150, 225, 150))
+            local triv_pros = vgui.Create("DLabel", atttrivia)
+            triv_pros:SetSize(barsize, ScreenScale(10))
+            triv_pros:SetText("")
+            triv_pros:Dock(TOP)
+            triv_pros.Paint = function(span, w, h)
+                surface.SetDrawColor(Color(0, 50, 0, 100))
+                surface.DrawRect(0, 0, w, h)
+
+                surface.SetTextColor(Color(125, 200, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText(i)
+                surface.DrawText("POSITIVES:")
+            end
+
+            for _, i in pairs(pros) do
+                local triv_pro = vgui.Create("DLabel", atttrivia)
+                triv_pro:SetSize(barsize, ScreenScale(10))
+                triv_pro:SetText("")
+                triv_pro:Dock(TOP)
+                triv_pro.Paint = function(span, w, h)
+
+                    surface.SetTextColor(Color(150, 225, 150))
+                    surface.SetFont("ArcCW_8")
+                    surface.SetTextPos(smallgap, 0)
+                    surface.DrawText(i)
+                end
             end
         end
 
-        local triv_cons = vgui.Create("DLabel", atttrivia)
-        triv_cons:SetSize(barsize, ScreenScale(10))
-        triv_cons:SetText("")
-        triv_cons:Dock(TOP)
-        triv_cons.Paint = function(span, w, h)
-            surface.SetDrawColor(Color(50, 0, 0, 100))
-            surface.DrawRect(0, 0, w, h)
+        if #cons > 0 then
+            local triv_cons = vgui.Create("DLabel", atttrivia)
+            triv_cons:SetSize(barsize, ScreenScale(10))
+            triv_cons:SetText("")
+            triv_cons:Dock(TOP)
+            triv_cons.Paint = function(span, w, h)
+                surface.SetDrawColor(Color(50, 0, 0, 100))
+                surface.DrawRect(0, 0, w, h)
 
-            surface.SetTextColor(Color(200, 125, 125))
-            surface.SetFont("ArcCW_8")
-            surface.SetTextPos(smallgap, 0)
-            surface.DrawText("NEGATIVES:")
-        end
-
-        for _, i in pairs(cons) do
-            local triv_con = vgui.Create("DLabel", atttrivia)
-            triv_con:SetSize(barsize, ScreenScale(10))
-            triv_con:SetText("")
-            triv_con:Dock(TOP)
-            triv_con.Paint = function(span, w, h)
-
-                surface.SetTextColor(Color(225, 150, 150))
+                surface.SetTextColor(Color(200, 125, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText(i)
+                surface.DrawText("NEGATIVES:")
+            end
+
+            for _, i in pairs(cons) do
+                local triv_con = vgui.Create("DLabel", atttrivia)
+                triv_con:SetSize(barsize, ScreenScale(10))
+                triv_con:SetText("")
+                triv_con:Dock(TOP)
+                triv_con.Paint = function(span, w, h)
+
+                    surface.SetTextColor(Color(225, 150, 150))
+                    surface.SetFont("ArcCW_8")
+                    surface.SetTextPos(smallgap, 0)
+                    surface.DrawText(i)
+                end
             end
         end
     end
