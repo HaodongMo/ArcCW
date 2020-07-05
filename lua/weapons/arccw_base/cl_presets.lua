@@ -73,8 +73,6 @@ function SWEP:LoadPreset(filename)
 
         self:Attach(i, att, true)
 
-        print(slidepos)
-
         if slidepos != 0.5 then
             self.Attachments[i].SlidePos = slidepos
         end
@@ -83,6 +81,8 @@ function SWEP:LoadPreset(filename)
             self.SightMagnifications[i] = mag
         end
     end
+
+    self:SendAllDetails()
 
     f:Close()
 
