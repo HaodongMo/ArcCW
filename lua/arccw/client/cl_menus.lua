@@ -32,6 +32,7 @@ function ArcCW_Options_HUD( CPanel )
     CPanel:AddControl("Checkbox", {Label = "Grey Out Unowned Attachments", Command = "arccw_attinv_darkunowned" })
     CPanel:AddControl("Checkbox", {Label = "Hide Customization UI", Command = "arccw_attinv_onlyinspect" })
     CPanel:AddControl("Checkbox", {Label = "Simple Pros And Cons", Command = "arccw_attinv_simpleproscons" })
+    CPanel:AddControl("Checkbox", {Label = "Close menu on damage taken", Command = "arccw_attinv_closeonhurt" })
 end
 
 function ArcCW_Options_Client( CPanel )

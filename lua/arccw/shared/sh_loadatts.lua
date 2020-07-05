@@ -22,26 +22,24 @@ function ArcCW.LoadAttachmentType(att)
 
         att.ID = ArcCW.NumAttachments
 
-        if ArcCW.GenerateAttEntities then
-            if !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
-                local attent = {}
-                attent.Base = "arccw_att_base"
-                attent.Icon = att.Icon
-                attent.PrintName = att.PrintName or shortname
-                attent.Spawnable = att.Spawnable or true
-                attent.AdminOnly = att.AdminOnly or false
-                attent.Category = "ArcCW - Attachments"
-                attent.Model = att.DroppedModel or att.Model or "models/Items/BoxSRounds.mdl"
-                attent.GiveAttachments = {
-                    [att.ShortName] = 1
-                }
+        if ArcCW.GenerateAttEntities and !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
+            local attent = {}
+            attent.Base = "arccw_att_base"
+            attent.Icon = att.Icon
+            attent.PrintName = att.PrintName or shortname
+            attent.Spawnable = att.Spawnable or true
+            attent.AdminOnly = att.AdminOnly or false
+            attent.Category = "ArcCW - Attachments"
+            attent.Model = att.DroppedModel or att.Model or "models/Items/BoxSRounds.mdl"
+            attent.GiveAttachments = {
+                [att.ShortName] = 1
+            }
 
-                for i, k in pairs(att) do
-                    attent[i] = k
-                end
-
-                scripted_ents.Register( attent, "acwatt_" .. shortname )
+            for i, k in pairs(att) do
+                attent[i] = k
             end
+
+            scripted_ents.Register( attent, "acwatt_" .. shortname )
         end
 
         ArcCW.NumAttachments = ArcCW.NumAttachments + 1

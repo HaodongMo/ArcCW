@@ -1556,10 +1556,3 @@ function SWEP:CreateCustomizeHUD()
 end
 
 end
-
-if CLIENT then
-    net.Receive("arccw_togglecustomize", function()
-        if !LocalPlayer():GetActiveWeapon() or !LocalPlayer():GetActiveWeapon().ArcCW then return end
-        LocalPlayer():GetActiveWeapon():ToggleCustomizeHUD(net.ReadBool())
-    end)
-end

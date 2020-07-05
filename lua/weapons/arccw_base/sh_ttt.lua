@@ -41,6 +41,7 @@ function SWEP:PreDrop()
     net.Start("arccw_togglecustomize")
         net.WriteBool(false)
     net.Send(self:GetOwner())
+    self:ToggleCustomizeHUD(false)
 end
 
 function SWEP:DampenDrop()
