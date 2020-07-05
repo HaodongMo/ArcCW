@@ -67,7 +67,8 @@ function ArcCW_Options_Crosshair( CPanel )
     CPanel:AddControl("Slider", {Label = "Crosshair Gap Scale", Command = "arccw_crosshair_gap", Min = 0, Max = 2, Type = "float" })
     CPanel:AddControl("Checkbox", {Label = "Show Center Dot", Command = "arccw_crosshair_dot" })
     CPanel:AddControl("Checkbox", {Label = "Use Shotgun Prongs", Command = "arccw_crosshair_shotgun" })
-    CPanel:AddControl("Checkbox", {Label = "Show Equipment Prongs", Command = "arccw_crosshair_equip" })
+    CPanel:AddControl("Checkbox", {Label = "Use Equipment Prongs", Command = "arccw_crosshair_equip" })
+    CPanel:AddControl("Checkbox", {Label = "Static Crosshair", Command = "arccw_crosshair_static" })
     CPanel:AddControl("color", {Label = "Crosshair Color",
         Red = "arccw_crosshair_clr_r",
         Green = "arccw_crosshair_clr_g",

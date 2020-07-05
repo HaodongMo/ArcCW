@@ -47,7 +47,9 @@ function SWEP:DoDrawCrosshair(x, y)
             GetConVar("arccw_crosshair_outline_b"):GetInt(),
             GetConVar("arccw_crosshair_outline_a"):GetInt())
 
-    local gap = ScreenScale(24) * math.Clamp(self:GetDispersion() / 1000, 0.1, 100) * GetConVar("arccw_crosshair_gap"):GetFloat()
+    local gap = ScreenScale(24)
+            * (GetConVar("arccw_crosshair_static"):GetBool() and 0.25 or math.Clamp(self:GetDispersion() / 1000, 0.1, 100))
+            * GetConVar("arccw_crosshair_gap"):GetFloat()
     gap = gap + ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1)
 
     local prong = ScreenScale(prong_len)
