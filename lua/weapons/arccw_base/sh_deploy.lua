@@ -18,62 +18,66 @@ function SWEP:Deploy()
 
     self.BurstCount = 0
 
-    if self.CheckpointAnimation then
-        self:PlayAnimation(self.CheckpointAnimation, self:GetBuff_Mult("Mult_ReloadTime"), true, self.CheckpointTime, true)
-        self:ProceduralDraw()
-        self:SetNWBool("reloading", true)
+    -- Don't play anim if in vehicle. This can be caused by HL2 level changes
+    if !self:GetOwner():InVehicle() then
 
-        self:SetTimer((self:GetAnimKeyTime(self.CheckpointAnimation) * self:GetBuff_Mult("Mult_ReloadTime")) - self.CheckpointTime,
-        function()
-            self:SetNWBool("reloading", false)
-            self.CheckpointAnimation = nil
-            self.CheckpointTime = 0
-        end)
-    else
-        local prd = false
-
-        if self.Animations.ready and self.UnReady then
-            self:PlayAnimation("ready", 1, true, 0, true)
-            self.UnReady = false
-
+        if self.CheckpointAnimation then
+            self:PlayAnimation(self.CheckpointAnimation, self:GetBuff_Mult("Mult_ReloadTime"), true, self.CheckpointTime, true)
+            self:ProceduralDraw()
             self:SetNWBool("reloading", true)
 
-            self:SetTimer(self:GetAnimKeyTime("ready"),
+            self:SetTimer((self:GetAnimKeyTime(self.CheckpointAnimation) * self:GetBuff_Mult("Mult_ReloadTime")) - self.CheckpointTime,
             function()
                 self:SetNWBool("reloading", false)
+                self.CheckpointAnimation = nil
+                self.CheckpointTime = 0
             end)
-
-            prd = self.Animations.ready.ProcDraw
-
-            self:SetNWBool("reloading", true)
         else
-            if self.Animations.draw_empty and self:Clip1() == 0 then
-            self:PlayAnimation("draw_empty", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
+            local prd = false
 
-            self:SetNWBool("reloading", true)
+            if self.Animations.ready and self.UnReady then
+                self:PlayAnimation("ready", 1, true, 0, true)
+                self.UnReady = false
 
-            self:SetTimer(self:GetAnimKeyTime("draw_empty") * self:GetBuff_Mult("Mult_DrawTime"),
-            function()
+                self:SetNWBool("reloading", true)
+
+                self:SetTimer(self:GetAnimKeyTime("ready"),
+                function()
                     self:SetNWBool("reloading", false)
-            end)
+                end)
 
-            prd = self.Animations.draw_empty.ProcDraw
+                prd = self.Animations.ready.ProcDraw
+
+                self:SetNWBool("reloading", true)
             else
-            self:PlayAnimation("draw", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
+                if self.Animations.draw_empty and self:Clip1() == 0 then
+                self:PlayAnimation("draw_empty", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
 
-            self:SetNWBool("reloading", true)
+                self:SetNWBool("reloading", true)
 
-            self:SetTimer(self:GetAnimKeyTime("draw") * self:GetBuff_Mult("Mult_DrawTime"),
-            function()
-                    self:SetNWBool("reloading", false)
-            end)
+                self:SetTimer(self:GetAnimKeyTime("draw_empty") * self:GetBuff_Mult("Mult_DrawTime"),
+                function()
+                        self:SetNWBool("reloading", false)
+                end)
 
-            prd = self.Animations.draw.ProcDraw
+                prd = self.Animations.draw_empty.ProcDraw
+                else
+                self:PlayAnimation("draw", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
+
+                self:SetNWBool("reloading", true)
+
+                self:SetTimer(self:GetAnimKeyTime("draw") * self:GetBuff_Mult("Mult_DrawTime"),
+                function()
+                        self:SetNWBool("reloading", false)
+                end)
+
+                prd = self.Animations.draw.ProcDraw
+                end
             end
-        end
 
-        if prd then
-            self:ProceduralDraw()
+            if prd then
+                self:ProceduralDraw()
+            end
         end
     end
 
