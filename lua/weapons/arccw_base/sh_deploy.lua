@@ -18,6 +18,9 @@ function SWEP:Deploy()
 
     self.BurstCount = 0
 
+    -- Do not even attempt to play animations, this can be caused by HL2 level changes
+    if self:InVehicle() then return true end
+
     if self.CheckpointAnimation then
         self:PlayAnimation(self.CheckpointAnimation, self:GetBuff_Mult("Mult_ReloadTime"), true, self.CheckpointTime, true)
         self:ProceduralDraw()
