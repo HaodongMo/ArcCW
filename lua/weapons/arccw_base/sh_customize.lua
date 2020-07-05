@@ -903,7 +903,7 @@ function SWEP:CreateCustomizeHUD()
             local txt = k.PrintName
 
             local att_txt = k.DefaultAttName or "No Attachment"
-            local att_icon = defaultatticon
+            local att_icon = k.DefaultAttIcon or defaultatticon
 
             local installed = k.Installed
 

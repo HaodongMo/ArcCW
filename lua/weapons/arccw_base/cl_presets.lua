@@ -41,17 +41,29 @@ function SWEP:LoadPreset(filename)
         if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end
     end
 
-    local ver = 1
     for i = 1, table.Count(self.Attachments) do
         local att = presetTbl[i]
         if !att then continue end
 
-        if att == "v2" then ver = 2 continue end
         if !att then continue end
         if !self.Attachments[i] then continue end
 
-        -- last 5 chars = slide pos
-        -- next last 5 chars = magnification
+        -- detect commas
+        -- no commas = do nothing
+        -- commas: If exactly two commas are detected
+        -- try to parse them as slidepos, magnification
+
+        local split = string.Split(att, ",")
+        local sc = table.Count(split)
+
+        local slidepos = 0.5
+        local mag = -1
+
+        if sc == 3 then
+            att = split[1]
+            slidepos = tonumber(split[2])
+            mag = tonumber(split[3])
+        end
 
         if att == self.Attachments[i].Installed then continue end
 
@@ -60,6 +72,16 @@ function SWEP:LoadPreset(filename)
         if !ArcCW.AttachmentTable[att] then continue end
 
         self:Attach(i, att, true)
+
+        print(slidepos)
+
+        if slidepos != 0.5 then
+            self.Attachments[i].SlidePos = slidepos
+        end
+
+        if mag != -1 then
+            self.SightMagnifications[i] = mag
+        end
     end
 
     f:Close()
@@ -73,10 +95,13 @@ function SWEP:SavePreset(filename)
     local str = ""
     for i, k in pairs(self.Attachments) do
         if k.Installed then
-            str = str .. k.Installed .. "\n"
-        else
-            str = str .. "\n"
+            str = str .. k.Installed
+            if k.SlidePos or self.SightMagnifications[i] then
+                str = str .. "," .. tostring(k.SlidePos or 0.5) .. "," .. tostring(self.SightMagnifications[i] or -1)
+            end
         end
+
+        str = str .. "\n"
     end
 
     filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. filename .. ".txt"

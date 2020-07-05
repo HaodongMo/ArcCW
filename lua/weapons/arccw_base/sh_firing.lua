@@ -267,7 +267,7 @@ function SWEP:PrimaryAttack()
         end
 
         if ss then
-            self:EmitSound(ss, svol, spitch, 1, CzfHAN_WEAPON)
+            self:EmitSound(ss, svol, spitch, 1, CHAN_WEAPON)
         end
 
         if IsFirstTimePredicted() then
