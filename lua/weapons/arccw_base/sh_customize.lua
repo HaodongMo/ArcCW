@@ -1333,9 +1333,32 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("Range") end,
             },
             {"Fire Rate", "The rate at which this weapon cycles at, in rounds per minute.",
-                function() return math.ceil(60 / self.Delay / 25) * 25 .. "RPM",
-                        math.ceil(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 25) * 25 .. "RPM" end,
-                function() return defaultBetterFunc("RPM") end,
+                function()
+
+                local orig = math.ceil(60 / self.Delay / 25) * 25 .. "RPM"
+                local cur = math.ceil(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 25) * 25 .. "RPM"
+
+                if self.ManualAction then
+                    orig = "MANUAL"
+                end
+                if self:GetBuff_Override("Override_ManualAction") or self.ManualAction then
+                    cur = "MANUAL"
+                end
+
+                return orig, cur
+                end,
+                function() 
+                    if !self:GetBuff_Override("Override_ManualAction") and !self.ManualAction then
+                        return defaultBetterFunc("RPM")
+                    end
+                    -- Funky calculations for when some manual gun goes automatic
+                    if !self.ManualAction and self:GetBuff_Override("Override_ManualAction") == true then
+                        return false
+                    elseif self.ManualAction and self:GetBuff_Override("Override_ManualAction") == false then
+                        return true
+                    end
+                    return nil
+                end,
             },
             {"Capacity", "How many rounds this weapon can hold.",
                 function()
