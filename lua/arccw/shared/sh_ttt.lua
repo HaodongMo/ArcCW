@@ -124,8 +124,10 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
     end
 
     -- Language string(s)
-    LANG.AddToLanguage("English", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
-    LANG.AddToLanguage("English", "ammo_smg1_grenade", "Rifle Grenades")
+    if CLIENT then
+        LANG.AddToLanguage("English", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
+        LANG.AddToLanguage("English", "ammo_smg1_grenade", "Rifle Grenades")
+    end
 end)
 
 hook.Add("DoPlayerDeath", "ArcCW_DetectiveSeeAtts", function(ply, attacker, dmginfo)

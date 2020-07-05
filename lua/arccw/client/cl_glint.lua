@@ -24,6 +24,9 @@ hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
 
         d = (d * d * 1.75) - 0.75
 
+        -- Factor in sight size (-50% when not zoomed in at all)
+        d = d * (0.5 + (1 - wpn:GetSightDelta()) * 0.5)
+
         if d < 0 then continue end
 
         local pos = ply:EyePos() + (ply:EyeAngles():Forward() * 16) + (ply:EyeAngles():Right() * 8)
@@ -46,8 +49,16 @@ hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
             end
         end
 
+        -- Also check the player's view so snipers can't hide in a dark spot
+        -- After all, glint is caused by reflection
+        local lightcol = render.GetLightColor(pos):Length()
+        local lightcol2 = render.GetLightColor(EyePos()):Length()
+
+        -- There is some grace because natural light isn't always at max
+        local intensity = math.min(0.2 + (lightcol + lightcol2) / 2 * 1, 1)
+
         render.SetMaterial(glintmat)
-        render.DrawSprite(pos, 64 * d, 64 * d, Color(255, 255, 255))
+        render.DrawSprite(pos, 96 * d, 96 * d, Color(255 * intensity, 255 * intensity, 255 * intensity))
     end
 
     cam.End3D()

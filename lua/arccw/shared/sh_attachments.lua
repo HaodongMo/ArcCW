@@ -105,6 +105,8 @@ function ArcCW:PlayerGetAtts(ply, att)
 
     local atttbl = ArcCW.AttachmentTable[att]
 
+    if !atttbl then return 0 end
+
     if atttbl.Free then return 999 end
 
     if !IsValid(ply) then return 0 end
