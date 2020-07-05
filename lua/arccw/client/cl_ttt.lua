@@ -3,7 +3,7 @@ if engine.ActiveGamemode() != "terrortown" then return end
 CreateClientConVar("arccw_ttt_inforoundstart", "1", true, false, "Whether to show ArcCW config every round.")
 CreateClientConVar("arccw_ttt_rolecrosshair", "1", true, false, "Whether to color your crosshair according to your role.")
 
-ArcCW.TTT_AttInfo = {}
+ArcCW.TTT_AttInfo = ArcCW.TTT_AttInfo or {}
 
 net.Receive("arccw_ttt_bodyattinfo", function()
     local rag = net.ReadEntity()
@@ -13,7 +13,8 @@ net.Receive("arccw_ttt_bodyattinfo", function()
     for i = 1, atts do
         local id = net.ReadUInt(ArcCW.GetBitNecessity())
         if id != 0 then
-            ArcCW.TTT_AttInfo[rag][i] = ArcCW.AttachmentIDTable[id]
+            --ArcCW.TTT_AttInfo[rag][i] = ArcCW.AttachmentIDTable[id]
+            table.insert(ArcCW.TTT_AttInfo[rag], ArcCW.AttachmentIDTable[id])
         end
     end
 end)
@@ -27,16 +28,26 @@ hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
         local finalTbl = {
             img	= "arccw/ttticons/arccw_dropattinfo.png",
             p = 10.5, -- Right after the murder weapon
-            text = (mode == 1 and "With your detective skills, you deduce" or "You think") .. " the murder weapon had these attachments: "
+            text = (mode == 1 and "With your detective skills, you deduce" or "You think") .. " the murder weapon "
         }
-        local comma = false
-        for i, v in pairs(attTbl) do
-            if v and ArcCW.AttachmentTable[v] then
-                finalTbl.text = finalTbl.text .. (comma and ", " or "") .. ArcCW.AttachmentTable[v].PrintName
-                comma = true
+        local count = table.Count(attTbl)
+        if count == 1 then
+            if not ArcCW.AttachmentTable[attTbl[1]] then return end
+            finalTbl.text = finalTbl.text .. "had " .. ArcCW.AttachmentTable[attTbl[1]].PrintName .. " installed."
+        elseif count == 2 then
+            if not ArcCW.AttachmentTable[attTbl[1]] or not ArcCW.AttachmentTable[attTbl[2]] then return end
+            finalTbl.text = finalTbl.text .. "had " .. ArcCW.AttachmentTable[attTbl[1]].PrintName .. " and " .. ArcCW.AttachmentTable[attTbl[2]].PrintName .. " installed."
+        else
+            finalTbl.text = finalTbl.text .. "had these attachments: "
+            local comma = false
+            for i, v in pairs(attTbl) do
+                if v and ArcCW.AttachmentTable[v] then
+                    finalTbl.text = finalTbl.text .. (comma and ", " or "") .. ArcCW.AttachmentTable[v].PrintName
+                    comma = true
+                end
             end
+            finalTbl.text = finalTbl.text .. "."
         end
-        finalTbl.text = finalTbl.text .. "."
         processed.arccw_atts = finalTbl
     end
 
