@@ -41,17 +41,17 @@ function SWEP:LoadPreset(filename)
         if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end
     end
 
-    local ver = 1
     for i = 1, table.Count(self.Attachments) do
         local att = presetTbl[i]
         if !att then continue end
 
-        if att == "v2" then ver = 2 continue end
         if !att then continue end
         if !self.Attachments[i] then continue end
 
-        -- last 5 chars = slide pos
-        -- next last 5 chars = magnification
+        -- detect commas
+        -- no commas = do nothing
+        -- commas: If exactly two commas are detected
+        -- try to parse them as slidepos, magnification
 
         if att == self.Attachments[i].Installed then continue end
 

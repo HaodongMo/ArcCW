@@ -54,7 +54,7 @@ function SWEP:Deploy()
 
             self:SetTimer(self:GetAnimKeyTime("draw_empty") * self:GetBuff_Mult("Mult_DrawTime"),
             function()
-                    self:SetNWBool("reloading", false)
+                self:SetNWBool("reloading", false)
             end)
 
             prd = self.Animations.draw_empty.ProcDraw
@@ -65,7 +65,7 @@ function SWEP:Deploy()
 
             self:SetTimer(self:GetAnimKeyTime("draw") * self:GetBuff_Mult("Mult_DrawTime"),
             function()
-                    self:SetNWBool("reloading", false)
+                self:SetNWBool("reloading", false)
             end)
 
             prd = self.Animations.draw.ProcDraw
