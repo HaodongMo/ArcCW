@@ -143,4 +143,6 @@ function ArcCW_Options_Server( CPanel )
     CPanel:AddControl("Header", {Description = ""})
     CPanel:AddControl("Checkbox", {Label = "Enable Year Limit", Command = "arccw_limityear_enable" })
     CPanel:AddControl("Slider", {Label = "Year Limit", Command = "arccw_limityear", Min = 1800, Max = 2100, Type = "int" })
+    CPanel:AddControl("Checkbox", {Label = "Force Disable Crosshair", Command = "arccw_override_crosshair_off" })
+    
 end
