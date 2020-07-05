@@ -103,8 +103,8 @@ function SWEP:GetViewModelPosition(pos, ang)
             pos = Vector(),
             ang = Angle(),
             down = 1,
-            sway = 4,
-            bob = 5,
+            sway = GetConVar("arccw_vm_sway_sprint"):GetInt(),
+            bob = GetConVar("arccw_vm_bob_sprint"):GetInt(),
         }
 
         target.pos:Set(self.HolsterPos)

@@ -56,6 +56,8 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Slider", {Label = "Viewmodel Forward", Command = "arccw_vm_forward", Min = -5, Max = 5, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Viewmodel Up", Command = "arccw_vm_up", Min = -5, Max = 5, Type = "float" })
     CPanel:AddControl("Header", {Description = "  Warning! Viewmodel offset settings may cause clipping or other undesired effects!"})
+    CPanel:AddControl("Slider", {Label = "Sprint Bob", Command = "arccw_vm_sway_sprint", Min = 0, Max = 5, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Sprint Sway", Command = "arccw_vm_bob_sprint", Min = 0, Max = 5, Type = "float" })
 end
 
 function ArcCW_Options_Crosshair( CPanel )
