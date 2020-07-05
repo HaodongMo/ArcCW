@@ -19,7 +19,7 @@ function SWEP:Deploy()
     self.BurstCount = 0
 
     -- Don't play anim if in vehicle. This can be caused by HL2 level changes
-    if !self:InVehicle() then
+    if !self:GetOwner():InVehicle() then
 
         if self.CheckpointAnimation then
             self:PlayAnimation(self.CheckpointAnimation, self:GetBuff_Mult("Mult_ReloadTime"), true, self.CheckpointTime, true)
