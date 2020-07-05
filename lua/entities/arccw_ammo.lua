@@ -31,6 +31,8 @@ ENT.ResistanceMult = {
     [DMG_CLUB] = 0.25,
     [DMG_SLASH] = 0.25,
     [DMG_CRUSH] = 0.25,
+    [DMG_NERVEGAS] = 0,
+    [DMG_POISON] = 0
 }
 
 function ENT:Initialize()

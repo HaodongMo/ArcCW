@@ -37,6 +37,10 @@ function SWEP:PreDrop()
             end
         end
     end
+
+    if CLIENT then
+        self:CloseCustomizeHUD()
+    end
 end
 
 function SWEP:DampenDrop()
@@ -88,10 +92,8 @@ end
 function SWEP:TTT_PostAttachments()
     self.IsSilent = self:GetBuff_Override("Suppressor")
 
-    if !self.IsSilent then
-        if self.ShootVol * self:GetBuff_Mult("Mult_ShootVol") <= 90 then
-            self.IsSilent = true
-        end
+    if !self.IsSilent and self.ShootVol * self:GetBuff_Mult("Mult_ShootVol") <= 90 then
+        self.IsSilent = true
     end
 end
 
@@ -108,41 +110,13 @@ function SWEP:TTT_Init()
 
     if self.ForgetDefaultBehavior then return end
 
-    --[[]
-    if self.Kind != WEAPON_EQUIP1 and self.Kind != WEAPON_EQUIP2 then
-        if !self.CanBuy then
-            if self.Slot == 0 then
-                -- melee weapons
-                self.Slot = 6
-                self.Kind = WEAPON_EQUIP1
-            elseif self.Slot == 1 then
-                -- sidearms
-                self.Kind = WEAPON_PISTOL
-            elseif self.Slot == 2 then
-                -- primaries
-                self.Kind = WEAPON_HEAVY
-            else
-                -- idk
-                self.Slot = 2
-                self.Kind = WEAPON_HEAVY
-            end
+    self.Primary.ClipMax = ArcCW.TTTAmmo_To_ClipMax[self.Primary.Ammo] or self.RegularClipSize * 2 or self.Primary.ClipSize * 2
 
-            if self.Throwing then
-                self.Slot = 3
-                self.Kind = WEAPON_NADE
-            end
-        end
-    end
-    if ArcCW.Ammo_To_TTTAmmo[self.Primary.Ammo] then
-        self.Primary.Ammo = ArcCW.Ammo_To_TTTAmmo[self.Primary.Ammo]
-    end
-    self.AmmoEnt = ArcCW.TTTAmmo_To_Ent[self.Primary.Ammo] or ""
-    ]]
-
-    self.Primary.ClipMax = ArcCW.TTTAmmo_To_ClipMax[self.Primary.Ammo] or self.RegularClipSize or self.Primary.ClipSize
-
-    self:SetClip1(self:GetCapacity())
-    self.Primary.DefaultClip = self:GetCapacity()
+    -- This will overwrite mag reducers, so give it a bit of time
+    timer.Simple(0.1, function()
+        self:SetClip1(self:GetCapacity())
+        self.Primary.DefaultClip = self:GetCapacity()
+    end)
 
     if self.Throwing then
         self.Primary.Ammo = "none"

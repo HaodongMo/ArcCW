@@ -126,6 +126,7 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
     -- Language string(s)
     if CLIENT then
         LANG.AddToLanguage("English", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
+        LANG.AddToLanguage("English", "search_dmg_nervegas", "Their face looks pale. It must have been some sort of nerve gas.")
         LANG.AddToLanguage("English", "ammo_smg1_grenade", "Rifle Grenades")
     end
 end)
@@ -133,7 +134,7 @@ end)
 hook.Add("DoPlayerDeath", "ArcCW_DetectiveSeeAtts", function(ply, attacker, dmginfo)
     local wep = util.WeaponFromDamage(dmginfo)
     timer.Simple(0, function()
-        if GetConVar("arccw_ttt_bodyattinfo"):GetInt() > 0 and ply.server_ragdoll and IsValid(wep) and wep:IsWeapon() and wep.ArcCW then
+        if GetConVar("arccw_ttt_bodyattinfo"):GetInt() > 0 and ply.server_ragdoll and IsValid(wep) and wep:IsWeapon() and wep.ArcCW and wep.Attachments then
             net.Start("arccw_ttt_bodyattinfo")
                 net.WriteEntity(ply.server_ragdoll)
                 net.WriteUInt(table.Count(wep.Attachments), 8)

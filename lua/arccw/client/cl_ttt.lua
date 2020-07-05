@@ -1,15 +1,19 @@
 if engine.ActiveGamemode() != "terrortown" then return end
 
 CreateClientConVar("arccw_ttt_inforoundstart", "1", true, false, "Whether to show ArcCW config every round.")
+CreateClientConVar("arccw_ttt_rolecrosshair", "1", true, false, "Whether to color your crosshair according to your role.")
+
+ArcCW.TTT_AttInfo = {}
 
 net.Receive("arccw_ttt_bodyattinfo", function()
     local rag = net.ReadEntity()
-    rag.ArcCW_AttInfo = {}
+    rag = rag:EntIndex()
+    ArcCW.TTT_AttInfo[rag] = {}
     local atts = net.ReadUInt(8)
     for i = 1, atts do
         local id = net.ReadUInt(ArcCW.GetBitNecessity())
         if id != 0 then
-            rag.ArcCW_AttInfo[i] = ArcCW.AttachmentIDTable[id]
+            ArcCW.TTT_AttInfo[rag][i] = ArcCW.AttachmentIDTable[id]
         end
     end
 end)
@@ -18,14 +22,15 @@ hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
 
     -- Attachment Info
     local mode = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
-    if Entity(raw.eidx).ArcCW_AttInfo and (mode == 2 or (mode == 1 and raw.detective_search)) then
+    local attTbl = ArcCW.TTT_AttInfo[raw.eidx]
+    if attTbl and (mode == 2 or (mode == 1 and raw.detective_search)) then
         local finalTbl = {
             img	= "arccw/ttticons/arccw_dropattinfo.png",
             p = 10.5, -- Right after the murder weapon
-            text = (mode == 1 and "With your detective skills, you" or "You") .. " deduce the murder weapon had these attachments: "
+            text = (mode == 1 and "With your detective skills, you deduce" or "You think") .. " the murder weapon had these attachments: "
         }
         local comma = false
-        for i, v in pairs(Entity(raw.eidx).ArcCW_AttInfo) do
+        for i, v in pairs(attTbl) do
             if v and ArcCW.AttachmentTable[v] then
                 finalTbl.text = finalTbl.text .. (comma and ", " or "") .. ArcCW.AttachmentTable[v].PrintName
                 comma = true
@@ -35,10 +40,13 @@ hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
         processed.arccw_atts = finalTbl
     end
 
-    -- Buckshot kill info
+    -- kill info
     if bit.band(raw.dmg, DMG_BUCKSHOT) == DMG_BUCKSHOT then
         processed.dmg.text = LANG.GetTranslation("search_dmg_buckshot")
         processed.dmg.img = "arccw/ttticons/kill_buckshot.png"
+    elseif bit.band(raw.dmg, DMG_NERVEGAS) == DMG_NERVEGAS then
+        processed.dmg.text = LANG.GetTranslation("search_dmg_nervegas")
+        processed.dmg.img = "arccw/ttticons/kill_nervegas.png"
     end
 end)
 
@@ -160,6 +168,7 @@ hook.Add("TTTPrepareRound", "ArcCW_TTT_Info", function()
             chat.AddText(Color(255,255,255), "To turn off ArcCW config info, type 'arccw_ttt_inforoundstart 0' in console.")
         end
     end
+    ArcCW.TTT_AttInfo = {}
 end)
 
 hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
@@ -175,9 +184,10 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
     local dgui = vgui.Create("DForm", panellist)
     dgui:SetName("Client Settings")
     dgui:CheckBox("Enable round startup info", "arccw_ttt_inforoundstart")
+    dgui:CheckBox("Enable Crosshair", "arccw_crosshair")
+    dgui:CheckBox("Enable role-based crosshair color", "arccw_ttt_rolecrosshair")
     dgui:CheckBox("Enable 2D3D on ammo and weapons", "arccw_2d3d")
     dgui:CheckBox("Enable Cheap Scopes (saves perf.)", "arccw_cheapscopes")
-    dgui:CheckBox("Enable Crosshair", "arccw_crosshair")
     dgui:CheckBox("Toggle ADS", "arccw_toggleads")
     dgui:CheckBox("E+RMB for UBGL", "arccw_altubglkey")
 

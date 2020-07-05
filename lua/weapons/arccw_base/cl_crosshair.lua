@@ -24,6 +24,17 @@ function SWEP:DoDrawCrosshair(x, y)
     local prong_right = true
     local prong_down = true
 
+    local clr = Color(255, 255, 255)
+    if GetConVar("arccw_ttt_rolecrosshair") and GetConVar("arccw_ttt_rolecrosshair"):GetBool() then
+        if LocalPlayer():IsActiveTraitor() then
+            clr = Color(255, 50, 50)
+        elseif LocalPlayer():IsActiveDetective() then
+            clr = Color(50, 50, 255)
+        elseif GetRoundState() != ROUND_PREP then
+            clr = Color(50, 255, 50)
+        end
+    end
+
     local gap = ScreenScale(24) * math.Clamp(self:GetDispersion() / 1000, 0.1, 100)
 
     gap = gap + ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1)
@@ -69,7 +80,7 @@ function SWEP:DoDrawCrosshair(x, y)
         surface.SetDrawColor(0, 0, 0, 150 * delta)
         surface.DrawRect(x - p_w2 / 2, y - p_w2 / 2, p_w2, p_w2)
 
-        surface.SetDrawColor(255, 255, 255, 255 * delta)
+        surface.SetDrawColor(clr.r, clr.g, clr.b, 255 * delta)
         surface.DrawRect(x - p_w / 2, y - p_w / 2, p_w, p_w)
 
     end
@@ -115,7 +126,7 @@ function SWEP:DoDrawCrosshair(x, y)
         surface.DrawRect(x - p_w2 / 2, y + gap - 1, p_w2, prong2)
     end
 
-    surface.SetDrawColor(255, 255, 255, 255 * delta)
+    surface.SetDrawColor(clr.r, clr.g, clr.b, 255 * delta)
 
     if prong_left then
         surface.DrawRect(x - gap - prong, y - p_w / 2, prong, p_w)
