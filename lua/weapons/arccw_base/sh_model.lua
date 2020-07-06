@@ -338,6 +338,12 @@ function SWEP:SetupModel(wm)
                 charmelement.CharmParent = element
                 charmelement.SubModel = true
 
+                if wm then
+                    charmelement.CharmScale = ((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                else
+                    charmelement.CharmScale = ((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                end
+
                 table.insert(elements, charmelement)
             end
         end
@@ -678,10 +684,11 @@ function SWEP:DrawCustomModel(wm)
 
                 local pos = k.CharmOffset
                 local ang = k.CharmAngle
+                local scale = k.CharmScale or Vector(1, 1, 1)
 
-                apos = apos + aang:Forward() * pos.x
-                apos = apos + aang:Right() * pos.y
-                apos = apos + aang:Up() * pos.z
+                apos = apos + aang:Forward() * pos.x * scale.x
+                apos = apos + aang:Right() * pos.y * scale.y
+                apos = apos + aang:Up() * pos.z * scale.z
 
                 aang:RotateAroundAxis(aang:Right(), ang.p)
                 aang:RotateAroundAxis(aang:Up(), ang.y)
