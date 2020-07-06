@@ -673,21 +673,25 @@ function SWEP:DrawCustomModel(wm)
             local cm = k.CharmParent.Model
             local boneindex = cm:LookupAttachment(k.CharmAtt)
             local angpos = cm:GetAttachment(boneindex)
-            apos, aang = angpos.Pos, angpos.Ang
+            if angpos then
+                apos, aang = angpos.Pos, angpos.Ang
 
-            local pos = k.CharmOffset
-            local ang = k.CharmAngle
+                local pos = k.CharmOffset
+                local ang = k.CharmAngle
 
-            apos = apos + aang:Forward() * pos.x
-            apos = apos + aang:Right() * pos.y
-            apos = apos + aang:Up() * pos.z
+                apos = apos + aang:Forward() * pos.x
+                apos = apos + aang:Right() * pos.y
+                apos = apos + aang:Up() * pos.z
 
-            aang:RotateAroundAxis(aang:Right(), ang.p)
-            aang:RotateAroundAxis(aang:Up(), ang.y)
-            aang:RotateAroundAxis(aang:Forward(), ang.r)
+                aang:RotateAroundAxis(aang:Right(), ang.p)
+                aang:RotateAroundAxis(aang:Up(), ang.y)
+                aang:RotateAroundAxis(aang:Forward(), ang.r)
+            end
         else
             continue
         end
+
+        if !apos or !aang then return end
 
         k.Model:SetPos(apos)
         k.Model:SetAngles(aang)

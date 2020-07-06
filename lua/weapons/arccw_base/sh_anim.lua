@@ -194,8 +194,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         self:NextAnimation()
 
         if anim.Checkpoints then
-            self.CheckpointAnimation = nil
-            self.CheckpointTime = 0
+            self:ResetCheckpoints()
         end
     end, key)
     if key != "idle" then

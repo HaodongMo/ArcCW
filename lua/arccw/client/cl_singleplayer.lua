@@ -13,6 +13,14 @@ net.Receive("arccw_sp_anim", function(len, ply)
     wpn:PlayAnimation(key, mult, false, sf, tt, skip, ignore)
 end)
 
+net.Receive("arccw_sp_checkpoints", function(len, ply)
+    local weapon = LocalPlayer():GetActiveWeapon()
+
+    if !weapon.ArcCW then return end
+
+    weapon.CheckpointAnimation = nil
+end)
+
 net.Receive("arccw_sp_lhikanim", function(len, ply)
     local key = net.ReadString()
     local time = net.ReadFloat()

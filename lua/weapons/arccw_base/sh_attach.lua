@@ -479,7 +479,7 @@ function SWEP:SendDetail_ColorIndex(slot)
     net.SendToServer()
 end
 
-function SWEP:SendDetail_SlidePos(slot)
+function SWEP:SendDetail_SlidePos(slot, hmm)
     if !self.Attachments then return end
     if !self.Attachments[slot].SlidePos then return end
 
@@ -491,7 +491,7 @@ end
 
 function SWEP:SendAllDetails()
     for i, k in pairs(self.Attachments) do
-        self:SendDetail_SlidePos(i)
+        self:SendDetail_SlidePos(i, true)
     end
 end
 
