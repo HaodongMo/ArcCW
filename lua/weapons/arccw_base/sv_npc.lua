@@ -78,7 +78,11 @@ function SWEP:NPC_SetupAttachments()
     end
 
     self:AdjustAtts()
-    self:NetworkWeapon()
+
+    timer.Simple(0.25, function()
+        if !IsValid(self) then return end
+        self:NetworkWeapon()
+    end)
 end
 
 function SWEP:NPC_Shoot()
