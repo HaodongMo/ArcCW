@@ -414,7 +414,11 @@ function SWEP:SetShouldHoldType()
     if self:GetState() == ArcCW.STATE_SIGHTS then
         self:SetHoldType(self:GetBuff_Override("Override_HoldtypeSights") or self.HoldtypeSights)
     elseif self:GetState() == ArcCW.STATE_SPRINT then
-        self:SetHoldType(self:GetBuff_Override("Override_HoldtypeHolstered") or self.HoldtypeHolstered)
+        if (self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then
+            self:SetHoldType(self:GetBuff_Override("Override_HoldtypeActive") or self.HoldtypeActive)
+        else
+            self:SetHoldType(self:GetBuff_Override("Override_HoldtypeHolstered") or self.HoldtypeHolstered)
+        end
     elseif self:GetState() == ArcCW.STATE_CUSTOMIZE then
         self:SetHoldType(self:GetBuff_Override("Override_HoldtypeCustomize") or self.HoldtypeCustomize)
     elseif self:GetCurrentFiremode().Mode == 0 then
