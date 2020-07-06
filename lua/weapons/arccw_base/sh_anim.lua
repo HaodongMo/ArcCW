@@ -193,9 +193,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     self:SetTimer(ttime, function()
         self:NextAnimation()
 
-        if anim.Checkpoints then
-            self:ResetCheckpoints()
-        end
+        self:ResetCheckpoints()
     end, key)
     if key != "idle" then
         self:SetTimer(ttime, function()
