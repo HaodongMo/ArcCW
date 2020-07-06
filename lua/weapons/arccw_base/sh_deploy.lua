@@ -29,8 +29,7 @@ function SWEP:Deploy()
             self:SetTimer((self:GetAnimKeyTime(self.CheckpointAnimation) * self:GetBuff_Mult("Mult_ReloadTime")) - self.CheckpointTime,
             function()
                 self:SetNWBool("reloading", false)
-                self.CheckpointAnimation = nil
-                self.CheckpointTime = 0
+                self:ResetCheckpoints()
             end)
         else
             local prd = false
@@ -57,7 +56,7 @@ function SWEP:Deploy()
 
                 self:SetTimer(self:GetAnimKeyTime("draw_empty") * self:GetBuff_Mult("Mult_DrawTime"),
                 function()
-                        self:SetNWBool("reloading", false)
+                    self:SetNWBool("reloading", false)
                 end)
 
                 prd = self.Animations.draw_empty.ProcDraw
@@ -68,7 +67,7 @@ function SWEP:Deploy()
 
                 self:SetTimer(self:GetAnimKeyTime("draw") * self:GetBuff_Mult("Mult_DrawTime"),
                 function()
-                        self:SetNWBool("reloading", false)
+                    self:SetNWBool("reloading", false)
                 end)
 
                 prd = self.Animations.draw.ProcDraw
@@ -91,6 +90,15 @@ function SWEP:Deploy()
     end
 
     return true
+end
+
+function SWEP:ResetCheckpoints()
+    self.CheckpointAnimation = nil
+
+    if game.SinglePlayer() then
+        net.Start("arccw_sp_checkpoints")
+        net.Broadcast()
+    end
 end
 
 function SWEP:Initialize()

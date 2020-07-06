@@ -4,6 +4,7 @@ util.AddNetworkString("arccw_sp_lhikanim")
 util.AddNetworkString("arccw_sp_anim")
 util.AddNetworkString("arccw_sp_health")
 util.AddNetworkString("arccw_sp_loadautosave")
+util.AddNetworkString("arccw_sp_checkpoints")
 
 end
 

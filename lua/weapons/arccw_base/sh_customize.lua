@@ -401,6 +401,7 @@ function SWEP:CreateCustomizeHUD()
     attslider.Knob.OnMouseReleased = function(span, kc)
         og_attsliderknobmr(span, kc)
         self:SendDetail_SlidePos(activeslot)
+        self:SavePreset("autosave")
     end
 
     attslidebox:Hide()
