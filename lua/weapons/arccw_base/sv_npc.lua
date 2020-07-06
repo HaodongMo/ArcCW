@@ -32,6 +32,22 @@ function SWEP:NPC_Initialize()
     self:GetOwner():NextThink(CurTime())
 end
 
+function SWEP:AssignRandomAttToSlot(slot)
+    if slot.DoNotRandomize then return end
+    if slot.Installed then return end
+
+    local atts = ArcCW:GetAttsForSlot(slot.Slot, self)
+    if #atts <= 0 then return end
+
+    slot.Installed = table.Random(atts)
+
+    local atttbl = ArcCW.AttachmentTable[slot.Installed]
+
+    if atttbl.MountPositionOverride then
+        slot.SlidePos = atttbl.MountPositionOverride
+    end
+end
+
 function SWEP:NPC_SetupAttachments()
     if self:GetOwner():IsNPC() and !GetConVar("arccw_npc_atts"):GetBool() then return end
 
@@ -49,26 +65,28 @@ function SWEP:NPC_SetupAttachments()
 
     local n = 0
 
-    for _, slot in pairs(self.Attachments) do
+    for i, slot in pairs(self.Attachments) do
         if n >= pick then continue end
         if !self:CheckFlags(slot.ExcludeFlags, slot.RequireFlags) then continue end
         if math.Rand(0, 100) > (chance * (slot.RandomChance or 1)) then continue end
 
-        if slot.DoNotRandomize then continue end
-        if slot.Installed then continue end
+        if slot.Hidden then continue end
 
-        local atts = ArcCW:GetAttsForSlot(slot.Slot, self)
+        local s = i
+
+        if slot.MergeSlots then
+            local ss = {i}
+            table.Add(ss, slot.MergeSlots)
+
+            s = table.Random(ss)
+        end
+
+        local atts = ArcCW:GetAttsForSlot(self.Attachments[s].Slot, self)
         if #atts <= 0 then continue end
 
         chance = chance - chancestep
 
-        slot.Installed = table.Random(atts)
-
-        local atttbl = ArcCW.AttachmentTable[slot.Installed]
-
-        if atttbl.MountPositionOverride then
-            slot.SlidePos = atttbl.MountPositionOverride
-        end
+        self:AssignRandomAttToSlot(self.Attachments[s])
 
         n = n + 1
     end
