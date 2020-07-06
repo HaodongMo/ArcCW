@@ -119,7 +119,7 @@ function SWEP:TTT_Init()
         self.Primary.DefaultClip = self:GetCapacity()
     end)
 
-    if self.Throwing then
+    if self.Throwing and self.Primary.Ammo and !self.ForceDefaultClip then
         self.Primary.Ammo = "none"
         self.Primary.DefaultClip = 0
         self:SetClip1(-1)

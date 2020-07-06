@@ -2,7 +2,10 @@ hook.Add("OnEntityCreated", "ArcCW_DefaultClip", function(ent)
     if not ent.ArcCW then return end
     if ent.Primary.DefaultClip <= 0 then return end
 
-    if GetConVar("arccw_mult_defaultclip"):GetInt() < 0 then
+    if ent.ForceDefaultClip then
+        ent.Primary.DefaultClip = ent.ForceDefaultClip
+        print("forced")
+    elseif GetConVar("arccw_mult_defaultclip"):GetInt() < 0 then
         ent.Primary.DefaultClip = ent.Primary.ClipSize * 3
         if ent.Primary.ClipSize >= 100 then
             ent.Primary.DefaultClip = ent.Primary.ClipSize * 2
@@ -10,6 +13,8 @@ hook.Add("OnEntityCreated", "ArcCW_DefaultClip", function(ent)
     else
         ent.Primary.DefaultClip = ent.Primary.ClipSize * GetConVar("arccw_mult_defaultclip"):GetInt()
     end
+
+    print(ent, ent.Primary.DefaultClip)
 end)
 
 hook.Add("PlayerCanPickupWeapon", "ArcCW_EquipmentSingleton", function(ply, wep)
