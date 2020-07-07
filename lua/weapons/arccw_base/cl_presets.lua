@@ -63,7 +63,6 @@ function SWEP:LoadPreset(filename)
             att = split[1]
             slidepos = tonumber(split[2])
             mag = tonumber(split[3])
-            print(slidepos)
         end
 
         if att == self.Attachments[i].Installed then continue end

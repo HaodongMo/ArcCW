@@ -202,9 +202,9 @@ function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
     if self.BurstCount > 0 and self:Clip1() > 0 then return false end
 
-    -- if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
-    --     self:CallOnClient("Holster")
-    -- end
+    if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
+        self:CallOnClient("Holster")
+    end
 
     if self:GetNWBool("grenadeprimed") then
         self:Throw()
@@ -217,7 +217,7 @@ function SWEP:Holster(wep)
 
     local time = 0.25
     if self.Animations.holster then
-       self:PlayAnimation("holster", self:GetBuff_Mult("Mult_HolsterTime"))
+       self:PlayAnimation("holster", self:GetBuff_Mult("Mult_DrawTime"))
        time = self.Animations.holster.Time
     else
        if CLIENT then
@@ -225,20 +225,20 @@ function SWEP:Holster(wep)
        end
     end
 
-    time = time * self:GetBuff_Mult("Mult_HolsterTime")
+    time = time * self:GetBuff_Mult("Mult_DrawTime")
 
-    -- if !self.FullyHolstered then
-        -- self:SetTimer(time, function()
+    if !self.FullyHolstered then
+        self:SetTimer(time, function()
             self.ReqEnd = true
             self:KillTimers()
 
-            -- self.FullyHolstered = true
+            self.FullyHolstered = true
 
-            -- self:Holster(self.HolsterSwitchTo)
+            self:Holster(self.HolsterSwitchTo)
 
-            -- if CLIENT then
-                -- input.SelectWeapon(self.HolsterSwitchTo)
-            -- else
+            if CLIENT then
+                input.SelectWeapon(self.HolsterSwitchTo)
+            else
                 if SERVER then
                     if self:GetBuff_Override("UBGL_UnloadOnDequip") then
                         local clip = self:Clip2()
@@ -254,7 +254,7 @@ function SWEP:Holster(wep)
 
                     self:KillShields()
 
-                    -- self:GetOwner():SelectWeapon(self.HolsterSwitchTo:GetClass())
+                    self:GetOwner():SelectWeapon(self.HolsterSwitchTo:GetClass())
 
                     local vm = self:GetOwner():GetViewModel()
 
@@ -264,13 +264,13 @@ function SWEP:Holster(wep)
 
                     vm:SetSkin(0)
                 end
-            -- end
-        -- end)
-    -- end
+            end
+        end)
+    end
 
-    return true
+    -- return true
 
-    -- return self.FullyHolstered
+    return self.FullyHolstered
 end
 
 function SWEP:ProceduralDraw()
