@@ -228,6 +228,11 @@ function SWEP:Holster(wep)
     time = time * self:GetBuff_Mult("Mult_DrawTime")
 
     if !self.FullyHolstered then
+
+        if CLIENT then
+            self:CloseCustomizeHUD()
+        end
+    
         self:SetTimer(time, function()
             self.ReqEnd = true
             self:KillTimers()
