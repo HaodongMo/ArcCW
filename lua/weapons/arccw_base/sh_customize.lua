@@ -888,6 +888,10 @@ function SWEP:CreateCustomizeHUD()
         end
 
         attcatb.Paint = function(span, w, h)
+
+            -- Might error when player dies
+            if !self or !self.Attachments then return end
+
             local Bfg_col = Color(255, 255, 255, 255)
             local Bbg_col = Color(0, 0, 0, 100)
 

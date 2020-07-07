@@ -506,7 +506,7 @@ end
 
 function SWEP:IsProne()
     if PRONE_INPRONE then
-        return self:GetOwner():IsProne()
+        return self:GetOwner().IsProne and self:GetOwner():IsProne()
     else
         return false
     end
