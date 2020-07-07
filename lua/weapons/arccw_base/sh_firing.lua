@@ -526,6 +526,10 @@ function SWEP:GetDispersion()
     spd = math.Clamp(spd / maxspeed, 0, 2)
     hip = hip + (spd * self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
 
+    if !self:GetOwner():OnGround() then
+        hip = hip + self.JumpDispersion * self:GetBuff_Mult("Mult_JumpDispersion")
+    end
+
     -- Bipod
     if self:InBipod() then
         hip = hip * (self:GetBuff_Mult("Mult_BipodDispersion") or 0.1)
