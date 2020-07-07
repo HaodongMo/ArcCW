@@ -1535,46 +1535,48 @@ function SWEP:CreateCustomizeHUD()
         end
     end
 
-    local togglestat = vgui.Create("DButton", ArcCW.InvHUD)
-    togglestat:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
-    togglestat:SetText("")
-    togglestat:SetPos(ScrW() - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap)
+    if !self.Throwing and !self.PrimaryBash and !self.ShootEntity then
+        local togglestat = vgui.Create("DButton", ArcCW.InvHUD)
+        togglestat:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+        togglestat:SetText("")
+        togglestat:SetPos(ScrW() - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap)
 
-    togglestat.OnMousePressed = function(spaa, kc)
-        if statbox:IsVisible() then
-            statbox:Hide()
-            triviabox:Show()
-        else
-            regenStatList()
-            statbox:Show()
-            triviabox:Hide()
-            attmenu:Hide()
-            self.InAttMenu = false
-            atttrivia:Hide()
-            attslidebox:Hide()
-        end
-    end
-
-    togglestat.Paint = function(spaa, w, h)
-        if !self:IsValid() then return end
-        if !self.Attachments then return end
-        local Bfg_col = Color(255, 255, 255, 255)
-        local Bbg_col = Color(0, 0, 0, 100)
-
-        if spaa:IsHovered() then
-            Bbg_col = Color(255, 255, 255, 100)
-            Bfg_col = Color(0, 0, 0, 255)
+        togglestat.OnMousePressed = function(spaa, kc)
+            if statbox:IsVisible() then
+                statbox:Hide()
+                triviabox:Show()
+            else
+                regenStatList()
+                statbox:Show()
+                triviabox:Hide()
+                attmenu:Hide()
+                self.InAttMenu = false
+                atttrivia:Hide()
+                attslidebox:Hide()
+            end
         end
 
-        surface.SetDrawColor(Bbg_col)
-        surface.DrawRect(0, 0, w, h)
+        togglestat.Paint = function(spaa, w, h)
+            if !self:IsValid() then return end
+            if !self.Attachments then return end
+            local Bfg_col = Color(255, 255, 255, 255)
+            local Bbg_col = Color(0, 0, 0, 100)
 
-        local txt = statbox:IsVisible() and "Trivia" or "Stats"
+            if spaa:IsHovered() then
+                Bbg_col = Color(255, 255, 255, 100)
+                Bfg_col = Color(0, 0, 0, 255)
+            end
 
-        surface.SetTextColor(Bfg_col)
-        surface.SetTextPos(smallgap, ScreenScale(1))
-        surface.SetFont("ArcCW_12")
-        surface.DrawText(txt)
+            surface.SetDrawColor(Bbg_col)
+            surface.DrawRect(0, 0, w, h)
+
+            local txt = statbox:IsVisible() and "Trivia" or "Stats"
+
+            surface.SetTextColor(Bfg_col)
+            surface.SetTextPos(smallgap, ScreenScale(1))
+            surface.SetFont("ArcCW_12")
+            surface.DrawText(txt)
+        end
     end
 
 end
