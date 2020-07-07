@@ -1272,8 +1272,8 @@ function SWEP:CreateCustomizeHUD()
 
     local function defaultStatFunc(name, unit, round)
         local orig = self[name]
-        if ArcCW.ConVar_BuffMults[name] then
-            orig = orig * GetConVar(ArcCW.ConVar_BuffMults[name]):GetFloat()
+        if ArcCW.ConVar_BuffMults["Mult_" .. name] then
+            orig = orig * GetConVar(ArcCW.ConVar_BuffMults["Mult_" .. name]):GetFloat()
         end
         return math.Round((unit == "%" and 100 or 1) * orig, round) .. (unit or ""),
                 math.Round((unit == "%" and 100 or 1) * self[name] * self:GetBuff_Mult("Mult_" .. name), round) .. (unit or "")
@@ -1434,12 +1434,26 @@ function SWEP:CreateCustomizeHUD()
             --     end,
             -- },
             {"Move Speed", "The speed at which you move with the gun, in percentage of original speed.",
-                function() return defaultStatFunc("SpeedMult","%") end,
-                function() return defaultBetterFunc("SpeedMult") end,
+                function()
+                    return math.Round(self.SpeedMult * 100) .. "%", math.Round(math.Clamp(self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) * 100) .. "%"
+                end,
+                function()
+                    local mult = self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
+                    if mult == 1 then return nil
+                    elseif mult > 1 then return true
+                    else return false end
+                end,
             },
             {"Sighted Strafe Speed", "The additional slowdown applied when you are moving with sights down.",
-                function() return defaultStatFunc("SightedSpeedMult","%") end,
-                function() return defaultBetterFunc("SightedSpeedMult") end,
+                function()
+                    return math.Round(self.SightedSpeedMult * 100) .. "%", math.Round(math.Clamp(self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) * 100) .. "%"
+                end,
+                function()
+                    local mult = self:GetBuff_Mult("Mult_SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed")
+                    if mult == 1 then return nil
+                    elseif mult > 1 then return true
+                    else return false end
+                end,
             },
             {"Bash Damage", "How much damage the melee bash causes.",
                 function() return defaultStatFunc("MeleeDamage") end,
