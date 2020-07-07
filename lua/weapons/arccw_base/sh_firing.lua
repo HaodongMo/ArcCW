@@ -135,7 +135,7 @@ function SWEP:PrimaryAttack()
 
                 local ret = self:GetBuff_Hook("Hook_BulletHit", {
                     range = dist,
-                    damage = self:GetDamage(dist),
+                    damage = self:GetDamage(dist, true),
                     dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType,
                     penleft = pen,
                     att = att,
@@ -374,7 +374,7 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
             local dmg = DamageInfo()
 
             dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-            dmg:SetDamage(self:GetDamage(dist) * pdelta)
+            dmg:SetDamage(self:GetDamage(dist) * pdelta, true)
             dmg:SetDamagePosition(ptr.HitPos)
 
             if IsValid(ptr.Entity) and !table.HasValue(alreadypenned, ptr.Entity) then
@@ -434,7 +434,7 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
                     dmg:SetDamage(0)
                 else
                     dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-                    dmg:SetDamage(self:GetDamage(dist) * pdelta)
+                    dmg:SetDamage(self:GetDamage(dist) * pdelta, true)
                 end
 
                 self:DoPenetration(btr, penleft)
@@ -676,11 +676,13 @@ function SWEP:FireAnimationEvent( pos, ang, event, options )
     return true
 end
 
-function SWEP:GetDamage(range)
+function SWEP:GetDamage(range, pellet)
     local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
     local dmult = 1
 
-    if num then
+    if pellet then
+        dmult = 1
+    elseif num then
         dmult = self.Num / dmult
     end
 
@@ -698,6 +700,8 @@ function SWEP:GetDamage(range)
     delta = math.Clamp(delta, 0, 1)
 
     local amt = Lerp(delta, dmgmax, dmgmin)
+
+    print(amt)
     return amt
 end
 
