@@ -3,7 +3,8 @@ ArcCW.IncompatibleAddons = {
     --["2131161276"] = "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues.",
     ["2137567877"] = "Causes viewmodel flickering with LHIK attachments",
     ["847269692"] = "Causes viewmodel flickering, may crash when customization menu opens",
-    ["1875551051"] = "Breaks LHIK attachments"
+    ["1875551051"] = "Breaks LHIK attachments. VManip has similar features and doesn't conflict.",
+    ["1100368137"] = "May cause Lua errors. Use the wOS version instead.",
 }
 
 function ArcCW.MakeIncompatibleWindow(tbl)
