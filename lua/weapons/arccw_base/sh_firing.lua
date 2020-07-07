@@ -374,7 +374,7 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
             local dmg = DamageInfo()
 
             dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-            dmg:SetDamage(self:GetDamage(dist) * pdelta, true)
+            dmg:SetDamage(self:GetDamage(dist, true) * pdelta)
             dmg:SetDamagePosition(ptr.HitPos)
 
             if IsValid(ptr.Entity) and !table.HasValue(alreadypenned, ptr.Entity) then
@@ -434,7 +434,7 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
                     dmg:SetDamage(0)
                 else
                     dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-                    dmg:SetDamage(self:GetDamage(dist) * pdelta, true)
+                    dmg:SetDamage(self:GetDamage(dist, true) * pdelta, true)
                 end
 
                 self:DoPenetration(btr, penleft)
@@ -685,7 +685,7 @@ function SWEP:GetDamage(range, pellet)
     local dmult = 1
 
     if pellet then
-        dmult = 1
+        dmult = 1 / ((self:GetBuff_Override("Override_Num") or 1) + self:GetBuff_Add("Add_Num"))
     elseif num then
         dmult = self.Num / dmult
     end
@@ -704,7 +704,8 @@ function SWEP:GetDamage(range, pellet)
     delta = math.Clamp(delta, 0, 1)
 
     local amt = Lerp(delta, dmgmax, dmgmin)
-
+    print(amt)
+    debug.Trace()
     return amt
 end
 

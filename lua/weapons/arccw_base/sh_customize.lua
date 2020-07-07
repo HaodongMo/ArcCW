@@ -1311,12 +1311,12 @@ function SWEP:CreateCustomizeHUD()
             {"Close Range Damage", "How much damage this weapon does at point blank.",
                 function()
                     local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
-                    local orig = math.Round(self.Damage) .. (self.Num != 1 and ("×" .. self.Num) or "")
-                    local cur = math.Round(self:GetDamage(0) / curNum) .. (curNum != 1 and ("×" .. curNum) or "")
+                    local orig = math.Round(self.Damage * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
+                    local cur = math.Round(self:GetDamage(0) / curNum * GetConVar("arccw_mult_damage"):GetFloat()) .. (curNum != 1 and ("×" .. curNum) or "")
                     return orig, cur
                 end,
                 function()
-                    local orig = self.Damage  * self.Num
+                    local orig = self.Damage * self.Num * GetConVar("arccw_mult_damage"):GetFloat()
                     local cur = self:GetDamage(0)
                     if orig == cur then return nil else return cur > orig end
                 end,
@@ -1324,17 +1324,18 @@ function SWEP:CreateCustomizeHUD()
             {"Long Range Damage", "How much damage this weapon does beyond its range.",
                 function()
                     local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
-                    local orig = math.Round(self.DamageMin) .. (self.Num != 1 and ("×" .. self.Num) or "")
-                    local cur = math.Round(self:GetDamage(self.Range) / curNum) .. (curNum != 1 and ("×" .. curNum) or "")
+                    local orig = math.Round(self.DamageMin * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
+                    local cur = math.Round(self:GetDamage(self.Range) / curNum * GetConVar("arccw_mult_damage"):GetFloat()) .. (curNum != 1 and ("×" .. curNum) or "")
                     return orig, cur
                 end,
                 function()
-                    local orig = self.DamageMin * self.Num
+                    local orig = self.DamageMin * self.Num * GetConVar("arccw_mult_damage"):GetFloat()
                     local maxgr = (self.Range * self:GetBuff_Mult("Mult_Range"))
                     if math.Round(self:GetDamage(self.Range)) < math.Round(self:GetDamage(0)) then
                         maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
                     end
                     local cur = self:GetDamage(maxgr)
+                    print(orig, cur)
                     if orig == cur then return nil else return cur > orig end
                 end,
             },

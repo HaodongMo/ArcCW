@@ -157,7 +157,7 @@ function SWEP:NPC_Shoot()
 
             local ret = self:GetBuff_Hook("Hook_BulletHit", {
                 range = dist,
-                damage = self:GetDamage(dist) * m,
+                damage = self:GetDamage(dist, true) * m,
                 dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType,
                 penleft = pen,
                 att = att,
