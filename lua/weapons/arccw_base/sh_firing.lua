@@ -704,8 +704,7 @@ function SWEP:GetDamage(range, pellet)
     delta = math.Clamp(delta, 0, 1)
 
     local amt = Lerp(delta, dmgmax, dmgmin)
-    print(amt)
-    debug.Trace()
+
     return amt
 end
 
