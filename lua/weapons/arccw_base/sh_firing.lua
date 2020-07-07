@@ -701,7 +701,6 @@ function SWEP:GetDamage(range, pellet)
 
     local amt = Lerp(delta, dmgmax, dmgmin)
 
-    print(amt)
     return amt
 end
 
