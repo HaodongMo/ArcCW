@@ -46,3 +46,5 @@ CreateConVar("arccw_mult_ammoamount", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Mult
 
 CreateConVar("arccw_limityear_enable", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Limit the maximum year for weapons.")
 CreateConVar("arccw_limityear", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Limit the maximum year for weapons.")
+
+CreateConVar("arccw_holstering", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Take time to holster your weapon.")
