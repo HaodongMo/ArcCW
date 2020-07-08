@@ -138,8 +138,18 @@ function SWEP:CreateCustomizeHUD()
             span:Remove()
         end
     end
+    ArcCW.InvHUD.ActiveWeapon = self
     ArcCW.InvHUD.OnRemove = function()
+        local close = false
         if self:IsValid() and self:GetState() == ArcCW.STATE_CUSTOMIZE then
+            close = true
+        end
+
+        if LocalPlayer():GetActiveWeapon() != ArcCW.InvHUD.ActiveWeapon then
+            close = true
+        end
+
+        if close then
             net.Start("arccw_togglecustomize")
             net.WriteBool(false)
             net.SendToServer()

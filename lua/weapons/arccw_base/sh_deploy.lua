@@ -229,10 +229,6 @@ function SWEP:Holster(wep)
 
     if !self.FullyHolstered then
 
-        if CLIENT then
-            self:CloseCustomizeHUD()
-        end
-    
         self:SetTimer(time, function()
             self.ReqEnd = true
             self:KillTimers()
