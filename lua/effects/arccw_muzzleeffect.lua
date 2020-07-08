@@ -35,7 +35,7 @@ function EFFECT:Init(data)
 
     if !pos then return end
 
-    if !wpn:GetBuff_Override("Silencer") then
+    if !wpn:GetBuff_Override("Silencer") and !wpn:GetBuff_Override("FlashHider") then
         local light = DynamicLight(self:EntIndex())
         if (light) then
             light.Pos = pos
