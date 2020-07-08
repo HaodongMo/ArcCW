@@ -1335,7 +1335,6 @@ function SWEP:CreateCustomizeHUD()
                         maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
                     end
                     local cur = self:GetDamage(maxgr)
-                    print(orig, cur)
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
