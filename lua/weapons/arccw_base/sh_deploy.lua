@@ -202,6 +202,8 @@ function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
     if self.BurstCount > 0 and self:Clip1() > 0 then return false end
 
+    local skip = GetConVar("arccw_holstering"):GetBool()
+
     if CLIENT then
         if LocalPlayer() != self:GetOwner() then return end
     end
@@ -230,6 +232,8 @@ function SWEP:Holster(wep)
     end
 
     time = time * self:GetBuff_Mult("Mult_DrawTime")
+
+    if !skip then time = 0 end
 
     if !self.FullyHolstered then
 
@@ -274,6 +278,8 @@ function SWEP:Holster(wep)
     end
 
     -- return true
+
+    if !skip then return true end
 
     return self.FullyHolstered
 end
