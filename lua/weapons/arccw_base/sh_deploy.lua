@@ -135,7 +135,7 @@ function SWEP:Initialize()
         end
 
         -- Check for incompatibile addons once 
-        if LocalPlayer().ArcCW_IncompatibilityCheck ~= true then
+        if LocalPlayer().ArcCW_IncompatibilityCheck != true then
             LocalPlayer().ArcCW_IncompatibilityCheck = true
             local incompatList = {}
             local addons = engine.GetAddons()
@@ -202,6 +202,12 @@ function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
     if self.BurstCount > 0 and self:Clip1() > 0 then return false end
 
+    local skip = GetConVar("arccw_holstering"):GetBool()
+
+    if CLIENT then
+        if LocalPlayer() != self:GetOwner() then return end
+    end
+
     if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
         self:CallOnClient("Holster")
     end
@@ -227,12 +233,10 @@ function SWEP:Holster(wep)
 
     time = time * self:GetBuff_Mult("Mult_DrawTime")
 
+    if !skip then time = 0 end
+
     if !self.FullyHolstered then
 
-        if CLIENT then
-            self:CloseCustomizeHUD()
-        end
-    
         self:SetTimer(time, function()
             self.ReqEnd = true
             self:KillTimers()
@@ -259,7 +263,7 @@ function SWEP:Holster(wep)
 
                     self:KillShields()
 
-                    self:GetOwner():SelectWeapon(self.HolsterSwitchTo:GetClass())
+                    self:GetOwner():SelectWeapon(self.HolsterSwitchTo)
 
                     local vm = self:GetOwner():GetViewModel()
 
@@ -274,6 +278,8 @@ function SWEP:Holster(wep)
     end
 
     -- return true
+
+    if !skip then return true end
 
     return self.FullyHolstered
 end

@@ -23,7 +23,7 @@ function EFFECT:Init(data)
         mdl = ent
     end
 
-    if !IsValid(ent) then return end
+    if !IsValid(ent) then self:Remove() return end
 
     if ent.Owner != LocalPlayer() then
         mdl = ent
@@ -33,9 +33,9 @@ function EFFECT:Init(data)
         if !GetConVar("arccw_shelleffects"):GetBool() then self:Remove() return end
     end
 
-    if !mdl or !IsValid(mdl) then return end
+    if !mdl or !IsValid(mdl) then self:Remove() return end
 
-    if !mdl:GetAttachment(att) then return end
+    if !mdl:GetAttachment(att) then self:Remove() return end
 
     local origin, ang = mdl:GetAttachment(att).Pos, mdl:GetAttachment(att).Ang
 
