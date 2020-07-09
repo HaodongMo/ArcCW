@@ -40,9 +40,12 @@ CreateConVar("arccw_ammo_largetrigger", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Wh
 CreateConVar("arccw_ammo_rareskin", 0.08, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Chance for a rare skin to appear. Only specific models have these.", 0, 1)
 CreateConVar("arccw_ammo_chaindet", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to allow ammoboxes to detonate each other. If disabled, they will still be destroyed but not explode.", 0, 1)
 
-
 CreateConVar("arccw_mult_ammohealth", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much health ammo boxes have. Set to -1 for indestructible boxes.", -1)
 CreateConVar("arccw_mult_ammoamount", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much ammo are in ammo boxes.", 0)
 
 CreateConVar("arccw_limityear_enable", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Limit the maximum year for weapons.")
 CreateConVar("arccw_limityear", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Limit the maximum year for weapons.")
+
+CreateConVar("arccw_doorbust", 1, FCVAR_ARCHIVE, "Whether to allow door busting. 1 - break down, 2 - open only", 0, 2)
+CreateConVar("arccw_doorbust_threshold", 80, FCVAR_ARCHIVE, "The amount of damage needed to bust a normal sized door.")
+CreateConVar("arccw_doorbust_time", 180, FCVAR_ARCHIVE, "The amount of time to keep the door busted by.", 1)
