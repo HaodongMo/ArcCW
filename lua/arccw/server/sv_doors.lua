@@ -1,12 +1,13 @@
 function ArcCW.DoorBust(ent, vel)
     local cvar = GetConVar("arccw_doorbust"):GetInt()
     local t = GetConVar("arccw_doorbust_time"):GetFloat()
-    if cvar == 0 then return end
+    if cvar == 0 or ent.ArcCW_DoorBusted then return end
+    ent.ArcCW_DoorBusted = true
 
     local oldSpeed = ent:GetInternalVariable("m_flSpeed")
-    ent:Fire("SetSpeed", "1000", 0)
+    ent:Fire("SetSpeed", tostring(oldSpeed * 5), 0)
     ent:Fire("Open", "", 0)
-    ent:Fire("SetSpeed", oldSpeed, 0.5)
+    ent:Fire("SetSpeed", oldSpeed, 0.3)
 
     if string.find(ent:GetClass(), "prop_door*") and ent:GetPhysicsObject():IsValid() and cvar == 1 then
 
@@ -24,7 +25,7 @@ function ArcCW.DoorBust(ent, vel)
         prop:GetPhysicsObject():SetVelocity(vel)
 
         -- Make it not collide with players after a bit cause that's annoying
-        timer.Create("ArcCW_DoorBust_" .. prop:EntIndex(), 3, 1, function()
+        timer.Create("ArcCW_DoorBust_" .. prop:EntIndex(), 2, 1, function()
             if IsValid(prop) then
                 prop:SetCollisionGroup(COLLISION_GROUP_WEAPON)
             end
@@ -36,20 +37,27 @@ function ArcCW.DoorBust(ent, vel)
             if IsValid(ent) then
                 ent:SetNoDraw(false)
                 ent:SetNotSolid(false)
+                ent.ArcCW_DoorBusted = false
+            end
+        end)
+    else
+        timer.Create("ArcCW_DoorBust_" .. ent:EntIndex(), 0.5, 1, function()
+            if IsValid(ent) then
+                ent.ArcCW_DoorBusted = false
             end
         end)
     end
 end
 
--- This function is not called on brush doors. Let's call this, uhh, intended behavior.
-local function DoorBustCheck(ent, dmginfo)
-    if GetConVar("arccw_doorbust"):GetInt() == 0 or not string.find(ent:GetClass(), "door") then return end
+function ArcCW.TryBustDoor(ent, dmginfo)
+    if GetConVar("arccw_doorbust"):GetInt() == 0 or not IsValid(ent) or not string.find(ent:GetClass(), "door") then return end
     local wep = IsValid(dmginfo:GetAttacker()) and ((dmginfo:GetInflictor():IsWeapon() and dmginfo:GetInflictor()) or dmginfo:GetAttacker():GetActiveWeapon())
     if not wep or not wep:IsWeapon() or not wep.ArcCW or not dmginfo:IsDamageType(DMG_BUCKSHOT) then return end
-    if ent:GetNoDraw() then return end
+    if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
 
     -- Magic number: 119.506 is the size of door01_left
-    local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * (ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506
+    -- The bigger the door is, the harder it is to bust
+    local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
 
     -- Because shotgun damage is done per pellet, we must count them together
     if ent.ArcCW_BustCurTime and (ent.ArcCW_BustCurTime + 0.1 < CurTime()) then
@@ -68,9 +76,11 @@ local function DoorBustCheck(ent, dmginfo)
     -- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
     for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
         if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
-                ArcCW.DoorBust(otherDoor, dmginfo:GetDamageForce() * 0.5)
-                break
+            ArcCW.DoorBust(otherDoor, dmginfo:GetDamageForce() * 0.5)
+            break
         end
     end
 end
-hook.Add("EntityTakeDamage", "ArcCW_DoorBust", DoorBustCheck)
+
+-- This hook is not called on brush doors. Let's call this, uhh, intended behavior.
+-- hook.Add("EntityTakeDamage", "ArcCW_DoorBust", ArcCW.TryBustDoor)

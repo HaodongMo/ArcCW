@@ -168,7 +168,12 @@ function SWEP:PrimaryAttack()
                         end
                     end
                 end
-
+                
+                if SERVER then
+                    -- This will not work as expected on shotguns with Num > 1 and no custom pattern,
+                    -- Because a bug makes this callback only run twice instead of however many times the pellet hits
+                    ArcCW.TryBustDoor(tr.Entity, dmg)
+                end
                 self:DoPenetration(tr, ret.penleft, {tr.Entity})
             end
         }
@@ -178,7 +183,7 @@ function SWEP:PrimaryAttack()
         local sp = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
         local spo = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun
 
-        if sp or spo then
+        if !se then -- sp or spo
             btabl = self:GetBuff_Hook("Hook_FireBullets", btabl)
 
             if !btabl then return end
@@ -207,7 +212,7 @@ function SWEP:PrimaryAttack()
                     self:GetOwner():LagCompensation(false)
                 end
             end
-        elseif se then
+        else
             if num > 1 then
                 local spd = AngleRand() * self:GetDispersion() / 360 / 60
 
@@ -230,7 +235,8 @@ function SWEP:PrimaryAttack()
 
                 self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang + spd)
             end
-        else
+        --else
+            --[[]
             btabl = self:GetBuff_Hook("Hook_FireBullets", btabl)
 
             if !btabl then return end
@@ -243,6 +249,7 @@ function SWEP:PrimaryAttack()
                 self:GetOwner():LagCompensation(false)
 
             end
+            ]]
         end
 
         self:DoRecoil()
