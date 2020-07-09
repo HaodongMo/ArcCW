@@ -684,7 +684,7 @@ function SWEP:GetDamage(range, pellet)
     local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
     local dmult = 1
 
-    if pellet then
+    if pellet and num != 1 then
         dmult = 1 / ((self:GetBuff_Override("Override_Num") or 1) + self:GetBuff_Add("Add_Num"))
     elseif num then
         dmult = self.Num / dmult
