@@ -82,5 +82,9 @@ function ArcCW.TryBustDoor(ent, dmginfo)
     end
 end
 
+hook.Add("PlayerUse", "ArcCW_DoorBust", function(ply, ent)
+    if ent.ArcCW_DoorBusted then return false end
+end)
+
 -- This hook is not called on brush doors. Let's call this, uhh, intended behavior.
 -- hook.Add("EntityTakeDamage", "ArcCW_DoorBust", ArcCW.TryBustDoor)
