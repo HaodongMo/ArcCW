@@ -31,6 +31,7 @@ function SWEP:Reload()
     local load = math.Clamp(clip + chamber, 0, reserve)
 
     if load <= self:Clip1() then return end
+    self.LastLoadClip1 = load - self:Clip1()
 
     self:SetNWBool("reqend", false)
     self.BurstCount = 0
@@ -122,6 +123,7 @@ function SWEP:Reload()
 end
 
 local lastframeclip1 = 0
+local lastframeloadclip1 = 0
 
 SWEP.LastClipOutTime = 0
 
@@ -151,6 +153,17 @@ function SWEP:GetVisualClip()
 
         return self:Clip1()
     end
+end
+
+function SWEP:GetVisualLoadAmount()
+    if self:Clip1() > lastframeloadclip1 then
+        local clip = self:GetCapacity()
+        local chamber = math.Clamp(self:Clip1(), 0, self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize)
+        self.LastLoadClip1 = math.Clamp(clip + chamber, 0, self:Ammo1() + self:Clip1()) - lastframeloadclip1
+    end
+    lastframeloadclip1 = self:Clip1()
+
+    return self.LastLoadClip1 or self:Clip1()
 end
 
 function SWEP:SelectReloadAnimation()

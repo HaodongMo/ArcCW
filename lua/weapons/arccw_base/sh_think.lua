@@ -199,7 +199,7 @@ function SWEP:Think()
                 if !bone then continue end
 
                 if self:GetVisualClip() >= i then
-                vm:ManipulateBoneScale(bone, vec1)
+                    vm:ManipulateBoneScale(bone, vec1)
                 end
             end
 
@@ -210,9 +210,23 @@ function SWEP:Think()
                 if !bone then continue end
 
                 if self:GetVisualBullets() >= i then
-                vm:ManipulateBoneScale(bone, vec1)
+                    vm:ManipulateBoneScale(bone, vec1)
                 end
             end
+
+            for i, k in pairs(self.StripperClipBones or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualLoadAmount() >= i then
+                    vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
+                end
+            end
+
         end
     end
 
