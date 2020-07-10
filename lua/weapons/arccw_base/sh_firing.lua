@@ -691,11 +691,20 @@ function SWEP:GetDamage(range, pellet)
     local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
     local dmult = 1
 
-    if pellet and num != 1 then
+    if pellet and self.Num == 1 then
+        -- Previously one pellet weapon got more than one pellet, we divide the original damage
         dmult = 1 / ((self:GetBuff_Override("Override_Num") or 1) + self:GetBuff_Add("Add_Num"))
-    elseif num then
-        dmult = self.Num / dmult
+    elseif self.Num != num then
+        -- Multi-pellet weapon has a different override, consider the original damaage is per pellet
+        dmult = self.Num / num
+    else
+        -- Default situation: Mult by pellet count
+        dmult = 1
     end
+    if !pellet then
+        dmult = dmult * num
+    end
+    print(self.Num, num, dmult)
 
     local dmgmax = self.Damage * self:GetBuff_Mult("Mult_Damage") * dmult
     local dmgmin = self.DamageMin * self:GetBuff_Mult("Mult_DamageMin") * dmult
