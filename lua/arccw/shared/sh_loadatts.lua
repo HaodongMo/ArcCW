@@ -51,6 +51,7 @@ local function ArcCW_LoadAtts()
     ArcCW.AttachmentIDTable = {}
     ArcCW.AttachmentSlotTable = {}
     ArcCW.NumAttachments = 1
+    ArcCW.AttachmentBits = nil
 
     for k, v in pairs(file.Find("arccw/shared/attachments/*", "LUA")) do
         att = {}
@@ -66,11 +67,10 @@ local function ArcCW_LoadAtts()
 end
 
 function ArcCW.GetBitNecessity()
-    local bits = 1
-
-    bits = math.ceil(math.log(ArcCW.NumAttachments, 2)) --math.ceil(math.sqrt(ArcCW.NumAttachments))
-
-    return bits
+    if !ArcCW.AttachmentBits then
+        ArcCW.AttachmentBits = math.ceil(math.log(ArcCW.NumAttachments, 2))
+    end
+    return ArcCW.AttachmentBits
 end
 
 ArcCW_LoadAtts()
