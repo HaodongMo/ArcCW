@@ -92,6 +92,8 @@ SWEP.Firemodes = {
     -- }
 }
 
+SWEP.ShotRecoilTable = nil -- {[1] = 0.25, [2] = 2} etc.
+
 SWEP.NotForNPCS = false
 SWEP.NPCWeaponType = nil -- string or table, the NPC weapons for this gun to replace
 -- if nil, this will be based on holdtype

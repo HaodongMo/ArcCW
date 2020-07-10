@@ -626,6 +626,12 @@ function SWEP:DoRecoil()
         rs = rs * (self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
     end
 
+    -- Used by hyper-burst and such to absorb recoil
+    local shotRecTbl = self:GetBuff_Override("Override_ShotRecoilTable") or self.ShotRecoilTable
+    if shotRecTbl and shotRecTbl[self.BurstCount] then
+        m = m * shotRecTbl[self.BurstCount]
+    end
+
     local vpa = Angle(0, 0, 0)
 
     vpa = vpa + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.Recoil * m * vsm)
