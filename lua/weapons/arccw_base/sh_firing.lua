@@ -182,7 +182,7 @@ function SWEP:PrimaryAttack()
         local sp = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
         local spo = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun
 
-        if !se then -- sp or spo
+        if sp or spo then
             btabl = self:GetBuff_Hook("Hook_FireBullets", btabl)
 
             if !btabl then return end
@@ -211,7 +211,7 @@ function SWEP:PrimaryAttack()
                     self:GetOwner():LagCompensation(false)
                 end
             end
-        else
+        elseif se then
             if num > 1 then
                 local spd = AngleRand() * self:GetDispersion() / 360 / 60
 
@@ -234,19 +234,26 @@ function SWEP:PrimaryAttack()
 
                 self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang + spd)
             end
-        --else
-            --[[]
+        else
+
             btabl = self:GetBuff_Hook("Hook_FireBullets", btabl)
-
             if !btabl then return end
-            if btabl.Num > 0 then
 
+            for n = 1, btabl.Num do
+                btabl.Num = 1
+                --btabl.Spread = Vector(0, 0, 0)
+                local ang = dir + AngleRand() * spread / 5
+                btabl.Dir = ang:Forward()
                 self:GetOwner():LagCompensation(true)
-
                 self:GetOwner():FireBullets(btabl)
-
                 self:GetOwner():LagCompensation(false)
+            end
 
+            --[[]
+            if btabl.Num > 0 then
+                self:GetOwner():LagCompensation(true)
+                self:GetOwner():FireBullets(btabl)
+                self:GetOwner():LagCompensation(false)
             end
             ]]
         end
