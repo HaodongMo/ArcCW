@@ -701,7 +701,19 @@ function SWEP:CreateCustomizeHUD()
                 attbtn.AttName = att
 
                 attbtn.OnMousePressed = function(spaa, kc2)
+
+                    local atttbl = ArcCW.AttachmentTable[spaa.AttName]
+                    if atttbl then
+                        if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
+                        for _, slot in pairs(k.MergeSlots or {}) do
+                            if slot and self.Attachments[slot] and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, spaa.AttName) and !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) then
+                                return
+                            end
+                        end
+                    end
+
                     if kc2 == MOUSE_LEFT then
+
                         if spaa.AttName == "" then
                             self:DetachAllMergeSlots(span.AttIndex)
                         else
@@ -775,6 +787,9 @@ function SWEP:CreateCustomizeHUD()
                     for _, slot in pairs(k.MergeSlots or {}) do
                         if !slot then continue end
                         if !self.Attachments[slot] then continue end
+                        if !blocked and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, spaa.AttName) and !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) then
+                            blocked = true
+                        end
                         if self.Attachments[slot].Installed == spaa.AttName then
                             installed = true
                             break

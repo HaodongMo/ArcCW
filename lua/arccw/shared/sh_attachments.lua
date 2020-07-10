@@ -60,6 +60,7 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
     end
 
     local atttbl = ArcCW.AttachmentTable[att]
+    if !atttbl then return false end
 
     if atttbl.Hidden then return false end
 
