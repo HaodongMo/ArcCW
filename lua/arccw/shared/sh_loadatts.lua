@@ -68,7 +68,7 @@ end
 function ArcCW.GetBitNecessity()
     local bits = 1
 
-    bits = math.ceil(math.sqrt(ArcCW.NumAttachments))
+    bits = math.ceil(math.log(ArcCW.NumAttachments, 2)) --math.ceil(math.sqrt(ArcCW.NumAttachments))
 
     return bits
 end
