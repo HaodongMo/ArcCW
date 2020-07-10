@@ -160,6 +160,9 @@ function SWEP:GetVisualLoadAmount()
         local clip = self:GetCapacity()
         local chamber = math.Clamp(self:Clip1(), 0, self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize)
         self.LastLoadClip1 = math.Clamp(clip + chamber, 0, self:Ammo1() + self:Clip1()) - lastframeloadclip1
+        if self.StripperClipOneOut and lastframeloadclip1 != 0 then
+            self.LastLoadClip1 = self.LastLoadClip1 + 1
+        end
     end
     lastframeloadclip1 = self:Clip1()
 
