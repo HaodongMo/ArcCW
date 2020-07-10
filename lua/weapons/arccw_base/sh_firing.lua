@@ -122,6 +122,7 @@ function SWEP:PrimaryAttack()
             Dir = dir:Forward(),
             Src = src,
             Spread = Vector(spread, spread, spread),
+            HullSize = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize"),
             Callback = function(att, tr, dmg)
                 local dist = (tr.HitPos - src):Length() * ArcCW.HUToM
 
@@ -168,10 +169,8 @@ function SWEP:PrimaryAttack()
                         end
                     end
                 end
-                
+
                 if SERVER then
-                    -- This will not work as expected on shotguns with Num > 1 and no custom pattern,
-                    -- Because a bug makes this callback only run twice instead of however many times the pellet hits
                     ArcCW.TryBustDoor(tr.Entity, dmg)
                 end
                 self:DoPenetration(tr, ret.penleft, {tr.Entity})

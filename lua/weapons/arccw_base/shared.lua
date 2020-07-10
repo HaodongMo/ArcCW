@@ -39,6 +39,7 @@ SWEP.MuzzleVelocity = 400 -- projectile or phys bullet muzzle velocity
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.Tracer = nil -- override tracer effect
 SWEP.TracerCol = Color(255, 255, 255)
+SWEP.HullSize = 0 -- HullSize used by FireBullets
 
 SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
