@@ -226,6 +226,9 @@ att.Hook_GetDistantShootSound = function(wep, sound) end
 -- allows you to modify the weapon's rate of fire
 att.Hook_ModifyRPM = function(wep, delay) end
 
+-- return a table containing Recoil, RecoilSide, VisualRecoilMult to multiply them
+att.Hook_ModifyRecoil = function(wep) end
+
 -- run in Think()
 att.Hook_Think = function(wep) end
 

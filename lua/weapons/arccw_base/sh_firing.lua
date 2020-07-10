@@ -617,9 +617,11 @@ function SWEP:DoRecoil()
     local r = math.Rand(-1, 1)
     local ru = math.Rand(0.75, 1.25)
 
-    local m = 1 * self:GetBuff_Mult("Mult_Recoil")
-    local rs = 1 * self:GetBuff_Mult("Mult_RecoilSide")
-    local vsm = 1 * self:GetBuff_Mult("Mult_VisualRecoilMult")
+    local ret = self:GetBuff_Hook("Hook_ModifyRecoil") or {}
+
+    local m = (ret.Recoil or 1) * self:GetBuff_Mult("Mult_Recoil")
+    local rs = (ret.RecoilSide or 1) * self:GetBuff_Mult("Mult_RecoilSide")
+    local vsm = (ret.VisualRecoilMult or 1) * self:GetBuff_Mult("Mult_VisualRecoilMult")
 
     if self:InBipod() then
         m = m * (self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
@@ -632,12 +634,14 @@ function SWEP:DoRecoil()
         m = m * shotRecTbl[self.BurstCount]
     end
 
+    m = ret and ret.Recoil or m
+    rs = ret and ret.RecoilSide or rs
+    vsm = ret and ret.VisualRecoilMult or vsm
+
     local vpa = Angle(0, 0, 0)
 
     vpa = vpa + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.Recoil * m * vsm)
-
     vpa = vpa + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * r * self.RecoilSide * m * vsm)
-
     vpa = vpa * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
 
     self:GetOwner():ViewPunch(vpa)
