@@ -68,7 +68,7 @@ end
 
 function ArcCW.GetBitNecessity()
     if !ArcCW.AttachmentBits then
-        ArcCW.AttachmentBits = math.ceil(math.log(ArcCW.NumAttachments, 2))
+        ArcCW.AttachmentBits = math.min(math.ceil(math.log(ArcCW.NumAttachments + 1, 2)), 32)
     end
     return ArcCW.AttachmentBits
 end
