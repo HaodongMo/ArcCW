@@ -523,17 +523,17 @@ function SWEP:GetDispersion()
         hip = self:GetBuff_Mult("Mult_HipDispersion") * self.HipDispersion
     end
 
-    -- Move Dispersion
-    local spd = self:GetOwner():GetAbsVelocity():Length()
-    local maxspeed = self:GetOwner():GetWalkSpeed() * self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
-    if self:GetState() == ArcCW.STATE_SIGHTS then
-        maxspeed = maxspeed * self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult")
-    end
-    spd = math.Clamp(spd / maxspeed, 0, 2)
-    hip = hip + (spd * self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
-
-    if !self:GetOwner():OnGround() then
-        hip = hip + self.JumpDispersion * self:GetBuff_Mult("Mult_JumpDispersion")
+    if self:GetOwner():OnGround() then
+        -- Move Dispersion
+        local spd = self:GetOwner():GetAbsVelocity():Length()
+        local maxspeed = self:GetOwner():GetWalkSpeed() * self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
+        if self:GetState() == ArcCW.STATE_SIGHTS then
+            maxspeed = maxspeed * self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult")
+        end
+        spd = math.Clamp(spd / maxspeed, 0, 2)
+        hip = hip + (spd * self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
+    else
+        hip = hip + math.max(self.JumpDispersion * self:GetBuff_Mult("Mult_JumpDispersion"), self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
     end
 
     -- Bipod
