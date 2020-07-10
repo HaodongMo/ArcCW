@@ -704,7 +704,6 @@ function SWEP:GetDamage(range, pellet)
     if !pellet then
         dmult = dmult * num
     end
-    print(self.Num, num, dmult)
 
     local dmgmax = self.Damage * self:GetBuff_Mult("Mult_Damage") * dmult
     local dmgmin = self.DamageMin * self:GetBuff_Mult("Mult_DamageMin") * dmult
