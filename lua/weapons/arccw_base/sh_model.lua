@@ -428,6 +428,7 @@ function SWEP:SetupModel(wm)
             hspelement.BoneMerge = k.BoneMerge or false
             hspelement.Slot = i
 
+            hspelement.OffsetPos = k.ModelOffset or Vector(0, 0, 0)
             hspelement.OffsetAng = element.OffsetAng
 
             if !wm then
