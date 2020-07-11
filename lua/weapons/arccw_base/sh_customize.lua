@@ -154,7 +154,9 @@ function SWEP:CreateCustomizeHUD()
             net.WriteBool(false)
             net.SendToServer()
 
-            self:ToggleCustomizeHUD(false)
+            if IsValid(self) then
+                self:ToggleCustomizeHUD(false)
+            end
         end
     end
 
