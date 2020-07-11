@@ -562,7 +562,7 @@ function SWEP:DoShellEject()
         self:GetOwner():GetViewModel()
     end
 
-    local posang = vm:GetAttachment(self.CaseEffectAttachment)
+    local posang = vm:GetAttachment(self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
 
     if !posang then return end
 

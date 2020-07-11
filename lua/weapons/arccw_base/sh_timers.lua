@@ -96,9 +96,48 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
                     if !IsValid(self) then return end
                     if !IsValid(self:GetOwner()) then return end
                     self:EmitSound(v.s, vol, pitch, 1, CHAN_AUTO)
+                    if v.e then
+                        local posang = self:GetAttachment(v.att or self.CaseEffectAttachment)
+                        if !posang then return end
+                        local pos = posang.Pos
+                        local ang = posang.Ang
+
+                        local fx = EffectData()
+                        fx:SetOrigin(pos)
+                        fx:SetAngles(ang)
+                        fx:SetAttachment(v.att or self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
+                        fx:SetScale(1)
+                        fx:SetEntity(self)
+                        fx:SetNormal(ang:Forward())
+                        fx:SetMagnitude(v.mag or 100)
+                        util.Effect(v.e, fx)
+                    end
+                    if v.s then
+                        self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
+                    end
                 end)
             else
-                self:SetTimer(st, function() self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO) end, "soundtable")
+                self:SetTimer(st, function()
+                    if v.e then
+                        local posang = self:GetAttachment(v.att or self.CaseEffectAttachment)
+                        if !posang then return end
+                        local pos = posang.Pos
+                        local ang = posang.Ang
+
+                        local fx = EffectData()
+                        fx:SetOrigin(pos)
+                        fx:SetAngles(ang)
+                        fx:SetAttachment(v.att or self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
+                        fx:SetScale(1)
+                        fx:SetEntity(self)
+                        fx:SetNormal(ang:Forward())
+                        fx:SetMagnitude(v.mag or 100)
+                        util.Effect(v.e, fx)
+                    end
+                    if v.s then
+                        self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
+                    end
+                end, "soundtable")
             end
         end
     end

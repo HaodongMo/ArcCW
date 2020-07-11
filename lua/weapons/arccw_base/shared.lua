@@ -396,7 +396,12 @@ SWEP.Animations = {
     --             p = 100, -- pitch
     --             v = 75, -- volume
     --             t = 1, -- time at which to play relative to Animations.Time
-    --             c = CHAN_ITEM -- channel to play the sound
+    --             c = CHAN_ITEM, -- channel to play the sound
+    --
+    --             -- Can also play an effect at the same time
+    --             e = "", -- effect name
+    --             att = nil, -- attachment, defaults to shell attachment
+    --             mag = 100, -- magnitude
     --         }
     --     },
     --     ViewPunchTable = {
