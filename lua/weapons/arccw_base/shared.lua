@@ -153,9 +153,6 @@ SWEP.CaseBones = {}
 
 -- Unlike BulletBones, these bones are determined by the missing bullet amount when reloading
 SWEP.StripperClipBones = {}
--- When not empty reload, add one to the amount of bullets inserted
--- Bolt action rifles must eject one round when tactically reloading, hence this
-SWEP.StripperClipOneOut = false
 
 SWEP.KeepBaseIrons = false -- do not override iron sights when scope installed
 

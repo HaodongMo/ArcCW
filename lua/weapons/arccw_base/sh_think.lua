@@ -24,7 +24,9 @@ function SWEP:Think()
 
     self:InBipod()
 
-    if (self:GetCurrentFiremode().Mode == 2 or !self:GetOwner():KeyDown(IN_ATTACK)) and self:GetNWBool("cycle", false) and !self:GetNWBool("reloading", false) then
+    if self:GetNWBool("cycle", false) and !self:GetNWBool("reloading", false) and
+            (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !self:GetOwner():KeyDown(IN_ATTACK))
+            or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 and self:GetOwner():KeyDown(IN_ATTACK) or self:GetOwner():KeyPressed(IN_ATTACK))) then
         local anim = "cycle"
         if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.cycle_iron then
             anim = "cycle_iron"

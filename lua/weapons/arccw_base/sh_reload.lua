@@ -85,6 +85,10 @@ function SWEP:Reload()
     else
         local anim = self:SelectReloadAnimation()
 
+        -- Yes, this will cause an issue in mag-fed manual action weapons where
+        -- despite an empty casing being in the chamber, you can load +1 and 
+        -- cycle an empty shell afterwards.
+        -- No, I am not in the correct mental state to fix this. - 8Z
         if self:Clip1() == 0 then
             self:SetNWBool("cycle", false)
         end
@@ -162,7 +166,7 @@ function SWEP:GetVisualLoadAmount()
         local clip = self:GetCapacity()
         local chamber = math.Clamp(self:Clip1(), 0, self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize)
         self.LastLoadClip1 = math.Clamp(clip + chamber, 0, self:Ammo1() + self:Clip1()) - lastframeloadclip1
-        if self.StripperClipOneOut and lastframeloadclip1 != 0 then
+        if self:GetNWBool("cycle", false) == false and lastframeloadclip1 != 0 then
             self.LastLoadClip1 = self.LastLoadClip1 + 1
         end
     end
