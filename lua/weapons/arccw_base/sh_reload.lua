@@ -73,7 +73,6 @@ function SWEP:Reload()
 
         anim = self:GetBuff_Hook("Hook_SelectReloadAnimation", anim) or anim
 
-        print(insertcount)
         self:GetOwner():SetAmmo(self:Ammo1() - insertcount, self.Primary.Ammo)
         self:SetClip1(self:Clip1() + insertcount)
 
