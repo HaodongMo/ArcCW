@@ -31,7 +31,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     local tranim = self:GetBuff_Hook("Hook_TranslateAnimation", key)
 
-    if tranim == false then return end
+    if !tranim then return end
 
     if self.Animations[tranim] then
         anim = self.Animations[tranim]
