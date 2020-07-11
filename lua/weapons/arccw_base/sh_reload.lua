@@ -67,10 +67,13 @@ function SWEP:Reload()
             empty = false
 
             insertcount = (self.Animations.sgreload_start_empty or {}).RestoreAmmo or 1
+        else
+            insertcount = (self.Animations.sgreload_start or {}).RestoreAmmo or 0
         end
 
         anim = self:GetBuff_Hook("Hook_SelectReloadAnimation", anim) or anim
 
+        print(insertcount)
         self:GetOwner():SetAmmo(self:Ammo1() - insertcount, self.Primary.Ammo)
         self:SetClip1(self:Clip1() + insertcount)
 
