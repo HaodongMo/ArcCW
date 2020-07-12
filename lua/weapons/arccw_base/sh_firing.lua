@@ -149,17 +149,19 @@ function SWEP:PrimaryAttack()
                 dmg:SetDamageType(ret.dmgtype)
                 dmg:SetDamage(ret.damage)
 
+                local effect = self.ImpactEffect
+                local decal = self.ImpactDecal
+
                 if dmg:GetDamageType() == DMG_BURN and ret.range <= self.Range then
                     if num == 1 then
                         dmg:SetDamageType(DMG_BULLET)
                     else
                         dmg:SetDamageType(DMG_BUCKSHOT)
                     end
-                    local fx = EffectData()
-                    fx:SetOrigin(tr.HitPos)
-                    util.Effect("arccw_incendiaryround", fx)
 
-                    util.Decal("FadingScorch", tr.StartPos, tr.HitPos - (tr.HitNormal * 16), self:GetOwner())
+                    effect = "arccw_incendiaryround"
+                    decal = "FadingScorch"
+                    
 
                     if SERVER then
                         if vFireInstalled then
@@ -174,6 +176,18 @@ function SWEP:PrimaryAttack()
                     ArcCW.TryBustDoor(tr.Entity, dmg)
                 end
                 self:DoPenetration(tr, ret.penleft, {tr.Entity})
+
+                effect = self:GetBuff_Override("Override_ImpactEffect") or effect
+                if effect then
+                    local fx = EffectData()
+                    fx:SetOrigin(tr.HitPos)
+                    util.Effect(effect, fx)
+                end
+
+                decal = self:GetBuff_Override("Override_ImpactDecal") or decal
+                if decal then
+                    util.Decal(decal, tr.StartPos, tr.HitPos - (tr.HitNormal * 16), self:GetOwner())
+                end
             end
         }
 

@@ -128,6 +128,8 @@ SWEP.SelectUBGLSound =  "weapons/arccw/ubgl_select.wav"
 SWEP.ExitUBGLSound = "weapons/arccw/ubgl_exit.wav"
 
 SWEP.MuzzleEffect = "arccw_muzzleeffect"
+SWEP.ImpactEffect = nil
+SWEP.ImpactDecal = nil
 
 SWEP.ShellModel = "models/shells/shell_556.mdl"
 SWEP.ShellMaterial = nil
