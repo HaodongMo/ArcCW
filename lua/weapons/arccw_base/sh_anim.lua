@@ -232,7 +232,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             else
                 ianim = ianim or "idle"
             end
-            print(ianim)
 
             self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
         end, "idlereset")
