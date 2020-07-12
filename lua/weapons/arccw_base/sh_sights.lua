@@ -63,6 +63,7 @@ function SWEP:EnterSights()
     if !asight then return end
     if self:GetState() != ArcCW.STATE_IDLE then return end
     if !self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD)) then return end
+    if self:GetBuff_Hook("Hook_ShouldNotSight") then return end
 
     self:SetupActiveSights()
 
