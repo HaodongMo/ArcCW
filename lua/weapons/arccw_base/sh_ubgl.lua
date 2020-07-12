@@ -12,6 +12,9 @@ function SWEP:SelectUBGL()
             self:DoLHIKAnimation("enter")
         end
     end
+    if self.Animations and self.Animations.enter_ubgl then
+        self:PlayAnimation("enter_ubgl")
+    end
 end
 
 function SWEP:DeselectUBGL()
@@ -25,6 +28,9 @@ function SWEP:DeselectUBGL()
         if !self:GetLHIKAnim() then
             self:DoLHIKAnimation("exit")
         end
+    end
+    if self.Animations and self.Animations.exit_ubgl then
+        self:PlayAnimation("exit_ubgl")
     end
 end
 

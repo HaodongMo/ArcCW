@@ -369,6 +369,9 @@ SWEP.Attachments = {}
 -- enter_inspect
 -- idle_inspect
 -- exit_inspect
+-- enter_ubgl
+-- exit_ubgl
+-- idle_ubgl
 -- append _empty for empty variation
 -- use SWEP.Hook_TranslateAnimation, same as in attachment, to do even more behaviours
 

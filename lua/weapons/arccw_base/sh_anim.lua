@@ -223,12 +223,16 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             end
 
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
-
-            if self:Clip1() == 0 and self.Animations.idle_empty then
+            if self.Animations.idle_ubgl_empty and self:GetNWBool("ubgl") and self:Clip2() <= 0 then
+                ianim = ianim or "idle_ubgl_empty"
+            elseif self.Animations.idle_ubgl and self:GetNWBool("ubgl") then
+                ianim = ianim or "idle_ubgl"
+            elseif self:Clip1() == 0 and self.Animations.idle_empty then
                 ianim = ianim or "idle_empty"
             else
                 ianim = ianim or "idle"
             end
+            print(ianim)
 
             self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
         end, "idlereset")
