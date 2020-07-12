@@ -264,7 +264,7 @@ function SWEP:Holster(wep)
                     self:KillShields()
 
                     if IsValid(self.HolsterSwitchTo) then
-                        self:GetOwner():SelectWeapon(self.HolsterSwitchTo:GetClass())
+                        self:GetOwner():SelectWeapon(self.HolsterSwitchTo)
                     end
 
                     local vm = self:GetOwner():GetViewModel()
