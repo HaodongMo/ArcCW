@@ -78,14 +78,12 @@ function SWEP:EnterBipod()
     if !self:CanBipod() then return end
     --if CurTime() < self:GetNextSecondaryFire() then return end
 
-    if self.Bipod_Integral then
-        if self.Animations.enter_bipod then
-            self:PlayAnimation("enter_bipod")
-        end
-    else
-        self:EmitSound(self.EnterBipodSound)
-        self:DoLHIKAnimation("enter", 0.5)
+    if self.Animations.enter_bipod then
+        self:PlayAnimation("enter_bipod")
     end
+
+    self:EmitSound(self.EnterBipodSound)
+    self:DoLHIKAnimation("enter", 0.5)
 
     self.BipodPos = self:GetOwner():EyePos()
     self.BipodAngle = self:GetOwner():EyeAngles()
@@ -99,14 +97,12 @@ function SWEP:ExitBipod()
     if !self:GetNWBool("bipod", false) then return end
     if CurTime() < self:GetNextSecondaryFire() then return end
 
-    if self.Bipod_Integral then
-        if self.Animations.exit_bipod then
-            self:PlayAnimation("exit_bipod")
-        end
-    else
-        self:EmitSound(self.ExitBipodSound)
-        self:DoLHIKAnimation("exit", 0.5)
+    if self.Animations.exit_bipod then
+        self:PlayAnimation("exit_bipod")
     end
+
+    self:EmitSound(self.ExitBipodSound)
+    self:DoLHIKAnimation("exit", 0.5)
 
     self:SetNextSecondaryFire(CurTime() + 0.075)
 

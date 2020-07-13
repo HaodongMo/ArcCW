@@ -214,11 +214,11 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 end
             end
 
-            if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) and self.Animations.idle_sights then
-                if self:Clip1() == 0 and self.Animations.idle_sights_empty then
-                    ianim = "idle_sights_empty"
+            if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) and self.Animations.idle_sight then
+                if self:Clip1() == 0 and self.Animations.idle_sight_empty then
+                    ianim = "idle_sight_empty"
                 else
-                    ianim = "idle_sights"
+                    ianim = "idle_sight"
                 end
             end
 
