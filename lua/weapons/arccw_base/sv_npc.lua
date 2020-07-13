@@ -291,9 +291,9 @@ function SWEP:GetNPCBulletSpread(prof)
         return 20 / (prof + 1)
     elseif mode == 1 then
         if math.Rand(0, 100) < (prof + 5) * 5 then
-            return 5 / (prof + 1)
+            return 10 / (prof + 1)
         else
-            return 30 / (prof + 1)
+            return 50 / (prof + 1)
         end
     elseif mode >= 2 then
         return 20 / (prof + 1)
