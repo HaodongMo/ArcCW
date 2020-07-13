@@ -25,9 +25,11 @@ end
 function ArcCW_Options_HUD( CPanel )
     CPanel:AddControl("Header", {Description = "All options in this menu can be customized by players, and do not need admin privileges."})
     CPanel:AddControl("Header", {Description = ""})
-    CPanel:AddControl("Checkbox", {Label = "3D Alt HUD", Command = "arccw_hud_3dfun" })
     CPanel:AddControl("Checkbox", {Label = "Show Health", Command = "arccw_hud_showhealth" })
     CPanel:AddControl("Checkbox", {Label = "Show Ammo", Command = "arccw_hud_showammo" })
+    CPanel:AddControl("Checkbox", {Label = "Alternative 3D2D Ammo HUD", Command = "arccw_hud_3dfun" })
+    CPanel:AddControl("Checkbox", {Label = "Force HUD On (Useful w/ Custom HUDs)", Command = "arccw_hud_forceshow" })
+    
     CPanel:AddControl("Checkbox", {Label = "Hide Unowned Attachments", Command = "arccw_attinv_hideunowned" })
     CPanel:AddControl("Checkbox", {Label = "Grey Out Unowned Attachments", Command = "arccw_attinv_darkunowned" })
     CPanel:AddControl("Checkbox", {Label = "Hide Customization UI", Command = "arccw_attinv_onlyinspect" })

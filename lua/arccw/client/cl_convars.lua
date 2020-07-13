@@ -41,6 +41,7 @@ CreateClientConVar("arccw_att_showothers", "1")
 CreateClientConVar("arccw_2d3d", "1")
 
 CreateClientConVar("arccw_hud_3dfun", "0")
+CreateClientConVar("arccw_hud_forceshow", "0")
 
 CreateClientConVar("arccw_scope_r", "255")
 CreateClientConVar("arccw_scope_g", "0")

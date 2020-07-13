@@ -36,7 +36,7 @@ function ArcCW:ShouldDrawHUDElement(ele)
 
     ArcCW.PollingDefaultHUDElements = true
 
-    if hook.Call("HUDShouldDraw", nil, ele) == false then
+    if !GetConVar("arccw_hud_forceshow"):GetBool() and hook.Call("HUDShouldDraw", nil, ele) == false then
         ArcCW.PollingDefaultHUDElements = false
         return false
     end
