@@ -1402,14 +1402,14 @@ function SWEP:CreateCustomizeHUD()
                     local m = self.RegularClipSize
                     local m2 = self.Primary.ClipSize
                     local cs = self.ChamberSize
-                    local cs2 = self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize
+                    local cs2 = self:GetChamberSize()
                     return m .. (cs > 0 and " +" .. cs or ""), m2 .. (cs2 > 0 and " +" .. cs2 or "")
                 end,
                 function()
                     local m = self.RegularClipSize
                     local m2 = self.Primary.ClipSize
                     local cs = self.ChamberSize
-                    local cs2 = self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize
+                    local cs2 = self:GetChamberSize()
                     if m + cs == m2 + cs2 then return nil end
                     return m + cs < m2 + cs2
                 end,

@@ -828,7 +828,7 @@ end
 
 function SWEP:AdjustAtts()
     if SERVER then
-        local cs = self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize
+        local cs = self:GetChamberSize()
 
         if self:Clip1() > self:GetCapacity() + cs then
             local diff = self:Clip1() - (self:GetCapacity() + cs)

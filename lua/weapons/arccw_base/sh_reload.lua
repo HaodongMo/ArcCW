@@ -26,7 +26,7 @@ function SWEP:Reload()
 
     local clip = self:GetCapacity()
 
-    local chamber = math.Clamp(self:Clip1(), 0, self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize)
+    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
 
     local load = math.Clamp(clip + chamber, 0, reserve)
 
@@ -164,7 +164,7 @@ end
 function SWEP:GetVisualLoadAmount()
     if self:Clip1() > lastframeloadclip1 then
         local clip = self:GetCapacity()
-        local chamber = math.Clamp(self:Clip1(), 0, self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize)
+        local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
         self.LastLoadClip1 = math.Clamp(clip + chamber, 0, self:Ammo1() + self:Clip1()) - lastframeloadclip1
         if self:GetNWBool("cycle", false) == false and lastframeloadclip1 != 0 then
             self.LastLoadClip1 = self.LastLoadClip1 + 1
@@ -195,7 +195,7 @@ function SWEP:ReloadInsert(empty)
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     if !empty then
-        total = total + (self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize)
+        total = total + (self:GetChamberSize())
     end
 
     self:SetNWBool("reloading", true)
@@ -281,4 +281,8 @@ function SWEP:GetCapacity()
     self.Primary.ClipSize = clip
 
     return clip
+end
+
+function SWEP:GetChamberSize()
+    return (self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize) + self:GetBuff_Add("Add_ChamberSize")
 end

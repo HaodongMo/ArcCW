@@ -265,6 +265,7 @@ att.Override_ManualAction = nil
 att.Override_CanFireUnderwater = nil
 
 att.Override_ChamberSize = nil
+att.Add_ChamberSize = nil
 
 att.Mult_Recoil = 1
 att.Mult_RecoilSide = 1
