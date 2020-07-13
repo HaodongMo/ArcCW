@@ -117,6 +117,10 @@ function SWEP:NPC_Shoot()
 
     delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
 
+    if (self:GetBuff_Override("Override_ManualAction") or self.ManualAction) then
+        delay = (self.Animations.cycle.Time or 1) * self:GetBuff_Mult("Mult_CycleSpeed") or delay
+    end
+
     local num = self:GetBuff_Override("Override_Num")
 
     if !num then
@@ -257,6 +261,23 @@ function SWEP:NPC_Shoot()
     if delay < 0.1 then
         self:GetOwner():NextThink(CurTime() + delay)
     end
+
+    if self:GetBuff_Override("UBGL_NPCFire") and self:GetNextSecondaryFire() < CurTime() then
+        if math.random(0, 100) < (self:GetOwner():GetCurrentWeaponProficiency() + 1) then
+            self:SetNextSecondaryFire(CurTime() + math.random(3, 5))
+        else
+            local func = self:GetBuff_Override("UBGL_NPCFire")
+            if func then
+                func(self)
+            end
+            if self:Clip2() == 0 then
+                self:SetClip2(self.Secondary.ClipSize)
+                self:GetOwner():SetNextSecondaryFire(CurTime() + math.random(300, 500) / (self:GetOwner():GetCurrentWeaponProficiency() + 1))
+            else
+                self:GetOwner():SetNextSecondaryFire(CurTime() + math.random(1, 2))
+            end
+        end
+   end
 end
 
 function SWEP:GetNPCBulletSpread(prof)
@@ -264,17 +285,17 @@ function SWEP:GetNPCBulletSpread(prof)
     mode = mode.Mode
 
     if mode < 0 then
-        return 15
+        return 10 / (prof + 1)
     elseif mode == 0 then
-        return 20
+        return 20 / (prof + 1)
     elseif mode == 1 then
-        if math.Rand(0, 100) < 25 then
-            return 5
+        if math.Rand(0, 100) < (prof + 5) * 5 then
+            return 5 / (prof + 1)
         else
-            return 50
+            return 30 / (prof + 1)
         end
     elseif mode >= 2 then
-        return 20
+        return 20 / (prof + 1)
     end
 
     return 15
