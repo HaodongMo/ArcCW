@@ -36,7 +36,7 @@ function SWEP:DoDrawCrosshair(x, y)
             clr = Color(255, 50, 50)
         elseif LocalPlayer():IsActiveDetective() then
             clr = Color(50, 50, 255)
-        elseif GetRoundState() != ROUND_PREP then
+        elseif GetRoundState() != ROUND_PREP and GetRoundState() != ROUND_POST then
             clr = Color(50, 255, 50)
         end
     end

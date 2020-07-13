@@ -204,20 +204,23 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
 
     panellist:AddItem(dgui)
 
-    if LocalPlayer():IsAdmin() then
+    if not game.IsDedicated() and LocalPlayer():IsSuperAdmin() then
         local dgui2 = vgui.Create("DForm", panellist)
         dgui2:SetName("Server Settings")
-        dgui2:Help("This panel will not work for dedicated servers. Use ConVars if that is the case.")
         dgui2:CheckBox("Auto-replace Weapons", "arccw_ttt_replace")
         dgui2:CheckBox("Auto-replace Ammo", "arccw_ttt_replaceammo")
         dgui2:CheckBox("Random Attachments", "arccw_ttt_atts")
         dgui2:NumSlider("Customization Mode", "arccw_ttt_customizemode", 0, 3, 0)
         dgui2:Help("0 - No restrictions; 1 - Restricted; 2 - Pregame only; 3 - Traitor/Detective only")
 
-        local cb = dgui2:CheckBox("Free Attachments", "arccw_attinv_free")
+        local cb = dgui2:CheckBox("Enable Customization", "arccw_enable_customization")
+        cb:SetTooltip("If disabled, nobody can customize. This overwrites Customization Mode.")
+
+        cb = dgui2:CheckBox("Free Attachments", "arccw_attinv_free")
         cb:SetTooltip("If enabled, players have access to all attachments.\nCustomization mode may still restrict them from using them.")
         cb = dgui2:CheckBox("Attachment Locking", "arccw_attinv_lockmode")
         cb:SetTooltip("If enabled, picking up one attachment unlocks it for every weapon, a-la CW2.")
+
 
         local ns = dgui2:NumSlider("Body Attachment Info", "arccw_ttt_bodyattinfo", 0, 2, 0)
         ns:SetTooltip("If enabled, searching a body will reveal the attachments on the weapon used to kill someone.")

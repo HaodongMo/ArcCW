@@ -1,4 +1,4 @@
-function ArcCW:PlayerCanAttach(ply, wep, attname, slot)
+function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
 
     -- The global variable takes priority over everything
     if !ArcCW.EnableCustomization then return false end
@@ -13,26 +13,13 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot)
     end
 
     -- Allow hooks to block attachment usage as well
-    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot) or true
+    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach) or true
 
     return ret
 end
 
 function ArcCW:PlayerCanDetach(ply, wep, attname, slot)
-
-    if !ArcCW.EnableCustomization then return false end
-
-    if !GetConVar("arccw_enable_customization"):GetBool() and !ply.ArcCW_AllowCustomize then return false end
-    if engine.ActiveGamemode() == "terrortown" then
-        local mode = GetConVar("arccw_ttt_customizemode"):GetInt()
-        if mode == 1 and !ply.ArcCW_AllowCustomize then return false
-        elseif mode == 2 and !ply.ArcCW_AllowCustomize and GetRoundState() == ROUND_ACTIVE then return false
-        elseif mode == 3 and !ply.ArcCW_AllowCustomize and !ply:IsActiveTraitor() and !ply:IsActiveDetective() then return false end
-    end
-
-    local ret = hook.Run("ArcCW_PlayerCanDetach", ply, wep, attname, slot) or true
-
-    return ret
+    return ArcCW:PlayerCanAttach(ply, wep, attname, slot, true)
 end
 
 function ArcCW:GetAttsForSlot(slot, wep)
