@@ -29,6 +29,7 @@ function SWEP:NPC_Initialize()
     self:GetOwner():Input("SetMaxLookDistance", nil, nil, range)
 
     self:SetNextPrimaryFire(CurTime())
+    self:SetNextSecondaryFire(CurTime() + 30)
     self:GetOwner():NextThink(CurTime())
 end
 
@@ -272,9 +273,9 @@ function SWEP:NPC_Shoot()
             end
             if self:Clip2() == 0 then
                 self:SetClip2(self.Secondary.ClipSize)
-                self:GetOwner():SetNextSecondaryFire(CurTime() + math.random(300, 500) / (self:GetOwner():GetCurrentWeaponProficiency() + 1))
+                self:SetNextSecondaryFire(CurTime() + math.random(300, 600) / (self:GetOwner():GetCurrentWeaponProficiency() + 1))
             else
-                self:GetOwner():SetNextSecondaryFire(CurTime() + math.random(1, 2))
+                self:SetNextSecondaryFire(CurTime() + 1 / ((self:GetBuff_Override("UBGL_RPM") or 300) / 60))
             end
         end
    end
