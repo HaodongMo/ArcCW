@@ -161,7 +161,6 @@ function SWEP:PrimaryAttack()
 
                     effect = "arccw_incendiaryround"
                     decal = "FadingScorch"
-                    
 
                     if SERVER then
                         if vFireInstalled then

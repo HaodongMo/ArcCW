@@ -131,6 +131,10 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         seq = anim.RareSource
     end
 
+    seq = self:GetBuff_Hook("Hook_TranslateSequence", seq)
+
+    if !seq then return end
+
     if istable(seq) then
         seq["BaseClass"] = nil
 
