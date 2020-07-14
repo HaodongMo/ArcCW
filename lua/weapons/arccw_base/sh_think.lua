@@ -89,6 +89,7 @@ function SWEP:Think()
     end
 
     if !(self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD))) then
+
         if self:GetOwner():GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
             if self:GetOwner():KeyPressed(IN_ATTACK2) and CLIENT then
                 if (lastUBGL or 0) + 0.25 > CurTime() then return end
@@ -107,6 +108,8 @@ function SWEP:Think()
                     self:SelectUBGL()
                 end
             end
+        elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+            self:ExitSights()
         elseif self:GetOwner():GetInfoNum("arccw_toggleads", 0) == 0 then
             if self:GetOwner():KeyPressed(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
                 self:EnterSights()

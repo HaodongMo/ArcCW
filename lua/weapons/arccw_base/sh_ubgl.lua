@@ -12,8 +12,13 @@ function SWEP:SelectUBGL()
             self:DoLHIKAnimation("enter")
         end
     end
-    if self.Animations.enter_ubgl then
-        self:PlayAnimation("enter_ubgl")
+
+    if self.Animations.enter_ubgl_empty and self:Clip2() == 0 then
+        self:PlayAnimation("enter_ubgl_empty", 1, false, 0, true)
+        self:SetNextSecondaryFire(CurTime() + self.Animations.enter_ubgl_empty.Time)
+    elseif self.Animations.enter_ubgl then
+        self:PlayAnimation("enter_ubgl", 1, false, 0, true)
+        self:SetNextSecondaryFire(CurTime() + self.Animations.enter_ubgl.Time)
     end
 end
 
@@ -29,8 +34,11 @@ function SWEP:DeselectUBGL()
             self:DoLHIKAnimation("exit")
         end
     end
-    if self.Animations.exit_ubgl then
-        self:PlayAnimation("exit_ubgl")
+
+    if self.Animations.exit_ubgl_empty and self:Clip2() == 0 then
+        self:PlayAnimation("exit_ubgl_empty", 1, false, 0, true)
+    elseif self.Animations.exit_ubgl then
+        self:PlayAnimation("exit_ubgl", 1, false, 0, true)
     end
 end
 
