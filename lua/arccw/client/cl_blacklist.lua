@@ -2,8 +2,6 @@ local blacklistWindow = nil
 local blacklistTbl = {}
 
 function ArcCW.MakeBlacklistWindow()
-    local startTime = CurTime()
-
     if blacklistWindow then blacklistWindow:Remove() end
     blacklistTbl = {}
 
@@ -63,6 +61,7 @@ function ArcCW.MakeBlacklistWindow()
                 net.WriteBool(bStatus)
             end
         net.SendToServer()
+        blacklistTbl = {}
         blacklistWindow:Close()
         blacklistWindow:Remove()
     end
@@ -100,7 +99,8 @@ function ArcCW.MakeBlacklistWindow()
             local Bfg_col = Color(255, 255, 255, 255)
             local Bbg_col = Color(0, 0, 0, 200)
 
-            local isBlacklisted = blacklistTbl[attName] or attTbl.Blacklisted
+            local isBlacklisted = blacklistTbl[attName]
+            if isBlacklisted == nil then isBlacklisted = attTbl.Blacklisted end
 
             if isBlacklisted and spaa:IsHovered() then
                 Bbg_col = Color(125, 25, 25, 150)

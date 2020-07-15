@@ -13,6 +13,7 @@ function ArcCW.LoadAttachmentType(att)
         ArcCW.AttachmentTable[shortname] = att
         ArcCW.AttachmentIDTable[ArcCW.NumAttachments] = shortname
 
+        att.Blacklisted = false
         att.ShortName = shortname
 
         if !ArcCW.AttachmentSlotTable[att.Slot] then
@@ -50,13 +51,14 @@ end
 local function ArcCW_SendBlacklist(ply)
     if SERVER then
         ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
-        net.Start("arccw_blacklist")
-            net.WriteUInt(table.Count(ArcCW.AttachmentBlacklistTable), ArcCW.GetBitNecessity())
-            for attName, bStatus in pairs(ArcCW.AttachmentBlacklistTable) do
-                net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
-                net.WriteBool(bStatus)
-            end
-        if ply then net.Send(ply) else net.Broadcast() end
+        timer.Simple(0, function()
+            net.Start("arccw_blacklist")
+                net.WriteUInt(table.Count(ArcCW.AttachmentBlacklistTable), ArcCW.GetBitNecessity())
+                for attName, bStatus in pairs(ArcCW.AttachmentBlacklistTable) do
+                    net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
+                end
+            if ply then net.Send(ply) else net.Broadcast() end
+        end)
     end
 end
 
@@ -107,11 +109,12 @@ if CLIENT then
         ArcCW.AttachmentBlacklistTable = {}
         local amt = net.ReadUInt(ArcCW.GetBitNecessity())
         for i = 1, amt do
-            local id, status = net.ReadUInt(ArcCW.GetBitNecessity()), net.ReadBool()
-            ArcCW.AttachmentBlacklistTable[ArcCW.AttachmentIDTable[id]] = (status == true and true or nil)
-            ArcCW.AttachmentTable[ArcCW.AttachmentIDTable[id]].Blacklisted = (status == true and true or nil)
+            local id = net.ReadUInt(ArcCW.GetBitNecessity())
+            ArcCW.AttachmentBlacklistTable[ArcCW.AttachmentIDTable[id]] = true
         end
-        -- ArcCW_LoadAtts()
+        for i, v in pairs(ArcCW.AttachmentTable) do
+            v.Blacklisted = ArcCW.AttachmentBlacklistTable[i]
+        end
     end)
 
 elseif SERVER then
@@ -121,11 +124,13 @@ elseif SERVER then
         local amt = net.ReadUInt(ArcCW.GetBitNecessity())
         for i = 1, amt do
             local id, status = net.ReadUInt(ArcCW.GetBitNecessity()), net.ReadBool()
-            ArcCW.AttachmentBlacklistTable[ArcCW.AttachmentIDTable[id]] = (status == true and true or nil)
+            local attName = ArcCW.AttachmentIDTable[id]
+            ArcCW.AttachmentBlacklistTable[attName] = (status == true and true or nil)
+            ArcCW.AttachmentTable[attName].Blacklisted = ArcCW.AttachmentBlacklistTable[attName]
         end
         file.Write("arccw_blacklist.txt", util.TableToJSON(ArcCW.AttachmentBlacklistTable))
         print("Saved " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " blacklisted attachments to file.")
-        ArcCW_LoadAtts()
+        ArcCW_SendBlacklist()
     end)
 
 end

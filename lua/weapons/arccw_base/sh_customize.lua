@@ -618,7 +618,7 @@ function SWEP:CreateCustomizeHUD()
     for i, k in pairs(self.Attachments) do
         if !k.PrintName then continue end
         if i == "BaseClass" then continue end
-        if k.Hidden then continue end
+        if k.Hidden or k.Blacklisted then continue end
         if k.Integral then continue end
 
         local attcatb = attcats:Add("DButton")
