@@ -193,6 +193,10 @@ att.Hook_SelectFireAnimation = function(wep, curanim) end
 -- return nil to do nothing
 att.Hook_TranslateAnimation = function(wep, anim) end
 
+-- directly changes source sequence to play
+-- seq and return can either be string or table
+att.Hook_TranslateSequence = function(wep, seq) end
+
 att.Hook_LHIK_TranslateAnimation = function(wep, anim) end
 
 -- att.Hook_TranslateAnimation = function(wep, anim)
