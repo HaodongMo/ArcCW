@@ -758,7 +758,7 @@ function SWEP:Detach(slot, silent)
 
     if !self.Attachments[slot].Installed then return end
 
-    if !ArcCW:PlayerCanDetach(self:GetOwner(), self, slot, self.Attachments[slot].Installed) then
+    if !ArcCW:PlayerCanAttach(self:GetOwner(), self, slot, self.Attachments[slot].Installed, true) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
