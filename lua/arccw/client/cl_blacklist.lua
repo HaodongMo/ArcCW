@@ -55,6 +55,7 @@ function ArcCW.MakeBlacklistWindow()
         -- We send ID over instead of strings to save on network costs
         -- optimization_is_optimization.png
         net.Start("arccw_blacklist")
+            net.WriteBool(false) -- We're sending a table, not asking for it
             net.WriteUInt(table.Count(blacklistTbl), ArcCW.GetBitNecessity())
             for attName, bStatus in pairs(blacklistTbl) do
                 net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
