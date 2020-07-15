@@ -159,6 +159,16 @@ if SERVER then
                 ammoent:SetPos(ent:GetPos())
                 ammoent:SetAngles(ent:GetAngles())
                 ammoent:Spawn()
+                -- Setting owner prevents pickup
+                if IsValid(ent:GetOwner()) then
+                    ammoent:SetOwner(ent:GetOwner())
+                    timer.Simple(2, function()
+                        if IsValid(ammoent) then ammoent:SetOwner(nil) end
+                    end)
+                end
+                -- Dropped ammo may have less rounds than usual
+                ammoent.AmmoCount = ent.AmmoAmount or ammoent.AmmoCount
+                ammoent:SetNWInt("truecount", ammoent.AmmoCount)
                 SafeRemoveEntityDelayed(ent, 0) -- remove next tick
             end)
         end

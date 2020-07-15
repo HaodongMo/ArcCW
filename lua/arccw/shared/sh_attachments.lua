@@ -3,23 +3,20 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     -- The global variable takes priority over everything
     if !ArcCW.EnableCustomization then return false end
 
+    -- Allow hooks to block or force allow attachment usage
+    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach) or true
+
     -- Followed by convar
-    if !GetConVar("arccw_enable_customization"):GetBool() and !ply.ArcCW_AllowCustomize then return false end
-    if engine.ActiveGamemode() == "terrortown" then
+    if !ret and !GetConVar("arccw_enable_customization"):GetBool() then return false end
+
+    if !ret and engine.ActiveGamemode() == "terrortown" then
         local mode = GetConVar("arccw_ttt_customizemode"):GetInt()
         if mode == 1 and !ply.ArcCW_AllowCustomize then return false
         elseif mode == 2 and !ply.ArcCW_AllowCustomize and GetRoundState() == ROUND_ACTIVE then return false
         elseif mode == 3 and !ply.ArcCW_AllowCustomize and !ply:IsActiveTraitor() and !ply:IsActiveDetective() then return false end
     end
 
-    -- Allow hooks to block attachment usage as well
-    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach) or true
-
     return ret
-end
-
-function ArcCW:PlayerCanDetach(ply, wep, attname, slot)
-    return ArcCW:PlayerCanAttach(ply, wep, attname, slot, true)
 end
 
 function ArcCW:GetAttsForSlot(slot, wep)
@@ -49,7 +46,7 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
     local atttbl = ArcCW.AttachmentTable[att]
     if !atttbl then return false end
 
-    if atttbl.Hidden then return false end
+    if atttbl.Hidden or atttbl.Blacklisted then return false end
 
     if atttbl.NotForNPC and wep.Owner:IsNPC() then
         return false

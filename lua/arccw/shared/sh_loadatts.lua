@@ -2,17 +2,18 @@ ArcCW = ArcCW or {}
 ArcCW.AttachmentTable = {}
 ArcCW.AttachmentIDTable = {}
 ArcCW.AttachmentSlotTable = {}
+ArcCW.AttachmentBlacklistTable = {}
 ArcCW.NumAttachments = 1
-
 ArcCW.GenerateAttEntities = true
 
-shortname = ""
+local shortname = ""
 
 function ArcCW.LoadAttachmentType(att)
     if !att.Ignore then
         ArcCW.AttachmentTable[shortname] = att
         ArcCW.AttachmentIDTable[ArcCW.NumAttachments] = shortname
 
+        att.Blacklisted = false
         att.ShortName = shortname
 
         if !ArcCW.AttachmentSlotTable[att.Slot] then
@@ -46,6 +47,21 @@ function ArcCW.LoadAttachmentType(att)
     end
 end
 
+-- TODO send player blacklist with this function upon request
+local function ArcCW_SendBlacklist(ply)
+    if SERVER then
+        ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
+        timer.Simple(0, function()
+            net.Start("arccw_blacklist")
+                net.WriteUInt(table.Count(ArcCW.AttachmentBlacklistTable), ArcCW.GetBitNecessity())
+                for attName, bStatus in pairs(ArcCW.AttachmentBlacklistTable) do
+                    net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
+                end
+            if ply then net.Send(ply) else net.Broadcast() end
+        end)
+    end
+end
+
 local function ArcCW_LoadAtts()
     ArcCW.AttachmentTable = {}
     ArcCW.AttachmentIDTable = {}
@@ -64,6 +80,8 @@ local function ArcCW_LoadAtts()
     end
 
     print("Loaded " .. tostring(ArcCW.NumAttachments) .. " ArcCW attachments.")
+
+    ArcCW_SendBlacklist()
 end
 
 function ArcCW.GetBitNecessity()
@@ -76,6 +94,7 @@ end
 ArcCW_LoadAtts()
 
 if CLIENT then
+
     spawnmenu.AddCreationTab( "#spawnmenu.category.entities", function()
 
         local ctrl = vgui.Create( "SpawnmenuContentPanel" )
@@ -85,6 +104,35 @@ if CLIENT then
         return ctrl
 
     end, "icon16/bricks.png", 20 )
+
+    net.Receive("arccw_blacklist", function()
+        ArcCW.AttachmentBlacklistTable = {}
+        local amt = net.ReadUInt(ArcCW.GetBitNecessity())
+        for i = 1, amt do
+            local id = net.ReadUInt(ArcCW.GetBitNecessity())
+            ArcCW.AttachmentBlacklistTable[ArcCW.AttachmentIDTable[id]] = true
+        end
+        for i, v in pairs(ArcCW.AttachmentTable) do
+            v.Blacklisted = ArcCW.AttachmentBlacklistTable[i]
+        end
+    end)
+
+elseif SERVER then
+
+    net.Receive("arccw_blacklist", function(len, ply)
+        if !ply:IsAdmin() then return end
+        local amt = net.ReadUInt(ArcCW.GetBitNecessity())
+        for i = 1, amt do
+            local id, status = net.ReadUInt(ArcCW.GetBitNecessity()), net.ReadBool()
+            local attName = ArcCW.AttachmentIDTable[id]
+            ArcCW.AttachmentBlacklistTable[attName] = (status == true and true or nil)
+            ArcCW.AttachmentTable[attName].Blacklisted = ArcCW.AttachmentBlacklistTable[attName]
+        end
+        file.Write("arccw_blacklist.txt", util.TableToJSON(ArcCW.AttachmentBlacklistTable))
+        print("Saved " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " blacklisted attachments to file.")
+        ArcCW_SendBlacklist()
+    end)
+
 end
 
 hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()

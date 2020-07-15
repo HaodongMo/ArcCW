@@ -618,7 +618,7 @@ function SWEP:CreateCustomizeHUD()
     for i, k in pairs(self.Attachments) do
         if !k.PrintName then continue end
         if i == "BaseClass" then continue end
-        if k.Hidden then continue end
+        if k.Hidden or k.Blacklisted then continue end
         if k.Integral then continue end
 
         local attcatb = attcats:Add("DButton")
@@ -1598,6 +1598,75 @@ function SWEP:CreateCustomizeHUD()
             surface.DrawRect(0, 0, w, h)
 
             local txt = statbox:IsVisible() and "Trivia" or "Stats"
+
+            surface.SetTextColor(Bfg_col)
+            surface.SetTextPos(smallgap, ScreenScale(1))
+            surface.SetFont("ArcCW_12")
+            surface.DrawText(txt)
+        end
+    end
+
+    if engine.ActiveGamemode() == "terrortown" then
+        local gap = airgap
+
+        if GetRoundState() == ROUND_ACTIVE and (LocalPlayer():GetTraitor() or LocalPlayer():GetDetective()) then
+            local buymenu = vgui.Create("DButton", ArcCW.InvHUD)
+            buymenu:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+            buymenu:SetText("")
+            buymenu:SetPos(ScrW() - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap + gap)
+            gap = gap + airgap
+
+            buymenu.OnMousePressed = function(spaa, kc)
+                RunConsoleCommand("ttt_cl_traitorpopup")
+            end
+
+            buymenu.Paint = function(spaa, w, h)
+                if !self:IsValid() then return end
+                if !self.Attachments then return end
+                local Bfg_col = Color(255, 255, 255, 255)
+                local Bbg_col = Color(0, 0, 0, 100)
+
+                if spaa:IsHovered() then
+                    Bbg_col = Color(255, 255, 255, 100)
+                    Bfg_col = Color(0, 0, 0, 255)
+                end
+
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+
+                local txt = "TTT Equipment"
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap, ScreenScale(1))
+                surface.SetFont("ArcCW_12")
+                surface.DrawText(txt)
+            end
+        end
+
+        local radiomenu = vgui.Create("DButton", ArcCW.InvHUD)
+        radiomenu:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+        radiomenu:SetText("")
+        radiomenu:SetPos(ScrW() - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap + gap)
+
+        radiomenu.OnMousePressed = function(spaa, kc)
+            RADIO:ShowRadioCommands(!RADIO.Show)
+        end
+
+        radiomenu.Paint = function(spaa, w, h)
+            if !self:IsValid() then return end
+            if !self.Attachments then return end
+            local Bfg_col = Color(255, 255, 255, 255)
+            local Bbg_col = Color(0, 0, 0, 100)
+
+            if spaa:IsHovered() then
+                Bbg_col = Color(255, 255, 255, 100)
+                Bfg_col = Color(0, 0, 0, 255)
+            end
+
+            surface.SetDrawColor(Bbg_col)
+            surface.DrawRect(0, 0, w, h)
+
+            local txt = "TTT Quickchat"
 
             surface.SetTextColor(Bfg_col)
             surface.SetTextPos(smallgap, ScreenScale(1))
