@@ -535,12 +535,16 @@ function SWEP:DrawCustomModel(wm)
             vm = self
             selfmode = true
         end
+
+        if !vm or !IsValid(vm) then return end
     else
         if !self.VM then
             self:SetupModel(wm)
         end
 
         vm = self:GetOwner():GetViewModel()
+
+        if !vm or !IsValid(vm) then return end
 
         models = self.VM
 
