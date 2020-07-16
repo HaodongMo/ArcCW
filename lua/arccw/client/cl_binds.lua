@@ -30,7 +30,7 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
     local block = false
 
     if bind == ArcCW.KEY_FIREMODE then
-        if wpn:GetBuff_Override("UBGL") then
+        if wpn:GetBuff_Override("UBGL") and !GetConVar("arccw_altubglkey"):GetBool() then
             if lastpressZ >= CurTime() - 0.25 then
                 if wpn:GetNWBool("ubgl") then
                     net.Start("arccw_ubgl")
