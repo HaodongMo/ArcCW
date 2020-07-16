@@ -131,6 +131,7 @@ function ArcCW_Options_Atts( CPanel )
     CPanel:AddControl("Slider", {Label = "Pick X", Command = "arccw_atts_pickx", Min = 0, Max = 15, Type = "int" })
     CPanel:AddControl("Checkbox", {Label = "Attachment Dropping", Command = "arccw_enable_dropping" })
     CPanel:AddControl("Checkbox", {Label = "Random Attachments on Spawn", Command = "arccw_atts_spawnrand" })
+    CPanel:AddControl("Button", {Label = "Blacklist Menu", Command = "arccw_blacklist"})
 end
 
 function ArcCW_Options_Server( CPanel )
