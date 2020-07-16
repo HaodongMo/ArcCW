@@ -8,6 +8,7 @@ end
 function SWEP:EnterSprint()
     if engine.ActiveGamemode() == "terrortown" then return end
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+    if self:GetState() == ArcCW.STATE_SPRINT then return end
     self:SetState(ArcCW.STATE_SPRINT)
     self.Sighted = false
     self.Sprinted = true
@@ -30,6 +31,7 @@ end
 
 function SWEP:ExitSprint()
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+    if self:GetState() == ArcCW.STATE_IDLE then return end
     self:SetState(ArcCW.STATE_IDLE)
     self.Sighted = false
     self.Sprinted = false
@@ -58,7 +60,6 @@ SWEP.LastEnterSightTime = 0
 SWEP.LastExitSightTime = 0
 
 function SWEP:EnterSights()
-    -- if !game.SinglePlayer() and IsFirstTimePredicted() then return end
     local asight = self:GetActiveSights()
     if !asight then return end
     if self:GetState() != ArcCW.STATE_IDLE then return end

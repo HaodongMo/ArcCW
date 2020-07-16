@@ -54,12 +54,21 @@ function ArcCW.MakeBlacklistWindow()
     accept.OnMousePressed = function(spaa, kc)
         -- We send ID over instead of strings to save on network costs
         -- optimization_is_optimization.png
+
+        local blacklistAmt = 0
+
+        for attName, bStatus in pairs(blacklistTbl) do
+            if bStatus then
+                blacklistAmt = blacklistAmt + 1
+            end
+        end
+
         net.Start("arccw_blacklist")
-            net.WriteBool(false) -- We're sending a table, not asking for it
-            net.WriteUInt(table.Count(blacklistTbl), ArcCW.GetBitNecessity())
+            net.WriteUInt(blacklistAmt, ArcCW.GetBitNecessity())
             for attName, bStatus in pairs(blacklistTbl) do
-                net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
-                net.WriteBool(bStatus)
+                if bStatus then
+                    net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
+                end
             end
         net.SendToServer()
         blacklistTbl = {}
@@ -132,9 +141,9 @@ function ArcCW.MakeBlacklistWindow()
         end
         attBtn.OnMousePressed = function(spaa, kc)
             if blacklistTbl[attName] == nil then
-                blacklistTbl[attName] = not attTbl.Blacklisted
+                blacklistTbl[attName] = !attTbl.Blacklisted
             else
-                blacklistTbl[attName] = not blacklistTbl[attName]
+                blacklistTbl[attName] = !blacklistTbl[attName]
             end
         end
     end

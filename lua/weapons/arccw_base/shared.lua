@@ -518,7 +518,21 @@ if CLIENT then
 end
 
 function SWEP:SetupDataTables()
-    self:NetworkVar("Int", 0, "State")
+    self:NetworkVar("Int", 0, "NWState")
+end
+
+function SWEP:SetState(v)
+    self:SetNWState(v)
+
+    if CLIENT then
+        self.State = v
+    end
+end
+
+function SWEP:GetState(v)
+    if CLIENT and self.State then return self.State end
+
+    return self:GetNWState(v)
 end
 
 function SWEP:IsProne()

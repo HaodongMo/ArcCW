@@ -115,7 +115,7 @@ function SWEP:TTT_Init()
 
     -- This will overwrite mag reducers, so give it a bit of time
     timer.Simple(0.1, function()
-        self:SetClip1(self:GetCapacity())
+        self:SetClip1(self:GetCapacity() or self.RegularClipSize or self.Primary.ClipSize)
         self.Primary.DefaultClip = self:GetCapacity()
     end)
 
