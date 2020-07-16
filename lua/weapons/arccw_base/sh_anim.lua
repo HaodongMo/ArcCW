@@ -226,6 +226,15 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 end
             end
 
+            -- because you just know SOMEONE is gonna make this mistake
+            if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) and self.Animations.idle_sights then
+                if self:Clip1() == 0 and self.Animations.idle_sights_empty then
+                    ianim = "idle_sights_empty"
+                else
+                    ianim = "idle_sights"
+                end
+            end
+
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
             if self:GetNWBool("ubgl") and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
                 ianim = "idle_ubgl_empty"
