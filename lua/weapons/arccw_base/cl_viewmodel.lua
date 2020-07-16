@@ -20,6 +20,7 @@ end
 
 function SWEP:GetViewModelPosition(pos, ang)
     if !self:GetOwner():IsValid() or !self:GetOwner():Alive() then return end
+
     local oldpos = Vector()
     local oldang = Angle()
 
@@ -98,7 +99,7 @@ function SWEP:GetViewModelPosition(pos, ang)
             target.ang = target.ang + Angle(0, -5, 0)
         end
 
-    elseif (sprinted or (self:GetCurrentFiremode().Mode == 0 and !sighted)) and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then
+    elseif (sprinted and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint)) or (self:GetCurrentFiremode().Mode == 0) then
         target = {
             pos = Vector(),
             ang = Angle(),

@@ -50,7 +50,7 @@ end
 -- TODO send player blacklist with this function upon request
 local function ArcCW_SendBlacklist(ply)
     if SERVER then
-        ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
+        -- ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
         timer.Simple(0, function()
             net.Start("arccw_blacklist")
                 net.WriteUInt(table.Count(ArcCW.AttachmentBlacklistTable), ArcCW.GetBitNecessity())
@@ -122,11 +122,14 @@ elseif SERVER then
     net.Receive("arccw_blacklist", function(len, ply)
         if !ply:IsAdmin() then return end
         local amt = net.ReadUInt(ArcCW.GetBitNecessity())
+        ArcCW.AttachmentBlacklistTable = {}
         for i = 1, amt do
-            local id, status = net.ReadUInt(ArcCW.GetBitNecessity()), net.ReadBool()
+            local id = net.ReadUInt(ArcCW.GetBitNecessity())
             local attName = ArcCW.AttachmentIDTable[id]
-            ArcCW.AttachmentBlacklistTable[attName] = (status == true and true or nil)
-            ArcCW.AttachmentTable[attName].Blacklisted = ArcCW.AttachmentBlacklistTable[attName]
+            ArcCW.AttachmentBlacklistTable[attName] = true
+        end
+        for i, k in pairs(ArcCW.AttachmentTable) do
+            k.Blacklisted = ArcCW.AttachmentBlacklistTable[i] or false
         end
         file.Write("arccw_blacklist.txt", util.TableToJSON(ArcCW.AttachmentBlacklistTable))
         print("Saved " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " blacklisted attachments to file.")
