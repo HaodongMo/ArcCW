@@ -647,15 +647,18 @@ function SWEP:CreateCustomizeHUD()
 
             local atts = {}
             local slots = {i}
+            local attCheck = {}
 
             table.Add(slots, k.MergeSlots or {})
 
             for _, y in pairs(slots) do
                 for _, bruh in pairs(ArcCW:GetAttsForSlot((self.Attachments[y] or {}).Slot, self)) do
+                    if attCheck[bruh] then continue end
                     table.insert(atts, {
                         att = bruh,
                         slot = y
                     })
+                    attCheck[bruh] = true
                 end
             end
 
