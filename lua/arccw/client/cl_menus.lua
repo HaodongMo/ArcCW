@@ -29,7 +29,7 @@ function ArcCW_Options_HUD( CPanel )
     CPanel:AddControl("Checkbox", {Label = "Show Ammo", Command = "arccw_hud_showammo" })
     CPanel:AddControl("Checkbox", {Label = "Alternative 3D2D Ammo HUD", Command = "arccw_hud_3dfun" })
     CPanel:AddControl("Checkbox", {Label = "Force HUD On (Useful w/ Custom HUDs)", Command = "arccw_hud_forceshow" })
-    
+
     CPanel:AddControl("Checkbox", {Label = "Hide Unowned Attachments", Command = "arccw_attinv_hideunowned" })
     CPanel:AddControl("Checkbox", {Label = "Grey Out Unowned Attachments", Command = "arccw_attinv_darkunowned" })
     CPanel:AddControl("Checkbox", {Label = "Hide Customization UI", Command = "arccw_attinv_onlyinspect" })
@@ -62,7 +62,137 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Slider", {Label = "Sprint Sway", Command = "arccw_vm_bob_sprint", Min = 0, Max = 5, Type = "float" })
 end
 
+local crosshair_cvars = {
+    "arccw_crosshair_length", "arccw_crosshair_thickness", "arccw_crosshair_gap",
+    "arccw_crosshair_dot", "arccw_crosshair_shotgun", "arccw_crosshair_equip", "arccw_crosshair_static",
+    "arccw_crosshair_clump", "arccw_crosshair_clump_outline", "arccw_crosshair_clump_always",
+    "arccw_crosshair_clr_r", "arccw_crosshair_clr_g", "arccw_crosshair_clr_b", "arccw_crosshair_clr_a",
+    "arccw_crosshair_outline", "arccw_crosshair_outline_r", "arccw_crosshair_outline_g", "arccw_crosshair_outline_b", "arccw_crosshair_outline_a",
+    "arccw_scope_r", "arccw_scope_g", "arccw_scope_b"}
+local crosshair_presets = {
+    ["#preset.default"] = {
+        ["arccw_crosshair_length"] = "4",
+        ["arccw_crosshair_thickness"] = "1",
+        ["arccw_crosshair_gap"] = "1",
+        ["arccw_crosshair_dot"] = "1",
+        ["arccw_crosshair_shotgun"] = "1",
+        ["arccw_crosshair_equip"] = "1",
+        ["arccw_crosshair_static"] = "0",
+        ["arccw_crosshair_clump"] = "0",
+        ["arccw_crosshair_clump_outline"] = "0",
+        ["arccw_crosshair_clump_always"] = "0",
+        ["arccw_crosshair_clr_r"] = "255",
+        ["arccw_crosshair_clr_g"] = "255",
+        ["arccw_crosshair_clr_b"] = "255",
+        ["arccw_crosshair_clr_a"] = "255",
+        ["arccw_crosshair_outline"] = "2",
+        ["arccw_crosshair_outline_r"] = "0",
+        ["arccw_crosshair_outline_g"] = "0",
+        ["arccw_crosshair_outline_b"] = "0",
+        ["arccw_crosshair_outline_a"] = "255",
+        ["arccw_scope_r"] = "255",
+        ["arccw_scope_g"] = "0",
+        ["arccw_scope_b"] = "0",
+    },
+    ["#arccw.crosshair.tfa"] = {
+        ["arccw_crosshair_length"] = "8",
+        ["arccw_crosshair_thickness"] = "0.4",
+        ["arccw_crosshair_gap"] = "1",
+        ["arccw_crosshair_dot"] = "0",
+        ["arccw_crosshair_shotgun"] = "0",
+        ["arccw_crosshair_equip"] = "0",
+        ["arccw_crosshair_static"] = "0",
+        ["arccw_crosshair_clump"] = "0",
+        ["arccw_crosshair_clump_outline"] = "0",
+        ["arccw_crosshair_clump_always"] = "0",
+        ["arccw_crosshair_clr_r"] = "255",
+        ["arccw_crosshair_clr_g"] = "255",
+        ["arccw_crosshair_clr_b"] = "255",
+        ["arccw_crosshair_clr_a"] = "255",
+        ["arccw_crosshair_outline"] = "2",
+        ["arccw_crosshair_outline_r"] = "0",
+        ["arccw_crosshair_outline_g"] = "0",
+        ["arccw_crosshair_outline_b"] = "0",
+        ["arccw_crosshair_outline_a"] = "255",
+        ["arccw_scope_r"] = "255",
+        ["arccw_scope_g"] = "0",
+        ["arccw_scope_b"] = "0",
+    },
+    ["#arccw.crosshair.cw2"] = {
+        ["arccw_crosshair_length"] = "3.5",
+        ["arccw_crosshair_thickness"] = "0.4",
+        ["arccw_crosshair_gap"] = "1",
+        ["arccw_crosshair_dot"] = "0",
+        ["arccw_crosshair_shotgun"] = "0",
+        ["arccw_crosshair_equip"] = "0",
+        ["arccw_crosshair_static"] = "0",
+        ["arccw_crosshair_clump"] = "1",
+        ["arccw_crosshair_clump_outline"] = "1",
+        ["arccw_crosshair_clump_always"] = "0",
+        ["arccw_crosshair_clr_r"] = "255",
+        ["arccw_crosshair_clr_g"] = "255",
+        ["arccw_crosshair_clr_b"] = "255",
+        ["arccw_crosshair_clr_a"] = "200",
+        ["arccw_crosshair_outline"] = "2",
+        ["arccw_crosshair_outline_r"] = "0",
+        ["arccw_crosshair_outline_g"] = "0",
+        ["arccw_crosshair_outline_b"] = "0",
+        ["arccw_crosshair_outline_a"] = "200",
+        ["arccw_scope_r"] = "255",
+        ["arccw_scope_g"] = "0",
+        ["arccw_scope_b"] = "0",
+    },
+    ["#arccw.crosshair.cs"] = {
+        ["arccw_crosshair_length"] = "3",
+        ["arccw_crosshair_thickness"] = "0.4",
+        ["arccw_crosshair_gap"] = "0.4",
+        ["arccw_crosshair_dot"] = "0",
+        ["arccw_crosshair_shotgun"] = "0",
+        ["arccw_crosshair_equip"] = "0",
+        ["arccw_crosshair_static"] = "1",
+        ["arccw_crosshair_clump"] = "0",
+        ["arccw_crosshair_clump_outline"] = "0",
+        ["arccw_crosshair_clump_always"] = "0",
+        ["arccw_crosshair_clr_r"] = "0",
+        ["arccw_crosshair_clr_g"] = "255",
+        ["arccw_crosshair_clr_b"] = "0",
+        ["arccw_crosshair_clr_a"] = "255",
+        ["arccw_crosshair_outline"] = "0",
+        ["arccw_crosshair_outline_r"] = "0",
+        ["arccw_crosshair_outline_g"] = "0",
+        ["arccw_crosshair_outline_b"] = "0",
+        ["arccw_crosshair_outline_a"] = "0",
+        ["arccw_scope_r"] = "255",
+        ["arccw_scope_g"] = "0",
+        ["arccw_scope_b"] = "0",
+    },
+    ["#arccw.crosshair.light"] = {
+        ["arccw_crosshair_length"] = "4",
+        ["arccw_crosshair_thickness"] = "0.8",
+        ["arccw_crosshair_gap"] = "1",
+        ["arccw_crosshair_dot"] = "0",
+        ["arccw_crosshair_shotgun"] = "1",
+        ["arccw_crosshair_equip"] = "1",
+        ["arccw_crosshair_static"] = "0",
+        ["arccw_crosshair_clump"] = "1",
+        ["arccw_crosshair_clump_outline"] = "1",
+        ["arccw_crosshair_clump_always"] = "0",
+        ["arccw_crosshair_clr_r"] = "255",
+        ["arccw_crosshair_clr_g"] = "255",
+        ["arccw_crosshair_clr_b"] = "255",
+        ["arccw_crosshair_clr_a"] = "200",
+        ["arccw_crosshair_outline"] = "2",
+        ["arccw_crosshair_outline_r"] = "0",
+        ["arccw_crosshair_outline_g"] = "0",
+        ["arccw_crosshair_outline_b"] = "0",
+        ["arccw_crosshair_outline_a"] = "200",
+        ["arccw_scope_r"] = "255",
+        ["arccw_scope_g"] = "0",
+        ["arccw_scope_b"] = "0",
+    },
+}
 function ArcCW_Options_Crosshair( CPanel )
+    CPanel:AddControl("combobox", {menubutton = 1, folder = "arccw_crosshair", options = crosshair_presets, cvars = crosshair_cvars})
     CPanel:AddControl("Header", {Description = "All options in this menu can be customized by players, and do not need admin privileges."})
     CPanel:AddControl("Header", {Description = ""})
     CPanel:AddControl("Checkbox", {Label = "Show Crosshair", Command = "arccw_crosshair" })
@@ -73,6 +203,9 @@ function ArcCW_Options_Crosshair( CPanel )
     CPanel:AddControl("Checkbox", {Label = "Use Shotgun Prongs", Command = "arccw_crosshair_shotgun" })
     CPanel:AddControl("Checkbox", {Label = "Use Equipment Prongs", Command = "arccw_crosshair_equip" })
     CPanel:AddControl("Checkbox", {Label = "Static Crosshair", Command = "arccw_crosshair_static" })
+    CPanel:AddControl("Checkbox", {Label = "Use CW2-Style Clump Circle", Command = "arccw_crosshair_clump" })
+    CPanel:AddControl("Checkbox", {Label = "Clump Circle Outline", Command = "arccw_crosshair_clump_outline" })
+    CPanel:AddControl("Checkbox", {Label = "Clump Circle Always On", Command = "arccw_crosshair_clump_always" })
     CPanel:AddControl("color", {Label = "Crosshair Color",
         Red = "arccw_crosshair_clr_r",
         Green = "arccw_crosshair_clr_g",
@@ -151,3 +284,8 @@ function ArcCW_Options_Server( CPanel )
     CPanel:AddControl("Slider", {Label = "Year Limit", Command = "arccw_limityear", Min = 1800, Max = 2100, Type = "int" })
     CPanel:AddControl("Checkbox", {Label = "Force Disable Crosshair", Command = "arccw_override_crosshair_off" })
 end
+
+language.Add("arccw.crosshair.tfa", "TFA")
+language.Add("arccw.crosshair.cw2", "CW 2.0")
+language.Add("arccw.crosshair.cs", "Counter-Strike")
+language.Add("arccw.crosshair.light", "Lightweight")

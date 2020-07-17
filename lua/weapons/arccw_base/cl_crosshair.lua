@@ -1,7 +1,8 @@
 local delta = 0
 local size = 0
 local cw = nil
-
+local clump_inner = Material("hud/clump_inner.png", "mips smooth")
+local clump_outer = Material("hud/clump_outer.png", "mips smooth")
 function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
     if !GetConVar("arccw_crosshair"):GetBool() then return false end
@@ -155,6 +156,22 @@ function SWEP:DoDrawCrosshair(x, y)
     if prong_down then
         surface.DrawRect(x - p_w / 2, y + gap, p_w, prong)
     end
+
+    if GetConVar("arccw_crosshair_clump"):GetBool() and (GetConVar("arccw_crosshair_clump_always"):GetBool() or num > 1) then
+        local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
+        local clumpSize = 1024 * spread
+
+        if GetConVar("arccw_crosshair_clump_outline"):GetBool() then
+        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+        surface.SetMaterial(clump_outer)
+        surface.DrawTexturedRect(x - clumpSize / 2, y - clumpSize / 2, clumpSize, clumpSize)
+        end
+
+        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
+        surface.SetMaterial(clump_inner)
+        surface.DrawTexturedRect(x - clumpSize / 2, y - clumpSize / 2, clumpSize, clumpSize)
+    end
+
 
     return true
 end

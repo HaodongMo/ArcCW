@@ -12,6 +12,10 @@ CreateClientConVar("arccw_crosshair_thickness", "1")
 CreateClientConVar("arccw_crosshair_gap", "1")
 CreateClientConVar("arccw_crosshair_static", "0")
 
+CreateClientConVar("arccw_crosshair_clump", "0")
+CreateClientConVar("arccw_crosshair_clump_outline", "0")
+CreateClientConVar("arccw_crosshair_clump_always", "0")
+
 CreateClientConVar("arccw_crosshair_outline", "2")
 CreateClientConVar("arccw_crosshair_outline_r", "0")
 CreateClientConVar("arccw_crosshair_outline_g", "0")
