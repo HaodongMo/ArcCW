@@ -323,7 +323,7 @@ function SWEP:PrimaryAttack()
         end
 
 
-        ret = ret or self:GetBuff_Hook("Hook_SelectFireAnimation", ret)
+        ret = self:GetBuff_Hook("Hook_SelectFireAnimation", ret) or ret
         local time = self:GetBuff_Mult("Mult_FireAnimTime", ret) or 1
 
         if ret then
