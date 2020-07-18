@@ -324,9 +324,10 @@ function SWEP:PrimaryAttack()
 
 
         ret = ret or self:GetBuff_Hook("Hook_SelectFireAnimation", ret)
+        local time = self:GetBuff_Mult("Mult_FireAnimTime", ret) or 1
 
         if ret then
-            self:PlayAnimation(ret, 1, true, 0, false)
+            self:PlayAnimation(ret, time, true, 0, false)
         end
 
         if self.ManualAction or self:GetBuff_Override("Override_ManualAction") then
