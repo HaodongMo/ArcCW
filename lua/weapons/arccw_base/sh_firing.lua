@@ -603,7 +603,7 @@ function SWEP:DoEffects()
     fx:SetAttachment(self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1)
     fx:SetEntity(self)
 
-    if self:GetBuff_Hook("Hook_PreDoEffects", {fx = fx}) == false then return end
+    if self:GetBuff_Hook("Hook_PreDoEffects", {fx = fx}) == true then return end
 
     util.Effect("arccw_muzzleeffect", fx)
 end
