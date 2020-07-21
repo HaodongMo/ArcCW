@@ -47,6 +47,8 @@ function EFFECT:Init(data)
 
     local dir = ang:Up()
 
+    local st = GetConVar("arccw_shelltime"):GetFloat()
+
     if ent then
         self.Model = ent.ShellModel
         self.Material = ent.ShellMaterial
@@ -54,7 +56,7 @@ function EFFECT:Init(data)
         self.PhysScale = ent.ShellPhysScale or 1
         self.Pitch = ent.ShellPitch or 100
         self.Sounds = ent.ShellSounds
-        self.ShellTime = ent.ShellTime
+        self.ShellTime = st <= 0 and ent.ShellTime or st
     end
 
     self:SetPos(origin)

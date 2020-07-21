@@ -40,6 +40,8 @@ CreateClientConVar("arccw_shake", "1")
 CreateClientConVar("arccw_muzzleeffects", "1")
 CreateClientConVar("arccw_shelleffects", "1")
 
+CreateClientConVar("arccw_shelltime", "0")
+
 CreateClientConVar("arccw_att_showothers", "1")
 
 CreateClientConVar("arccw_2d3d", "1")
