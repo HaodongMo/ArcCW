@@ -1498,8 +1498,15 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("ShootVol", true) end,
             },
             {"Barrel Length", "The length of the barrel, in Hammer Units.",
-                function() return defaultStatFunc("BarrelLength","in") end,
-                function() return defaultBetterFunc("BarrelLength", true) end,
+                function()
+                    local orig = self.BarrelLength
+                    local cur = orig + self:GetBuff_Add("Add_BarrelLength")
+                    return orig .. "in", cur .. "in"
+                end,
+                function()
+                    local add = self:GetBuff_Add("Add_BarrelLength")
+                    return (add == 0) and nil or (add < 0)
+                end,
             },
             {"Penetration", "How much steel this weapon can penetrate.",
                 function() return defaultStatFunc("Penetration","mm") end,
