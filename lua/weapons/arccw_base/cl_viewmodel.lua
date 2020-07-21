@@ -333,7 +333,11 @@ function SWEP:GetViewModelPosition(pos, ang)
     return pos, ang
 end
 
-local function ShouldCheapWorldModel()
+local function ShouldCheapWorldModel(wep)
+    -- This prevents attachments from drawing when in first person spectate mode
+    if LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE and LocalPlayer():GetObserverTarget() == wep:GetOwner() then
+        return true
+    end
     return !GetConVar("arccw_att_showothers"):GetBool()
 end
 
@@ -369,7 +373,7 @@ function SWEP:DrawWorldModel()
         cam.End3D2D()
     end
 
-    if ShouldCheapWorldModel() then
+    if ShouldCheapWorldModel(self) then
         self:DrawModel()
     else
         self:DrawCustomModel(true)
