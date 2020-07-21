@@ -1505,7 +1505,7 @@ function SWEP:CreateCustomizeHUD()
                 end,
                 function()
                     local add = self:GetBuff_Add("Add_BarrelLength")
-                    return (add == 0) and nil or (add < 0)
+                    if add == 0 then return nil else return add < 0 end
                 end,
             },
             {"Penetration", "How much steel this weapon can penetrate.",
