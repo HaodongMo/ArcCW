@@ -761,7 +761,7 @@ function SWEP:CreateCustomizeHUD()
                     if !atttbl then
                         atttbl = {
                             PrintName = k.DefaultAttName or "No Attachment",
-                            Icon = defaultatticon,
+                            Icon = k.DefaultAttIcon or defaultatticon,
                             Free = true
                         }
                     end
@@ -863,7 +863,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.DrawText(txt)
 
                     surface.SetDrawColor(Bfg_col)
-                    surface.SetMaterial(atttbl.Icon or defaultatticon)
+                    surface.SetMaterial(atttbl.Icon or k.DefaultAttIcon or defaultatticon)
                     surface.DrawTexturedRect(h / 4, 0, h, h)
 
                     if blocked then

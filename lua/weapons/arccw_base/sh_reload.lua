@@ -18,6 +18,8 @@ function SWEP:Reload()
 
     if self:Ammo1() <= 0 then return end
 
+    self:GetBuff_Hook("Hook_PreReload")
+
     self.LastClip1 = self:Clip1()
 
     local reserve = self:Ammo1()
@@ -126,6 +128,8 @@ function SWEP:Reload()
     end
 
     self.Primary.Automatic = false
+
+    self:GetBuff_Hook("Hook_PostReload")
 end
 
 local lastframeclip1 = 0
@@ -134,6 +138,9 @@ local lastframeloadclip1 = 0
 SWEP.LastClipOutTime = 0
 
 function SWEP:GetVisualBullets()
+    local h = self:GetBuff_Hook("Hook_GetVisualBullets")
+
+    if h then return h end
     if self.LastClipOutTime > CurTime() then
         return self.LastClip1_B or self:Clip1()
     else
@@ -144,6 +151,9 @@ function SWEP:GetVisualBullets()
 end
 
 function SWEP:GetVisualClip()
+    local h = self:GetBuff_Hook("Hook_GetVisualClip")
+
+    if h then return h end
     if self.LastClipOutTime > CurTime() then
         return self.LastClip1 or self:Clip1()
     else

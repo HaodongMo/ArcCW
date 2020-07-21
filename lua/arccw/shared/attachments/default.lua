@@ -219,6 +219,14 @@ att.Hook_LHIK_TranslateAnimation = function(wep, anim) end
 -- changes to dmg may be overwritten later, so set damage and dmgtype instead
 att.Hook_BulletHit = function(wep, data) end
 
+att.Hook_PreReload = function(wep) end
+
+att.Hook_PostReload = function(wep) end
+
+att.Hook_GetVisualBullets = function(wep) end
+
+att.Hook_GetVisualClip = function(wep) end
+
 -- return to set mag capacity
 att.Hook_GetCapacity = function(wep, cap) end
 
