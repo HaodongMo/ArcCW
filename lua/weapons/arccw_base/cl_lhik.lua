@@ -108,7 +108,7 @@ function SWEP:DoLHIK()
 
                 local seq = lhik_model:LookupSequence(key)
 
-                if seq > 0 then
+                if seq and seq > 0 then
                     lhik_model:SetSequence(seq)
                     lhik_model:SetCycle(delta)
                 end
