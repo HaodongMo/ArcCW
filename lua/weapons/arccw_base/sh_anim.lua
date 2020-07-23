@@ -146,7 +146,22 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end
 
     if seq then --!game.SinglePlayer() and CLIENT
-        vm:SendViewModelMatchingSequence(seq)
+        -- Hack to fix an issue with playing one anim multiple times in a row
+        -- Provided by Jackarunda
+        local resetSeq = anim.HardResetAnim and vm:LookupSequence(anim.HardResetAnim)
+        if resetSeq then
+            vm:SendViewModelMatchingSequence(resetSeq)
+            vm:SetPlaybackRate(.1)
+            timer.Simple(0,function()
+                vm:SendViewModelMatchingSequence(seq)
+                local dur = vm:SequenceDuration()
+                vm:SetPlaybackRate(dur / (ttime + startfrom))
+            end)
+        else
+            vm:SendViewModelMatchingSequence(seq)
+            local dur = vm:SequenceDuration()
+            vm:SetPlaybackRate(dur / (ttime + startfrom))
+        end
     end
 
     local framestorealtime = 1
