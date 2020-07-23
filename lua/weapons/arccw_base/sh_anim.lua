@@ -286,6 +286,8 @@ function SWEP:GetAnimKeyTime(key)
             tseq = tseq[1]
         end
 
+        if !tseq then return 1 end
+
         tseq = vm:LookupSequence(tseq)
 
         anim.Time = vm:SequenceDuration(tseq) or 1

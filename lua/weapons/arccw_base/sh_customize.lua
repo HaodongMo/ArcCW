@@ -539,7 +539,40 @@ function SWEP:CreateCustomizeHUD()
             end
         end
 
+        local neutrals = atttbl.Desc_Neutrals
+
         local pros, cons = ArcCW:GetProsCons(atttbl)
+
+        if #neutrals > 0 then
+
+            local triv_neutrals = vgui.Create("DLabel", atttrivia)
+            triv_neutrals:SetSize(barsize, ScreenScale(10))
+            triv_neutrals:SetText("")
+            triv_neutrals:Dock(TOP)
+            triv_neutrals.Paint = function(span, w, h)
+                surface.SetDrawColor(Color(0, 0, 50, 100))
+                surface.DrawRect(0, 0, w, h)
+
+                surface.SetTextColor(Color(125, 125, 200))
+                surface.SetFont("ArcCW_8")
+                surface.SetTextPos(smallgap, 0)
+                surface.DrawText("INFORMATION:")
+            end
+
+            for _, i in pairs(neutrals) do
+                local triv_neutral = vgui.Create("DLabel", atttrivia)
+                triv_neutral:SetSize(barsize, ScreenScale(10))
+                triv_neutral:SetText("")
+                triv_neutral:Dock(TOP)
+                triv_neutral.Paint = function(span, w, h)
+
+                    surface.SetTextColor(Color(150, 150, 225))
+                    surface.SetFont("ArcCW_8")
+                    surface.SetTextPos(smallgap, 0)
+                    surface.DrawText(i)
+                end
+            end
+        end
 
         if #pros > 0 then
 
