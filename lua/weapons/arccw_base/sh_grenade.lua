@@ -36,6 +36,7 @@ function SWEP:Throw()
     local force = Lerp(windup, self.MuzzleVelocity * 0.25, self.MuzzleVelocity)
 
     self:SetTimer(0.25, function()
+
         local rocket = self:FireRocket(self.ShootEntity, force)
 
         if !rocket then return end
@@ -45,6 +46,10 @@ function SWEP:Throw()
         end
 
         local phys = rocket:GetPhysicsObject()
+
+        if GetConVar("arccw_throwinertia"):GetBool() then
+            phys:AddVelocity(self:GetOwner():GetVelocity())
+        end
 
         phys:AddAngleVelocity( Vector(0, 750, 0) )
 
