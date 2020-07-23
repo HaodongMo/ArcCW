@@ -170,9 +170,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         framestorealtime = 1 / anim.FrameRate
     end
 
-    local dur = vm:SequenceDuration()
-
-    vm:SetPlaybackRate(dur / (ttime + startfrom))
+    -- local dur = vm:SequenceDuration()
+    -- vm:SetPlaybackRate(dur / (ttime + startfrom))
 
     if anim.Checkpoints then
         self.CheckpointAnimation = key
