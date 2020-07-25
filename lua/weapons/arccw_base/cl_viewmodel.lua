@@ -315,7 +315,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 		coolxang = Lerp(ft10,coolxang,xangdiff)
 		--Adds some flair to the swaying
 		coolyangcomp = Lerp(10*ft,coolyangcomp,-coolyang*5)
-		coolxangcomp = Lerp(50*ft,coolxangcomp,-xangdiff)*swaymult
+		coolxangcomp = Lerp(50*ft,coolxangcomp,-xangdiff)
 		
 		local xang = coolxang*swaymult
 		local yang = coolyang*swaymult
