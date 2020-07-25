@@ -304,6 +304,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 		
 		local velmult = math.min(vel/200 * (actual.bob/2), 3)
 		local swaymult = actual.sway/2
+		local sprintmult = (self:InSprint() and 1.5) or 1
 		
 		local xangdiff=math.AngleDifference(eyeangles.x,lasteyeangles.x)
 		local yangdiff=math.AngleDifference(eyeangles.y,lasteyeangles.y)*0.3
@@ -321,11 +322,11 @@ function SWEP:GetViewModelPosition(pos, ang)
 		local yang = coolyang*swaymult
 		
 		local ctpower=ct*5  
-		local ctsin=math.sin(ctpower)
+		local ctsin=math.sin(ctpower*sprintmult)
 		--Cool pos and ang
 		coolswaypos.x = ctsin*swayxpower * (vel*0.01)
 		coolswaypos.y = ctsin*swayypower * (vel*0.01)
-		coolswaypos.z = math.sin(ctpower*2)*swayzpower*velmult * (vel*0.01)
+		coolswaypos.z = math.sin(ctpower*2*sprintmult)*swayzpower*velmult * (vel*0.01)
 		
 		coolswayang.x = coolxangcomp+xang
 		coolswayang.y = yang*2
