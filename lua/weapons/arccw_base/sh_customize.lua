@@ -541,7 +541,7 @@ function SWEP:CreateCustomizeHUD()
 
         local neutrals = atttbl.Desc_Neutrals or {}
 
-        local pros, cons = ArcCW:GetProsCons(atttbl) or {}, {}
+        local pros, cons = ArcCW:GetProsCons(atttbl)
 
         if #neutrals > 0 then
 
@@ -574,7 +574,7 @@ function SWEP:CreateCustomizeHUD()
             end
         end
 
-        if #pros > 0 then
+        if (pros and #pros or 0) > 0 then
 
             local triv_pros = vgui.Create("DLabel", atttrivia)
             triv_pros:SetSize(barsize, ScreenScale(10))
@@ -605,7 +605,7 @@ function SWEP:CreateCustomizeHUD()
             end
         end
 
-        if #cons > 0 then
+        if (cons and #cons or 0)  > 0 then
             local triv_cons = vgui.Create("DLabel", atttrivia)
             triv_cons:SetSize(barsize, ScreenScale(10))
             triv_cons:SetText("")
