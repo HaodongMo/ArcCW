@@ -21,8 +21,8 @@ end
 
 -- Coolsway locals
 local coolxang,coolyang,coolyangcomp,coolxangcomp = 0,0,0,0
-local eyeangles,lasteyeangles,coolswayang = angle_zero,angle_zero,angle_zero
-local coolswaypos = vector_origin
+local eyeangles,lasteyeangles,coolswayang = Angle(0,0,0),Angle(0,0,0),Angle(0,0,0)
+local coolswaypos = Vector(0,0,0)
 local swayxpower,swayypower,swayzpower = 0.2,0.25,-0.1
 local vector_noup=Vector(1,1,0)
 
@@ -315,16 +315,21 @@ function SWEP:GetViewModelPosition(pos, ang)
 		coolxang = Lerp(ft10,coolxang,xangdiff)
 		--Adds some flair to the swaying
 		coolyangcomp = Lerp(10*ft,coolyangcomp,-coolyang*5)
-		coolxangcomp = Lerp(50*ft,coolxangcomp,-xangdiff)
+		coolxangcomp = Lerp(50*ft,coolxangcomp, (self:GetState() == ArcCW.STATE_SIGHTS and 0) or -xangdiff )
 		
 		local xang = coolxang*swaymult
 		local yang = coolyang*swaymult
 		
-		local ctpower=ct*5
+		local ctpower=ct*5  
 		local ctsin=math.sin(ctpower)
 		--Cool pos and ang
-		coolswaypos = Vector(ctsin*swayxpower , (ctsin*swayypower) , math.sin(ctpower*2)*swayzpower*velmult) * (vel*0.01)
-		coolswayang = Angle(coolxangcomp , 0 , math.sin(ctpower*velmult)*velmult) + Angle(xang , yang*2 , yang*4+xang*6+coolyangcomp)
+		coolswaypos.x = ctsin*swayxpower * (vel*0.01)
+		coolswaypos.y = ctsin*swayypower * (vel*0.01)
+		coolswaypos.z = math.sin(ctpower*2)*swayzpower*velmult * (vel*0.01)
+		
+		coolswayang.x = coolxangcomp+xang
+		coolswayang.y = yang*2
+		coolswayang.z = (math.sin(ctpower)*velmult) + (yang*4+xang*6+coolyangcomp)
 		
 		target.ang = target.ang - coolswayang
 		target.pos = target.pos + coolswaypos
