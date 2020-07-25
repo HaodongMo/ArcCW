@@ -539,9 +539,9 @@ function SWEP:CreateCustomizeHUD()
             end
         end
 
-        local neutrals = atttbl.Desc_Neutrals
+        local neutrals = atttbl.Desc_Neutrals or {}
 
-        local pros, cons = ArcCW:GetProsCons(atttbl)
+        local pros, cons = ArcCW:GetProsCons(atttbl) or {}, {}
 
         if #neutrals > 0 then
 

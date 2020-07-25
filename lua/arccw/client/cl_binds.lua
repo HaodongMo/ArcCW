@@ -8,15 +8,40 @@ ArcCW.KEY_TOGGLEINV = "+menu_context"
 ArcCW.KEY_TOGGLEINV_ALT = "arccw_toggle_inv"
 ArcCW.KEY_SWITCHSCOPE = "+use"
 ArcCW.KEY_SWITCHSCOPE_ALT = "arccw_switch_scope"
-ArcCW.KEY_TOGGLEUBGL_ALT = "arccw_toggle_ubgl"
+ArcCW.KEY_TOGGLEUBGL = "arccw_toggle_ubgl"
 
 local lastpressZ = 0
 local lastpressE = 0
 
 function ArcCW:GetBind(bind)
-    if ArcCW[bind] then return ArcCW[bind] end
+    local e = input.LookupBinding(bind)
+    if e == "no value" then return bind .. " unbound" end
+    return e
+end
 
-    return input.LookupBinding(bind)
+ArcCW.BindToEffect = {
+    [ArcCW.KEY_FIREMODE] = "firemode",
+    [ArcCW.KEY_ZOOMIN] = "zoomin",
+    [ArcCW.KEY_ZOOMOUT] = "zoomout",
+    [ArcCW.KEY_TOGGLEINV] = "inv",
+    [ArcCW.KEY_SWITCHSCOPE] = "switchscope_dtap",
+}
+
+ArcCW.BindToEffect_Unique = {
+    [ArcCW.KEY_TOGGLEUBGL] = "ubgl",
+    [ArcCW.KEY_SWITCHSCOPE_ALT] = "switchscope",
+    [ArcCW.KEY_FIREMODE_ALT] = "firemode",
+    [ArcCW.KEY_ZOOMIN_ALT] = "zoomin",
+    [ArcCW.KEY_ZOOMOUT_ALT] = "zoomout",
+    [ArcCW.KEY_TOGGLEINV_ALT] = "inv"
+}
+
+local function ArcCW_TranslateBindToEffect(bind)
+    if GetConVar("arccw_altbindsonly"):GetBool() then
+        return ArcCW.BindToEffect_Unique[bind] or bind
+    else
+        return ArcCW.BindToEffect[bind] or ArcCW.BindToEffect_Unique[bind] or bind
+    end
 end
 
 local function ArcCW_PlayerBindPress(ply, bind, pressed)
@@ -29,7 +54,9 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
 
     local block = false
 
-    if bind == ArcCW.KEY_FIREMODE then
+    bind = ArcCW_TranslateBindToEffect(bind)
+
+    if bind == "firemode" then
         if wpn:GetBuff_Override("UBGL") and !GetConVar("arccw_altubglkey"):GetBool() then
             if lastpressZ >= CurTime() - 0.25 then
                 if wpn:GetNWBool("ubgl") then
@@ -70,7 +97,7 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
         end
 
         block = true
-    elseif bind == ArcCW.KEY_TOGGLEINV then
+    elseif bind == "inv" then
         local p = wpn:GetState() != ArcCW.STATE_CUSTOMIZE
         wpn:ToggleCustomizeHUD(p)
 
@@ -79,22 +106,38 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
         net.SendToServer()
 
         block = true
+    elseif bind == "ubgl" then
+        if wpn:GetNWBool("ubgl") then
+            net.Start("arccw_ubgl")
+            net.WriteBool(false)
+            net.SendToServer()
+
+            wpn:DeselectUBGL()
+        else
+            net.Start("arccw_ubgl")
+            net.WriteBool(true)
+            net.SendToServer()
+
+            wpn:SelectUBGL()
+        end
     end
 
     if wpn:GetState() == ArcCW.STATE_SIGHTS then
-        if bind == ArcCW.KEY_ZOOMIN then
+        if bind == "zoomin" then
             wpn:Scroll(1)
             block = true
-        elseif bind == ArcCW.KEY_ZOOMOUT then
+        elseif bind == "zoomout" then
             wpn:Scroll(-1)
             block = true
-        elseif bind == ArcCW.KEY_SWITCHSCOPE then
+        elseif bind == "switchscope_dtap" then
             if lastpressE >= CurTime() - 0.25 then
                 wpn:SwitchActiveSights()
                 lastpressE = 0
             else
                 lastpressE = CurTime()
             end
+        elseif bind == "switchscope" then
+            wpn:SwitchActiveSights()
         end
     end
 

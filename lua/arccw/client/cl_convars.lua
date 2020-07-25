@@ -68,3 +68,4 @@ CreateClientConVar("arccw_vm_bob_sprint", "3")
 
 CreateClientConVar("arccw_toggleads", "0", true, true)
 CreateClientConVar("arccw_altubglkey", "0", true, true)
+CreateClientConVar("arccw_altbindsonly", "0", true, true)
