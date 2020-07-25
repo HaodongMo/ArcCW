@@ -254,7 +254,7 @@ function SWEP:Holster(wep)
 
                         local ammo = self:GetBuff_Override("UBGL_Ammo") or "smg1_grenade"
 
-                        if SERVER then
+                        if SERVER and IsValid(self:GetOwner()) then
                             self:GetOwner():GiveAmmo(clip, ammo, true)
                         end
 
@@ -263,17 +263,18 @@ function SWEP:Holster(wep)
 
                     self:KillShields()
 
-                    if IsValid(self.HolsterSwitchTo) then
+                    if IsValid(self:GetOwner()) and IsValid(self.HolsterSwitchTo) then
                         self:GetOwner():SelectWeapon(self.HolsterSwitchTo:GetClass())
                     end
 
                     local vm = self:GetOwner():GetViewModel()
 
-                    for i = 0, vm:GetNumBodyGroups() do
-                        vm:SetBodygroup(i, 0)
+                    if IsValid(vm) then
+                        for i = 0, vm:GetNumBodyGroups() do
+                            vm:SetBodygroup(i, 0)
+                        end
+                        vm:SetSkin(0)
                     end
-
-                    vm:SetSkin(0)
                 end
             end
         end)
