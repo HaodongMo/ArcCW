@@ -299,7 +299,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 	if coolsway then
 		eyeangles=self.Owner:EyeAngles()
 		
-		local bobmodifier = (actual.sway/((self:InSprint() and 4) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
+		local bobmodifier = (target.sway/((self:InSprint() and target.bob) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
 		local vel = math.min( (self.Owner:GetVelocity()*vector_noup):Length() * bobmodifier , 600 )
 		
 		local velmult = math.min(vel/200 * (actual.bob/2), 3)
