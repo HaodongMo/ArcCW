@@ -295,7 +295,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local speed = target.speed or 3
 	
 	--coolsway
-	local coolsway=GetConVar("arccw_vm_coolsway"):GetBool() and !(self:GetState() == ArcCW.STATE_CUSTOMIZE)
+	local coolsway=GetConVar("arccw_vm_coolsway"):GetBool()
 	if coolsway then
 		eyeangles=self.Owner:EyeAngles()
 		
@@ -379,7 +379,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     self.ActualVMData = actual
-	lasteyeangles=eyeangles --Trying to lerp this to resolve framerate discrepancies causes the gun to go bonkers at <30FPS
+	if coolsway then
+		lasteyeangles=LerpAngle(math.min(100*ft,1),lasteyeangles,eyeangles) --Not perfect
+	end
 
     return pos, ang
 end
