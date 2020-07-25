@@ -130,91 +130,93 @@ function SWEP:NPC_Shoot()
 
     num = num + self:GetBuff_Add("Add_Num")
 
-    local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
+    if num > 0 then
+        local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
 
-    local btabl = {
-        Attacker = self:GetOwner(),
-        Damage = 0,
-        Force = 1,
-        Distance = 33000,
-        Num = num,
-        Tracer = self.TracerNum,
-        AmmoType = self.Primary.Ammo,
-        Dir = self:GetOwner():GetAimVector(),
-        Src = self:GetShootSrc(),
-        Spread = Vector(spread, spread, spread),
-        Callback = function(att, tr, dmg)
-            local dist = (tr.HitPos - tr.StartPos):Length() * ArcCW.HUToM
+        local btabl = {
+            Attacker = self:GetOwner(),
+            Damage = 0,
+            Force = 1,
+            Distance = 33000,
+            Num = num,
+            Tracer = self.TracerNum,
+            AmmoType = self.Primary.Ammo,
+            Dir = self:GetOwner():GetAimVector(),
+            Src = self:GetShootSrc(),
+            Spread = Vector(spread, spread, spread),
+            Callback = function(att, tr, dmg)
+                local dist = (tr.HitPos - tr.StartPos):Length() * ArcCW.HUToM
 
-            local pen = self.Penetration * self:GetBuff_Mult("Mult_Penetration")
+                local pen = self.Penetration * self:GetBuff_Mult("Mult_Penetration")
 
-            -- local frags = math.random(1, self.Frangibility)
+                -- local frags = math.random(1, self.Frangibility)
 
-            -- for i = 1, frags do
-            --     self:DoPenetration(tr, (self.Penetration / frags) - 0.5, tr.Entity)
-            -- end
+                -- for i = 1, frags do
+                --     self:DoPenetration(tr, (self.Penetration / frags) - 0.5, tr.Entity)
+                -- end
 
-            if self.DamageMin > self.Damage then
-                dist = -dist + self.Range + self.Range
-            end
-
-            local m = 1 * self:GetBuff_Mult("Mult_DamageNPC")
-
-            local ret = self:GetBuff_Hook("Hook_BulletHit", {
-                range = dist,
-                damage = self:GetDamage(dist, true) * m,
-                dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType,
-                penleft = pen,
-                att = att,
-                tr = tr,
-                dmg = dmg
-            })
-
-            if !ret then return end
-
-            dmg:SetDamageType(ret.dmgtype)
-            dmg:SetDamage(ret.damage)
-
-            if dmg:GetDamageType() == DMG_BURN and ret.range <= self.Range then
-                if num == 1 then
-                    dmg:SetDamageType(DMG_BULLET)
-                else
-                    dmg:SetDamageType(DMG_BUCKSHOT)
+                if self.DamageMin > self.Damage then
+                    dist = -dist + self.Range + self.Range
                 end
-                local fx = EffectData()
-                fx:SetOrigin(tr.HitPos)
-                util.Effect("arccw_incendiaryround", fx)
 
-                util.Decal("FadingScorch", tr.StartPos, tr.HitPos - (tr.HitNormal * 16), self:GetOwner())
+                local m = 1 * self:GetBuff_Mult("Mult_DamageNPC")
 
-                tr.Entity:Ignite(1, 32)
+                local ret = self:GetBuff_Hook("Hook_BulletHit", {
+                    range = dist,
+                    damage = self:GetDamage(dist, true) * m,
+                    dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType,
+                    penleft = pen,
+                    att = att,
+                    tr = tr,
+                    dmg = dmg
+                })
+
+                if !ret then return end
+
+                dmg:SetDamageType(ret.dmgtype)
+                dmg:SetDamage(ret.damage)
+
+                if dmg:GetDamageType() == DMG_BURN and ret.range <= self.Range then
+                    if num == 1 then
+                        dmg:SetDamageType(DMG_BULLET)
+                    else
+                        dmg:SetDamageType(DMG_BUCKSHOT)
+                    end
+                    local fx = EffectData()
+                    fx:SetOrigin(tr.HitPos)
+                    util.Effect("arccw_incendiaryround", fx)
+
+                    util.Decal("FadingScorch", tr.StartPos, tr.HitPos - (tr.HitNormal * 16), self:GetOwner())
+
+                    tr.Entity:Ignite(1, 32)
+                end
             end
+        }
+
+        local sp = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
+        local spo = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun
+        local se = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
+
+        if sp or spo then
+            btabl = self:GetBuff_Hook("Hook_FireBullets", btabl)
+
+            if !btabl then return end
+            if btabl.Num == 0 then return end
+
+            for n = 1, btabl.Num do
+                btabl.Num = 1
+                local ang = self:GetOwner():GetAimVector():Angle() + self:GetShotgunSpreadOffset(n)
+
+                btabl.Dir = ang:Forward()
+
+                self:GetOwner():FireBullets(btabl)
+            end
+        elseif se then
+            self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"))
+        else
+            self:GetBuff_Hook("Hook_FireBullets", btabl)
+            self:FireBullets(btabl)
         end
-    }
-
-    local sp = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
-    local spo = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun
-    local se = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
-
-    if sp or spo then
-        btabl = self:GetBuff_Hook("Hook_FireBullets", btabl)
-
-        if !btabl then return end
-        if btabl.Num == 0 then return end
-
-        for n = 1, btabl.Num do
-            btabl.Num = 1
-            local ang = self:GetOwner():GetAimVector():Angle() + self:GetShotgunSpreadOffset(n)
-
-            btabl.Dir = ang:Forward()
-
-            self:GetOwner():FireBullets(btabl)
-        end
-    elseif se then
-        self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"))
-    else
-        self:GetBuff_Hook("Hook_FireBullets", btabl)
-        self:FireBullets(btabl)
     end
 
     self:DoEffects()
