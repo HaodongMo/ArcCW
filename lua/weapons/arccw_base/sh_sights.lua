@@ -79,7 +79,7 @@ function SWEP:EnterSights()
 
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
-    self:EmitSound(asight.SwitchToSound or "weapons/arccw/movement1.wav", 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
+    self:EmitSound(asight.SwitchToSound or "", 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
 
     self.LastEnterSightTime = UnPredictedCurTime()
 
@@ -108,7 +108,7 @@ function SWEP:ExitSights()
 
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
-    self:EmitSound(asight.SwitchFromSound or "weapons/arccw/movement1.wav", 75, math.Rand(80, 90), 0.5, CHAN_VOICE2)
+    self:EmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_VOICE2)
 
     self.LastExitSightTime = UnPredictedCurTime()
 
