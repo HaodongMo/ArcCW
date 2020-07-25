@@ -324,7 +324,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 		local ctsin=math.sin(ctpower)
 		--Cool pos and ang
 		coolswaypos = Vector(ctsin*swayxpower , (ctsin*swayypower) , math.sin(ctpower*2)*swayzpower*velmult) * (vel*0.01)
-		coolswayang = Angle(coolxangcomp , 0 , math.sin(ctpower*velmult)*velmult) + Angle(xang , yang*2 , yang*4+xang*6+coolyangcomp)
+		coolswayang = Angle(coolxangcomp , 0 , math.sin(ctpower)*velmult) + Angle(xang , yang*2 , yang*4+xang*6+coolyangcomp)
 		
 		target.ang = target.ang - coolswayang
 		target.pos = target.pos + coolswaypos
