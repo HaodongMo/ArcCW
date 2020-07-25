@@ -286,6 +286,7 @@ function SWEP:SetupModel(wm)
         element.Model = model
         element.DrawFunc = atttbl.DrawFunc
         element.WM = wm or false
+        element.WMBone = k.WMBone
         element.Bone = repbone or k.Bone
         element.NoDraw = atttbl.NoDraw or false
         element.BoneMerge = k.BoneMerge or false
@@ -378,6 +379,7 @@ function SWEP:SetupModel(wm)
             hspelement.NoDraw = true
             hspelement.BoneMerge = k.BoneMerge or false
             hspelement.Slot = i
+            hspelement.WMBone = k.WMBone
 
             hspelement.OffsetAng = element.OffsetAng
 
@@ -427,6 +429,7 @@ function SWEP:SetupModel(wm)
             hspelement.NoDraw = atttbl.NoDraw or false
             hspelement.BoneMerge = k.BoneMerge or false
             hspelement.Slot = i
+            hspelement.WMBone = k.WMBone
 
             hspelement.ModelOffset = atttbl.ModelOffset
             hspelement.OffsetAng = element.OffsetAng

@@ -310,6 +310,7 @@ SWEP.Attachments = {}
 --     Slot = "pic_sight", -- what kind of attachments can fit here
 --     MergeSlots = {}, -- these other slots will be merged into this one.
 --     Bone = "sight", -- relevant bone any attachments will be mostly referring to
+--     WMBone = "ValveBiped.Bip01_L_Hand", -- set it to change parent bone of attachment WM
 --     KeepBaseIrons = false,
 --     ExtraSightDist = 0,
 --     Offset = {
