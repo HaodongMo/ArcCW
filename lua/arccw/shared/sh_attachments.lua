@@ -48,7 +48,7 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
 
     if atttbl.Hidden or atttbl.Blacklisted then return false end
 
-    if atttbl.NotForNPC and wep.Owner:IsNPC() then
+    if (atttbl.NotForNPC or atttbl.NotForNPCs) and wep.Owner:IsNPC() then
         return false
     end
 
