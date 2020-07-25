@@ -18,6 +18,15 @@ local function ApproachAngleA(vec1, vec2, d)
     return vec3
 end
 
+
+-- Coolsway locals
+local coolxang,coolyang,coolyangcomp,coolxangcomp = 0,0,0,0
+local eyeangles,lasteyeangles,coolswayang = angle_zero,angle_zero,angle_zero
+local coolswaypos = vector_origin
+local swayxpower,swayypower,swayzpower = 0.2,0.25,-0.1
+local vector_noup=Vector(1,1,0)
+
+
 function SWEP:GetViewModelPosition(pos, ang)
     if !self:GetOwner():IsValid() or !self:GetOwner():Alive() then return end
 
@@ -284,6 +293,41 @@ function SWEP:GetViewModelPosition(pos, ang)
     target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2)
 
     local speed = target.speed or 3
+	
+	--coolsway
+	local coolsway=GetConVar("arccw_vm_coolsway"):GetBool() and !(self:GetState() == ArcCW.STATE_CUSTOMIZE)
+	if coolsway then
+		eyeangles=self.Owner:EyeAngles()
+		
+		local bobmodifier = (actual.sway/((self:InSprint() and 4) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
+		local vel = math.min( (self.Owner:GetVelocity()*vector_noup):Length() * bobmodifier , 600 )
+		
+		local velmult = math.min(vel/200 * (actual.bob/2), 3)
+		local swaymult = actual.sway/2
+		
+		local xangdiff=math.AngleDifference(eyeangles.x,lasteyeangles.x)
+		local yangdiff=math.AngleDifference(eyeangles.y,lasteyeangles.y)*0.3
+		
+		local ft10=ft*10
+		
+		--Cool angles
+		coolyang = Lerp(ft10,coolyang,yangdiff)
+		coolxang = Lerp(ft10,coolxang,xangdiff)
+		--Adds some flair to the swaying
+		coolyangcomp = Lerp(10*ft,coolyangcomp,-coolyang*5)
+		coolxangcomp = Lerp(50*ft,coolxangcomp,-xangdiff)*swaymult
+		
+		local xang = coolxang*swaymult
+		local yang = coolyang*swaymult
+		
+		local ctpower=ct*5
+		--Cool pos and ang
+		coolswaypos = Vector(math.sin(ctpower)*swayxpower , (math.sin(ctpower)*swayypower) , math.sin(ctpower*2)*swayzpower*velmult) * (vel*0.01)
+		coolswayang = Angle(coolxangcomp , 0 , math.sin(ctpower*velmult)*velmult) + Angle(xang , yang*2 , yang*4+xang*6+coolyangcomp)
+		
+		target.ang = target.ang - coolswayang
+		target.pos = target.pos + coolswaypos
+	end
 
     speed = 1 / self:GetSightTime() * speed * ft
 
@@ -299,8 +343,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     actual.ang = ApproachAngleA(actual.ang, target.ang, speed * 0.1)
     actual.down = math.Approach(actual.down, target.down, speed * 0.1)
 
-    self.SwayScale = actual.sway
-    self.BobScale = actual.bob
+    self.SwayScale = (coolsway and 0) or actual.sway
+    self.BobScale = (coolsway and 0) or actual.bob
 
     pos = pos + self.RecoilPunchBack * -oldang:Forward()
     pos = pos + self.RecoilPunchSide * oldang:Right()
@@ -329,6 +373,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     self.ActualVMData = actual
+	lasteyeangles=eyeangles --Trying to lerp this to resolve framerate discrepancies causes the gun to go bonkers at <30FPS
 
     return pos, ang
 end
