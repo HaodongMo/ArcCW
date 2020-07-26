@@ -339,7 +339,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         coolswayang.x = ( (math.cos(ctpower * 0.5) * velmult) + coolxangcomp + xang ) * sprintnull
         coolswayang.y = ( (math.cos(ctpower * 0.6) * velmult) + yang * 2 ) * sprintnull
-        coolswayang.z = (math.sin(ctpower) * velmult) + (yang * 4 + xang * 6 + coolyangcomp) * sprintmult
+        coolswayang.z = (math.sin(ctpower) * velmult) + (yang * 4 + xang * 2 + coolyangcomp) * sprintmult
 
         target.ang = target.ang - coolswayang
         target.pos = target.pos + coolswaypos
