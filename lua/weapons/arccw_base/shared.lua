@@ -164,7 +164,6 @@ SWEP.IronSightStruct = {
     Magnification = 1,
     BlackBox = false,
     ScopeTexture = nil,
-    ScopeFOV = nil, -- FOV of the scope texture
     SwitchToSound = "", -- sound that plays when switching to this sight
     SwitchFromSound = "",
     ScrollFunc = ArcCW.SCROLL_NONE,

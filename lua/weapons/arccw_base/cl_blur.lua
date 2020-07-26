@@ -45,40 +45,10 @@ end
 
 function SWEP:BlurNotWeapon()
     if !GetConVar("arccw_blur"):GetBool() then return end
-    local vm = self:GetOwner():GetViewModel()
-
-    render.UpdateScreenEffectTexture()
-    render.ClearStencil()
-    render.SetStencilEnable(true)
-    render.SetStencilCompareFunction(STENCIL_ALWAYS)
-    render.SetStencilPassOperation(STENCIL_REPLACE)
-    render.SetStencilFailOperation(STENCIL_KEEP)
-    render.SetStencilZFailOperation(STENCIL_REPLACE)
-    render.SetStencilWriteMask(0xFF)
-    render.SetStencilTestMask(0xFF)
-
-    render.SetBlend(1)
-
-        render.SetStencilReferenceValue(55)
-
-        ArcCW.Overdraw = true
-        vm:DrawModel()
-
-        ArcCW.Overdraw = false
-
-        render.SetStencilReferenceValue(0)
-
-    render.SetBlend(0)
-
-    render.SetStencilPassOperation(STENCIL_REPLACE)
-    render.SetStencilCompareFunction(STENCIL_EQUAL)
-
-    -- render.SetColorMaterial()
 
     dofmat:SetFloat("bluramount", 0.1)
 
+    render.UpdateScreenEffectTexture()
     render.SetMaterial(dofmat)
     render.DrawScreenQuad()
-
-    render.SetStencilEnable( false )
 end

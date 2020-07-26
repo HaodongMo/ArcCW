@@ -305,6 +305,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         if self:GetState() != ArcCW.STATE_SIGHTS then
             vel = math.max(vel, 10)
+        else
+            vel = math.max(vel, 2.5)
         end
 
         local velmult = math.min(vel / 200 * (actual.bob / 2), 3)
@@ -331,11 +333,11 @@ function SWEP:GetViewModelPosition(pos, ang)
         local mag = 0.01
         coolswaypos.x = ctsin * swayxpower * (vel * mag)
         coolswaypos.y = ctsin * swayypower * (vel * mag)
-        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzpower * velmult * (vel * mag)
+        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzpower * velmult * (vel * mag) * sprintmult
 
-        coolswayang.x = coolxangcomp + xang
-        coolswayang.y = yang * 2
-        coolswayang.z = (math.sin(ctpower) * velmult) + (yang * 4 + xang * 6 + coolyangcomp)
+        coolswayang.x = (math.cos(ctpower * 0.5) * velmult) + coolxangcomp + xang
+        coolswayang.y = (math.cos(ctpower * 0.6) * velmult) + yang * 2
+        coolswayang.z = (math.sin(ctpower) * velmult) + (yang * 4 + xang * 6 + coolyangcomp) * sprintmult
 
         target.ang = target.ang - coolswayang
         target.pos = target.pos + coolswaypos
@@ -451,8 +453,16 @@ function SWEP:DrawWorldModel()
     end
 end
 
+function SWEP:ShouldHideViewModel()
+
+end
+
 function SWEP:PreDrawViewModel(vm)
     if !vm then return end
+
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        self:BlurNotWeapon()
+    end
 
     if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
         -- auto configure what the best option is likely to be
@@ -487,9 +497,5 @@ function SWEP:PostDrawViewModel()
     else
         self:DoLaser()
         self:DoHolosight()
-
-        if self:GetState() == ArcCW.STATE_CUSTOMIZE then
-            self:BlurNotWeapon()
-        end
     end
 end
