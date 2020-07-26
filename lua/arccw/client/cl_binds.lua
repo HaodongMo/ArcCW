@@ -56,7 +56,7 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
 
     bind = ArcCW_TranslateBindToEffect(bind)
 
-    if bind == "firemode" then
+    if bind == "firemode" and !GetConVar("arccw_altfcgkey"):GetBool() then
         if wpn:GetBuff_Override("UBGL") and !GetConVar("arccw_altubglkey"):GetBool() then
             if lastpressZ >= CurTime() - 0.25 then
                 if wpn:GetNWBool("ubgl") then

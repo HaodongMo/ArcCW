@@ -1,6 +1,7 @@
 if CLIENT then
 
 ArcCW.LastWeapon = nil
+local lastfiremode = 0
 
 end
 
@@ -49,7 +50,7 @@ function SWEP:Think()
         end
     end
 
-    if self:GetOwner():KeyPressed(IN_USE) then
+    if self:GetOwner():KeyReleased(IN_USE) then
         if self:InBipod() then
             self:ExitBipod()
         else
@@ -88,8 +89,16 @@ function SWEP:Think()
         self:ExitSprint()
     end
 
-    if !(self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD))) then
-
+    if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyPressed(IN_RELOAD) and self:GetOwner():KeyDown(IN_USE) then
+        if (lastfiremode or 0) + 0.1 < CurTime() then
+            lastfiremode = CurTime()
+            if CLIENT or game.SinglePlayer() then
+                net.Start("arccw_firemode")
+                net.SendToServer()
+                self:ChangeFiremode()
+            end
+        end
+    elseif !(self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD))) then
         if self:GetOwner():GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
             if self:GetOwner():KeyPressed(IN_ATTACK2) and CLIENT then
                 if (lastUBGL or 0) + 0.25 > CurTime() then return end
