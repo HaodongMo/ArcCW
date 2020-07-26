@@ -88,6 +88,10 @@ function SWEP:Think()
         self:ExitSprint()
     end
 
+    if self:GetNWBool("reloading", false) then
+        self:ExitSights()
+    end
+
     if !(self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD))) then
 
         if self:GetOwner():GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then

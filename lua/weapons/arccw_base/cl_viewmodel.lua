@@ -302,9 +302,13 @@ function SWEP:GetViewModelPosition(pos, ang)
         local bobmodifier = (target.sway / ((self:InSprint() and target.bob) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
         local vel = math.min( (self.Owner:GetVelocity() * vector_noup):Length() * bobmodifier , 600 )
 
+        if self:GetState() != ArcCW.STATE_SIGHTS then
+            vel = math.max(vel, 15)
+        end
+
         local velmult = math.min(vel / 200 * (actual.bob / 2), 3)
         local swaymult = actual.sway / 2
-        local sprintmult = (self:InSprint() and 1.5) or 1
+        local sprintmult = (self:InSprint() and 2) or 1
 
         local xangdiff = math.AngleDifference(eyeangles.x,lasteyeangles.x)
         local yangdiff = math.AngleDifference(eyeangles.y,lasteyeangles.y) * 0.3
@@ -324,9 +328,10 @@ function SWEP:GetViewModelPosition(pos, ang)
         local ctpower = ct * 5
         local ctsin = math.sin(ctpower * sprintmult)
         --Cool pos and ang
-        coolswaypos.x = ctsin * swayxpower * (vel * 0.01)
-        coolswaypos.y = ctsin * swayypower * (vel * 0.01)
-        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzpower * velmult * (vel * 0.01)
+        local mag = 0.01
+        coolswaypos.x = ctsin * swayxpower * (vel * mag)
+        coolswaypos.y = ctsin * swayypower * (vel * mag)
+        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzpower * velmult * (vel * mag)
 
         coolswayang.x = coolxangcomp + xang
         coolswayang.y = yang * 2
