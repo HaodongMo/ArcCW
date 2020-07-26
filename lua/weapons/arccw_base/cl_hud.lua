@@ -97,12 +97,22 @@ function SWEP:DrawHUD()
 
         local yuriewantsbabynapnaptimewaawaawaaa = GetConVar("arccw_hud_3dfun"):GetBool()
 
-        local vm = self.Owner:GetViewModel()
-
         local angpos
 
-        if vm and vm:IsValid() then
-            angpos = vm:GetAttachment(muzz)
+        if self:GetOwner():ShouldDrawLocalPlayer() then
+            local bone = "ValveBiped.Bip01_R_Hand"
+            local ind = self:GetOwner():LookupBone(bone)
+
+            if ind > -1 then
+                local p, a = self:GetOwner():GetBonePosition(ind)
+                angpos = {Ang = a, Pos = p}
+            end
+        else
+            local vm = self:GetOwner():GetViewModel()
+
+            if vm and vm:IsValid() then
+                angpos = vm:GetAttachment(muzz)
+            end
         end
 
         if yuriewantsbabynapnaptimewaawaawaaa and muzz and angpos then

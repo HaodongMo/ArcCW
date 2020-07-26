@@ -299,16 +299,16 @@ function SWEP:GetViewModelPosition(pos, ang)
     if coolsway then
         eyeangles = self.Owner:EyeAngles()
 
+        local sprintmult = (self:InSprint() and 2) or 1
         local bobmodifier = (target.sway / ((self:InSprint() and target.bob) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
         local vel = math.min( (self.Owner:GetVelocity() * vector_noup):Length() * bobmodifier , 600 )
 
         if self:GetState() != ArcCW.STATE_SIGHTS then
-            vel = math.max(vel, 15)
+            vel = math.max(vel, 10)
         end
 
         local velmult = math.min(vel / 200 * (actual.bob / 2), 3)
         local swaymult = actual.sway / 2
-        local sprintmult = (self:InSprint() and 2) or 1
 
         local xangdiff = math.AngleDifference(eyeangles.x,lasteyeangles.x)
         local yangdiff = math.AngleDifference(eyeangles.y,lasteyeangles.y) * 0.3

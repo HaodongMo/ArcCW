@@ -63,17 +63,11 @@ function SWEP:RecoilUBGL()
 
     vpa = vpa + (Angle(0, 1, 0) * r * amt * m * vsm)
 
-    self:OurViewPunch(vpa)
+    if CLIENT then
+        self:OurViewPunch(vpa)
+    end
     -- self:SetNWFloat("recoil", self.Recoil * m)
     -- self:SetNWFloat("recoilside", r * self.RecoilSide * m)
-
-    local ang = self:GetOwner():GetViewPunchAngles()
-
-    ang[1] = math.Clamp(ang[1], -180, 180)
-    ang[2] = math.Clamp(ang[2], -180, 180)
-    ang[3] = math.Clamp(ang[3], -180, 180)
-
-    self:GetOwner():SetViewPunchAngles(ang)
 
     if CLIENT or game.SinglePlayer() then
 

@@ -65,7 +65,7 @@ function SWEP:OurViewPunch(angle)
 end
 
 function SWEP:GetOurViewPunchAngles()
-    return self.ViewPunchAngle + self:GetOwner():GetViewPunchAngles()
+    return (self.ViewPunchAngle * 10) + self:GetOwner():GetViewPunchAngles()
 end
 
 local function lensqr(ang)
