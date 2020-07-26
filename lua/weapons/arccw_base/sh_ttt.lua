@@ -82,6 +82,8 @@ function SWEP:Equip(newowner)
 end
 
 function SWEP:WasBought(buyer)
+    if self.TTT_DoNotAttachOnBuy then return end
+
     for i, k in pairs(self.Attachments) do
         k.RandomChance = 100
     end

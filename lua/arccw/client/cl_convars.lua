@@ -66,6 +66,7 @@ CreateClientConVar("arccw_vm_forward", "0")
 CreateClientConVar("arccw_vm_sway_sprint", "3")
 CreateClientConVar("arccw_vm_bob_sprint", "3")
 CreateClientConVar("arccw_vm_coolsway", "0")
+CreateClientConVar("arccw_vm_coolview", "1")
 
 CreateClientConVar("arccw_toggleads", "0", true, true)
 CreateClientConVar("arccw_altubglkey", "0", true, true)

@@ -302,6 +302,8 @@ SWEP.AttachmentOverrides = {
     -- ["optic_docter"] = {} -- allows you to overwrite atttbl values
 }
 
+SWEP.TTT_DoNotAttachOnBuy = false -- don't give all attachments when bought
+
 SWEP.Attachments = {}
 -- [1] = {
 --     PrintName = "Optic", -- print name
