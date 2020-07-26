@@ -202,7 +202,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, anim.TPAnimStartTime, true )
             end
         else
-            self:GetOwner():DoAnimationEvent(anim.TPAnim)
+            local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
+            self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, 0, true )
         end
     end
 
