@@ -251,6 +251,10 @@ function SWEP:Think()
         -- end
     -- end
 
+    if CLIENT then
+        self:DoOurViewPunch()
+    end
+
     if SERVER and self.Throwing and self:Clip1() == 0 and self:Ammo1() > 0 then
         self:SetClip1(1)
         self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)

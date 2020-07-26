@@ -63,7 +63,7 @@ function SWEP:RecoilUBGL()
 
     vpa = vpa + (Angle(0, 1, 0) * r * amt * m * vsm)
 
-    self:GetOwner():ViewPunch(vpa)
+    self:OurViewPunch(vpa)
     -- self:SetNWFloat("recoil", self.Recoil * m)
     -- self:SetNWFloat("recoilside", r * self.RecoilSide * m)
 
