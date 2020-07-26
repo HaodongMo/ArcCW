@@ -92,7 +92,7 @@ function SWEP:Think()
     if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyPressed(IN_RELOAD) and self:GetOwner():KeyDown(IN_USE) then
         if (lastfiremode or 0) + 0.1 < CurTime() then
             lastfiremode = CurTime()
-            if CLIENT or game.SinglePlayer() then
+            if CLIENT then
                 net.Start("arccw_firemode")
                 net.SendToServer()
                 self:ChangeFiremode()
