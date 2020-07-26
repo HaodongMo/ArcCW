@@ -30,7 +30,9 @@ function SWEP:Bash(melee2)
         self:EmitSound(self.MeleeSwingSound, 75, 100, 1, CHAN_USER_BASE + 1)
     end
 
-    self:GetOwner():ViewPunch(-self.BashPrepareAng * 0.05)
+    if CLIENT then
+        self:OurViewPunch(-self.BashPrepareAng * 0.05)
+    end
     self:SetNextPrimaryFire(CurTime() + mt)
 
     if melee2 then
@@ -60,7 +62,9 @@ function SWEP:Bash(melee2)
         if !IsValid(self:GetOwner()) then return end
         if self:GetOwner():GetActiveWeapon() != self then return end
 
-        self:GetOwner():ViewPunch(-self.BashAng * 0.05)
+        if CLIENT then
+            self:OurViewPunch(-self.BashAng * 0.05)
+        end
 
         self:MeleeAttack(melee2)
     end)

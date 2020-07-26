@@ -99,6 +99,9 @@ function SWEP:Think()
             end
         end
     elseif !(self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD))) then
+        if self:GetNWBool("reloading", false) then
+            self:ExitSights()
+        end
         if self:GetOwner():GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
             if self:GetOwner():KeyPressed(IN_ATTACK2) and CLIENT then
                 if (lastUBGL or 0) + 0.25 > CurTime() then return end
@@ -255,6 +258,10 @@ function SWEP:Think()
         --     self:OpenCustomizeHUD()
         -- end
     -- end
+
+    if CLIENT then
+        self:DoOurViewPunch()
+    end
 
     if SERVER and self.Throwing and self:Clip1() == 0 and self:Ammo1() > 0 then
         self:SetClip1(1)

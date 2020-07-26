@@ -658,17 +658,11 @@ function SWEP:DoRecoil()
     vpa = vpa + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * r * self.RecoilSide * m * vsm)
     vpa = vpa * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
 
-    self:GetOwner():ViewPunch(vpa)
+    if CLIENT then
+        self:OurViewPunch(vpa)
+    end
     -- self:SetNWFloat("recoil", self.Recoil * m)
     -- self:SetNWFloat("recoilside", r * self.RecoilSide * m)
-
-    local ang = self:GetOwner():GetViewPunchAngles()
-
-    ang[1] = math.Clamp(ang[1], -180, 180)
-    ang[2] = math.Clamp(ang[2], -180, 180)
-    ang[3] = math.Clamp(ang[3], -180, 180)
-
-    self:GetOwner():SetViewPunchAngles(ang)
 
     if CLIENT or game.SinglePlayer() then
         vsm = vsm * self.VisualRecoilMult

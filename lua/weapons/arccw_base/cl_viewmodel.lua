@@ -24,7 +24,7 @@ local coolxang,coolyang,coolyangcomp,coolxangcomp = 0,0,0,0
 local eyeangles,lasteyeangles,coolswayang = Angle(0,0,0),Angle(0,0,0),Angle(0,0,0)
 local coolswaypos = Vector(0,0,0)
 local swayxpower,swayypower,swayzpower = 0.2,0.25,-0.1
-local vector_noup=Vector(1,1,0)
+local vector_noup = Vector(1,1,0)
 
 
 function SWEP:GetViewModelPosition(pos, ang)
@@ -293,47 +293,57 @@ function SWEP:GetViewModelPosition(pos, ang)
     target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2)
 
     local speed = target.speed or 3
-	
-	--coolsway
-	local coolsway=GetConVar("arccw_vm_coolsway"):GetBool() and !(self:GetState() == ArcCW.STATE_CUSTOMIZE)
-	if coolsway then
-		eyeangles=self.Owner:EyeAngles()
+
+    --coolsway
+    local coolsway = GetConVar("arccw_vm_coolsway"):GetBool()
+    if coolsway then
+        eyeangles = self.Owner:EyeAngles()
+
+        local sprintmult = (self:InSprint() and 2) or 1
+		local sprintnull = (sprintmult==2 and 0.5) or 1 --Helps us hamper swaying on certain axis while sprinting, so the gun doesn't go all over the place
 		
-		local bobmodifier = (actual.sway/((self:InSprint() and 4) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
-		local vel = math.min( (self.Owner:GetVelocity()*vector_noup):Length() * bobmodifier , 600 )
-		
-		local velmult = math.min(vel/200 * (actual.bob/2), 3)
-		local swaymult = actual.sway/2
-		
-		local xangdiff=math.AngleDifference(eyeangles.x,lasteyeangles.x)
-		local yangdiff=math.AngleDifference(eyeangles.y,lasteyeangles.y)*0.3
-		
-		local ft10=ft*10
-		
-		--Cool angles
-		coolyang = Lerp(ft10,coolyang,yangdiff)
-		coolxang = Lerp(ft10,coolxang,xangdiff)
-		--Adds some flair to the swaying
-		coolyangcomp = Lerp(10*ft,coolyangcomp,-coolyang*5)
-		coolxangcomp = Lerp(50*ft,coolxangcomp, (self:GetState() == ArcCW.STATE_SIGHTS and 0) or -xangdiff )
-		
-		local xang = coolxang*swaymult
-		local yang = coolyang*swaymult
-		
-		local ctpower=ct*5  
-		local ctsin=math.sin(ctpower)
-		--Cool pos and ang
-		coolswaypos.x = ctsin*swayxpower * (vel*0.01)
-		coolswaypos.y = ctsin*swayypower * (vel*0.01)
-		coolswaypos.z = math.sin(ctpower*2)*swayzpower*velmult * (vel*0.01)
-		
-		coolswayang.x = coolxangcomp+xang
-		coolswayang.y = yang*2
-		coolswayang.z = (math.sin(ctpower)*velmult) + (yang*4+xang*6+coolyangcomp)
-		
-		target.ang = target.ang - coolswayang
-		target.pos = target.pos + coolswaypos
-	end
+        local bobmodifier = (target.sway / ((self:InSprint() and target.bob) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
+        local vel = math.min( (self.Owner:GetVelocity() * vector_noup):Length() * bobmodifier , 600 )
+
+        if self:GetState() != ArcCW.STATE_SIGHTS then
+            vel = math.max(vel, 10)
+        else
+            vel = math.max(vel, 2.5)
+        end
+
+        local velmult = math.min(vel / 200 * (actual.bob / 2), 3)
+        local swaymult = actual.sway / 2
+
+        local xangdiff = math.AngleDifference(eyeangles.x,lasteyeangles.x)
+        local yangdiff = math.AngleDifference(eyeangles.y,lasteyeangles.y) * 0.3
+
+        local ft10 = ft * 10
+
+        --Cool angles
+        coolyang = Lerp(ft10,coolyang,yangdiff)
+        coolxang = Lerp(ft10,coolxang,xangdiff)
+        --Adds some flair to the swaying
+        coolyangcomp = Lerp(10 * ft,coolyangcomp,-coolyang * 5)
+        coolxangcomp = Lerp(50 * ft,coolxangcomp, (self:GetState() == ArcCW.STATE_SIGHTS and 0) or -xangdiff )
+
+        local xang = coolxang * swaymult
+        local yang = coolyang * swaymult
+
+        local ctpower = ct * 5
+        local ctsin = math.sin(ctpower * sprintmult)
+        --Cool pos and ang
+        local mag = 0.01
+        coolswaypos.x = ctsin * swayxpower * (vel * mag) * sprintnull
+        coolswaypos.y = ctsin * swayypower * (vel * mag) * sprintnull
+        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzpower * velmult * (vel * mag) * sprintnull
+
+        coolswayang.x = ( (math.cos(ctpower * 0.5) * velmult) + coolxangcomp + xang ) * sprintnull
+        coolswayang.y = ( (math.cos(ctpower * 0.6) * velmult) + yang * 2 ) * sprintnull
+        coolswayang.z = (math.sin(ctpower) * velmult) + (yang * 4 + xang * 2 + coolyangcomp) * sprintmult
+
+        target.ang = target.ang - coolswayang
+        target.pos = target.pos + coolswaypos
+    end
 
     speed = 1 / self:GetSightTime() * speed * ft
 
@@ -379,7 +389,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     self.ActualVMData = actual
-	lasteyeangles=eyeangles --Trying to lerp this to resolve framerate discrepancies causes the gun to go bonkers at <30FPS
+    if coolsway then
+        lasteyeangles = LerpAngle(math.min(100 * ft,1),lasteyeangles,eyeangles) --Not perfect
+    end
 
     return pos, ang
 end
@@ -443,8 +455,16 @@ function SWEP:DrawWorldModel()
     end
 end
 
+function SWEP:ShouldHideViewModel()
+
+end
+
 function SWEP:PreDrawViewModel(vm)
     if !vm then return end
+
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        self:BlurNotWeapon()
+    end
 
     if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
         -- auto configure what the best option is likely to be
@@ -479,9 +499,5 @@ function SWEP:PostDrawViewModel()
     else
         self:DoLaser()
         self:DoHolosight()
-
-        if self:GetState() == ArcCW.STATE_CUSTOMIZE then
-            self:BlurNotWeapon()
-        end
     end
 end
