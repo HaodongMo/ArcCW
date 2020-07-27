@@ -125,7 +125,7 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         end
 
         if GetConVar("arccw_ttt_weakensounds"):GetBool() then
-            wep.SoundVol = math.Clamp(wep.SoundVol - 20, 70, 115)
+            wep.ShootVol = math.Clamp(wep.ShootVol - 20, 70, 115)
         end
 
     end
