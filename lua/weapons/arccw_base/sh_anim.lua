@@ -63,7 +63,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         return
     end
 
-    if anim.ViewPunchTable then
+    if anim.ViewPunchTable and CLIENT then
         for k, v in pairs(anim.ViewPunchTable) do
 
             if !v.t then continue end
