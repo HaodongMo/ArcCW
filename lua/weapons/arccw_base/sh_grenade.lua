@@ -11,6 +11,10 @@ function SWEP:PreThrow()
     end
     if self:GetNWBool("grenadeprimed") then return end
 
+    if engine.ActiveGamemode() == "terrortown" and  GetRoundState() == ROUND_PREP and GetConVar("ttt_no_nade_throw_during_prep"):GetBool() then
+        return
+    end
+
     self:PlayAnimation("pre_throw", 1, false, 0, true)
 
     self:SetNextPrimaryFire(CurTime() + self.PullPinTime)
