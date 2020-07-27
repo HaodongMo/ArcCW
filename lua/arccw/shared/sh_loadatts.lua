@@ -162,6 +162,7 @@ elseif SERVER then
         for i, k in pairs(ArcCW.AttachmentTable) do
             k.Blacklisted = ArcCW.AttachmentBlacklistTable[i] or false
         end
+        print("Received blacklist with " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " attachments.")
         file.Write("arccw_blacklist.txt", util.TableToJSON(ArcCW.AttachmentBlacklistTable))
         ArcCW_SendBlacklist()
     end)
