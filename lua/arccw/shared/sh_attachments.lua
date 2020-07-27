@@ -4,7 +4,7 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     if !ArcCW.EnableCustomization then return false end
 
     -- Allow hooks to block or force allow attachment usage
-    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach) or true
+    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach)
 
     -- Followed by convar
     if !ret and !GetConVar("arccw_enable_customization"):GetBool() then return false end
