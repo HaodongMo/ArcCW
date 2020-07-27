@@ -64,6 +64,7 @@ local function ArcCW_SendBlacklist(ply)
         end)
     elseif CLIENT and ArcCW.AttachmentBlacklistTable == nil then
         -- Actively request the table, this happens on player load into server once
+        print("Requesting ArcCW blacklist info from server...")
         net.Start("arccw_blacklist")
             net.WriteBool(true)
         net.SendToServer()
@@ -129,6 +130,7 @@ if CLIENT then
         for i, v in pairs(ArcCW.AttachmentTable) do
             v.Blacklisted = ArcCW.AttachmentBlacklistTable[i]
         end
+        print("Received blacklist with " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " attachments.")
     end)
 
 elseif SERVER then
