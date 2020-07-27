@@ -80,7 +80,7 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         end
 
         wep.AmmoEnt = ArcCW.TTTAmmo_To_Ent[wep.Primary.Ammo] or ""
-
+        wep.AutoSpawnable = wep.AutoSpawnable or true
         wep.AllowDrop = wep.AllowDrop or true
 
         -- We have to do this here because TTT2 does a check for .Kind in WeaponEquip,
