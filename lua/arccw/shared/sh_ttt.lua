@@ -124,7 +124,7 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
             wep.Icon = path
         end
 
-        if GetConVar("arccw_ttt_weakensounds"):GetBool() then
+        if GetConVar("arccw_ttt_weakensounds"):GetBool() and wep.ShootVol then
             wep.ShootVol = math.Clamp(wep.ShootVol - 20, 70, 115)
         end
 
