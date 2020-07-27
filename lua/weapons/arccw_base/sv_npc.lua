@@ -79,7 +79,7 @@ function SWEP:NPC_SetupAttachments()
             local ss = {i}
             table.Add(ss, slot.MergeSlots)
 
-            s = table.Random(ss)
+            s = table.Random(ss) or i
         end
 
         local atts = ArcCW:GetAttsForSlot(self.Attachments[s].Slot, self)

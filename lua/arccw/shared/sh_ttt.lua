@@ -81,7 +81,7 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
 
         wep.AmmoEnt = ArcCW.TTTAmmo_To_Ent[wep.Primary.Ammo] or ""
         -- You can tell how desperate I am in blocking the base from spawning
-        wep.AutoSpawnable = (wep.AutoSpawnable == nil and tobool(wep:GetClass() != "arccw_base")) or wep.AutoSpawnable
+        wep.AutoSpawnable = (wep.AutoSpawnable == nil and true) or wep.AutoSpawnable
         wep.AllowDrop = wep.AllowDrop or true
 
         -- We have to do this here because TTT2 does a check for .Kind in WeaponEquip,

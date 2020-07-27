@@ -3,6 +3,7 @@ local blacklistTbl = {}
 
 function ArcCW.MakeBlacklistWindow()
     if blacklistWindow then blacklistWindow:Remove() end
+
     blacklistTbl = {}
 
     blacklistWindow = vgui.Create( "DFrame" )
@@ -98,6 +99,9 @@ function ArcCW.MakeBlacklistWindow()
     for attName, attTbl in SortedPairsByMemberValue(ArcCW.AttachmentTable, "PrintName") do
 
         if attTbl.Slot == "charm" then continue end
+
+        -- We have to do this because we're no longer using deltas
+        if attTbl.Blacklisted then blacklistTbl[attName] = true end
 
         local attBtn = vgui.Create("DButton", attList)
         attBtn:SetSize(ScreenScale(256), ScreenScale(16))

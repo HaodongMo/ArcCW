@@ -7,9 +7,9 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach)
 
     -- Followed by convar
-    if ret != nil and !GetConVar("arccw_enable_customization"):GetBool() then return false end
+    if ret == nil and !GetConVar("arccw_enable_customization"):GetBool() then return false end
 
-    if ret != nil and engine.ActiveGamemode() == "terrortown" then
+    if ret == nil and engine.ActiveGamemode() == "terrortown" then
         local mode = GetConVar("arccw_ttt_customizemode"):GetInt()
         if mode == 1 and !ply.ArcCW_AllowCustomize then return false
         elseif mode == 2 and !ply.ArcCW_AllowCustomize and GetRoundState() == ROUND_ACTIVE then return false
