@@ -216,6 +216,9 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
         local cb = dgui2:CheckBox("Enable Customization", "arccw_enable_customization")
         cb:SetTooltip("If disabled, nobody can customize. This overwrites Customization Mode.")
 
+        cb = dgui2:CheckBox("Weaken Sounds", "arccw_ttt_weakensounds")
+        cb:SetTooltip("Reduces all firearm volume by 20dB, making shots easier to hide.")
+
         cb = dgui2:CheckBox("Free Attachments", "arccw_attinv_free")
         cb:SetTooltip("If enabled, players have access to all attachments.\nCustomization mode may still restrict them from using them.")
         cb = dgui2:CheckBox("Attachment Locking", "arccw_attinv_lockmode")
