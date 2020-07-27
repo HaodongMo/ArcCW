@@ -48,7 +48,13 @@ function SWEP:BlurNotWeapon()
 
     dofmat:SetFloat("bluramount", 0.1)
 
-    render.UpdateScreenEffectTexture()
+    render.UpdateRefractTexture()
     render.SetMaterial(dofmat)
     render.DrawScreenQuad()
+end
+
+function SWEP:DoToyTown()
+    if !GetConVar("arccw_blur_toytown"):GetBool() then return end
+    render.UpdateRefractTexture()
+    DrawToyTown( 3, ScrH() * 0.5 * (1 - self:GetSightDelta()) )
 end

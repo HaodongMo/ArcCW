@@ -23,6 +23,20 @@ hook.Add("HUDShouldDraw", "ArcCW_HideHUD", function(name)
     return false
 end)
 
+hook.Add("RenderScreenspaceEffects", "ArcCW_ToyTown", function()
+    if !LocalPlayer():IsValid() then return end
+    local wpn = LocalPlayer():GetActiveWeapon()
+    if !IsValid(wpn) then return end
+
+    if !wpn.ArcCW then return end
+
+    local delta = wpn:GetSightDelta()
+
+    if delta < 1 then
+        wpn:DoToyTown()
+    end
+end)
+
 ArcCW.PollingDefaultHUDElements = false
 
 function ArcCW:ShouldDrawHUDElement(ele)

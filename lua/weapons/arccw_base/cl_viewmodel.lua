@@ -488,6 +488,10 @@ function SWEP:PreDrawViewModel(vm)
         self:FormCheapScope()
     end
 
+    if self:GetSightDelta() < 1 and asight.ScopeTexture then
+        self:FormCheapScope()
+    end
+
     self:DrawCustomModel(false)
 
     self:DoLHIK()

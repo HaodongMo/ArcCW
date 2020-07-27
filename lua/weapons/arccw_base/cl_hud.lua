@@ -43,6 +43,7 @@ local lastinfo = {ammo = 0, clip = 0, firemode = "", plus = 0}
 local lastinfotime = 0
 
 function SWEP:DrawHUD()
+
     -- info panel
 
     local col1 = Color(0, 0, 0, 100)
