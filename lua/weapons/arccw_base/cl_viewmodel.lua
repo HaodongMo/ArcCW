@@ -23,7 +23,7 @@ end
 local coolxang,coolyang,coolyangcomp,coolxangcomp = 0,0,0,0
 local eyeangles,lasteyeangles,coolswayang = Angle(0,0,0),Angle(0,0,0),Angle(0,0,0)
 local coolswaypos = Vector(0,0,0)
-local swayxpower, swayypower, swayzpower = 0.2,0.5,-0.1
+local swayxpower,swayypower,swayzpower = 0.2,0.25,-0.3
 local vector_noup = Vector(1,1,0)
 
 
@@ -300,6 +300,9 @@ function SWEP:GetViewModelPosition(pos, ang)
         eyeangles = self.Owner:EyeAngles()
 
         local sprintmult = (self:InSprint() and 2) or 1
+		local sprintnull = (sprintmult==2 and 0.5) or 1 --Hamper swaying on certain axis while sprinting, so the gun doesn't go all over the place
+		local airnull = (self.Owner:OnGround() and 1) or 0.1 --Hamper swaying when not walking on the ground
+		
         local bobmodifier = (target.sway / ((self:InSprint() and target.bob) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
         local vel = math.min( (self.Owner:GetVelocity() * vector_noup):Length() * bobmodifier , 600 )
 
@@ -309,7 +312,7 @@ function SWEP:GetViewModelPosition(pos, ang)
             vel = math.max(vel, 2.5)
         end
 
-        local velmult = math.min(vel / 200 * (actual.bob / 2), 3)
+        local velmult = math.min(vel / 600 * (actual.bob / 2), 3)
         local swaymult = actual.sway / 2
 
         local xangdiff = math.AngleDifference(eyeangles.x,lasteyeangles.x)
@@ -331,13 +334,13 @@ function SWEP:GetViewModelPosition(pos, ang)
         local ctsin = math.sin(ctpower * sprintmult)
         --Cool pos and ang
         local mag = 0.01
-        coolswaypos.x = ctsin * swayxpower * (vel * mag)
-        coolswaypos.y = ctsin * swayypower * (vel * mag)
-        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzpower * velmult * (vel * mag) * sprintmult
+        coolswaypos.x = ctsin * swayxpower * (vel * mag) * sprintnull
+        coolswaypos.y = ctsin * swayypower * (vel * mag) * sprintnull
+        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzpower * velmult * (vel * mag) * sprintnull * airnull
 
-        coolswayang.x = (math.cos(ctpower * 0.5) * velmult) + coolxangcomp + xang
-        coolswayang.y = (math.cos(ctpower * 0.6) * velmult) + yang * 2
-        coolswayang.z = (math.sin(ctpower) * velmult) + (yang * 4 + xang * 6 + coolyangcomp) * sprintmult
+        coolswayang.x = ( (math.cos(ctpower * 0.5) * velmult) + coolxangcomp + xang ) * sprintnull
+        coolswayang.y = ( (math.cos(ctpower * 0.6) * velmult) + yang * 2 ) * sprintnull
+        coolswayang.z = (math.sin(ctpower) * velmult) + (yang * 4 + xang * 2 + coolyangcomp) * sprintmult
 
         target.ang = target.ang - coolswayang
         target.pos = target.pos + coolswaypos

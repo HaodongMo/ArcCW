@@ -71,4 +71,5 @@ CreateClientConVar("arccw_vm_coolview", "1")
 
 CreateClientConVar("arccw_toggleads", "0", true, true)
 CreateClientConVar("arccw_altubglkey", "0", true, true)
+CreateClientConVar("arccw_altfcgkey", "0", true, true)
 CreateClientConVar("arccw_altbindsonly", "0", true, true)

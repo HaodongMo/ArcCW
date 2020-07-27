@@ -155,11 +155,14 @@ elseif SERVER then
         for i = 1, amt do
             local id = net.ReadUInt(ArcCW.GetBitNecessity())
             local attName = ArcCW.AttachmentIDTable[id]
-            ArcCW.AttachmentBlacklistTable[attName] = true
+            if attName and ArcCW.AttachmentTable[attName] then
+                ArcCW.AttachmentBlacklistTable[attName] = true
+            end
         end
         for i, k in pairs(ArcCW.AttachmentTable) do
             k.Blacklisted = ArcCW.AttachmentBlacklistTable[i] or false
         end
+        print("Received blacklist with " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " attachments.")
         file.Write("arccw_blacklist.txt", util.TableToJSON(ArcCW.AttachmentBlacklistTable))
         ArcCW_SendBlacklist()
     end)

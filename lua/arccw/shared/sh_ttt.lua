@@ -48,7 +48,7 @@ if engine.ActiveGamemode() != "terrortown" then return end
 CreateConVar("arccw_ttt_replace", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Use custom code to forcefully replace TTT weapons with ArcCW ones.", 0, 1)
 CreateConVar("arccw_ttt_replaceammo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Forcefully replace TTT ammo boxes with ArcCW ones.", 0, 1)
 CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Automatically set up ArcCW weapons with an attachment loadout.", 0, 1)
-CreateConVar("arccw_ttt_customizemode", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable all customization features on ArcCW weapons. If set to 2, players can customize during setup and postgame. If set to 3, only T and Ds can customize.", 0, 3)
+CreateConVar("arccw_ttt_customizemode", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "If set to 1, disallow customization on ArcCW weapons. If set to 2, players can customize during setup and postgame. If set to 3, only T and Ds can customize.", 0, 3)
 CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
 
 function ArcCW:TTT_GetRandomWeapon(class)
@@ -80,7 +80,8 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         end
 
         wep.AmmoEnt = ArcCW.TTTAmmo_To_Ent[wep.Primary.Ammo] or ""
-
+        -- You can tell how desperate I am in blocking the base from spawning
+        wep.AutoSpawnable = (wep.AutoSpawnable == nil and tobool(wep:GetClass() != "arccw_base")) or wep.AutoSpawnable
         wep.AllowDrop = wep.AllowDrop or true
 
         -- We have to do this here because TTT2 does a check for .Kind in WeaponEquip,

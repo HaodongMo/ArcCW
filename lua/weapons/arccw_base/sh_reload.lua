@@ -16,6 +16,9 @@ function SWEP:Reload()
         return
     end
 
+    -- Don't accidently reload when changing firemode
+    if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
+
     if self:Ammo1() <= 0 then return end
 
     self:GetBuff_Hook("Hook_PreReload")

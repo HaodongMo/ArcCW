@@ -201,7 +201,7 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
     dgui:CheckBox("Enable Cheap Scopes (saves perf.)", "arccw_cheapscopes")
     dgui:CheckBox("Toggle ADS", "arccw_toggleads")
     dgui:CheckBox("E+RMB for UBGL", "arccw_altubglkey")
-
+    dgui:CheckBox("E+RMB for Firemodes", "arccw_altfcgkey")
     panellist:AddItem(dgui)
 
     if not game.IsDedicated() and LocalPlayer():IsSuperAdmin() then

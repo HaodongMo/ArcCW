@@ -64,6 +64,7 @@ function ArcCW.MakeBlacklistWindow()
         end
 
         net.Start("arccw_blacklist")
+            net.WriteBool(false)
             net.WriteUInt(blacklistAmt, ArcCW.GetBitNecessity())
             for attName, bStatus in pairs(blacklistTbl) do
                 if bStatus then

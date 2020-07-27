@@ -10,7 +10,7 @@ function SWEP:IsEquipment()
 end
 
 SWEP.IsSilent = false
-SWEP.AutoSpawnable = true
+SWEP.AutoSpawnable = nil -- If not set, automatically set to true in InitPostEntity 
 
 -- The OnDrop() hook is useless for this as it happens AFTER the drop. OwnerChange
 -- does not occur when a drop happens for some reason. Hence this thing.
@@ -117,6 +117,7 @@ function SWEP:TTT_Init()
 
     -- This will overwrite mag reducers, so give it a bit of time
     timer.Simple(0.1, function()
+        if !IsValid(self) then return end
         self:SetClip1(self:GetCapacity() or self.RegularClipSize or self.Primary.ClipSize)
         self.Primary.DefaultClip = self:GetCapacity()
     end)
