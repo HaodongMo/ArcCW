@@ -37,7 +37,7 @@ function SWEP:DoDrawCrosshair(x, y)
             GetConVar("arccw_crosshair_clr_g"):GetInt(),
             GetConVar("arccw_crosshair_clr_b"):GetInt())
     if GetConVar("arccw_ttt_rolecrosshair") and GetConVar("arccw_ttt_rolecrosshair"):GetBool() then
-        if LocalPlayer().GetRoleColor and LocalPlayer:GetRoleColor() then
+        if LocalPlayer().GetRoleColor and LocalPlayer():GetRoleColor() then
             clr = LocalPlayer():GetRoleColor() -- TTT2 feature
         elseif LocalPlayer():IsActiveTraitor() then
             clr = Color(255, 50, 50)
