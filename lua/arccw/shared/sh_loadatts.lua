@@ -95,6 +95,10 @@ local function ArcCW_LoadAtts()
     else
         -- Simply read the file and do no networking, since both client/server has access to it
         ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
+        for i, v in pairs(ArcCW.AttachmentTable) do
+            v.Blacklisted = ArcCW.AttachmentBlacklistTable[i]
+        end
+        print("Loaded blacklist with " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " attachments.")
     end
 end
 
