@@ -173,6 +173,10 @@ elseif SERVER then
         ArcCW_SendBlacklist()
     end)
 
+    hook.Add("PlayerAuthed", "ArcCW_Blacklist", function(ply)
+        ArcCW_Blacklist(ply)
+    end)
+
 end
 
 hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()
