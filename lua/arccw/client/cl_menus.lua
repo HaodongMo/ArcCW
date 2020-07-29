@@ -65,6 +65,12 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Header", {Description = "  Warning! Viewmodel offset settings may cause clipping or other undesired effects!"})
     CPanel:AddControl("Slider", {Label = "Sprint Bob", Command = "arccw_vm_sway_sprint", Min = 0, Max = 5, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Sprint Sway", Command = "arccw_vm_bob_sprint", Min = 0, Max = 5, Type = "float" })
+    CPanel:AddControl("Header", {Description = "  The following only applies when Custom Swaying is enabled"})
+    CPanel:AddControl("Slider", {Label = "Horizontal Look Sway", Command = "arccw_vm_lookymult", Min = -10, Max = 10, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Vertical Look Sway", Command = "arccw_vm_lookxmult", Min = -10, Max = 10, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Bob Right Multiplier", Command = "arccw_vm_swayxmult", Min = -1, Max = 1, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Bob Forward Multiplier", Command = "arccw_vm_swayymult", Min = -2, Max = 2, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Bob Up Multiplier", Command = "arccw_vm_swayzmult", Min = -2, Max = 2, Type = "float" })
 end
 
 local crosshair_cvars = {
