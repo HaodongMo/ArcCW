@@ -464,7 +464,11 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
                     dmg:SetDamage(self:GetDamage(dist, true) * pdelta, true)
                 end
 
-                self:DoPenetration(btr, penleft)
+                --if LeyHitreg then
+                --    timer.Simple(0.05, function() if IsValid(self) then self:DoPenetration(btr, penleft) end end)
+                --else
+                    self:DoPenetration(btr, penleft)
+                --end
             end
         } )
 
