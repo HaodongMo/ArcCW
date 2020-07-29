@@ -1,3 +1,5 @@
+ArcCW.AttachmentBlacklistTable = ArcCW.AttachmentBlacklistTable or {}
+
 function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
 
     -- The global variable takes priority over everything

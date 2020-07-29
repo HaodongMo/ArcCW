@@ -104,7 +104,7 @@ function SWEP:DrawHUD()
             local bone = "ValveBiped.Bip01_R_Hand"
             local ind = self:GetOwner():LookupBone(bone)
 
-            if ind > -1 then
+            if ind and ind > -1 then
                 local p, a = self:GetOwner():GetBonePosition(ind)
                 angpos = {Ang = a, Pos = p}
             end
