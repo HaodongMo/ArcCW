@@ -257,3 +257,31 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
 
     dtabs:AddSheet("ArcCW", panellist, "icon16/gun.png", false, false, "ArcCW Settings")
 end)
+
+hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2", function(tData)
+    local client = LocalPlayer()
+    local ent = tData:GetEntity()
+
+    if not IsValid(client) or not client:IsTerror() or not client:Alive()
+    or not IsValid(ent) or tData:GetEntityDistance() > 100 or not ent:IsWeapon()
+    or not ent.ArcCW or ent.Throwable then
+        return
+    end
+
+    if tData:GetAmountDescriptionLines() > 0 then
+        tData:AddDescriptionLine()
+    end
+
+    if ent.Attachments and ent:CountAttachments() > 0 then
+        tData:AddDescriptionLine(tostring(ent:CountAttachments()) .. " Attachment(s):", nil)
+        for i, v in pairs(ent.Attachments) do
+            if not v or not v.Installed then continue end
+            local attTbl = ArcCW.AttachmentTable[v.Installed]
+            if attTbl and attTbl.PrintName then
+                tData:AddDescriptionLine(v.PrintName .. ": " .. attTbl.PrintName, nil, {attTbl.Icon})
+            end
+        end
+    end
+
+    tData:AddDescriptionLine()
+end)
