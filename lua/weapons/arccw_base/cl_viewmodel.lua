@@ -23,7 +23,8 @@ end
 local coolxang,coolyang,coolyangcomp,coolxangcomp = 0,0,0,0
 local eyeangles,lasteyeangles,coolswayang = Angle(0,0,0),Angle(0,0,0),Angle(0,0,0)
 local coolswaypos = Vector(0,0,0)
-local swayxpower,swayypower,swayzpower = 0.2,0.25,-0.3
+-- local swayxpower,swayypower,swayzpower = 0.2,0.25,-0.3
+local swayxpower,swayypower,swayzpower = -0.6,0.15,-0.3
 local vector_noup = Vector(1,1,0)
 
 
