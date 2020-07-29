@@ -64,7 +64,6 @@ local function ArcCW_SendBlacklist(ply)
         end)
     elseif CLIENT and ArcCW.AttachmentBlacklistTable == nil then
         -- Actively request the table, this happens on player load into server once
-        print("Requesting ArcCW blacklist info from server...")
         net.Start("arccw_blacklist")
             net.WriteBool(true)
         net.SendToServer()
@@ -95,6 +94,10 @@ local function ArcCW_LoadAtts()
     else
         -- Simply read the file and do no networking, since both client/server has access to it
         ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
+        for i, v in pairs(ArcCW.AttachmentTable) do
+            v.Blacklisted = ArcCW.AttachmentBlacklistTable[i]
+        end
+        print("Loaded blacklist with " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " attachments.")
     end
 end
 
@@ -132,6 +135,13 @@ if CLIENT then
         end
         print("Received blacklist with " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " attachments.")
     end)
+
+    -- Gets around Listen server spawn issues
+    hook.Add( "InitPostEntity", "Ready", function()
+        net.Start("arccw_blacklist")
+            net.WriteBool(true)
+        net.SendToServer()
+    end )
 
 elseif SERVER then
 
