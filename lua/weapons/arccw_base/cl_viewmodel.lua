@@ -309,8 +309,6 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         if self:GetState() != ArcCW.STATE_SIGHTS then
             vel = math.max(vel, 10)
-        else
-            vel = math.max(vel, 2.5)
         end
 
         local velmult = math.min(vel / 600 * (actual.bob / 2), 3)
