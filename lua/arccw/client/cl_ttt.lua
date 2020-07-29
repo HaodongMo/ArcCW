@@ -272,12 +272,25 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2", function(tData)
         tData:AddDescriptionLine()
     end
 
+    local pickx = GetConVar("arccw_atts_pickx"):GetInt()
+
     if ent.Attachments and ent:CountAttachments() > 0 then
-        tData:AddDescriptionLine(tostring(ent:CountAttachments()) .. " Attachment(s):", nil)
+        tData:AddDescriptionLine(tostring(ent:CountAttachments()) .. (pickx > 0 and ("/" .. pickx) or "") .. " Attachment(s):", nil)
         for i, v in pairs(ent.Attachments) do
-            if not v or not v.Installed then continue end
-            local attTbl = ArcCW.AttachmentTable[v.Installed]
-            if attTbl and attTbl.PrintName then
+            local attName = v.Installed
+            if not attName and not v.MergeSlots then
+                continue
+            elseif v.MergeSlots and not attName then
+                for _, s in pairs(v.MergeSlots) do
+                    if ent.Attachments[s] and ent.Attachments[s].Installed then
+                        attName = ent.Attachments[s].Installed
+                        break
+                    end
+                end
+                if not attName then continue end
+            end
+            local attTbl = ArcCW.AttachmentTable[attName]
+            if attTbl and v.PrintName and attTbl.PrintName then
                 tData:AddDescriptionLine(v.PrintName .. ": " .. attTbl.PrintName, nil, {attTbl.Icon})
             end
         end

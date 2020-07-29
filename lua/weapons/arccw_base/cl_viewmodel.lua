@@ -405,7 +405,7 @@ local function ShouldCheapWorldModel(wep)
 end
 
 function SWEP:DrawWorldModel()
-    if !IsValid(self:GetOwner()) and GetConVar("arccw_2d3d"):GetBool()
+    if !IsValid(self:GetOwner()) and !TTT2 and GetConVar("arccw_2d3d"):GetBool()
             and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then -- 512^2
         local ang = LocalPlayer():EyeAngles()
 
