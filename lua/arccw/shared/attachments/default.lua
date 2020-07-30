@@ -207,6 +207,14 @@ att.Hook_LHIK_TranslateAnimation = function(wep, anim) end
 --     end
 -- end
 
+-- anim is string
+att.Hook_SelectBashAnim = function(wep, anim) end
+
+att.Hook_PreBash = function(wep) end
+
+-- data = {tr = tr, dmg = dmg}
+att.Hook_PostBash = function(wep, data) end
+
 -- data has entries:
 -- number range, the distance the bullet had to travel
 -- number damage, the calculated damage the bullet will do

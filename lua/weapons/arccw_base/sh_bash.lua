@@ -12,23 +12,33 @@ function SWEP:Bash(melee2)
         mt = self.Melee2Time * mult
     end
 
+    local bashanim = "bash"
+
     if melee2 then
         if self.Animations.bash2_empty and self:Clip1() == 0 then
-            self:PlayAnimation("bash2_empty", mult, true, 0, true)
+            bashanim = "bash2_empty"
         else
-            self:PlayAnimation("bash2", mult, true, 0, true)
+            bashanim = "bash2"
         end
     elseif self.Animations.bash then
         if self.Animations.bash_empty and self:Clip1() == 0 then
-            self:PlayAnimation("bash_empty", mult, true, 0, true)
+            bashanim = "bash_empty"
         else
-            self:PlayAnimation("bash", mult, true, 0, true)
+            bashanim = "bash"
         end
+    end
+
+    bashanim = self:GetBuff_Hook("Hook_SelectBashAnim", bashanim) or bashanim
+
+    if bashanim and self.Animations[bashanim] then
+        self:PlayAnimation(bashanim, mult, true, 0, true)
     else
         self:ProceduralBash()
 
         self:EmitSound(self.MeleeSwingSound, 75, 100, 1, CHAN_USER_BASE + 1)
     end
+
+    self:GetBuff_Hook("Hook_PreBash")
 
     if CLIENT then
         self:OurViewPunch(-self.BashPrepareAng * 0.05)
