@@ -227,7 +227,7 @@ function SWEP:SetupModel(wm)
 
         local model = ClientsideModel(atttbl.Model)
 
-        if !model then continue end
+        if !model or !IsValid(model) then continue end
 
         if atttbl.BoneMerge then
             local parent = self:GetOwner():GetViewModel()
