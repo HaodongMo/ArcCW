@@ -288,8 +288,8 @@ function SWEP:InSprint()
 
     local curspeed = self:GetOwner():GetVelocity():Length()
 
-    if TTT2 and GetConVar("ttt2_sprint_enabled"):GetBool() then
-        return self:GetOwner().sprintProgress > 0 and self:GetOwner():KeyDown(IN_SPEED)
+    if TTT2 and GetConVar("ttt2_sprint_enabled") and GetConVar("ttt2_sprint_enabled"):GetBool() then
+        return (self:GetOwner().sprintProgress or 0) > 0 and self:GetOwner():KeyDown(IN_SPEED)
     end
 
     if !self:GetOwner():KeyDown(IN_SPEED) then return false end
