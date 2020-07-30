@@ -23,8 +23,10 @@ end
 local coolxang,coolyang,coolyangcomp,coolxangcomp = 0,0,0,0
 local eyeangles,lasteyeangles,coolswayang = Angle(0,0,0),Angle(0,0,0),Angle(0,0,0)
 local coolswaypos = Vector(0,0,0)
--- local swayxpower,swayypower,swayzpower = 0.2,0.25,-0.3
-local swayxpower,swayypower,swayzpower = -0.6,0.15,-0.3
+
+local swayxmult,swayymult,swayzmult = -0.1,0.1,-0.3
+local lookxpower,lookypower = 1,2
+
 local vector_noup = Vector(1,1,0)
 
 
@@ -297,12 +299,21 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     --coolsway
     local coolsway = GetConVar("arccw_vm_coolsway"):GetBool()
+	
+	lookxmult=GetConVar("arccw_vm_lookxmult"):GetFloat()
+	lookymult=GetConVar("arccw_vm_lookymult"):GetFloat()
+	
+	swayxmult=GetConVar("arccw_vm_swayxmult"):GetFloat()
+	swayymult=GetConVar("arccw_vm_swayymult"):GetFloat()
+	swayzmult=GetConVar("arccw_vm_swayzmult"):GetFloat()
+	
     if coolsway then
         eyeangles = self.Owner:EyeAngles()
 
         local sprintmult = (self:InSprint() and 2) or 1
-		local sprintnull = (sprintmult==2 and 0.5) or 1 --Hamper swaying on certain axis while sprinting, so the gun doesn't go all over the place
-		local airnull = (self.Owner:OnGround() and 1) or 0.1 --Hamper swaying when not walking on the ground
+		local sprintnull = 1 -- (sprintmult == 2 and 0.5) or 1 --Hamper swaying on certain axis while sprinting, so the gun doesn't go all over the place
+		-- it's meant to go everywhere, dummy
+        local airnull = (self.Owner:OnGround() and 1) or 0.1 --Hamper swaying when not walking on the ground
 		
         local bobmodifier = (target.sway / ((self:InSprint() and target.bob) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
         local vel = math.min( (self.Owner:GetVelocity() * vector_noup):Length() * bobmodifier , 600 )
@@ -310,6 +321,13 @@ function SWEP:GetViewModelPosition(pos, ang)
         if self:GetState() != ArcCW.STATE_SIGHTS then
             vel = math.max(vel, 10)
         end
+
+        local movespeed = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
+        movespeed = math.Clamp(movespeed, 0.01, 1)
+
+        vel = vel / movespeed
+
+        vel = vel * self.BobMult or 1
 
         local velmult = math.min(vel / 600 * (actual.bob / 2), 3)
         local swaymult = actual.sway / 2
@@ -333,12 +351,12 @@ function SWEP:GetViewModelPosition(pos, ang)
         local ctsin = math.sin(ctpower * sprintmult)
         --Cool pos and ang
         local mag = 0.01
-        coolswaypos.x = ctsin * swayxpower * (vel * mag) * sprintnull
-        coolswaypos.y = ctsin * swayypower * (vel * mag) * sprintnull
-        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzpower * velmult * (vel * mag) * sprintnull * airnull
+        coolswaypos.x = ctsin * swayxmult * (vel * mag) * sprintnull
+        coolswaypos.y = ctsin * swayymult * (vel * mag) * sprintnull
+        coolswaypos.z = math.sin(ctpower * 2 * sprintmult) * swayzmult * velmult * (vel * mag) * sprintnull * airnull
 
-        coolswayang.x = ( (math.cos(ctpower * 0.5) * velmult) + coolxangcomp + xang ) * sprintnull
-        coolswayang.y = ( (math.cos(ctpower * 0.6) * velmult) + yang * 2 ) * sprintnull
+        coolswayang.x = ( (math.cos(ctpower * 0.5) * velmult) + coolxangcomp + xang * lookxmult ) * sprintnull
+        coolswayang.y = ( (math.cos(ctpower * 0.6) * velmult) + yang * lookymult ) * sprintnull
         coolswayang.z = (math.sin(ctpower) * velmult) + (yang * 4 + xang * 2 + coolyangcomp) * sprintmult
 
         target.ang = target.ang - coolswayang
