@@ -220,6 +220,8 @@ SWEP.BarrelOffsetHip = Vector(3, 0, -3)
 SWEP.CustomizePos = Vector(9.824, 0, -4.897)
 SWEP.CustomizeAng = Angle(12.149, 30.547, 0)
 
+SWEP.BobMult = 1
+
 SWEP.BarrelLength = 24
 
 SWEP.Bipod_Integral = false
