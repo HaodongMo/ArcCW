@@ -197,6 +197,11 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
     dgui:CheckBox("Enable round startup info", "arccw_ttt_inforoundstart")
     dgui:CheckBox("Enable Crosshair", "arccw_crosshair")
     dgui:CheckBox("Enable role-based crosshair color", "arccw_ttt_rolecrosshair")
+    dgui:CheckBox("Enable Customization Blur", "arccw_blur")
+    dgui:CheckBox("Use Alternative 2D3D HUD", "arccw_hud_3dfun")
+    dgui:CheckBox("Force enable custom HUD", "arccw_hud_forceshow")
+    dgui:CheckBox("Show Health HUD", "arccw_hud_showhealth")
+    dgui:CheckBox("Show Ammo HUD", "arccw_hud_showammo")
     dgui:CheckBox("Enable 2D3D on ammo and weapons", "arccw_2d3d")
     dgui:CheckBox("Enable Cheap Scopes (saves perf.)", "arccw_cheapscopes")
     dgui:CheckBox("Toggle ADS", "arccw_toggleads")
@@ -251,4 +256,45 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
     end
 
     dtabs:AddSheet("ArcCW", panellist, "icon16/gun.png", false, false, "ArcCW Settings")
+end)
+
+hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2", function(tData)
+    local client = LocalPlayer()
+    local ent = tData:GetEntity()
+
+    if not IsValid(client) or not client:IsTerror() or not client:Alive()
+    or not IsValid(ent) or tData:GetEntityDistance() > 100 or not ent:IsWeapon()
+    or not ent.ArcCW or ent.Throwable then
+        return
+    end
+
+    if tData:GetAmountDescriptionLines() > 0 then
+        tData:AddDescriptionLine()
+    end
+
+    local pickx = GetConVar("arccw_atts_pickx"):GetInt()
+
+    if ent.Attachments and ent:CountAttachments() > 0 then
+        tData:AddDescriptionLine(tostring(ent:CountAttachments()) .. (pickx > 0 and ("/" .. pickx) or "") .. " Attachment(s):", nil)
+        for i, v in pairs(ent.Attachments) do
+            local attName = v.Installed
+            if not attName and not v.MergeSlots then
+                continue
+            elseif v.MergeSlots and not attName then
+                for _, s in pairs(v.MergeSlots) do
+                    if ent.Attachments[s] and ent.Attachments[s].Installed then
+                        attName = ent.Attachments[s].Installed
+                        break
+                    end
+                end
+                if not attName then continue end
+            end
+            local attTbl = ArcCW.AttachmentTable[attName]
+            if attTbl and v.PrintName and attTbl.PrintName then
+                tData:AddDescriptionLine(v.PrintName .. ": " .. attTbl.PrintName, nil, {attTbl.Icon})
+            end
+        end
+    end
+
+    tData:AddDescriptionLine()
 end)
