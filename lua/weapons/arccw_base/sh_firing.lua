@@ -567,7 +567,7 @@ function SWEP:GetDispersion()
 
     -- Bipod
     if self:InBipod() then
-        hip = hip * (self:GetBuff_Mult("Mult_BipodDispersion") or 0.1)
+        hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1)
     end
 
     return hip
@@ -646,8 +646,8 @@ function SWEP:DoRecoil()
     local vsm = (ret.VisualRecoilMult or 1) * self:GetBuff_Mult("Mult_VisualRecoilMult")
 
     if self:InBipod() then
-        m = m * (self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
-        rs = rs * (self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
+        m = m * ((self.BipodRecoil or 1) * self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
+        rs = rs * ((self.BipodRecoil or 1) * self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
     end
 
     -- Used by hyper-burst and such to absorb recoil
