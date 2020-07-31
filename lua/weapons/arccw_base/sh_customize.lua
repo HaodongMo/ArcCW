@@ -1,4 +1,4 @@
-local tr = ArcCW.GetTranslation
+local translate = ArcCW.GetTranslation
 
 function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
@@ -283,12 +283,12 @@ function SWEP:CreateCustomizeHUD()
         surface.SetTextColor(0, 0, 0)
         surface.SetTextPos(smallgap, 0)
         surface.SetFont("ArcCW_12_Glow")
-        surface.DrawText(tr("name." .. self:GetClass()) or self.PrintName)
+        surface.DrawText(translate("name." .. self:GetClass()) or self.PrintName)
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap, 0)
         surface.SetFont("ArcCW_12")
-        surface.DrawText(tr("name." .. self:GetClass()) or self.PrintName)
+        surface.DrawText(translate("name." .. self:GetClass()) or self.PrintName)
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
@@ -482,7 +482,7 @@ function SWEP:CreateCustomizeHUD()
             triv_attname:DockMargin( 0, 0, 0, 0 )
             triv_attname:SetText("")
             triv_attname.Paint = function(span, w, h)
-                local txt = multlinetext(tr("name." .. att) or atttbl.PrintName, w, "ArcCW_16")
+                local txt = multlinetext(translate("name." .. att) or atttbl.PrintName, w, "ArcCW_16")
 
                 c = 0
 
@@ -523,7 +523,7 @@ function SWEP:CreateCustomizeHUD()
 
         -- att desc
 
-        desctext = multlinetext(tr("desc." .. att) or atttbl.Description, barsize - smallgap * 2, "ArcCW_8")
+        desctext = multlinetext(translate("desc." .. att) or atttbl.Description, barsize - smallgap * 2, "ArcCW_8")
 
         local triv_desc = vgui.Create("DLabel", atttrivia)
         triv_desc:SetSize(barsize, ScreenScale(8) * (table.Count(desctext) + 1))
@@ -558,7 +558,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(125, 200, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText(tr("ui.positives"))
+                surface.DrawText(translate("ui.positives"))
             end
 
             for _, i in pairs(pros) do
@@ -588,7 +588,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(200, 125, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText(tr("ui.negatives"))
+                surface.DrawText(translate("ui.negatives"))
             end
 
             for _, i in pairs(cons) do
@@ -619,7 +619,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(125, 125, 200))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText(tr("ui.information"))
+                surface.DrawText(translate("ui.information"))
             end
 
             for _, i in pairs(neutrals) do
@@ -712,7 +712,7 @@ function SWEP:CreateCustomizeHUD()
                 order_b = atttbl_b.SortOrder or order_b
 
                 if order_a == order_b then
-                    return (tr("name." .. a) or atttbl_a.PrintName) > (tr("name." .. b) or atttbl_b.PrintName)
+                    return (translate("name." .. a) or atttbl_a.PrintName) > (translate("name." .. b) or atttbl_b.PrintName)
                 end
 
                 return order_a > order_b
@@ -795,7 +795,7 @@ function SWEP:CreateCustomizeHUD()
 
                     if !atttbl then
                         atttbl = {
-                            PrintName = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or tr("attslot.noatt"),
+                            PrintName = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt"),
                             Icon = k.DefaultAttIcon or defaultatticon,
                             Free = true
                         }
@@ -886,7 +886,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetDrawColor(Bfg_col)
                     surface.DrawRect((h * 1.5) - (linesize / 2), 0, linesize, h)
 
-                    local txt = tr("name." .. spaa.AttName) or atttbl.PrintName
+                    local txt = translate("name." .. spaa.AttName) or atttbl.PrintName
 
                     if showqty then
                         txt = txt .. " (" .. tostring(qty) .. ")"
@@ -977,7 +977,7 @@ function SWEP:CreateCustomizeHUD()
 
             local txt =  ArcCW.TryTranslation(k.PrintName)
 
-            local att_txt = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or tr("attslot.noatt")
+            local att_txt = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt")
             local att_icon = k.DefaultAttIcon or defaultatticon
 
             local installed = k.Installed
@@ -1025,7 +1025,7 @@ function SWEP:CreateCustomizeHUD()
             if installed then
                 local atttbl = ArcCW.AttachmentTable[installed]
 
-                att_txt = tr("name." .. installed) or atttbl.PrintName
+                att_txt = translate("name." .. installed) or atttbl.PrintName
 
                 if atttbl.Icon then
                     att_icon = atttbl.Icon
@@ -1067,7 +1067,7 @@ function SWEP:CreateCustomizeHUD()
     triv_wpnnamelabel:SetText("")
     triv_wpnnamelabel.Paint = function(span, w, h)
         if !IsValid(self) then return end
-        local txt = tr("name." .. self:GetClass()) or self.PrintName
+        local txt = translate("name." .. self:GetClass()) or self.PrintName
 
         surface.SetFont("ArcCW_20")
         local tw, th = surface.GetTextSize(txt)
@@ -1090,25 +1090,25 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local trivia = {
-        function() return tr("trivia.class") .. ": " .. ArcCW.TryTranslation(self.Trivia_Class) or "Unknown" end,
-        function() return tr("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
-        function() return tr("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
-        function() return tr("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
-        function() return tr("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo) end,
-        function() return tr("trivia.country") .. ": " .. self.Trivia_Country or "Unknown" end,
-        function() return tr("trivia.manufacturer") .. ": " .. self.Trivia_Manufacturer or "Unknown" end,
-        function() return tr("trivia.clipsize") .. ": " .. self:GetCapacity() end,
-        function() return tr("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
-        function() return tr("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
-        function() return tr("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
-        function() return tr("trivia.penetration") .. ": " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
+        function() return translate("trivia.class") .. ": " .. ArcCW.TryTranslation(self.Trivia_Class) or "Unknown" end,
+        function() return translate("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
+        function() return translate("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
+        function() return translate("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
+        function() return translate("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo) end,
+        function() return translate("trivia.country") .. ": " .. self.Trivia_Country or "Unknown" end,
+        function() return translate("trivia.manufacturer") .. ": " .. self.Trivia_Manufacturer or "Unknown" end,
+        function() return translate("trivia.clipsize") .. ": " .. self:GetCapacity() end,
+        function() return translate("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
+        function() return translate("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
+        function() return translate("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
+        function() return translate("trivia.penetration") .. ": " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
     }
 
     if !self.ManualAction and !self:GetBuff_Override("Override_ManualAction") then
         table.insert(trivia, function()
             local rpm = 60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
             rpm = math.ceil(rpm / 25) * 25
-            return tr("trivia.firerate") .. ": " .. rpm .. "RPM"
+            return translate("trivia.firerate") .. ": " .. rpm .. "RPM"
         end)
     end
 
@@ -1158,7 +1158,7 @@ function SWEP:CreateCustomizeHUD()
     end
 
     if self.FuseTime then
-        table.insert(trivia, function() return tr("trivia.fusetime") .. ": " .. self.FuseTime end)
+        table.insert(trivia, function() return translate("trivia.fusetime") .. ": " .. self.FuseTime end)
     end
 
     for _, i in pairs(trivia) do
@@ -1181,7 +1181,7 @@ function SWEP:CreateCustomizeHUD()
 
     -- multlinetext(text, maxw, font)
 
-    local adesctext = multlinetext(tr("desc." .. self:GetClass()) or self.Trivia_Desc, barsize, "ArcCW_8")
+    local adesctext = multlinetext(translate("desc." .. self:GetClass()) or self.Trivia_Desc, barsize, "ArcCW_8")
 
     table.insert(adesctext, "")
 
@@ -1358,11 +1358,11 @@ function SWEP:CreateCustomizeHUD()
     local statList
     regenStatList = function()
         statList = {
-            {tr("stat.stat"), "",
-                function() return tr("stat.original"), tr("stat.current") end,
+            {translate("stat.stat"), "",
+                function() return translate("stat.original"), translate("stat.current") end,
                 function() return nil end,
             },
-            {tr("stat.damage"), tr("stat.damage.tooltip"),
+            {translate("stat.damage"), translate("stat.damage.tooltip"),
                 function()
                     local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
                     local orig = math.Round(self.Damage * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
@@ -1375,7 +1375,7 @@ function SWEP:CreateCustomizeHUD()
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
-            {tr("stat.damagemin"), tr("stat.damagemin.tooltip"),
+            {translate("stat.damagemin"), translate("stat.damagemin.tooltip"),
                 function()
                     local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
                     local orig = math.Round(self.DamageMin * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
@@ -1392,21 +1392,21 @@ function SWEP:CreateCustomizeHUD()
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
-            {tr("stat.range"), tr("stat.range.tooltip"),
+            {translate("stat.range"), translate("stat.range.tooltip"),
                 function() return defaultStatFunc("Range", "m") end,
                 function() return defaultBetterFunc("Range") end,
             },
-            {tr("stat.firerate"), tr("stat.firerate.tooltip"),
+            {translate("stat.firerate"), translate("stat.firerate.tooltip"),
                 function()
 
                 local orig = math.ceil(60 / self.Delay / 25) * 25 .. "RPM"
                 local cur = math.ceil(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 25) * 25 .. "RPM"
 
                 if self.ManualAction then
-                    orig = tr("stat.firerate.manual")
+                    orig = translate("stat.firerate.manual")
                 end
                 if self:GetBuff_Override("Override_ManualAction") or self.ManualAction then
-                    cur = tr("stat.firerate.manual")
+                    cur = translate("stat.firerate.manual")
                 end
 
                 return orig, cur
@@ -1424,7 +1424,7 @@ function SWEP:CreateCustomizeHUD()
                     return nil
                 end,
             },
-            {tr("stat.capacity"), tr("stat.capacity.tooltip"),
+            {translate("stat.capacity"), translate("stat.capacity.tooltip"),
                 function()
                     local m = self.RegularClipSize
                     local m2 = self.Primary.ClipSize
@@ -1441,31 +1441,31 @@ function SWEP:CreateCustomizeHUD()
                     return m + cs < m2 + cs2
                 end,
             },
-            {tr("stat.precision"), tr("stat.precision.tooltip"),
+            {translate("stat.precision"), translate("stat.precision.tooltip"),
                 function() return defaultStatFunc("AccuracyMOA", " MOA", 3) end,
                 function() return defaultBetterFunc("AccuracyMOA", true) end,
             },
-            {tr("stat.hipdisp"), tr("stat.hipdisp.tooltip"),
+            {translate("stat.hipdisp"), translate("stat.hipdisp.tooltip"),
                 function() return defaultStatFunc("HipDispersion", " MOA") end,
                 function() return defaultBetterFunc("HipDispersion", true) end,
             },
-            {tr("stat.movedisp"), tr("stat.movedisp.tooltip"),
+            {translate("stat.movedisp"), translate("stat.movedisp.tooltip"),
                 function() return defaultStatFunc("MoveDispersion", " MOA") end,
                 function() return defaultBetterFunc("MoveDispersion", true) end,
             },
-            {tr("stat.recoil"), tr("stat.recoil.tooltip"),
+            {translate("stat.recoil"), translate("stat.recoil.tooltip"),
                 function() return defaultStatFunc("Recoil", nil, 2) end,
                 function() return defaultBetterFunc("Recoil", true) end,
             },
-            {tr("stat.recoilside"), tr("stat.recoilside.tooltip"),
+            {translate("stat.recoilside"), translate("stat.recoilside.tooltip"),
                 function() return defaultStatFunc("RecoilSide", nil, 2) end,
                 function() return defaultBetterFunc("RecoilSide", true) end,
             },
-            {tr("stat.sighttime"), tr("stat.sighttime.tooltip"),
+            {translate("stat.sighttime"), translate("stat.sighttime.tooltip"),
                 function() return defaultStatFunc("SightTime", "s", 2) end,
                 function() return defaultBetterFunc("SightTime", true) end,
             },
-            {tr("stat.speedmult"), tr("stat.speedmult.tooltip"),
+            {translate("stat.speedmult"), translate("stat.speedmult.tooltip"),
                 function()
                     return math.Round(self.SpeedMult * 100) .. "%", math.Round(math.Clamp(self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) * 100) .. "%"
                 end,
@@ -1476,7 +1476,7 @@ function SWEP:CreateCustomizeHUD()
                     else return false end
                 end,
             },
-            {tr("stat.sightspeed"), tr("stat.sightspeed.tooltip"),
+            {translate("stat.sightspeed"), translate("stat.sightspeed.tooltip"),
                 function()
                     return math.Round(self.SightedSpeedMult * 100) .. "%", math.Round(math.Clamp(self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) * 100) .. "%"
                 end,
@@ -1487,19 +1487,19 @@ function SWEP:CreateCustomizeHUD()
                     else return false end
                 end,
             },
-            {tr("stat.meleedamage"), tr("stat.meleedamage.tooltip"),
+            {translate("stat.meleedamage"), translate("stat.meleedamage.tooltip"),
                 function() return defaultStatFunc("MeleeDamage") end,
                 function() return defaultBetterFunc("MeleeDamage") end,
             },
-            {tr("stat.meleetime"), tr("stat.meleetime.tooltip"),
+            {translate("stat.meleetime"), translate("stat.meleetime.tooltip"),
                 function() return defaultStatFunc("MeleeTime", "s", 2) end,
                 function() return defaultBetterFunc("MeleeTime", true) end,
             },
-            {tr("stat.shootvol"), tr("stat.shootvol.tooltip"),
+            {translate("stat.shootvol"), translate("stat.shootvol.tooltip"),
                 function() return defaultStatFunc("ShootVol","dB") end,
                 function() return defaultBetterFunc("ShootVol", true) end,
             },
-            {tr("stat.barrellen"), tr("stat.barrellen.tooltip"),
+            {translate("stat.barrellen"), translate("stat.barrellen.tooltip"),
                 function()
                     local orig = self.BarrelLength
                     local cur = orig + self:GetBuff_Add("Add_BarrelLength")
@@ -1510,7 +1510,7 @@ function SWEP:CreateCustomizeHUD()
                     if add == 0 then return nil else return add < 0 end
                 end,
             },
-            {tr("stat.pen"), tr("stat.pen.tooltip"),
+            {translate("stat.pen"), translate("stat.pen.tooltip"),
                 function() return defaultStatFunc("Penetration","mm") end,
                 function() return defaultBetterFunc("Penetration") end,
             },
@@ -1609,7 +1609,7 @@ function SWEP:CreateCustomizeHUD()
             surface.SetDrawColor(Bbg_col)
             surface.DrawRect(0, 0, w, h)
 
-            local txt = tr(statbox:IsVisible() and "ui.trivia" or "ui.stats")
+            local txt = translate(statbox:IsVisible() and "ui.trivia" or "ui.stats")
 
             surface.SetTextColor(Bfg_col)
             surface.SetTextPos(smallgap, ScreenScale(1))
@@ -1646,7 +1646,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetDrawColor(Bbg_col)
                 surface.DrawRect(0, 0, w, h)
 
-                local txt = tr("ui.tttequip")
+                local txt = translate("ui.tttequip")
 
                 surface.SetTextColor(Bfg_col)
                 surface.SetTextPos(smallgap, ScreenScale(1))
@@ -1678,7 +1678,7 @@ function SWEP:CreateCustomizeHUD()
             surface.SetDrawColor(Bbg_col)
             surface.DrawRect(0, 0, w, h)
 
-            local txt = tr("ui.tttchat")
+            local txt = translate("ui.tttchat")
 
             surface.SetTextColor(Bfg_col)
             surface.SetTextPos(smallgap, ScreenScale(1))

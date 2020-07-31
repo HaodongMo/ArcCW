@@ -60,7 +60,7 @@ function ArcCW:ShouldDrawHUDElement(ele)
     return true
 end
 
-local font = "Bahnschrift"
+local font = ArcCW.GetTranslation("default_font") or "Bahnschrift"
 
 local sizes_to_make = {
     6,
