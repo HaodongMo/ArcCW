@@ -151,7 +151,9 @@ function SWEP:RestoreAmmo(count)
 
     if load <= self:Clip1() then return end
 
-    self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
+    if SERVER then
+        self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
+    end
     self:SetClip1(0)
     self:TakePrimaryAmmo(load)
     self:SetClip1(load)
