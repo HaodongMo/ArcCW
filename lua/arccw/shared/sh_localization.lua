@@ -76,6 +76,7 @@ end
 
 ArcCW.LangTable = {
     ["en"] = {
+        -- Trivia
         ["trivia.class"] = "Class",
         ["trivia.year"] = "Year",
         ["trivia.mechanism"] = "Mechanism",
@@ -88,5 +89,23 @@ ArcCW.LangTable = {
         ["trivia.noise"] = "Noise",
         ["trivia.recoil"] = "Effective Recoil Momentum",
         ["trivia.penetration"] = "Penetration",
+
+        -- Class
+        ["class.pistol"] = "Pistol",
+        ["class.revolver"] = "Revolver",
+        ["class.machinepistol"] = "Machine Pistol",
+        ["class.smg"] = "Submachine Gun",
+        ["class.pdw"] = "Personal Defense Weapon",
+        ["class.assaultcarbine"] = "Assault Carbine",
+        ["class.carbine"] = "Carbine",
+        ["class.assaultrifle"] = "Assault Rifle",
+        ["class.rifle"] = "Rifle",
+        ["class.battlerifle"] = "Battle Rifle",
+        ["class.dmr"] = "DMR",
+        ["class.sniperrifle"] = "Sniper Rifle",
+        ["class.antimaterielrifle"] = "Antimateriel rifle",
+        ["class.rocketlauncher"] = "Rocket Launcher",
+        ["class.grenade"] = "Hand Grenade",
+        ["class.melee"] = "Melee Weapon",
     }
 }

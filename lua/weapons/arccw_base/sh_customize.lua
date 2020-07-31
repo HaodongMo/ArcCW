@@ -1088,7 +1088,7 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local trivia = {
-        function() return ArcCW.GetTranslation("trivia.class") .. ": " .. self.Trivia_Class or "Unknown" end,
+        function() return ArcCW.GetTranslation("trivia.class") .. ": " .. ArcCW.TryTranslation(self.Trivia_Class) or "Unknown" end,
         function() return ArcCW.GetTranslation("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
         function() return ArcCW.GetTranslation("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
         function() return ArcCW.GetTranslation("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
@@ -1179,7 +1179,7 @@ function SWEP:CreateCustomizeHUD()
 
     -- multlinetext(text, maxw, font)
 
-    local adesctext = multlinetext(self.Trivia_Desc, barsize, "ArcCW_8")
+    local adesctext = multlinetext(ArcCW.GetTranslation("desc." .. self:GetClass()) or self.Trivia_Desc, barsize, "ArcCW_8")
 
     table.insert(adesctext, "")
 
