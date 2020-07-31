@@ -80,6 +80,10 @@ function SWEP:Deploy()
         end
     end
 
+    if (self.AutoReload or self:GetBuff_Override("Override_AutoReload")) and (self:GetBuff_Override("Override_AutoReload") != false) then
+        self:RestoreAmmo()
+    end
+
     self.LHIKAnimation = nil
 
     self:SetupModel(false)
@@ -274,6 +278,10 @@ function SWEP:Holster(wep)
                             vm:SetBodygroup(i, 0)
                         end
                         vm:SetSkin(0)
+                    end
+
+                    if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
+                        self:GetOwner():StripWeapon(self:GetClass())
                     end
                 end
             end

@@ -280,6 +280,8 @@ att.Override_TracerNum = nil
 att.Override_ShotgunReload = nil
 att.Override_HybridReload = nil
 
+att.Override_AutoReload = nil
+
 att.Override_ManualAction = nil
 
 att.Override_CanFireUnderwater = nil

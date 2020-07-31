@@ -58,6 +58,10 @@ SWEP.ReloadInSights = false
 
 SWEP.CanFireUnderwater = false
 
+SWEP.Disposable = false -- when all ammo is expended, the gun will remove itself when holstered
+
+SWEP.AutoReload = false -- when weapon is drawn, the gun will reload itself.
+
 SWEP.Recoil = 2
 SWEP.RecoilSide = 1
 SWEP.RecoilRise = 1
