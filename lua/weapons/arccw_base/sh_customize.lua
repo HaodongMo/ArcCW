@@ -558,7 +558,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(125, 200, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText(tr("att.positives"))
+                surface.DrawText(tr("ui.positives"))
             end
 
             for _, i in pairs(pros) do
@@ -588,7 +588,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(200, 125, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText(tr("att.negatives"))
+                surface.DrawText(tr("ui.negatives"))
             end
 
             for _, i in pairs(cons) do
@@ -619,7 +619,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(125, 125, 200))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText(tr("att.information"))
+                surface.DrawText(tr("ui.information"))
             end
 
             for _, i in pairs(neutrals) do
@@ -1609,7 +1609,7 @@ function SWEP:CreateCustomizeHUD()
             surface.SetDrawColor(Bbg_col)
             surface.DrawRect(0, 0, w, h)
 
-            local txt = statbox:IsVisible() and "Trivia" or "Stats"
+            local txt = tr(statbox:IsVisible() and "ui.trivia" or "ui.stats")
 
             surface.SetTextColor(Bfg_col)
             surface.SetTextPos(smallgap, ScreenScale(1))
@@ -1646,7 +1646,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetDrawColor(Bbg_col)
                 surface.DrawRect(0, 0, w, h)
 
-                local txt = "TTT Equipment"
+                local txt = tr("ui.tttequip")
 
                 surface.SetTextColor(Bfg_col)
                 surface.SetTextPos(smallgap, ScreenScale(1))
@@ -1678,7 +1678,7 @@ function SWEP:CreateCustomizeHUD()
             surface.SetDrawColor(Bbg_col)
             surface.DrawRect(0, 0, w, h)
 
-            local txt = "TTT Quickchat"
+            local txt = tr("ui.tttchat")
 
             surface.SetTextColor(Bfg_col)
             surface.SetTextPos(smallgap, ScreenScale(1))

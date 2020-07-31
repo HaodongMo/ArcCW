@@ -167,10 +167,16 @@ ArcCW.LangTable = {
         ["class.grenade"] = "Hand Grenade",
         ["class.melee"] = "Melee Weapon",
 
-        -- Attachments
-        ["att.positives"] = "POSITIVES:",
-        ["att.negatives"] = "NEGATIVES:",
-        ["att.information"] = "INFORMATION:",
+        -- UI
+        ["ui.savepreset"] = "Save Preset",
+        ["ui.loadpreset"] = "Load Preset",
+        ["ui.stats"] = "Stats",
+        ["ui.trivia"] = "Trivia",
+        ["ui.tttequip"] = "TTT Equipment",
+        ["ui.tttchat"] = "TTT Quickchat",
+        ["ui.positives"] = "POSITIVES:",
+        ["ui.negatives"] = "NEGATIVES:",
+        ["ui.information"] = "INFORMATION:",
 
         -- Stats
         ["stat.stat"] = "Stat", -- Used on first line of stat page
