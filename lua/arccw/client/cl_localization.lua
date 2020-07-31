@@ -143,7 +143,7 @@ ArcCW.PhraseTable = {
     },
 }
 
-local lang = GetConVar("gmod_language"):GetString()
+local lang = string.lower(GetConVar("gmod_language"):GetString())
 if not ArcCW.PhraseTable[lang] then lang = "en" end
 
 for key, value in pairs(ArcCW.PhraseTable[lang]) do
