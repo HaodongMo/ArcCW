@@ -20,11 +20,18 @@ ArcCW.StringToLang = {
     ["battle rifle"] = "class.battlerifle",
     ["designated marksman rifle"] = "class.dmr",
     ["dmr"] = "class.dmr", -- Preferred
-    ["sniper rifle"] = "class.sniperrifle",
+    ["sniper rifle"] = "class.sniperrifle", -- Preferred
+    ["sniper"] = "class.sniperrifle",
 
     ["antimateriel rifle"] = "class.antimaterielrifle", -- Preferred
     ["antimaterial rifle"] = "class.antimaterielrifle",
     ["anti-material rifle"] = "class.antimaterielrifle",
+    ["rocket launcher"] = "class.rocketlauncher",
+
+    ["hand grenade"] = "class.grenade", -- Preferred
+    ["grenade"] = "class.grenade",
+    ["melee weapon"] = "class.melee", -- Preferred
+    ["melee"] = "class.melee",
 }
 
 -- Adds a string to the StringToLang table.
@@ -44,7 +51,7 @@ function ArcCW.GetPhraseFromString(str)
 end
 
 -- Gets a translated string from a phrase. If none exist, returns nil.
-function ArcCW.GetTranslationFromPhrase(phrase, lang)
+function ArcCW.GetTranslation(phrase, lang)
     if not lang then
         lang = string.lower(GetConVar("gmod_language"):GetString())
     end
@@ -60,7 +67,7 @@ end
 
 -- Attempts to translate a string (could be either a raw string or a phrase).
 -- If fail, return the string itself.
-function ArcCW.TryTranslate(str, lang)
+function ArcCW.TryTranslation(str, lang)
     local phrase = ArcCW.GetPhraseFromString(str)
     if not phrase then return str end
 
@@ -77,6 +84,9 @@ ArcCW.LangTable = {
         ["trivia.country"] = "Country",
         ["trivia.manufacturer"] = "Manufacturer",
         ["trivia.clipsize"] = "Magazine Capacity",
-        ["trivia.precision"] = "Precision"
+        ["trivia.precision"] = "Precision",
+        ["trivia.noise"] = "Noise",
+        ["trivia.recoil"] = "Effective Recoil Momentum",
+        ["trivia.penetration"] = "Penetration",
     }
 }

@@ -1088,18 +1088,18 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local trivia = {
-        function() return "Class: " .. self.Trivia_Class or "Unknown" end,
-        function() return "Year: " .. tostring(self.Trivia_Year) or "Unknown" end,
-        function() return "Mechanism: " .. self.Trivia_Mechanism or "Unknown" end,
-        function() return "Calibre: " .. self.Trivia_Calibre or "Unknown" end,
-        function() return "Ammo Type: " .. language.GetPhrase(self.Primary.Ammo) end,
-        function() return "Country: " .. self.Trivia_Country or "Unknown" end,
-        function() return "Manufacturer: " .. self.Trivia_Manufacturer or "Unknown" end,
-        function() return "Magazine Capacity: " .. self:GetCapacity() end,
-        function() return "Precision: " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
-        function() return "Noise: " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
-        function() return "Effective Recoil Momentum: " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
-        function() return "Penetration: " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
+        function() return ArcCW.GetTranslation("trivia.class") .. ": " .. self.Trivia_Class or "Unknown" end,
+        function() return ArcCW.GetTranslation("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
+        function() return ArcCW.GetTranslation("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
+        function() return ArcCW.GetTranslation("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
+        function() return ArcCW.GetTranslation("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo) end,
+        function() return ArcCW.GetTranslation("trivia.country") .. ": " .. self.Trivia_Country or "Unknown" end,
+        function() return ArcCW.GetTranslation("trivia.manufacturer") .. ": " .. self.Trivia_Manufacturer or "Unknown" end,
+        function() return ArcCW.GetTranslation("trivia.clipsize") .. ": " .. self:GetCapacity() end,
+        function() return ArcCW.GetTranslation("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
+        function() return ArcCW.GetTranslation("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
+        function() return ArcCW.GetTranslation("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
+        function() return ArcCW.GetTranslation("trivia.penetration") .. ": " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
     }
 
     if !self.ManualAction and !self:GetBuff_Override("Override_ManualAction") then
@@ -1420,7 +1420,7 @@ function SWEP:CreateCustomizeHUD()
 
                 return orig, cur
                 end,
-                function() 
+                function()
                     if !self:GetBuff_Override("Override_ManualAction") and !self.ManualAction then
                         return defaultBetterFunc("RPM")
                     end
