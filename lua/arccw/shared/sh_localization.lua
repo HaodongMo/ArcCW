@@ -167,6 +167,11 @@ ArcCW.LangTable = {
         ["class.grenade"] = "Hand Grenade",
         ["class.melee"] = "Melee Weapon",
 
+        -- Attachments
+        ["att.positives"] = "POSITIVES:",
+        ["att.negatives"] = "NEGATIVES:",
+        ["att.information"] = "INFORMATION:",
+
         -- Stats
         ["stat.stat"] = "Stat", -- Used on first line of stat page
         ["stat.original"] = "Original",

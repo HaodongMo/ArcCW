@@ -558,7 +558,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(125, 200, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText("POSITIVES:")
+                surface.DrawText(tr("att.positives"))
             end
 
             for _, i in pairs(pros) do
@@ -588,7 +588,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(200, 125, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText("NEGATIVES:")
+                surface.DrawText(tr("att.negatives"))
             end
 
             for _, i in pairs(cons) do
@@ -619,7 +619,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(125, 125, 200))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText("INFORMATION:")
+                surface.DrawText(tr("att.information"))
             end
 
             for _, i in pairs(neutrals) do
