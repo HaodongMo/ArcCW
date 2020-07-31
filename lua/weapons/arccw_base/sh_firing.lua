@@ -304,14 +304,18 @@ function SWEP:PrimaryAttack()
 
         local ret = "fire"
 
-        if self:Clip1() == 0 and self.Animations.fire_bipod_empty and self:InBipod() then
+        if self:Clip1() == 0 and self.Animations.fire_bipod_empty and self:InBipod() and self:GetState() == ArcCW.STATE_SIGHTS then
+            ret = "fire_bipod_iron_empty"
+        elseif self:Clip1() == 0 and self.Animations.fire_bipod_empty and self:InBipod() then
             ret = "fire_bipod_empty"
         elseif self:Clip1() == 0 and self.Animations.fire_iron_empty and self:GetState() == ArcCW.STATE_SIGHTS then
             ret = "fire_iron_empty"
         elseif self:Clip1() == 0 and self.Animations.fire_empty and self:GetState() != ArcCW.STATE_SIGHTS then
             ret = "fire_empty"
         else
-            if self:InBipod() and self.Animations.fire_bipod then
+            if self:InBipod() and self.Animations.fire_bipod and self:GetState() == ArcCW.STATE_SIGHTS then
+                ret = "fire_bipod_iron"
+            elseif self:InBipod() and self.Animations.fire_bipod then
                 ret = "fire_bipod"
             elseif self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.fire_iron then
                 ret = "fire_iron"
