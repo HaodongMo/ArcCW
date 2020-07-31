@@ -46,7 +46,13 @@ function ArcCW:GetRandomWeapon(wpn, nades)
 
         local weight = (k.NPCWeight or 100)
 
-        if wpn and k.NPCWeaponType then
+        if wpn and k.TTTWeaponType then -- TTT weapon type(s) take priority over NPC weapon types
+            if isstring(k.TTTWeaponType) then
+                if k.TTTWeaponType != wpn then continue end
+            elseif istable(k.TTTWeaponType) then
+                if !table.HasValue(k.TTTWeaponType, wpn) then continue end
+            end
+        elseif wpn and k.NPCWeaponType then
             if isstring(k.NPCWeaponType) then
                 if k.NPCWeaponType != wpn then continue end
             elseif istable(k.NPCWeaponType) then
