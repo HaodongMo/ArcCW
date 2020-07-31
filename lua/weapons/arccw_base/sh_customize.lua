@@ -283,12 +283,12 @@ function SWEP:CreateCustomizeHUD()
         surface.SetTextColor(0, 0, 0)
         surface.SetTextPos(smallgap, 0)
         surface.SetFont("ArcCW_12_Glow")
-        surface.DrawText(self.PrintName)
+        surface.DrawText(tr("name." .. self:GetClass()) or self.PrintName)
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap, 0)
         surface.SetFont("ArcCW_12")
-        surface.DrawText(self.PrintName)
+        surface.DrawText(tr("name." .. self:GetClass()) or self.PrintName)
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
@@ -297,7 +297,7 @@ function SWEP:CreateCustomizeHUD()
         local pick = GetConVar("arccw_atts_pickx"):GetInt()
 
         if pick <= 0 then
-            surface.DrawText(self.Trivia_Class)
+            surface.DrawText(ArcCW.TryTranslation(self.Trivia_Class))
         else
             local txt = self:CountAttachments() .. "/" .. pick .. " Attachments"
 
@@ -482,7 +482,7 @@ function SWEP:CreateCustomizeHUD()
             triv_attname:DockMargin( 0, 0, 0, 0 )
             triv_attname:SetText("")
             triv_attname.Paint = function(span, w, h)
-                local txt = multlinetext(atttbl.PrintName, w, "ArcCW_16")
+                local txt = multlinetext(tr("name." .. att) or atttbl.PrintName, w, "ArcCW_16")
 
                 c = 0
 
@@ -523,7 +523,7 @@ function SWEP:CreateCustomizeHUD()
 
         -- att desc
 
-        desctext = multlinetext(atttbl.Description, barsize - smallgap * 2, "ArcCW_8")
+        desctext = multlinetext(tr("desc." .. att) or atttbl.Description, barsize - smallgap * 2, "ArcCW_8")
 
         local triv_desc = vgui.Create("DLabel", atttrivia)
         triv_desc:SetSize(barsize, ScreenScale(8) * (table.Count(desctext) + 1))
@@ -712,7 +712,7 @@ function SWEP:CreateCustomizeHUD()
                 order_b = atttbl_b.SortOrder or order_b
 
                 if order_a == order_b then
-                    return atttbl_a.PrintName > atttbl_b.PrintName
+                    return (tr("name." .. a) or atttbl_a.PrintName) > (tr("name." .. b) or atttbl_b.PrintName)
                 end
 
                 return order_a > order_b
@@ -795,7 +795,7 @@ function SWEP:CreateCustomizeHUD()
 
                     if !atttbl then
                         atttbl = {
-                            PrintName = k.DefaultAttName or "No Attachment",
+                            PrintName = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or tr("attslot.noatt"),
                             Icon = k.DefaultAttIcon or defaultatticon,
                             Free = true
                         }
@@ -886,7 +886,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetDrawColor(Bfg_col)
                     surface.DrawRect((h * 1.5) - (linesize / 2), 0, linesize, h)
 
-                    local txt = atttbl.PrintName
+                    local txt = tr("name." .. spaa.AttName) or atttbl.PrintName
 
                     if showqty then
                         txt = txt .. " (" .. tostring(qty) .. ")"
@@ -975,9 +975,9 @@ function SWEP:CreateCustomizeHUD()
                 Bfg_col = Color(150, 50, 50, 255)
             end
 
-            local txt = k.PrintName
+            local txt =  ArcCW.TryTranslation(k.PrintName)
 
-            local att_txt = k.DefaultAttName or "No Attachment"
+            local att_txt = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or tr("attslot.noatt")
             local att_icon = k.DefaultAttIcon or defaultatticon
 
             local installed = k.Installed
@@ -1025,7 +1025,7 @@ function SWEP:CreateCustomizeHUD()
             if installed then
                 local atttbl = ArcCW.AttachmentTable[installed]
 
-                att_txt = atttbl.PrintName
+                att_txt = tr("name." .. installed) or atttbl.PrintName
 
                 if atttbl.Icon then
                     att_icon = atttbl.Icon
@@ -1067,7 +1067,7 @@ function SWEP:CreateCustomizeHUD()
     triv_wpnnamelabel:SetText("")
     triv_wpnnamelabel.Paint = function(span, w, h)
         if !IsValid(self) then return end
-        local txt = self.PrintName
+        local txt = tr("name." .. self:GetClass()) or self.PrintName
 
         surface.SetFont("ArcCW_20")
         local tw, th = surface.GetTextSize(txt)

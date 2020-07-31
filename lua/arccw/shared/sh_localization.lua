@@ -32,15 +32,38 @@ ArcCW.StringToLang = {
     ["grenade"] = "class.grenade",
     ["melee weapon"] = "class.melee", -- Preferred
     ["melee"] = "class.melee",
+
+    -- Attachment Slot
+    ["optic"] = "attslot.optic",
+    ["muzzle"] = "attslot.muzzle",
+    ["underbarrel"] = "attslot.underbarrel",
+    ["tactical"] = "attslot.tactical",
+    ["grip"] = "attslot.grip",
+    ["stock"] = "attslot.stock",
+    ["fire group"] = "attslot.fcg",
+    ["ammo type"] = "attslot.ammo",
+    ["perk"] = "attslot.perk",
+    ["charm"] = "attslot.charm",
+    ["skin"] = "attslot.skin",
+
+    ["iron sights"] = "attslot.optic.default",
+    ["ironsights"] = "attslot.optic.default",
+    ["standard muzzle"] = "attslot.muzzle.default",
+    ["standard grip"] = "attslot.grip.default",
+    ["standard stock"] = "attslot.stock.default",
+    ["no stock"] = "attslot.stock.none",
+    ["standard fcg"] = "attslot.fcg.default",
 }
 
 -- Adds a string to the StringToLang table.
 function ArcCW.AddStringToLang(str, phrase)
+    if phrase == nil or phrase == "" or str == nil or str == "" then return nil end
     ArcCW.StringToLang[string.lower(str)] = phrase
 end
 
 -- Retrieves a lang phrase from a string. If the string is a phrase itself, it will be returned.
 function ArcCW.GetPhraseFromString(str)
+    if str == nil or str == "" then return nil end
     if ArcCW.StringToLang[string.lower(str)] then
         return ArcCW.StringToLang[string.lower(str)]
     end
@@ -53,6 +76,7 @@ end
 -- Gets a translated string from a phrase. Will attempt to fallback to English.
 -- Returns nil if no such phrase exists.
 function ArcCW.GetTranslation(phrase, lang)
+    if phrase == nil or phrase == "" then return nil end
     if not lang then
         lang = string.lower(GetConVar("gmod_language"):GetString())
     end
@@ -69,6 +93,7 @@ end
 -- Attempts to translate a string (could be either a raw string or a phrase).
 -- If fail, return the string itself.
 function ArcCW.TryTranslation(str, lang)
+    if str == nil or str == "" then return nil end
     local phrase = ArcCW.GetPhraseFromString(str)
     if not phrase then return str end
 
@@ -77,12 +102,38 @@ end
 
 -- Adds a translated string for a specific language's phrase. lang defaults to English.
 function ArcCW.AddTranslation(phrase, str, lang)
+    if phrase == nil or phrase == "" or str == nil or str == "" then return nil end
     lang = lang and string.lower(lang) or "en"
     ArcCW.LangTable[lang][string.lower(phrase)] = str
 end
 
 ArcCW.LangTable = {
     ["en"] = {
+        -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
+        -- Similarly, you can translate attachment and weapoon names with ["name.class_name"]
+        -- Example: {["desc.fcg_auto"] = "blah blah blah automatic firemode", ["name.arccw_p228"] = "P228 But Cooler"}
+
+        -- Attachment Slots
+        ["attslot.noatt"] = "No Attachment",
+        ["attslot.optic"] = "Optic",
+        ["attslot.muzzle"] = "Muzzle",
+        ["attslot.underbarrel"] = "Underbarrel",
+        ["attslot.tactical"] = "Tactical",
+        ["attslot.grip"] = "Grip",
+        ["attslot.stock"] = "Stock",
+        ["attslot.fcg"] = "Fire Group",
+        ["attslot.ammo"] = "Ammo Type",
+        ["attslot.perk"] = "Perk",
+        ["attslot.charm"] = "Charm",
+        ["attslot.skin"] = "Skin",
+
+        ["attslot.optic.default"] = "Iron Sights",
+        ["attslot.muzzle.default"] = "Standard Muzzle",
+        ["attslot.grip.default"] = "Standard Grip",
+        ["attslot.stock.default"] = "Standard Stock",
+        ["attslot.stock.none"] = "No Stock",
+        ["attslot.fcg.default"] = "Standard FCG",
+
         -- Trivia
         ["trivia.class"] = "Class",
         ["trivia.year"] = "Year",
