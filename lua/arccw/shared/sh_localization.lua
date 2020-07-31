@@ -97,7 +97,7 @@ function ArcCW.TryTranslation(str, lang)
     local phrase = ArcCW.GetPhraseFromString(str)
     if not phrase then return str end
 
-    return ArcCW.GetTranslationFromPhrase(phrase, lang) or str
+    return ArcCW.GetTranslation(phrase, lang) or str
 end
 
 -- Adds a translated string for a specific language's phrase. lang defaults to English.
