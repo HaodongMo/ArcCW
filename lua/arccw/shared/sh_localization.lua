@@ -114,7 +114,6 @@ ArcCW.LangTable = {
         -- Example: {["desc.fcg_auto"] = "blah blah blah automatic firemode", ["name.arccw_p228"] = "P228 But Cooler"}
 
         -- Attachment Slots
-        ["attslot.noatt"] = "No Attachment",
         ["attslot.optic"] = "Optic",
         ["attslot.muzzle"] = "Muzzle",
         ["attslot.underbarrel"] = "Underbarrel",
@@ -126,7 +125,7 @@ ArcCW.LangTable = {
         ["attslot.perk"] = "Perk",
         ["attslot.charm"] = "Charm",
         ["attslot.skin"] = "Skin",
-
+        ["attslot.noatt"] = "No Attachment",
         ["attslot.optic.default"] = "Iron Sights",
         ["attslot.muzzle.default"] = "Standard Muzzle",
         ["attslot.grip.default"] = "Standard Grip",
@@ -209,5 +208,31 @@ ArcCW.LangTable = {
         ["stat.barrellen.tooltip"] = "The length of the barrel, in Hammer Units. Long barrels will be blocked by walls more easily.",
         ["stat.pen"] = "Penetration",
         ["stat.pen.tooltip"] = "How much material this weapon can penetrate.",
+
+        -- Autostats
+        ["autostat.bipodrecoil"] = "Recoil in bipod",
+        ["autostat.bipoddisp"] = "Dispersion in bipod",
+        ["autostat.damage"] = "Close range damage",
+        ["autostat.damagemin"] = "Long range damage",
+        ["autostat.range"] = "Range",
+        ["autostat.penetration"] = "Penetration",
+        ["autostat.muzzlevel"] = "Muzzle velocity",
+        ["autostat.meleetime"] = "Melee attack time",
+        ["autostat.meleedamage"] = "Melee damage",
+        ["autostat.meleerange"] = "Melee range",
+        ["autostat.recoil"] = "Recoil",
+        ["autostat.recoilside"] = "Horizontal recoil",
+        ["autostat.firerate"] = "Fire rate",
+        ["autostat.precision"] = "Imprecision",
+        ["autostat.hipdisp"] = "Hip fire spread",
+        ["autostat.sightdisp"] = "Sighted spread",
+        ["autostat.movedisp"] = "Moving accuracy",
+        ["autostat.shootvol"] = "Weapon volume",
+        ["autostat.speedmult"] = "Movement speed",
+        ["autostat.sightspeed"] = "Sighted strafe speed",
+        ["autostat.reloadtime"] = "Reload time",
+        ["autostat.drawtime"] = "Draw time",
+        ["autostat.sighttime"] = "Sight time",
+        ["autostat.cycletime"] = "Cycle time",
     }
 }

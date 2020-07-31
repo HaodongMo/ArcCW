@@ -1,31 +1,31 @@
 -- ["buff"] = {"desc", bool ismult, bool lowerbetter}
 ArcCW.AutoStats = {
-    ["Mult_BipodRecoil"] = {"Recoil in bipod", true, true},
-    ["Mult_BipodDispersion"] = {"Dispersion in bipod", true, true},
-    ["Mult_Damage"] = {"Close range damage", true, false},
-    ["Mult_DamageMin"] = {"Long range damage", true, false},
-    ["Mult_Range"] = {"Range", true, false},
-    ["Mult_Penetration"] = {"Penetration", true, false},
-    ["Mult_MuzzleVelocity"] = {"Muzzle velocity", true, false},
-    ["Mult_MeleeTime"] = {"Melee attack time", true, true},
-    ["Mult_MeleeDamage"] = {"Melee damage", true, false},
-    ["Add_MeleeRange"] = {"Melee range", false, false},
-    ["Mult_Recoil"] = {"Recoil", true, true},
-    ["Mult_RecoilSide"] = {"Horizontal recoil", true, true},
-    ["Mult_RPM"] = {"Fire rate", true, false},
-    ["Mult_AccuracyMOA"] = {"Imprecision", true, true},
-    ["Mult_HipDispersion"] = {"Hip fire spread", true, true},
-    ["Mult_SightsDispersion"] = {"Sighted spread", true, true},
-    ["Mult_MoveDispersion"] = {"Moving spread", true, true},
-    ["Mult_ShootVol"] = {"Weapon volume", true, true},
-    ["Mult_SpeedMult"] = {"Movement speed", true, false},
-    ["Mult_MoveSpeed"] = {"Movement speed", true, false},
-    ["Mult_SightedSpeedMult"] = {"Sighted strafe speed", true, false},
-    ["Mult_SightedMoveSpeed"] = {"Sighted strafe speed", true, false},
-    ["Mult_ReloadTime"] = {"Reload time", true, true},
-    ["Mult_DrawTime"] = {"Draw time", true, true},
-    ["Mult_SightTime"] = {"Sight time", true, true},
-    ["Mult_CycleTime"] = {"Cycle time", true, true}
+    ["Mult_BipodRecoil"] = {"autostat.bipodrecoil", true, true},
+    ["Mult_BipodDispersion"] = {"autostat.bipoddisp", true, true},
+    ["Mult_Damage"] = {"autostat.damage", true, false},
+    ["Mult_DamageMin"] = {"autostat.damagemin", true, false},
+    ["Mult_Range"] = {"autostat.range", true, false},
+    ["Mult_Penetration"] = {"autostat.penetration", true, false},
+    ["Mult_MuzzleVelocity"] = {"autostat.muzzlevel", true, false},
+    ["Mult_MeleeTime"] = {"autostat.meleedamage", true, true},
+    ["Mult_MeleeDamage"] = {"autostat.meleedamage", true, false},
+    ["Add_MeleeRange"] = {"autostat.meleerange", false, false},
+    ["Mult_Recoil"] = {"autostat.recoil", true, true},
+    ["Mult_RecoilSide"] = {"autostat.recoilside", true, true},
+    ["Mult_RPM"] = {"autostat.firerate", true, false},
+    ["Mult_AccuracyMOA"] = {"autostat.precision", true, true},
+    ["Mult_HipDispersion"] = {"autostat.hipdisp", true, true},
+    ["Mult_SightsDispersion"] = {"autostat.sightdisp", true, true},
+    ["Mult_MoveDispersion"] = {"autostat.movedisp", true, true},
+    ["Mult_ShootVol"] = {"autostat.shootvol", true, true},
+    ["Mult_SpeedMult"] = {"autostat.speedmult", true, false},
+    ["Mult_MoveSpeed"] = {"autostat.speedmult", true, false},
+    ["Mult_SightedSpeedMult"] = {"autostat.sightspeed", true, false},
+    ["Mult_SightedMoveSpeed"] = {"autostat.sightspeed", true, false},
+    ["Mult_ReloadTime"] = {"autostat.reloadtime", true, true},
+    ["Mult_DrawTime"] = {"autostat.drawtime", true, true},
+    ["Mult_SightTime"] = {"autostat.sighttime", true, true},
+    ["Mult_CycleTime"] = {"autostat.cycletime", true, true},
 }
 
 local function getsimpleamt(stat)
@@ -70,13 +70,15 @@ function ArcCW:GetProsCons(att)
             local stat = ArcCW.AutoStats[i]
             local txt = ""
 
+            local str = ArcCW.GetTranslation(stat[1]) or stat[1]
+
             if stat[2] then
                 -- mult
                 if k > 1 then
                     if simple then
                         txt = getsimpleamt(k) .. stat[1]
                     else
-                        txt = "+" .. tostring((k - 1) * 100) .. "% " .. stat[1]
+                        txt = "+" .. tostring((k - 1) * 100) .. "% " .. str
                     end
                     if stat[3] then
                         table.insert(cons, txt)
@@ -87,7 +89,7 @@ function ArcCW:GetProsCons(att)
                     if simple then
                         txt = getsimpleamt(k) .. stat[1]
                     else
-                        txt = "-" .. tostring((1 - k) * 100) .. "% " .. stat[1]
+                        txt = "-" .. tostring((1 - k) * 100) .. "% " .. str
                     end
                     if stat[3] then
                         table.insert(pros, txt)
@@ -99,9 +101,9 @@ function ArcCW:GetProsCons(att)
                 -- add
                 if k > 0 then
                     if simple then
-                        txt = "+ " .. stat[1]
+                        txt = "+ " .. str
                     else
-                        txt = "+" .. tostring(k) .. " " .. stat[1]
+                        txt = "+" .. tostring(k) .. " " .. str
                     end
                     if stat[3] then
                         table.insert(cons, txt)
@@ -110,9 +112,9 @@ function ArcCW:GetProsCons(att)
                     end
                 elseif k < 0 then
                     if simple then
-                        txt = "+ " .. stat[1]
+                        txt = "+ " .. str
                     else
-                        txt = "-" .. tostring(-k) .. " " .. stat[1]
+                        txt = "-" .. tostring(-k) .. " " .. str
                     end
                     if stat[3] then
                         table.insert(pros, txt)
