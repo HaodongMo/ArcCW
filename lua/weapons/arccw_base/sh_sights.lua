@@ -6,7 +6,7 @@ function SWEP:GetSightTime()
 end
 
 function SWEP:EnterSprint()
-    if engine.ActiveGamemode() == "terrortown" and not (TTT2 and GetConVar("ttt2_sprint_enabled"):GetBool()) then return end
+    if engine.ActiveGamemode() == "terrortown" and not TTT2 then return end
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
     if self:GetState() == ArcCW.STATE_SPRINT then return end
     self:SetState(ArcCW.STATE_SPRINT)

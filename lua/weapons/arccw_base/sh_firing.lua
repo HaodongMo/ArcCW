@@ -304,12 +304,20 @@ function SWEP:PrimaryAttack()
 
         local ret = "fire"
 
-        if self:Clip1() == 0 and self.Animations.fire_iron_empty and self:GetState() == ArcCW.STATE_SIGHTS then
+        if self:Clip1() == 0 and self.Animations.fire_bipod_empty and self:InBipod() and self:GetState() == ArcCW.STATE_SIGHTS then
+            ret = "fire_bipod_iron_empty"
+        elseif self:Clip1() == 0 and self.Animations.fire_bipod_empty and self:InBipod() then
+            ret = "fire_bipod_empty"
+        elseif self:Clip1() == 0 and self.Animations.fire_iron_empty and self:GetState() == ArcCW.STATE_SIGHTS then
             ret = "fire_iron_empty"
         elseif self:Clip1() == 0 and self.Animations.fire_empty and self:GetState() != ArcCW.STATE_SIGHTS then
             ret = "fire_empty"
         else
-            if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.fire_iron then
+            if self:InBipod() and self.Animations.fire_bipod and self:GetState() == ArcCW.STATE_SIGHTS then
+                ret = "fire_bipod_iron"
+            elseif self:InBipod() and self.Animations.fire_bipod then
+                ret = "fire_bipod"
+            elseif self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.fire_iron then
                 ret = "fire_iron"
             else
                 ret = "fire"
@@ -563,7 +571,7 @@ function SWEP:GetDispersion()
 
     -- Bipod
     if self:InBipod() then
-        hip = hip * (self:GetBuff_Mult("Mult_BipodDispersion") or 0.1)
+        hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1)
     end
 
     return hip
@@ -642,8 +650,8 @@ function SWEP:DoRecoil()
     local vsm = (ret.VisualRecoilMult or 1) * self:GetBuff_Mult("Mult_VisualRecoilMult")
 
     if self:InBipod() then
-        m = m * (self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
-        rs = rs * (self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
+        m = m * ((self.BipodRecoil or 1) * self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
+        rs = rs * ((self.BipodRecoil or 1) * self:GetBuff_Mult("Mult_BipodRecoil") or 0.25)
     end
 
     -- Used by hyper-burst and such to absorb recoil
