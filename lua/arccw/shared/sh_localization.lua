@@ -75,6 +75,12 @@ function ArcCW.TryTranslation(str, lang)
     return ArcCW.GetTranslationFromPhrase(phrase, lang) or str
 end
 
+-- Adds a translated string for a specific language's phrase. lang defaults to English.
+function ArcCW.AddTranslation(phrase, str, lang)
+    lang = lang and string.lower(lang) or "en"
+    ArcCW.LangTable[lang][string.lower(phrase)] = str
+end
+
 ArcCW.LangTable = {
     ["en"] = {
         -- Trivia
