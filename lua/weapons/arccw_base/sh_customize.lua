@@ -1,3 +1,5 @@
+local tr = ArcCW.GetTranslation
+
 function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
 
@@ -1088,25 +1090,25 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local trivia = {
-        function() return ArcCW.GetTranslation("trivia.class") .. ": " .. ArcCW.TryTranslation(self.Trivia_Class) or "Unknown" end,
-        function() return ArcCW.GetTranslation("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
-        function() return ArcCW.GetTranslation("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
-        function() return ArcCW.GetTranslation("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
-        function() return ArcCW.GetTranslation("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo) end,
-        function() return ArcCW.GetTranslation("trivia.country") .. ": " .. self.Trivia_Country or "Unknown" end,
-        function() return ArcCW.GetTranslation("trivia.manufacturer") .. ": " .. self.Trivia_Manufacturer or "Unknown" end,
-        function() return ArcCW.GetTranslation("trivia.clipsize") .. ": " .. self:GetCapacity() end,
-        function() return ArcCW.GetTranslation("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
-        function() return ArcCW.GetTranslation("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
-        function() return ArcCW.GetTranslation("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
-        function() return ArcCW.GetTranslation("trivia.penetration") .. ": " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
+        function() return tr("trivia.class") .. ": " .. ArcCW.TryTranslation(self.Trivia_Class) or "Unknown" end,
+        function() return tr("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
+        function() return tr("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
+        function() return tr("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
+        function() return tr("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo) end,
+        function() return tr("trivia.country") .. ": " .. self.Trivia_Country or "Unknown" end,
+        function() return tr("trivia.manufacturer") .. ": " .. self.Trivia_Manufacturer or "Unknown" end,
+        function() return tr("trivia.clipsize") .. ": " .. self:GetCapacity() end,
+        function() return tr("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
+        function() return tr("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
+        function() return tr("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
+        function() return tr("trivia.penetration") .. ": " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
     }
 
     if !self.ManualAction and !self:GetBuff_Override("Override_ManualAction") then
         table.insert(trivia, function()
             local rpm = 60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
             rpm = math.ceil(rpm / 25) * 25
-            return "Firerate: " .. rpm .. "RPM"
+            return tr("trivia.firerate") .. ": " .. rpm .. "RPM"
         end)
     end
 
@@ -1156,7 +1158,7 @@ function SWEP:CreateCustomizeHUD()
     end
 
     if self.FuseTime then
-        table.insert(trivia, function() return "Fuse Time: " .. self.FuseTime end)
+        table.insert(trivia, function() return tr("trivia.fusetime") .. ": " .. self.FuseTime end)
     end
 
     for _, i in pairs(trivia) do
@@ -1179,7 +1181,7 @@ function SWEP:CreateCustomizeHUD()
 
     -- multlinetext(text, maxw, font)
 
-    local adesctext = multlinetext(ArcCW.GetTranslation("desc." .. self:GetClass()) or self.Trivia_Desc, barsize, "ArcCW_8")
+    local adesctext = multlinetext(tr("desc." .. self:GetClass()) or self.Trivia_Desc, barsize, "ArcCW_8")
 
     table.insert(adesctext, "")
 
@@ -1353,25 +1355,14 @@ function SWEP:CreateCustomizeHUD()
         else return nil end
     end
 
-    local function defaultOverrideBetterFunc(name, inverse)
-        local override, _ = self:GetBuff_Override("Override_" .. name)
-        local stat = self[name]
-        if isbool(override) then
-            override = override and 1 or 0
-            stat = stat and 1 or 0
-        end
-        if !override then return nil
-        else return inverse and override < stat or override > stat end
-    end
-
     local statList
     regenStatList = function()
         statList = {
-            {"Stat", "",
-                function() return "Original", "Current" end,
+            {tr("stat.stat"), "",
+                function() return tr("stat.original"), tr("stat.current") end,
                 function() return nil end,
             },
-            {"Close Range Damage", "How much damage this weapon does at point blank.",
+            {tr("stat.damage"), tr("stat.damage.tooltip"),
                 function()
                     local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
                     local orig = math.Round(self.Damage * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
@@ -1384,7 +1375,7 @@ function SWEP:CreateCustomizeHUD()
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
-            {"Long Range Damage", "How much damage this weapon does beyond its range.",
+            {tr("stat.damagemin"), tr("stat.damagemin.tooltip"),
                 function()
                     local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
                     local orig = math.Round(self.DamageMin * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
@@ -1401,21 +1392,21 @@ function SWEP:CreateCustomizeHUD()
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
-            {"Range", "The distance between which close range damage turns to long range damage, in meters.",
+            {tr("stat.range"), tr("stat.range.tooltip"),
                 function() return defaultStatFunc("Range", "m") end,
                 function() return defaultBetterFunc("Range") end,
             },
-            {"Fire Rate", "The rate at which this weapon cycles at, in rounds per minute.",
+            {tr("stat.firerate"), tr("stat.firerate.tooltip"),
                 function()
 
                 local orig = math.ceil(60 / self.Delay / 25) * 25 .. "RPM"
                 local cur = math.ceil(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 25) * 25 .. "RPM"
 
                 if self.ManualAction then
-                    orig = "MANUAL"
+                    orig = tr("stat.firerate.manual")
                 end
                 if self:GetBuff_Override("Override_ManualAction") or self.ManualAction then
-                    cur = "MANUAL"
+                    cur = tr("stat.firerate.manual")
                 end
 
                 return orig, cur
@@ -1433,7 +1424,7 @@ function SWEP:CreateCustomizeHUD()
                     return nil
                 end,
             },
-            {"Capacity", "How many rounds this weapon can hold.",
+            {tr("stat.capacity"), tr("stat.capacity.tooltip"),
                 function()
                     local m = self.RegularClipSize
                     local m2 = self.Primary.ClipSize
@@ -1450,53 +1441,31 @@ function SWEP:CreateCustomizeHUD()
                     return m + cs < m2 + cs2
                 end,
             },
-            {"Precision", "How precise the weapon is when still and aimed, in minutes of arc.",
+            {tr("stat.precision"), tr("stat.precision.tooltip"),
                 function() return defaultStatFunc("AccuracyMOA", " MOA", 3) end,
                 function() return defaultBetterFunc("AccuracyMOA", true) end,
             },
-            {"Hip Dispersion", "How much imprecision there is when the weapon is hipfired.",
+            {tr("stat.hipdisp"), tr("stat.hipdisp.tooltip"),
                 function() return defaultStatFunc("HipDispersion", " MOA") end,
                 function() return defaultBetterFunc("HipDispersion", true) end,
             },
-            {"Moving Accuracy", "How much imprecision is added when the gun is used while moving.",
+            {tr("stat.movedisp"), tr("stat.movedisp.tooltip"),
                 function() return defaultStatFunc("MoveDispersion", " MOA") end,
                 function() return defaultBetterFunc("MoveDispersion", true) end,
             },
-            {"Recoil", "The amount of kick produced each shot.",
+            {tr("stat.recoil"), tr("stat.recoil.tooltip"),
                 function() return defaultStatFunc("Recoil", nil, 2) end,
                 function() return defaultBetterFunc("Recoil", true) end,
             },
-            {"Side Recoil", "The amount of horizontal kick produced each shot.",
+            {tr("stat.recoilside"), tr("stat.recoilside.tooltip"),
                 function() return defaultStatFunc("RecoilSide", nil, 2) end,
                 function() return defaultBetterFunc("RecoilSide", true) end,
             },
-            {"Sight Time", "How long does it take to aim with this weapon.",
+            {tr("stat.sighttime"), tr("stat.sighttime.tooltip"),
                 function() return defaultStatFunc("SightTime", "s", 2) end,
                 function() return defaultBetterFunc("SightTime", true) end,
             },
-            -- {"Reload Time", "How long does it take to perform a tactical/dry reload.",
-            --     function()
-            --         local mult = self:GetBuff_Mult("Mult_ReloadTime")
-            --         local r = self.Animations["reload"].Time
-            --         local r2 = self.Animations["reload_empty"] and self.Animations["reload_empty"].Time
-            --         local h = self.Hook_SelectReloadAnimation
-            --         local seq, seq2 = h and self:Hook_SelectReloadAnimation("reload") or "reload", h and self:Hook_SelectReloadAnimation("reload_empty") or "reload_empty"
-            --         local rCur = self.Animations[seq].Time * mult
-            --         local r2Cur = self.Animations[seq2] and self.Animations[seq2].Time * mult
-            --         return math.Round(r, 1) .. "s" .. (r2 and "/" .. math.Round(r2, 1) .. "s" or ""),
-            --                 math.Round(rCur, 1) .. "s" .. (r2Cur and "/" .. math.Round(r2Cur, 1) .. "s" or "")
-            --     end,
-            --     function()
-            --         local mult = self:GetBuff_Mult("Mult_ReloadTime")
-            --         local r = self.Animations["reload"].Time
-            --         local h = self.Hook_SelectReloadAnimation
-            --         local seq = h and self:Hook_SelectReloadAnimation("reload") or "reload"
-            --         local rCur = self.Animations[seq].Time * mult
-            --         if r == rCur then return nil
-            --         else return r > rCur end
-            --     end,
-            -- },
-            {"Move Speed", "The speed at which you move with the gun, in percentage of original speed.",
+            {tr("stat.speedmult"), tr("stat.speedmult.tooltip"),
                 function()
                     return math.Round(self.SpeedMult * 100) .. "%", math.Round(math.Clamp(self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) * 100) .. "%"
                 end,
@@ -1507,7 +1476,7 @@ function SWEP:CreateCustomizeHUD()
                     else return false end
                 end,
             },
-            {"Sighted Strafe Speed", "The additional slowdown applied when you are moving with sights down.",
+            {tr("stat.sightspeed"), tr("stat.sightspeed.tooltip"),
                 function()
                     return math.Round(self.SightedSpeedMult * 100) .. "%", math.Round(math.Clamp(self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) * 100) .. "%"
                 end,
@@ -1518,19 +1487,19 @@ function SWEP:CreateCustomizeHUD()
                     else return false end
                 end,
             },
-            {"Bash Damage", "How much damage the melee bash causes.",
+            {tr("stat.meleedamage"), tr("stat.meleedamage.tooltip"),
                 function() return defaultStatFunc("MeleeDamage") end,
                 function() return defaultBetterFunc("MeleeDamage") end,
             },
-            {"Bash Time", "The time it takes to do a melee bash.",
+            {tr("stat.meleetime"), tr("stat.meleetime.tooltip"),
                 function() return defaultStatFunc("MeleeTime", "s", 2) end,
                 function() return defaultBetterFunc("MeleeTime", true) end,
             },
-            {"Weapon Volume", "How loud the weapon is, in decibels.",
+            {tr("stat.shootvol"), tr("stat.shootvol.tooltip"),
                 function() return defaultStatFunc("ShootVol","dB") end,
                 function() return defaultBetterFunc("ShootVol", true) end,
             },
-            {"Barrel Length", "The length of the barrel, in Hammer Units.",
+            {tr("stat.barrellen"), tr("stat.barrellen.tooltip"),
                 function()
                     local orig = self.BarrelLength
                     local cur = orig + self:GetBuff_Add("Add_BarrelLength")
@@ -1541,7 +1510,7 @@ function SWEP:CreateCustomizeHUD()
                     if add == 0 then return nil else return add < 0 end
                 end,
             },
-            {"Penetration", "How much steel this weapon can penetrate.",
+            {tr("stat.pen"), tr("stat.pen.tooltip"),
                 function() return defaultStatFunc("Penetration","mm") end,
                 function() return defaultBetterFunc("Penetration") end,
             },
