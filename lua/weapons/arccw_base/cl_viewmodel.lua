@@ -419,6 +419,10 @@ local function ShouldCheapWorldModel(wep)
     if LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE and LocalPlayer():GetObserverTarget() == wep:GetOwner() then
         return true
     end
+    -- Do not draw attachments on far away weapons
+    if (EyePos() - wep:WorldSpaceCenter()):LengthSqr() > 1048676 then -- 1024^2
+        return true
+    end
     return !GetConVar("arccw_att_showothers"):GetBool()
 end
 
