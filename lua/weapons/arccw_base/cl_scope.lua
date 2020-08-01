@@ -184,7 +184,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
     self.ProceduralViewOffset.y = math.Approach(self.ProceduralViewOffset.y, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.y)
     self.ProceduralViewOffset.r = math.Approach(self.ProceduralViewOffset.r, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.r)
     mzang_fixed_last = mzang_fixed
-    local ints = 3 * -viewbobintensity
+    local ints = 3 * GetConVar("arccw_vm_coolview_mult"):GetFloat() * -viewbobintensity
     ang:RotateAroundAxis(ang:Right(), Lerp(progress, 0, -self.ProceduralViewOffset.p) * ints)
     ang:RotateAroundAxis(ang:Up(), Lerp(progress, 0, self.ProceduralViewOffset.y / 2) * ints)
     ang:RotateAroundAxis(ang:Forward(), Lerp(progress, 0, self.ProceduralViewOffset.r / 3) * ints)
