@@ -113,8 +113,9 @@ end
 ArcCW.LangTable = {
     ["en"] = {
         -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
-        -- Similarly, you can translate attachment and weapoon names with ["name.class_name"]
-        -- Example: {["desc.fcg_auto"] = "blah blah blah automatic firemode", ["name.arccw_p228"] = "P228 But Cooler"}
+        -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
+        -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]
+        -- Example: {["desc.fcg_auto"] = "blah blah blah automatic firemode", ["name.fcg_auto"] = "Auto But Cooler"}
 
         -- Not a translate string, but in case a language needs its own font
         ["default_font"] = "Bahnschrift",
