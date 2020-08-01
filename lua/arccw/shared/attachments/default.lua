@@ -277,6 +277,8 @@ att.Override_TracerNum = nil
 -- att.Override_TracerCol = nil
 -- att.Mult_TracerWidth = 1
 
+att.Override_CanBash = nil
+
 att.Override_ShotgunReload = nil
 att.Override_HybridReload = nil
 

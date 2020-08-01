@@ -3,6 +3,8 @@ function SWEP:Bash(melee2)
     if self:GetState() == ArcCW.STATE_SIGHTS then return end
     if self:GetNextPrimaryFire() > CurTime() then return end
 
+    if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
+
     self.Primary.Automatic = true
 
     local mult = self:GetBuff_Mult("Mult_MeleeTime")
