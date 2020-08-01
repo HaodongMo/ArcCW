@@ -253,5 +253,15 @@ ArcCW.LangTable = {
         ["autostat.drawtime"] = "Draw time",
         ["autostat.sighttime"] = "Sight time",
         ["autostat.cycletime"] = "Cycle time",
+        ["autostat.magextender"] = "Extended magazine size",
+        ["autostat.magreducer"] = "Reduced magazine size",
+        ["autostat.bipod"] = "Can use Bipod",
+        ["autostat.holosight"] = "Precision sight picture",
+        ["autostat.zoom"] = "+ Zoom",
+        ["autostat.glint"] = "Visible scope glint",
+        ["autostat.thermal"] = "Thermal vision",
+        ["autostat.silencer"] = "Suppresses firing sound",
     },
 }
+
+hook.Run("ArcCW_LocalizationLoaded")

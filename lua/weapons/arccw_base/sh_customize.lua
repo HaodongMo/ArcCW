@@ -632,7 +632,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetTextColor(Color(150, 150, 225))
                     surface.SetFont("ArcCW_8")
                     surface.SetTextPos(smallgap, 0)
-                    surface.DrawText(i)
+                    surface.DrawText(ArcCW.TryTranslation(i))
                 end
             end
         end
