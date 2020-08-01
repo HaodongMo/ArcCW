@@ -298,5 +298,5 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Ammo", function(tData)
     tData:SetOutlineColor(client:GetRoleColor())
 
     tData:SetTitle(ent.PrintName)
-    tData:SetSubtitle("Ammo: " .. ent:GetNWInt("truecount", ent.AmmoCount))
+    tData:SetSubtitle(ArcCW.GetTranslation("ttt.ammo") .. ent:GetNWInt("truecount", ent.AmmoCount))
 end)

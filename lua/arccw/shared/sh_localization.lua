@@ -304,6 +304,7 @@ ArcCW.LangTable = {
         ["ttt.bodyatt.att3"] = " had these attachments: ",
 
         ["ttt.attachments"] = " Attachment(s): ", -- Used in TTT2 TargetID
+        ["ttt.ammo"] = "Ammo: ", -- Used in TTT2 TargetID
     },
 }
 
