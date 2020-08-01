@@ -28,21 +28,21 @@ hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
         local finalTbl = {
             img	= "arccw/ttticons/arccw_dropattinfo.png",
             p = 10.5, -- Right after the murder weapon
-            text = (mode == 1 and "With your detective skills, you deduce" or "You think") .. " the murder weapon "
+            text = ArcCW.GetTranslation(mode == 1 and "ttt.bodyatt.founddet" or "ttt.bodyatt.found")
         }
         local count = table.Count(attTbl)
         if count == 1 then
             if not ArcCW.AttachmentTable[attTbl[1]] then return end
-            finalTbl.text = finalTbl.text .. "had " .. ArcCW.AttachmentTable[attTbl[1]].PrintName .. " installed."
+            finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att1", {att = ArcCW.TryTranslation(ArcCW.AttachmentTable[attTbl[1]].PrintName)})
         elseif count == 2 then
             if not ArcCW.AttachmentTable[attTbl[1]] or not ArcCW.AttachmentTable[attTbl[2]] then return end
-            finalTbl.text = finalTbl.text .. "had " .. ArcCW.AttachmentTable[attTbl[1]].PrintName .. " and " .. ArcCW.AttachmentTable[attTbl[2]].PrintName .. " installed."
+            finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att2", {att1 = ArcCW.TryTranslation(ArcCW.AttachmentTable[attTbl[1]].PrintName), att2 = ArcCW.TryTranslation(ArcCW.AttachmentTable[attTbl[2]].PrintName)})
         else
-            finalTbl.text = finalTbl.text .. "had these attachments: "
+            finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att3")
             local comma = false
             for i, v in pairs(attTbl) do
                 if v and ArcCW.AttachmentTable[v] then
-                    finalTbl.text = finalTbl.text .. (comma and ", " or "") .. ArcCW.AttachmentTable[v].PrintName
+                    finalTbl.text = finalTbl.text .. (comma and ", " or "") .. ArcCW.TryTranslation(ArcCW.AttachmentTable[v].PrintName)
                     comma = true
                 end
             end
@@ -98,67 +98,44 @@ local function CreateInfoBox(t)
     label:SetText("ArcCW Configuration")
 
     if GetConVar("arccw_ttt_replace"):GetBool() then
-        AddLine(infoBox, "Auto-replace TTT weapons")
+        AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.replace"))
     end
 
-    local cmode_str = "No Restrictions"
-    local cmode_cvar = GetConVar("arccw_ttt_customizemode"):GetInt()
-    if cmode_cvar == 1 then
-        cmode_str = "Restricted"
-    elseif cmode_cvar == 2 then
-        cmode_str = "Availble during setup"
-    elseif cmode_cvar == 3 then
-        cmode_str = "Traitor/Detective only"
-    end
-    AddLine(infoBox, "Customize Mode: " .. cmode_str)
+    local cmode_str = "ttt.roundinfo.cmode" .. GetConVar("arccw_ttt_customizemode"):GetInt()
+    AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.cmode") .. " " .. ArcCW.GetTranslation(cmode_str))
 
     local att_str = ""
     local att_cvar = GetConVar("arccw_attinv_free"):GetBool()
     local att_cvar2 = GetConVar("arccw_attinv_lockmode"):GetBool()
     local att_cvar3 = GetConVar("arccw_attinv_loseondie"):GetBool()
     if att_cvar then
-        att_str = "Free"
+        att_str = "ttt.roundinfo.free"
     elseif att_cvar2 then
-        att_str = "Locking"
+        att_str = "ttt.roundinfo.locking"
     else
-        att_str = "Inventory"
+        att_str = "ttt.roundinfo.inv"
     end
+    att_str = ArcCW.GetTranslation(att_str)
     if att_cvar3 == 0 then
-        att_str = att_str .. ", Persistent"
+        att_str = att_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.persist")
     elseif not att_cvar and not att_cvar2 and att_cvar3 == 2 then
-        att_str = att_str .. ", Dropped"
+        att_str = att_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.drop")
     end
     if GetConVar("arccw_atts_pickx"):GetInt() > 0 then
-        att_str = att_str .. ", Pick " .. GetConVar("arccw_atts_pickx"):GetInt()
+        att_str = att_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.pickx") .. " " .. GetConVar("arccw_atts_pickx"):GetInt()
     end
-    AddLine(infoBox, "Attachment Mode: " .. att_str)
+    AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.attmode") .. " " .. att_str)
 
-    local binfo_str = "Unavailable"
     local binfo_cvar = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
-    if binfo_cvar == 1 then
-        binfo_str = "Detectives Only"
-    elseif binfo_cvar == 2 then
-        binfo_str = "Available"
-    end
-    AddLine(infoBox, "Attachment Info on Body: " .. binfo_str)
+    AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.bmode") .. " " .. ArcCW.GetTranslation("ttt.roundinfo.bmode" .. binfo_cvar))
 
-    if GetConVar("arccw_ttt_replaceammo"):GetBool() then
-        local ainfo_str = "None"
+    if GetConVar("arccw_ttt_replaceammo"):GetBool() and GetConVar("arccw_mult_ammohealth"):GetFloat() > 0 then
         local ainfo_cvar = GetConVar("arccw_ammo_detonationmode"):GetInt()
-
-        if GetConVar("arccw_mult_ammohealth"):GetFloat() <= 0 then
-            ainfo_str = "Indestructible"
-        elseif ainfo_cvar == 0 then
-            ainfo_str = "Simple"
-        elseif ainfo_cvar == 1 then
-            ainfo_str = "Frag"
-        elseif ainfo_cvar == 2 then
-            ainfo_str = "Full"
+        local ainfo_str = ArcCW.GetTranslation("ttt.roundinfo.amode" .. ainfo_cvar)
+        if GetConVar("arccw_ammo_chaindet"):GetBool() then
+            ainfo_str = ainfo_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.achain")
         end
-        if GetConVar("arccw_mult_ammohealth"):GetFloat() > 0 and GetConVar("arccw_ammo_chaindet"):GetBool() then
-            ainfo_str = ainfo_str .. ", Chain reaction"
-        end
-        AddLine(infoBox, "Ammo explosion: " .. ainfo_str)
+        AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.amode") .. " " .. ainfo_str)
     end
 
 
@@ -277,7 +254,7 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
     local pickx = GetConVar("arccw_atts_pickx"):GetInt()
 
     if ent.Attachments and ent:CountAttachments() > 0 then
-        tData:AddDescriptionLine(tostring(ent:CountAttachments()) .. (pickx > 0 and ("/" .. pickx) or "") .. " Attachment(s):", nil)
+        tData:AddDescriptionLine(tostring(ent:CountAttachments()) .. (pickx > 0 and ("/" .. pickx) or "") .. ArcCW.GetTranslation("ttt.attachments"), nil)
         for i, v in pairs(ent.Attachments) do
             local attName = v.Installed
             if not attName and not v.MergeSlots then
@@ -293,7 +270,8 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
             end
             local attTbl = ArcCW.AttachmentTable[attName]
             if attTbl and v.PrintName and attTbl.PrintName then
-                tData:AddDescriptionLine(v.PrintName .. ": " .. attTbl.PrintName, nil, {attTbl.Icon})
+                local attName = ArcCW.GetTranslation("name." .. attName) or attTbl.PrintName
+                tData:AddDescriptionLine(ArcCW.TryTranslation(v.PrintName) .. ": " .. attName, nil, {attTbl.Icon})
             end
         end
     end

@@ -78,28 +78,30 @@ end
 
 -- Gets a translated string from a phrase. Will attempt to fallback to English.
 -- Returns nil if no such phrase exists.
-function ArcCW.GetTranslation(phrase, lang)
+function ArcCW.GetTranslation(phrase, format)
     if phrase == nil or phrase == "" then return nil end
-    if not lang then
-        lang = string.lower(GetConVar("gmod_language"):GetString())
-    end
+    local lang = string.lower(GetConVar("gmod_language"):GetString())
     if not lang or lang == "" or not ArcCW.LangTable[lang] or not ArcCW.LangTable[lang][phrase] then
         lang = "en"
     end
     if ArcCW.LangTable[lang][phrase] then
-        return ArcCW.LangTable[lang][phrase], lang
+        local str = ArcCW.LangTable[lang][phrase]
+        for i, v in pairs(format or {}) do
+            str = string.Replace(str, "{" .. i .. "}", v)
+        end
+        return str
     end
     return nil
 end
 
 -- Attempts to translate a string (could be either a raw string or a phrase).
 -- If fail, return the string itself.
-function ArcCW.TryTranslation(str, lang)
+function ArcCW.TryTranslation(str, format)
     if str == nil or str == "" then return nil end
     local phrase = ArcCW.GetPhraseFromString(str)
     if not phrase then return str end
 
-    return ArcCW.GetTranslation(phrase, lang) or str
+    return ArcCW.GetTranslation(phrase, format) or str
 end
 
 -- Adds a translated string for a specific language's phrase. lang defaults to English.
@@ -263,6 +265,43 @@ ArcCW.LangTable = {
         ["autostat.glint"] = "Visible scope glint",
         ["autostat.thermal"] = "Thermal vision",
         ["autostat.silencer"] = "Suppresses firing sound",
+
+        -- TTT
+        ["ttt.roundinfo.replace"] = "Auto-replace TTT weapons",
+        ["ttt.roundinfo.cmode"] = "Customize Mode:",
+        ["ttt.roundinfo.cmode0"] = "No Restrictions",
+        ["ttt.roundinfo.cmode1"] = "Restricted",
+        ["ttt.roundinfo.cmode2"] = "Pre-game only",
+        ["ttt.roundinfo.cmode3"] = "T/D only",
+
+        ["ttt.roundinfo.attmode"] = "Attachment Mode:",
+        ["ttt.roundinfo.free"] = "Free",
+        ["ttt.roundinfo.locking"] = "Locking",
+        ["ttt.roundinfo.inv"] = "Inventory",
+        ["ttt.roundinfo.persist"] = "Persistent",
+        ["ttt.roundinfo.drop"] = "Drop on death",
+        ["ttt.roundinfo.inv"] = "Inventory",
+        ["ttt.roundinfo.pickx"] = "Pick",
+
+        ["ttt.roundinfo.bmode"] = "Attachment Info on Body:",
+        ["ttt.roundinfo.bmode0"] = "Unavailable",
+        ["ttt.roundinfo.bmode1"] = "Detectives Only",
+        ["ttt.roundinfo.bmode2"] = "Available",
+
+        ["ttt.roundinfo.amode"] = "Ammo Explosion:",
+        ["ttt.roundinfo.amode-1"] = "Disabled",
+        ["ttt.roundinfo.amode0"] = "Simple",
+        ["ttt.roundinfo.amode1"] = "Frag",
+        ["ttt.roundinfo.amode2"] = "Full",
+        ["ttt.roundinfo.achain"] = "Chain explosions",
+
+        ["ttt.bodyatt.found"] = "You think the murder weapon",
+        ["ttt.bodyatt.founddet"] = "With your detective skills, you deduce the murder weapon",
+        ["ttt.bodyatt.att1"] = " had {att} installed.",
+        ["ttt.bodyatt.att2"] = " had {att1} and {att2} installed.",
+        ["ttt.bodyatt.att3"] = " had these attachments: ",
+
+        ["ttt.attachments"] = " Attachment(s): ", -- Used in TTT2 TargetID
     },
 }
 
