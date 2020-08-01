@@ -87,6 +87,7 @@ function ArcCW.GetTranslation(phrase, format)
     if ArcCW.LangTable[lang][phrase] then
         local str = ArcCW.LangTable[lang][phrase]
         for i, v in pairs(format or {}) do
+            print(i, v)
             str = string.Replace(str, "{" .. i .. "}", v)
         end
         return str
@@ -267,6 +268,7 @@ ArcCW.LangTable = {
         ["autostat.silencer"] = "Suppresses firing sound",
 
         -- TTT
+        ["ttt.roundinfo"] = "ArcCW Configuration",
         ["ttt.roundinfo.replace"] = "Auto-replace TTT weapons",
         ["ttt.roundinfo.cmode"] = "Customize Mode:",
         ["ttt.roundinfo.cmode0"] = "No Restrictions",

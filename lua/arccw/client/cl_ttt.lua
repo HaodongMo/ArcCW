@@ -33,16 +33,20 @@ hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
         local count = table.Count(attTbl)
         if count == 1 then
             if not ArcCW.AttachmentTable[attTbl[1]] then return end
-            finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att1", {att = ArcCW.TryTranslation(ArcCW.AttachmentTable[attTbl[1]].PrintName)})
+            local printName = ArcCW.GetTranslation("name." .. attTbl[1]) or ArcCW.AttachmentTable[attTbl[1]].PrintName
+            finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att1", {att = printName})
         elseif count == 2 then
             if not ArcCW.AttachmentTable[attTbl[1]] or not ArcCW.AttachmentTable[attTbl[2]] then return end
-            finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att2", {att1 = ArcCW.TryTranslation(ArcCW.AttachmentTable[attTbl[1]].PrintName), att2 = ArcCW.TryTranslation(ArcCW.AttachmentTable[attTbl[2]].PrintName)})
+            local printName1 = ArcCW.GetTranslation("name." .. attTbl[1]) or ArcCW.AttachmentTable[attTbl[1]].PrintName
+            local printName2 = ArcCW.GetTranslation("name." .. attTbl[2]) or ArcCW.AttachmentTable[attTbl[2]].PrintName
+            finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att2", {att1 = printName1, att2 = printName2})
         else
             finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att3")
             local comma = false
             for i, v in pairs(attTbl) do
                 if v and ArcCW.AttachmentTable[v] then
-                    finalTbl.text = finalTbl.text .. (comma and ", " or "") .. ArcCW.TryTranslation(ArcCW.AttachmentTable[v].PrintName)
+                    local printName = ArcCW.GetTranslation("name." .. v) or ArcCW.AttachmentTable[v].PrintName
+                    finalTbl.text = finalTbl.text .. (comma and ", " or "") .. printName
                     comma = true
                 end
             end
@@ -95,7 +99,7 @@ local function CreateInfoBox(t)
     label:DockMargin(ScreenScale(4), ScreenScale(2), ScreenScale(4), ScreenScale(2))
     label:SetTextColor(Color(255,255,255,255))
     label:SetFont("ArcCW_12")
-    label:SetText("ArcCW Configuration")
+    label:SetText(ArcCW.GetTranslation("ttt.roundinfo"))
 
     if GetConVar("arccw_ttt_replace"):GetBool() then
         AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.replace"))
@@ -270,8 +274,8 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
             end
             local attTbl = ArcCW.AttachmentTable[attName]
             if attTbl and v.PrintName and attTbl.PrintName then
-                local attName = ArcCW.GetTranslation("name." .. attName) or attTbl.PrintName
-                tData:AddDescriptionLine(ArcCW.TryTranslation(v.PrintName) .. ": " .. attName, nil, {attTbl.Icon})
+                local printName = ArcCW.GetTranslation("name." .. attName) or attTbl.PrintName
+                tData:AddDescriptionLine(ArcCW.TryTranslation(v.PrintName) .. ": " .. printName, nil, {attTbl.Icon})
             end
         end
     end
