@@ -69,6 +69,11 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.vm_swayxmult"] = "Bob Right Multiplier",
         ["arccw.cvar.vm_swayymult"] = "Bob Forward Multiplier",
         ["arccw.cvar.vm_swayzmult"] = "Bob Up Multiplier",
+        ["arccw.cvar.vm_swayzmult"] = "Bob Up Multiplier",
+        ["arccw.cvar.vm_swayzmult"] = "Bob Up Multiplier",
+        ["arccw.cvar.vm_viewwarn"] = "  The following only applies when Custom Camera Movement is enabled",
+        ["arccw.cvar.vm_coolviewmult"] = "Camera Movement Multiplier",
+
 
         -- ArcCW_Options_Crosshair
         ["arccw.crosshair.tfa"] = "TFA",

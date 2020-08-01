@@ -71,8 +71,8 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Slider", {Label = "#arccw.cvar.vm_swayxmult", Command = "arccw_vm_swayxmult", Min = -1, Max = 1, Type = "float" })
     CPanel:AddControl("Slider", {Label = "#arccw.cvar.vm_swayymult", Command = "arccw_vm_swayymult", Min = -2, Max = 2, Type = "float" })
     CPanel:AddControl("Slider", {Label = "#arccw.cvar.vm_swayzmult", Command = "arccw_vm_swayzmult", Min = -2, Max = 2, Type = "float" })
-    CPanel:AddControl("Header", {Description = "  The following only applies when Custom Camera Movement is enabled"})
-    CPanel:AddControl("Slider", {Label = "Camera Movement Multiplier", Command = "arccw_vm_coolview_mult", Min = -3, Max = 3, Type = "float" })
+    CPanel:AddControl("Header", {Description = "#arccw.cvar.vm_viewwarn"})
+    CPanel:AddControl("Slider", {Label = "#arccw.cvar.vm_coolviewmult", Command = "arccw_vm_coolview_mult", Min = -3, Max = 3, Type = "float" })
 
 end
 
