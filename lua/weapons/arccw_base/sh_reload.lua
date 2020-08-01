@@ -135,6 +135,30 @@ function SWEP:Reload()
     self:GetBuff_Hook("Hook_PostReload")
 end
 
+function SWEP:RestoreAmmo(count)
+    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    local clip = self:GetCapacity()
+
+    count = count or (clip + chamber)
+
+    local reserve = self:Ammo1()
+
+    reserve = reserve + self:Clip1()
+
+    local load = math.Clamp(self:Clip1() + count, 0, reserve)
+
+    load = math.Clamp(load, 0, clip + chamber)
+
+    if load <= self:Clip1() then return end
+
+    if SERVER then
+        self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
+    end
+    self:SetClip1(0)
+    self:TakePrimaryAmmo(load)
+    self:SetClip1(load)
+end
+
 local lastframeclip1 = 0
 local lastframeloadclip1 = 0
 
@@ -240,7 +264,7 @@ function SWEP:ReloadInsert(empty)
 
         self:SetNWBool("reqend", false)
     else
-        local insertcount = 1
+        local insertcount = self:GetBuff_Override("Override_InsertAmount") or 1
         local insertanim = "sgreload_insert"
 
         local ret = self:GetBuff_Hook("Hook_SelectInsertAnimation", {count = insertcount, anim = insertanim, empty = empty})
@@ -250,8 +274,7 @@ function SWEP:ReloadInsert(empty)
             insertanim = ret.anim
         end
 
-        self:GetOwner():SetAmmo(self:Ammo1() - insertcount, self.Primary.Ammo)
-        self:SetClip1(self:Clip1() + insertcount)
+        self:RestoreAmmo(insertcount)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(self:GetAnimKeyTime(insertanim) * mult,

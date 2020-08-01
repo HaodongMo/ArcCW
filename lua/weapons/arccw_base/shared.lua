@@ -58,6 +58,10 @@ SWEP.ReloadInSights = false
 
 SWEP.CanFireUnderwater = false
 
+SWEP.Disposable = false -- when all ammo is expended, the gun will remove itself when holstered
+
+SWEP.AutoReload = false -- when weapon is drawn, the gun will reload itself.
+
 SWEP.Recoil = 2
 SWEP.RecoilSide = 1
 SWEP.RecoilRise = 1
@@ -98,6 +102,7 @@ SWEP.NotForNPCS = false
 SWEP.NPCWeaponType = nil -- string or table, the NPC weapons for this gun to replace
 -- if nil, this will be based on holdtype
 SWEP.NPCWeight = 100 -- relative likeliness for an NPC to have this weapon
+SWEP.TTTWeaponType = nil -- string or table, like NPCWeaponType but specifically for TTT weapons (takes precdence over NPCWeaponType, uses NPCWeight)
 
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
