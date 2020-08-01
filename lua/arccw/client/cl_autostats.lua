@@ -59,6 +59,10 @@ function ArcCW:GetProsCons(att)
     table.Add(pros, att.Desc_Pros or {})
     table.Add(cons, att.Desc_Cons or {})
 
+    -- Localize pro and con text
+    for i, v in pairs(pros) do pros[i] = ArcCW.TryTranslation(v) end
+    for i, v in pairs(cons) do cons[i] = ArcCW.TryTranslation(v) end
+
     if !att.AutoStats then
         return pros, cons
     end
@@ -76,7 +80,7 @@ function ArcCW:GetProsCons(att)
                 -- mult
                 if k > 1 then
                     if simple then
-                        txt = getsimpleamt(k) .. stat[1]
+                        txt = getsimpleamt(k) .. str
                     else
                         txt = "+" .. tostring((k - 1) * 100) .. "% " .. str
                     end
@@ -87,7 +91,7 @@ function ArcCW:GetProsCons(att)
                     end
                 elseif k < 1 then
                     if simple then
-                        txt = getsimpleamt(k) .. stat[1]
+                        txt = getsimpleamt(k) .. str
                     else
                         txt = "-" .. tostring((1 - k) * 100) .. "% " .. str
                     end
