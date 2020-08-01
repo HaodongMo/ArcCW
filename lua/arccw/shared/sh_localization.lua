@@ -182,6 +182,7 @@ ArcCW.LangTable = {
         ["ui.trivia"] = "Trivia",
         ["ui.tttequip"] = "TTT Equipment",
         ["ui.tttchat"] = "TTT Quickchat",
+        ["ui.position"] = "POSITION",
         ["ui.positives"] = "POSITIVES:",
         ["ui.negatives"] = "NEGATIVES:",
         ["ui.information"] = "INFORMATION:",

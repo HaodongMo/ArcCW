@@ -366,7 +366,7 @@ function SWEP:CreateCustomizeHUD()
         surface.SetTextColor(fg_col)
         surface.SetFont("ArcCW_6")
         surface.SetTextPos(smallgap, smallgap)
-        surface.DrawText("POSITION")
+        surface.DrawText(translate("ui.position"))
     end
 
     local attslider = vgui.Create("DSlider", attslidebox)
