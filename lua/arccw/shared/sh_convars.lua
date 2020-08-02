@@ -12,7 +12,7 @@ CreateConVar("arccw_atts_pickx", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Limit wea
 CreateConVar("arccw_npc_replace", 0, FCVAR_ARCHIVE, "Replace NPC weapons with ArcCW weapons.")
 CreateConVar("arccw_npc_atts", 1, FCVAR_ARCHIVE, "Randomly give NPC weapons attachments.")
 
-CreateConVar("arccw_truenames", 0, FCVAR_ARCHIVE, "Use true names instead of fake names, where applicable. Requires restart.")
+CreateConVar("arccw_truenames", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Use true names instead of fake names, where applicable. Requires restart.")
 
 CreateConVar("arccw_equipmentammo", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Automatically assign unique ammo types to each throwable weapon. Prone to running into the ammo type limit.", 0, 1)
 CreateConVar("arccw_equipmentsingleton", 0, FCVAR_ARCHIVE, "Make grenades and equipment not use ammo, and remove themselves on use.", 0, 1)

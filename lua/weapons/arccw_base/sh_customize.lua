@@ -1,3 +1,5 @@
+local translate = ArcCW.GetTranslation
+
 function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
 
@@ -281,12 +283,12 @@ function SWEP:CreateCustomizeHUD()
         surface.SetTextColor(0, 0, 0)
         surface.SetTextPos(smallgap, 0)
         surface.SetFont("ArcCW_12_Glow")
-        surface.DrawText(self.PrintName)
+        surface.DrawText(translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or self.PrintName)
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap, 0)
         surface.SetFont("ArcCW_12")
-        surface.DrawText(self.PrintName)
+        surface.DrawText(translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or self.PrintName)
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
@@ -295,7 +297,7 @@ function SWEP:CreateCustomizeHUD()
         local pick = GetConVar("arccw_atts_pickx"):GetInt()
 
         if pick <= 0 then
-            surface.DrawText(self.Trivia_Class)
+            surface.DrawText(ArcCW.TryTranslation(self.Trivia_Class))
         else
             local txt = self:CountAttachments() .. "/" .. pick .. " Attachments"
 
@@ -364,7 +366,7 @@ function SWEP:CreateCustomizeHUD()
         surface.SetTextColor(fg_col)
         surface.SetFont("ArcCW_6")
         surface.SetTextPos(smallgap, smallgap)
-        surface.DrawText("POSITION")
+        surface.DrawText(translate("ui.position"))
     end
 
     local attslider = vgui.Create("DSlider", attslidebox)
@@ -480,7 +482,7 @@ function SWEP:CreateCustomizeHUD()
             triv_attname:DockMargin( 0, 0, 0, 0 )
             triv_attname:SetText("")
             triv_attname.Paint = function(span, w, h)
-                local txt = multlinetext(atttbl.PrintName, w, "ArcCW_16")
+                local txt = multlinetext(translate("name." .. att) or atttbl.PrintName, w, "ArcCW_16")
 
                 c = 0
 
@@ -521,7 +523,7 @@ function SWEP:CreateCustomizeHUD()
 
         -- att desc
 
-        desctext = multlinetext(atttbl.Description, barsize - smallgap * 2, "ArcCW_8")
+        desctext = multlinetext(translate("desc." .. att) or atttbl.Description, barsize - smallgap * 2, "ArcCW_8")
 
         local triv_desc = vgui.Create("DLabel", atttrivia)
         triv_desc:SetSize(barsize, ScreenScale(8) * (table.Count(desctext) + 1))
@@ -556,7 +558,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(125, 200, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText("POSITIVES:")
+                surface.DrawText(translate("ui.positives"))
             end
 
             for _, i in pairs(pros) do
@@ -586,7 +588,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(200, 125, 125))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText("NEGATIVES:")
+                surface.DrawText(translate("ui.negatives"))
             end
 
             for _, i in pairs(cons) do
@@ -617,7 +619,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Color(125, 125, 200))
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap, 0)
-                surface.DrawText("INFORMATION:")
+                surface.DrawText(translate("ui.information"))
             end
 
             for _, i in pairs(neutrals) do
@@ -630,7 +632,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetTextColor(Color(150, 150, 225))
                     surface.SetFont("ArcCW_8")
                     surface.SetTextPos(smallgap, 0)
-                    surface.DrawText(i)
+                    surface.DrawText(ArcCW.TryTranslation(i))
                 end
             end
         end
@@ -710,7 +712,7 @@ function SWEP:CreateCustomizeHUD()
                 order_b = atttbl_b.SortOrder or order_b
 
                 if order_a == order_b then
-                    return atttbl_a.PrintName > atttbl_b.PrintName
+                    return (translate("name." .. a) or atttbl_a.PrintName) > (translate("name." .. b) or atttbl_b.PrintName)
                 end
 
                 return order_a > order_b
@@ -793,7 +795,7 @@ function SWEP:CreateCustomizeHUD()
 
                     if !atttbl then
                         atttbl = {
-                            PrintName = k.DefaultAttName or "No Attachment",
+                            PrintName = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt"),
                             Icon = k.DefaultAttIcon or defaultatticon,
                             Free = true
                         }
@@ -884,7 +886,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetDrawColor(Bfg_col)
                     surface.DrawRect((h * 1.5) - (linesize / 2), 0, linesize, h)
 
-                    local txt = atttbl.PrintName
+                    local txt = translate("name." .. spaa.AttName) or atttbl.PrintName
 
                     if showqty then
                         txt = txt .. " (" .. tostring(qty) .. ")"
@@ -973,9 +975,9 @@ function SWEP:CreateCustomizeHUD()
                 Bfg_col = Color(150, 50, 50, 255)
             end
 
-            local txt = k.PrintName
+            local txt =  ArcCW.TryTranslation(k.PrintName)
 
-            local att_txt = k.DefaultAttName or "No Attachment"
+            local att_txt = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt")
             local att_icon = k.DefaultAttIcon or defaultatticon
 
             local installed = k.Installed
@@ -1023,7 +1025,7 @@ function SWEP:CreateCustomizeHUD()
             if installed then
                 local atttbl = ArcCW.AttachmentTable[installed]
 
-                att_txt = atttbl.PrintName
+                att_txt = translate("name." .. installed) or atttbl.PrintName
 
                 if atttbl.Icon then
                     att_icon = atttbl.Icon
@@ -1065,7 +1067,7 @@ function SWEP:CreateCustomizeHUD()
     triv_wpnnamelabel:SetText("")
     triv_wpnnamelabel.Paint = function(span, w, h)
         if !IsValid(self) then return end
-        local txt = self.PrintName
+        local txt = translate("name." .. self:GetClass()) or self.PrintName
 
         surface.SetFont("ArcCW_20")
         local tw, th = surface.GetTextSize(txt)
@@ -1088,25 +1090,25 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local trivia = {
-        function() return "Class: " .. self.Trivia_Class or "Unknown" end,
-        function() return "Year: " .. tostring(self.Trivia_Year) or "Unknown" end,
-        function() return "Mechanism: " .. self.Trivia_Mechanism or "Unknown" end,
-        function() return "Calibre: " .. self.Trivia_Calibre or "Unknown" end,
-        function() return "Ammo Type: " .. language.GetPhrase(self.Primary.Ammo) end,
-        function() return "Country: " .. self.Trivia_Country or "Unknown" end,
-        function() return "Manufacturer: " .. self.Trivia_Manufacturer or "Unknown" end,
-        function() return "Magazine Capacity: " .. self:GetCapacity() end,
-        function() return "Precision: " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
-        function() return "Noise: " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
-        function() return "Effective Recoil Momentum: " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
-        function() return "Penetration: " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
+        function() return translate("trivia.class") .. ": " .. ArcCW.TryTranslation(self.Trivia_Class) or "Unknown" end,
+        function() return translate("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
+        function() return translate("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
+        function() return translate("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
+        function() return translate("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo) end,
+        function() return translate("trivia.country") .. ": " .. self.Trivia_Country or "Unknown" end,
+        function() return translate("trivia.manufacturer") .. ": " .. self.Trivia_Manufacturer or "Unknown" end,
+        function() return translate("trivia.clipsize") .. ": " .. self:GetCapacity() end,
+        function() return translate("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
+        function() return translate("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
+        function() return translate("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
+        function() return translate("trivia.penetration") .. ": " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
     }
 
     if !self.ManualAction and !self:GetBuff_Override("Override_ManualAction") then
         table.insert(trivia, function()
             local rpm = 60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
             rpm = math.ceil(rpm / 25) * 25
-            return "Firerate: " .. rpm .. "RPM"
+            return translate("trivia.firerate") .. ": " .. rpm .. "RPM"
         end)
     end
 
@@ -1156,7 +1158,7 @@ function SWEP:CreateCustomizeHUD()
     end
 
     if self.FuseTime then
-        table.insert(trivia, function() return "Fuse Time: " .. self.FuseTime end)
+        table.insert(trivia, function() return translate("trivia.fusetime") .. ": " .. self.FuseTime end)
     end
 
     for _, i in pairs(trivia) do
@@ -1179,7 +1181,7 @@ function SWEP:CreateCustomizeHUD()
 
     -- multlinetext(text, maxw, font)
 
-    local adesctext = multlinetext(self.Trivia_Desc, barsize, "ArcCW_8")
+    local adesctext = multlinetext(translate("desc." .. self:GetClass()) or self.Trivia_Desc, barsize, "ArcCW_8")
 
     table.insert(adesctext, "")
 
@@ -1353,25 +1355,14 @@ function SWEP:CreateCustomizeHUD()
         else return nil end
     end
 
-    local function defaultOverrideBetterFunc(name, inverse)
-        local override, _ = self:GetBuff_Override("Override_" .. name)
-        local stat = self[name]
-        if isbool(override) then
-            override = override and 1 or 0
-            stat = stat and 1 or 0
-        end
-        if !override then return nil
-        else return inverse and override < stat or override > stat end
-    end
-
     local statList
     regenStatList = function()
         statList = {
-            {"Stat", "",
-                function() return "Original", "Current" end,
+            {translate("stat.stat"), "",
+                function() return translate("stat.original"), translate("stat.current") end,
                 function() return nil end,
             },
-            {"Close Range Damage", "How much damage this weapon does at point blank.",
+            {translate("stat.damage"), translate("stat.damage.tooltip"),
                 function()
                     local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
                     local orig = math.Round(self.Damage * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
@@ -1384,7 +1375,7 @@ function SWEP:CreateCustomizeHUD()
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
-            {"Long Range Damage", "How much damage this weapon does beyond its range.",
+            {translate("stat.damagemin"), translate("stat.damagemin.tooltip"),
                 function()
                     local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
                     local orig = math.Round(self.DamageMin * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
@@ -1401,26 +1392,26 @@ function SWEP:CreateCustomizeHUD()
                     if orig == cur then return nil else return cur > orig end
                 end,
             },
-            {"Range", "The distance between which close range damage turns to long range damage, in meters.",
+            {translate("stat.range"), translate("stat.range.tooltip"),
                 function() return defaultStatFunc("Range", "m") end,
                 function() return defaultBetterFunc("Range") end,
             },
-            {"Fire Rate", "The rate at which this weapon cycles at, in rounds per minute.",
+            {translate("stat.firerate"), translate("stat.firerate.tooltip"),
                 function()
 
                 local orig = math.ceil(60 / self.Delay / 25) * 25 .. "RPM"
                 local cur = math.ceil(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 25) * 25 .. "RPM"
 
                 if self.ManualAction then
-                    orig = "MANUAL"
+                    orig = translate("stat.firerate.manual")
                 end
                 if self:GetBuff_Override("Override_ManualAction") or self.ManualAction then
-                    cur = "MANUAL"
+                    cur = translate("stat.firerate.manual")
                 end
 
                 return orig, cur
                 end,
-                function() 
+                function()
                     if !self:GetBuff_Override("Override_ManualAction") and !self.ManualAction then
                         return defaultBetterFunc("RPM")
                     end
@@ -1433,7 +1424,7 @@ function SWEP:CreateCustomizeHUD()
                     return nil
                 end,
             },
-            {"Capacity", "How many rounds this weapon can hold.",
+            {translate("stat.capacity"), translate("stat.capacity.tooltip"),
                 function()
                     local m = self.RegularClipSize
                     local m2 = self.Primary.ClipSize
@@ -1450,53 +1441,31 @@ function SWEP:CreateCustomizeHUD()
                     return m + cs < m2 + cs2
                 end,
             },
-            {"Precision", "How precise the weapon is when still and aimed, in minutes of arc.",
+            {translate("stat.precision"), translate("stat.precision.tooltip"),
                 function() return defaultStatFunc("AccuracyMOA", " MOA", 3) end,
                 function() return defaultBetterFunc("AccuracyMOA", true) end,
             },
-            {"Hip Dispersion", "How much imprecision there is when the weapon is hipfired.",
+            {translate("stat.hipdisp"), translate("stat.hipdisp.tooltip"),
                 function() return defaultStatFunc("HipDispersion", " MOA") end,
                 function() return defaultBetterFunc("HipDispersion", true) end,
             },
-            {"Moving Accuracy", "How much imprecision is added when the gun is used while moving.",
+            {translate("stat.movedisp"), translate("stat.movedisp.tooltip"),
                 function() return defaultStatFunc("MoveDispersion", " MOA") end,
                 function() return defaultBetterFunc("MoveDispersion", true) end,
             },
-            {"Recoil", "The amount of kick produced each shot.",
+            {translate("stat.recoil"), translate("stat.recoil.tooltip"),
                 function() return defaultStatFunc("Recoil", nil, 2) end,
                 function() return defaultBetterFunc("Recoil", true) end,
             },
-            {"Side Recoil", "The amount of horizontal kick produced each shot.",
+            {translate("stat.recoilside"), translate("stat.recoilside.tooltip"),
                 function() return defaultStatFunc("RecoilSide", nil, 2) end,
                 function() return defaultBetterFunc("RecoilSide", true) end,
             },
-            {"Sight Time", "How long does it take to aim with this weapon.",
+            {translate("stat.sighttime"), translate("stat.sighttime.tooltip"),
                 function() return defaultStatFunc("SightTime", "s", 2) end,
                 function() return defaultBetterFunc("SightTime", true) end,
             },
-            -- {"Reload Time", "How long does it take to perform a tactical/dry reload.",
-            --     function()
-            --         local mult = self:GetBuff_Mult("Mult_ReloadTime")
-            --         local r = self.Animations["reload"].Time
-            --         local r2 = self.Animations["reload_empty"] and self.Animations["reload_empty"].Time
-            --         local h = self.Hook_SelectReloadAnimation
-            --         local seq, seq2 = h and self:Hook_SelectReloadAnimation("reload") or "reload", h and self:Hook_SelectReloadAnimation("reload_empty") or "reload_empty"
-            --         local rCur = self.Animations[seq].Time * mult
-            --         local r2Cur = self.Animations[seq2] and self.Animations[seq2].Time * mult
-            --         return math.Round(r, 1) .. "s" .. (r2 and "/" .. math.Round(r2, 1) .. "s" or ""),
-            --                 math.Round(rCur, 1) .. "s" .. (r2Cur and "/" .. math.Round(r2Cur, 1) .. "s" or "")
-            --     end,
-            --     function()
-            --         local mult = self:GetBuff_Mult("Mult_ReloadTime")
-            --         local r = self.Animations["reload"].Time
-            --         local h = self.Hook_SelectReloadAnimation
-            --         local seq = h and self:Hook_SelectReloadAnimation("reload") or "reload"
-            --         local rCur = self.Animations[seq].Time * mult
-            --         if r == rCur then return nil
-            --         else return r > rCur end
-            --     end,
-            -- },
-            {"Move Speed", "The speed at which you move with the gun, in percentage of original speed.",
+            {translate("stat.speedmult"), translate("stat.speedmult.tooltip"),
                 function()
                     return math.Round(self.SpeedMult * 100) .. "%", math.Round(math.Clamp(self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) * 100) .. "%"
                 end,
@@ -1507,7 +1476,7 @@ function SWEP:CreateCustomizeHUD()
                     else return false end
                 end,
             },
-            {"Sighted Strafe Speed", "The additional slowdown applied when you are moving with sights down.",
+            {translate("stat.sightspeed"), translate("stat.sightspeed.tooltip"),
                 function()
                     return math.Round(self.SightedSpeedMult * 100) .. "%", math.Round(math.Clamp(self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) * 100) .. "%"
                 end,
@@ -1518,19 +1487,19 @@ function SWEP:CreateCustomizeHUD()
                     else return false end
                 end,
             },
-            {"Bash Damage", "How much damage the melee bash causes.",
+            {translate("stat.meleedamage"), translate("stat.meleedamage.tooltip"),
                 function() return defaultStatFunc("MeleeDamage") end,
                 function() return defaultBetterFunc("MeleeDamage") end,
             },
-            {"Bash Time", "The time it takes to do a melee bash.",
+            {translate("stat.meleetime"), translate("stat.meleetime.tooltip"),
                 function() return defaultStatFunc("MeleeTime", "s", 2) end,
                 function() return defaultBetterFunc("MeleeTime", true) end,
             },
-            {"Weapon Volume", "How loud the weapon is, in decibels.",
+            {translate("stat.shootvol"), translate("stat.shootvol.tooltip"),
                 function() return defaultStatFunc("ShootVol","dB") end,
                 function() return defaultBetterFunc("ShootVol", true) end,
             },
-            {"Barrel Length", "The length of the barrel, in Hammer Units.",
+            {translate("stat.barrellen"), translate("stat.barrellen.tooltip"),
                 function()
                     local orig = self.BarrelLength
                     local cur = orig + self:GetBuff_Add("Add_BarrelLength")
@@ -1541,7 +1510,7 @@ function SWEP:CreateCustomizeHUD()
                     if add == 0 then return nil else return add < 0 end
                 end,
             },
-            {"Penetration", "How much steel this weapon can penetrate.",
+            {translate("stat.pen"), translate("stat.pen.tooltip"),
                 function() return defaultStatFunc("Penetration","mm") end,
                 function() return defaultBetterFunc("Penetration") end,
             },
@@ -1640,7 +1609,7 @@ function SWEP:CreateCustomizeHUD()
             surface.SetDrawColor(Bbg_col)
             surface.DrawRect(0, 0, w, h)
 
-            local txt = statbox:IsVisible() and "Trivia" or "Stats"
+            local txt = translate(statbox:IsVisible() and "ui.trivia" or "ui.stats")
 
             surface.SetTextColor(Bfg_col)
             surface.SetTextPos(smallgap, ScreenScale(1))
@@ -1677,7 +1646,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetDrawColor(Bbg_col)
                 surface.DrawRect(0, 0, w, h)
 
-                local txt = "TTT Equipment"
+                local txt = translate("ui.tttequip")
 
                 surface.SetTextColor(Bfg_col)
                 surface.SetTextPos(smallgap, ScreenScale(1))
@@ -1709,7 +1678,7 @@ function SWEP:CreateCustomizeHUD()
             surface.SetDrawColor(Bbg_col)
             surface.DrawRect(0, 0, w, h)
 
-            local txt = "TTT Quickchat"
+            local txt = translate("ui.tttchat")
 
             surface.SetTextColor(Bfg_col)
             surface.SetTextPos(smallgap, ScreenScale(1))

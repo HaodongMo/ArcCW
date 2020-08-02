@@ -1,31 +1,37 @@
--- ["buff"] = {"desc", bool ismult, bool lowerbetter}
+-- ["buff"] = {"desc", string mode (mult, add, override), bool lowerbetter}
 ArcCW.AutoStats = {
-    ["Mult_BipodRecoil"] = {"Recoil in bipod", true, true},
-    ["Mult_BipodDispersion"] = {"Dispersion in bipod", true, true},
-    ["Mult_Damage"] = {"Close range damage", true, false},
-    ["Mult_DamageMin"] = {"Long range damage", true, false},
-    ["Mult_Range"] = {"Range", true, false},
-    ["Mult_Penetration"] = {"Penetration", true, false},
-    ["Mult_MuzzleVelocity"] = {"Muzzle velocity", true, false},
-    ["Mult_MeleeTime"] = {"Melee attack time", true, true},
-    ["Mult_MeleeDamage"] = {"Melee damage", true, false},
-    ["Add_MeleeRange"] = {"Melee range", false, false},
-    ["Mult_Recoil"] = {"Recoil", true, true},
-    ["Mult_RecoilSide"] = {"Horizontal recoil", true, true},
-    ["Mult_RPM"] = {"Fire rate", true, false},
-    ["Mult_AccuracyMOA"] = {"Imprecision", true, true},
-    ["Mult_HipDispersion"] = {"Hip fire spread", true, true},
-    ["Mult_SightsDispersion"] = {"Sighted spread", true, true},
-    ["Mult_MoveDispersion"] = {"Moving spread", true, true},
-    ["Mult_ShootVol"] = {"Weapon volume", true, true},
-    ["Mult_SpeedMult"] = {"Movement speed", true, false},
-    ["Mult_MoveSpeed"] = {"Movement speed", true, false},
-    ["Mult_SightedSpeedMult"] = {"Sighted strafe speed", true, false},
-    ["Mult_SightedMoveSpeed"] = {"Sighted strafe speed", true, false},
-    ["Mult_ReloadTime"] = {"Reload time", true, true},
-    ["Mult_DrawTime"] = {"Draw time", true, true},
-    ["Mult_SightTime"] = {"Sight time", true, true},
-    ["Mult_CycleTime"] = {"Cycle time", true, true}
+    ["MagExtender"] = {"autostat.magextender", "override", false},
+    ["MagReducer"] = {"autostat.magreducer", "override", true},
+    ["Bipod"] = {"autostat.bipod", "override", false},
+    ["ScopeGlint"] = {"autostat.glint", "override", true},
+    ["Silencer"] = {"autostat.silencer", "override", false},
+
+    ["Mult_BipodRecoil"] = {"autostat.bipodrecoil", "mult", true},
+    ["Mult_BipodDispersion"] = {"autostat.bipoddisp", "mult", true},
+    ["Mult_Damage"] = {"autostat.damage", "mult", false},
+    ["Mult_DamageMin"] = {"autostat.damagemin", "mult", false},
+    ["Mult_Range"] = {"autostat.range", "mult", false},
+    ["Mult_Penetration"] = {"autostat.penetration", "mult", false},
+    ["Mult_MuzzleVelocity"] = {"autostat.muzzlevel", "mult", false},
+    ["Mult_MeleeTime"] = {"autostat.meleetime", "mult", true},
+    ["Mult_MeleeDamage"] = {"autostat.meleedamage", "mult", false},
+    ["Add_MeleeRange"] = {"autostat.meleerange", false, false},
+    ["Mult_Recoil"] = {"autostat.recoil", "mult", true},
+    ["Mult_RecoilSide"] = {"autostat.recoilside", "mult", true},
+    ["Mult_RPM"] = {"autostat.firerate", "mult", false},
+    ["Mult_AccuracyMOA"] = {"autostat.precision", "mult", true},
+    ["Mult_HipDispersion"] = {"autostat.hipdisp", "mult", true},
+    ["Mult_SightsDispersion"] = {"autostat.sightdisp", "mult", true},
+    ["Mult_MoveDispersion"] = {"autostat.movedisp", "mult", true},
+    ["Mult_ShootVol"] = {"autostat.shootvol", "mult", true},
+    ["Mult_SpeedMult"] = {"autostat.speedmult", "mult", false},
+    ["Mult_MoveSpeed"] = {"autostat.speedmult", "mult", false},
+    ["Mult_SightedSpeedMult"] = {"autostat.sightspeed", "mult", false},
+    ["Mult_SightedMoveSpeed"] = {"autostat.sightspeed", "mult", false},
+    ["Mult_ReloadTime"] = {"autostat.reloadtime", "mult", true},
+    ["Mult_DrawTime"] = {"autostat.drawtime", "mult", true},
+    ["Mult_SightTime"] = {"autostat.sighttime", "mult", true},
+    ["Mult_CycleTime"] = {"autostat.cycletime", "mult", true},
 }
 
 local function getsimpleamt(stat)
@@ -59,24 +65,31 @@ function ArcCW:GetProsCons(att)
     table.Add(pros, att.Desc_Pros or {})
     table.Add(cons, att.Desc_Cons or {})
 
+    -- Localize pro and con text
+    for i, v in pairs(pros) do pros[i] = ArcCW.TryTranslation(v) end
+    for i, v in pairs(cons) do cons[i] = ArcCW.TryTranslation(v) end
+
     if !att.AutoStats then
         return pros, cons
     end
 
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
 
-    for i, k in pairs(att) do
-        if ArcCW.AutoStats[i] then
-            local stat = ArcCW.AutoStats[i]
+    --for i, k in pairs(att) do
+    for i, stat in pairs(ArcCW.AutoStats) do
+        if att[i] ~= nil then
+            local k = att[i]
             local txt = ""
 
-            if stat[2] then
+            local str = ArcCW.GetTranslation(stat[1]) or stat[1]
+
+            if stat[2] == "mult" then
                 -- mult
                 if k > 1 then
                     if simple then
-                        txt = getsimpleamt(k) .. stat[1]
+                        txt = getsimpleamt(k) .. str
                     else
-                        txt = "+" .. tostring((k - 1) * 100) .. "% " .. stat[1]
+                        txt = "+" .. tostring((k - 1) * 100) .. "% " .. str
                     end
                     if stat[3] then
                         table.insert(cons, txt)
@@ -85,9 +98,9 @@ function ArcCW:GetProsCons(att)
                     end
                 elseif k < 1 then
                     if simple then
-                        txt = getsimpleamt(k) .. stat[1]
+                        txt = getsimpleamt(k) .. str
                     else
-                        txt = "-" .. tostring((1 - k) * 100) .. "% " .. stat[1]
+                        txt = "-" .. tostring((1 - k) * 100) .. "% " .. str
                     end
                     if stat[3] then
                         table.insert(pros, txt)
@@ -95,13 +108,13 @@ function ArcCW:GetProsCons(att)
                         table.insert(cons, txt)
                     end
                 end
-            else
+            elseif stat[2] == "add" then
                 -- add
                 if k > 0 then
                     if simple then
-                        txt = "+ " .. stat[1]
+                        txt = "+ " .. str
                     else
-                        txt = "+" .. tostring(k) .. " " .. stat[1]
+                        txt = "+" .. tostring(k) .. " " .. str
                     end
                     if stat[3] then
                         table.insert(cons, txt)
@@ -110,15 +123,21 @@ function ArcCW:GetProsCons(att)
                     end
                 elseif k < 0 then
                     if simple then
-                        txt = "+ " .. stat[1]
+                        txt = "+ " .. str
                     else
-                        txt = "-" .. tostring(-k) .. " " .. stat[1]
+                        txt = "-" .. tostring(-k) .. " " .. str
                     end
                     if stat[3] then
                         table.insert(pros, txt)
                     else
                         table.insert(cons, txt)
                     end
+                end
+            elseif stat[2] == "override" and k == true then
+                if stat[3] then
+                    table.insert(cons, 1, str)
+                else
+                    table.insert(pros, 1, str)
                 end
             end
         end

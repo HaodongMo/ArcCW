@@ -556,7 +556,7 @@ function SWEP:GetDispersion()
         hip = self:GetBuff_Mult("Mult_HipDispersion") * self.HipDispersion
     end
 
-    if self:GetOwner():OnGround() then
+    if self:GetOwner():OnGround() or self:GetOwner():WaterLevel() > 0 or self:GetOwner():GetMoveType() == MOVETYPE_NOCLIP then
         -- Move Dispersion
         local spd = self:GetOwner():GetAbsVelocity():Length()
         local maxspeed = self:GetOwner():GetWalkSpeed() * self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
