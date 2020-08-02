@@ -84,6 +84,8 @@ ArcCW.Colors = {
 ArcCW.LHIKBones = {
     "ValveBiped.Bip01_L_UpperArm",
     "ValveBiped.Bip01_L_Forearm",
+    "ValveBiped.Bip01_L_Wrist",
+    "ValveBiped.Bip01_L_Ulna",
     "ValveBiped.Bip01_L_Hand",
     "ValveBiped.Bip01_L_Finger4",
     "ValveBiped.Bip01_L_Finger41",
