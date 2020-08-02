@@ -72,7 +72,7 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Slider", {Label = "Bob Forward Multiplier", Command = "arccw_vm_swayymult", Min = -2, Max = 2, Type = "float" })
     CPanel:AddControl("Slider", {Label = "Bob Up Multiplier", Command = "arccw_vm_swayzmult", Min = -2, Max = 2, Type = "float" })
     CPanel:AddControl("Header", {Description = "  The following only applies when Custom Camera Movement is enabled"})
-    CPanel:AddControl("Slider", {Label = "Camera Movement Multiplier", Command = "arccw_vm_coolview_mult", Min = -3, Max = 3, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "Camera Movement Multiplier", Command = "arccw_vm_coolview_mult", Min = -10, Max = 10, Type = "float" })
 end
 
 local crosshair_cvars = {
