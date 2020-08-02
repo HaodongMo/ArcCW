@@ -73,7 +73,6 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Slider", {Label = "#arccw.cvar.vm_swayzmult", Command = "arccw_vm_swayzmult", Min = -2, Max = 2, Type = "float" })
     CPanel:AddControl("Header", {Description = "#arccw.cvar.vm_viewwarn"})
     CPanel:AddControl("Slider", {Label = "#arccw.cvar.vm_coolviewmult", Command = "arccw_vm_coolview_mult", Min = -10, Max = 10, Type = "float" })
-
 end
 
 local crosshair_cvars = {
@@ -299,3 +298,8 @@ function ArcCW_Options_Server( CPanel )
     CPanel:AddControl("Slider", {Label = "#arccw.cvar.limityear", Command = "arccw_limityear", Min = 1800, Max = 2100, Type = "int" })
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.override_crosshair_off", Command = "arccw_override_crosshair_off" })
 end
+
+language.Add("arccw.crosshair.tfa", "TFA")
+language.Add("arccw.crosshair.cw2", "CW 2.0")
+language.Add("arccw.crosshair.cs", "Counter-Strike")
+language.Add("arccw.crosshair.light", "Lightweight")
