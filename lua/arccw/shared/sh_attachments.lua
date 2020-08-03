@@ -18,7 +18,7 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
         elseif mode == 3 and !ply.ArcCW_AllowCustomize and !ply:IsActiveTraitor() and !ply:IsActiveDetective() then return false end
     end
 
-    return ret
+    return (ret == nil and true) or ret
 end
 
 function ArcCW:GetAttsForSlot(slot, wep)
