@@ -189,7 +189,8 @@ function SWEP:CreateCustomizeHUD()
         surface.SetDrawColor(Bbg_col)
         surface.DrawRect(0, 0, w, h)
 
-        local txt = "Load Preset"
+        local txt = (translate("ui.loadpreset"))
+        
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap, ScreenScale(1))
@@ -220,7 +221,7 @@ function SWEP:CreateCustomizeHUD()
         surface.SetDrawColor(Bbg_col)
         surface.DrawRect(0, 0, w, h)
 
-        local txt = "Save Preset"
+        local txt = (translate("ui.savepreset"))
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap, ScreenScale(1))
