@@ -145,6 +145,8 @@ function SWEP:DoLHIK()
         for _, bone in pairs(ArcCW.LHIKBones) do
             local vmbone = vm:LookupBone(bone)
 
+            if !vmbone then return end -- Happens when spectating someone prolly
+
             local vmtransform = vm:GetBoneMatrix(vmbone)
 
             if !vmtransform then return end -- something very bad has happened

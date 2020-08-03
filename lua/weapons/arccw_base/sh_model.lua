@@ -62,7 +62,7 @@ function SWEP:AddElement(elementname, wm)
     for _, i in pairs(eles or {}) do
         local model = ClientsideModel(i.Model)
 
-        if !model then continue end
+        if !model or !IsValid(model) then continue end
 
         if i.BoneMerge then
             model:SetParent(parent)
