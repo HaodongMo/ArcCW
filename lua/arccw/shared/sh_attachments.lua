@@ -6,10 +6,10 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     if !ArcCW.EnableCustomization then return false end
 
     -- Allow hooks to block or force allow attachment usage
-    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach)
+    local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach) or true
 
     -- Followed by convar
-    if ret == nil and !GetConVar("arccw_enable_customization"):GetBool() then return false end
+    if !GetConVar("arccw_enable_customization"):GetBool() then return false end
 
     if ret == nil and engine.ActiveGamemode() == "terrortown" then
         local mode = GetConVar("arccw_ttt_customizemode"):GetInt()
@@ -18,7 +18,7 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
         elseif mode == 3 and !ply.ArcCW_AllowCustomize and !ply:IsActiveTraitor() and !ply:IsActiveDetective() then return false end
     end
 
-    return ret or true
+    return ret
 end
 
 function ArcCW:GetAttsForSlot(slot, wep)
