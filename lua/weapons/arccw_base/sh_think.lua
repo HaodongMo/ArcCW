@@ -288,7 +288,7 @@ function SWEP:InSprint()
 
     local curspeed = self:GetOwner():GetVelocity():Length()
 
-    if TTT2 and self:GetOwner().isSprinting then
+    if IsValid(self:GetOwner()) and engine.ActiveGamemode() == "terrortown" and TTT2 != nil and self:GetOwner().isSprinting == true then
         return tobool((self:GetOwner().sprintProgress or 0) > 0 and self:GetOwner():KeyDown(IN_SPEED) and self:GetOwner():OnGround())
     end
 
