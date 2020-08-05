@@ -19,6 +19,8 @@ att.Hidden = false
 att.AddPrefix = ""
 att.AddSuffix = ""
 
+att.KeepBaseIrons = false
+
 att.GivesFlags = {}
 att.RequireFlags = {}
 att.ExcludeFlags = {}
