@@ -88,7 +88,7 @@ function SWEP:EnterBipod()
     self.BipodPos = self:GetOwner():EyePos()
     self.BipodAngle = self:GetOwner():EyeAngles()
 
-    --self:SetNextSecondaryFire(CurTime() + 0.075)
+    self:SetNextSecondaryFire(CurTime() + 0.075)
 
     self:SetNWBool("bipod", true)
 end
