@@ -545,6 +545,9 @@ end
 function SWEP:GetDispersion()
     local delta = self:GetSightDelta()
 
+    -- The most rudimentary VR support ever
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then return 0 end
+
     -- This number now only applies when partially scoping in
     -- If you unscope partway through, GetSightDelta treats your progress as zero,
     -- effectively giving you a window to "quickscope". None of that!

@@ -105,6 +105,9 @@ function SWEP:CloseCustomizeHUD()
         ArcCW.InvHUD:Clear()
         ArcCW.InvHUD:Remove()
         gui.EnableScreenClicker(false)
+        if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then
+            vrmod.MenuClose( "ArcCW_Customize" )
+        end
     end
 end
 
@@ -128,10 +131,16 @@ function SWEP:CreateCustomizeHUD()
     self.InAttMenu = false
     activeslot = nil
 
+    local scrw, scrh = ScrW(), ScrH()
+        if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        scrw = 1366
+        scrh = 768
+    end
+
     ArcCW.InvHUD = vgui.Create("DFrame")
 
     ArcCW.InvHUD:SetPos(0, 0)
-    ArcCW.InvHUD:SetSize(ScrW(), ScrH())
+    ArcCW.InvHUD:SetSize(scrw, scrh)
     ArcCW.InvHUD:SetText("")
     ArcCW.InvHUD:SetTitle("")
     ArcCW.InvHUD.Paint = function(span)
@@ -169,7 +178,7 @@ function SWEP:CreateCustomizeHUD()
     local loadpresets = vgui.Create("DButton", ArcCW.InvHUD)
     loadpresets:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
     loadpresets:SetText("")
-    loadpresets:SetPos(ScrW() - barsize - airgap, airgap)
+    loadpresets:SetPos(scrw - barsize - airgap, airgap)
 
     loadpresets.OnMousePressed = function(spaa, kc)
         self:CreatePresetMenu()
@@ -201,7 +210,7 @@ function SWEP:CreateCustomizeHUD()
     local savepresets = vgui.Create("DButton", ArcCW.InvHUD)
     savepresets:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
     savepresets:SetText("")
-    savepresets:SetPos(ScrW() - (barsize / 2) + ScreenScale(1) - airgap, airgap)
+    savepresets:SetPos(scrw - (barsize / 2) + ScreenScale(1) - airgap, airgap)
 
     savepresets.OnMousePressed = function(spaa, kc)
         self:CreatePresetSave()
@@ -229,7 +238,7 @@ function SWEP:CreateCustomizeHUD()
         surface.DrawText(txt)
     end
 
-    local attcatsy = ScrH() - ScreenScale(64) - airgap
+    local attcatsy = scrh - ScreenScale(64) - airgap
 
     local attcats = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     attcats:SetText("")
@@ -242,8 +251,8 @@ function SWEP:CreateCustomizeHUD()
 
     local triviabox = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     triviabox:SetText("")
-    triviabox:SetSize(barsize, ScrH() - ScreenScale(64) - (3 * airgap))
-    triviabox:SetPos(ScrW() - barsize - airgap, 2 * airgap)
+    triviabox:SetSize(barsize, scrh - ScreenScale(64) - (3 * airgap))
+    triviabox:SetPos(scrw - barsize - airgap, 2 * airgap)
     triviabox.Paint = function(span, w, h)
         surface.SetDrawColor(bg_col)
         surface.DrawRect(0, 0, w, h)
@@ -308,8 +317,8 @@ function SWEP:CreateCustomizeHUD()
 
     local statbox = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     statbox:SetText("")
-    statbox:SetSize(barsize, ScrH() - ScreenScale(64) - (3 * airgap))
-    statbox:SetPos(ScrW() - barsize - airgap, 2 * airgap)
+    statbox:SetSize(barsize, scrh - ScreenScale(64) - (3 * airgap))
+    statbox:SetPos(scrw - barsize - airgap, 2 * airgap)
     statbox.Paint = function(span, w, h)
         surface.SetDrawColor(bg_col)
         surface.DrawRect(0, 0, w, h)
@@ -331,7 +340,7 @@ function SWEP:CreateCustomizeHUD()
         surface.DrawRect(0, 0, w, h)
     end
 
-    local attmenuh = ScrH() - (2 * airgap)
+    local attmenuh = scrh - (2 * airgap)
 
     local attmenu = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     attmenu:SetText("")
@@ -359,7 +368,7 @@ function SWEP:CreateCustomizeHUD()
 
     local attslidebox = vgui.Create("DPanel", ArcCW.InvHUD)
     attslidebox:SetSize(barsize, ScreenScale(20))
-    attslidebox:SetPos(ScrW() - barsize - airgap, ScrH() - ScreenScale(64) - (1 * airgap))
+    attslidebox:SetPos(scrw - barsize - airgap, scrh - ScreenScale(64) - (1 * airgap))
     attslidebox.Paint = function(span, w, h)
         surface.SetDrawColor(bg_col)
         surface.DrawRect(0, 0, w, h)
@@ -422,8 +431,8 @@ function SWEP:CreateCustomizeHUD()
     attslidebox:Hide()
 
     local atttrivia = vgui.Create("DScrollPanel", ArcCW.InvHUD)
-    atttrivia:SetSize(barsize, ScrH() - ScreenScale(116))
-    atttrivia:SetPos(ScrW() - barsize - airgap, 2 * airgap)
+    atttrivia:SetSize(barsize, scrh - ScreenScale(116))
+    atttrivia:SetPos(scrw - barsize - airgap, 2 * airgap)
     atttrivia.Paint = function(span, w, h)
         surface.SetDrawColor(bg_col)
         surface.DrawRect(0, 0, w, h)
@@ -1579,7 +1588,7 @@ function SWEP:CreateCustomizeHUD()
         local togglestat = vgui.Create("DButton", ArcCW.InvHUD)
         togglestat:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
         togglestat:SetText("")
-        togglestat:SetPos(ScrW() - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap)
+        togglestat:SetPos(scrw - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap)
 
         togglestat.OnMousePressed = function(spaa, kc)
             if statbox:IsVisible() then
@@ -1626,7 +1635,7 @@ function SWEP:CreateCustomizeHUD()
             local buymenu = vgui.Create("DButton", ArcCW.InvHUD)
             buymenu:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
             buymenu:SetText("")
-            buymenu:SetPos(ScrW() - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap + gap)
+            buymenu:SetPos(scrw - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap + gap)
             gap = gap + airgap
 
             buymenu.OnMousePressed = function(spaa, kc)
@@ -1659,7 +1668,7 @@ function SWEP:CreateCustomizeHUD()
         local radiomenu = vgui.Create("DButton", ArcCW.InvHUD)
         radiomenu:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
         radiomenu:SetText("")
-        radiomenu:SetPos(ScrW() - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap + gap)
+        radiomenu:SetPos(scrw - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap + gap)
 
         radiomenu.OnMousePressed = function(spaa, kc)
             RADIO:ShowRadioCommands(!RADIO.Show)
@@ -1686,6 +1695,16 @@ function SWEP:CreateCustomizeHUD()
             surface.SetFont("ArcCW_12")
             surface.DrawText(txt)
         end
+    end
+
+    if CLIENT and vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        local ang = Angle(0,g_VR.tracking.hmd.ang.yaw-90,45)
+        local pos = g_VR.tracking.hmd.pos + Vector(0,0,-20) + Angle(0,g_VR.tracking.hmd.ang.yaw,0):Forward() * 30 + ang:Forward() * 1366 * -0.02 + ang:Right() * 768 * -0.02
+        pos, ang = WorldToLocal(pos, ang, g_VR.origin, g_VR.originAngle)
+        vrmod.MenuCreate( "ArcCW_Customize", 1366, 768, ArcCW.InvHUD, 4,
+                pos, ang, 0.04, true, function()
+            self:CloseCustomizeHUD()
+        end)
     end
 
 end
