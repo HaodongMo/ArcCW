@@ -132,7 +132,8 @@ function SWEP:CreateCustomizeHUD()
     activeslot = nil
 
     local scrw, scrh = ScrW(), ScrH()
-        if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        -- Other resolutions seem to cause stretching issues
         scrw = 1366
         scrh = 768
     end
@@ -1698,10 +1699,11 @@ function SWEP:CreateCustomizeHUD()
     end
 
     if CLIENT and vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        local w, h = ArcCW.InvHUD:GetSize()
         local ang = Angle(0,g_VR.tracking.hmd.ang.yaw-90,45)
-        local pos = g_VR.tracking.hmd.pos + Vector(0,0,-20) + Angle(0,g_VR.tracking.hmd.ang.yaw,0):Forward() * 30 + ang:Forward() * 1366 * -0.02 + ang:Right() * 768 * -0.02
+        local pos = g_VR.tracking.hmd.pos + Vector(0,0,-20) + Angle(0,g_VR.tracking.hmd.ang.yaw,0):Forward() * 30 + ang:Forward() * w * -0.02 + ang:Right() * h * -0.02
         pos, ang = WorldToLocal(pos, ang, g_VR.origin, g_VR.originAngle)
-        vrmod.MenuCreate( "ArcCW_Customize", 1366, 768, ArcCW.InvHUD, 4,
+        vrmod.MenuCreate( "ArcCW_Customize", w, h, ArcCW.InvHUD, 4,
                 pos, ang, 0.04, true, function()
             self:CloseCustomizeHUD()
         end)
