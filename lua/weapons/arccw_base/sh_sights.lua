@@ -121,6 +121,10 @@ function SWEP:GetSightDelta()
     local lst = self.LastExitSightTime
     local minus = 0
 
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        return 0 -- This ensures sights will always draw
+    end
+
     if self:GetState() == ArcCW.STATE_SIGHTS then
         lst = self.LastEnterSightTime
         minus = 1

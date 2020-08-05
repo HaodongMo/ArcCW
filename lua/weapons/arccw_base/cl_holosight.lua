@@ -1,4 +1,33 @@
 function SWEP:DoHolosight()
+
+    -- In VRMod, we draw all holosights all the time
+    if true then -- vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        for i, asight in pairs(self.SightTable) do
+            local aslot = self.Attachments[asight.Slot] or {}
+            local atttbl = asight.HolosightData
+
+            if !atttbl and aslot.Installed then
+                atttbl = ArcCW.AttachmentTable[aslot.Installed]
+
+                if !atttbl.Holosight then return end
+            end
+
+            if atttbl then
+                local hsp = asight.HolosightPiece or self.HSPElement
+                local hsm = asight.HolosightModel
+
+                if !hsp and !hsm then
+                    self:SetupActiveSights()
+                    return
+                end
+
+                self:DrawHolosight(atttbl, hsm, hsp, asight)
+            end
+        end
+
+        return
+    end
+
     local asight = self:GetActiveSights()
     if !asight then return end
     local aslot = self.Attachments[asight.Slot] or {}
@@ -348,11 +377,11 @@ end)
 local black = Material("hud/black.png")
 local defaultdot = Material("hud/scopes/dot.png")
 
-function SWEP:DrawHolosight(hs, hsm, hsp)
+function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     -- holosight structure
     -- holosight model
 
-    local asight = self:GetActiveSights()
+    asight = asight or self:GetActiveSights()
     local delta = self:GetSightDelta()
 
     if asight.HolosightData then
