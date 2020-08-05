@@ -175,6 +175,11 @@ if SERVER then
                 end
                 -- Dropped ammo may have less rounds than usual
                 ammoent.AmmoCount = ent.AmmoAmount or ammoent.AmmoCount
+                if ent:GetClass() == "item_ammo_pistol_ttt" and ent.AmmoCount == 20 then
+                    -- Extremely ugly hack: TTT pistol ammo only gives 20 rounds but we want it to be 30
+                    -- Because most SMGs use pistol ammo (unlike vanilla TTT) and it runs out quickly
+                    ammoent.AmmoCount = 30
+                end
                 ammoent:SetNWInt("truecount", ammoent.AmmoCount)
                 SafeRemoveEntityDelayed(ent, 0) -- remove next tick
             end)

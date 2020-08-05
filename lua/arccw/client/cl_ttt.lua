@@ -279,8 +279,6 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
             end
         end
     end
-
-    tData:AddDescriptionLine()
 end)
 
 hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Ammo", function(tData)
