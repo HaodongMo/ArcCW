@@ -167,7 +167,7 @@ function SWEP:SetupActiveSights()
 
         if !atttbl.AdditionalSights then continue end
 
-        if !k.KeepBaseIrons then kbi = false end
+        if !k.KeepBaseIrons and !atttbl.KeepBaseIrons then kbi = false end
 
         for _, s in pairs(atttbl.AdditionalSights) do
             local stab = table.Copy(s)
