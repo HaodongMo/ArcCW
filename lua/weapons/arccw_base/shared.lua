@@ -422,8 +422,9 @@ SWEP.Animations = {
     --         }
     --     },
     --     ProcDraw = false, -- for draw/deploy animations, always procedurally draw in addition to playing animation
-    --     ProcHolster = false -- procedural holster weapon, THEN play animation
-    --     LastClip1OutTime = 0 -- when should the belt visually replenish on a belt fed
+    --     ProcHolster = false, -- procedural holster weapon, THEN play animation
+    --     LastClip1OutTime = 0, -- when should the belt visually replenish on a belt fed
+    --     MinProgress = 0, -- how much time in seconds must pass before the animation can be cancelled
     -- }
 }
 
