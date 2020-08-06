@@ -338,3 +338,6 @@ att.Mult_ReloadTime = 1
 att.Mult_DrawTime = 1
 att.Mult_SightTime = 1
 att.Mult_CycleTime = 1
+
+att.AttachSound = nil
+att.DetatchSound = nil
