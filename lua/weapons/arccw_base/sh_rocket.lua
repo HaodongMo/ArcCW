@@ -18,6 +18,7 @@ function SWEP:FireRocket(ent, vel, ang)
     rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
 
     rocket.Owner = self:GetOwner()
+    if rocket.ArcCW_SetOwner then rocket:SetOwner(self:GetOwner()) end
     rocket.Inflictor = self
 
     if rocket.ArcCW_Killable == nil then
