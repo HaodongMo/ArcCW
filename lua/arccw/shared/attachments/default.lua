@@ -157,7 +157,7 @@ att.Hook_ShotgunSpreadOffset = function(wep, data) end
 
 -- done before playing an effect
 -- return false to prevent playing
--- fx: {fx = EffectData()}
+-- fx: {eff = effect name, fx = EffectData()}
 att.Hook_PreDoEffects = function(wep, fx) end
 
 -- return true = compatible

@@ -239,13 +239,13 @@ function SWEP:PrimaryAttack()
 
                     ang = ang + AngleRand() * spread / 10
 
-                    self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang)
+                    self:FireRocket(se, (self:GetBuff_Override("Override_MuzzleVelocity") or self.MuzzleVelocity) * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang)
                 end
             elseif num > 0 then
                 local spd = AngleRand() * self:GetDispersion() / 360 / 60
                 local ang = self:GetOwner():EyeAngles() + (AngleRand() * spread / 10)
 
-                self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang + spd)
+                self:FireRocket(se, (self:GetBuff_Override("Override_MuzzleVelocity") or self.MuzzleVelocity) * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"), ang + spd)
             end
         else
 
@@ -607,6 +607,8 @@ function SWEP:DoShellEject()
     fx:SetNormal(ang:Forward())
     fx:SetMagnitude(100)
 
+    if self:GetBuff_Hook("Hook_PreDoEffects", {eff = "arccw_shelleffect", fx = fx}) == true then return end
+
     util.Effect("arccw_shelleffect", fx)
 end
 
@@ -618,7 +620,7 @@ function SWEP:DoEffects()
     fx:SetAttachment(self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1)
     fx:SetEntity(self)
 
-    if self:GetBuff_Hook("Hook_PreDoEffects", {fx = fx}) == true then return end
+    if self:GetBuff_Hook("Hook_PreDoEffects", {eff = "arccw_muzzleeffect", fx = fx}) == true then return end
 
     util.Effect("arccw_muzzleeffect", fx)
 end
