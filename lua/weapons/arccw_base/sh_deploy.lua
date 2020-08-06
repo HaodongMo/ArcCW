@@ -197,6 +197,8 @@ function SWEP:Initialize()
     if engine.ActiveGamemode() == "terrortown" then
         self:TTT_Init()
     end
+
+    self:AdjustAtts()
 end
 
 SWEP.FullyHolstered = false
