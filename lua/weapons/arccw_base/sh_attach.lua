@@ -140,18 +140,26 @@ function SWEP:GetBuff_Override(buff)
 
     end
 
-    for i, e in pairs(self:GetActiveElements()) do
-        local ele = self.AttachmentElements[e]
+    if !ArcCW.BuffStack then
 
-        if ele then
-            if ele[buff] != nil then
-                if level == 0 or (ele[buff .. "_Priority"] and ele[buff .. "_Priority"] > level) then
-                    current = ele[buff]
-                    level = ele[buff .. "_Priority"] or 1
-                    winningslot = i
+        ArcCW.BuffStack = true
+
+        for i, e in pairs(self:GetActiveElements()) do
+            local ele = self.AttachmentElements[e]
+
+            if ele then
+                if ele[buff] != nil then
+                    if level == 0 or (ele[buff .. "_Priority"] and ele[buff .. "_Priority"] > level) then
+                        current = ele[buff]
+                        level = ele[buff .. "_Priority"] or 1
+                        winningslot = i
+                    end
                 end
             end
         end
+
+        ArcCW.BuffStack = false
+
     end
 
     if self:GetTable()[buff] != nil then
@@ -331,8 +339,8 @@ function SWEP:GetActiveElements(recache)
 
     table.Add(eles, self.DefaultElements)
 
-    --local mode = self:GetCurrentFiremode()
-    --table.Add(eles, (mode or {}).ActivateElements or {})
+    local mode = self:GetCurrentFiremode()
+    table.Add(eles, (mode or {}).ActivateElements or {})
 
     local eles2 = {}
 
