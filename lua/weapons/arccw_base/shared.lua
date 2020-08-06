@@ -93,6 +93,7 @@ SWEP.Firemodes = {
     --     PrintName = "PUMP",
     --     RunAwayBurst = false,
     --     PostBurstDelay = 0,
+    --     ActivateElements = {}
     -- }
 }
 
