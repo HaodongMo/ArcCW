@@ -340,4 +340,4 @@ att.Mult_SightTime = 1
 att.Mult_CycleTime = 1
 
 att.AttachSound = nil
-att.DetatchSound = nil
+att.DetachSound = nil

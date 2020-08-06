@@ -798,7 +798,7 @@ function SWEP:Detach(slot, silent)
         net.SendToServer()
 
         if !silent then
-            surface.PlaySound(atttbl.DetatchSound or "weapons/arccw/uninstall.wav")
+            surface.PlaySound(atttbl.DetachSound or "weapons/arccw/uninstall.wav")
         end
 
         self:SetupActiveSights()
