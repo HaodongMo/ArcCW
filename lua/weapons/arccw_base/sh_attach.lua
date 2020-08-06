@@ -866,6 +866,14 @@ function SWEP:AdjustAtts()
     else
         self.Secondary.Ammo = "none"
     end
+
+    local ammo = self:GetBuff_Override("Override_Ammo")
+    if ammo then
+        self.OriginalAmmo = self.Primary.Ammo
+        self.Primary.Ammo = ammo
+    else
+        self.Primary.Ammo = self.OriginalAmmo or self.Primary.Ammo
+    end
 end
 
 function SWEP:GetAttachmentMaxHP(slot)

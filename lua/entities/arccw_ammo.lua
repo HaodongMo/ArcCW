@@ -219,7 +219,7 @@ if SERVER then
 
             local cvar = GetConVar("arccw_ammo_detonationmode"):GetInt()
 
-            if cvar == -1 or (!GetConVar("arccw_ammo_chaindet"):GetBool() and dmginfo:GetInflictor().ArcCW_Ammo) then
+            if cvar == -1 or (!GetConVar("arccw_ammo_chaindet"):GetBool() and dmginfo:GetInflictor().ArcCW_Ammo) or self.DetonationDamage <= 0 then
                 -- Go quietly
                 local e = EffectData()
                 e:SetOrigin(self:GetPos())
