@@ -1,6 +1,5 @@
-if not vrmod then return end
-
 local function addmenu()
+    if not vrmod then return end
     vrmod.AddInGameMenuItem("ArcCW Customize", 3, 1, function()
         local wpn = LocalPlayer():GetActiveWeapon()
         if not IsValid(wpn) or not wpn.ArcCW then return end
@@ -10,4 +9,3 @@ local function addmenu()
 end
 
 hook.Add("VRMod_Start", "ArcCW", addmenu)
-addmenu()

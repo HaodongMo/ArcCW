@@ -557,6 +557,10 @@ end
 function SWEP:BarrelHitWall()
     local offset = self.BarrelOffsetHip
 
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        return 0 -- Never block barrel in VR
+    end
+
     if self:GetState() == ArcCW.STATE_SIGHTS then
         offset = self.BarrelOffsetSighted
     end

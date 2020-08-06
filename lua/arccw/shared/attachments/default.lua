@@ -157,7 +157,7 @@ att.Hook_ShotgunSpreadOffset = function(wep, data) end
 
 -- done before playing an effect
 -- return false to prevent playing
--- fx: {fx = EffectData()}
+-- fx: {eff = effect name, fx = EffectData()}
 att.Hook_PreDoEffects = function(wep, fx) end
 
 -- return true = compatible
@@ -338,3 +338,6 @@ att.Mult_ReloadTime = 1
 att.Mult_DrawTime = 1
 att.Mult_SightTime = 1
 att.Mult_CycleTime = 1
+
+att.AttachSound = nil
+att.DetachSound = nil

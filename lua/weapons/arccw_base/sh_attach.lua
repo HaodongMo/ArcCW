@@ -682,7 +682,7 @@ function SWEP:Attach(slot, attname, silent)
         net.SendToServer()
 
         if !silent then
-            surface.PlaySound("weapons/arccw/install.wav")
+            surface.PlaySound(atttbl.AttachSound or "weapons/arccw/install.wav")
         end
     else
         self:DetachAllMergeSlots(slot)
@@ -802,7 +802,7 @@ function SWEP:Detach(slot, silent)
         net.SendToServer()
 
         if !silent then
-            surface.PlaySound("weapons/arccw/uninstall.wav")
+            surface.PlaySound(atttbl.DetachSound or "weapons/arccw/uninstall.wav")
         end
 
         self:SetupActiveSights()
