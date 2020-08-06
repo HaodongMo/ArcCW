@@ -15,7 +15,7 @@ function SWEP:FireRocket(ent, vel, ang)
     rocket:Activate()
     rocket:GetPhysicsObject():SetVelocity(self:GetOwner():GetAbsVelocity())
     rocket:GetPhysicsObject():SetVelocityInstantaneous(ang:Forward() * vel)
-    rocket:SetCollisionGroup(COLLISION_GROUP_DEBRIS)
+    rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
 
     rocket.Owner = self:GetOwner()
     rocket.Inflictor = self
