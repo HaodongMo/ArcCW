@@ -331,9 +331,8 @@ function SWEP:GetActiveElements(recache)
 
     table.Add(eles, self.DefaultElements)
 
-    local mode = self:GetCurrentFiremode()
-
-    table.Add(eles, (mode or {}).ActivateElements or {})
+    --local mode = self:GetCurrentFiremode()
+    --table.Add(eles, (mode or {}).ActivateElements or {})
 
     local eles2 = {}
 
