@@ -145,18 +145,18 @@ function SWEP:DoLHIK()
         for _, bone in pairs(ArcCW.LHIKBones) do
             local vmbone = vm:LookupBone(bone)
 
-            if !vmbone then return end -- Happens when spectating someone prolly
+            if !vmbone then continue end -- Happens when spectating someone prolly
 
             local vmtransform = vm:GetBoneMatrix(vmbone)
 
-            if !vmtransform then return end -- something very bad has happened
+            if !vmtransform then continue end -- something very bad has happened
 
             local vm_pos = vmtransform:GetTranslation()
             local vm_ang = vmtransform:GetAngles()
 
             local newtransform = Matrix()
 
-            newtransform:SetTranslation(LerpVector(delta, vm_pos, vm_pos - (EyeAngles():Up() * 64)))
+            newtransform:SetTranslation(LerpVector(delta, vm_pos, vm_pos - (EyeAngles():Up() * 4) - (EyeAngles():Forward() * 4)))
             newtransform:SetAngles(vm_ang)
 
             vm:SetBoneMatrix(vmbone, newtransform)
@@ -164,9 +164,10 @@ function SWEP:DoLHIK()
     end
 
     if !lhik_model or !IsValid(lhik_model) then return end
-    if justhide then return end
 
     lhik_model:SetupBones()
+
+    if justhide then return end
 
     local cyc = (UnPredictedCurTime() - self.LHIKAnimationStart) / self.LHIKAnimationTime
 
