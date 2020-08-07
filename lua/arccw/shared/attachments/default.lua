@@ -310,6 +310,8 @@ att.Mult_SightsDispersion = 1
 att.Mult_ShootVol = 1
 att.Mult_ShootPitch = 1
 
+att.Mult_GlintMagnitude = 1
+
 att.Override_MuzzleEffect = nil
 
 att.Override_ShellMaterial = nil

@@ -55,7 +55,8 @@ hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
         local lightcol2 = render.GetLightColor(EyePos()):Length()
 
         -- There is some grace because natural light isn't always at max
-        local intensity = math.min(0.2 + (lightcol + lightcol2) / 2 * 1, 1)
+        local mag = wpn:GetBuff_Mult("Mult_GlintMagnitude") or 1
+        local intensity = math.min(0.2 + (lightcol + lightcol2) / 2 * 1, 1) * mag
 
         render.SetMaterial(glintmat)
         render.DrawSprite(pos, 96 * d, 96 * d, Color(255 * intensity, 255 * intensity, 255 * intensity))
