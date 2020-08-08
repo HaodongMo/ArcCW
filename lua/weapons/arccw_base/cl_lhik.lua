@@ -156,7 +156,7 @@ function SWEP:DoLHIK()
 
             local newtransform = Matrix()
 
-            newtransform:SetTranslation(LerpVector(delta, vm_pos, vm_pos - (EyeAngles():Up() * 4) - (EyeAngles():Forward() * 4)))
+            newtransform:SetTranslation(LerpVector(delta, vm_pos, vm_pos - (EyeAngles():Up() * 12) - (EyeAngles():Forward() * 4)))
             newtransform:SetAngles(vm_ang)
 
             vm:SetBoneMatrix(vmbone, newtransform)

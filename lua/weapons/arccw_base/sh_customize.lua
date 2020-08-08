@@ -200,7 +200,6 @@ function SWEP:CreateCustomizeHUD()
         surface.DrawRect(0, 0, w, h)
 
         local txt = (translate("ui.loadpreset"))
-        
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(smallgap, ScreenScale(1))
@@ -668,7 +667,7 @@ function SWEP:CreateCustomizeHUD()
         if k.Integral then continue end
 
         local attcatb = attcats:Add("DButton")
-        attcatb:SetSize(barsize, buttonsize)
+        attcatb:SetSize(barsize, buttonsize / 2)
         attcatb:SetText("")
         attcatb:Dock( TOP )
         attcatb:DockMargin( 0, 0, 0, smallgap )
@@ -1013,28 +1012,6 @@ function SWEP:CreateCustomizeHUD()
                     perc = math.Round(perc)
                     txt = txt .. " (" .. tostring(perc) .. "%)"
                 end
-            end
-
-            surface.SetDrawColor(Bbg_col)
-            surface.DrawRect(0, 0, w, h)
-            surface.DrawRect(0, 0, w, h / 2)
-            surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
-
-            surface.SetDrawColor(Bfg_col)
-            surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
-
-            surface.SetTextColor(0, 0, 0)
-            surface.SetTextPos(smallgap, 0)
-            surface.SetFont("ArcCW_12_Glow")
-            surface.DrawText(txt)
-
-            surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(smallgap, 0)
-            surface.SetFont("ArcCW_12")
-            surface.DrawText(txt)
-
-            if installed then
-                local atttbl = ArcCW.AttachmentTable[installed]
 
                 att_txt = translate("name." .. installed) or atttbl.PrintName
 
@@ -1043,17 +1020,66 @@ function SWEP:CreateCustomizeHUD()
                 end
             end
 
-            surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
-            surface.SetFont("ArcCW_12")
-            surface.DrawText(att_txt)
+            if activeslot == span.AttIndex then
+                span:SetSize(barsize, buttonsize)
 
-            surface.SetDrawColor(Bfg_col)
-            surface.DrawRect(w - (1.5 * h), 0, linesize, h)
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+                surface.DrawRect(0, 0, w, h / 2)
+                surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
 
-            surface.SetDrawColor(Bfg_col)
-            surface.SetMaterial(att_icon)
-            surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
+
+                surface.SetTextColor(0, 0, 0)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12_Glow")
+                surface.DrawText(txt)
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12")
+                surface.DrawText(txt)
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
+                surface.SetFont("ArcCW_12")
+                surface.DrawText(att_txt)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(w - (1.5 * h), 0, linesize, h)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.SetMaterial(att_icon)
+                surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
+            else
+                if installed then
+                    txt = att_txt
+                end
+
+                span:SetSize(barsize, buttonsize / 2)
+
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+                surface.DrawRect(w - (1.5 * h), 0, 1.5 * h, h)
+
+                surface.SetTextColor(0, 0, 0)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12_Glow")
+                surface.DrawText(txt)
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12")
+                surface.DrawText(txt)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(w - (1.5 * h), 0, linesize, h)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.SetMaterial(att_icon)
+                surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
+            end
         end
     end
 

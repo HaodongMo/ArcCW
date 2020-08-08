@@ -14,10 +14,12 @@ ArcCW.ConVar_BuffMults = {
 SWEP.TickCache_Overrides = {}
 SWEP.TickCache_Adds = {}
 SWEP.TickCache_Mults = {}
+SWEP.TickCache_Hooks = {}
 
 SWEP.TickCache_Tick_Overrides = {}
 SWEP.TickCache_Tick_Adds = {}
 SWEP.TickCache_Tick_Mults = {}
+SWEP.TickCache_Tick_Hooks = {}
 
 function SWEP:RecalcAllBuffs()
     self.TickCache_Overrides = {}
@@ -32,6 +34,13 @@ end
 function SWEP:GetBuff_Hook(buff, data)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
+    local hasany = false
+
+    if self.TickCache_Hooks[buff] and self.TickCache_Tick_Hooks[buff] == CurTime() then
+        hook.Call(buff, ArcCW, self, data)
+        return data
+    end
+
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
@@ -41,6 +50,8 @@ function SWEP:GetBuff_Hook(buff, data)
 
         if isfunction(atttbl[buff]) then
             local ret = atttbl[buff](self, data)
+
+            hasany = true
 
             if ret == nil then continue end
 
@@ -54,6 +65,8 @@ function SWEP:GetBuff_Hook(buff, data)
 
     if cfm and isfunction(cfm[buff]) then
         local ret = cfm[buff](self, data)
+
+        hasany = true
 
         if ret != nil then
 
@@ -71,6 +84,8 @@ function SWEP:GetBuff_Hook(buff, data)
             if ele[buff] then
                 local ret = ele[buff](self, data)
 
+                hasany = true
+
                 if ret != nil then
 
                     if ret == false then return end
@@ -84,6 +99,8 @@ function SWEP:GetBuff_Hook(buff, data)
     if isfunction(self:GetTable()[buff]) then
         local ret = self:GetTable()[buff](self, data)
 
+        hasany = true
+
         if ret != nil then
 
             if ret == false then return end
@@ -91,6 +108,12 @@ function SWEP:GetBuff_Hook(buff, data)
             data = ret
 
         end
+    end
+
+    self.TickCache_Tick_Hooks[buff] = CurTime()
+
+    if !hasany then
+        self.TickCache_Hooks[buff] = true
     end
 
     hook.Call(buff, ArcCW, self, data)

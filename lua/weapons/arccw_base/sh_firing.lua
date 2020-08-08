@@ -28,7 +28,7 @@ function SWEP:PrimaryAttack()
 
     if self:Clip1() <= 0 then self.BurstCount = 0 self:DryFire() return end
     if self:GetNWBool("cycle", false) then return end
-    if self.BurstCount >= self:GetBurstLength() then return end
+    if (self.BurstCount or 0) >= self:GetBurstLength() then return end
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
         self.Primary.Automatic = false
@@ -133,6 +133,8 @@ function SWEP:PrimaryAttack()
                 -- for i = 1, frags do
                 --     self:DoPenetration(tr, (self.Penetration / frags) - 0.5, tr.Entity)
                 -- end
+
+                debugoverlay.Cross(tr.HitPos, 5, 5, Color( 0, 0, 255 ), true )
 
                 local ret = self:GetBuff_Hook("Hook_BulletHit", {
                     range = dist,
@@ -451,6 +453,8 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
 
         local pdelta = penleft / (self.Penetration * self:GetBuff_Mult("Mult_Penetration"))
 
+        math.randomseed(self:GetOwner():GetCurrentCommand():CommandNumber() + (self:EntIndex() % 24977))
+
         self:GetOwner():FireBullets( {
             Attacker = self:GetOwner(),
             Damage = 0,
@@ -471,6 +475,8 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
                     dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
                     dmg:SetDamage(self:GetDamage(dist, true) * pdelta, true)
                 end
+
+                debugoverlay.Cross(btr.HitPos, 5, 5, Color( 255, 0, 0 ), true )
 
                 --if LeyHitreg then
                 --    timer.Simple(0.05, function() if IsValid(self) then self:DoPenetration(btr, penleft) end end)
