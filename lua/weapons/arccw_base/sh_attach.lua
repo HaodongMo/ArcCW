@@ -25,10 +25,12 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Overrides = {}
     self.TickCache_Adds = {}
     self.TickCache_Mults = {}
+    self.TickCache_Hooks = {}
 
     self.TickCache_Tick_Overrides = {}
     self.TickCache_Tick_Adds = {}
     self.TickCache_Tick_Mults = {}
+    self.TickCache_Tick_Hooks = {}
 end
 
 function SWEP:GetBuff_Hook(buff, data)
@@ -901,13 +903,21 @@ function SWEP:AdjustAtts()
         self.Secondary.Ammo = "none"
     end
 
-    local ammo = self:GetBuff_Override("Override_Ammo")
+    local ammo = self:GetBuff_Override("Override_Ammo") or self.Primary.Ammo
+    local oldammo = self.OldAmmo or self.Primary.Ammo
+
+    if ammo != oldammo then
+        self:Unload()
+    end
+
     if ammo then
-        self.OriginalAmmo = self.Primary.Ammo
         self.Primary.Ammo = ammo
     else
-        self.Primary.Ammo = self.OriginalAmmo or self.Primary.Ammo
+        local wpn = weapons.GetStored(self:GetClass())
+        self.Primary.Ammo = wpn.Primary.Ammo
     end
+
+    self.OldAmmo = self.Primary.Ammo
 end
 
 function SWEP:GetAttachmentMaxHP(slot)
