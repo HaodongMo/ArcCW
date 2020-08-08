@@ -89,7 +89,7 @@ function ENT:Think()
         if CLIENT then
             for i, k in pairs(self.Particles or {}) do
                 if !k then continue end
-                k:SetThinkFunction(nil)
+                k:SetThinkFunction(function() end)
                 k:SetLifeTime(0)
                 k:SetDieTime(self.Life)
                 k:SetStartAlpha(255)
