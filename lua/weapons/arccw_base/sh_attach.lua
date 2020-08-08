@@ -903,8 +903,8 @@ function SWEP:AdjustAtts()
         self.Secondary.Ammo = "none"
     end
 
-    local ammo = self:GetBuff_Override("Override_Ammo")
-    local oldammo = self.Primary.Ammo
+    local ammo = self:GetBuff_Override("Override_Ammo") or self.Primary.Ammo
+    local oldammo = self.OldAmmo or self.Primary.Ammo
 
     if ammo != oldammo then
         self:Unload()
@@ -916,6 +916,8 @@ function SWEP:AdjustAtts()
         local wpn = weapons.GetStored(self:GetClass())
         self.Primary.Ammo = wpn.Primary.Ammo
     end
+
+    self.OldAmmo = self.Primary.Ammo
 end
 
 function SWEP:GetAttachmentMaxHP(slot)
