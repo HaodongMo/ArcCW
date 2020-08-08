@@ -136,6 +136,7 @@ function SWEP:Reload()
 end
 
 function SWEP:Unload()
+    if !self:GetOwner():IsPlayer() then return end
     if SERVER then
         self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
     end
