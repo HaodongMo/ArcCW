@@ -135,6 +135,13 @@ function SWEP:Reload()
     self:GetBuff_Hook("Hook_PostReload")
 end
 
+function SWEP:Unload()
+    if SERVER then
+        self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
+    end
+    self:SetClip1(0)
+end
+
 function SWEP:RestoreAmmo(count)
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
     local clip = self:GetCapacity()
