@@ -323,7 +323,7 @@ function SWEP:SetupModel(wm)
 
             charmscale:Scale(atttbl.CharmScale or Vector(1, 1, 1))
 
-            if charmmodel then
+            if IsValid(charmmodel) then
                 charmmodel:SetNoDraw(ArcCW.NoDraw)
                 charmmodel:DrawShadow(true)
                 charmmodel:SetupBones()
