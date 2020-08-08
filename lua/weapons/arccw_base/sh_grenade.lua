@@ -37,7 +37,9 @@ function SWEP:Throw()
 
     windup = math.Clamp(windup, 0, 1)
 
-    local force = Lerp(windup, self.MuzzleVelocity * 0.25, self.MuzzleVelocity)
+    local mv = self.MuzzleVelocity * self:GetBuff_Mult("Mult_MuzzleVelocity")
+
+    local force = Lerp(windup, mv * 0.25, mv)
 
     self:SetTimer(0.25, function()
 
@@ -51,7 +53,7 @@ function SWEP:Throw()
 
         local phys = rocket:GetPhysicsObject()
 
-        if GetConVar("arccw_throwinertia"):GetBool() then
+        if GetConVar("arccw_throwinertia"):GetBool() and mv > 100 then
             phys:AddVelocity(self:GetOwner():GetVelocity())
         end
 
