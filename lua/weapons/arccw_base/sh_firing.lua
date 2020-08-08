@@ -134,7 +134,11 @@ function SWEP:PrimaryAttack()
                 --     self:DoPenetration(tr, (self.Penetration / frags) - 0.5, tr.Entity)
                 -- end
 
-                debugoverlay.Cross(tr.HitPos, 5, 5, Color( 0, 0, 255 ), true )
+                if SERVER then
+                    debugoverlay.Cross(tr.HitPos, 5, 5, Color( 255, 0, 0 ), true )
+                else
+                    debugoverlay.Cross(tr.HitPos, 5, 5, Color( 0, 0, 255 ), true )
+                end
 
                 local ret = self:GetBuff_Hook("Hook_BulletHit", {
                     range = dist,
@@ -475,8 +479,6 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
                     dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
                     dmg:SetDamage(self:GetDamage(dist, true) * pdelta, true)
                 end
-
-                debugoverlay.Cross(btr.HitPos, 5, 5, Color( 255, 0, 0 ), true )
 
                 --if LeyHitreg then
                 --    timer.Simple(0.05, function() if IsValid(self) then self:DoPenetration(btr, penleft) end end)
