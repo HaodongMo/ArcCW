@@ -30,7 +30,7 @@ att.SubSlots = {
     Slot = {"optic", "optic_lp"}, -- OR
     Slot = "optic",
     DefaultAttName = "Iron Sights",
-    DefaultAttIcon = Material(),
+    DefaultAttIcon = Material(""),
     MergeSlots = {}, -- mergeslots are relative to att.SubSlots, so this entry would be [1], then [2], etc
     -- bone/wmbone is inherited
     ExtraSightDist = 0, -- inherited if not specified
