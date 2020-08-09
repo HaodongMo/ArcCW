@@ -903,7 +903,7 @@ function SWEP:AdjustAtts()
         self.Secondary.Ammo = "none"
     end
 
-    local wpn = weapons.GetStored(self:GetClass())
+    local wpn = weapons.Get(self:GetClass())
 
     local ammo = self:GetBuff_Override("Override_Ammo") or wpn.Primary.Ammo
     local oldammo = self.OldAmmo or self.Primary.Ammo
@@ -948,6 +948,18 @@ function SWEP:DamageAttachment(slot, dmg)
     self.Attachments[slot].HP = self:GetAttachmentHP(slot) - dmg
 
     if self:GetAttachmentHP(slot) <= 0 then
+        local atttbl = ArcCW.AttachmentTable[self.Attachments[slot].Installed]
+
+        if atttbl.Hook_AttDestroyed then
+            atttbl.Hook_AttDestroyed(self, {slot = slot, dmg = dmg})
+        end
+
         self:Detach(slot, true)
     end
+end
+
+function SWEP:ClearSubAttachments()
+end
+
+function SWEP:AssembleAttachments()
 end
