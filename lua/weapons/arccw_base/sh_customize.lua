@@ -1658,7 +1658,7 @@ function SWEP:CreateCustomizeHUD()
     if engine.ActiveGamemode() == "terrortown" then
         local gap = airgap
 
-        if GetRoundState() == ROUND_ACTIVE and (LocalPlayer():GetTraitor() or LocalPlayer():GetDetective() or (TTT2 and ply.IsShopper and ply:IsShopper())) then
+        if GetRoundState() == ROUND_ACTIVE and (LocalPlayer():GetTraitor() or LocalPlayer():GetDetective() or (TTT2 and LocalPlayer().IsShopper and LocalPlayer():IsShopper())) then
             local buymenu = vgui.Create("DButton", ArcCW.InvHUD)
             buymenu:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
             buymenu:SetText("")
