@@ -15,6 +15,8 @@ SWEP.Firemodes = {
 SWEP.PullPinTime = 0.25
 SWEP.FuseTime = 3.5
 
+SWEP.ChamberSize = 0
+
 SWEP.HoldtypeHolstered = "normal"
 SWEP.HoldtypeActive = "grenade"
 

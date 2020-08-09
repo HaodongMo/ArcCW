@@ -1131,7 +1131,7 @@ function SWEP:CreateCustomizeHUD()
         function() return translate("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
         function() return translate("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
         function() return translate("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
-        function() return translate("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo) end,
+        function() return translate("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo or self.PrintName) end,
         function() return translate("trivia.country") .. ": " .. self.Trivia_Country or "Unknown" end,
         function() return translate("trivia.manufacturer") .. ": " .. self.Trivia_Manufacturer or "Unknown" end,
         function() return translate("trivia.clipsize") .. ": " .. self:GetCapacity() end,
