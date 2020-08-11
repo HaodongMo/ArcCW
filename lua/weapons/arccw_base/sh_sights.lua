@@ -434,8 +434,3 @@ function SWEP:SetShouldHoldType()
         self:SetHoldType(self:GetBuff_Override("Override_HoldtypeActive") or self.HoldtypeActive)
     end
 end
-
--- Here as compatibility, not recommended to use (check for the state itself instead)
-function SWEP:GetIronsights()
-    return self:GetState() == ArcCW.STATE_SIGHTS
-end
