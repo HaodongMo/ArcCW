@@ -81,6 +81,7 @@ function SWEP:NPC_SetupAttachments()
 
             s = table.Random(ss) or i
         end
+        if !self.Attachments[s] then s = i end
 
         local atts = ArcCW:GetAttsForSlot(self.Attachments[s].Slot, self)
         if #atts <= 0 then continue end
@@ -92,7 +93,7 @@ function SWEP:NPC_SetupAttachments()
         n = n + 1
     end
 
-    if self:GetBuff_Override("UBGL") then
+    if self:GetBuff_Override("UBGL") and self:GetBuff_Override("UBGL_Capacity") then
         self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
     end
 
