@@ -1,6 +1,20 @@
 {
-"title" : "ArcCW",
-"type" : "weapon",
-"tags" : ["realism","roleplay"],
-"ignore" : ["*.psd", "*.vcproj", "*.svn*"]
+    "title" : "ArcCW",
+    "type" : "weapon",
+    "tags" : ["realism","roleplay"],
+	"ignore":
+	[
+		"*.cmd",
+		"*.ini",
+		"*.lnk",
+		"*.url",
+		"*.psd",
+        "*.bat",
+        ".git/*",
+        ".gitignore",
+        ".gitattributes",
+        "*.code-workspace",
+        "LICENSE",
+        "README.md"
+	]
 }
