@@ -98,43 +98,44 @@ function SWEP:Think()
                 self:ChangeFiremode()
             end
         end
-    elseif !(!self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD))) then
-        if !self.ReloadInSights and self:GetNWBool("reloading", false) then
+    elseif (!(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD))) then
+        if !(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and self:GetNWBool("reloading", false) then
             self:ExitSights()
         end
-        if self:GetOwner():GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
-            if self:GetOwner():KeyPressed(IN_ATTACK2) and CLIENT then
-                if (lastUBGL or 0) + 0.25 > CurTime() then return end
-                lastUBGL = CurTime()
-                if self:GetNWBool("ubgl") then
-                    net.Start("arccw_ubgl")
-                    net.WriteBool(false)
-                    net.SendToServer()
+    end
 
-                    self:DeselectUBGL()
-                else
-                    net.Start("arccw_ubgl")
-                    net.WriteBool(true)
-                    net.SendToServer()
+    if self:GetOwner():GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
+        if self:GetOwner():KeyPressed(IN_ATTACK2) and CLIENT then
+            if (lastUBGL or 0) + 0.25 > CurTime() then return end
+            lastUBGL = CurTime()
+            if self:GetNWBool("ubgl") then
+                net.Start("arccw_ubgl")
+                net.WriteBool(false)
+                net.SendToServer()
 
-                    self:SelectUBGL()
-                end
+                self:DeselectUBGL()
+            else
+                net.Start("arccw_ubgl")
+                net.WriteBool(true)
+                net.SendToServer()
+
+                self:SelectUBGL()
             end
-        elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+        end
+    elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+        self:ExitSights()
+    elseif self:GetOwner():GetInfoNum("arccw_toggleads", 0) == 0 then
+        if self:GetOwner():KeyPressed(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
+            self:EnterSights()
+        elseif self:GetOwner():KeyReleased(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
             self:ExitSights()
-        elseif self:GetOwner():GetInfoNum("arccw_toggleads", 0) == 0 then
-            if self:GetOwner():KeyPressed(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
+        end
+    else
+        if self:GetOwner():KeyPressed(IN_ATTACK2) then
+            if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
                 self:EnterSights()
-            elseif self:GetOwner():KeyReleased(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+            else
                 self:ExitSights()
-            end
-        else
-            if self:GetOwner():KeyPressed(IN_ATTACK2) then
-                if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
-                    self:EnterSights()
-                else
-                    self:ExitSights()
-                end
             end
         end
     end
