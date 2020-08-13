@@ -93,7 +93,7 @@ function SWEP:ExitSights()
     local asight = self:GetActiveSights()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
 
-    print("yeah yeah beebis")
+    --print("yeah yeah beebis")
 
     self:SetState(ArcCW.STATE_IDLE)
     self.Sighted = false
