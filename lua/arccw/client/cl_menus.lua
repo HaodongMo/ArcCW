@@ -277,6 +277,7 @@ function ArcCW_Options_Atts( CPanel )
     CPanel:AddControl("Slider", {Label = "#arccw.cvar.atts_pickx", Command = "arccw_atts_pickx", Min = 0, Max = 10, Type = "int" })
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.enable_dropping", Command = "arccw_enable_dropping" })
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.atts_spawnrand", Command = "arccw_atts_spawnrand" })
+    CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.atts_ubglautoload", Command = "arccw_atts_ubglautoload" })
     CPanel:AddControl("Button", {Label = "#arccw.blacklist", Command = "arccw_blacklist"})
 end
 

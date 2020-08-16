@@ -893,6 +893,9 @@ function SWEP:AdjustAtts()
 
     if self:GetBuff_Override("UBGL_Capacity") then
         self.Secondary.ClipSize = self:GetBuff_Override("UBGL_Capacity")
+        if GetConVar("arccw_atts_ubglautoload"):GetBool() then
+            self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
+        end
     else
         self.Secondary.ClipSize = -1
     end
