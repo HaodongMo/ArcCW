@@ -54,8 +54,9 @@ att.Model = ""
 att.HideModel = false
 att.ModelBodygroups = ""
 att.ModelSkin = 0
-att.ModelScale = 1
+att.ModelScale = Vector(1, 1, 1)
 att.ModelOffset = Vector(0, 0, 0)
+att.OffsetAng = Angle(0, 0, 0)
 att.ModelIsShield = false
 att.DrawFunc = function(self, element, wm) end
 
@@ -77,6 +78,9 @@ att.ShieldCorrectPos = Vector(0, 0, 0)
 att.DamageOnShoot = 0
 att.DamageOnReload = 0
 att.DamagePerSecond = 0
+
+-- {slot = int, atthp = float, dmg = DamageInfo}
+att.Hook_PlayerTakeDamage = function(wep, data) end
 
 -- {slot = int, oldhp = float, dmg = float}
 att.Hook_AttTakeDamage = function(wep, data) end
