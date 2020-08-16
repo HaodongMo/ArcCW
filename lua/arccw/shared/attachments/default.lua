@@ -268,6 +268,7 @@ att.Hook_GetCapacity = function(wep, cap) end
 -- return false to suppress shoot sound
 -- string sound = default sound
 att.Hook_GetShootSound = function(wep, sound) end
+att.Hook_GetShootDrySound = function(wep, sound) end -- NOT DONE!
 att.Hook_GetDistantShootSound = function(wep, sound) end
 
 -- allows you to modify the weapon's rate of fire

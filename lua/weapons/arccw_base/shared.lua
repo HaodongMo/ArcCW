@@ -122,6 +122,7 @@ SWEP.ShootPitch = 100 -- pitch of shoot sound
 SWEP.FirstShootSound = nil
 SWEP.ShootSound = ""
 SWEP.FirstShootSoundSilenced = nil
+SWEP.ShootDrySound = nil -- Add an attachment hook for Hook_GetShootDrySound please!
 SWEP.DistantShootSound = nil
 SWEP.ShootSoundSilenced = "weapons/arccw/m4a1/m4a1-1.wav"
 SWEP.FiremodeSound = "weapons/arccw/firemode.wav"

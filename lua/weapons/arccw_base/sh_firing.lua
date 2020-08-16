@@ -641,7 +641,7 @@ function SWEP:DryFire()
 
     self.Primary.Automatic = false
 
-    self:EmitSound("weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
+    self:EmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
     self:SetNextPrimaryFire(CurTime() + 0.25)
 end
 
