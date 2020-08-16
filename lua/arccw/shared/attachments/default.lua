@@ -67,8 +67,8 @@ att.CharmScale = Vector(1, 1, 1)
 att.CharmSkin = 0
 att.CharmBodygroups = ""
 
-att.Breakable = false
-att.Health = 0 -- for shields
+att.Health = 0 -- for breakable attachments
+
 att.ShieldCorrectAng = Angle(0, 0, 0)
 att.ShieldCorrectPos = Vector(0, 0, 0)
 

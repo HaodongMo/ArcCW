@@ -222,6 +222,17 @@ net.Receive("arccw_sendattinv", function(len, ply)
     end
 end)
 
+net.Receive("arccw_sendatthp", function(len, ply)
+    local wpn = LocalPlayer():GetActiveWeapon()
+
+    while net.ReadBool() do
+        local slot = net.ReadUInt(8)
+        local hp = net.ReadFloat()
+
+        wpn.Attachments[slot].HP = hp
+    end
+end)
+
 elseif SERVER then
 
 hook.Add("PlayerDeath", "ArcCW_DeathAttInv", function(ply)

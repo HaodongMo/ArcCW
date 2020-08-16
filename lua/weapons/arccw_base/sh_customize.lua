@@ -1007,8 +1007,8 @@ function SWEP:CreateCustomizeHUD()
             if installed then
                 local atttbl = ArcCW.AttachmentTable[installed]
 
-                if atttbl.Breakable then
-                    local perc = self:GetAttachmentHP(slot) / self:GetAttachmentMaxHP(slot)
+                if atttbl.Health then
+                    local perc = (self:GetAttachmentHP(i) / self:GetAttachmentMaxHP(i)) * 100
                     perc = math.Round(perc)
                     txt = txt .. " (" .. tostring(perc) .. "%)"
                 end
@@ -1054,7 +1054,14 @@ function SWEP:CreateCustomizeHUD()
                 surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
             else
                 if installed then
+                    local atttbl = ArcCW.AttachmentTable[installed]
                     txt = att_txt
+
+                    if atttbl.Health then
+                        local perc = (self:GetAttachmentHP(i) / self:GetAttachmentMaxHP(i)) * 100
+                        perc = math.Round(perc)
+                        txt = txt .. " (" .. tostring(perc) .. "%)"
+                    end
                 end
 
                 span:SetSize(barsize, buttonsize / 2)
