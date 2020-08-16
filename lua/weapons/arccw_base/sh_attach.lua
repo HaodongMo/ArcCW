@@ -958,7 +958,9 @@ function SWEP:ApplyAttachmentShootDamage()
         end
     end
 
-    self:SendAttHP()
+    if any then
+        self:SendAttHP()
+    end
 end
 
 function SWEP:DamageAttachment(slot, dmg)

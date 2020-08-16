@@ -260,6 +260,17 @@ function SWEP:Think()
         -- end
     -- end
 
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        local atttbl = ArcCW.AttachmentTable[k.Installed]
+
+        if atttbl.DamagePerSecond then
+            local dmg = atttbl.DamagePerSecond * FrameTime()
+
+            self:DamageAttachment(i, dmg)
+        end
+    end
+
     if CLIENT then
         self:DoOurViewPunch()
     end
