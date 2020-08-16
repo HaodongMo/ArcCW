@@ -722,7 +722,7 @@ function SWEP:Attach(slot, attname, silent)
 
     attslot.Installed = attname
 
-    if atttbl.Breakable then
+    if atttbl.Health then
         attslot.HP = self:GetAttachmentMaxHP(slot)
     end
 
@@ -944,6 +944,25 @@ function SWEP:GetAttachmentHP(slot)
     return self.Attachments[slot].HP
 end
 
+function SWEP:ApplyAttachmentShootDamage()
+    local any = false
+    for j, i in pairs(self.Attachments) do
+        if !i.Installed then continue end
+        local atttbl = ArcCW.AttachmentTable[i.Installed]
+
+        if !atttbl.Health then continue end
+
+        if atttbl.DamageOnShoot then
+            self:DamageAttachment(j, atttbl.DamageOnShoot)
+            any = true
+        end
+    end
+
+    if any then
+        self:SendAttHP()
+    end
+end
+
 function SWEP:DamageAttachment(slot, dmg)
     if !self.Attachments[slot] then return end
     if !self.Attachments[slot].Installed then return end
@@ -959,6 +978,22 @@ function SWEP:DamageAttachment(slot, dmg)
 
         self:Detach(slot, true)
     end
+end
+
+function SWEP:SendAttHP()
+    net.Start("arccw_sendatthp")
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        local atttbl = ArcCW.AttachmentTable[k.Installed]
+
+        if atttbl.Health then
+            net.WriteBool(true)
+            net.WriteUInt(i, 8)
+            net.WriteFloat(self:GetAttachmentHP(i))
+        end
+    end
+    net.WriteBool(false)
+    net.Send(self:GetOwner())
 end
 
 function SWEP:ClearSubAttachments()

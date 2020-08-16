@@ -356,6 +356,8 @@ function SWEP:PrimaryAttack()
             self:SetNextPrimaryFire(CurTime() + postburst)
         end
 
+        self:ApplyAttachmentShootDamage()
+
         self:GetBuff_Hook("Hook_PostFireBullets")
 
         if SERVER and !game.SinglePlayer() then
