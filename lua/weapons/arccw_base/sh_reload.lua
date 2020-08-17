@@ -125,6 +125,15 @@ function SWEP:Reload()
 
     self:SetNWBool("reloading", true)
 
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        local atttbl = ArcCW.AttachmentTable[k.Installed]
+
+        if atttbl.DamageOnReload then
+            self:DamageAttachment(i, atttbl.DamageOnReload)
+        end
+    end
+
     if !self.ReloadInSights then
         self:ExitSights()
         self.Sighted = false

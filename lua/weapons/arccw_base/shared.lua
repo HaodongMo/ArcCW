@@ -122,6 +122,7 @@ SWEP.ShootPitch = 100 -- pitch of shoot sound
 SWEP.FirstShootSound = nil
 SWEP.ShootSound = ""
 SWEP.FirstShootSoundSilenced = nil
+SWEP.ShootDrySound = nil -- Add an attachment hook for Hook_GetShootDrySound please!
 SWEP.DistantShootSound = nil
 SWEP.ShootSoundSilenced = "weapons/arccw/m4a1/m4a1-1.wav"
 SWEP.FiremodeSound = "weapons/arccw/firemode.wav"
@@ -331,8 +332,6 @@ SWEP.Attachments = {}
 --     RejectAttachments = {}, -- specific blacklist of attachments this slot cannot accept. Needs to be like {"optic_mrs" = true}
 --     VMScale = Vector(1, 1, 1),
 --     WMScale = Vector(1, 1, 1),
---     LHIKOutTime = 0.5, -- how much time we should blend out any left hand IK for
---     LHIKInTime = 0.5, -- ditto
 --     SlideAmount = { -- how far this attachment can slide in both directions.
 --         -- overrides Offset.
 --         vmin = Vector(0, 0, 0),

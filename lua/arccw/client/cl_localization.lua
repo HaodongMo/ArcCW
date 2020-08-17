@@ -132,6 +132,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.atts_pickx"] = "Pick X",
         ["arccw.cvar.enable_dropping"] = "Attachment Dropping",
         ["arccw.cvar.atts_spawnrand"] = "Random Attachments on Spawn",
+        ["arccw.cvar.atts_ubglautoload"] = "Underbarrel Weapons Automatically Loaded",
         ["arccw.blacklist"] = "Blacklist Menu",
 
         -- ArcCW_Options_Server

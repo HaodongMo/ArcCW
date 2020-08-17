@@ -327,7 +327,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         vel = vel / movespeed
 
-        vel = vel * self.BobMult or 1
+        vel = vel * self.BobMult or 1   
 
         local velmult = math.min(vel / 600 * (actual.bob / 2), 3)
         local swaymult = actual.sway / 2
@@ -417,10 +417,6 @@ end
 local function ShouldCheapWorldModel(wep)
     -- This prevents attachments from drawing when in first person spectate mode
     if LocalPlayer():GetObserverMode() == OBS_MODE_IN_EYE and LocalPlayer():GetObserverTarget() == wep:GetOwner() then
-        return true
-    end
-    -- Do not draw attachments on far away weapons without owner
-    if !IsValid(wep:GetOwner()) and (EyePos() - wep:WorldSpaceCenter()):LengthSqr() > 262144 then -- 512^2
         return true
     end
     return !GetConVar("arccw_att_showothers"):GetBool()

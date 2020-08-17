@@ -3,6 +3,15 @@ function SWEP:Deploy()
         return
     end
 
+    -- Remove me shall I interfere
+    if CLIENT then
+        if ArcCW.LastWeapon != self then
+            self:LoadPreset("autosave")
+        end
+
+        ArcCW.LastWeapon = self
+    end
+
     self:InitTimers()
 
     self.FullyHolstered = false
