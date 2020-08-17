@@ -15,6 +15,28 @@ function SWEP:ChangeFiremode(pred)
        fmi = 1
     end
 
+    local altsafety = SERVER and (self:GetOwner():GetInfo("arccw_altsafety") == "1") or CLIENT and (GetConVar("arccw_altsafety"):GetBool())
+    if altsafety and !self:GetOwner():KeyDown(IN_WALK) and fmt[fmi] and fmt[fmi].Mode == 0 then
+        -- Skip safety when walk key is not down
+        fmi = (fmi + 1 > table.Count(fmt)) and 1 or (fmi + 1)
+    elseif altsafety and self:GetOwner():KeyDown(IN_WALK) then
+        if fmt[lastfmi] and fmt[lastfmi].Mode == 0 then
+            -- Find the first non-safety firemode
+            local nonsafe_fmi = nil
+            for i, fm in pairs(fmt) do
+                if fm.Mode != 0 then nonsafe_fmi = i break end
+            end
+            fmi = nonsafe_fmi or fmi
+        else
+            -- Find the safety firemode
+            local safety_fmi = nil
+            for i, fm in pairs(fmt) do
+                if fm.Mode == 0 then safety_fmi = i break end
+            end
+            fmi = safety_fmi or fmi
+        end
+    end
+
     if !fmt[fmi] then fmi = 1 end
 
     self:SetNWInt("firemode", fmi)

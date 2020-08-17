@@ -39,8 +39,9 @@ ArcCW.PhraseTable = {
 
         -- ArcCW_Options_Client
         ["arccw.cvar.toggleads"] = "Toggle Aim",
-        ["arccw.cvar.altfcgkey"] = "E+R To Toggle firemode (Disables +ZOOM)",
+        ["arccw.cvar.altfcgkey"] = "E+R To Toggle Firemode (Disables +ZOOM)",
         ["arccw.cvar.altubglkey"] = "E+RMB To Toggle UBGL (Disables 2x +ZOOM)",
+        ["arccw.cvar.altsafety"] = "Hold Walk to Toggle Safety",
         ["arccw.cvar.autosave"] = "Autosave Attachments",
         ["arccw.cvar.autosave.desc"] = "Attempt to re-equip the last equipped set of attachments on weapon pickup.",
         ["arccw.cvar.cheapscopes"] = "Cheap Scopes",
