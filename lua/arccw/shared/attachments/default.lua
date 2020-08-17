@@ -129,6 +129,9 @@ att.UBGL_ClipSize = 1
 att.UBGL_Ammo = "smg1_grenade"
 att.UBGL_RPM = 300
 
+-- Use animations on the weapon itself, useful for weapon-specific UBGL
+att.UBGL_BaseAnims = false
+
 -- wep: weapon
 -- ubgl: UBGL attachment slot.
 att.UBGL_Fire = function(wep, ubgl) end

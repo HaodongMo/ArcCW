@@ -13,10 +13,10 @@ function SWEP:SelectUBGL()
         end
     end
 
-    if self.Animations.enter_ubgl_empty and self:Clip2() == 0 then
+    if self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.enter_ubgl_empty and self:Clip2() == 0 then
         self:PlayAnimation("enter_ubgl_empty", 1, false, 0, true)
         self:SetNextSecondaryFire(CurTime() + self.Animations.enter_ubgl_empty.Time)
-    elseif self.Animations.enter_ubgl then
+    elseif self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.enter_ubgl then
         self:PlayAnimation("enter_ubgl", 1, false, 0, true)
         self:SetNextSecondaryFire(CurTime() + self.Animations.enter_ubgl.Time)
     end
@@ -35,9 +35,9 @@ function SWEP:DeselectUBGL()
         end
     end
 
-    if self.Animations.exit_ubgl_empty and self:Clip2() == 0 then
+    if self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.exit_ubgl_empty and self:Clip2() == 0 then
         self:PlayAnimation("exit_ubgl_empty", 1, false, 0, true)
-    elseif self.Animations.exit_ubgl then
+    elseif self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.exit_ubgl then
         self:PlayAnimation("exit_ubgl", 1, false, 0, true)
     end
 end

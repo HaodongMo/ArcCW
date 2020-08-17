@@ -251,9 +251,10 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             end
 
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
-            if self:GetNWBool("ubgl") and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
+            if self:GetBuff_Override("UBGL_BaseAnims") and self:GetNWBool("ubgl") 
+                    and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
                 ianim = "idle_ubgl_empty"
-            elseif self:GetNWBool("ubgl") and self.Animations.idle_ubgl then
+            elseif self:GetBuff_Override("UBGL_BaseAnims") and self:GetNWBool("ubgl") and self.Animations.idle_ubgl then
                 ianim = "idle_ubgl"
             elseif (self:Clip1() == 0 or self:GetNWBool("cycle")) and self.Animations.idle_empty then
                 ianim = ianim or "idle_empty"
