@@ -300,6 +300,7 @@ function ArcCW_Options_Server( CPanel )
     CPanel:AddControl("Slider", {Label = "#arccw.cvar.limityear", Command = "arccw_limityear", Min = 1800, Max = 2100, Type = "int" })
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.override_crosshair_off", Command = "arccw_override_crosshair_off" })
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.override_deploychambered", Command = "arccw_override_deploychambered" })
+    CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.override_barrellength", Command = "arccw_override_nearwall" })
 end
 
 language.Add("arccw.crosshair.tfa", "TFA")
