@@ -148,6 +148,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.limityear_enable"] = "Enable Year Limit",
         ["arccw.cvar.limityear"] = "Year Limit",
         ["arccw.cvar.override_crosshair_off"] = "Force Disable Crosshair",
+        ["arccw.cvar.override_deploychambered"] = "Deploy with Rounds Chambered",
 
         -- TTT Menus
         ["arccw.cvar.attinv_loseondie.help"] = "If enabled, players lose attachment on death and round end.",

@@ -864,7 +864,7 @@ end
 
 function SWEP:AdjustAtts()
     if SERVER then
-        local cs = self:GetChamberSize()
+        local cs = self:GetChamberSize() * GetConVar("arccw_override_deploychambered"):GetInt()
 
         if self:Clip1() > self:GetCapacity() + cs then
             local diff = self:Clip1() - (self:GetCapacity() + cs)
