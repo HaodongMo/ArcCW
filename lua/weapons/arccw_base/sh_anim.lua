@@ -217,7 +217,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if key != "idle" then
         self:SetTimer(ttime, function()
             local ianim
-            if self:GetState() == ArcCW.STATE_SPRINT and self.Animations.idle_sprint then
+            local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
+            if self:GetState() == ArcCW.STATE_SPRINT and self.Animations.idle_sprint and !s then
                 if self:Clip1() == 0 and self.Animations.idle_sprint_empty then
                     ianim = "idle_sprint_empty"
                 else
