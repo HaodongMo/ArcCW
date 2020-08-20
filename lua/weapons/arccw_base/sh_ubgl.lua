@@ -23,6 +23,7 @@ function SWEP:SelectUBGL()
 end
 
 function SWEP:DeselectUBGL()
+    if !self:GetNWBool("ubgl", false) then return end
     self:SetNWBool("ubgl", false)
     self:EmitSound(self.ExitUBGLSound)
 

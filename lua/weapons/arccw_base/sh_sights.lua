@@ -24,7 +24,7 @@ function SWEP:EnterSprint()
         self:SetNextPrimaryFire(CurTime() + self:GetSightTime())
     end
 
-    if self.Animations.enter_sprint then
+    if self.Animations.enter_sprint and !s then
         self:PlayAnimation("enter_sprint", self:GetSightTime())
     end
 end
@@ -51,7 +51,7 @@ function SWEP:ExitSprint()
         self:EnterSights()
     end
 
-    if self.Animations.exit_sprint then
+    if self.Animations.exit_sprint and !s then
         self:PlayAnimation("exit_sprint", self:GetSightTime())
     end
 end

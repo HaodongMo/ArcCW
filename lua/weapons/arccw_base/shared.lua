@@ -554,36 +554,40 @@ function SWEP:IsProne()
 end
 
 function SWEP:BarrelHitWall()
-    local offset = self.BarrelOffsetHip
+    if GetConVar("arccw_override_nearwall"):GetBool() then
+        local offset = self.BarrelOffsetHip
 
-    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
-        return 0 -- Never block barrel in VR
-    end
+        if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+            return 0 -- Never block barrel in VR
+        end
 
-    if self:GetState() == ArcCW.STATE_SIGHTS then
-        offset = self.BarrelOffsetSighted
-    end
+        if self:GetState() == ArcCW.STATE_SIGHTS then
+            offset = self.BarrelOffsetSighted
+        end
 
-    local dir = self:GetOwner():EyeAngles()
-    local src = self:GetOwner():EyePos()
+        local dir = self:GetOwner():EyeAngles()
+        local src = self:GetOwner():EyePos()
 
-    src = src + dir:Right() * offset[1]
-    src = src + dir:Forward() * offset[2]
-    src = src + dir:Up() * offset[3]
+        src = src + dir:Right() * offset[1]
+        src = src + dir:Forward() * offset[2]
+        src = src + dir:Up() * offset[3]
 
-    local mask = MASK_SOLID
+        local mask = MASK_SOLID
 
-    local tr = util.TraceLine({
-        start = src,
-        endpos = src + (dir:Forward() * (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength"))),
-        filter = {self:GetOwner()},
-        mask = mask
-    })
+        local tr = util.TraceLine({
+            start = src,
+            endpos = src + (dir:Forward() * (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength"))),
+            filter = {self:GetOwner()},
+            mask = mask
+        })
 
-    if tr.Hit then
-        local l = (tr.HitPos - src):Length()
-        l = l
-        return 1 - math.Clamp(l / (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength")), 0, 1)
+        if tr.Hit then
+            local l = (tr.HitPos - src):Length()
+            l = l
+            return 1 - math.Clamp(l / (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength")), 0, 1)
+        else
+            return 0
+        end
     else
         return 0
     end
