@@ -20,12 +20,12 @@ function SWEP:EnterSprint()
 
     local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
 
-    if !s and self:GetNextPrimaryFire() <= (CurTime() + self:GetSightTime()) then
-        self:SetNextPrimaryFire(CurTime() + self:GetSightTime())
+    if !s and self:GetNextPrimaryFire() <= CurTime() then
+        self:SetNextPrimaryFire(CurTime())
     end
 
     if self.Animations.enter_sprint and !s then
-        self:PlayAnimation("enter_sprint", self:GetSightTime())
+        self:PlayAnimation("enter_sprint")
     end
 end
 
@@ -43,8 +43,8 @@ function SWEP:ExitSprint()
 
     local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
 
-    if !s and self:GetNextPrimaryFire() <= (CurTime() + self:GetSightTime()) then
-        self:SetNextPrimaryFire(CurTime() + self:GetSightTime())
+    if !s and self:GetNextPrimaryFire() <= CurTime() then
+        self:SetNextPrimaryFire(CurTime())
     end
 
     if self:GetOwner():KeyDown(IN_ATTACK2) then
@@ -52,7 +52,7 @@ function SWEP:ExitSprint()
     end
 
     if self.Animations.exit_sprint and !s then
-        self:PlayAnimation("exit_sprint", self:GetSightTime())
+        self:PlayAnimation("exit_sprint")
     end
 end
 
