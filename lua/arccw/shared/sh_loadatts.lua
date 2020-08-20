@@ -2,7 +2,7 @@ ArcCW = ArcCW or {}
 ArcCW.AttachmentTable = {}
 ArcCW.AttachmentIDTable = {}
 ArcCW.AttachmentSlotTable = {}
-ArcCW.AttachmentBlacklistTable = nil
+ArcCW.AttachmentBlacklistTable = {}
 ArcCW.NumAttachments = 1
 ArcCW.GenerateAttEntities = true
 
