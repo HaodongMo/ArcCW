@@ -251,6 +251,14 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 end
             end
 
+            if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+                if self:Clip1() == 0 and self.Animations.idle_inspect_empty then
+                    ianim = "idle_inspect_empty"
+                else
+                    ianim = "idle_inspect"
+                end
+            end
+
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
             if self:GetBuff_Override("UBGL_BaseAnims") and self:GetNWBool("ubgl") 
                     and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
