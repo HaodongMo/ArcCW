@@ -10,7 +10,7 @@ function SWEP:ToggleCustomizeHUD(ic)
         self:ExitSights()
         self:SetShouldHoldType()
         self:ExitBipod()
-        self:PlayAnimation("inspect_enter", nil, true, nil, nil, true, false)
+        self:PlayAnimation("enter_inspect", nil, true, nil, nil, true, false)
         if CLIENT then
             self:OpenCustomizeHUD()
         end
@@ -19,7 +19,7 @@ function SWEP:ToggleCustomizeHUD(ic)
         self.Sighted = false
         self.Sprinted = false
         self:SetShouldHoldType()
-        self:PlayAnimation("inspect_exit", nil, true, nil, nil, true, false)
+        self:PlayAnimation("exit_inspect", nil, true, nil, nil, true, false)
         if CLIENT then
             self:CloseCustomizeHUD()
             self:SendAllDetails()
