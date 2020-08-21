@@ -92,6 +92,7 @@ function SWEP:ExitSights()
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
     local asight = self:GetActiveSights()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
+    if self.LockSightsInReload and self:GetNWBool("reloading") then return end
 
     --print("yeah yeah beebis")
 

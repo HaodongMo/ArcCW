@@ -111,7 +111,7 @@ function SWEP:GetViewModelPosition(pos, ang)
             target.ang = target.ang + Angle(0, -5, 0)
         end
 
-    elseif (sprinted and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint)) or (self:GetCurrentFiremode().Mode == 0) then
+    elseif (sprinted and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint)) then
         target = {
             pos = Vector(),
             ang = Angle(),
@@ -120,11 +120,32 @@ function SWEP:GetViewModelPosition(pos, ang)
             bob = GetConVar("arccw_vm_bob_sprint"):GetInt(),
         }
 
-        target.pos:Set(self.HolsterPos)
+        target.pos:Set(self.SprintPos or self.HolsterPos)
 
         target.pos = target.pos + Vector(vm_right, vm_forward, vm_up)
 
-        target.ang:Set(self.HolsterAng)
+        target.ang:Set(self.SprintAng or self.HolsterAng)
+
+        if ang.p < -15 then
+            target.ang.p = target.ang.p + ang.p + 15
+        end
+
+        target.ang.p = math.Clamp(target.ang.p, -80, 80)
+
+    elseif self:GetCurrentFiremode().Mode == 0 then
+        target = {
+            pos = Vector(),
+            ang = Angle(),
+            down = 1,
+            sway = GetConVar("arccw_vm_sway_sprint"):GetInt(),
+            bob = GetConVar("arccw_vm_bob_sprint"):GetInt(),
+        }
+
+        target.pos:Set(self.HolsterPos or self.SprintPos)
+
+        target.pos = target.pos + Vector(vm_right, vm_forward, vm_up)
+
+        target.ang:Set(self.HolsterAng or self.SprintAng)
 
         if ang.p < -15 then
             target.ang.p = target.ang.p + ang.p + 15
