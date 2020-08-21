@@ -710,8 +710,8 @@ function SWEP:CreateCustomizeHUD()
             atts[0] = ""
 
             table.sort(atts, function(a, b)
-                a = a.att
-                b = b.att
+                a = a.att or ""
+                b = b.att or ""
                 local atttbl_a = ArcCW.AttachmentTable[a]
                 local atttbl_b = ArcCW.AttachmentTable[b]
 
@@ -722,7 +722,7 @@ function SWEP:CreateCustomizeHUD()
                 order_b = atttbl_b.SortOrder or order_b
 
                 if order_a == order_b then
-                    return (translate("name." .. a) or atttbl_a.PrintName) > (translate("name." .. b) or atttbl_b.PrintName)
+                    return (translate("name." .. a) or atttbl_a.PrintName or "") > (translate("name." .. b) or atttbl_b.PrintName or "")
                 end
 
                 return order_a > order_b
