@@ -227,6 +227,9 @@ SWEP.CrouchAng = nil
 SWEP.HolsterPos = Vector(0.532, -6, 0)
 SWEP.HolsterAng = Angle(-4.633, 36.881, 0)
 
+SWEP.SprintPos = nil
+SWEP.SprintAng = nil
+
 SWEP.BarrelOffsetSighted = Vector(0, 0, 0)
 SWEP.BarrelOffsetHip = Vector(3, 0, -3)
 
