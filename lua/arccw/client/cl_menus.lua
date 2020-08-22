@@ -46,6 +46,14 @@ function ArcCW_Options_Client( CPanel )
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.altsafety", Command = "arccw_altsafety" })
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.autosave", Command = "arccw_autosave" })
     CPanel:AddControl("Header", {Description = "#arccw.cvar.autosave.desc"})
+
+    
+    CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.embracetradition", Command = "arccw_hud_embracetradition" })
+    CPanel:AddControl("Header", {Description = "#arccw.cvar.embracetradition.desc"})
+
+
+
+
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.cheapscopes", Command = "arccw_cheapscopes" })
     CPanel:AddControl("Header", {Description = "#arccw.cvar.cheapscopes.desc"})
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.glare", Command = "arccw_glare" })
