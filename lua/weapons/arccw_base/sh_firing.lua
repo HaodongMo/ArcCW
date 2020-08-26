@@ -282,7 +282,7 @@ function SWEP:PrimaryAttack()
         self:GetOwner():DoAnimationEvent(self:GetBuff_Override("Override_AnimShoot") or self.AnimShoot)
 
         local svol = self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")
-        local spitch = self.ShootPitch * math.Rand(0.95, 1.05) * self:GetBuff_Mult("Mult_ShootPitch")
+        local spitch = self.ShootPitch * math.Rand(1 - self.ShootPitchVariation, 1 + self.ShootPitchVariation) * self:GetBuff_Mult("Mult_ShootPitch")
 
         svol = math.Clamp(svol, 51, 149)
         spitch = math.Clamp(spitch, 51, 149)
