@@ -104,9 +104,9 @@ function SWEP:Reload()
         self:SetTimer(self:GetAnimKeyTime(anim) * mult,
         function()
             self:SetNWBool("reloading", false)
-            if self:GetOwner():KeyDown(IN_ATTACK2) then
-                self:EnterSights()
-            end
+            -- if self:GetOwner():KeyDown(IN_ATTACK2) then
+            --     self:EnterSights()
+            -- end
         end)
         self.CheckpointAnimation = anim
         self.CheckpointTime = 0
