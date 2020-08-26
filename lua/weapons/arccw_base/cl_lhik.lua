@@ -249,6 +249,6 @@ function SWEP:DoLHIK()
         new[2] = cf_deltapos[1]
         new[3] = cf_deltapos[3]
 
-        self.ViewModel_Hit = LerpVector(0.25, self.ViewModel_Hit, new / cf)
+        self.ViewModel_Hit = LerpVector(0.25, self.ViewModel_Hit, new / cf):GetNormalized()
     end
 end

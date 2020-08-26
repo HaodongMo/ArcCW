@@ -273,9 +273,9 @@ function SWEP:GetViewModelPosition(pos, ang)
         nap[2] = self.ViewModel_Hit[2]
         nap[3] = self.ViewModel_Hit[3]
 
-        nap[1] = math.Clamp(nap[1], -1, 1)
-        nap[2] = math.Clamp(nap[2], -1, 1)
-        nap[3] = math.Clamp(nap[3], -1, 1)
+        nap[1] = math.Clamp(nap[2], -1, 1) * 2
+        -- nap[2] = math.Clamp(nap[2], -1, 1)
+        nap[3] = math.Clamp(nap[1], -1, 1) * 2
 
         target.pos = target.pos + nap
 
@@ -286,11 +286,11 @@ function SWEP:GetViewModelPosition(pos, ang)
             naa[2] = self.ViewModel_Hit[2]
             naa[3] = self.ViewModel_Hit[3]
 
-            naa[1] = math.Clamp(naa[1], -1, 1)
-            naa[2] = math.Clamp(naa[2], -1, 1)
-            naa[3] = math.Clamp(naa[3], -1, 1)
+            naa[1] = math.Clamp(naa[1], -1, 1) * -5
+            naa[2] = math.Clamp(naa[2], -1, 1) * -2
+            naa[3] = math.Clamp(naa[3], -1, 1) * 12.5
 
-            target.ang = target.ang + (naa * 10)
+            target.ang = target.ang + naa
         end
 
         local nvmh = Vector(0, 0, 0)
