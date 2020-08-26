@@ -113,7 +113,7 @@ function SWEP:PrimaryAttack()
         local btabl = {
             Attacker = self:GetOwner(),
             Damage = 0,
-            Force = 5 / num,
+            Force = 1 / num,
             Distance = 33000,
             Num = num,
             Tracer = self:GetBuff_Override("Override_TracerNum") or self.TracerNum,

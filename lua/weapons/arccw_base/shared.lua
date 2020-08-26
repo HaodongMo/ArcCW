@@ -133,6 +133,7 @@ SWEP.DistantShootSound = nil
 SWEP.ShootSoundSilenced = "weapons/arccw/m4a1/m4a1-1.wav"
 SWEP.FiremodeSound = "weapons/arccw/firemode.wav"
 SWEP.MeleeSwingSound = "weapons/arccw/m249/m249_draw.wav"
+SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
 SWEP.MeleeHitSound = "weapons/arccw/knife/knife_hitwall1.wav"
 SWEP.MeleeHitNPCSound = "physics/body/body_medium_break2.wav"
 SWEP.EnterBipodSound = "weapons/arccw/m249/m249_coverdown.wav"
@@ -226,6 +227,9 @@ SWEP.CrouchAng = nil
 
 SWEP.HolsterPos = Vector(0.532, -6, 0)
 SWEP.HolsterAng = Angle(-4.633, 36.881, 0)
+
+SWEP.SprintPos = nil
+SWEP.SprintAng = nil
 
 SWEP.BarrelOffsetSighted = Vector(0, 0, 0)
 SWEP.BarrelOffsetHip = Vector(3, 0, -3)
@@ -396,7 +400,8 @@ SWEP.Animations = {
     -- ["draw"] = {
     --     RestoreAmmo = 1, -- only used by shotgun empty insert reload
     --     Source = "deploy",
-    --     RareSource = "", -- 1/100 chance of playing this animation instead
+    --     RareSource = "", -- 1/RareSourceChance of playing this animation instead
+    --     RareSourceChance = 100 -- Chance the rapper
     --     Time = 0.5,
     --     TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2, -- third person animation to play when this animation is played
     --     TPAnimStartTime = 0, -- when to start it from

@@ -669,7 +669,11 @@ function SWEP:CreateCustomizeHUD()
         if k.Integral then continue end
 
         local attcatb = attcats:Add("DButton")
-        attcatb:SetSize(barsize, buttonsize / 2)
+        if GetConVar("arccw_hud_embracetradition"):GetBool() then
+            attcatb:SetSize(barsize, buttonsize )
+        else
+            attcatb:SetSize(barsize, buttonsize / 2)
+        end
         attcatb:SetText("")
         attcatb:Dock( TOP )
         attcatb:DockMargin( 0, 0, 0, smallgap )
@@ -1014,15 +1018,62 @@ function SWEP:CreateCustomizeHUD()
                     perc = math.Round(perc)
                     txt = txt .. " (" .. tostring(perc) .. "%)"
                 end
+                if !GetConVar("arccw_hud_embracetradition"):GetBool() then
+                    att_txt = translate("name." .. installed) or atttbl.PrintName
 
-                att_txt = translate("name." .. installed) or atttbl.PrintName
-
-                if atttbl.Icon then
-                    att_icon = atttbl.Icon
-                end
+                    if atttbl.Icon then
+                        att_icon = atttbl.Icon
+                    end
+                end 
             end
 
-            if activeslot == span.AttIndex then
+            if GetConVar("arccw_hud_embracetradition"):GetBool() then
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+                surface.DrawRect(0, 0, w, h / 2)
+                surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
+
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+                surface.DrawRect(0, 0, w, h / 2)
+                surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
+
+                surface.SetTextColor(0, 0, 0)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12_Glow")
+                surface.DrawText(txt)
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12")
+                surface.DrawText(txt)
+
+                if installed then
+                    local atttbl = ArcCW.AttachmentTable[installed]
+
+                    att_txt = translate("name." .. installed) or atttbl.PrintName
+
+                    if atttbl.Icon then
+                        att_icon = atttbl.Icon
+                    end
+                end
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
+                surface.SetFont("ArcCW_12")
+                surface.DrawText(att_txt)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(w - (1.5 * h), 0, linesize, h)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.SetMaterial(att_icon)
+                surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
+            ----------------------------------------------------------------------
+            elseif activeslot == span.AttIndex then
                 span:SetSize(barsize, buttonsize)
 
                 surface.SetDrawColor(Bbg_col)

@@ -48,6 +48,7 @@ CreateClientConVar("arccw_2d3d", "1")
 
 CreateClientConVar("arccw_hud_3dfun", "0")
 CreateClientConVar("arccw_hud_forceshow", "0")
+CreateClientConVar("arccw_hud_embracetradition", 0, true, false, "Use the classic customization HUD.")
 
 CreateClientConVar("arccw_scope_r", "255")
 CreateClientConVar("arccw_scope_g", "0")
