@@ -320,22 +320,22 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     --coolsway
     local coolsway = GetConVar("arccw_vm_coolsway"):GetBool()
-	
-	lookxmult=GetConVar("arccw_vm_lookxmult"):GetFloat()
-	lookymult=GetConVar("arccw_vm_lookymult"):GetFloat()
-	
-	swayxmult=GetConVar("arccw_vm_swayxmult"):GetFloat()
-	swayymult=GetConVar("arccw_vm_swayymult"):GetFloat()
-	swayzmult=GetConVar("arccw_vm_swayzmult"):GetFloat()
-	
+
+    lookxmult = GetConVar("arccw_vm_lookxmult"):GetFloat()
+    lookymult = GetConVar("arccw_vm_lookymult"):GetFloat()
+
+    swayxmult = GetConVar("arccw_vm_swayxmult"):GetFloat()
+    swayymult = GetConVar("arccw_vm_swayymult"):GetFloat()
+    swayzmult = GetConVar("arccw_vm_swayzmult"):GetFloat()
+
     if coolsway then
         eyeangles = self.Owner:EyeAngles()
 
         local sprintmult = (self:InSprint() and 2) or 1
-		local sprintnull = 1 -- (sprintmult == 2 and 0.5) or 1 --Hamper swaying on certain axis while sprinting, so the gun doesn't go all over the place
-		-- it's meant to go everywhere, dummy
+        local sprintnull = 1 -- (sprintmult == 2 and 0.5) or 1 --Hamper swaying on certain axis while sprinting, so the gun doesn't go all over the place
+        -- it's meant to go everywhere, dummy
         local airnull = (self.Owner:OnGround() and 1) or 0.1 --Hamper swaying when not walking on the ground
-		
+
         local bobmodifier = (target.sway / ((self:InSprint() and target.bob) or 2)) --'bob' but it's sway, sprint bob seems to control looking sway
         local vel = math.min( (self.Owner:GetVelocity() * vector_noup):Length() * bobmodifier , 600 )
 
@@ -348,7 +348,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         vel = vel / movespeed
 
-        vel = vel * self.BobMult or 1   
+        vel = vel * self.BobMult or 1
 
         local velmult = math.min(vel / 600 * (actual.bob / 2), 3)
         local swaymult = actual.sway / 2

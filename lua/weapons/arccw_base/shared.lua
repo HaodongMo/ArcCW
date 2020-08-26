@@ -196,6 +196,8 @@ SWEP.HoldtypeNPC = nil
 
 SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 
+SWEP.WeaponCamBone = nil
+
 SWEP.CanBash = true
 SWEP.PrimaryBash = false -- primary attack triggers melee attack
 

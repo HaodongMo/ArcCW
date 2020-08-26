@@ -65,6 +65,14 @@ function SWEP:GetLHIKAnim()
     return self.LHIKAnimation
 end
 
+-- features:
+-- ability to focus on multiple LHIK objects
+-- ability to control LHIK timelines more finely
+function SWEP:DoLHIK2()
+    local delta = 1
+    local lhik_model = nil
+end
+
 function SWEP:DoLHIK()
     local justhide = false
     local lhik_model = nil
