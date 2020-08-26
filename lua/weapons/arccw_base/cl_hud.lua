@@ -59,7 +59,7 @@ function SWEP:DrawHUD()
 
     local bargap = ScreenScale(2)
 
-    if self:CanBipod() then
+    if self:CanBipod() or self:GetNWBool("bipod", false) then
         local txt = "[" .. string.upper(ArcCW:GetBind("+use")) .. "]"
 
         if self:InBipod() then

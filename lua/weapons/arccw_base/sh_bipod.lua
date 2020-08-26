@@ -1,9 +1,9 @@
 function SWEP:InBipod()
     local bip = self:GetNWBool("bipod", false)
 
-    if !self:CanBipod() then
-        self:ExitBipod()
-    end
+    -- if !self:CanBipod() then
+    --     self:ExitBipod()
+    -- end
 
     if self.BipodPos != self:GetOwner():EyePos() then
         self:ExitBipod()
@@ -20,6 +20,8 @@ function SWEP:CanBipod()
     if !(self:GetBuff_Override("Bipod") or self.Bipod_Integral) then return false end
 
     if self.CachedCanBipodTime >= CurTime() then return self.CachedCanBipod end
+
+    -- local bip = self:GetNWBool("bipod", false)
 
     local maxs = Vector(2, 2, 2)
     local mins = Vector(-2, -2, -2)

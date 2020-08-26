@@ -71,7 +71,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     if self:InBipod() then
-        target.pos = target.pos + ((self.BipodAngle - self:GetOwner():EyeAngles()):Right() * -4)
+        target.pos = target.pos + ((self.BipodAngle - self:GetOwner():EyeAngles()):Right() * self.InBipodPos.x)
+        target.pos = target.pos + ((self.BipodAngle - self:GetOwner():EyeAngles()):Forward() * self.InBipodPos.y)
+        target.pos = target.pos + ((self.BipodAngle - self:GetOwner():EyeAngles()):Up() * self.InBipodPos.z)
         target.sway = 0.2
     end
 
@@ -273,9 +275,9 @@ function SWEP:GetViewModelPosition(pos, ang)
         nap[2] = self.ViewModel_Hit[2]
         nap[3] = self.ViewModel_Hit[3]
 
-        nap[1] = math.Clamp(nap[2], -1, 1) * 2
+        nap[1] = math.Clamp(nap[2], -1, 1) * 0.25
         -- nap[2] = math.Clamp(nap[2], -1, 1)
-        nap[3] = math.Clamp(nap[1], -1, 1) * 2
+        nap[3] = math.Clamp(nap[1], -1, 1) * 1
 
         target.pos = target.pos + nap
 
@@ -286,7 +288,7 @@ function SWEP:GetViewModelPosition(pos, ang)
             naa[2] = self.ViewModel_Hit[2]
             naa[3] = self.ViewModel_Hit[3]
 
-            naa[1] = math.Clamp(naa[1], -1, 1) * -5
+            naa[1] = math.Clamp(naa[1], -1, 1) * 5
             naa[2] = math.Clamp(naa[2], -1, 1) * -2
             naa[3] = math.Clamp(naa[3], -1, 1) * 12.5
 
@@ -385,6 +387,10 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     speed = 1 / self:GetSightTime() * speed * ft
+
+    -- if self:GetNWBool("bipod", false) then
+    --     speed = speed * 10
+    -- end
 
     actual.pos = LerpVector(speed, actual.pos, target.pos)
     actual.ang = LerpAngle(speed, actual.ang, target.ang)
