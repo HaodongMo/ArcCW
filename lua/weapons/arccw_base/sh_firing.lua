@@ -37,7 +37,8 @@ function SWEP:PrimaryAttack()
 
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
 
-    math.randomseed(self:GetOwner():GetCurrentCommand():CommandNumber() + (self:EntIndex() % 30241))
+    --math.randomseed(self:GetOwner():GetCurrentCommand():CommandNumber() + (self:EntIndex() % 30241))
+    -- a great fight
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
 

@@ -4,7 +4,9 @@ function SWEP:Reload()
     end
 
     if self:GetNextPrimaryFire() >= CurTime() then return end
-    if self:GetNextSecondaryFire() > CurTime() then return end
+    --if self:GetNextSecondaryFire() > CurTime() then return end
+        -- don't succumb to
+                -- californication
 
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
