@@ -46,6 +46,8 @@ function SWEP:DrawHUD()
 
     -- info panel
 
+    self:GetBuff_Hook("Hook_DrawHUD")
+
     local col1 = Color(0, 0, 0, 100)
     local col2 = Color(255, 255, 255, 255)
     local col3 = Color(255, 0, 0, 255)
