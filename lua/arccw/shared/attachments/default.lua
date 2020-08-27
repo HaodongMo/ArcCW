@@ -206,6 +206,9 @@ att.Hook_PostFireBullets = function(wep) end
 -- return true to prevent fire
 att.Hook_ShouldNotFire = function(wep) end
 
+-- return true to prevent ads
+att.Hook_ShouldNotSight = function(wep) end
+
 -- return anything to select this reload animation. Bear in mind that not all guns have the same animations, so check first.
 att.Hook_SelectReloadAnimation = function(wep, curanim) end
 
