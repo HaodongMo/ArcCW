@@ -71,7 +71,7 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
     mult = 1 / mult
     startfrom = startfrom or 0
 
-    self:KillTimer("soundtable")
+    --self:KillTimer("soundtable")
     for k, v in pairs(soundtable) do
 
         if !v.t then continue end
