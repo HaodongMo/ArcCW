@@ -244,10 +244,11 @@ function SWEP:DoLHIK()
 
     if !cf_deltapos:IsZero() and cf > 0 and self:GetBuff_Override("LHIK_Animation") then
         local new = Vector(0, 0, 0)
+        local viewmult = self:GetBuff_Override("LHIK_MovementMult") or 1
 
-        new[1] = cf_deltapos[2]
-        new[2] = cf_deltapos[1]
-        new[3] = cf_deltapos[3]
+        new[1] = cf_deltapos[2] * viewmult
+        new[2] = cf_deltapos[1] * viewmult
+        new[3] = cf_deltapos[3] * viewmult
 
         self.ViewModel_Hit = LerpVector(0.25, self.ViewModel_Hit, new / cf):GetNormalized()
     end

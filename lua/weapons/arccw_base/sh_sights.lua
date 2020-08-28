@@ -153,6 +153,7 @@ SWEP.SightMagnifications = {}
 
 function SWEP:SetupActiveSights()
     if !self.IronSightStruct then return end
+    if self:GetBuff_Hook("Hook_ShouldNotSight") then return false end
 
     if !self:GetOwner():IsPlayer() then return end
 

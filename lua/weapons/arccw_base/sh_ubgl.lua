@@ -54,19 +54,21 @@ function SWEP:RecoilUBGL()
     end
 
     local amt = self:GetBuff_Override("UBGL_Recoil")
+    local amtside = self:GetBuff_Override("UBGL_RecoilSide") or (self:GetBuff_Override("UBGL_Recoil") * 0.5)
+    local amtrise = self:GetBuff_Override("UBGL_RecoilRise") or 1
 
     local r = math.Rand(-1, 1)
     local ru = math.Rand(0.75, 1.25)
 
     local m = 1 * amt
-    local rs = 1 * amt * 0.1
+    local rs = 1 * amtside
     local vsm = 1
 
     local vpa = Angle(0, 0, 0)
 
     vpa = vpa + (Angle(1, 0, 0) * amt * m * vsm)
 
-    vpa = vpa + (Angle(0, 1, 0) * r * amt * m * vsm)
+    vpa = vpa + (Angle(0, 1, 0) * r * amtside * m * vsm)
 
     if CLIENT then
         self:OurViewPunch(vpa)
@@ -77,21 +79,22 @@ function SWEP:RecoilUBGL()
     if CLIENT or game.SinglePlayer() then
 
         self.RecoilAmount = self.RecoilAmount + (amt * m)
-        self.RecoilAmountSide = self.RecoilAmountSide + (r * amt * m * rs)
+        self.RecoilAmountSide = self.RecoilAmountSide + (r * amtside * m * rs)
 
-        self.RecoilPunchBack = amt * 1 * m
+        self.RecoilPunchBack = amt * 2.5 * m
 
         if self.MaxRecoilBlowback > 0 then
             self.RecoilPunchBack = math.Clamp(self.RecoilPunchBack, 0, self.MaxRecoilBlowback)
         end
 
-        self.RecoilPunchSide = rs * rs * m * 0.1 * vsm
-        self.RecoilPunchUp = ru * amt * m * 0.3 * vsm
+        self.RecoilPunchSide = r * rs * m * 0.1 * vsm
+        self.RecoilPunchUp = math.Clamp(ru * amt * m * 0.6 * vsm * amtrise, 0, 0.1)
     end
 end
 
 function SWEP:ShootUBGL()
     if self:GetNextSecondaryFire() > CurTime() then return end
+    if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return false end
 
     self.Primary.Automatic = self:GetBuff_Override("UBGL_Automatic")
 
