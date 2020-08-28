@@ -142,8 +142,14 @@ function SWEP:CreateCustomizeHUD()
 
     ArcCW.InvHUD = vgui.Create("DFrame")
 
+            local scrwmult = GetConVar("arccw_hud_deadzone_x"):GetFloat() * ScrW()
+            local scrhmult = GetConVar("arccw_hud_deadzone_y"):GetFloat() * ScrH()
+
+    scrw, scrh = scrw - scrwmult, scrh - scrhmult
+
     ArcCW.InvHUD:SetPos(0, 0)
     ArcCW.InvHUD:SetSize(scrw, scrh)
+    ArcCW.InvHUD:Center()
     ArcCW.InvHUD:SetText("")
     ArcCW.InvHUD:SetTitle("")
     ArcCW.InvHUD.Paint = function(span)

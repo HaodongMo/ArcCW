@@ -35,6 +35,10 @@ function ArcCW_Options_HUD( CPanel )
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.attinv_onlyinspect", Command = "arccw_attinv_onlyinspect" })
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.attinv_simpleproscons", Command = "arccw_attinv_simpleproscons" })
     CPanel:AddControl("Checkbox", {Label = "#arccw.cvar.attinv_closeonhurt", Command = "arccw_attinv_closeonhurt" })
+
+    CPanel:AddControl("Header", {Description = ""})
+    CPanel:AddControl("Slider", {Label = "#arccw.cvar.hudpos_deadzone_x", Command = "arccw_hud_deadzone_x", Min = 0, Max = 1, Type = "float" })
+    CPanel:AddControl("Slider", {Label = "#arccw.cvar.hudpos_deadzone_y", Command = "arccw_hud_deadzone_y", Min = 0, Max = 1, Type = "float" })
 end
 
 function ArcCW_Options_Client( CPanel )

@@ -36,6 +36,8 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.attinv_onlyinspect"] = "Hide Customization UI",
         ["arccw.cvar.attinv_simpleproscons"] = "Simple Pros And Cons",
         ["arccw.cvar.attinv_closeonhurt"] = "Close menu on damage taken",
+        ["arccw.cvar.hudpos_deadzone_x"] = "Deadzone X",
+        ["arccw.cvar.hudpos_deadzone_y"] = "Deadzone Y",
 
         -- ArcCW_Options_Client
         ["arccw.cvar.toggleads"] = "Toggle Aim",
