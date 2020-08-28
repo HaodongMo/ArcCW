@@ -197,7 +197,7 @@ SWEP.HoldtypeNPC = nil
 
 SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 
-SWEP.WeaponCamBone = nil
+SWEP.GuaranteeLaser = false -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
 
 SWEP.CanBash = true
 SWEP.PrimaryBash = false -- primary attack triggers melee attack

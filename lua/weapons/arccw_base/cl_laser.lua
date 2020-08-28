@@ -74,6 +74,10 @@ function SWEP:DrawLaser(ls, lsm, lsc, wm)
             delta = math.Approach(delta, 1, RealFrameTime() * 1 / 0.15)
         end
 
+        if self.GuaranteeLaser then
+            delta = 1
+        end
+
         dir = Lerp(delta, eang:Forward(), dir)
     end
 
