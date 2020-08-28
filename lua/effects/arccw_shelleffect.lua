@@ -132,7 +132,6 @@ function EFFECT:Think()
         self:SetRenderFX( kRenderFxFadeFast )
         if (self.SpawnTime + self.ShellTime + 1) <= CurTime() then
             self:Remove()
-            return false
         end
     end
     return true
