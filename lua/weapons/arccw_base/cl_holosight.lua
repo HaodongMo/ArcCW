@@ -1,7 +1,7 @@
 function SWEP:DoHolosight()
 
     -- In VRMod, we draw all holosights all the time
-    if true then -- vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
         for i, asight in pairs(self.SightTable) do
             local aslot = self.Attachments[asight.Slot] or {}
             local atttbl = asight.HolosightData
