@@ -231,6 +231,9 @@ att.Hook_TranslateAnimation = function(wep, anim) end
 -- seq and return can either be string or table
 att.Hook_TranslateSequence = function(wep, seq) end
 
+-- allows any sound to be translated to any other
+att.Hook_TranslateSound = function(wep, soundname) end
+
 att.Hook_LHIK_TranslateAnimation = function(wep, anim) end
 
 -- att.Hook_TranslateAnimation = function(wep, anim)
