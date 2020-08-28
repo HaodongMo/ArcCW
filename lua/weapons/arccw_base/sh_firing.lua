@@ -4,6 +4,11 @@ function SWEP:PrimaryAttack()
         return
     end
 
+    if self:GetNWBool("ubgl") then
+        self:ShootUBGL()
+        return
+    end
+
     if self:GetNextPrimaryFire() >= CurTime() then return end
 
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
@@ -21,10 +26,6 @@ function SWEP:PrimaryAttack()
     if self:BarrelHitWall() > 0 then return end
     if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
-    if self:GetNWBool("ubgl") then
-        self:ShootUBGL()
-        return
-    end
 
     if self:Clip1() <= 0 then self.BurstCount = 0 self:DryFire() return end
     if self:GetNWBool("cycle", false) then return end

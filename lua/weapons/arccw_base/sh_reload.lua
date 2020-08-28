@@ -3,6 +3,12 @@ function SWEP:Reload()
         return
     end
 
+    if self:GetNWBool("ubgl") then
+        if self:GetNextSecondaryFire() > CurTime() then return end
+            self:ReloadUBGL()
+        return
+    end
+
     if self:GetNextPrimaryFire() >= CurTime() then return end
     --if self:GetNextSecondaryFire() > CurTime() then return end
         -- don't succumb to
@@ -12,11 +18,6 @@ function SWEP:Reload()
 
     if self.Throwing then return end
     if self.PrimaryBash then return end
-
-    if self:GetNWBool("ubgl") then
-        self:ReloadUBGL()
-        return
-    end
 
     -- Don't accidently reload when changing firemode
     if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
