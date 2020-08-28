@@ -1,7 +1,7 @@
 
 function SWEP:SelectUBGL()
     self:SetNWBool("ubgl", true)
-    self:EmitSound(self.SelectUBGLSound)
+    self:MyEmitSound(self.SelectUBGLSound)
     self:SetNWInt("firemode", 1)
 
     if CLIENT then
@@ -20,12 +20,14 @@ function SWEP:SelectUBGL()
         self:PlayAnimation("enter_ubgl", 1, false, 0, true)
         self:SetNextSecondaryFire(CurTime() + self.Animations.enter_ubgl.Time)
     end
+
+    self:GetBuff_Hook("Hook_OnSelectUBGL")
 end
 
 function SWEP:DeselectUBGL()
     if !self:GetNWBool("ubgl", false) then return end
     self:SetNWBool("ubgl", false)
-    self:EmitSound(self.ExitUBGLSound)
+    self:MyEmitSound(self.ExitUBGLSound)
 
     if CLIENT then
         if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
@@ -41,6 +43,8 @@ function SWEP:DeselectUBGL()
     elseif self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.exit_ubgl then
         self:PlayAnimation("exit_ubgl", 1, false, 0, true)
     end
+
+    self:GetBuff_Hook("Hook_OnDeselectUBGL")
 end
 
 function SWEP:RecoilUBGL()

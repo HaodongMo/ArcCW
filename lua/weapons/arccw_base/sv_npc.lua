@@ -252,11 +252,11 @@ function SWEP:NPC_Shoot()
 
     if dss then
         -- sound.Play(self.DistantShootSound, self:GetPos(), 149, self.ShootPitch * math.Rand(0.95, 1.05), 1)
-        self:EmitSound(dss, 130, spitch, 0.5, CHAN_BODY)
+        self:MyEmitSound(dss, 130, spitch, 0.5, CHAN_BODY)
     end
 
     if ss then
-        self:EmitSound(ss, svol, spitch, 1, CHAN_WEAPON)
+        self:MyEmitSound(ss, svol, spitch, 1, CHAN_WEAPON)
     end
 
     self:SetClip1(self:Clip1() - 1)

@@ -295,11 +295,11 @@ function SWEP:PrimaryAttack()
 
         if dss then
             -- sound.Play(self.DistantShootSound, self:GetPos(), 149, self.ShootPitch * math.Rand(0.95, 1.05), 1)
-            self:EmitSound(dss, 149, spitch, 0.5, CHAN_WEAPON + 1)
+            self:MyEmitSound(dss, 149, spitch, 0.5, CHAN_WEAPON + 1)
         end
 
         if ss then
-            self:EmitSound(ss, svol, spitch, 1, CHAN_WEAPON)
+            self:MyEmitSound(ss, svol, spitch, 1, CHAN_WEAPON)
         end
 
         if IsFirstTimePredicted() then
@@ -643,7 +643,7 @@ function SWEP:DryFire()
 
     self.Primary.Automatic = false
 
-    self:EmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
+    self:MyEmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
     self:SetNextPrimaryFire(CurTime() + 0.25)
 end
 

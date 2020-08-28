@@ -45,12 +45,12 @@ function SWEP:ChangeFiremode(pred)
         if pred then
             SuppressHostEvents(self:GetOwner())
         end
-        self:EmitSound(self.FiremodeSound, 75, 100, 1, CHAN_ITEM + 2)
+        self:MyEmitSound(self.FiremodeSound, 75, 100, 1, CHAN_ITEM + 2)
         if pred then
             SuppressHostEvents(NULL)
         end
     else
-       self:EmitSound(self.FiremodeSound, 75, 100, 1, CHAN_ITEM + 2)
+       self:MyEmitSound(self.FiremodeSound, 75, 100, 1, CHAN_ITEM + 2)
     end
 
     local a = tostring(lastfmi) .. "_to_" .. tostring(fmi)

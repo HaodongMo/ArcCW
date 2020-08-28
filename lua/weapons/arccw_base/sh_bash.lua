@@ -37,7 +37,7 @@ function SWEP:Bash(melee2)
     else
         self:ProceduralBash()
 
-        self:EmitSound(self.MeleeSwingSound, 75, 100, 1, CHAN_USER_BASE + 1)
+        self:MyEmitSound(self.MeleeSwingSound, 75, 100, 1, CHAN_USER_BASE + 1)
     end
 
     self:GetBuff_Hook("Hook_PreBash")
@@ -117,9 +117,9 @@ function SWEP:MeleeAttack(melee2)
     if !(game.SinglePlayer() and CLIENT) then
         if tr.Hit then
             if tr.Entity:IsNPC() or tr.Entity:IsNextBot() or tr.Entity:IsPlayer() then
-                self:EmitSound(self.MeleeHitNPCSound, 75, 100, 1, CHAN_USER_BASE + 2)
+                self:MyEmitSound(self.MeleeHitNPCSound, 75, 100, 1, CHAN_USER_BASE + 2)
             else
-                self:EmitSound(self.MeleeHitSound, 75, 100, 1, CHAN_USER_BASE + 2)
+                self:MyEmitSound(self.MeleeHitSound, 75, 100, 1, CHAN_USER_BASE + 2)
             end
 
             if tr.MatType == MAT_FLESH or tr.MatType == MAT_ALIENFLESH or tr.MatType == MAT_ANTLION or tr.MatType == MAT_BLOODYFLESH then
@@ -129,7 +129,7 @@ function SWEP:MeleeAttack(melee2)
                 util.Effect("BloodImpact", fx)
             end
         else
-            self:EmitSound(self.MeleeMissSound or "weapons/iceaxe/iceaxe_swing1.wav", 75, 100, 1, CHAN_USER_BASE + 3)
+            self:MyEmitSound(self.MeleeMissSound or "weapons/iceaxe/iceaxe_swing1.wav", 75, 100, 1, CHAN_USER_BASE + 3)
         end
     end
 

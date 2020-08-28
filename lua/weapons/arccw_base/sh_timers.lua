@@ -95,7 +95,7 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
                 timer.Simple(st, function()
                     if !IsValid(self) then return end
                     if !IsValid(self:GetOwner()) then return end
-                    self:EmitSound(v.s, vol, pitch, 1, CHAN_AUTO)
+                    self:MyEmitSound(v.s, vol, pitch, 1, CHAN_AUTO)
                     if v.e then
                         local posang = self:GetAttachment(v.att or self.CaseEffectAttachment)
                         if !posang then return end
@@ -113,7 +113,7 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
                         util.Effect(v.e, fx)
                     end
                     if v.s then
-                        self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
+                        self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
                     end
                 end)
             else
@@ -135,7 +135,7 @@ function SWEP:PlaySoundTable(soundtable, mult, startfrom)
                         util.Effect(v.e, fx)
                     end
                     if v.s then
-                        self:EmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
+                        self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
                     end
                 end, "soundtable")
             end

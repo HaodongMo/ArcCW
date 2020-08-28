@@ -84,7 +84,7 @@ function SWEP:EnterBipod()
         self:PlayAnimation("enter_bipod")
     end
 
-    self:EmitSound(self.EnterBipodSound)
+    self:MyEmitSound(self.EnterBipodSound)
     self:DoLHIKAnimation("enter", 0.5)
 
     self.BipodPos = self:GetOwner():EyePos()
@@ -103,7 +103,7 @@ function SWEP:ExitBipod()
         self:PlayAnimation("exit_bipod")
     end
 
-    self:EmitSound(self.ExitBipodSound)
+    self:MyEmitSound(self.ExitBipodSound)
     self:DoLHIKAnimation("exit", 0.5)
 
     self:SetNextSecondaryFire(CurTime() + 0.075)

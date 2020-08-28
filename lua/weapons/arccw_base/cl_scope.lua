@@ -32,7 +32,7 @@ function SWEP:Scroll(var)
         self.SightMagnifications[irons.Slot or 0] = irons.ScopeMagnification
 
         if old != irons.ScopeMagnification then
-            self:EmitSound(irons.ZoomSound or "", 75, math.Rand(95, 105), 1, CHAN_ITEM)
+            self:MyEmitSound(irons.ZoomSound or "", 75, math.Rand(95, 105), 1, CHAN_ITEM)
         end
 
         -- if !irons.MinZoom then return end
@@ -45,7 +45,7 @@ function SWEP:Scroll(var)
         -- irons.Magnification = math.Clamp(irons.Magnification, irons.MinZoom, irons.MaxZoom)
 
         -- if old != irons.Magnification then
-        --     self:EmitSound(irons.ZoomSound or "", 75, 100, 1, CHAN_ITEM)
+        --     self:MyEmitSound(irons.ZoomSound or "", 75, 100, 1, CHAN_ITEM)
         -- end
     end
 
