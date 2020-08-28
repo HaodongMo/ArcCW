@@ -239,8 +239,8 @@ function SWEP:DrawHUD()
             end
         else
 
-            apan_bg.x = ScrW() - apan_bg.w - airgap
-            apan_bg.y = ScrH() - apan_bg.h - airgap
+            apan_bg.x = ScrW() - apan_bg.w - airgap - ScreenScale( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 )
+            apan_bg.y = ScrH() - apan_bg.h - airgap - ScreenScale( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 )
 
             surface.SetDrawColor(col1)
             surface.DrawRect(apan_bg.x, apan_bg.y, apan_bg.w, apan_bg.h)
@@ -363,9 +363,11 @@ function SWEP:DrawHUD()
             colhp = col3
         end
 
+
+
         local whp = {
-            x = airgap,
-            y = ScrH() - ScreenScale(26) - ScreenScale(16) - airgap,
+            x = airgap + ScreenScale( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
+            y = ScrH() - ScreenScale(26) - ScreenScale(16) - airgap - ScreenScale( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 ),
             font = "ArcCW_26",
             text = "HP: " .. tostring(math.Round(vhp)),
             col = colhp,
@@ -376,8 +378,8 @@ function SWEP:DrawHUD()
 
         if LocalPlayer():Armor() > 0 then
             local war = {
-                x = airgap,
-                y = ScrH() - ScreenScale(16) - airgap,
+                x = airgap + ScreenScale( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
+                y = ScrH() - ScreenScale(16) - airgap - ScreenScale( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 ),
                 font = "ArcCW_16",
                 text = "ARMOR: " .. tostring(math.Round(varmor)),
                 col = col2,
