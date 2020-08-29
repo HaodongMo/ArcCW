@@ -38,9 +38,10 @@ function SWEP:PrimaryAttack()
 
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
 
-    math.randomseed((self:EntIndex() % 30241))
+    math.randomseed(self:GetOwner():GetCurrentCommand():CommandNumber() + (self:EntIndex() % 30241))
             -- yeah fight me but i can call primaryattack from anywhere now bitch
                         -- ..unless you have a better idea
+								-- it wasn't a good idea ok
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
@@ -264,8 +265,10 @@ function SWEP:PrimaryAttack()
             for n = 1, btabl.Num do
                 btabl.Num = 1
                 --btabl.Spread = Vector(0, 0, 0)
-                local ang = dir + AngleRand() * spread / 5
-                btabl.Dir = ang:Forward()
+                if not self:GetBuff_Override("Override_NoRandSpread") then
+                    local ang = dir + AngleRand() * spread / 5
+                    btabl.Dir = ang:Forward()
+                end
                 self:GetOwner():LagCompensation(true)
                 self:GetOwner():FireBullets(btabl)
                 self:GetOwner():LagCompensation(false)
