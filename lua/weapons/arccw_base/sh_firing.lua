@@ -4,6 +4,11 @@ function SWEP:PrimaryAttack()
         return
     end
 
+    if self:GetNWBool("ubgl") then
+        self:ShootUBGL()
+        return
+    end
+
     if self:GetNextPrimaryFire() >= CurTime() then return end
 
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
@@ -21,10 +26,6 @@ function SWEP:PrimaryAttack()
     if self:BarrelHitWall() > 0 then return end
     if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
-    if self:GetNWBool("ubgl") then
-        self:ShootUBGL()
-        return
-    end
 
     if self:Clip1() <= 0 then self.BurstCount = 0 self:DryFire() return end
     if self:GetNWBool("cycle", false) then return end
@@ -37,7 +38,9 @@ function SWEP:PrimaryAttack()
 
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
 
-    math.randomseed(self:GetOwner():GetCurrentCommand():CommandNumber() + (self:EntIndex() % 30241))
+    math.randomseed(util.SharedRandom( self.BurstCount, -1337, 1337, CurTime() ) * (self:EntIndex() % 30241))
+            -- yeah fight me but i can call primaryattack from anywhere now bitch
+                        -- ..unless you have a better idea
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
@@ -261,8 +264,10 @@ function SWEP:PrimaryAttack()
             for n = 1, btabl.Num do
                 btabl.Num = 1
                 --btabl.Spread = Vector(0, 0, 0)
-                local ang = dir + AngleRand() * spread / 5
-                btabl.Dir = ang:Forward()
+                if not self:GetBuff_Override("Override_NoRandSpread") then
+                    local ang = dir + AngleRand() * spread / 5
+                    btabl.Dir = ang:Forward()
+                end
                 self:GetOwner():LagCompensation(true)
                 self:GetOwner():FireBullets(btabl)
                 self:GetOwner():LagCompensation(false)
