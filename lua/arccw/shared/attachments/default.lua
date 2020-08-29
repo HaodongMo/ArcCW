@@ -308,6 +308,8 @@ att.Mult_MuzzleVelocity = 1
 att.Override_ShotgunSpreadPattern = {}
 att.Override_ShotgunSpreadPatternOverrun = {}
 
+att.Override_NoRandSpread = false -- disable (random) spread modification after bullet table override
+
 att.Mult_MeleeTime = 1
 att.Mult_MeleeDamage = 1
 att.Add_MeleeRange = 0
