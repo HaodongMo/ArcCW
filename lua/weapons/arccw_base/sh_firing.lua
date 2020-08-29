@@ -264,10 +264,8 @@ function SWEP:PrimaryAttack()
             for n = 1, btabl.Num do
                 btabl.Num = 1
                 --btabl.Spread = Vector(0, 0, 0)
-                if not self:GetBuff_Override("Override_NoRandSpread") then
-                    local ang = dir + AngleRand() * spread / 5
-                    btabl.Dir = ang:Forward()
-                end
+                local ang = dir + AngleRand() * spread / 5
+                btabl.Dir = ang:Forward()
                 self:GetOwner():LagCompensation(true)
                 self:GetOwner():FireBullets(btabl)
                 self:GetOwner():LagCompensation(false)
