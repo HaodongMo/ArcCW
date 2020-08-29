@@ -38,7 +38,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
 
-    math.randomseed((self:EntIndex() % 30241))
+    math.randomseed(util.SharedRandom( self.BurstCount, -1337, 1337, CurTime() ) * (self:EntIndex() % 30241))
             -- yeah fight me but i can call primaryattack from anywhere now bitch
                         -- ..unless you have a better idea
 
