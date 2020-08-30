@@ -44,6 +44,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.altfcgkey"] = "E+R To Toggle Firemode (Disables +ZOOM)",
         ["arccw.cvar.altubglkey"] = "E+RMB To Toggle UBGL (Disables 2x +ZOOM)",
         ["arccw.cvar.altsafety"] = "Hold Walk to Toggle Safety",
+        ["arccw.cvar.altlaserkey"] = "E+WALK To Toggle Laser (Default WALK+E)",
         ["arccw.cvar.autosave"] = "Autosave Attachments",
         ["arccw.cvar.autosave.desc"] = "Attempt to re-equip the last equipped set of attachments on weapon pickup.",
         ["arccw.cvar.embracetradition"] = "Classic Customization HUD",

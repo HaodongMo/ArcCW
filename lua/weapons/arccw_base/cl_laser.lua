@@ -1,163 +1,143 @@
-function SWEP:DoLaser(wm)
-    wm = wm or false
+local mth        = math
+local m_log10    = mth.log10
+local m_rand     = mth.Rand
+local m_appor    = mth.Approach
+local rnd        = render
+local SetMat     = rnd.SetMaterial
+local DrawBeam   = rnd.DrawBeam
+local DrawSprite = rnd.DrawSprite
+local cam        = cam
+local IgnoreZ    = cam.IgnoreZ
 
-    for i, k in pairs(self.Attachments) do
-        if !k.Installed then continue end
-        local atttbl = ArcCW.AttachmentTable[k.Installed]
+local lasermat = Material("arccw/laser")
+local flaremat = Material("effects/whiteflare")
+local delta    = 1
 
-        if atttbl.Laser then
-            if wm then
-                if !k.WElement then continue end
+function SWEP:DoLaser(model)
+    world = world or false
+
+    if not self:GetNWBool("laserenabled", true) then return end
+
+    for _, k in pairs(self.Attachments) do
+        if not k.Installed then continue end
+
+        local attach = ArcCW.AttachmentTable[k.Installed]
+
+        if attach.Laser then
+            local color = attach.ColorOptionsTable[k.ColorOptionIndex or 1]
+
+            if world then
+                if not k.WElement then continue end
+    
                 cam.Start3D()
-                self:DrawLaser(atttbl, k.WElement.Model, atttbl.ColorOptionsTable[k.ColorOptionIndex or 1], true)
+                    self:DrawLaser(attach, k.WElement.Model, color, true)
                 cam.End3D()
             else
-                if !k.VElement then continue end
-                self:DrawLaser(atttbl, k.VElement.Model, atttbl.ColorOptionsTable[k.ColorOptionIndex or 1])
+                if not k.VElement then continue end
+                self:DrawLaser(attach, k.VElement.Model, color)
             end
         end
     end
 end
 
--- hook.Add("PostDrawEffects", "ArcCW_ScopeLaser", function()
---     -- if !ArcCW.LaserBehavior then return end
+function SWEP:DrawLaser(laser, model, color, world)
+    local owner = self:GetOwner()
+    local behav = ArcCW.LaserBehavior
 
---     -- local wep = LocalPlayer():GetActiveWeapon()
+    if not owner then return end
 
---     -- if !wep.ArcCW then return end
+    if not IsValid(owner) then return end
 
---     -- wep:DoLaser(false)
--- end)
+    if not model then return end
 
-local lasermat = Material("arccw/laser")
-local laserflare = Material("effects/whiteflare")
+    if not IsValid(model) then return end
 
-local delta = 1
+    local att = model:LookupAttachment(laser.LaserBone or "laser")
 
-function SWEP:DrawLaser(ls, lsm, lsc, wm)
-    if !self:GetOwner() then return end
-    if !IsValid(self:GetOwner()) then return end
+    att = att == 0 and model:LookupAttachment("muzzle") or att
 
-    if !lsm then return end
-    if !IsValid(lsm) then return end
+    if att == 0 then return end
 
-    local attid = lsm:LookupAttachment(ls.LaserBone or "laser")
+    local attdata  = model:GetAttachment(att)
+    local pos, ang = attdata.Pos, attdata.Ang
+    local dir      = -ang:Right()
 
-    if attid == 0 then
-        attid = lsm:LookupAttachment("muzzle")
-    end
-
-    if attid == 0 then return end
-
-    local ret = lsm:GetAttachment(attid)
-    local pos = ret.Pos
-    local ang = ret.Ang
-
-    local dir = -ang:Right()
-
-    if wm then
-        if self:GetOwner():IsNPC() then
-            dir = -ang:Right()
-        else
-            dir = self:GetOwner():EyeAngles():Forward()
-        end
+    if world then
+        dir = owner:IsNPC() and (-ang:Right()) or owner:EyeVector()
     else
         ang:RotateAroundAxis(ang:Up(), 90)
 
         dir = ang:Forward()
 
-        local eang = self:GetOwner():EyeAngles() + (self:GetOwner():GetViewPunchAngles() * 0.5)
+        local eyeang = owner:EyeAngles() + (owner:GetViewPunchAngles() * 0.5)
+        local sights = self:GetCurrentFiremode().Mode ~= 0 and not self:GetNWBool("reloading", 0) and not (self:BarrelHitWall() > 0)
 
-        if self:GetCurrentFiremode().Mode != 0 and !self:GetNWBool("reloading", 0) then
-            delta = math.Approach(delta, self:GetSightDelta(), RealFrameTime() * 1 / 0.15)
-        else
-            delta = math.Approach(delta, 1, RealFrameTime() * 1 / 0.15)
+        delta = m_appor(delta, sights and self:GetSightDelta() or 1, RealFrameTime() * 1 / 0.15)
+
+        if self.GuaranteeLaser then delta = 1 end
+
+        dir = Lerp(delta, eyeang:Forward(), dir)
+    end
+
+    local beamdir, tracepos = dir, pos
+
+    beamdir = world and (-ang:Right()) or beamdir
+
+    if behav and not world then
+        local cheap = GetConVar("arccw_cheapscopes"):GetBool()
+        local punch = owner:GetViewPunchAngles()
+
+        ang = EyeAngles() - (punch * (cheap and 0.5 or 1))
+
+        tracepos = EyePos() - Vector(0, 0, 1)
+        pos, dir = tracepos, ang:Forward()
+        beamdir  = dir
+    end
+
+    local dist = 128
+
+    local tl = {}
+    tl.start  = tracepos
+    tl.endpos = tracepos + (dir * 33000)
+    tl.filter = owner
+
+    local tr = util.TraceLine(tl)
+
+    tl.endpos = tracepos + (beamdir * dist)
+
+    local btr = util.TraceLine(tl)
+
+    local hit    = tr.Hit
+    local hitpos = tr.HitPos
+    local solid  = tr.StartSolid
+
+    local strength = laser.LaserStrength or 1
+    local laserpos = solid and tr.StartPos or hitpos
+
+    laserpos = laserpos - (EyeAngles():Forward())
+
+    if solid then return end
+
+    local width = m_rand(0.05, 0.1) * strength
+
+    if not behav or world then
+        if hit then
+            SetMat(lasermat)
+            DrawBeam(pos, btr.HitPos, width, 1, 0, color)
         end
-
-        if self.GuaranteeLaser then
-            delta = 1
-        end
-
-        dir = Lerp(delta, eang:Forward(), dir)
-    end
-
-    local dir2 = dir
-
-    if wm then
-        dir2 = -ang:Right()
-    end
-
-    local tpos = pos
-
-    -- if !wm then
-    --     tpos = EyePos()
-    -- end
-
-    if ArcCW.LaserBehavior and !wm then
-        ang = EyeAngles() - (self:GetOwner():GetViewPunchAngles() * 0.5)
-
-        if GetConVar("arccw_cheapscopes"):GetBool() then
-            ang = EyeAngles() - (self:GetOwner():GetViewPunchAngles())
-        end
-
-        tpos = EyePos() - Vector(0, 0, 1)
-        pos = tpos
-        dir = ang:Forward()
-        dir2 = dir
-    end
-
-    local di = 128
-
-    local tr = util.TraceLine({
-        start = tpos,
-        endpos = tpos + (dir * 40000),
-        filter = self:GetOwner()
-    })
-
-    local btr = util.TraceLine({
-        start = tpos,
-        endpos = tpos + (dir2 * di),
-        filter = self:GetOwner()
-    })
-
-    local hit = tr.HitPos
-    local didhit = tr.Hit
-    local m = ls.LaserStrength or 1
-    local col = lsc
-
-    if tr.StartSolid then
-        hit = tr.StartPos
-    end
-
-    hit = hit - (EyeAngles():Forward() * 1.5)
-
-    -- local hte = (hit - EyePos()):Length()
-    -- local htl = (pos - EyePos()):Length()
-
-    if tr.StartSolid then return end
-
-    local width = math.Rand(0.05, 0.1) * m
-
-    if !ArcCW.LaserBehavior or wm then
-        render.SetMaterial(lasermat)
-        render.DrawBeam(pos, btr.HitPos, width, 1, 0, col)
     else
-        cam.IgnoreZ(true)
+        IgnoreZ(true)
     end
 
-    if didhit then
-        local sd = (tr.HitPos - EyePos()):Length()
-        local mult = math.log10(sd) * m
+    if hit and not tr.HitSky then
+        local mul = m_log10((tr.HitPos - EyePos()):Length()) * strength
+        local rad = m_rand(4, 6) * mul
+        local glr = rad * m_rand(0.2, 0.3)
 
-        render.SetMaterial(laserflare)
-        local r1 = math.Rand(4, 6) * mult
-        local r2 = math.Rand(4, 6) * mult
-
-        render.DrawSprite(hit, r1, r2, col)
-        render.DrawSprite(hit, r1 * 0.25, r2 * 0.25, Color(255, 255, 255))
+        SetMat(flaremat)
+        DrawSprite(laserpos, rad, rad, color)
+        DrawSprite(laserpos, glr, glr, color_white)
     end
 
-    if ArcCW.LaserBehavior and !wm then
-        cam.IgnoreZ(false)
-    end
+    if behav and not world then IgnoreZ(false) end
 end
