@@ -80,7 +80,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end
 
     if isnumber(anim.ShellEjectAt) then
-        self:SetTimer(anim.ShellEjectAt, function()
+        self:SetTimer(anim.ShellEjectAt * mult, function()
             self:DoShellEject()
         end)
     end
