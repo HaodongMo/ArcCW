@@ -44,7 +44,7 @@ function SWEP:PrimaryAttack()
     end
 
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
-
+  
     m_derand(util.SharedRandom(self.BurstCount, -1337, 1337, CurTime()) * (self:EntIndex() % 30241))
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
