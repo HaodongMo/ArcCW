@@ -72,7 +72,7 @@ function SWEP:DrawLaser(laser, model, color, world)
         local eyeang = owner:EyeAngles() + (owner:GetViewPunchAngles() * 0.5)
         local sights = self:GetCurrentFiremode().Mode ~= 0 and not self:GetNWBool("reloading", 0) and not (self:BarrelHitWall() > 0)
 
-        delta = m_appor(delta, sights and self:GetSightDelta() or 1, RealFrameTime() * 1 / 0.15)
+        delta = m_appor(delta, sights and self:GetSightDelta() or 1, 0)
 
         if self.GuaranteeLaser then delta = 1 end
 
