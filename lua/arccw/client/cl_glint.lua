@@ -1,66 +1,54 @@
+local rnd        = render
+local r_lightcol = rnd.GetLightColor
+
 local glintmat = Material("effects/blueflare1")
 
 hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
-    local e = player.GetAll()
+    local players = player.GetAll()
 
     cam.Start3D()
+        for _, ply in pairs(players) do
+            if not IsValid(ply) then continue end
+    
+            if ply == LocalPlayer() and not ply:ShouldDrawLocalPlayer() then continue end
+    
+            local wep = ply:GetActiveWeapon()
 
-    for _, ply in pairs(e) do
-        if !IsValid(ply) then continue end
-        if ply == LocalPlayer() and !ply:ShouldDrawLocalPlayer() then continue end
+            if not (IsValid(wep) and wep.ArcCW) then continue end
+    
+            if not wep:GetBuff_Override("ScopeGlint") then continue end
 
-        local wpn = ply:GetActiveWeapon()
+            local vec = (ply:EyePos() - EyePos()):GetNormalized()
+            local dot = vec:Dot(-ply:EyeAngles():Forward())
 
-        if !IsValid(wpn) then continue end
+            dot = (dot * dot * 1.75) - 0.75
+            dot = dot * (0.5 + (1 - wep:GetSightDelta()) * 0.5)
 
-        if !wpn.ArcCW then continue end
+            if dot < 0 then continue end
+    
+            local pos = ply:EyePos() + (ply:EyeAngles():Forward() * 16) + (ply:EyeAngles():Right() * 8)
 
-        if !wpn:GetBuff_Override("ScopeGlint") then continue end
+            local _, scope_i = wep:GetBuff_Override("ScopeGlint")
 
-        local v1 = (ply:EyePos() - EyePos()):GetNormalized()
-        local v2 = -ply:EyeAngles():Forward()
+            if scope_i then
+                local world = (wep.Attachments[scope_i].WElement or {}).Model
 
-        local d = v1:Dot(v2)
+                if world and IsValid(world) then
+                    local att = world:LookupAttachment("holosight") or world:LookupAttachment("scope")
 
-        d = (d * d * 1.75) - 0.75
-
-        -- Factor in sight size (-50% when not zoomed in at all)
-        d = d * (0.5 + (1 - wpn:GetSightDelta()) * 0.5)
-
-        if d < 0 then continue end
-
-        local pos = ply:EyePos() + (ply:EyeAngles():Forward() * 16) + (ply:EyeAngles():Right() * 8)
-
-        local _, scope_i = wpn:GetBuff_Override("ScopeGlint")
-
-        if scope_i then
-            local wme = (wpn.Attachments[scope_i].WElement or {}).Model
-
-            if wme and IsValid(wme) then
-                local att = wme:LookupAttachment("holosight")
-
-                if !att then
-                    att = wme:LookupAttachment("scope")
-                end
-
-                if att then
-                    pos = wme:GetAttachment(att).Pos
+                    if att then pos = world:GetAttachment(att).Pos end
                 end
             end
+
+            local lcolpos = r_lightcol(pos):Length()
+            local lcoleye = r_lightcol(EyePos()):Length()
+
+            local mag       = wep:GetBuff_Mult("Mult_GlintMagnitude") or 1
+            local intensity = math.min(0.2 + (lcolpos + lcoleye) / 2 * 1, 1) * mag
+            local col       = 255 * intensity
+
+            rnd.SetMaterial(glintmat)
+            rnd.DrawSprite(pos, 96 * dot, 96 * dot, Color(col, col, col))
         end
-
-        -- Also check the player's view so snipers can't hide in a dark spot
-        -- After all, glint is caused by reflection
-        local lightcol = render.GetLightColor(pos):Length()
-        local lightcol2 = render.GetLightColor(EyePos()):Length()
-
-        -- There is some grace because natural light isn't always at max
-        local mag = wpn:GetBuff_Mult("Mult_GlintMagnitude") or 1
-        local intensity = math.min(0.2 + (lightcol + lightcol2) / 2 * 1, 1) * mag
-
-        render.SetMaterial(glintmat)
-        render.DrawSprite(pos, 96 * d, 96 * d, Color(255 * intensity, 255 * intensity, 255 * intensity))
-    end
-
     cam.End3D()
 end)
