@@ -49,8 +49,8 @@ end
 
 local function ArcCW_SendBlacklist(ply)
     if SERVER then
-        if !ArcCW.AttachmentBlacklistTable then
-            -- Only load if there is no table yet
+        -- Only load if table is empty, bruh
+        if table.IsEmpty(ArcCW.AttachmentBlacklistTable) then
             ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
             print("Loaded " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " blacklisted ArcCW attachments.")
         end
