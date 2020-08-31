@@ -104,9 +104,9 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
     elseif bind == "inv" then
         local state = wep:GetState() ~= ArcCW.STATE_CUSTOMIZE
 
-        wep:ToggleCustomizeHUD(state)
-
         SendNet("arccw_togglecustomize", state)
+
+        wep:ToggleCustomizeHUD(state)
 
         block = true
     elseif bind == "ubgl" then
