@@ -338,8 +338,8 @@ function SWEP:DoPrimaryAnim()
 
     -- Needs testing
     if inbipod then
-        anim = (empty and iron and bipodem) and "fire_bipod_iron_empty" or (iron and bipodem) and "fire_bipod_iron_empty"
-                or (empty and ironem) and "fire_iron_empty" or fireir and "fire_iron" or "fire"
+        anim = (empty and iron and bipodem) and "fire_bipod_iron_empty" or (empty and bipodem) and "fire_bipod_iron_empty"
+                or (empty and iron and ironem) and "fire_iron_empty" or (iron and fireir) and "fire_iron" or "fire"
     elseif iron then
         anim = (empty and ironem) and "fire_iron_empty" or fireir and "fire_iron" or "fire"
     else
@@ -403,11 +403,11 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
 
             curr_ent = ptrent
 
-            local ptrhp = ptr.HitPos
+            local ptrhp  = ptr.HitPos
             local dist   = (ptrhp - tr.StartPos):Length() * ArcCW.HUToM
             local pdelta = penleft / (self.Penetration * self:GetBuff_Mult("Mult_Penetration"))
-            local dmg    = DamageInfo()
 
+            local dmg = DamageInfo()
             dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
             dmg:SetDamage(self:GetDamage(dist, true) * pdelta)
             dmg:SetDamagePosition(ptrhp)
@@ -527,10 +527,11 @@ function SWEP:GetShotgunSpreadOffset(num)
         end
     end
 
-    rotate = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", {
-        num = num,
-        ang = rotate
-    }).ang
+    local rotate = {}
+    rotate.num = num
+    rotate.ang = rotate
+
+    rotate = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", rotate).ang
 
     return rotate or Angle()
 end

@@ -182,6 +182,8 @@ function SWEP:Initialize()
     self:SetState(0)
     self:SetClip2(0)
 
+    self:SetNWBool("laserenabled", true) -- J
+
     self.Attachments["BaseClass"] = nil
 
     if GetConVar("arccw_mult_defaultclip"):GetInt() < 0 then
