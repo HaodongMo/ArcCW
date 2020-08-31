@@ -415,6 +415,7 @@ function SWEP:CreateCustomizeHUD()
             if activeslot then
                 local delta = attslider:GetSlideX()
                 if lastslidepos != delta and lastsoundtime <= CurTime() then
+
                     EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
 
                     lastsoundtime = CurTime() + 0.05
