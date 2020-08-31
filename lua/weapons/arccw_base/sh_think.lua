@@ -1,17 +1,19 @@
 if CLIENT then
+    ArcCW.LastWeapon = nil
 
-ArcCW.LastWeapon = nil
-local lastfiremode = 0
-
+    local lastfiremode = 0
 end
 
 local lastUBGL = 0
+
 function SWEP:Think()
-    if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then return end
+    local owner = self:GetOwner()
 
-    local vm = self:GetOwner():GetViewModel()
+    if !IsValid(owner) or owner:IsNPC() then return end
 
-    if self:GetOwner():KeyPressed(IN_ATTACK) then
+    local vm = owner:GetViewModel()
+
+    if owner:KeyPressed(IN_ATTACK) then
         self:SetNWBool("reqend", true)
     end
 
@@ -26,8 +28,8 @@ function SWEP:Think()
     self:InBipod()
 
     if self:GetNWBool("cycle", false) and !self:GetNWBool("reloading", false) and
-            (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !self:GetOwner():KeyDown(IN_ATTACK))
-            or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 and self:GetOwner():KeyDown(IN_ATTACK) or self:GetOwner():KeyPressed(IN_ATTACK))) then
+            (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
+            or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 and owner:KeyDown(IN_ATTACK) or owner:KeyPressed(IN_ATTACK))) then
         local anim = "cycle"
         if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.cycle_iron then
             anim = "cycle_iron"
@@ -38,7 +40,7 @@ function SWEP:Think()
         self:SetNWBool("cycle", false)
     end
 
-    if self:GetNWBool("grenadeprimed") and !self:GetOwner():KeyDown(IN_ATTACK) then
+    if self:GetNWBool("grenadeprimed") and !owner:KeyDown(IN_ATTACK) then
         self:Throw()
     end
 
@@ -50,7 +52,7 @@ function SWEP:Think()
         end
     end
 
-    if self:GetOwner():KeyReleased(IN_USE) then
+    if owner:KeyReleased(IN_USE) then
         if self:InBipod() then
             self:ExitBipod()
         else
@@ -69,7 +71,7 @@ function SWEP:Think()
         end
     end
 
-    if self:GetOwner():KeyReleased(IN_ATTACK) then
+    if owner:KeyReleased(IN_ATTACK) then
         if !self:GetCurrentFiremode().RunawayBurst then
             self.BurstCount = 0
         end
@@ -89,7 +91,16 @@ function SWEP:Think()
         self:ExitSprint()
     end
 
-    if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyPressed(IN_RELOAD) and self:GetOwner():KeyDown(IN_USE) then
+    -- That seems a good way to do such things
+    local altlaser = owner:GetInfoNum("arccw_altlaserkey", 0) == 1
+    local laserdown, laserpress = altlaser and IN_USE or IN_WALK, altlaser and IN_WALK or IN_USE -- Can't find good alt keys
+   
+    if owner:KeyDown(laserdown) and owner:KeyPressed(laserpress) then
+        self:SetNWBool("laserenabled", not self:GetNWBool("laserenabled", true))
+    end
+    
+
+    if owner:GetInfoNum("arccw_altfcgkey", 0) == 1 and owner:KeyPressed(IN_RELOAD) and owner:KeyDown(IN_USE) then
         if (lastfiremode or 0) + 0.1 < CurTime() then
             lastfiremode = CurTime()
             if CLIENT then
@@ -98,14 +109,14 @@ function SWEP:Think()
                 self:ChangeFiremode()
             end
         end
-    elseif (!(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD))) then
+    elseif (!(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and (self:GetNWBool("reloading", false) or owner:KeyDown(IN_RELOAD))) then
         if !(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and self:GetNWBool("reloading", false) then
             self:ExitSights()
         end
     end
 
-    if self:GetOwner():GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
-        if self:GetOwner():KeyPressed(IN_ATTACK2) and CLIENT then
+    if owner:GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and owner:KeyDown(IN_USE) then
+        if owner:KeyPressed(IN_ATTACK2) and CLIENT then
             if (lastUBGL or 0) + 0.25 > CurTime() then return end
             lastUBGL = CurTime()
             if self:GetNWBool("ubgl") then
@@ -124,14 +135,14 @@ function SWEP:Think()
         end
     elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
         self:ExitSights()
-    elseif self:GetOwner():GetInfoNum("arccw_toggleads", 0) == 0 then
-        if self:GetOwner():KeyPressed(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
+    elseif owner:GetInfoNum("arccw_toggleads", 0) == 0 then
+        if owner:KeyPressed(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
             self:EnterSights()
-        elseif self:GetOwner():KeyReleased(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+        elseif owner:KeyReleased(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
             self:ExitSights()
         end
     else
-        if self:GetOwner():KeyPressed(IN_ATTACK2) then
+        if owner:KeyPressed(IN_ATTACK2) then
             if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
                 self:EnterSights()
             else
@@ -146,7 +157,7 @@ function SWEP:Think()
         --    ft = RealFrameTime()
         -- end
 
-        local newang = self:GetOwner():EyeAngles()
+        local newang = owner:EyeAngles()
         local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
         local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
 
@@ -166,7 +177,7 @@ function SWEP:Think()
         -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
         -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
 
-        self:GetOwner():SetEyeAngles(newang)
+        owner:SetEyeAngles(newang)
 
         local rpb = self.RecoilPunchBack
         local rps = self.RecoilPunchSide
@@ -277,7 +288,7 @@ function SWEP:Think()
 
     if SERVER and self.Throwing and self:Clip1() == 0 and self:Ammo1() > 0 then
         self:SetClip1(1)
-        self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
+        owner:SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
     end
 
     -- self:RefreshBGs()
@@ -291,22 +302,24 @@ function SWEP:Think()
 end
 
 function SWEP:InSprint()
+    local owner = self:GetOwner()
+
     local sm = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
 
     sm = math.Clamp(sm, 0, 1)
 
-    local sprintspeed = self:GetOwner():GetRunSpeed() * sm
-    local walkspeed = self:GetOwner():GetWalkSpeed() * sm
+    local sprintspeed = owner:GetRunSpeed() * sm
+    local walkspeed = owner:GetWalkSpeed() * sm
 
-    local curspeed = self:GetOwner():GetVelocity():Length()
+    local curspeed = owner:GetVelocity():Length()
 
-    if TTT2 and self:GetOwner().isSprinting == true then
-        return (self:GetOwner().sprintProgress or 0) > 0 and self:GetOwner():KeyDown(IN_SPEED) and curspeed > walkspeed and self:GetOwner():OnGround()
+    if TTT2 and owner.isSprinting == true then
+        return (owner.sprintProgress or 0) > 0 and owner:KeyDown(IN_SPEED) and curspeed > walkspeed and owner:OnGround()
     end
 
-    if !self:GetOwner():KeyDown(IN_SPEED) then return false end
+    if !owner:KeyDown(IN_SPEED) then return false end
     if curspeed < Lerp(0.5, walkspeed, sprintspeed) then return false end
-    if !self:GetOwner():OnGround() then return false end
+    if !owner:OnGround() then return false end
 
     return true
 end

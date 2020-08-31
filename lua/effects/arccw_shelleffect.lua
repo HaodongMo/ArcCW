@@ -20,13 +20,13 @@ function EFFECT:Init(data)
     local mdl = LocalPlayer():GetViewModel()
 
     if LocalPlayer():ShouldDrawLocalPlayer() then
-        mdl = ent
+        mdl = ent.WMModel or ent
     end
 
     if !IsValid(ent) then self:Remove() return end
 
     if ent.Owner != LocalPlayer() then
-        mdl = ent
+        mdl = ent.WMModel or ent
     end
 
     if ent.Owner != LocalPlayer() then
