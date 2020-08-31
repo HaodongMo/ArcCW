@@ -66,8 +66,7 @@ function ArcCW:GetProsCons(att)
 
     for i, stat in pairs(ArcCW.AutoStats) do
         if att[i] ~= nil then
-            local k   = att[i]
-            local txt = ""
+            local k, txt = att[i], ""
 
             local str = ArcCW.GetTranslation(stat[1]) or stat[1]
 
@@ -81,6 +80,7 @@ function ArcCW:GetProsCons(att)
                 local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
 
                 txt = simple and "+ " or sign .. tostr(state) .. " "
+                
 
                 tbl_ins(k > 0 and (stat[3] and cons or pros) or (stat[3] and pros or cons), txt .. str)
             elseif stat[2] == "override" and k == true then
