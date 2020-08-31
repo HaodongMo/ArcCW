@@ -401,7 +401,7 @@ end
 
 function SWEP:GetMuzzleDevice(wm)
     local model = self.WM
-    local muzz = self
+    local muzz = self.WMModel or self
 
     if !wm then
         model = self.VM

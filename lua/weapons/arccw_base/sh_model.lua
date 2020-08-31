@@ -156,8 +156,6 @@ function SWEP:SetupModel(wm)
         model:SetNoDraw(ArcCW.NoDraw)
         model:DrawShadow(true)
         model:SetPredictable(false)
-        model:SetParent(self:GetOwner() or self)
-        model:AddEffects(EF_BONEMERGE)
         model.Weapon = self
         model:SetSkin(self.DefaultWMSkin or 0)
         model:SetBodyGroups(self.DefaultWMBodygroups or "")
@@ -165,9 +163,18 @@ function SWEP:SetupModel(wm)
         local element = {}
         element.Model = model
         element.WM = true
-        element.OffsetAng = Angle(0, 0, 0)
         element.IsBaseWM = true
-        element.BoneMerge = true
+
+        if self.WorldModelOffset then
+            element.OffsetAng = self.WorldModelOffset.ang or Angle(0, 0, 0)
+            element.OffsetPos = self.WorldModelOffset.pos or Vector(0, 0, 0)
+            element.BoneMerge = false
+        else
+            model:SetParent(self:GetOwner() or self)
+            model:AddEffects(EF_BONEMERGE)
+            element.BoneMerge = true
+            element.OffsetAng = Angle(0, 0, 0)
+        end
 
         self.WMModel = model
 
