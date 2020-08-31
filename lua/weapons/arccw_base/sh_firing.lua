@@ -283,9 +283,9 @@ function SWEP:PrimaryAttack()
 
     self:DoEffects()
 
-    if distancesound then self:MyEmitSound(distancesound, 149, spitch, 0.5, CHAN_WEAPON + 1) end
+    if distancesound then self:MyEmitSound(distancesound, 149, pitch, 0.5, CHAN_WEAPON + 1) end
 
-    if sound then self:MyEmitSound(sound, volume, spitch, 1, CHAN_WEAPON) end
+    if sound then self:MyEmitSound(sound, volume, pitch, 1, CHAN_WEAPON) end
 
     if IsFirstTimePredicted() then self.BurstCount = self.BurstCount + 1 end
 
