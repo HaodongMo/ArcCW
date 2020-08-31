@@ -27,6 +27,12 @@ SWEP.DefaultWMBodygroups = "00000000"
 SWEP.DefaultSkin = 0
 SWEP.DefaultWMSkin = 0
 
+SWEP.WorldModelOffset = nil
+-- {
+--     pos = Vector(0, 0, 0),
+--     ang = Angle(0, 0, 0)
+-- }
+
 SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.Range = 200 -- in METRES
