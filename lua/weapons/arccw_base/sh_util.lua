@@ -1,11 +1,12 @@
 function SWEP:TableRandom(table)
-	return table[math.random(#table)]
+    return table[math.random(#table)]
 end
 
-function SWEP:MyEmitSound(sound, level, pitch, vol, chan)
-    sound = self:GetBuff_Hook("Hook_TranslateSound", sound) or sound
+function SWEP:MyEmitSound(fsound, level, pitch, vol, chan)
+    -- some retard made this "sound". Fuck you, whoever did that.
+    fsound = self:GetBuff_Hook("Hook_TranslateSound", fsound) or fsound
 
-    if istable(sound) then sound = self:TableRandom(sound) end
+    if istable(fsound) then sound = self:TableRandom(fsound) end
 
-    self:EmitSound(sound, level, pitch, vol, chan or CHAN_AUTO)
+    self:EmitSound(fsound, level, pitch, vol, chan or CHAN_AUTO)
 end

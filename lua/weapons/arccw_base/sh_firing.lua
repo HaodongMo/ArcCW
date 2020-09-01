@@ -49,37 +49,37 @@ function SWEP:PrimaryAttack()
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
-    local sound = self.ShootSound
+    local fsound = self.ShootSound
 
     if self:GetBuff_Override("Silencer") then
-        sound = self.ShootSoundSilenced
+        fsound = self.ShootSoundSilenced
     end
 
     local firstsound = self.FirstShootSound
 
     if self.BurstCount == 0 and firstsound then
-        sound = firstsound
+        fsound = firstsound
 
         local firstsil = self.FirstShootSoundSilenced
 
         if self:GetBuff_Override("Silencer") then
-            sound = firstsil and firstsil or self.ShootSoundSilenced
+            fsound = firstsil and firstsil or self.ShootSoundSilenced
         end
     end
 
     local lastsound = self.LastShootSound
 
     if self:Clip1() == 1 and lastsound then
-        sound = lastsound
+        fsound = lastsound
 
         local lastsil = self.LastShootSoundSilenced
 
         if self:GetBuff_Override("Silencer") then
-            sound = lastsil and lastsil or self.ShootSoundSilenced
+            fsound = lastsil and lastsil or self.ShootSoundSilenced
         end
     end
 
-    sound = self:GetBuff_Hook("Hook_GetShootSound", sound)
+    fsound = self:GetBuff_Hook("Hook_GetShootSound", fsound)
 
     local distancesound = self.DistantShootSound
 
@@ -285,7 +285,7 @@ function SWEP:PrimaryAttack()
 
     if distancesound then self:MyEmitSound(distancesound, 149, pitch, 0.5, CHAN_WEAPON + 1) end
 
-    if sound then self:MyEmitSound(sound, volume, pitch, 1, CHAN_WEAPON) end
+    if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
     if IsFirstTimePredicted() then self.BurstCount = self.BurstCount + 1 end
 
