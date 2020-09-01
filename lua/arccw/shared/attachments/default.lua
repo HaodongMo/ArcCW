@@ -166,6 +166,8 @@ att.HolosightConstDist = nil -- constant holosight distance, mainly for scopes w
 att.Colorable = false -- automatically use the player's color option
 att.HolosightColor = Color(255, 255, 255)
 
+att.Override_Ammo = "ar2" -- overrides the ammo type with this one
+
 att.Override_Firemodes = {}
 
 -- all hooks will work when applied to the SWEP table as well

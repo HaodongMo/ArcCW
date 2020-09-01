@@ -687,6 +687,7 @@ function SWEP:Attach(slot, attname, silent)
 
     local atttbl = ArcCW.AttachmentTable[attname]
 
+    if !atttbl then return end
     if !ArcCW:SlotAcceptsAtt(attslot.Slot, self, attname) then return end
     if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
     if !self:PlayerOwnsAtt(attname) then return end

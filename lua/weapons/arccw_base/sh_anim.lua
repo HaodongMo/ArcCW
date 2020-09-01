@@ -119,6 +119,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             self.LHIKTimeline[3] = math.huge
             self.LHIKTimeline[4] = math.huge
         end
+    else
+        self.LHIKTimeline = nil
     end
 
     if anim.LastClip1OutTime then
@@ -127,7 +129,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     local seq = anim.Source
 
-    if anim.RareSource and math.random(1, (anim.RareSourceTime or 100)) <= 1 then
+    if anim.RareSource and math.random(1, anim.RareSourceTime or 100) <= 1 then
         seq = anim.RareSource
     end
 
