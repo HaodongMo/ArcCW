@@ -97,7 +97,7 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
         self:SetTimer(ttime, function()
             DoShell(self, v)
 
-            if SERVER and v.s then
+            if SERVER and v and v.s then
                 net.Start("arccw_networksound")
                 net.WriteTable(v)
                 net.Send(owner)
