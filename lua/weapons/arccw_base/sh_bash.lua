@@ -148,7 +148,7 @@ function SWEP:MeleeAttack(melee2)
 
         dmginfo:SetInflictor(self)
         dmginfo:SetDamage(dmg * relspeed)
-        dmginfo:SetDamageType(self.MeleeDamageType or DMG_CLUB)
+        dmginfo:SetDamageType(self:GetBuff_Override("Override_MeleeDamageType") or self.MeleeDamageType or DMG_CLUB)
 
         dmginfo:SetDamageForce(self:GetOwner():GetRight() * -4912 + self:GetOwner():GetForward() * 9989)
 

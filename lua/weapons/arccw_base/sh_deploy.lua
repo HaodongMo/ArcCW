@@ -4,13 +4,13 @@ function SWEP:Deploy()
     end
 
     -- Remove me shall I interfere
-    if CLIENT then
+    --[[if CLIENT then
         if ArcCW.LastWeapon != self then
             self:LoadPreset("autosave")
         end
 
         ArcCW.LastWeapon = self
-    end
+    end]]
 
     self:InitTimers()
 
@@ -45,13 +45,13 @@ function SWEP:Deploy()
 
             if self.Animations.ready and self.UnReady then
                 self:PlayAnimation("ready", 1, true, 0, true)
-                self.UnReady = false
 
                 self:SetNWBool("reloading", true)
 
                 self:SetTimer(self:GetAnimKeyTime("ready"),
                 function()
                     self:SetNWBool("reloading", false)
+                    self.UnReady = false
                 end)
 
                 prd = self.Animations.ready.ProcDraw
@@ -122,6 +122,15 @@ function SWEP:Initialize()
     if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
         self:CallOnClient("Initialize")
     end
+
+    -- Remove me shall I interfere
+    --[[if CLIENT then
+        if ArcCW.LastWeapon != self then
+            self:LoadPreset("autosave")
+        end
+
+        ArcCW.LastWeapon = self
+    end]]
 
     if CLIENT then
         local class = self:GetClass()
