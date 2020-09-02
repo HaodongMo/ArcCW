@@ -26,3 +26,5 @@ util.AddNetworkString("arccw_blacklist")
 util.AddNetworkString("arccw_sendatthp")
 
 util.AddNetworkString("arccw_ttt_bodyattinfo")
+
+util.AddNetworkString("arccw_networksound")

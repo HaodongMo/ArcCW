@@ -1,19 +1,21 @@
+local tbl     = table
+local tbl_ins = tbl.insert
+
+local tick = 0
+
 function SWEP:InitTimers()
-    self.ActiveTimers = {} -- {{time, callback}}
+    self.ActiveTimers = {} -- { { time, id, func } }
 end
 
 function SWEP:SetTimer(time, callback, id)
-    if !IsFirstTimePredicted() then return end
-    -- if time < 0 then return end
-    id = id or ""
-    table.insert(self.ActiveTimers, {time + UnPredictedCurTime(), id, callback})
+    if not IsFirstTimePredicted() then return end
+
+    tbl_ins(self.ActiveTimers, { time + UnPredictedCurTime(), id or "", callback })
 end
 
 function SWEP:TimerExists(id)
-    for k, v in pairs(self.ActiveTimers) do
-        if v[2] == id then
-            return true
-        end
+    for _, v in pairs(self.ActiveTimers) do
+        if v[2] == id then return true end
     end
 
     return false
@@ -22,10 +24,8 @@ end
 function SWEP:KillTimer(id)
     local keeptimers = {}
 
-    for k, v in pairs(self.ActiveTimers) do
-        if v[2] != id then
-            table.insert(keeptimers, v)
-        end
+    for _, v in pairs(self.ActiveTimers) do
+        if v[2] ~= id then tbl_ins(keeptimers, v) end
     end
 
     self.ActiveTimers = keeptimers
@@ -35,110 +35,84 @@ function SWEP:KillTimers()
     self.ActiveTimers = {}
 end
 
-local tick = 0
-
 function SWEP:ProcessTimers()
-    local ct = UnPredictedCurTime()
+    local keeptimers, UCT = {}, UnPredictedCurTime()
 
-    if CLIENT then
-        if ct == tick then return end
+    if CLIENT and UCT == tick then return end
+
+    if not self.ActiveTimers then self:InitTimers() end
+
+    for _, v in pairs(self.ActiveTimers) do
+        if v[1] <= UCT then v[3]() end
     end
 
-    if !self.ActiveTimers then
-        self:InitTimers()
-    end
-
-    for k, v in pairs(self.ActiveTimers) do
-        if v[1] <= ct then
-            v[3]()
-        end
-    end
-
-    local keeptimers = {}
-
-    for k, v in pairs(self.ActiveTimers) do
-        if v[1] > ct then
-            table.insert(keeptimers, v)
-        end
+    for _, v in pairs(self.ActiveTimers) do
+        if v[1] > UCT then tbl_ins(keeptimers, v) end
     end
 
     self.ActiveTimers = keeptimers
 end
 
-function SWEP:PlaySoundTable(soundtable, mult, startfrom)
-    if CLIENT and game.SinglePlayer() then return end
-    mult = mult or 1
-    mult = 1 / mult
-    startfrom = startfrom or 0
+local function DoShell(wep, data)
+    if data.e then
+        local att = data.att or wep:GetBuff_Override("Override_CaseEffectAttachment") or wep.CaseEffectAttachment or 2
+        local getatt = wep:GetAttachment()
 
-    --self:KillTimer("soundtable")
-    for k, v in pairs(soundtable) do
+        if not getatt then return end
 
-        if !v.t then continue end
+        local pos, ang = getatt.Pos, getatt.Ang
 
-        local pitch = 100
-        local vol = 75
+        local ed = EffectData()
+        ed:SetOrigin(pos)
+        ed:SetAngles(ang)
+        ed:SetAttachment(att)
+        ed:SetScale(1)
+        ed:SetEntity(wep)
+        ed:SetNormal(ang:Forward())
+        ed:SetMagnitude(data.mag or 100)
 
-        if v.p then
-            pitch = v.p
-        end
-
-        if v.v then
-            vol = v.v
-        end
-
-        local st = (v.t * mult) - startfrom
-
-        if isnumber(v.t) then
-            if st < 0 then continue end
-            if self:GetOwner():IsNPC() then
-                timer.Simple(st, function()
-                    if !IsValid(self) then return end
-                    if !IsValid(self:GetOwner()) then return end
-                    self:MyEmitSound(v.s, vol, pitch, 1, CHAN_AUTO)
-                    if v.e then
-                        local posang = self:GetAttachment(v.att or self.CaseEffectAttachment)
-                        if !posang then return end
-                        local pos = posang.Pos
-                        local ang = posang.Ang
-
-                        local fx = EffectData()
-                        fx:SetOrigin(pos)
-                        fx:SetAngles(ang)
-                        fx:SetAttachment(v.att or self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
-                        fx:SetScale(1)
-                        fx:SetEntity(self)
-                        fx:SetNormal(ang:Forward())
-                        fx:SetMagnitude(v.mag or 100)
-                        util.Effect(v.e, fx)
-                    end
-                    if v.s then
-                        self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
-                    end
-                end)
-            else
-                self:SetTimer(st, function()
-                    if v.e then
-                        local posang = self:GetAttachment(v.att or self.CaseEffectAttachment)
-                        if !posang then return end
-                        local pos = posang.Pos
-                        local ang = posang.Ang
-
-                        local fx = EffectData()
-                        fx:SetOrigin(pos)
-                        fx:SetAngles(ang)
-                        fx:SetAttachment(v.att or self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
-                        fx:SetScale(1)
-                        fx:SetEntity(self)
-                        fx:SetNormal(ang:Forward())
-                        fx:SetMagnitude(v.mag or 100)
-                        util.Effect(v.e, fx)
-                    end
-                    if v.s then
-                        self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
-                    end
-                end, "soundtable")
-            end
-        end
+        util.Effect(data.e, ed)
     end
+end
+
+function SWEP:PlaySoundTable(soundtable, mult, start)
+    if CLIENT and game.SinglePlayer() then return end
+
+    local owner = self:GetOwner()
+
+    start = start or 0
+    mult  = 1 / (mult or 1)
+
+    for _, v in pairs(soundtable) do
+        if not v.t then continue end
+
+        local ttime = (v.t * mult) - start
+
+        if not isnumber(v.t) then continue end
+
+        if ttime < 0 then continue end
+
+        if not (IsValid(self) and IsValid(owner)) then continue end
+
+        self:SetTimer(ttime, function()
+            DoShell(self, v)
+
+            if SERVER and v.s then
+                net.Start("arccw_networksound")
+                net.WriteTable(v)
+                net.Send(owner)
+            end
+        end, "soundtable")
+    end
+end
+
+if CLIENT then
+    net.Receive("arccw_networksound", function(len)
+        local wep = LocalPlayer():GetActiveWeapon()
+        local snd = net.ReadTable()
+
+        if not (IsValid(wep) and snd.s) then return end
+
+        wep:MyEmitSound(snd.s, snd.v or 75, snd.p or 100, 1, snd.c or CHAN_AUTO)
+    end)
 end
