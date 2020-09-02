@@ -170,7 +170,7 @@ function SWEP:DrawHUD()
 
                 wammo.col = col2
 
-                if self:Clip1() == 0 then
+                if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
                     wammo.col = col3
                 end
 
@@ -302,7 +302,7 @@ function SWEP:DrawHUD()
 
             wammo.col = col2
 
-            if self:Clip1() == 0 then
+            if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
                 wammo.col = col3
             end
 

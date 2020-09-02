@@ -60,7 +60,7 @@ function SWEP:Deploy()
 
                 self:SetNWBool("reloading", true)
             else
-                if self.Animations.draw_empty and self:Clip1() == 0 then
+                if self.Animations.draw_empty and (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
                 self:PlayAnimation("draw_empty", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
 
                 self:SetNWBool("reloading", true)
@@ -307,7 +307,7 @@ function SWEP:Holster(wep)
                         vm:SetSkin(0)
                     end
 
-                    if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
+                    if self.Disposable and (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 and self:Ammo1() == 0 then
                         self:GetOwner():StripWeapon(self:GetClass())
                     end
                 end

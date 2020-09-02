@@ -49,6 +49,7 @@ SWEP.HullSize = 0 -- HullSize used by FireBullets
 
 SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
+SWEP.Primary.Quake = false -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 50
 SWEP.ReducedClipSize = 10
 

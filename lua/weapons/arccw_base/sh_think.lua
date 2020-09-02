@@ -286,7 +286,7 @@ function SWEP:Think()
         self:DoOurViewPunch()
     end
 
-    if SERVER and self.Throwing and self:Clip1() == 0 and self:Ammo1() > 0 then
+    if SERVER and self.Throwing and (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 and self:Ammo1() > 0 then
         self:SetClip1(1)
         owner:SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
     end

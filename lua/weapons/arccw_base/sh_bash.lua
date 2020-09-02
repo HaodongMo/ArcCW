@@ -17,13 +17,13 @@ function SWEP:Bash(melee2)
     local bashanim = "bash"
 
     if melee2 then
-        if self.Animations.bash2_empty and self:Clip1() == 0 then
+        if self.Animations.bash2_empty and (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
             bashanim = "bash2_empty"
         else
             bashanim = "bash2"
         end
     elseif self.Animations.bash then
-        if self.Animations.bash_empty and self:Clip1() == 0 then
+        if self.Animations.bash_empty and (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
             bashanim = "bash_empty"
         else
             bashanim = "bash"

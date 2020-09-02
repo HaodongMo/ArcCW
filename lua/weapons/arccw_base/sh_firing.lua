@@ -25,7 +25,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetState() == ArcCW.STATE_SPRINT and not (self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
-    if self:Clip1() <= 0 then
+    if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() <= 0) or self:Clip1() <= 0 then
         self.BurstCount = 0
         self:DryFire()
 
@@ -34,7 +34,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetNWBool("cycle", false) then return end
 
-    if (self.BurstCount or 0) >= self:GetBurstLength() then return end
+    if (self.BurstCount or 0) >= self:GetBurstLength() then return end  
 
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
@@ -289,11 +289,15 @@ function SWEP:PrimaryAttack()
 
     if IsFirstTimePredicted() then self.BurstCount = self.BurstCount + 1 end
 
-    self:TakePrimaryAmmo(1) -- add self.PrimaryTakeAmmo or smth
+    if self:Clip1() == -1 or self:GetCapacity() == -1 or self.Primary.ClipSize == -1 then
+        self.Owner:RemoveAmmo(1, self.Primary.Ammo) -- add self.PrimaryTakeAmmo or smth x2
+    else
+        self:TakePrimaryAmmo(1) -- add self.PrimaryTakeAmmo or smth
+    end
 
     self:DoPrimaryAnim()
 
-    if self.ManualAction or self:GetBuff_Override("Override_ManualAction") and not (self.NoLastCycle and self:Clip1() == 0) then
+    if self.ManualAction or self:GetBuff_Override("Override_ManualAction") and not (self.NoLastCycle and (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0) then
         self:SetNWBool("cycle", true)
     end
 
@@ -326,7 +330,6 @@ function SWEP:DoPrimaryAnim()
     local anim = "fire"
 
     local inbipod = self:InBipod()
-    local empty   = self:Clip1() == 0
     local iron    = self:GetState() == ArcCW.STATE_SIGHTS
 
     local bipodem = self.Animations.fire_bipod_empty
@@ -335,6 +338,14 @@ function SWEP:DoPrimaryAnim()
     local ironem  = self.Animations.fire_iron_empty
     local fireir  = self.Animations.fire_iron
     local fireem  = self.Animations.fire_empty
+
+    local empty
+    
+    if (self.Primary.Quake or self:GetBuff_Override("Override_Quake")) then
+        empty = self:Ammo1() == 0
+    else
+        empty = self:Clip1() == 0
+    end
 
     -- Needs testing
     if inbipod then

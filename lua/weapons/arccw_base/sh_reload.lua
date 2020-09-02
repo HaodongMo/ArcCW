@@ -14,6 +14,10 @@ function SWEP:Reload()
         -- don't succumb to
                 -- californication
 
+    if self:Clip1() == -1 or self:GetCapacity() == -1 or self.Primary.ClipSize == -1 then
+        return
+    end
+
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     if self.Throwing then return end
@@ -55,7 +59,7 @@ function SWEP:Reload()
     end
 
     if self.HybridReload or self:GetBuff_Override("Override_HybridReload") then
-        if self:Clip1() == 0 then
+        if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
             shouldshotgunreload = false
         else
             shouldshotgunreload = true
@@ -68,7 +72,7 @@ function SWEP:Reload()
         local anim = "sgreload_start"
         local insertcount = 0
 
-        local empty = (self:Clip1() == 0) or self:GetNWBool("cycle", false)
+        local empty = ((self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0) or self:GetNWBool("cycle", false)
 
         if self.Animations.sgreload_start_empty and empty then
             anim = "sgreload_start_empty"
@@ -97,7 +101,7 @@ function SWEP:Reload()
         -- despite an empty casing being in the chamber, you can load +1 and 
         -- cycle an empty shell afterwards.
         -- No, I am not in the correct mental state to fix this. - 8Z
-        if self:Clip1() == 0 then
+        if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
             self:SetNWBool("cycle", false)
         end
 
@@ -235,7 +239,7 @@ end
 function SWEP:SelectReloadAnimation()
     local ret
 
-    if self.Animations.reload_empty and self:Clip1() == 0 then
+    if self.Animations.reload_empty and (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
         ret = "reload_empty"
     else
         ret = "reload"

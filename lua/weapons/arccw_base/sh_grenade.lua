@@ -1,7 +1,7 @@
 SWEP.GrenadePrimeTime = 0
 
 function SWEP:PreThrow()
-    if self:Clip1() == 0 then
+    if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 then
         if self:Ammo1() == 0 then
             return
         else
@@ -61,7 +61,7 @@ function SWEP:Throw()
 
         self:TakePrimaryAmmo(1)
 
-        if self:Clip1() == 0 and self:Ammo1() >= 1 and !self.Singleton then
+        if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 and self:Ammo1() >= 1 and !self.Singleton then
             self:SetClip1(1)
             self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
         else

@@ -222,7 +222,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             local ianim
             local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
             if self:GetState() == ArcCW.STATE_SPRINT and self.Animations.idle_sprint and !s then
-                if self:Clip1() == 0 and self.Animations.idle_sprint_empty then
+                if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 and self.Animations.idle_sprint_empty then
                     ianim = "idle_sprint_empty"
                 else
                     ianim = "idle_sprint"
@@ -230,7 +230,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             end
 
             if self:InBipod() and self.Animations.idle_bipod then
-                if self:Clip1() == 0 and self.Animations.idle_bipod_empty then
+                if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 and self.Animations.idle_bipod_empty then
                     ianim = "idle_bipod_empty"
                 else
                     ianim = "idle_bipod"
@@ -238,7 +238,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             end
 
             if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) and self.Animations.idle_sight then
-                if self:Clip1() == 0 and self.Animations.idle_sight_empty then
+                if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 and self.Animations.idle_sight_empty then
                     ianim = "idle_sight_empty"
                 else
                     ianim = "idle_sight"
@@ -247,7 +247,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
             -- because you just know SOMEONE is gonna make this mistake
             if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) and self.Animations.idle_sights then
-                if self:Clip1() == 0 and self.Animations.idle_sights_empty then
+                if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 and self.Animations.idle_sights_empty then
                     ianim = "idle_sights_empty"
                 else
                     ianim = "idle_sights"
@@ -255,7 +255,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             end
 
             if self:GetState() == ArcCW.STATE_CUSTOMIZE then
-                if self:Clip1() == 0 and self.Animations.idle_inspect_empty then
+                if (self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 and self.Animations.idle_inspect_empty then
                     ianim = "idle_inspect_empty"
                 else
                     ianim = "idle_inspect"
@@ -268,7 +268,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 ianim = "idle_ubgl_empty"
             elseif self:GetBuff_Override("UBGL_BaseAnims") and self:GetNWBool("ubgl") and self.Animations.idle_ubgl then
                 ianim = "idle_ubgl"
-            elseif (self:Clip1() == 0 or self:GetNWBool("cycle")) and self.Animations.idle_empty then
+            elseif ((self.Primary.Quake or self:GetBuff_Override("Override_Quake") and self:Ammo1() == 0) or self:Clip1() == 0 or self:GetNWBool("cycle")) and self.Animations.idle_empty then
                 ianim = ianim or "idle_empty"
             else
                 ianim = ianim or "idle"
