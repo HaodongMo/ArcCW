@@ -117,7 +117,7 @@ function SWEP:Think()
     end
 
     if owner:GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and owner:KeyDown(IN_USE) then
-        if owner:KeyPressed(IN_ATTACK2) and CLIENT then
+        if owner:KeyDown(IN_ATTACK2) and CLIENT then
             if (lastUBGL or 0) + 0.25 > CurTime() then return end
             lastUBGL = CurTime()
             if self:GetNWBool("ubgl") then
@@ -137,13 +137,13 @@ function SWEP:Think()
     elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
         self:ExitSights()
     elseif owner:GetInfoNum("arccw_toggleads", 0) == 0 then
-        if owner:KeyPressed(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
+        if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
             self:EnterSights()
-        elseif owner:KeyReleased(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+        elseif !owner:KeyDown(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
             self:ExitSights()
         end
     else
-        if owner:KeyPressed(IN_ATTACK2) then
+        if owner:KeyDown(IN_ATTACK2) then
             if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
                 self:EnterSights()
             else

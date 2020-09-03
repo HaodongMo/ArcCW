@@ -558,9 +558,9 @@ function SWEP:DrawCustomModel(wm)
 
         models = self.VM
 
-        if self.HSPElement then
-            self.HSPElement.Model:DrawModel()
-        end
+        -- if self.HSPElement then
+        --     self.HSPElement.Model:DrawModel()
+        -- end
     end
 
     for i, k in pairs(models) do
