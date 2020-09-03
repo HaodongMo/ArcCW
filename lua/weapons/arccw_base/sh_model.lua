@@ -188,6 +188,10 @@ function SWEP:SetupModel(wm)
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
+        if self.AttachmentElements[k.Installed] then
+            self:AddElement(k.Installed, wm)
+        end
+
         if k.InstalledEles then
             for _, ele in pairs(k.InstalledEles or {}) do
                 self:AddElement(ele, wm)
@@ -198,10 +202,6 @@ function SWEP:SetupModel(wm)
 
         for _, ele in pairs(atttbl.ActivateElements or {}) do
             self:AddElement(ele, wm)
-        end
-
-        if self.AttachmentElements[k.Installed] then
-            self:AddElement(k.Installed, wm)
         end
 
         local slots = atttbl.Slot

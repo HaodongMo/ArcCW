@@ -92,13 +92,14 @@ function SWEP:Think()
     end
 
     -- That seems a good way to do such things
-    local altlaser = owner:GetInfoNum("arccw_altlaserkey", 0) == 1
-    local laserdown, laserpress = altlaser and IN_USE or IN_WALK, altlaser and IN_WALK or IN_USE -- Can't find good alt keys
+    -- local altlaser = owner:GetInfoNum("arccw_altlaserkey", 0) == 1
+    -- local laserdown, laserpress = altlaser and IN_USE or IN_WALK, altlaser and IN_WALK or IN_USE -- Can't find good alt keys
    
-    if owner:KeyDown(laserdown) and owner:KeyPressed(laserpress) then
-        self:SetNWBool("laserenabled", not self:GetNWBool("laserenabled", true))
-    end
-    
+    -- if owner:KeyDown(laserdown) and owner:KeyPressed(laserpress) then
+    --     self:SetNWBool("laserenabled", not self:GetNWBool("laserenabled", true))
+    -- end
+
+    -- Yeah, this would be OP unless we can also turn off the laser stats, too.
 
     if owner:GetInfoNum("arccw_altfcgkey", 0) == 1 and owner:KeyPressed(IN_RELOAD) and owner:KeyDown(IN_USE) then
         if (lastfiremode or 0) + 0.1 < CurTime() then
