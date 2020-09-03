@@ -740,7 +740,7 @@ function SWEP:Attach(slot, attname, silent)
         self:SetNWInt("firemode", 1)
     end
 
-    self.UnReady = false
+    --self.UnReady = false
 
     if SERVER then
         self:NetworkWeapon()

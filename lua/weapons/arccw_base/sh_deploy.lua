@@ -3,14 +3,7 @@ function SWEP:Deploy()
         return
     end
 
-    -- Remove me shall I interfere
-    if CLIENT then
-        if ArcCW.LastWeapon != self then
-            self:LoadPreset("autosave")
-        end
-
-        ArcCW.LastWeapon = self
-    end
+    
 
     self:InitTimers()
 
@@ -26,6 +19,15 @@ function SWEP:Deploy()
     self.LHIKAnimation = nil
 
     self.BurstCount = 0
+
+    -- Remove me shall I interfere
+    --[[if CLIENT then
+        if ArcCW.LastWeapon != self then
+            self:LoadPreset("autosave")
+        end
+
+        ArcCW.LastWeapon = self
+    end]]
 
     -- Don't play anim if in vehicle. This can be caused by HL2 level changes
     if !self:GetOwner():InVehicle() then
@@ -122,6 +124,15 @@ function SWEP:Initialize()
     if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
         self:CallOnClient("Initialize")
     end
+
+    -- Remove me shall I interfere
+    --[[if CLIENT then
+        if ArcCW.LastWeapon != self then
+            self:LoadPreset("autosave")
+        end
+
+        ArcCW.LastWeapon = self
+    end]]
 
     if CLIENT then
         local class = self:GetClass()

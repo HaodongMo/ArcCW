@@ -216,6 +216,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
         self:ResetCheckpoints()
     end, key)
+
     if key != "idle" then
         self:SetTimer(ttime, function()
             local ianim

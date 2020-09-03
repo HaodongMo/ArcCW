@@ -13,8 +13,8 @@ local lasermat = Material("arccw/laser")
 local flaremat = Material("effects/whiteflare")
 local delta    = 1
 
-function SWEP:DoLaser(model)
-    world = world or false
+function SWEP:DoLaser(world)
+    local toworld = world or false
 
     if not self:GetNWBool("laserenabled", true) then return end
 
@@ -26,9 +26,9 @@ function SWEP:DoLaser(model)
         if attach.Laser then
             local color = attach.ColorOptionsTable[k.ColorOptionIndex or 1]
 
-            if world then
+            if toworld then
                 if not k.WElement then continue end
-    
+
                 cam.Start3D()
                     self:DrawLaser(attach, k.WElement.Model, color, true)
                 cam.End3D()
@@ -63,14 +63,14 @@ function SWEP:DrawLaser(laser, model, color, world)
     local dir      = -ang:Right()
 
     if world then
-        dir = owner:IsNPC() and (-ang:Right()) or owner:EyeVector()
+        dir = owner:IsNPC() and (-ang:Right()) or dir
     else
         ang:RotateAroundAxis(ang:Up(), 90)
 
         dir = ang:Forward()
 
         local eyeang = owner:EyeAngles() + (owner:GetViewPunchAngles() * 0.5)
-        local sights = self:GetCurrentFiremode().Mode ~= 0 and not self:GetNWBool("reloading", 0) and not (self:BarrelHitWall() > 0)
+        local sights = self:GetCurrentFiremode().Mode ~= 0 and not self:GetNWBool("reloading", 0) and self:BarrelHitWall() <= 0
 
         delta = m_appor(delta, sights and self:GetSightDelta() or 1, 0)
 
@@ -130,7 +130,7 @@ function SWEP:DrawLaser(laser, model, color, world)
     end
 
     if hit and not tr.HitSky then
-        local mul = m_log10((tr.HitPos - EyePos()):Length()) * strength
+        local mul = m_log10((hitpos - EyePos()):Length()) * strength
         local rad = m_rand(4, 6) * mul
         local glr = rad * m_rand(0.2, 0.3)
 
