@@ -126,9 +126,7 @@ function SWEP:Initialize()
     if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
         self:CallOnClient("Initialize")
     end
-	
-	if GetConVar("arccw_override_deploychambered"):GetBool() then self.UnReady = false end
-	
+
     -- Remove me shall I interfere
     --[[if CLIENT then
         if ArcCW.LastWeapon != self then
@@ -187,7 +185,9 @@ function SWEP:Initialize()
             end
         end
     end
-
+	
+	if GetConVar("arccw_override_deploychambered"):GetBool() then self.UnReady = false end
+	
     if GetConVar("arccw_equipmentsingleton"):GetBool() and self.Throwing then
         self.Singleton = true
         self.Primary.ClipSize = -1
