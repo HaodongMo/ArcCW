@@ -44,7 +44,9 @@ function SWEP:Deploy()
             end)
         else
             local prd = false
-
+			
+			
+			
             if self.Animations.ready and self.UnReady then
                 self:PlayAnimation("ready", 1, true, 0, true)
                 self.UnReady = false
@@ -124,7 +126,9 @@ function SWEP:Initialize()
     if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
         self:CallOnClient("Initialize")
     end
-
+	
+	if GetConVar("arccw_override_deploychambered"):GetBool() then self.UnReady = false end
+	
     -- Remove me shall I interfere
     --[[if CLIENT then
         if ArcCW.LastWeapon != self then
