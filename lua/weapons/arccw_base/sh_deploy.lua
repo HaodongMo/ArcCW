@@ -45,8 +45,6 @@ function SWEP:Deploy()
         else
             local prd = false
 			
-			
-			
             if self.Animations.ready and self.UnReady then
                 self:PlayAnimation("ready", 1, true, 0, true)
                 self.UnReady = false
