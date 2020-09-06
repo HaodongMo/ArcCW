@@ -184,6 +184,8 @@ function ArcCW.MakeBlacklistWindow()
         self:GetCanvas():Clear()
 
         for attName, attTbl in SortedPairsByMemberValue(ArcCW.AttachmentTable, "PrintName") do
+            if attTbl.Hidden then continue end
+      
             if filter ~= "" and not string.find((attTbl.PrintName):lower(), filter) then continue end
 
             --if attTbl.Slot == "charm" then continue end why the fuck would you do this

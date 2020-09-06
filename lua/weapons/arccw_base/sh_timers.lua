@@ -57,7 +57,7 @@ local function DoShell(wep, data)
     if not data.e then return end
 
     local att = data.att or wep:GetBuff_Override("Override_CaseEffectAttachment") or wep.CaseEffectAttachment or 2
-    local getatt = wep:GetAttachment()
+    local getatt = wep:GetAttachment(att)
 
     if not getatt then return end
 
