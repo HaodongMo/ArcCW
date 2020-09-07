@@ -62,7 +62,7 @@ local function DoShell(wep, data)
 
     if not att then return end
 
-    local getatt = wep:GetAttachment()
+    local getatt = wep:GetAttachment(att)
 
     if not getatt then return end
 
@@ -97,7 +97,7 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
 
         if ttime < 0 then continue end
 
-        if not (IsValid(self) and IsValid(owner)) then return end
+        if not (IsValid(self) and IsValid(owner)) then continue end
 
         self:SetTimer(ttime, function()
             DoShell(self, v)
