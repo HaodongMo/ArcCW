@@ -1,7 +1,6 @@
 local mth        = math
 local m_log10    = mth.log10
 local m_rand     = mth.Rand
-local m_appor    = mth.Approach
 local rnd        = render
 local SetMat     = rnd.SetMaterial
 local DrawBeam   = rnd.DrawBeam
@@ -69,10 +68,10 @@ function SWEP:DrawLaser(laser, model, color, world)
 
         dir = ang:Forward()
 
-        local eyeang = owner:EyeAngles() + (owner:GetViewPunchAngles() * 0.5)
-        local sights = self:GetCurrentFiremode().Mode ~= 0 and not self:GetNWBool("reloading", 0) and self:BarrelHitWall() <= 0
+        local eyeang   = owner:EyeAngles() + (owner:GetViewPunchAngles() * 0.5)
+        local canlaser = self:GetCurrentFiremode().Mode ~= 0 and not self:GetNWBool("reloading", 0) and self:BarrelHitWall() <= 0
 
-        delta = m_appor(delta, sights and self:GetSightDelta() or 1, 0)
+        delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
 
         if self.GuaranteeLaser then delta = 1 end
 

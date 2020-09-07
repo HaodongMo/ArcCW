@@ -54,10 +54,15 @@ function SWEP:ProcessTimers()
 end
 
 local function DoShell(wep, data)
+    if not (IsValid(wep) and IsValid(wep:GetOwner())) then return end
+
     if not data.e then return end
 
     local att = data.att or wep:GetBuff_Override("Override_CaseEffectAttachment") or wep.CaseEffectAttachment or 2
-    local getatt = wep:GetAttachment(att)
+
+    if not att then return end
+
+    local getatt = wep:GetAttachment()
 
     if not getatt then return end
 
@@ -92,7 +97,7 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
 
         if ttime < 0 then continue end
 
-        if not (IsValid(self) and IsValid(owner)) then continue end
+        if not (IsValid(self) and IsValid(owner)) then return end
 
         self:SetTimer(ttime, function()
             DoShell(self, v)
