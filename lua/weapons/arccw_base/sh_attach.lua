@@ -576,87 +576,93 @@ function SWEP:RefreshBGs()
         self.WMModel:SetSkin(wms)
     end
 
-    for _, e in pairs(self:GetActiveElements()) do
-    local ele = self.AttachmentElements[e]
+    local ae = self:GetActiveElements()
 
-    if !ele then continue end
+    for _, e in pairs(ae) do
+        local ele = self.AttachmentElements[e]
 
-    if ele.VMSkin and vm and IsValid(vm) then
-        vm:SetSkin(ele.VMSkin)
-    end
+        if !ele then continue end
 
-    if self.WMModel and self.WMModel:IsValid() and ele.WMSkin then
-        self.WMModel:SetSkin(ele.WMSkin)
-        self:SetSkin(ele.WMSkin)
-    end
+        if ele.VMSkin and vm and IsValid(vm) then
+            vm:SetSkin(ele.VMSkin)
+        end
 
-    if ele.VMColor and vm and IsValid(vm) then
-        vm:SetColor(ele.VMColor)
-    end
+        if self.WMModel and self.WMModel:IsValid() and ele.WMSkin then
+            self.WMModel:SetSkin(ele.WMSkin)
+            self:SetSkin(ele.WMSkin)
+        end
 
-    if self.WMModel and self.WMModel:IsValid() and ele.WMColor then
-        self.WMModel:SetColor(ele.WMColor)
-        self:SetColor(ele.WMColor)
-    end
+        if ele.VMColor and vm and IsValid(vm) then
+            vm:SetColor(ele.VMColor)
+        end
 
-    if ele.VMMaterial and vm and IsValid(vm) then
-        vm:SetMaterial(ele.VMMaterial)
-    end
+        if self.WMModel and self.WMModel:IsValid() and ele.WMColor then
+            self.WMModel:SetColor(ele.WMColor)
+            self:SetColor(ele.WMColor)
+        end
 
-    if self.WMModel and self.WMModel:IsValid() and ele.WMMaterial then
-        self.WMModel:SetMaterial(ele.WMMaterial)
-        self:SetMaterial(ele.WMMaterial)
-    end
+        if ele.VMMaterial and vm and IsValid(vm) then
+            vm:SetMaterial(ele.VMMaterial)
+        end
 
-    if ele.VMBodygroups then
-        for _, i in pairs(ele.VMBodygroups) do
-            if !i.ind or !i.bg then continue end
+        if self.WMModel and self.WMModel:IsValid() and ele.WMMaterial then
+            self.WMModel:SetMaterial(ele.WMMaterial)
+            self:SetMaterial(ele.WMMaterial)
+        end
 
-            if vm and IsValid(vm) and vm:GetBodygroup(i.ind) != i.bg then
-                vm:SetBodygroup(i.ind, i.bg)
+        if ele.VMBodygroups then
+            for _, i in pairs(ele.VMBodygroups) do
+                if !i.ind or !i.bg then continue end
+
+                if vm and IsValid(vm) and vm:GetBodygroup(i.ind) != i.bg then
+                    vm:SetBodygroup(i.ind, i.bg)
+                end
             end
         end
-    end
 
-    if ele.WMBodygroups then
-        for _, i in pairs(ele.WMBodygroups) do
-            if !i.ind or !i.bg then continue end
+        if ele.WMBodygroups then
+            for _, i in pairs(ele.WMBodygroups) do
+                if !i.ind or !i.bg then continue end
 
-            if self.WMModel and IsValid(self.WMModel) and self.WMModel:GetBodygroup(i.ind) != i.bg then
-                self.WMModel:SetBodygroup(i.ind, i.bg)
+                if self.WMModel and IsValid(self.WMModel) and self.WMModel:GetBodygroup(i.ind) != i.bg then
+                    self.WMModel:SetBodygroup(i.ind, i.bg)
+                end
+
+                if self:GetBodygroup(i.ind) != i.bg then
+                    self:SetBodygroup(i.ind, i.bg)
+                end
             end
+        end
 
-            if self:GetBodygroup(i.ind) != i.bg then
-                self:SetBodygroup(i.ind, i.bg)
+        if ele.VMBoneMods then
+            for bone, i in pairs(ele.VMBoneMods) do
+                local boneind = vm:LookupBone(bone)
+
+                if !boneind then continue end
+
+                vm:ManipulateBonePosition(boneind, i)
             end
         end
-    end
 
-    if ele.VMBoneMods then
-        for bone, i in pairs(ele.VMBoneMods) do
-            local boneind = vm:LookupBone(bone)
+        if ele.WMBoneMods then
+            for bone, i in pairs(ele.WMBoneMods) do
+                if !(self.WMModel and self.WMModel:IsValid()) then break end
+                local boneind = self:LookupBone(bone)
 
-            if !boneind then continue end
+                if !boneind then continue end
 
-            vm:ManipulateBonePosition(boneind, i)
+                self:ManipulateBonePosition(boneind, i)
+            end
+        end
+
+
+
+        if SERVER then
+            self:SetupShields()
         end
     end
 
-    if ele.WMBoneMods then
-        for bone, i in pairs(ele.WMBoneMods) do
-            if !(self.WMModel and self.WMModel:IsValid()) then break end
-            local boneind = self:LookupBone(bone)
-
-            if !boneind then continue end
-
-            self:ManipulateBonePosition(boneind, i)
-        end
-    end
-
-    if SERVER then
-        self:SetupShields()
-    end
-end
+    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae})
 end
 
 function SWEP:Attach(slot, attname, silent)
