@@ -143,7 +143,7 @@ function SWEP:Think()
             self:ExitSights()
         end
     else
-        if owner:KeyDown(IN_ATTACK2) then
+        if owner:KeyPressed(IN_ATTACK2) then
             if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
                 self:EnterSights()
             else
