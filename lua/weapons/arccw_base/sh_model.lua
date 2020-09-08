@@ -15,10 +15,14 @@ function SWEP:AddElement(elementname, wm)
 
     if GetConVar("arccw_truenames"):GetBool() and e.TrueNameChange then
         self.PrintName = e.TrueNameChange
+    elseif GetConVar("arccw_truenames"):GetBool() and e.NameChange then
+        self.PrintName = e.NameChange
     end
 
     if !GetConVar("arccw_truenames"):GetBool() and e.NameChange then
         self.PrintName = e.NameChange
+    elseif !GetConVar("arccw_truenames"):GetBool() and e.TrueNameChange then
+        self.PrintName = e.TrueNameChange
     end
 
     if e.AddPrefix then
