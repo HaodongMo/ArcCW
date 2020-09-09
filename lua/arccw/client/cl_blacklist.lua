@@ -2,8 +2,9 @@ local srf      = surface
 local ScrScale = ScreenScale
 
 local blacklistWindow = nil
-local blacklistTbl = {}
-local filter = ""
+local blacklistTbl    = {}
+local filter          = ""
+local onlyblacklisted = false
 
 local color_arccwbred = Color(150, 50, 50, 255)
 local color_arccwlred = Color(125, 25, 25, 150)
@@ -12,6 +13,29 @@ local color_arccwdtbl = Color(0, 0, 0, 200)
 
 local Scr256, Scr48, Scr36, Scr20    = ScrScale(256), ScrScale(48), ScrScale(36), ScrScale(20)
 local Scr16, Scr12, Scr4, Scr2, Scr1 =  ScrScale(16), ScrScale(12), ScrScale(4), ScrScale(2), ScrScale(1)
+
+local function SaveBlacklist()
+    -- We send ID over instead of strings to save on network costs
+    -- optimization_is_optimization.png
+
+    local blacklistAmt = 0
+
+    for attName, bStatus in pairs(blacklistTbl) do
+        if bStatus then blacklistAmt = blacklistAmt + 1 end
+    end
+
+    net.Start("arccw_blacklist")
+        net.WriteBool(false)
+        net.WriteUInt(blacklistAmt, ArcCW.GetBitNecessity())
+        for attName, bStatus in pairs(blacklistTbl) do
+            if bStatus then
+                net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
+            end
+        end
+    net.SendToServer()
+
+    blacklistTbl = {}
+end
 
 local function CreateAttButton(parent, attName, attTbl)
     local attBtn = vgui.Create("DButton", parent)
@@ -44,17 +68,21 @@ local function CreateAttButton(parent, attName, attTbl)
 
         local txt = attTbl.PrintName
         srf.SetTextColor(Bfg_col)
-        srf.SetTextPos(Scr20, 0)
+        srf.SetTextPos(Scr20, Scr2)
         srf.SetFont("ArcCW_12")
         srf.DrawText(txt)
+
+        local listed   = (blacklistTbl[attName] and not attTbl.Blacklisted)
+        local unlisted = (attTbl.Blacklisted and not blacklistTbl[attName])
+        local saved = (listed or unlisted) and " [not saved]" or ""
+        srf.SetTextColor(Bfg_col)
+        srf.SetTextPos(spaa:GetWide() - Scr36, Scr4)
+        srf.SetFont("ArcCW_8")
+        srf.DrawText(saved)
     end
 
     attBtn.OnMousePressed = function(spaa, kc)
-        if blacklistTbl[attName] == nil then
-            blacklistTbl[attName] = not attTbl.Blacklisted
-        else
-            blacklistTbl[attName] = not blacklistTbl[attName]
-        end
+        blacklistTbl[attName] = not blacklistTbl[attName] and not attTbl.Blacklisted or not blacklistTbl[attName]
     end
 
     return attBtn
@@ -65,8 +93,8 @@ function ArcCW.MakeBlacklistWindow()
 
     blacklistTbl = {}
 
-    blacklistWindow = vgui.Create( "DFrame" )
-    blacklistWindow:SetSize( ScrW() * 0.4, ScrH() * 0.75)
+    blacklistWindow = vgui.Create("DFrame")
+    blacklistWindow:SetSize(ScrW() * 0.5, ScrH() * 0.75)
     blacklistWindow:Center()
     blacklistWindow:SetTitle("")
     blacklistWindow:SetDraggable(false)
@@ -121,6 +149,33 @@ function ArcCW.MakeBlacklistWindow()
     FilterLabel:SetFont("ArcCW_12")
     FilterLabel:SetText("FILTER")
 
+    local FilterButton = vgui.Create("DButton", FilterPanel)
+    FilterButton:SetFont("ArcCW_8")
+    FilterButton:SetText("")
+    FilterButton:SetSize(Scr48, Scr12)
+    FilterButton:Dock(RIGHT)
+    FilterButton:DockMargin(Scr1, 0, 0, 0)
+    FilterButton:SetContentAlignment(5)
+
+    FilterButton.OnMousePressed = function(spaa, kc)
+        onlyblacklisted = not onlyblacklisted
+
+        attList:GenerateButtonsToList()
+    end
+
+    FilterButton.Paint = function(spaa, w, h)
+        local hovered = spaa:IsHovered()
+
+        local Bfg_col = hovered and color_black or color_white
+        local Bbg_col = hovered and color_white or color_arccwdtbl
+
+        srf.SetDrawColor(Bbg_col)
+        srf.DrawRect(0, 0, w, h)
+
+        spaa:SetTextColor(Bfg_col)
+        spaa:SetText(onlyblacklisted and "ALL" or "BLACKLISTED")
+    end
+
     local FilterEntry = vgui.Create("DTextEntry", FilterPanel)
     FilterEntry:Dock(FILL)
     FilterEntry:SetValue(filter)
@@ -139,26 +194,8 @@ function ArcCW.MakeBlacklistWindow()
     accept:SetContentAlignment(5)
 
     accept.OnMousePressed = function(spaa, kc)
-        -- We send ID over instead of strings to save on network costs
-        -- optimization_is_optimization.png
+        SaveBlacklist()
 
-        local blacklistAmt = 0
-
-        for attName, bStatus in pairs(blacklistTbl) do
-            if bStatus then blacklistAmt = blacklistAmt + 1 end
-        end
-
-        net.Start("arccw_blacklist")
-            net.WriteBool(false)
-            net.WriteUInt(blacklistAmt, ArcCW.GetBitNecessity())
-            for attName, bStatus in pairs(blacklistTbl) do
-                if bStatus then
-                    net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
-                end
-            end
-        net.SendToServer()
-
-        blacklistTbl = {}
         blacklistWindow:Close()
         blacklistWindow:Remove()
     end
@@ -173,7 +210,7 @@ function ArcCW.MakeBlacklistWindow()
         srf.DrawRect(0, 0, w, h)
 
         srf.SetTextColor(Bfg_col)
-        srf.SetTextPos(ScreenScale(8), ScreenScale(2))
+        srf.SetTextPos(Scr4, Scr4)
         srf.SetFont("ArcCW_12")
         srf.DrawText("Save")
     end
@@ -185,12 +222,14 @@ function ArcCW.MakeBlacklistWindow()
 
         for attName, attTbl in SortedPairsByMemberValue(ArcCW.AttachmentTable, "PrintName") do
             if attTbl.Hidden then continue end
-      
+
+            if attTbl.Blacklisted then blacklistTbl[attName] = true end
+
+            if onlyblacklisted and not (attTbl.Blacklisted or blacklistTbl[attName]) then continue end
+
             if filter ~= "" and not string.find((attTbl.PrintName):lower(), filter) then continue end
 
             --if attTbl.Slot == "charm" then continue end why the fuck would you do this
-
-            if attTbl.Blacklisted then blacklistTbl[attName] = true end
 
             CreateAttButton(self, attName, attTbl)
         end
