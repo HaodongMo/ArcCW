@@ -913,6 +913,16 @@ function SWEP:AdjustAtts()
         self.Secondary.Ammo = "none"
     end
 
+    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
+
+    fmt["BaseClass"] = nil
+
+    local fmi = self:GetNWInt("firemode", 1)
+
+    if !fmt[fmi] then fmi = 1 end
+
+    self:SetNWInt("firemode", fmi)
+
     local wpn = weapons.Get(self:GetClass())
 
     local ammo = self:GetBuff_Override("Override_Ammo") or wpn.Primary.Ammo
