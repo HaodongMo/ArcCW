@@ -451,7 +451,7 @@ function SWEP:CheckFlags(reject, need)
 end
 
 function SWEP:GetWeaponFlags()
-    local flags = self:GetActiveElements()
+    local flags = table.Copy(self:GetActiveElements())
 
     for _, i in pairs(self.Attachments) do
         if !i.Installed then continue end
