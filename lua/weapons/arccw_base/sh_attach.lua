@@ -392,6 +392,8 @@ function SWEP:GetActiveElements(recache)
         table.insert(eles2, i)
     end
 
+    table.Add(eles2, self:GetWeaponFlags())
+
     ArcCW.Overflow = false
 
     self.ActiveElementCache = eles2
@@ -451,7 +453,7 @@ function SWEP:CheckFlags(reject, need)
 end
 
 function SWEP:GetWeaponFlags()
-    local flags = table.Copy(self:GetActiveElements())
+    local flags = {}
 
     for _, i in pairs(self.Attachments) do
         if !i.Installed then continue end
