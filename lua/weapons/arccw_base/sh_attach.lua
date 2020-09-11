@@ -432,7 +432,7 @@ function SWEP:GetMuzzleDevice(wm)
 end
 
 function SWEP:CheckFlags(reject, need)
-    local flags = self:GetWeaponFlags()
+    local flags = self:GetActiveElements()
 
     reject = reject or {}
     need = need or {}

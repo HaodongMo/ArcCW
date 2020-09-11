@@ -6,8 +6,7 @@ function SWEP:GetSightTime()
 end
 
 function SWEP:EnterSprint()
-    if engine.ActiveGamemode() == "terrortown" and not (TTT2 and self:GetOwner().isSprinting) then return end
-    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+    if engine.ActiveGamemode() == "terrortown" and !(TTT2 and self:GetOwner().isSprinting) then return end
     if self:GetState() == ArcCW.STATE_SPRINT then return end
     self:SetState(ArcCW.STATE_SPRINT)
     self.Sighted = false
@@ -30,7 +29,6 @@ function SWEP:EnterSprint()
 end
 
 function SWEP:ExitSprint()
-    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
     if self:GetState() == ArcCW.STATE_IDLE then return end
     self:SetState(ArcCW.STATE_IDLE)
     self.Sighted = false
@@ -77,19 +75,20 @@ function SWEP:EnterSights()
     -- self.SwayScale = 0.1
     -- self.BobScale = 0.1
 
-    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
-
     self:MyEmitSound(asight.SwitchToSound or "", 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
 
     self.LastEnterSightTime = UnPredictedCurTime()
 
     if self.Animations.enter_sight then
-        self:PlayAnimation("enter_sight", self:GetSightTime(), true, nil, nil, nil, false)
+        if self:Clip1() == 0 and self.Animations.enter_sight_empty then
+            self:PlayAnimation("enter_sight_empty", self:GetSightTime(), true, nil, nil, nil, false)
+        else
+            self:PlayAnimation("enter_sight", self:GetSightTime(), true, nil, nil, nil, false)
+        end
     end
 end
 
 function SWEP:ExitSights()
-    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
     local asight = self:GetActiveSights()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
     if self.LockSightsInReload and self:GetNWBool("reloading") then return end
@@ -116,7 +115,11 @@ function SWEP:ExitSights()
     self.LastExitSightTime = UnPredictedCurTime()
 
     if self.Animations.exit_sight then
-        self:PlayAnimation("exit_sight", self:GetSightTime())
+        if self:Clip1() == 0 and self.Animations.exit_sight_empty then
+            self:PlayAnimation("exit_sight_empty", self:GetSightTime(), true, nil, nil, nil, false)
+        else
+            self:PlayAnimation("exit_sight", self:GetSightTime(), true, nil, nil, nil, false)
+        end
     end
 end
 

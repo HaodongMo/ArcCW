@@ -85,16 +85,18 @@ function SWEP:Think()
         end
     end
 
-    if self:InSprint() and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT) then
-        self:EnterSprint()
-    elseif !self:InSprint() and (self.Sprinted or self:GetState() == ArcCW.STATE_SPRINT) then
-        self:ExitSprint()
+    if game.SinglePlayer() or IsFirstTimePredicted() then
+        if self:InSprint() and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT) then
+            self:EnterSprint()
+        elseif !self:InSprint() and (self.Sprinted or self:GetState() == ArcCW.STATE_SPRINT) then
+            self:ExitSprint()
+        end
     end
 
     -- That seems a good way to do such things
     -- local altlaser = owner:GetInfoNum("arccw_altlaserkey", 0) == 1
     -- local laserdown, laserpress = altlaser and IN_USE or IN_WALK, altlaser and IN_WALK or IN_USE -- Can't find good alt keys
-   
+
     -- if owner:KeyDown(laserdown) and owner:KeyPressed(laserpress) then
     --     self:SetNWBool("laserenabled", not self:GetNWBool("laserenabled", true))
     -- end
@@ -136,20 +138,27 @@ function SWEP:Think()
         end
     elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
         self:ExitSights()
-    elseif owner:GetInfoNum("arccw_toggleads", 0) == 0 then
-        if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
-            self:EnterSights()
-        elseif !owner:KeyDown(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
-            self:ExitSights()
-        end
     else
-        if owner:KeyPressed(IN_ATTACK2) then
-            if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
-                self:EnterSights()
+
+        if game.SinglePlayer() or IsFirstTimePredicted() then
+            -- everything here has to be predicted for the first time
+            if owner:GetInfoNum("arccw_toggleads", 0) == 0 then
+                if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
+                    self:EnterSights()
+                elseif !owner:KeyDown(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+                    self:ExitSights()
+                end
             else
-                self:ExitSights()
+                if owner:KeyDown(IN_ATTACK2) then
+                    if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
+                        self:EnterSights()
+                    else
+                        self:ExitSights()
+                    end
+                end
             end
         end
+
     end
 
     if (CLIENT or game.SinglePlayer()) and (IsFirstTimePredicted() or game.SinglePlayer()) then
