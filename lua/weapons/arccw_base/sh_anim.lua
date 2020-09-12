@@ -129,7 +129,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     local seq = anim.Source
 
-    if anim.RareSource and math.random(1, anim.RareSourceTime or 100) <= 1 then
+    if anim.RareSource and math.random(1, anim.RareSourceChance or 100) <= 1 then
         seq = anim.RareSource
     end
 

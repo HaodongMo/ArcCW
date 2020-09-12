@@ -185,6 +185,10 @@ att.Override_Firemodes = {}
 
 -- all hooks, mults, and adds will work on fire modes
 
+-- allows you to do whatever you like to the weapon VMs
+-- {vm = vm, eles = ae}
+att.Hook_ModifyBodygroups = function(wep, data) end
+
 -- allows you to return a shotgun spread offset
 -- {n = int number, ang = angle offset}
 att.Hook_ShotgunSpreadOffset = function(wep, data) end
