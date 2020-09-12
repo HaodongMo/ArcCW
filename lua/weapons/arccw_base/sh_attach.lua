@@ -392,6 +392,8 @@ function SWEP:GetActiveElements(recache)
         table.insert(eles2, i)
     end
 
+    table.Add(eles2, self:GetWeaponFlags())
+
     ArcCW.Overflow = false
 
     self.ActiveElementCache = eles2
@@ -430,7 +432,7 @@ function SWEP:GetMuzzleDevice(wm)
 end
 
 function SWEP:CheckFlags(reject, need)
-    local flags = self:GetWeaponFlags()
+    local flags = self:GetActiveElements()
 
     reject = reject or {}
     need = need or {}
@@ -451,7 +453,7 @@ function SWEP:CheckFlags(reject, need)
 end
 
 function SWEP:GetWeaponFlags()
-    local flags = self:GetActiveElements()
+    local flags = {}
 
     for _, i in pairs(self.Attachments) do
         if !i.Installed then continue end
@@ -912,6 +914,16 @@ function SWEP:AdjustAtts()
     else
         self.Secondary.Ammo = "none"
     end
+
+    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
+
+    fmt["BaseClass"] = nil
+
+    local fmi = self:GetNWInt("firemode", 1)
+
+    if !fmt[fmi] then fmi = 1 end
+
+    self:SetNWInt("firemode", fmi)
 
     local wpn = weapons.Get(self:GetClass())
 
