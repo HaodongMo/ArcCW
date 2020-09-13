@@ -169,7 +169,7 @@ function SWEP:RestoreAmmo(count)
 
     load = math.Clamp(load, 0, clip + chamber)
 
-    if load <= self:Clip1() then return end
+    -- if load <= self:Clip1() then return end
 
     if SERVER then
         self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
