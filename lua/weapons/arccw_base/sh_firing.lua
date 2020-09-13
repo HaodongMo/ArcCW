@@ -293,7 +293,7 @@ function SWEP:PrimaryAttack()
 
     self:DoPrimaryAnim()
 
-    if self.ManualAction or self:GetBuff_Override("Override_ManualAction") and not (self.NoLastCycle and self:Clip1() == 0) then
+    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and not (self.NoLastCycle and self:Clip1() == 0) then
         self:SetNWBool("cycle", true)
     end
 

@@ -3,8 +3,6 @@ function SWEP:Deploy()
         return
     end
 
-    
-
     self:InitTimers()
 
     self.FullyHolstered = false
@@ -46,7 +44,11 @@ function SWEP:Deploy()
             local prd = false
 
             if self.Animations.ready and self.UnReady then
-                self:PlayAnimation("ready", 1, true, 0, true)
+                if self.Animations.ready_empty and self:Clip1() == 0 then
+                    self:PlayAnimation("ready_empty", 1, true, 0, true)
+                else
+                    self:PlayAnimation("ready", 1, true, 0, true)
+                end
                 self.UnReady = false
 
                 self:SetNWBool("reloading", true)
@@ -93,6 +95,8 @@ function SWEP:Deploy()
 
     if (self.AutoReload or self:GetBuff_Override("Override_AutoReload")) and (self:GetBuff_Override("Override_AutoReload") != false) then
         self:RestoreAmmo()
+    else
+        self:RestoreAmmo(0)
     end
 
     self.LHIKAnimation = nil

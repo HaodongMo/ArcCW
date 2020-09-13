@@ -335,6 +335,7 @@ SWEP.ActiveElementCache = nil
 
 function SWEP:GetActiveElements(recache)
     if self.ActiveElementCache and !recache then return self.ActiveElementCache end
+    if ArcCW.Overflow and self.ActiveElementCache then return self.ActiveElementCache end
 
     local eles = {}
 
@@ -432,7 +433,12 @@ function SWEP:GetMuzzleDevice(wm)
 end
 
 function SWEP:CheckFlags(reject, need)
-    local flags = self:GetActiveElements()
+    local flags
+    if ArcCW.Overflow then
+        flags = {}
+    else
+        flags = self:GetActiveElements()
+    end
 
     reject = reject or {}
     need = need or {}
