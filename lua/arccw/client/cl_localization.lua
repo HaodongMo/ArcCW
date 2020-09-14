@@ -9,6 +9,7 @@ ArcCW.PhraseTable = {
         -- Menus
         ["arccw.menus.hud"]                      = "HUD",
         ["arccw.menus.client"]                   = "Client",
+        ["arccw.menus.viewmodel"]                = "Viewmodel",
         ["arccw.menus.server"]                   = "Server",
         ["arccw.menus.mults"]                    = "Multipliers",
         ["arccw.menus.npcs"]                     = "NPCs",
@@ -50,14 +51,24 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.cheapscopes.desc"]          = "A cheaper PIP scope implementation that is very low quality but saves a significant amount of performance. Can be a little glitchy.",
         ["arccw.cvar.glare"]                     = "Scope Glare",
         ["arccw.cvar.glare.desc"]                = "Glare visible on your scope lens when aiming.",
-        ["arccw.cvar.blur"]                      = "Customization Blur",
-        ["arccw.cvar.blur_toytown"]              = "Aim Blur",
         ["arccw.cvar.shake"]                     = "Screen Shake",
+        ["arccw.cvar.shake_info"]                = "Aggressive snap when you shoot a weapon.",
         ["arccw.cvar.2d3d"]                      = "Floating Help Text",
+        ["arccw.cvar.2d3d_info"]                 = "Text that floats over dropped weapons.",
+
+        -- client options, but performance
+        ["arccw.performance"]                    = "The options below may change performance.",
+        ["arccw.cvar.cheapscopes"]               = "Cheap Scopes",
+        ["arccw.cvar.cheapscopes.desc"]          = "A cheaper PIP scope implementation that is very low quality but saves a significant amount of performance. Scoped weapons will appear to clip into surfaces.\nWill reduce scope quality!",
         ["arccw.cvar.muzzleeffects"]             = "Muzzle Effects (Others Only)",
         ["arccw.cvar.shelleffects"]              = "Case Effects (Others Only)",
         ["arccw.cvar.att_showothers"]            = "Show World Attachments (Others Only)",
         ["arccw.cvar.shelltime"]                 = "Case Lifetime",
+        ["arccw.cvar.blur"]                      = "Customization Blur",
+        ["arccw.cvar.blur_toytown"]              = "Aim Blur",
+
+
+        -- ArcCW_Options_Viewmodel
         ["arccw.cvar.vm_coolsway"]               = "Custom Swaying",
         ["arccw.cvar.vm_coolview"]               = "Custom Camera Movement",
         ["arccw.cvar.vm_right"]                  = "Viewmodel Right",
@@ -66,16 +77,15 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.vm_offsetwarn"]             = "  Warning! Viewmodel offset settings may cause clipping or other undesired effects!",
         ["arccw.cvar.vm_sway_sprint"]            = "Sprint Bob", -- This is intentionally flipped
         ["arccw.cvar.vm_bob_sprint"]             = "Sprint Sway", -- Ditto
-        ["arccw.cvar.vm_swaywarn"]               = "  The following only applies when Custom Swaying is enabled",
+        ["arccw.cvar.vm_swaywarn"]               = "The following only applies when Custom Swaying is enabled",
         ["arccw.cvar.vm_lookymult"]              = "Horizontal Look Sway",
         ["arccw.cvar.vm_lookxmult"]              = "Vertical Look Sway",
         ["arccw.cvar.vm_swayxmult"]              = "Bob Right Multiplier",
         ["arccw.cvar.vm_swayymult"]              = "Bob Forward Multiplier",
         ["arccw.cvar.vm_swayzmult"]              = "Bob Up Multiplier",
-        ["arccw.cvar.vm_swayzmult"]              = "Bob Up Multiplier",
-        ["arccw.cvar.vm_swayzmult"]              = "Bob Up Multiplier",
-        ["arccw.cvar.vm_viewwarn"]               = "  The following only applies when Custom Camera Movement is enabled",
-        ["arccw.cvar.vm_coolviewmult"]           = "Camera Movement Multiplier",
+        ["arccw.cvar.vm_accelmult"]              = "Sway Tightness",
+        ["arccw.cvar.vm_viewwarn"]               = "The following only applies when Custom Camera Movement is enabled",
+        ["arccw.cvar.vm_coolviewmult"]           = "View Move Multiplier",
         -- ArcCW_Options_Crosshair
         ["arccw.crosshair.tfa"]                  = "TFA",
         ["arccw.crosshair.cw2"]                  = "CW 2.0",
