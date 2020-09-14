@@ -14,18 +14,27 @@ local ClientPanel = {
     [0.8] = { type = "c", text = "#arccw.cvar.autosave.desc" },
     [0.9] = { type = "b", text = "#arccw.cvar.embracetradition", var = "arccw_hud_embracetradition" },
     [1.0] = { type = "c", text = "#arccw.cvar.embracetradition.desc" },
-    [1.1] = { type = "b", text = "#arccw.cvar.cheapscopes", var = "arccw_cheapscopes" },
-    [1.2] = { type = "c", text = "#arccw.cvar.cheapscopes.desc" },
     [1.3] = { type = "b", text = "#arccw.cvar.glare", var = "arccw_glare" },
     [1.4] = { type = "c", text = "#arccw.cvar.glare.desc" },
-    [1.5] = { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
-    [1.6] = { type = "b", text = "#arccw.cvar.blur_toytown", var = "arccw_blur_toytown" },
     [1.7] = { type = "b", text = "#arccw.cvar.shake", var = "arccw_shake" },
+    [1.75] = { type = "c", text = "#arccw.cvar.shake_info" },
     [1.8] = { type = "b", text = "#arccw.cvar.2d3d", var = "arccw_2d3d" },
-    [1.9] = { type = "b", text = "#arccw.cvar.muzzleeffects", var = "arccw_muzzleeffects" },
-    [2.0] = { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
-    [2.1] = { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
-    [2.2] = { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
+    [1.85] = { type = "c", text = "#arccw.cvar.2d3d_info" },
+
+    
+    [2.9] = { type = "h", text = "" },
+    [3] = { type = "h", text = "#arccw.performance" },
+    [3.1] = { type = "b", text = "#arccw.cvar.cheapscopes", var = "arccw_cheapscopes" },
+    [3.2] = { type = "c", text = "#arccw.cvar.cheapscopes.desc" },
+    [3.3] = { type = "b", text = "#arccw.cvar.muzzleeffects", var = "arccw_muzzleeffects" },
+    [3.4] = { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
+    [3.5] = { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
+    [3.51] = { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
+    [3.52] = { type = "b", text = "#arccw.cvar.blur_toytown", var = "arccw_blur_toytown" },
+    [3.6] = { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
+}
+
+local Viewmodel = {
     [2.3] = { type = "b", text = "#arccw.cvar.vm_coolsway", var = "arccw_vm_coolsway" },
     [2.4] = { type = "b", text = "#arccw.cvar.vm_coolview", var = "arccw_vm_coolview" },
     [2.5] = { type = "f", text = "#arccw.cvar.vm_right", var = "arccw_vm_right", min = -5, max = 5 },
@@ -34,13 +43,16 @@ local ClientPanel = {
     [2.8] = { type = "c", text = "#arccw.cvar.vm_offsetwarn" },
     [2.9] = { type = "f", text = "#arccw.cvar.vm_sway_sprint", var = "arccw_vm_sway_sprint", min = 0, max = 5 },
     [3.0] = { type = "f", text = "#arccw.cvar.vm_bob_sprint", var = "arccw_vm_bob_sprint", min = 0, max = 5 },
-    [3.1] = { type = "c", text = "#arccw.cvar.vm_swaywarn" },
+    [3.1-.01] = { type = "h", text = "" },
+    [3.1] = { type = "h", text = "#arccw.cvar.vm_swaywarn" },
     [3.2] = { type = "f", text = "#arccw.cvar.vm_lookxmult", var = "arccw_vm_lookxmult", min = -10, max = 10 },
     [3.3] = { type = "f", text = "#arccw.cvar.vm_lookymult", var = "arccw_vm_lookymult", min = -10, max = 10 },
+    [3.31] = { type = "f", text = "#arccw.cvar.vm_accelmult", var = "arccw_vm_accelmult", min = 1/3, max = 3 },
     [3.4] = { type = "f", text = "#arccw.cvar.vm_swayxmult", var = "arccw_vm_swayxmult", min = -1, max = 1 },
     [3.5] = { type = "f", text = "#arccw.cvar.vm_swayymult", var = "arccw_vm_swayymult", min = -2, max = 2 },
     [3.6] = { type = "f", text = "#arccw.cvar.vm_swayzmult", var = "arccw_vm_swayzmult", min = -2, max = 2 },
-    [3.7] = { type = "c", text = "#arccw.cvar.vm_viewwarn" },
+    [3.7-.01] = { type = "h", text = "" },
+    [3.7] = { type = "h", text = "#arccw.cvar.vm_viewwarn" },
     [3.8] = { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -10, max = 10 },
 }
 
@@ -288,6 +300,10 @@ function ArcCW_Options_Client(panel)
     ArcCW.GeneratePanelElements(panel, ClientPanel)
 end
 
+function ArcCW_Options_Viewmodel(panel)
+    ArcCW.GeneratePanelElements(panel, Viewmodel)
+end
+
 function ArcCW_Options_HUD(panel)
     ArcCW.GeneratePanelElements(panel, HudPanel)
 end
@@ -326,6 +342,7 @@ end
 
 ArcCW.ClientMenus = {
     ["ArcCW_Options_Client"]    = { name = "#arccw.menus.client", func = ArcCW_Options_Client },
+    ["ArcCW_Options_Viewmodel"]    = { name = "#arccw.menus.viewmodel", func = ArcCW_Options_Viewmodel },
     ["ArcCW_Options_HUD"]       = { name = "#arccw.menus.hud",    func = ArcCW_Options_HUD },
     ["ArcCW_Options_Crosshair"] = { name = "#arccw.menus.xhair",  func = ArcCW_Options_Crosshair },
     ["ArcCW_Options_Server"]    = { name = "#arccw.menus.server", func = ArcCW_Options_Server },

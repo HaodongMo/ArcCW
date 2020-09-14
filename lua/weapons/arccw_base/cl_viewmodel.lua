@@ -262,6 +262,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     lookxmult = GetConVar("arccw_vm_lookxmult"):GetFloat()
     lookymult = GetConVar("arccw_vm_lookymult"):GetFloat()
 
+    accelmult = GetConVar("arccw_vm_accelmult"):GetFloat()
+
     swayxmult = GetConVar("arccw_vm_swayxmult"):GetFloat()
     swayymult = GetConVar("arccw_vm_swayymult"):GetFloat()
     swayzmult = GetConVar("arccw_vm_swayzmult"):GetFloat()
@@ -358,7 +360,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     self.ActualVMData = actual
 
-    if coolsway then lasteyeangles = LerpAngle(m_min(FT * 100, 1), lasteyeangles, eyeangles) end
+    if coolsway then lasteyeangles = LerpAngle(m_min(FT * 100 * accelmult, 1), lasteyeangles, eyeangles) end
 
     return pos, ang
 end
