@@ -327,10 +327,6 @@ function ArcCW_Options_Viewmodel(panel)
     ArcCW.GeneratePanelElements(panel, ViewmodelPanel)
 end
 
-function ArcCW_Options_Perfomance(panel)
-    --ArcCW.GeneratePanelElements(panel, PerfomancePanel)
-end
-
 function ArcCW_Options_HUD(panel)
     ArcCW.GeneratePanelElements(panel, HudPanel)
 end
@@ -370,7 +366,6 @@ end
 ArcCW.ClientMenus = {
     ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client },
     ["ArcCW_Options_Viewmodel"] = { text = "#arccw.menus.vmodel", func = ArcCW_Options_Viewmodel },
-    --["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf",   func = ArcCW_Options_Perfomance },
     ["ArcCW_Options_HUD"]       = { text = "#arccw.menus.hud",    func = ArcCW_Options_HUD },
     ["ArcCW_Options_Crosshair"] = { text = "#arccw.menus.xhair",  func = ArcCW_Options_Crosshair },
     ["ArcCW_Options_Server"]    = { text = "#arccw.menus.server", func = ArcCW_Options_Server },
