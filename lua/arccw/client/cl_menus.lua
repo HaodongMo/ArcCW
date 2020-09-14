@@ -47,7 +47,7 @@ local ClientPanel = {
 }
 
 local PerfomancePanel = {
-    [0.10] = { type = "h", text = "#arccw.clientcfg" },
+    --[0.10] = { type = "h", text = "#arccw.clientcfg" },
     [0.20] = { type = "h", text = "#arccw.performance" },
     [0.30] = { type = "b", text = "#arccw.cvar.cheapscopes", var = "arccw_cheapscopes" },
     [0.40] = { type = "c", text = "#arccw.cvar.cheapscopes.desc" },
@@ -148,10 +148,10 @@ local AttsPanel = {
     [0.30] = { type = "h", text = "#arccw.attdesc2" },
     [0.40] = { type = "b", text = "#arccw.cvar.attinv_free", var = "arccw_attinv_free" },
     [0.50] = { type = "b", text = "#arccw.cvar.attinv_lockmode", var = "arccw_attinv_lockmode" },
-    [0.60] = { type = "c", text = "#arccw.cvar.attinv_loseondie.desc" },
-    [0.70] = { type = "i", text = "#arccw.cvar.attinv_loseondie", var = "arccw_attinv_loseondie", min = 0, max = 2 },
-    [0.80] = { type = "c", text = "#arccw.cvar.atts_pickx.desc" },
-    [0.90] = { type = "i", text = "#arccw.cvar.atts_pickx", var = "arccw_atts_pickx", min = 0, max = 10 },
+    [0.60] = { type = "i", text = "#arccw.cvar.attinv_loseondie", var = "arccw_attinv_loseondie", min = 0, max = 2 },
+    [0.70] = { type = "c", text = "#arccw.cvar.attinv_loseondie.desc" },
+    [0.80] = { type = "i", text = "#arccw.cvar.atts_pickx", var = "arccw_atts_pickx", min = 0, max = 10 },
+    [0.90] = { type = "c", text = "#arccw.cvar.atts_pickx.desc" },
     [1.00] = { type = "b", text = "#arccw.cvar.enable_dropping", var = "arccw_enable_dropping" },
     [1.10] = { type = "b", text = "#arccw.cvar.atts_spawnrand", var = "arccw_atts_spawnrand" },
     [1.20] = { type = "b", text = "#arccw.cvar.atts_ubglautoload", var = "arccw_atts_ubglautoload" },
@@ -320,6 +320,7 @@ local CrosshairPresets = {
 
 function ArcCW_Options_Client(panel)
     ArcCW.GeneratePanelElements(panel, ClientPanel)
+    ArcCW.GeneratePanelElements(panel, PerfomancePanel)
 end
 
 function ArcCW_Options_Viewmodel(panel)
@@ -327,7 +328,7 @@ function ArcCW_Options_Viewmodel(panel)
 end
 
 function ArcCW_Options_Perfomance(panel)
-    ArcCW.GeneratePanelElements(panel, PerfomancePanel)
+    --ArcCW.GeneratePanelElements(panel, PerfomancePanel)
 end
 
 function ArcCW_Options_HUD(panel)
@@ -369,7 +370,7 @@ end
 ArcCW.ClientMenus = {
     ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client },
     ["ArcCW_Options_Viewmodel"] = { text = "#arccw.menus.vmodel", func = ArcCW_Options_Viewmodel },
-    ["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf",   func = ArcCW_Options_Perfomance },
+    --["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf",   func = ArcCW_Options_Perfomance },
     ["ArcCW_Options_HUD"]       = { text = "#arccw.menus.hud",    func = ArcCW_Options_HUD },
     ["ArcCW_Options_Crosshair"] = { text = "#arccw.menus.xhair",  func = ArcCW_Options_Crosshair },
     ["ArcCW_Options_Server"]    = { text = "#arccw.menus.server", func = ArcCW_Options_Server },
