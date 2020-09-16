@@ -1,6 +1,9 @@
 
 function SWEP:SelectUBGL()
     self:SetNWBool("ubgl", true)
+
+    if !IsFirstTimePredicted() then return end
+
     self:MyEmitSound(self.SelectUBGLSound)
     self:SetNWInt("firemode", 1)
 
@@ -27,6 +30,9 @@ end
 function SWEP:DeselectUBGL()
     if !self:GetNWBool("ubgl", false) then return end
     self:SetNWBool("ubgl", false)
+
+    if !IsFirstTimePredicted() then return end
+    
     self:MyEmitSound(self.ExitUBGLSound)
 
     if CLIENT then
