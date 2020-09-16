@@ -92,7 +92,7 @@ function ArcCW.GetTranslation(phrase, format)
     if ArcCW.LangTable[lang][phrase] then
         local str = ArcCW.LangTable[lang][phrase]
         for i, v in pairs(format or {}) do
-            print(i, v)
+            -- print(i, v)
             str = string.Replace(str, "{" .. i .. "}", v)
         end
         return str

@@ -8,6 +8,7 @@ end
 function SWEP:EnterSprint()
     if engine.ActiveGamemode() == "terrortown" and !(TTT2 and self:GetOwner().isSprinting) then return end
     if self:GetState() == ArcCW.STATE_SPRINT then return end
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
     self:SetState(ArcCW.STATE_SPRINT)
     self.Sighted = false
     self.Sprinted = true

@@ -14,7 +14,7 @@ function SWEP:NPC_Initialize()
 
     self:SetClip1(self:GetCapacity() or self.Primary.ClipSize)
 
-    print(self:Clip1())
+    -- print(self:Clip1())
 
     local range = self.Range
 

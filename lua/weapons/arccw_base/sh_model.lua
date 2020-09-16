@@ -513,6 +513,8 @@ function SWEP:SetupModel(wm)
 
     end
 
+    self.PrintName = self:GetBuff_Hook("Hook_NameChange", self.PrintName) or self.PrintName
+
     self:SetupActiveSights()
 end
 
