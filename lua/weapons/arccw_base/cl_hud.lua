@@ -46,7 +46,9 @@ function SWEP:DrawHUD()
 
     -- info panel
 
-    self:GetBuff_Hook("Hook_DrawHUD")
+    if self:GetState() ~= ArcCW.STATE_CUSTOMIZE then
+        self:GetBuff_Hook("Hook_DrawHUD")
+    end
 
     local col1 = Color(0, 0, 0, 100)
     local col2 = Color(255, 255, 255, 255)

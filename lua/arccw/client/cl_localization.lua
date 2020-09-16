@@ -9,7 +9,8 @@ ArcCW.PhraseTable = {
         -- Menus
         ["arccw.menus.hud"]                      = "HUD",
         ["arccw.menus.client"]                   = "Client",
-        ["arccw.menus.viewmodel"]                = "Viewmodel",
+        ["arccw.menus.vmodel"]                   = "Viewmodel",
+        ["arccw.menus.perf"]                     = "Perfomance",
         ["arccw.menus.server"]                   = "Server",
         ["arccw.menus.mults"]                    = "Multipliers",
         ["arccw.menus.npcs"]                     = "NPCs",
@@ -18,7 +19,7 @@ ArcCW.PhraseTable = {
         ["arccw.menus.xhair"]                    = "Crosshair",
         -- ArcCW_Options_Ammo
         ["arccw.cvar.ammo_detonationmode"]       = "Ammo Detonation Mode",
-        ["arccw.cvar.ammo_detonationmode.desc"]  = "-1 = don't explode, 0 = simple explosion, 1 = fragmentation, 2 = frag + burning",
+        ["arccw.cvar.ammo_detonationmode.desc"]  = "-1 - don't explode\n 0 - simple explosion\n 1 - fragmentation\n 2 - frag + burning",
         ["arccw.cvar.ammo_autopickup"]           = "Auto Pickup",
         ["arccw.cvar.ammo_largetrigger"]         = "Large Pickup Trigger",
         ["arccw.cvar.ammo_rareskin"]             = "Rare Skin Chance",
@@ -30,11 +31,6 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.hud_showammo"]              = "Show Ammo",
         ["arccw.cvar.hud_3dfun"]                 = "Alternative 3D2D Ammo HUD",
         ["arccw.cvar.hud_forceshow"]             = "Force HUD On (Useful w/ Custom HUDs)",
-        ["arccw.cvar.attinv_hideunowned"]        = "Hide Unowned Attachments",
-        ["arccw.cvar.attinv_darkunowned"]        = "Grey Out Unowned Attachments",
-        ["arccw.cvar.attinv_onlyinspect"]        = "Hide Customization UI",
-        ["arccw.cvar.attinv_simpleproscons"]     = "Simple Pros And Cons",
-        ["arccw.cvar.attinv_closeonhurt"]        = "Close menu on damage taken",
         ["arccw.cvar.hudpos_deadzone_x"]         = "Deadzone X",
         ["arccw.cvar.hudpos_deadzone_y"]         = "Deadzone Y",
         -- ArcCW_Options_Client
@@ -47,16 +43,18 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.autosave.desc"]             = "Attempt to re-equip the last equipped set of attachments on weapon pickup.",
         ["arccw.cvar.embracetradition"]          = "Classic Customization HUD",
         ["arccw.cvar.embracetradition.desc"]     = "Use the classic bulky customization HUD. Embrace tradition. Good on 4:3.",
-        ["arccw.cvar.cheapscopes"]               = "Cheap Scopes",
-        ["arccw.cvar.cheapscopes.desc"]          = "A cheaper PIP scope implementation that is very low quality but saves a significant amount of performance. Can be a little glitchy.",
         ["arccw.cvar.glare"]                     = "Scope Glare",
         ["arccw.cvar.glare.desc"]                = "Glare visible on your scope lens when aiming.",
         ["arccw.cvar.shake"]                     = "Screen Shake",
         ["arccw.cvar.shake_info"]                = "Aggressive snap when you shoot a weapon.",
         ["arccw.cvar.2d3d"]                      = "Floating Help Text",
         ["arccw.cvar.2d3d_info"]                 = "Text that floats over dropped weapons.",
-
-        -- client options, but performance
+        ["arccw.cvar.attinv_hideunowned"]        = "Hide Unowned Attachments",
+        ["arccw.cvar.attinv_darkunowned"]        = "Grey Out Unowned Attachments",
+        ["arccw.cvar.attinv_onlyinspect"]        = "Hide Customization UI",
+        ["arccw.cvar.attinv_simpleproscons"]     = "Simple Pros And Cons",
+        ["arccw.cvar.attinv_closeonhurt"]        = "Close menu on damage taken",
+        -- ArcCW_Options_Perf
         ["arccw.performance"]                    = "The options below may change performance.",
         ["arccw.cvar.cheapscopes"]               = "Cheap Scopes",
         ["arccw.cvar.cheapscopes.desc"]          = "A cheaper PIP scope implementation that is very low quality but saves a significant amount of performance. Scoped weapons will appear to clip into surfaces.\nWill reduce scope quality!",
@@ -66,15 +64,13 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.shelltime"]                 = "Case Lifetime",
         ["arccw.cvar.blur"]                      = "Customization Blur",
         ["arccw.cvar.blur_toytown"]              = "Aim Blur",
-
-
         -- ArcCW_Options_Viewmodel
         ["arccw.cvar.vm_coolsway"]               = "Custom Swaying",
         ["arccw.cvar.vm_coolview"]               = "Custom Camera Movement",
         ["arccw.cvar.vm_right"]                  = "Viewmodel Right",
         ["arccw.cvar.vm_forward"]                = "Viewmodel Forward",
         ["arccw.cvar.vm_up"]                     = "Viewmodel Up",
-        ["arccw.cvar.vm_offsetwarn"]             = "  Warning! Viewmodel offset settings may cause clipping or other undesired effects!",
+        ["arccw.cvar.vm_offsetwarn"]             = "Warning! Viewmodel offset settings may cause clipping or other undesired effects!",
         ["arccw.cvar.vm_sway_sprint"]            = "Sprint Bob", -- This is intentionally flipped
         ["arccw.cvar.vm_bob_sprint"]             = "Sprint Sway", -- Ditto
         ["arccw.cvar.vm_swaywarn"]               = "The following only applies when Custom Swaying is enabled",
@@ -134,9 +130,9 @@ ArcCW.PhraseTable = {
         ["arccw.attdesc2"]                       = "Leave all options off for ACT3 style attachment inventory behaviour.",
         ["arccw.cvar.attinv_free"]               = "Free Attachments",
         ["arccw.cvar.attinv_lockmode"]           = "Attachment Locking",
-        ["arccw.cvar.attinv_loseondie.desc"]     = "Lose Attachments Mode: 0 = Disable; 1 = Removed on death, 2 = Drop Attachment Box on death",
+        ["arccw.cvar.attinv_loseondie.desc"]     = "Lose Attachments Modes:\n0 - Disable\n1 = Removed on death\n2 = Drop Attachment Box on death",
         ["arccw.cvar.attinv_loseondie"]          = "Lose Attachments Mode",
-        ["arccw.cvar.atts_pickx.desc"]           = "Pick X behaviour allows you to set a limit on attachments that can be placed on any weapon. 0 = unlimited.",
+        ["arccw.cvar.atts_pickx.desc"]           = "Pick X behaviour allows you to set a limit on attachments that can be placed on any weapon.\n0 = unlimited.",
         ["arccw.cvar.atts_pickx"]                = "Pick X",
         ["arccw.cvar.enable_dropping"]           = "Attachment Dropping",
         ["arccw.cvar.atts_spawnrand"]            = "Random Attachments on Spawn",
@@ -148,7 +144,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.truenames"]                 = "True Names (Requires Restart)",
         ["arccw.cvar.equipmentammo.desc"]        = "There is a limit of 127 ammo types, and enabling this option can cause problems related to this. Requires restart.",
         ["arccw.cvar.equipmentammo"]             = "Equipment Unique Ammo Types",
-        ["arccw.cvar.equipmentsingleton.desc"]   =  "Singletons can be used once and then remove themselves from your inventory. Requires restart.",
+        ["arccw.cvar.equipmentsingleton.desc"]   = "Singletons can be used once and then remove themselves from your inventory. Requires restart.",
         ["arccw.cvar.equipmentsingleton"]        = "Grenade/Equipment Singleton",
         ["arccw.cvar.equipmenttime"]             = "Equipment Self-Destruct Time",
         ["arccw.cvar.throwinertia"]              = "Grenade Inherit Velocity",
