@@ -104,7 +104,7 @@ function SWEP:Reload()
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
         self:PlayAnimation(anim, mult, true, 0, true)
-        self:SetTimer(self:GetAnimKeyTime(anim) * mult,
+        self:SetTimer(self:GetAnimKeyTime(anim) * mult * 0.75,
         function()
             self:SetNWBool("reloading", false)
             -- if self:GetOwner():KeyDown(IN_ATTACK2) then

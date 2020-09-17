@@ -603,13 +603,17 @@ function SWEP:DrawCustomModel(wm)
             bonename = k.WMBone or "ValveBiped.Bip01_R_Hand"
         end
 
-        if k.SubModel then bonename = nil end
-
         local bpos, bang
         local offset = k.OffsetPos
 
         if bonename then
             local boneindex = vm:LookupBone(bonename)
+
+            if !boneindex then
+                if self.WMModel then
+                    boneindex = self.WMModel:LookupBone(bonename)
+                end
+            end
 
             if selfmode then
                 boneindex = 0

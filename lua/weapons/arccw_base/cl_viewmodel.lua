@@ -62,6 +62,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         if self.CrouchPos then
             target.pos = self.CrouchPos
+        end
+        if self.CrouchAng then
             target.ang = self.CrouchAng
         end
     end
@@ -152,7 +154,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.bob  = 2
     end
 
-    if isangle(target.ang) then target.ang = Angle(target.ang) end
+    if !isangle(target.ang) then target.ang = Angle(target.ang) end
 
     if self.InProcDraw then
         self.InProcHolster = false
