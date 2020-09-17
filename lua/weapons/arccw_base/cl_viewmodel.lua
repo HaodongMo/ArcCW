@@ -15,15 +15,7 @@ local eyeangles, lasteyeangles, coolswayang = Angle(), Angle(), Angle()
 local swayxmult, swayymult, swayzmult = -0.1, 0.1, -0.3
 local coolswaypos, vector_noup = Vector(), Vector(1, 1, 0)
 
-local function ApproachVector(vec, tovec, d)
-    vec[1] = m_appor(vec[1], tovec[1], d)
-    vec[2] = m_appor(vec[2], tovec[2], d)
-    vec[3] = m_appor(vec[3], tovec[3], d)
-
-    return vec
-end
-
-local function ApproachAngle(vec, tovec, d) -- this is not override, cuz its not in math lib
+local function ApprVecAng(vec, tovec, d)
     vec[1] = m_appor(vec[1], tovec[1], d)
     vec[2] = m_appor(vec[2], tovec[2], d)
     vec[3] = m_appor(vec[3], tovec[3], d)
@@ -69,8 +61,10 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.down = 0
 
         if self.CrouchPos then
-            target.pos = f_lerp(FT5, target.pos, self.CrouchPos)
-            target.ang = f_lerp(FT5, target.ang, self.CrouchAng)
+            target.pos = self.CrouchPos
+        end
+        if self.CrouchAng then
+            target.ang = self.CrouchAng
         end
     end
 
@@ -160,7 +154,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.bob  = 2
     end
 
-    if isangle(target.ang) then target.ang = Angle(target.ang) end
+    if !isangle(target.ang) then target.ang = Angle(target.ang) end
 
     if self.InProcDraw then
         self.InProcHolster = false
@@ -327,8 +321,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     actual.evpos = f_lerp(speed, actual.evpos or Vector(), target.evpos or Vector())
     actual.evang = f_lerp(speed, actual.evang or Angle(), target.evang or Angle())
 
-    actual.pos  = ApproachVector(actual.pos, target.pos, speed * 0.1)
-    actual.ang  = ApproachAngle(actual.ang, target.ang, speed * 0.1)
+    actual.pos  = ApprVecAng(actual.pos, target.pos, speed * 0.1)
+    actual.ang  = ApprVecAng(actual.ang, target.ang, speed * 0.1)
     actual.down = m_appor(actual.down, target.down, speed * 0.1)
 
     self.SwayScale = (coolsway and 0) or actual.sway

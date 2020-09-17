@@ -1211,7 +1211,7 @@ function SWEP:CreateCustomizeHUD()
     if !self.ManualAction and !self:GetBuff_Override("Override_ManualAction") then
         table.insert(trivia, function()
             local rpm = 60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
-            rpm = math.ceil(rpm / 1) * 1
+            rpm = math.Round(rpm)
             return translate("trivia.firerate") .. ": " .. rpm .. "RPM"
         end)
     end
@@ -1503,8 +1503,8 @@ function SWEP:CreateCustomizeHUD()
             {translate("stat.firerate"), translate("stat.firerate.tooltip"),
                 function()
 
-                local orig = math.ceil(60 / self.Delay / 1) * 1 .. "RPM"
-                local cur = math.ceil(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 1) * 1 .. "RPM"
+                local orig = math.Round(60 / self.Delay) .. "RPM"
+                local cur = math.Round(60 / (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM"))) / 1) .. "RPM"
 
                 if self.ManualAction then
                     orig = translate("stat.firerate.manual")

@@ -185,6 +185,10 @@ att.Override_Firemodes = {}
 
 -- all hooks, mults, and adds will work on fire modes
 
+-- Allows you to change the weapon's name
+-- string name
+att.Hook_NameChange = function(wep, name) end
+
 -- allows you to do whatever you like to the weapon VMs
 -- {vm = vm, eles = ae}
 att.Hook_ModifyBodygroups = function(wep, data) end
