@@ -432,6 +432,17 @@ function SWEP:GetMuzzleDevice(wm)
     return muzz
 end
 
+function SWEP:GetTracerOrigin()
+    local wm = self:GetOwner():ShouldDrawLocalPlayer()
+    local muzz = self:GetMuzzleDevice(wm)
+
+    if muzz then
+        local pos = muzz:GetAttachment(1).Pos
+
+        return pos
+    end
+end
+
 function SWEP:CheckFlags(reject, need)
     local flags
     if ArcCW.Overflow then
@@ -563,6 +574,12 @@ function SWEP:RefreshBGs()
     local vms = self:GetBuff_Override("Override_VMSkin") or self.DefaultSkin
     local wms = self:GetBuff_Override("Override_WMSkin") or self.DefaultWMSkin
 
+    if self.MirrorVMWM then
+        wmm = vmm
+        wmc = vmc
+        wms = vms
+    end
+
     if self:GetOwner():IsPlayer() then
         vm = self:GetOwner():GetViewModel()
     end
@@ -579,6 +596,11 @@ function SWEP:RefreshBGs()
     self:SetSkin(wms)
 
     if self.WMModel and self.WMModel:IsValid() then
+        if self.MirrorVMWM then
+            self.WMModel:SetBodyGroups(self.DefaultBodygroups)
+        else
+            self.WMModel:SetBodyGroups(self.DefaultWMBodygroups)
+        end
         self.WMModel:SetMaterial(wmm)
         self.WMModel:SetColor(wmc)
         self.WMModel:SetSkin(wms)
@@ -595,27 +617,42 @@ function SWEP:RefreshBGs()
             vm:SetSkin(ele.VMSkin)
         end
 
-        if self.WMModel and self.WMModel:IsValid() and ele.WMSkin then
-            self.WMModel:SetSkin(ele.WMSkin)
-            self:SetSkin(ele.WMSkin)
+        if self.WMModel and self.WMModel:IsValid() then
+            if self.MirrorVMWM and ele.VMSkin then
+                self.WMModel:SetSkin(ele.VMSkin)
+                self:SetSkin(ele.VMSkin)
+            elseif ele.WMSkin then
+                self.WMModel:SetSkin(ele.WMSkin)
+                self:SetSkin(ele.WMSkin)
+            end
         end
 
         if ele.VMColor and vm and IsValid(vm) then
             vm:SetColor(ele.VMColor)
         end
 
-        if self.WMModel and self.WMModel:IsValid() and ele.WMColor then
-            self.WMModel:SetColor(ele.WMColor)
-            self:SetColor(ele.WMColor)
+        if self.WMModel and self.WMModel:IsValid() then
+            if self.MirrorVMWM and ele.VMSkin then
+                self.WMModel:SetColor(ele.VMColor)
+                self:SetColor(ele.VMColor)
+            elseif ele.WMSkin then
+                self.WMModel:SetColor(ele.WMColor)
+                self:SetColor(ele.WMColor)
+            end
         end
 
         if ele.VMMaterial and vm and IsValid(vm) then
             vm:SetMaterial(ele.VMMaterial)
         end
 
-        if self.WMModel and self.WMModel:IsValid() and ele.WMMaterial then
-            self.WMModel:SetMaterial(ele.WMMaterial)
-            self:SetMaterial(ele.WMMaterial)
+        if self.WMModel and self.WMModel:IsValid() then
+            if self.MirrorVMWM and ele.VMMaterial then
+                self.WMModel:SetMaterial(ele.VMMaterial)
+                self:SetMaterial(ele.VMMaterial)
+            elseif ele.WMMaterial then
+                self.WMModel:SetMaterial(ele.WMMaterial)
+                self:SetMaterial(ele.WMMaterial)
+            end
         end
 
         if ele.VMBodygroups then
@@ -626,9 +663,23 @@ function SWEP:RefreshBGs()
                     vm:SetBodygroup(i.ind, i.bg)
                 end
             end
+
+            if self.MirrorVMWM then
+                for _, i in pairs(ele.VMBodygroups) do
+                    if !i.ind or !i.bg then continue end
+
+                    if self.WMModel and IsValid(self.WMModel) and self.WMModel:GetBodygroup(i.ind) != i.bg then
+                        self.WMModel:SetBodygroup(i.ind, i.bg)
+                    end
+
+                    if self:GetBodygroup(i.ind) != i.bg then
+                        self:SetBodygroup(i.ind, i.bg)
+                    end
+                end
+            end
         end
 
-        if ele.WMBodygroups then
+        if ele.WMBodygroups and !self.MirrorVMWM then
             for _, i in pairs(ele.WMBodygroups) do
                 if !i.ind or !i.bg then continue end
 
@@ -650,9 +701,20 @@ function SWEP:RefreshBGs()
 
                 vm:ManipulateBonePosition(boneind, i)
             end
+
+            if self.MirrorVMWM then
+                for bone, i in pairs(ele.VMBoneMods) do
+                    if !(self.WMModel and self.WMModel:IsValid()) then break end
+                    local boneind = self:LookupBone(bone)
+
+                    if !boneind then continue end
+
+                    self:ManipulateBonePosition(boneind, i)
+                end
+            end
         end
 
-        if ele.WMBoneMods then
+        if ele.WMBoneMods and !self.MirrorVMWM then
             for bone, i in pairs(ele.WMBoneMods) do
                 if !(self.WMModel and self.WMModel:IsValid()) then break end
                 local boneind = self:LookupBone(bone)

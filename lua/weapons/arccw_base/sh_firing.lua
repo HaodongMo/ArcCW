@@ -472,15 +472,19 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
 
         owner:FireBullets(bullet)
 
-        local supbullet = {}
-        supbullet.Src      = endpos
-        supbullet.Dir      = -dir
-        supbullet.Damage   = 0
-        supbullet.Distance = 8
-        supbullet.Tracer   = 0
-        supbullet.Force    = 0
+        if tr.HitWorld then
 
-        owner:FireBullets(supbullet, true)
+            local supbullet = {}
+            supbullet.Src      = endpos
+            supbullet.Dir      = -dir
+            supbullet.Damage   = 0
+            supbullet.Distance = 8
+            supbullet.Tracer   = 0
+            supbullet.Force    = 0
+
+            owner:FireBullets(supbullet, true)
+
+        end
     end
 end
 

@@ -123,6 +123,9 @@ function SWEP:DoOurViewPunch()
 
         self.ViewPunchAngle = vpa
         self.ViewPunchVelocity = vpv
+    else
+        self.ViewPunchAngle = Angle(0, 0, 0)
+        self.ViewPunchVelocity = Angle(0, 0, 0)
     end
 end
 

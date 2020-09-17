@@ -62,6 +62,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         if self.CrouchPos then
             target.pos = self.CrouchPos
+        end
+        if self.CrouchAng then
             target.ang = self.CrouchAng
         end
     end
@@ -152,7 +154,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.bob  = 2
     end
 
-    if isangle(target.ang) then target.ang = Angle(target.ang) end
+    if !isangle(target.ang) then target.ang = Angle(target.ang) end
 
     if self.InProcDraw then
         self.InProcHolster = false
@@ -415,30 +417,43 @@ function SWEP:DrawWorldModel()
     end
 end
 
-function SWEP:ShouldHideViewModel() end
+function SWEP:ShouldFlatScope()
+    if self:GetState() != ArcCW.STATE_SIGHTS then return false end
+    local irons = self:GetActiveSights()
+
+    if irons.FlatScope then
+        return true
+    elseif irons.MagnifiedOptic and GetConVar("arccw_flatscopes"):GetBool() then
+        return true
+    end
+end
 
 function SWEP:PreDrawViewModel(vm)
     if not vm then return end
 
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE then self:BlurNotWeapon() end
+    if self:ShouldFlatScope() then
+        render.SetBlend(0)
+    else
+        if self:GetState() == ArcCW.STATE_CUSTOMIZE then self:BlurNotWeapon() end
 
-    if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
-        local fps    = 1 / m_min(FrameTime(), RealFrameTime())
-        local lowfps = fps <= 45
+        if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
+            local fps    = 1 / m_min(FrameTime(), RealFrameTime())
+            local lowfps = fps <= 45
 
-        GetConVar("arccw_cheapscopes"):SetBool(lowfps and true or false)
+            GetConVar("arccw_cheapscopes"):SetBool(lowfps and true or false)
 
-        GetConVar("arccw_cheapscopesautoconfig"):SetBool(false)
-    end
+            GetConVar("arccw_cheapscopesautoconfig"):SetBool(false)
+        end
 
-    local asight = self:GetActiveSights()
+        local asight = self:GetActiveSights()
 
-    if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
-        self:FormCheapScope()
-    end
+        if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
+            self:FormCheapScope()
+        end
 
-    if self:GetSightDelta() < 1 and asight.ScopeTexture then
-        self:FormCheapScope()
+        if self:GetSightDelta() < 1 and asight.ScopeTexture then
+            self:FormCheapScope()
+        end
     end
 
     self:DrawCustomModel(false)
@@ -447,6 +462,8 @@ function SWEP:PreDrawViewModel(vm)
 end
 
 function SWEP:PostDrawViewModel()
+    render.SetBlend(1)
+
     if ArcCW.Overdraw then
         ArcCW.Overdraw = false
     else

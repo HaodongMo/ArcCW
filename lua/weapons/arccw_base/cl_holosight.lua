@@ -431,6 +431,47 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     local size = hs.HolosightSize or 1
 
+    if self:ShouldFlatScope() then
+        local screen = rtmat_cheap
+
+        if asight.NVScope then
+            self:FormNightVision(screen)
+        end
+
+        if asight.Thermal then
+            self:FormThermalImaging(screen)
+        end
+
+        render.UpdateScreenEffectTexture()
+        render.ClearStencil()
+        render.SetStencilEnable(true)
+        render.SetStencilPassOperation(STENCIL_REPLACE)
+        render.SetStencilCompareFunction(STENCIL_ALWAYS)
+        render.SetStencilFailOperation(STENCIL_KEEP)
+        render.SetStencilZFailOperation(STENCIL_REPLACE)
+        render.SetStencilWriteMask(255)
+        render.SetStencilTestMask(255)
+
+        render.SetStencilReferenceValue(55)
+
+        local spos = EyePos() + ((EyeAngles() + (Angle(0.1, 0, 0) * delta) + (self:GetOwner():GetViewPunchAngles() * 0.25)):Forward() * 2048)
+
+        cam.IgnoreZ(true)
+
+        render.SetMaterial(hs.HolosightReticle or defaultdot)
+        render.DrawSprite(spos, 3 * (1 - delta), 3 * (1 - delta), hsc or Color(255, 255, 255))
+
+        render.SetStencilPassOperation(STENCIL_REPLACE)
+        render.SetStencilCompareFunction(STENCIL_NOTEQUAL)
+
+        render.SetMaterial(black)
+        render.DrawScreenQuad()
+
+        render.SetStencilEnable(false)
+        cam.IgnoreZ(false)
+        return
+    end
+
     local hsmag = asight.ScopeMagnification or 1
 
     -- if asight.NightVision then

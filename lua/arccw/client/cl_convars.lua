@@ -41,6 +41,8 @@ ArcCW.ClientConVars = {
     ["arccw_cheapscopes"]             = { def =  1 },
     ["arccw_cheapscopesautoconfig"]   = { def =  0 },
 
+    ["arccw_flatscopes"]              = { def = 0 },
+
     ["arccw_shake"]                   = { def =  1 },
     ["arccw_muzzleeffects"]           = { def =  1 },
     ["arccw_shelleffects"]            = { def =  1 },

@@ -54,8 +54,13 @@ function SWEP:AddElement(elementname, wm)
     if wm then
         eles = e.WMElements
 
-        self.WorldModel = e.WMOverride or self.WorldModel
-        self:SetSkin(e.WMSkin or self.DefaultWMSkin)
+        if self.MirrorVMWM then
+            self.WorldModel = e.VMOverride or self.WorldModel
+            self:SetSkin(e.VMSkin or self.DefaultSkin)
+        else
+            self.WorldModel = e.WMOverride or self.WorldModel
+            self:SetSkin(e.WMSkin or self.DefaultWMSkin)
+        end
     else
         self.ViewModel = e.VMOverride or self.ViewModel
         self:GetOwner():GetViewModel():SetSkin(e.VMSkin or self.DefaultSkin)
@@ -102,6 +107,12 @@ function SWEP:AddElement(elementname, wm)
         element.OffsetPos:Set(i.Offset.pos or Vector(), 0, 0)
         element.IsMuzzleDevice = i.IsMuzzleDevice
 
+        if self.MirrorVMWM then
+            element.WMBone = i.Bone
+        else
+            element.WMBone = i.WMBone
+        end
+
         table.insert(elements, element)
     end
 
@@ -123,12 +134,6 @@ function SWEP:SetupModel(wm)
     if wm then
         self:KillModel(self.WM)
         self.WM = elements
-
-        if !GetConVar("arccw_att_showothers"):GetBool() then
-            if LocalPlayer() != self:GetOwner() then
-                return
-            end
-        end
     else
         self:KillModel(self.VM)
         self.VM = elements
@@ -168,10 +173,12 @@ function SWEP:SetupModel(wm)
         element.Model = model
         element.WM = true
         element.IsBaseWM = true
+        element.WMBone = "ValveBiped.Bip01_R_Hand"
 
         if self.WorldModelOffset then
             element.OffsetAng = self.WorldModelOffset.ang or Angle(0, 0, 0)
             element.OffsetPos = self.WorldModelOffset.pos or Vector(0, 0, 0)
+            element.WMBone = self.WorldModelOffset.bone or element.WMBone
             element.BoneMerge = false
         else
             model:SetParent(self:GetOwner() or self)
@@ -224,6 +231,12 @@ function SWEP:SetupModel(wm)
 
         if atttbl.AddSuffix then
             self.PrintName = self.PrintName .. atttbl.AddSuffix
+        end
+
+        if !GetConVar("arccw_att_showothers"):GetBool() then
+            if LocalPlayer() != self:GetOwner() then
+                continue
+            end
         end
 
         if SERVER then continue end
@@ -297,7 +310,6 @@ function SWEP:SetupModel(wm)
         element.Model = model
         element.DrawFunc = atttbl.DrawFunc
         element.WM = wm or false
-        element.WMBone = k.WMBone
         element.Bone = repbone or k.Bone
         element.NoDraw = atttbl.NoDraw or false
         element.BoneMerge = k.BoneMerge or false
@@ -311,6 +323,15 @@ function SWEP:SetupModel(wm)
             element.OffsetAng:Set(repang or k.Offset.wang or Angle(0, 0, 0))
             element.OffsetAng = element.OffsetAng + (atttbl.OffsetAng or Angle(0, 0, 0))
             k.WElement = element
+
+            if self.MirrorVMWM then
+                element.WMBone = repbone or k.Bone
+                element.OffsetAng = Angle()
+                element.OffsetAng:Set(repang or k.Offset.vang or Angle(0, 0, 0))
+                element.OffsetAng = element.OffsetAng + (atttbl.OffsetAng or Angle(0, 0, 0))
+            else
+                element.WMBone = k.WMBone
+            end
         else
             element.OffsetAng = Angle()
             element.OffsetAng:Set(repang or k.Offset.vang or Angle(0, 0, 0))
@@ -327,7 +348,11 @@ function SWEP:SetupModel(wm)
             local charmscale = Matrix()
 
             if wm then
-                charmscale:Scale((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                if self.MirrorVMWM then
+                    charmscale:Scale((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                else
+                    charmscale:Scale((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                end
             else
                 charmscale:Scale((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
             end
@@ -351,7 +376,11 @@ function SWEP:SetupModel(wm)
                 charmelement.SubModel = true
 
                 if wm then
-                    charmelement.CharmScale = ((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                    if self.MirrorVMWM then
+                        charmelement.CharmScale = ((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                    else
+                        charmelement.CharmScale = ((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                    end
                 else
                     charmelement.CharmScale = ((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
                 end
@@ -400,6 +429,10 @@ function SWEP:SetupModel(wm)
 
             if wm then
                 k.WMuzzleDeviceElement = hspelement
+
+                if self.MirrorVMWM then
+                    hspelement.WMBone = k.Bone
+                end
             else
                 k.VMuzzleDeviceElement = hspelement
             end
@@ -447,6 +480,10 @@ function SWEP:SetupModel(wm)
 
             if !wm then
                 k.HSPElement = hspelement
+            else
+                if self.MirrorVMWM then
+                    hspelement.WMBone = k.Bone
+                end
             end
 
             table.insert(elements, hspelement)
@@ -547,6 +584,10 @@ function SWEP:DrawCustomModel(wm)
 
         vm = self:GetOwner()
 
+        if self.MirrorVMWM then
+            vm = self.WMModel or self
+        end
+
         if !IsValid(self:GetOwner()) then
             vm = self
             selfmode = true
@@ -590,6 +631,15 @@ function SWEP:DrawCustomModel(wm)
             else
                 k.Model:SetParent(self)
             end
+            if self:GetOwner():IsValid() then
+                vm = self:GetOwner()
+            else
+                vm = self
+            end
+        else
+            if wm and self.MirrorVMWM then
+                vm = self.WMModel or self
+            end
         end
 
         if k.BoneMerge and !k.NoDraw then
@@ -602,8 +652,6 @@ function SWEP:DrawCustomModel(wm)
         if wm then
             bonename = k.WMBone or "ValveBiped.Bip01_R_Hand"
         end
-
-        if k.SubModel then bonename = nil end
 
         local bpos, bang
         local offset = k.OffsetPos
@@ -620,8 +668,11 @@ function SWEP:DrawCustomModel(wm)
             bpos, bang = vm:GetBonePosition(boneindex)
 
             if bpos == vm:GetPos() then
-                bpos = vm:GetBoneMatrix(boneindex):GetTranslation()
-                bang = vm:GetBoneMatrix(boneindex):GetAngles()
+                local bonemat = vm:GetBoneMatrix(boneindex)
+                if bonemat then
+                    bpos = bonemat:GetTranslation()
+                    bang = bonemat:GetAngles()
+                end
             end
 
             if k.Slot then
@@ -641,10 +692,15 @@ function SWEP:DrawCustomModel(wm)
 
                     if ((ele.AttPosMods or {})[k.Slot] or {}).vpos then
                         vmelemod = ele.AttPosMods[k.Slot].vpos
+                        if self.MirrorVMWM then
+                            wmelemod = ele.AttPosMods[k.Slot].vpos
+                        end
                     end
 
-                    if ((ele.AttPosMods or {})[k.Slot] or {}).wpos then
-                        wmelemod = ele.AttPosMods[k.Slot].wpos
+                    if !self.MirrorVMWM then
+                        if ((ele.AttPosMods or {})[k.Slot] or {}).wpos then
+                            wmelemod = ele.AttPosMods[k.Slot].wpos
+                        end
                     end
 
                     if ((ele.AttPosMods or {})[k.Slot] or {}).slide then
@@ -652,7 +708,7 @@ function SWEP:DrawCustomModel(wm)
                     end
                 end
 
-                if wm then
+                if wm and !self.MirrorVMWM then
                     offset = wmelemod or (attslot.Offset or {}).wpos or Vector(0, 0, 0)
 
                     if attslot.SlideAmount then
