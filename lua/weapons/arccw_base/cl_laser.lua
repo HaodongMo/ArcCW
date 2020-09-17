@@ -84,6 +84,9 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     if behav and not world then
         local cheap = GetConVar("arccw_cheapscopes"):GetBool()
+        if self:ShouldFlatScope() then
+            cheap = true
+        end
         local punch = owner:GetViewPunchAngles()
 
         ang = EyeAngles() - (punch * (cheap and 0.5 or 1))
@@ -119,6 +122,10 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     local width = m_rand(0.05, 0.1) * strength
 
+    if self:ShouldFlatScope() then
+        cam.Start3D()
+    end
+
     if not behav or world then
         if hit then
             SetMat(lasermat)
@@ -129,7 +136,10 @@ function SWEP:DrawLaser(laser, model, color, world)
     end
 
     if hit and not tr.HitSky then
-        local mul = m_log10((hitpos - EyePos()):Length()) * strength
+        local mul = 1 * strength
+        -- if !self:ShouldFlatScope() then
+            mul = m_log10((hitpos - EyePos()):Length()) * strength
+        -- end
         local rad = m_rand(4, 6) * mul
         local glr = rad * m_rand(0.2, 0.3)
 
@@ -138,5 +148,9 @@ function SWEP:DrawLaser(laser, model, color, world)
         DrawSprite(laserpos, glr, glr, color_white)
     end
 
-    if behav and not world then IgnoreZ(false) end
+    IgnoreZ(false)
+
+    if self:ShouldFlatScope() then
+        cam.End3D()
+    end
 end

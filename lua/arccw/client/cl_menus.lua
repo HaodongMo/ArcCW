@@ -51,12 +51,14 @@ local PerfomancePanel = {
     [0.20] = { type = "h", text = "#arccw.performance" },
     [0.30] = { type = "b", text = "#arccw.cvar.cheapscopes", var = "arccw_cheapscopes" },
     [0.40] = { type = "c", text = "#arccw.cvar.cheapscopes.desc" },
-    [0.50] = { type = "b", text = "#arccw.cvar.muzzleeffects", var = "arccw_muzzleeffects" },
-    [0.60] = { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
-    [0.70] = { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
-    [0.80] = { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
-    [0.90] = { type = "b", text = "#arccw.cvar.blur_toytown", var = "arccw_blur_toytown" },
-    [1.00] = { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
+    [0.50] = { type = "b", text = "#arccw.cvar.flatscopes", var = "arccw_flatscopes" },
+    [0.60] = { type = "c", text = "#arccw.cvar.flatscopes.desc" },
+    [0.70] = { type = "b", text = "#arccw.cvar.muzzleeffects", var = "arccw_muzzleeffects" },
+    [0.80] = { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
+    [0.90] = { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
+    [1.00] = { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
+    [1.10] = { type = "b", text = "#arccw.cvar.blur_toytown", var = "arccw_blur_toytown" },
+    [1.20] = { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
 }
 
 local ViewmodelPanel = {
@@ -169,7 +171,7 @@ local MultsPanel = {
     [0.80] = { type = "f", text = "Move Dispersion", var = "arccw_mult_movedisp", min = 0, max = 10 },
     [0.90] = { type = "f", text = "Reload Time", var = "arccw_mult_reloadtime", min = 0.01, max = 5 },
     [1.00] = { type = "f", text = "ADS Time", var = "arccw_mult_sighttime", min = 0.1, max = 5 },
-    [1.10] = { type = "f", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10 },
+    [1.10] = { type = "i", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10 },
     [1.20] = { type = "f", text = "Random Att. Chance", var = "arccw_mult_attchance", min = 0, max = 10 },
 }
 
@@ -320,6 +322,9 @@ local CrosshairPresets = {
 
 function ArcCW_Options_Client(panel)
     ArcCW.GeneratePanelElements(panel, ClientPanel)
+end
+
+function ArcCW_Options_Perf(panel)
     ArcCW.GeneratePanelElements(panel, PerfomancePanel)
 end
 
@@ -365,6 +370,7 @@ end
 
 ArcCW.ClientMenus = {
     ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client },
+    ["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf", func = ArcCW_Options_Perf },
     ["ArcCW_Options_Viewmodel"] = { text = "#arccw.menus.vmodel", func = ArcCW_Options_Viewmodel },
     ["ArcCW_Options_HUD"]       = { text = "#arccw.menus.hud",    func = ArcCW_Options_HUD },
     ["ArcCW_Options_Crosshair"] = { text = "#arccw.menus.xhair",  func = ArcCW_Options_Crosshair },

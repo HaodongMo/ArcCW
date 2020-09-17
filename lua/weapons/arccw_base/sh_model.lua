@@ -134,12 +134,6 @@ function SWEP:SetupModel(wm)
     if wm then
         self:KillModel(self.WM)
         self.WM = elements
-
-        if !GetConVar("arccw_att_showothers"):GetBool() then
-            if LocalPlayer() != self:GetOwner() then
-                return
-            end
-        end
     else
         self:KillModel(self.VM)
         self.VM = elements
@@ -237,6 +231,12 @@ function SWEP:SetupModel(wm)
 
         if atttbl.AddSuffix then
             self.PrintName = self.PrintName .. atttbl.AddSuffix
+        end
+
+        if !GetConVar("arccw_att_showothers"):GetBool() then
+            if LocalPlayer() != self:GetOwner() then
+                continue
+            end
         end
 
         if SERVER then continue end
