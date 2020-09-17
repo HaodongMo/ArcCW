@@ -104,22 +104,16 @@ function SWEP:Reload()
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
         self:PlayAnimation(anim, mult, true, 0, true)
-        self:SetTimer(self:GetAnimKeyTime(anim) * mult,
+        self:SetTimer(self:GetAnimKeyTime(anim) * mult * 0.95,
         function()
             self:SetNWBool("reloading", false)
             -- if self:GetOwner():KeyDown(IN_ATTACK2) then
             --     self:EnterSights()
             -- end
+            self:RestoreAmmo()
         end)
         self.CheckpointAnimation = anim
         self.CheckpointTime = 0
-
-        if SERVER then
-            self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
-            self:SetClip1(0)
-            self:TakePrimaryAmmo(load)
-            self:SetClip1(load)
-        end
 
         if self.RevolverReload then
             self.LastClip1 = load
@@ -185,6 +179,9 @@ local lastframeloadclip1 = 0
 SWEP.LastClipOutTime = 0
 
 function SWEP:GetVisualBullets()
+    local reserve = self:Ammo1()
+    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    local abouttoload = math.Clamp(self:GetCapacity() + chamber, 0, reserve + self:Clip1())
     local h = self:GetBuff_Hook("Hook_GetVisualBullets")
 
     if h then return h end
@@ -193,11 +190,19 @@ function SWEP:GetVisualBullets()
     else
         self.LastClip1_B = self:Clip1()
 
-        return self:Clip1()
+        if self:GetNWBool("reloading") then
+            return abouttoload
+        else
+            return self:Clip1()
+        end
     end
 end
 
 function SWEP:GetVisualClip()
+    local reserve = self:Ammo1()
+    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    local abouttoload = math.Clamp(self:GetCapacity() + chamber, 0, reserve + self:Clip1())
+
     local h = self:GetBuff_Hook("Hook_GetVisualClip")
 
     if h then return h end
@@ -214,7 +219,11 @@ function SWEP:GetVisualClip()
             lastframeclip1 = self:Clip1()
         end
 
-        return self:Clip1()
+        if self:GetNWBool("reloading") then
+            return abouttoload
+        else
+            return self:Clip1()
+        end
     end
 end
 

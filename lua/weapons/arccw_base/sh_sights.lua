@@ -8,6 +8,7 @@ end
 function SWEP:EnterSprint()
     if engine.ActiveGamemode() == "terrortown" and !(TTT2 and self:GetOwner().isSprinting) then return end
     if self:GetState() == ArcCW.STATE_SPRINT then return end
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
     self:SetState(ArcCW.STATE_SPRINT)
     self.Sighted = false
     self.Sprinted = true
@@ -411,7 +412,11 @@ function SWEP:TranslateFOV(fov)
     if self:GetState() != ArcCW.STATE_SIGHTS then
         self.ApproachFOV = fov
     else
-        self.ApproachFOV = fov / irons.Magnification
+        if CLIENT and self:ShouldFlatScope() then
+            self.ApproachFOV = fov / (irons.Magnification + irons.ScopeMagnification)
+        else
+            self.ApproachFOV = fov / irons.Magnification
+        end
     end
 
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
