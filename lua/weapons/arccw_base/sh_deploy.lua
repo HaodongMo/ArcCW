@@ -29,18 +29,6 @@ function SWEP:Deploy()
 
     -- Don't play anim if in vehicle. This can be caused by HL2 level changes
     if !self:GetOwner():InVehicle() then
-
-        if self.CheckpointAnimation then
-            self:PlayAnimation(self.CheckpointAnimation, self:GetBuff_Mult("Mult_ReloadTime"), true, self.CheckpointTime, true)
-            self:ProceduralDraw()
-            self:SetNWBool("reloading", true)
-
-            self:SetTimer((self:GetAnimKeyTime(self.CheckpointAnimation) * self:GetBuff_Mult("Mult_ReloadTime")) - self.CheckpointTime,
-            function()
-                self:SetNWBool("reloading", false)
-                self:ResetCheckpoints()
-            end)
-        else
             local prd = false
 
             if self.Animations.ready and self.UnReady then
@@ -90,7 +78,6 @@ function SWEP:Deploy()
             if prd then
                 self:ProceduralDraw()
             end
-        end
     end
 
     if (self.AutoReload or self:GetBuff_Override("Override_AutoReload")) and (self:GetBuff_Override("Override_AutoReload") != false) then

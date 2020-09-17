@@ -169,7 +169,7 @@ local MultsPanel = {
     [0.80] = { type = "f", text = "Move Dispersion", var = "arccw_mult_movedisp", min = 0, max = 10 },
     [0.90] = { type = "f", text = "Reload Time", var = "arccw_mult_reloadtime", min = 0.01, max = 5 },
     [1.00] = { type = "f", text = "ADS Time", var = "arccw_mult_sighttime", min = 0.1, max = 5 },
-    [1.10] = { type = "f", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10 },
+    [1.10] = { type = "i", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10 },
     [1.20] = { type = "f", text = "Random Att. Chance", var = "arccw_mult_attchance", min = 0, max = 10 },
 }
 
