@@ -166,32 +166,36 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         end
     end
 
-    local framestorealtime = 1
+    -- :(
+    -- unfortunately, gmod seems to have broken the features required for this to work.
+    -- as such, I'm reverting to a more traditional reload system.
 
-    if anim.FrameRate then
-        framestorealtime = 1 / anim.FrameRate
-    end
+    -- local framestorealtime = 1
+
+    -- if anim.FrameRate then
+    --     framestorealtime = 1 / anim.FrameRate
+    -- end
 
     -- local dur = vm:SequenceDuration()
     -- vm:SetPlaybackRate(dur / (ttime + startfrom))
 
-    if anim.Checkpoints then
-        self.CheckpointAnimation = key
-        self.CheckpointTime = startfrom
+    -- if anim.Checkpoints then
+    --     self.CheckpointAnimation = key
+    --     self.CheckpointTime = startfrom
 
-        for i, k in pairs(anim.Checkpoints) do
-            if !k then continue end
-            if istable(k) then continue end
-            local realtime = k * framestorealtime
+    --     for i, k in pairs(anim.Checkpoints) do
+    --         if !k then continue end
+    --         if istable(k) then continue end
+    --         local realtime = k * framestorealtime
 
-            if realtime > startfrom then
-                self:SetTimer((realtime * mult) - startfrom, function()
-                    self.CheckpointAnimation = key
-                    self.CheckpointTime = realtime
-                end)
-            end
-        end
-    end
+    --         if realtime > startfrom then
+    --             self:SetTimer((realtime * mult) - startfrom, function()
+    --                 self.CheckpointAnimation = key
+    --                 self.CheckpointTime = realtime
+    --             end)
+    --         end
+    --     end
+    -- end
 
     if CLIENT then
         vm:SetAnimTime(CurTime() - startfrom)

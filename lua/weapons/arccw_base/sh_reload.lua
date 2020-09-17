@@ -110,16 +110,10 @@ function SWEP:Reload()
             -- if self:GetOwner():KeyDown(IN_ATTACK2) then
             --     self:EnterSights()
             -- end
+            self:RestoreAmmo()
         end)
         self.CheckpointAnimation = anim
         self.CheckpointTime = 0
-
-        if SERVER then
-            self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo, true)
-            self:SetClip1(0)
-            self:TakePrimaryAmmo(load)
-            self:SetClip1(load)
-        end
 
         if self.RevolverReload then
             self.LastClip1 = load
