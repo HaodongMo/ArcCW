@@ -44,7 +44,7 @@ function SWEP:PrimaryAttack()
     end
 
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
-  
+
     m_derand(util.SharedRandom(self.BurstCount, -1337, 1337, CurTime()) * (self:EntIndex() % 30241))
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
@@ -211,43 +211,43 @@ function SWEP:PrimaryAttack()
         bullet = self:GetBuff_Hook("Hook_FireBullets", bullet)
 
         if not bullet then return end
-    
+
         local doent = shootent and num or bullet.Num
         local minnum = shootent and 1 or 0
-    
+
         if doent > minnum then
             for n = 1, bullet.Num do
                 bullet.Num = 1
-    
+
                 local dispers = self:GetBuff_Override("Override_ShotgunSpreadDispersion") or self.ShotgunSpreadDispersion
                 local offset  = self:GetShotgunSpreadOffset(n)
                 local calcoff = dispers and (offset * self:GetDispersion() / 60) or (offset + extraspread)
-    
+
                 local ang = owner:EyeAngles() + calcoff
-    
+
                 if not self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
                     ang = ang + AngleRand() * spread / 10
                 end
-    
+
                 if shootent then
                     projectiledata.ang = ang
-    
+
                     self:DoPrimaryFire(true, projectiledata)
                 else
                     bullet.Dir = ang:Forward()
-    
+
                     self:DoPrimaryFire(false, bullet)
                 end
             end
         elseif shootent then
             local ang = owner:EyeAngles()
-    
+
             if not self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
                 ang = ang + (AngleRand() * spread / 10)
             end
-    
+
             projectiledata.ang = ang + extraspread
-    
+
             self:DoPrimaryFire(true, projectiledata)
         end
     else
@@ -441,6 +441,7 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
         if (dir:Length() == 0) then return end
 
         local pdelta = penleft / (self.Penetration * self:GetBuff_Mult("Mult_Penetration"))
+        local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
 
         m_derand(self:GetOwner():GetCurrentCommand():CommandNumber() + (self:EntIndex() % 24977))
 
@@ -490,7 +491,7 @@ end
 
 function SWEP:GetShootSrc()
     local owner = self:GetOwner()
-    
+
     if owner:IsNPC() then return owner:GetShootPos() end
 
     local dir    = owner:EyeAngles()
@@ -510,32 +511,32 @@ end
 
 function SWEP:GetShotgunSpreadOffset(num)
     local rotate = Angle()
-    local spread   = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern or {}
+    local spreadpt = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern or {}
     local spreadov = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun or { Angle() }
 
-    if istable(spread) and istable(spreadov) then
-        spread["BaseClass"]   = nil
+    if istable(spreadpt) and istable(spreadov) then
+        spreadpt["BaseClass"] = nil
         spreadov["BaseClass"] = nil
 
-        if num > #spread then
+        if num > #spreadpt then
             if spo then
-                num = num - #spread
+                num = num - #spreadpt
                 num = m_fmod(num, #spreadov) + 1
                 rotate = spreadov[num]
             else
-                num = m_fmod(num, #spread) + 1
-                rotate = spread[num]
+                num = m_fmod(num, #spreadpt) + 1
+                rotate = spreadpt[num]
             end
         else
-            rotate = spread[num]
+            rotate = spreadpt[num]
         end
     end
 
-    local rotate = {}
-    rotate.num = num
-    rotate.ang = rotate
+    local rottoang = {}
+    rottoang.num = num
+    rottoang.ang = rotate
 
-    rotate = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", rotate).ang
+    rotate = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", rottoang).ang
 
     return rotate or Angle()
 end
