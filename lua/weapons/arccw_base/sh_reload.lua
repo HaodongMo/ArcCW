@@ -179,6 +179,9 @@ local lastframeloadclip1 = 0
 SWEP.LastClipOutTime = 0
 
 function SWEP:GetVisualBullets()
+    local reserve = self:Ammo1()
+    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    local abouttoload = math.Clamp(self:GetCapacity() + chamber, 0, reserve + self:Clip1())
     local h = self:GetBuff_Hook("Hook_GetVisualBullets")
 
     if h then return h end
@@ -187,11 +190,19 @@ function SWEP:GetVisualBullets()
     else
         self.LastClip1_B = self:Clip1()
 
-        return self:Clip1()
+        if self:GetNWBool("reloading") then
+            return abouttoload
+        else
+            return self:Clip1()
+        end
     end
 end
 
 function SWEP:GetVisualClip()
+    local reserve = self:Ammo1()
+    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    local abouttoload = math.Clamp(self:GetCapacity() + chamber, 0, reserve + self:Clip1())
+
     local h = self:GetBuff_Hook("Hook_GetVisualClip")
 
     if h then return h end
@@ -208,7 +219,11 @@ function SWEP:GetVisualClip()
             lastframeclip1 = self:Clip1()
         end
 
-        return self:Clip1()
+        if self:GetNWBool("reloading") then
+            return abouttoload
+        else
+            return self:Clip1()
+        end
     end
 end
 
