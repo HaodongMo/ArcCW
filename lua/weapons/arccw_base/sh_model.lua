@@ -429,6 +429,10 @@ function SWEP:SetupModel(wm)
 
             if wm then
                 k.WMuzzleDeviceElement = hspelement
+
+                if self.MirrorVMWM then
+                    hspelement.WMBone = k.Bone
+                end
             else
                 k.VMuzzleDeviceElement = hspelement
             end
@@ -476,6 +480,10 @@ function SWEP:SetupModel(wm)
 
             if !wm then
                 k.HSPElement = hspelement
+            else
+                if self.MirrorVMWM then
+                    hspelement.WMBone = k.Bone
+                end
             end
 
             table.insert(elements, hspelement)
