@@ -68,24 +68,23 @@ function ArcCW:GetProsCons(att)
     for i, stat in pairs(ArcCW.AutoStats) do
         if not att[i] then continue end
 
-        local k, txt = att[i], ""
+        local k, txt  = att[i], ""
+        local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
 
-        local str = ArcCW.GetTranslation(stat[1]) or stat[1]
-
-        local st = stat[3]
+        local tcon, tpro = (st and cons or pros), (st and pros or cons)
 
         if stat[2] == "mult" and k ~= 1 then
             local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
 
             txt = simple and getsimpleamt(k) or sign .. tostr(percent * 100) .. "% "
 
-            tbl_ins(k > 1 and st and cons or pros, txt .. str)
+            tbl_ins(k > 1 and tcon or tpro, txt .. str)
         elseif stat[2] == "add" and k ~= 0 then
             local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
 
             txt = simple and "+ " or sign .. tostr(state) .. " "
 
-            tbl_ins(k > 0 and st and cons or pros, txt .. str)
+            tbl_ins(k > 0 and tcon or tpro, txt .. str)
         elseif stat[2] == "override" and k == true then
             tbl_ins(st and cons or pros, 1, str)
         end
