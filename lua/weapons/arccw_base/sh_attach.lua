@@ -433,14 +433,14 @@ function SWEP:GetMuzzleDevice(wm)
 end
 
 function SWEP:GetTracerOrigin()
-    local wm = self:GetOwner():ShouldDrawLocalPlayer()
-    local muzz = self:GetMuzzleDevice(wm)
+    -- local wm = self:GetOwner():ShouldDrawLocalPlayer()
+    -- local muzz = self:GetMuzzleDevice(wm)
 
-    if muzz then
-        local pos = muzz:GetAttachment(1).Pos
+    -- if muzz then
+    --     local pos = muzz:GetAttachment(1).Pos
 
-        return pos
-    end
+    --     return pos
+    -- end
 end
 
 function SWEP:CheckFlags(reject, need)
@@ -732,7 +732,10 @@ function SWEP:RefreshBGs()
         end
     end
 
-    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae})
+    if vm and vm:IsValid() then
+        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae})
+    end
+    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae})
 end
 
 function SWEP:Attach(slot, attname, silent)

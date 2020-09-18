@@ -490,7 +490,7 @@ end
 
 function SWEP:GetShootSrc()
     local owner = self:GetOwner()
-    
+
     if owner:IsNPC() then return owner:GetShootPos() end
 
     local dir    = owner:EyeAngles()
@@ -572,8 +572,6 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject()
-    if not game.SinglePlayer() and not IsFirstTimePredicted() then return end
-
     local owner = self:GetOwner()
 
     if not IsValid(owner) then return end

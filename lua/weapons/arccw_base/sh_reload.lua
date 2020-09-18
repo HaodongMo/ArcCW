@@ -150,6 +150,7 @@ function SWEP:Unload()
 end
 
 function SWEP:RestoreAmmo(count)
+    if self:GetOwner():IsNPC() then return end
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
     local clip = self:GetCapacity()
 
@@ -190,7 +191,7 @@ function SWEP:GetVisualBullets()
     else
         self.LastClip1_B = self:Clip1()
 
-        if self:GetNWBool("reloading") then
+        if self:GetNWBool("reloading") and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
             return abouttoload
         else
             return self:Clip1()
@@ -219,7 +220,7 @@ function SWEP:GetVisualClip()
             lastframeclip1 = self:Clip1()
         end
 
-        if self:GetNWBool("reloading") then
+        if self:GetNWBool("reloading") and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
             return abouttoload
         else
             return self:Clip1()
