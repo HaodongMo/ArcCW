@@ -25,7 +25,7 @@ function SWEP:EnterSprint()
     end
 
     if self.Animations.enter_sprint and !s then
-        self:PlayAnimation("enter_sprint", self:GetSightTime(), true, nil, nil, nil, false)
+        self:PlayAnimation("enter_sprint", self:GetSightTime(), true, nil, nil, nil, false, true)
     end
 end
 
@@ -51,7 +51,7 @@ function SWEP:ExitSprint()
     end
 
     if self.Animations.exit_sprint and !s then
-        self:PlayAnimation("exit_sprint", self:GetSightTime(), true, nil, nil, nil, false)
+        self:PlayAnimation("exit_sprint", self:GetSightTime(), true, nil, nil, nil, false, true)
     end
 end
 
@@ -82,9 +82,9 @@ function SWEP:EnterSights()
 
     if self.Animations.enter_sight then
         if self:Clip1() == 0 and self.Animations.enter_sight_empty then
-            self:PlayAnimation("enter_sight_empty", self:GetSightTime(), true, nil, nil, nil, false)
+            self:PlayAnimation("enter_sight_empty", self:GetSightTime(), true, nil, nil, nil, false, true)
         else
-            self:PlayAnimation("enter_sight", self:GetSightTime(), true, nil, nil, nil, false)
+            self:PlayAnimation("enter_sight", self:GetSightTime(), true, nil, nil, nil, false, true)
         end
     end
 end
@@ -117,9 +117,9 @@ function SWEP:ExitSights()
 
     if self.Animations.exit_sight then
         if self:Clip1() == 0 and self.Animations.exit_sight_empty then
-            self:PlayAnimation("exit_sight_empty", self:GetSightTime(), true, nil, nil, nil, false)
+            self:PlayAnimation("exit_sight_empty", self:GetSightTime(), true, nil, nil, nil, false, true)
         else
-            self:PlayAnimation("exit_sight", self:GetSightTime(), true, nil, nil, nil, false)
+            self:PlayAnimation("exit_sight", self:GetSightTime(), true, nil, nil, nil, false, true)
         end
     end
 end
