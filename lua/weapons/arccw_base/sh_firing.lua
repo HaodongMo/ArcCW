@@ -573,8 +573,6 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject()
-    if not game.SinglePlayer() and not IsFirstTimePredicted() then return end
-
     local owner = self:GetOwner()
 
     if not IsValid(owner) then return end

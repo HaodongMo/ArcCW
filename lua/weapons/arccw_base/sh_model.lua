@@ -157,7 +157,11 @@ function SWEP:SetupModel(wm)
     end
 
     if wm and CLIENT then
-        local model = ClientsideModel(self.WorldModel)
+        local sm = self.WorldModel
+        if self.MirrorVMWM then
+            sm = self.ViewModel
+        end
+        local model = ClientsideModel(sm)
 
         if !model then return end
         if !IsValid(model) then return end
@@ -176,9 +180,14 @@ function SWEP:SetupModel(wm)
         element.WMBone = "ValveBiped.Bip01_R_Hand"
 
         if self.WorldModelOffset then
-            element.OffsetAng = self.WorldModelOffset.ang or Angle(0, 0, 0)
-            element.OffsetPos = self.WorldModelOffset.pos or Vector(0, 0, 0)
-            element.WMBone = self.WorldModelOffset.bone or element.WMBone
+            if !self:GetOwner():IsValid() then
+                element.OffsetAng = Angle(0, 0, 0)
+                element.OffsetPos = Vector(0, 0, 0)
+            else
+                element.OffsetAng = self.WorldModelOffset.ang or Angle(0, 0, 0)
+                element.OffsetPos = self.WorldModelOffset.pos or Vector(0, 0, 0)
+                element.WMBone = self.WorldModelOffset.bone or element.WMBone
+            end
             element.BoneMerge = false
         else
             model:SetParent(self:GetOwner() or self)
@@ -589,7 +598,6 @@ function SWEP:DrawCustomModel(wm)
         end
 
         if !IsValid(self:GetOwner()) then
-            vm = self
             selfmode = true
         end
 
@@ -639,6 +647,7 @@ function SWEP:DrawCustomModel(wm)
         else
             if wm and self.MirrorVMWM then
                 vm = self.WMModel or self
+                -- vm = self
             end
         end
 

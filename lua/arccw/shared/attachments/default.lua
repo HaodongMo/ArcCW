@@ -324,6 +324,7 @@ att.Mult_MeleeTime = 1
 att.Mult_MeleeDamage = 1
 att.Add_MeleeRange = 0
 att.Mult_MeleeAttackTime = 1
+att.Override_MeleeDamageType = nil
 
 att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil
