@@ -242,10 +242,8 @@ function SWEP:SetupModel(wm)
             self.PrintName = self.PrintName .. atttbl.AddSuffix
         end
 
-        if !GetConVar("arccw_att_showothers"):GetBool() then
-            if LocalPlayer() != self:GetOwner() then
-                continue
-            end
+        if !GetConVar("arccw_att_showothers"):GetBool() and CLIENT and LocalPlayer() != self:GetOwner() then
+            continue
         end
 
         if SERVER then continue end
