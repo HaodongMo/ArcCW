@@ -13,13 +13,14 @@ end
 
 SWEP.LastAnimStartTime = 0
 
-function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorereload)
+function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorereload, absolute)
     mult = mult or 1
     pred = pred or false
     startfrom = startfrom or 0
     tt = tt or false
     skipholster = skipholster or false
     ignorereload = ignorereload or false
+    absolute = absolute or false
 
     if !self.Animations[key] then return end
 
@@ -94,12 +95,18 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     self:GetAnimKeyTime(key)
 
-    local ttime = (anim.Time * mult) - startfrom
+    local time = anim.Time
 
-    if startfrom > (anim.Time * mult) then return end
+    if absolute then
+        time = 1
+    end
+
+    local ttime = (time * mult) - startfrom
+
+    if startfrom > (time * mult) then return end
 
     if tt then
-        self:SetNextPrimaryFire(CurTime() + ((anim.MinProgress or anim.Time) * mult) - startfrom)
+        self:SetNextPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
     end
 
     if anim.LHIK then
