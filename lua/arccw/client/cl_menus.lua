@@ -157,7 +157,7 @@ local AttsPanel = {
     [1.00] = { type = "b", text = "#arccw.cvar.enable_dropping", var = "arccw_enable_dropping" },
     [1.10] = { type = "b", text = "#arccw.cvar.atts_spawnrand", var = "arccw_atts_spawnrand" },
     [1.20] = { type = "b", text = "#arccw.cvar.atts_ubglautoload", var = "arccw_atts_ubglautoload" },
-    [1.20] = { type = "p", text = "#arccw.blacklist", func = function() RunConsoleCommand("arccw_blacklist") end },
+    [1.30] = { type = "p", text = "#arccw.blacklist", func = function() RunConsoleCommand("arccw_blacklist") end },
 }
 
 local MultsPanel = {
