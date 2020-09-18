@@ -25,7 +25,7 @@ function SWEP:EnterSprint()
     end
 
     if self.Animations.enter_sprint and !s then
-        self:PlayAnimation("enter_sprint")
+        self:PlayAnimation("enter_sprint", self:GetSightTime(), true, nil, nil, nil, false)
     end
 end
 
@@ -51,7 +51,7 @@ function SWEP:ExitSprint()
     end
 
     if self.Animations.exit_sprint and !s then
-        self:PlayAnimation("exit_sprint")
+        self:PlayAnimation("exit_sprint", self:GetSightTime(), true, nil, nil, nil, false)
     end
 end
 

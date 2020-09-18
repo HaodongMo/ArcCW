@@ -1,7 +1,5 @@
 if CLIENT then
     ArcCW.LastWeapon = nil
-
-    local lastfiremode = 0
 end
 
 local lastUBGL = 0
@@ -27,7 +25,7 @@ function SWEP:Think()
 
     self:InBipod()
 
-    if self:GetNWBool("cycle", false) and !self:GetNWBool("reloading", false) and
+    if IsFirstTimePredicted() and self:GetNWBool("cycle", false) and !self:GetNWBool("reloading", false) and
             (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
             or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 and owner:KeyDown(IN_ATTACK) or owner:KeyPressed(IN_ATTACK))) then
         local anim = "cycle"
