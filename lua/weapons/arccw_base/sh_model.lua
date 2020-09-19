@@ -337,7 +337,7 @@ function SWEP:SetupModel(wm)
                 element.OffsetAng:Set(repang or k.Offset.vang or Angle(0, 0, 0))
                 element.OffsetAng = element.OffsetAng + (atttbl.OffsetAng or Angle(0, 0, 0))
             else
-                element.WMBone = k.WMBone
+                element.WMBone = k.WMBone or "ValveBiped.Bip01_R_Hand"
             end
         else
             element.OffsetAng = Angle()
@@ -591,12 +591,8 @@ function SWEP:DrawCustomModel(wm)
 
         vm = self:GetOwner()
 
-        if self.MirrorVMWM then
+        if self.MirrorVMWM or !IsValid(self:GetOwner()) then
             vm = self.WMModel or self
-        end
-
-        if !IsValid(self:GetOwner()) then
-            selfmode = true
         end
 
         if !vm or !IsValid(vm) then return end
@@ -634,13 +630,11 @@ function SWEP:DrawCustomModel(wm)
         if k.IsBaseWM then
             if self:GetOwner():IsValid() then
                 k.Model:SetParent(self:GetOwner())
-            else
-                k.Model:SetParent(self)
-            end
-            if self:GetOwner():IsValid() then
                 vm = self:GetOwner()
             else
+                k.Model:SetParent(self)
                 vm = self
+                selfmode = true
             end
         else
             if wm and self.MirrorVMWM then
