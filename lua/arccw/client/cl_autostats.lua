@@ -71,7 +71,7 @@ function ArcCW:GetProsCons(att)
         local k, txt  = att[i], ""
         local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
 
-        local tcon, tpro = (st and cons or pros), (st and pros or cons)
+        local tcon, tpro = st and cons or pros, st and pros or cons
 
         if stat[2] == "mult" and k ~= 1 then
             local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
@@ -84,7 +84,7 @@ function ArcCW:GetProsCons(att)
 
             txt = simple and "+ " or sign .. tostr(state) .. " "
 
-            tbl_ins(k > 0 and tcon or tpro, txt .. str)
+            tbl_ins(k > 1 and tpro or tcon, txt .. str)
         elseif stat[2] == "override" and k == true then
             tbl_ins(st and cons or pros, 1, str)
         end
