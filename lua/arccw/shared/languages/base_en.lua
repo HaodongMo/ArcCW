@@ -150,6 +150,7 @@ L["autostat.zoom"] = "Increased zoom"
 L["autostat.glint"] = "Visible scope glint"
 L["autostat.thermal"] = "Thermal vision"
 L["autostat.silencer"] = "Suppresses firing sound"
+L["autostat.norandspr"] = "No random spread"
 
 -- TTT
 L["ttt.roundinfo"] = "ArcCW Configuration"

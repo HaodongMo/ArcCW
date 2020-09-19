@@ -7,11 +7,12 @@ local tostr   = tostring
 
 ArcCW.AutoStats = {
     -- Attachments
-    ["MagExtender"] = { "autostat.magextender", "override", false },
-    ["MagReducer"]  = { "autostat.magreducer",  "override", true },
-    ["Bipod"]       = { "autostat.bipod",       "override", false },
-    ["ScopeGlint"]  = { "autostat.glint",       "override", true },
-    ["Silencer"]    = { "autostat.silencer",    "override", false },
+    ["MagExtender"]           = { "autostat.magextender", "override", false },
+    ["MagReducer"]            = { "autostat.magreducer",  "override", true },
+    ["Bipod"]                 = { "autostat.bipod",       "override", false },
+    ["ScopeGlint"]            = { "autostat.glint",       "override", true },
+    ["Silencer"]              = { "autostat.silencer",    "override", false },
+    ["Override_NoRandSpread"] = { "autostat.norandspr",   "override", false },
     -- Multipliers
     ["Mult_BipodRecoil"]      = { "autostat.bipodrecoil", "mult", true },
     ["Mult_BipodDispersion"]  = { "autostat.bipoddisp",   "mult", true },
@@ -65,26 +66,27 @@ function ArcCW:GetProsCons(att)
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
 
     for i, stat in pairs(ArcCW.AutoStats) do
-        if att[i] ~= nil then
-            local k, txt = att[i], ""
+        if not att[i] then continue end
 
-            local str = ArcCW.GetTranslation(stat[1]) or stat[1]
+        local k, txt  = att[i], ""
+        local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
 
-            if stat[2] == "mult" then
-                local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
+        local tcon, tpro = st and cons or pros, st and pros or cons
 
-                txt = simple and getsimpleamt(k) or sign .. tostr(percent * 100) .. "% "
+        if stat[2] == "mult" and k ~= 1 then
+            local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
 
-                tbl_ins(k > 1 and (stat[3] and cons or pros) or (stat[3] and pros or cons), txt .. str)
-            elseif stat[2] == "add" then
-                local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
+            txt = simple and getsimpleamt(k) or sign .. tostr(percent * 100) .. "% "
 
-                txt = simple and "+ " or sign .. tostr(state) .. " "
+            tbl_ins(k > 1 and tcon or tpro, txt .. str)
+        elseif stat[2] == "add" and k ~= 0 then
+            local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
 
-                tbl_ins(k > 0 and (stat[3] and cons or pros) or (stat[3] and pros or cons), txt .. str)
-            elseif stat[2] == "override" and k == true then
-                tbl_ins(stat[3] and cons or pros, 1, str)
-            end
+            txt = simple and "+ " or sign .. tostr(state) .. " "
+
+            tbl_ins(k > 1 and tpro or tcon, txt .. str)
+        elseif stat[2] == "override" and k == true then
+            tbl_ins(st and cons or pros, 1, str)
         end
     end
 
