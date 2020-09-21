@@ -191,6 +191,14 @@ L["ttt.bodyatt.att3"] = " had these attachments: "
 L["ttt.attachments"] = " Attachment(s): " -- Used in TTT2 TargetID
 L["ttt.ammo"] = "Ammo: " -- Used in TTT2 TargetID
 
+-- Shit that used to be in CS+ why
+L["info.togglesight"] = "Double press +USE to toggle sights"
+L["info.toggleubgl"] = "Double press +ZOOM to toggle underbarrel"
+L["pro.ubgl"] = "Selectable underbarrel launcher"
+L["pro.ubsg"] = "Selectable underbarrel shotgun"
+L["con.obstruction"] = "May obstruct sights"
+L["autostat.underwater"] = "Shoot underwater"
+
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
 -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]
