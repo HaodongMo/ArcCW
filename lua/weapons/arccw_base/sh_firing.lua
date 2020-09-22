@@ -305,6 +305,8 @@ function SWEP:PrimaryAttack()
 
     self:ApplyAttachmentShootDamage()
 
+    self:AddHeat()
+
     self:GetBuff_Hook("Hook_PostFireBullets")
 
     if shouldsupp then SuppressHostEvents(nil) end
