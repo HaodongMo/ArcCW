@@ -228,6 +228,8 @@ function SWEP:Think()
         end
     end
 
+    self:DoHeat()
+
     -- if CLIENT then
         -- if !IsValid(ArcCW.InvHUD) then
         --     gui.EnableScreenClicker(false)
