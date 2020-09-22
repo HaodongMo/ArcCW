@@ -310,6 +310,10 @@ function SWEP:Holster(wep)
 
     if !skip then return true end
 
+    local vm = self:GetOwner():GetViewModel()
+
+    vm:SetPlaybackRate(1)
+
     return self.FullyHolstered
 end
 
