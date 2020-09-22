@@ -11,6 +11,8 @@ function SWEP:Think()
 
     local vm = owner:GetViewModel()
 
+    self.BurstCount = self:GetBurstCount()
+
     if owner:KeyPressed(IN_ATTACK) then
         self:SetNWBool("reqend", true)
     end
