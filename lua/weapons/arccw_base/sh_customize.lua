@@ -1596,7 +1596,7 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("MeleeDamage") end,
             },
             {translate("stat.meleetime"), translate("stat.meleetime.tooltip"),
-                function() return defaultStatFunc("MeleeTime", "s", 2) end,
+                function() return defaultStatFunc("MeleeTime", "ms", 2) end,
                 function() return defaultBetterFunc("MeleeTime", true) end,
             },
             {translate("stat.shootvol"), translate("stat.shootvol.tooltip"),
