@@ -24,7 +24,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     if !self.Animations[key] then return end
 
-    --if self:GetNWBool("reloading", false) and !ignorereload then return end
+    if self:GetNWBool("reloading", false) and !ignorereload then return end
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
