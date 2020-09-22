@@ -24,7 +24,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     if !self.Animations[key] then return end
 
-    if self:GetNWBool("reloading", false) and !ignorereload then return end
+    --if self:GetNWBool("reloading", false) and !ignorereload then return end
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
@@ -51,17 +51,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         net.WriteBool(skipholster)
         net.WriteBool(ignorereload)
         net.Send(self:GetOwner())
-    end
-
-    if anim.ProcHolster and !skipholster then
-        self:ProceduralHolster()
-        self:SetTimer(0.25, function()
-            self:PlayAnimation(anim, mult, true, startfrom, tt, true)
-        end)
-        if tt then
-            self:SetNextPrimaryFire(CurTime() + 0.25)
-        end
-        return
     end
 
     if anim.ViewPunchTable and CLIENT then
@@ -106,7 +95,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if startfrom > (time * mult) then return end
 
     if tt then
-        self:SetNextPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
+        self:SetNextCPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
     end
 
     if anim.LHIK then

@@ -459,7 +459,8 @@ SWEP.Secondary.Ammo = "none"
 SWEP.DrawCrosshair = true
 
 SWEP.ArcCW = true
-SWEP.BurstCount = 0
+--SWEP.BurstCount = 0
+        --Outdated, but if you could find a way to keep compatibility with older atts/weps :heart:
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true
@@ -551,6 +552,13 @@ end
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
+
+    
+    self:NetworkVar("Float", 0, "NextCPrimaryFire")
+    self:NetworkVar("Int", 1, "BurstCount")
+    --self:NetworkVar("Int", 0, "NWState")
+
+
 end
 
 function SWEP:SetState(v)

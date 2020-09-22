@@ -9,7 +9,7 @@ function SWEP:Reload()
         return
     end
 
-    if self:GetNextPrimaryFire() >= CurTime() then return end
+    if self:GetNextCPrimaryFire() >= CurTime() then return end
     --if self:GetNextSecondaryFire() > CurTime() then return end
         -- don't succumb to
                 -- californication
@@ -42,7 +42,7 @@ function SWEP:Reload()
     self.LastLoadClip1 = load - self:Clip1()
 
     self:SetNWBool("reqend", false)
-    self.BurstCount = 0
+    self:SetBurstCount(0)
 
     local shouldshotgunreload = self.ShotgunReload
 

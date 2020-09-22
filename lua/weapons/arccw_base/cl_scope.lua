@@ -150,7 +150,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
     oldpostmp = pos * 1
     oldangtmp = ang * 1
 
-    targbool = self:GetNextPrimaryFire() - .1 > CurTime()
+    targbool = self:GetNextCPrimaryFire() - .1 > CurTime()
     targint = targbool and 1 or 0
     targint = math.min(targint, 1-math.pow( vm:GetCycle(), 2 ) )
     progress = Lerp(ftv * 15, progress, targint)

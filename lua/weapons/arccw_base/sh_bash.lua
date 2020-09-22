@@ -1,7 +1,7 @@
 function SWEP:Bash(melee2)
     melee2 = melee2 or false
     if self:GetState() == ArcCW.STATE_SIGHTS then return end
-    if self:GetNextPrimaryFire() > CurTime() then return end
+    if self:GetNextCPrimaryFire() > CurTime() then return end
 
     if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
 
@@ -45,7 +45,7 @@ function SWEP:Bash(melee2)
     if CLIENT then
         self:OurViewPunch(-self.BashPrepareAng * 0.05)
     end
-    self:SetNextPrimaryFire(CurTime() + mt)
+    self:SetNextCPrimaryFire(CurTime() + mt)
 
     if melee2 then
         if self.HoldtypeActive == "pistol" or self.HoldtypeActive == "revolver" then

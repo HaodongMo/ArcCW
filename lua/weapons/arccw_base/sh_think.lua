@@ -59,26 +59,26 @@ function SWEP:Think()
     end
 
     if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 then
-        if self.BurstCount > 0 then
+        if self:GetBurstCount() > 0 then
             self:PrimaryAttack()
         end
 
-        if self.BurstCount == self:GetBurstLength() then
+        if self:GetBurstCount() == self:GetBurstLength() then
             self.Primary.Automatic = false
-            self.BurstCount = 0
+            self:SetBurstCount(0)
         end
     end
 
     if owner:KeyReleased(IN_ATTACK) then
         if !self:GetCurrentFiremode().RunawayBurst then
-            self.BurstCount = 0
+            self:SetBurstCount(0)
         end
 
         if self:GetCurrentFiremode().Mode < 0 and !self:GetCurrentFiremode().RunawayBurst then
             local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
 
-            if (CurTime() + postburst) > self:GetNextPrimaryFire() then
-            self:SetNextPrimaryFire(CurTime() + postburst)
+            if (CurTime() + postburst) > self:GetNextCPrimaryFire() then
+            self:SetNextCPrimaryFire(CurTime() + postburst)
             end
         end
     end
