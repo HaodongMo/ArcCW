@@ -160,48 +160,7 @@ function SWEP:Think()
     end
 
     if (CLIENT or game.SinglePlayer()) and (IsFirstTimePredicted() or game.SinglePlayer()) then
-        local ft = FrameTime()
-        -- if CLIENT then
-        --    ft = RealFrameTime()
-        -- end
-
-        local newang = owner:EyeAngles()
-        local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
-        local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
-
-        local ra = Angle(0, 0, 0)
-
-        ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.5)
-        ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
-
-        newang = newang - ra
-
-        self.RecoilAmount = r - (ft * r * 20)
-        self.RecoilAmountSide = rs - (ft * rs * 20)
-
-        self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 0.1)
-        self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 0.1)
-
-        -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
-        -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
-
-        owner:SetEyeAngles(newang)
-
-        local rpb = self.RecoilPunchBack
-        local rps = self.RecoilPunchSide
-        local rpu = self.RecoilPunchUp
-
-        if rpb != 0 then
-            self.RecoilPunchBack = math.Approach(rpb, 0, ft * rpb * 2.5)
-        end
-
-        if rps != 0 then
-            self.RecoilPunchSide = math.Approach(rps, 0, ft * rps * 5)
-        end
-
-        if rpu != 0 then
-            self.RecoilPunchUp = math.Approach(rpu, 0, ft * rpu * 5)
-        end
+        self:ProcessRecoil()
 
         if IsValid(vm) then
             local vec1 = Vector(1, 1, 1)
@@ -307,6 +266,52 @@ function SWEP:Think()
     --if SERVER or !game.SinglePlayer() then
         self:ProcessTimers()
     --end
+end
+
+function SWEP:ProcessRecoil()
+    local owner = self:GetOwner()
+    local ft = FrameTime()
+    if CLIENT then
+       ft = math.min(FrameTime(), RealFrameTime())
+    end
+
+    local newang = owner:EyeAngles()
+    local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
+    local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
+
+    local ra = Angle(0, 0, 0)
+
+    ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.5)
+    ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
+
+    newang = newang - ra
+
+    self.RecoilAmount = r - (ft * r * 20)
+    self.RecoilAmountSide = rs - (ft * rs * 20)
+
+    self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 0.1)
+    self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 0.1)
+
+    -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
+    -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
+
+    owner:SetEyeAngles(newang)
+
+    local rpb = self.RecoilPunchBack
+    local rps = self.RecoilPunchSide
+    local rpu = self.RecoilPunchUp
+
+    if rpb != 0 then
+        self.RecoilPunchBack = math.Approach(rpb, 0, ft * rpb * 2.5)
+    end
+
+    if rps != 0 then
+        self.RecoilPunchSide = math.Approach(rps, 0, ft * rps * 5)
+    end
+
+    if rpu != 0 then
+        self.RecoilPunchUp = math.Approach(rpu, 0, ft * rpu * 5)
+    end
 end
 
 function SWEP:InSprint()
