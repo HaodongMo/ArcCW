@@ -313,7 +313,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     speed = 1 / self:GetSightTime() * speed * FT
 
-    actual.pos   = LerpVector(speed * 2, actual.pos, target.pos)
+    actual.pos   = LerpVector(speed, actual.pos, target.pos)
     actual.ang   = LerpAngle(speed, actual.ang, target.ang)
     actual.down  = f_lerp(speed, actual.down, target.down)
     actual.sway  = f_lerp(speed, actual.sway, target.sway)
