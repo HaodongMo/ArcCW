@@ -470,6 +470,8 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawCrosshair = true
+SWEP.m_WeaponDeploySpeed = 8008135
+        -- We don't do that here
 
 SWEP.ArcCW = true
 --SWEP.BurstCount = 0
