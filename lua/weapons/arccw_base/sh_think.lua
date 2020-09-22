@@ -160,7 +160,7 @@ function SWEP:Think()
     end
 
     if (CLIENT or game.SinglePlayer()) and (IsFirstTimePredicted() or game.SinglePlayer()) then
-        self:DoRecoil()
+        self:ProcessRecoil()
 
         if IsValid(vm) then
             local vec1 = Vector(1, 1, 1)
@@ -268,12 +268,12 @@ function SWEP:Think()
     --end
 end
 
-function SWEP:DoRecoil()
+function SWEP:ProcessRecoil()
     local owner = self:GetOwner()
-    local ft = math.min(FrameTime(), RealFrameTime())
-    -- if CLIENT then
-    --    ft = RealFrameTime()
-    -- end
+    local ft = FrameTime()
+    if CLIENT then
+       ft = math.min(FrameTime(), RealFrameTime())
+    end
 
     local newang = owner:EyeAngles()
     local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
