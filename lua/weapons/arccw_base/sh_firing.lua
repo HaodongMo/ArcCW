@@ -38,7 +38,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
-        self.Primary.Automatic = false
+        --self.Primary.Automatic = false
 
         return
     end
@@ -702,6 +702,7 @@ function SWEP:GetBurstLength()
 
     local hookedlen = self:GetBuff_Hook("Hook_GetBurstLength", len)
 
+    if len == 1 then return 1 end
     if len >= 2 then return self:GetBurstCount() + 10 end
 
     if hookedlen ~= len then return hookedlen end
@@ -712,7 +713,7 @@ function SWEP:GetBurstLength()
 end
 
 function SWEP:ShouldBeAutomatic()
-    if self:GetCurrentFiremode().Mode == 1 then return false end
+    if self:GetCurrentFiremode().Mode == 1 then return true end
 
     if self:GetCurrentFiremode().RunawayBurst then return true end
 

@@ -246,7 +246,6 @@ function SWEP:Holster(wep)
         time = self:GetAnimKeyTime("holster_empty")
     elseif self.Animations.holster then
         self:PlayAnimation("holster", self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-                        --(key, mult, pred, startfrom, tt, skipholster, ignorereload)
         time = self:GetAnimKeyTime("holster")
     else
         if CLIENT then
