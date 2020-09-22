@@ -241,7 +241,7 @@ function SWEP:Holster(wep)
     self.HolsterSwitchTo = wep
 
     local time = 0.25
-    if self.Animations.holster_empty then
+    if self:Clip1() == 0 and self.Animations.holster_empty then
         self:PlayAnimation("holster_empty", self:GetBuff_Mult("Mult_DrawTime"))
         time = self:GetAnimKeyTime("holster_empty")
     elseif self.Animations.holster then
