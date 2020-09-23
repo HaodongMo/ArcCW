@@ -326,6 +326,12 @@ att.Add_MeleeRange = 0
 att.Mult_MeleeAttackTime = 1
 att.Override_MeleeDamageType = nil
 
+-- jam/heat related buffs
+att.Override_Jamming = nil
+att.Mult_HeatCapacity = 1
+att.Mult_FixTime = 1
+att.Mult_HeatDissipation = 1
+
 att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil
 -- att.Override_TracerCol = nil

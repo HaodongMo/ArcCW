@@ -18,6 +18,13 @@ SWEP.UseHands = true
 SWEP.ViewModel = "" -- I mean, you probably have to edit these too
 SWEP.WorldModel = ""
 
+--[[
+SWEP.WorldModelOffset = {
+	pos		=	Vector(0, 0, 0),
+	ang		=	Angle(0, 0, 0),
+	bone	=	"ValveBiped.Bip01_R_Hand",
+}]]
+
 SWEP.PresetBase = nil -- make this weapon share presets with this one.
 
 SWEP.KillIconAlias = nil -- set to other weapon class to share select and kill icons
@@ -194,6 +201,10 @@ SWEP.IronSightStruct = {
 SWEP.ProceduralRegularFire = false
 SWEP.ProceduralIronFire = false
 SWEP.SightTime = 0.33
+
+SWEP.Jamming = false
+SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
+SWEP.HeatDissipation = 5 -- rounds' worth of heat lost per second
 
 SWEP.HoldtypeHolstered = "passive"
 SWEP.HoldtypeActive = "shotgun"
@@ -385,6 +396,8 @@ SWEP.Attachments = {}
 -- fire_empty
 -- cycle (for bolt actions)
 -- bash
+-- fix
+-- fix_empty
 -- enter_bipod
 -- exit_bipod
 -- enter_sight
@@ -503,6 +516,7 @@ include("sh_firemodes.lua")
 include("sh_customize.lua")
 include("sh_ubgl.lua")
 include("sh_rocket.lua")
+include("sh_heat.lua")
 include("sh_bash.lua")
 include("sh_bipod.lua")
 include("sh_grenade.lua")
@@ -521,6 +535,7 @@ AddCSLuaFile("sh_firemodes.lua")
 AddCSLuaFile("sh_customize.lua")
 AddCSLuaFile("sh_ubgl.lua")
 AddCSLuaFile("sh_rocket.lua")
+AddCSLuaFile("sh_heat.lua")
 AddCSLuaFile("sh_bash.lua")
 AddCSLuaFile("sh_bipod.lua")
 AddCSLuaFile("sh_grenade.lua")
