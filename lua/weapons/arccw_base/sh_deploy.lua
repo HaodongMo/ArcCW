@@ -238,6 +238,10 @@ function SWEP:Holster(wep)
     self.Sighted = false
     self.Sprinted = false
 
+    if CLIENT and LocalPlayer() == self:GetOwner() then
+        self:ToggleCustomizeHUD(false)
+    end
+
     self.HolsterSwitchTo = wep
 
     local time = 0.25
@@ -309,6 +313,10 @@ function SWEP:Holster(wep)
     -- return true
 
     if !skip then return true end
+
+    local vm = self:GetOwner():GetViewModel()
+
+    vm:SetPlaybackRate(1)
 
     return self.FullyHolstered
 end
