@@ -18,6 +18,13 @@ SWEP.UseHands = true
 SWEP.ViewModel = "" -- I mean, you probably have to edit these too
 SWEP.WorldModel = ""
 
+--[[
+SWEP.WorldModelOffset = {
+	pos		=	Vector(0, 0, 0),
+	ang		=	Angle(0, 0, 0),
+	bone	=	"ValveBiped.Bip01_R_Hand",
+}]]
+
 SWEP.PresetBase = nil -- make this weapon share presets with this one.
 
 SWEP.KillIconAlias = nil -- set to other weapon class to share select and kill icons
