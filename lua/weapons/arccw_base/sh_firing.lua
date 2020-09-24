@@ -328,24 +328,19 @@ function SWEP:DoPrimaryAnim()
     local anim = "fire"
 
     local inbipod = self:InBipod()
-    local empty   = self:Clip1() == 0
     local iron    = self:GetState() == ArcCW.STATE_SIGHTS
-
-    local bipodem = self.Animations.fire_bipod_empty
-    local bipod   = self.Animations.fire_bipod
-
-    local ironem  = self.Animations.fire_iron_empty
-    local fireir  = self.Animations.fire_iron
-    local fireem  = self.Animations.fire_empty
 
     -- Needs testing
     if inbipod then
-        anim = (empty and iron and bipodem) and "fire_bipod_iron_empty" or (empty and bipodem) and "fire_bipod_iron_empty"
-                or (empty and iron and ironem) and "fire_iron_empty" or (iron and fireir) and "fire_iron" or "fire"
+        if iron then
+            anim = self:SelectAnimation("fire_bipod_iron") or self:SelectAnimation("fire_iron") or anim
+        else
+            anim = self:SelectAnimation("fire_bipod") or self:SelectAnimation("fire") or anim
+        end
     elseif iron then
-        anim = (empty and ironem) and "fire_iron_empty" or fireir and "fire_iron" or "fire"
+        anim = self:SelectAnimation("fire_iron") or self:SelectAnimation("fire") or anim
     else
-        anim = (empty and fireem) and "fire_empty" or "fire"
+        anim = self:SelectAnimation("fire") or anim
     end
 
     if (self.ProceduralIronFire and iron) or (self.ProceduralRegularFire and not iron) then anim = nil end

@@ -24,6 +24,7 @@ util.AddNetworkString("arccw_npcgivereturn")
 util.AddNetworkString("arccw_rqwpnnet")
 util.AddNetworkString("arccw_blacklist")
 util.AddNetworkString("arccw_sendatthp")
+util.AddNetworkString("arccw_reloadatts")
 
 util.AddNetworkString("arccw_ttt_bodyattinfo")
 

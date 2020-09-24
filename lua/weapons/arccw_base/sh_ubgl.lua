@@ -18,10 +18,10 @@ function SWEP:SelectUBGL()
 
     if self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.enter_ubgl_empty and self:Clip2() == 0 then
         self:PlayAnimation("enter_ubgl_empty", 1, false, 0, true)
-        self:SetNextSecondaryFire(CurTime() + self.Animations.enter_ubgl_empty.Time)
+        self:SetNextSecondaryFire(CurTime() + self:GetAnimKeyTime("enter_ubgl_empty"))
     elseif self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.enter_ubgl then
         self:PlayAnimation("enter_ubgl", 1, false, 0, true)
-        self:SetNextSecondaryFire(CurTime() + self.Animations.enter_ubgl.Time)
+        self:SetNextSecondaryFire(CurTime() + self:GetAnimKeyTime("enter_ubgl"))
     end
 
     self:GetBuff_Hook("Hook_OnSelectUBGL")
@@ -32,7 +32,7 @@ function SWEP:DeselectUBGL()
     self:SetNWBool("ubgl", false)
 
     if !IsFirstTimePredicted() then return end
-    
+
     self:MyEmitSound(self.ExitUBGLSound)
 
     if CLIENT then

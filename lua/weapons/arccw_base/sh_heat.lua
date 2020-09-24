@@ -14,14 +14,12 @@ function SWEP:AddHeat()
     self.Heat = math.Clamp(self.Heat + 1, 0, max)
     self.NextHeatDissipateTime = CurTime() + 0.5
 
-    if self.Heat >= max and self.Animations["fix"] then
-        local anim = "fix"
+    if self.Heat >= max then
+        local anim = self:SelectAnimation("fix")
 
-        if self:Clip1() == 0 and self.Animations["fix_empty"] then
-            anim = "fix_empty"
+        if anim then
+            self:PlayAnimation(anim, mult, true, 0, true)
         end
-
-        self:PlayAnimation(anim, mult, true, 0, true)
     end
 end
 
