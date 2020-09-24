@@ -170,6 +170,7 @@ local function postsetup(wpn)
         if wpn:GetOwner() == LocalPlayer() then
             wpn:SetupModel(false)
         end
+        wpn:AdjustAtts()
     else
         timer.Simple(0.1, function()
             postsetup(wpn)
