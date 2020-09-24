@@ -19,9 +19,8 @@ SWEP.TickCache_Hooks = {}
 SWEP.TickCache_Tick_Overrides = {}
 SWEP.TickCache_Tick_Adds = {}
 SWEP.TickCache_Tick_Mults = {}
-SWEP.TickCache_Tick_Hooks = {}
 
-SWEP.AttCache_Hooks = {}
+SWEP.AttCache_Hooks = nil
 
 function SWEP:RecalcAllBuffs()
     self.TickCache_Overrides = {}
@@ -32,7 +31,6 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Tick_Overrides = {}
     self.TickCache_Tick_Adds = {}
     self.TickCache_Tick_Mults = {}
-    self.TickCache_Tick_Hooks = {}
 
     self.AttCache_Hooks = {}
 end
@@ -40,11 +38,28 @@ end
 function SWEP:GetBuff_Hook(buff, data)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
-    local hasany = false
+    -- Fesiug, this will only work if you have just one hook.
+    -- if self.TickCache_Hooks[buff] and self.TickCache_Tick_Hooks[buff] == CurTime() then
+    --     hook.Call(buff, ArcCW, self, data)
+    --     return data
+    -- end
 
-    if self.TickCache_Hooks[buff] and self.TickCache_Tick_Hooks[buff] == CurTime() then
+    if self.AttCache_Hooks[buff] then
+        for i, k in pairs(self.AttCache_Hooks[buff]) do
+            local ret = k(self, data)
+
+            if ret == nil then continue end
+
+            if ret == false then return end
+
+            data = ret
+        end
+
         hook.Call(buff, ArcCW, self, data)
+
         return data
+    else
+        self.AttCache_Hooks[buff] = {}
     end
 
     for i, k in pairs(self.Attachments) do
@@ -57,7 +72,7 @@ function SWEP:GetBuff_Hook(buff, data)
         if isfunction(atttbl[buff]) then
             local ret = atttbl[buff](self, data)
 
-            hasany = true
+            table.insert(self.AttCache_Hooks[buff], atttbl[buff])
 
             if ret == nil then continue end
 
@@ -71,6 +86,8 @@ function SWEP:GetBuff_Hook(buff, data)
 
     if cfm and isfunction(cfm[buff]) then
         local ret = cfm[buff](self, data)
+
+        table.insert(self.AttCache_Hooks[buff], cfm[buff])
 
         hasany = true
 
@@ -90,6 +107,8 @@ function SWEP:GetBuff_Hook(buff, data)
             if ele[buff] then
                 local ret = ele[buff](self, data)
 
+                table.insert(self.AttCache_Hooks[buff], ele[buff])
+
                 hasany = true
 
                 if ret != nil then
@@ -105,6 +124,8 @@ function SWEP:GetBuff_Hook(buff, data)
     if isfunction(self:GetTable()[buff]) then
         local ret = self:GetTable()[buff](self, data)
 
+        table.insert(self.AttCache_Hooks[buff], self:GetTable()[buff])
+
         hasany = true
 
         if ret != nil then
@@ -114,12 +135,6 @@ function SWEP:GetBuff_Hook(buff, data)
             data = ret
 
         end
-    end
-
-    self.TickCache_Tick_Hooks[buff] = CurTime()
-
-    if !hasany then
-        self.TickCache_Hooks[buff] = true
     end
 
     hook.Call(buff, ArcCW, self, data)
