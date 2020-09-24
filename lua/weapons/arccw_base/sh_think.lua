@@ -11,6 +11,8 @@ function SWEP:Think()
 
     local vm = owner:GetViewModel()
 
+    self.BurstCount = self:GetBurstCount()
+
     if owner:KeyPressed(IN_ATTACK) then
         self:SetNWBool("reqend", true)
     end
@@ -59,26 +61,26 @@ function SWEP:Think()
     end
 
     if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 then
-        if self.BurstCount > 0 then
+        if self:GetBurstCount() > 0 then
             self:PrimaryAttack()
         end
 
-        if self.BurstCount == self:GetBurstLength() then
+        if self:GetBurstCount() == self:GetBurstLength() then
             self.Primary.Automatic = false
-            self.BurstCount = 0
+            self:SetBurstCount(0)
         end
     end
 
     if owner:KeyReleased(IN_ATTACK) then
         if !self:GetCurrentFiremode().RunawayBurst then
-            self.BurstCount = 0
+            self:SetBurstCount(0)
         end
 
         if self:GetCurrentFiremode().Mode < 0 and !self:GetCurrentFiremode().RunawayBurst then
             local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
 
-            if (CurTime() + postburst) > self:GetNextPrimaryFire() then
-            self:SetNextPrimaryFire(CurTime() + postburst)
+            if (CurTime() + postburst) > self:GetNextArcCWPrimaryFire() then
+            self:SetNextArcCWPrimaryFire(CurTime() + postburst)
             end
         end
     end
@@ -147,7 +149,7 @@ function SWEP:Think()
                     self:ExitSights()
                 end
             else
-                if owner:KeyDown(IN_ATTACK2) then
+                if owner:KeyPressed(IN_ATTACK2) then
                     if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
                         self:EnterSights()
                     else

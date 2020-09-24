@@ -4,7 +4,7 @@ function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
 
     if ic then
-        if (self:GetNextPrimaryFire() + 0.1) >= CurTime() then return end
+        if (self:GetNextArcCWPrimaryFire() + 0.1) >= CurTime() then return end
 
         self:SetState(ArcCW.STATE_CUSTOMIZE)
         self:ExitSights()
@@ -1444,8 +1444,8 @@ function SWEP:CreateCustomizeHUD()
         if ArcCW.ConVar_BuffMults["Mult_" .. name] then
             orig = orig * GetConVar(ArcCW.ConVar_BuffMults["Mult_" .. name]):GetFloat()
         end
-        return math.Round((unit == "%" and 100 or 1) * orig, round) .. (unit or ""),
-                math.Round((unit == "%" and 100 or 1) * self[name] * self:GetBuff_Mult("Mult_" .. name), round) .. (unit or "")
+        return math.Round((unit == "%" and 100 or unit == "ms" and 1000 or 1) * orig, round) .. (unit or ""),
+               math.Round((unit == "%" and 100 or unit == "ms" and 1000 or 1) * self[name] * self:GetBuff_Mult("Mult_" .. name), round) .. (unit or "")
     end
 
     local function defaultBetterFunc(name, inverse)
@@ -1566,7 +1566,7 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("RecoilSide", true) end,
             },
             {translate("stat.sighttime"), translate("stat.sighttime.tooltip"),
-                function() return defaultStatFunc("SightTime", "s", 2) end,
+                function() return defaultStatFunc("SightTime", "ms", 2) end,
                 function() return defaultBetterFunc("SightTime", true) end,
             },
             {translate("stat.speedmult"), translate("stat.speedmult.tooltip"),
@@ -1596,7 +1596,7 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("MeleeDamage") end,
             },
             {translate("stat.meleetime"), translate("stat.meleetime.tooltip"),
-                function() return defaultStatFunc("MeleeTime", "s", 2) end,
+                function() return defaultStatFunc("MeleeTime", "ms", 2) end,
                 function() return defaultBetterFunc("MeleeTime", true) end,
             },
             {translate("stat.shootvol"), translate("stat.shootvol.tooltip"),

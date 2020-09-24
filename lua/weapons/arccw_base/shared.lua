@@ -477,9 +477,12 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawCrosshair = true
+SWEP.m_WeaponDeploySpeed = 8008135
+        -- We don't do that here
 
 SWEP.ArcCW = true
-SWEP.BurstCount = 0
+--SWEP.BurstCount = 0
+        --Outdated, but if you could find a way to keep compatibility with older atts/weps :heart:
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true
@@ -573,6 +576,13 @@ end
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
+
+    
+    self:NetworkVar("Float", 0, "NextArcCWPrimaryFire")
+    self:NetworkVar("Int", 1, "BurstCount")
+    --self:NetworkVar("Int", 0, "NWState")
+
+
 end
 
 function SWEP:SetState(v)
@@ -635,4 +645,13 @@ function SWEP:BarrelHitWall()
     else
         return 0
     end
+end
+
+function SWEP:GetNextPrimaryFire()
+    return self:GetNextArcCWPrimaryFire()
+end
+
+function SWEP:SetNextPrimaryFire(value)
+    self:SetNextArcCWPrimaryFire(value)
+    return 
 end

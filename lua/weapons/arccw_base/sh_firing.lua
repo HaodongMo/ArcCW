@@ -13,7 +13,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetNWBool("ubgl") then self:ShootUBGL() return end
 
-    if self:GetNextPrimaryFire() >= CurTime() then return end
+    if self:GetNextArcCWPrimaryFire() >= CurTime() then return end
 
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
 
@@ -26,7 +26,7 @@ function SWEP:PrimaryAttack()
     if self:GetState() == ArcCW.STATE_SPRINT and not (self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
     if self:Clip1() <= 0 then
-        self.BurstCount = 0
+        self:SetBurstCount(0)
         self:DryFire()
 
         return
@@ -34,18 +34,18 @@ function SWEP:PrimaryAttack()
 
     if self:GetNWBool("cycle", false) then return end
 
-    if (self.BurstCount or 0) >= self:GetBurstLength() then return end
+    if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
 
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
-        self.Primary.Automatic = false
+        --self.Primary.Automatic = false
 
         return
     end
 
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
 
-    m_derand(util.SharedRandom(self.BurstCount, -1337, 1337, CurTime()) * (self:EntIndex() % 30241))
+    m_derand(util.SharedRandom(self:GetBurstCount(), -1337, 1337, CurTime()) * (self:EntIndex() % 30241))
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
@@ -57,7 +57,7 @@ function SWEP:PrimaryAttack()
 
     local firstsound = self.FirstShootSound
 
-    if self.BurstCount == 0 and firstsound then
+    if self:GetBurstCount() == 0 and firstsound then
         fsound = firstsound
 
         local firstsil = self.FirstShootSoundSilenced
@@ -106,7 +106,7 @@ function SWEP:PrimaryAttack()
 
     delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
 
-    self:SetNextPrimaryFire(CurTime() + delay)
+    self:SetNextArcCWPrimaryFire(CurTime() + delay)
 
     local num = self:GetBuff_Override("Override_Num")
 
@@ -288,7 +288,7 @@ function SWEP:PrimaryAttack()
 
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
-    if IsFirstTimePredicted() then self.BurstCount = self.BurstCount + 1 end
+    if IsFirstTimePredicted() then self:SetBurstCount(self:GetBurstCount() + 1) end
 
     self:TakePrimaryAmmo(1) -- add self.PrimaryTakeAmmo or smth
 
@@ -298,10 +298,10 @@ function SWEP:PrimaryAttack()
         self:SetNWBool("cycle", true)
     end
 
-    if self:GetCurrentFiremode().Mode < 0 and self.BurstCount == -self:GetCurrentFiremode().Mode then
+    if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == -self:GetCurrentFiremode().Mode then
         local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
 
-        self:SetNextPrimaryFire(CurTime() + postburst)
+        self:SetNextArcCWPrimaryFire(CurTime() + postburst)
     end
 
     self:ApplyAttachmentShootDamage()
@@ -534,13 +534,16 @@ function SWEP:DoEffects()
 end
 
 function SWEP:DryFire()
-    if self.Animations.fire_dry then
+
+    if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.fire_dry_iron then
+        return self:PlayAnimation("fire_dry_iron", 1, true, 0, true)
+    elseif self.Animations.fire_dry then
         return self:PlayAnimation("fire_dry", 1, true, 0, true)
     end
 
     self.Primary.Automatic = false
     self:MyEmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
-    self:SetNextPrimaryFire(CurTime() + 0.25)
+    self:SetNextArcCWPrimaryFire(CurTime() + 0.25)
 end
 
 function SWEP:DoRecoil()
@@ -572,7 +575,7 @@ function SWEP:DoRecoil()
 
     local recoiltbl = self:GetBuff_Override("Override_ShotRecoilTable") or self.ShotRecoilTable
 
-    if recoiltbl and recoiltbl[self.BurstCount] then rmul = rmul * recoiltbl[self.BurstCount] end
+    if recoiltbl and recoiltbl[self:GetBurstCount()] then rmul = rmul * recoiltbl[self:GetBurstCount()] end
 
     rmul = rec and recoil or rmul
     recv = rec and visual or recv
@@ -606,21 +609,22 @@ end
 function SWEP:GetBurstLength()
     local len = self:GetCurrentFiremode().Mode
 
-    if not len then return self.BurstCount + 10 end
+    if not len then return self:GetBurstCount() + 10 end
 
     local hookedlen = self:GetBuff_Hook("Hook_GetBurstLength", len)
 
-    if len >= 2 then return self.BurstCount + 10 end
+    if len == 1 then return 1 end
+    if len >= 2 then return self:GetBurstCount() + 10 end
 
     if hookedlen ~= len then return hookedlen end
 
     if len < 0 then return -len end
 
-    return self.BurstCount + 10
+    return self:GetBurstCount() + 10
 end
 
 function SWEP:ShouldBeAutomatic()
-    if self:GetCurrentFiremode().Mode == 1 then return false end
+    if self:GetCurrentFiremode().Mode == 1 then return true end
 
     if self:GetCurrentFiremode().RunawayBurst then return true end
 

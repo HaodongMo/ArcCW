@@ -63,17 +63,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         net.Send(self:GetOwner())
     end
 
-    if anim.ProcHolster and !skipholster then
-        self:ProceduralHolster()
-        self:SetTimer(0.25, function()
-            self:PlayAnimation(anim, mult, true, startfrom, tt, true)
-        end)
-        if tt then
-            self:SetNextPrimaryFire(CurTime() + 0.25)
-        end
-        return
-    end
-
     if anim.ViewPunchTable and CLIENT then
         for k, v in pairs(anim.ViewPunchTable) do
 
@@ -116,7 +105,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if startfrom > (time * mult) then return end
 
     if tt then
-        self:SetNextPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
+        self:SetNextArcCWPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
     end
 
     if anim.LHIK then
