@@ -116,10 +116,14 @@ att.AdditionalSights = {
         Thermal = true,
         ThermalScopeColor = Color(255, 255, 255),
         ThermalHighlightColor = Color(255, 255, 255),
+        ThermalFullColor = false,
         ThermalScopeSimple = false,
         ThermalNoCC = false,
         ThermalBHOT = false, -- invert bright/dark
-        IgnoreExtra = false -- ignore gun-determined extra sight distance
+        IgnoreExtra = false, -- ignore gun-determined extra sight distance
+        Contrast = 1, -- allows you to adjust the values for contrast and brightness when either NVScope or Thermal is enabled.
+        Brightness = 0,
+        SpecialScopeFunction = function(screen) end -- perform whatever screen space effects you like here, copy SWEP:FormThermalImaging and SWEP:FormNightVision for examples
     }
 }
 
