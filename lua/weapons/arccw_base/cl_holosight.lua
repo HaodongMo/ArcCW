@@ -206,18 +206,21 @@ function SWEP:FormThermalImaging(tex)
 
     if !asight.ThermalNoCC then
         render.SetStencilCompareFunction(STENCIL_NOTEQUAL)
+        render.SetStencilPassOperation(STENCIL_KEEP)
 
-        -- DrawColorModify({
-        --     ["$pp_colour_addr"] = 0,
-        --     ["$pp_colour_addg"] = 0,
-        --     ["$pp_colour_addb"] = 0,
-        --     ["$pp_colour_brightness"] = 0.1,
-        --     ["$pp_colour_contrast"] = 0.5,
-        --     ["$pp_colour_colour"] = 0,
-        --     ["$pp_colour_mulr"] = 0,
-        --     ["$pp_colour_mulg"] = 0,
-        --     ["$pp_colour_mulb"] = 0
-        -- })
+        if !asight.ThermalFullColor then
+            DrawColorModify({
+                ["$pp_colour_addr"] = 0,
+                ["$pp_colour_addg"] = 0,
+                ["$pp_colour_addb"] = 0,
+                ["$pp_colour_brightness"] = 0,
+                ["$pp_colour_contrast"] = 1,
+                ["$pp_colour_colour"] = 0,
+                ["$pp_colour_mulr"] = 0,
+                ["$pp_colour_mulg"] = 0,
+                ["$pp_colour_mulb"] = 0
+            })
+        end
 
         DrawColorModify({
             ["$pp_colour_addr"] = nvsc.r - 255,
@@ -310,6 +313,10 @@ function SWEP:FormCheapScope()
         self:FormThermalImaging(screen)
     end
 
+    if asight.SpecialScopeFunction then
+        asight.SpecialScopeFunction(screen)
+    end
+
     render.CopyTexture( screen, rtmat_cheap )
 
     render.DrawTextureToScreen(rtmat_spare)
@@ -366,6 +373,10 @@ function SWEP:FormRTScope()
 
     if asight.Thermal then
         self:FormThermalImaging(rtmat)
+    end
+
+    if asight.SpecialScopeFunction then
+        asight.SpecialScopeFunction(rtmat)
     end
 end
 
@@ -448,6 +459,10 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             self:FormThermalImaging(screen)
         end
 
+        if asight.SpecialScopeFunction then
+            asight.SpecialScopeFunction(screen)
+        end
+
         render.DrawTextureToScreen(screen)
 
         render.ClearStencil()
@@ -489,7 +504,10 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         if GetConVar("arccw_cheapscopes"):GetBool() then
             screen = rtmat_cheap
         end
-        self:FormNightVision(screen)
+
+        if asight.NVScope then
+            self:FormNightVision(screen)
+        end
     end
 
     render.UpdateScreenEffectTexture()

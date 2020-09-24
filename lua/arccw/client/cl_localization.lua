@@ -61,6 +61,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.flatscopes"]                = "Flat Scopes",
         ["arccw.cvar.flatscopes.desc"]           = "For the ultimate performance gain.\nUse a traditional-style scope implementation that's not very impressive, but actually saves performance relative to even not being scoped in.",
         ["arccw.cvar.muzzleeffects"]             = "Muzzle Effects (Others Only)",
+        ["arccw.cvar.fastmuzzles"]               = "Low Performance Muzzle Effects",
         ["arccw.cvar.shelleffects"]              = "Case Effects (Others Only)",
         ["arccw.cvar.att_showothers"]            = "Show World Attachments (Others Only)",
         ["arccw.cvar.shelltime"]                 = "Case Lifetime",

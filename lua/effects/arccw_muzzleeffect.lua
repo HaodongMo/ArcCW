@@ -4,15 +4,26 @@ function EFFECT:Init(data)
 
     if !IsValid(wpn) then return end
 
-    local muzzle = wpn:GetBuff_Override("Override_MuzzleEffect") or wpn.MuzzleEffect
+    local muzzle = wpn.MuzzleEffect
+    local overridemuzzle = wpn:GetBuff_Override("Override_MuzzleEffect")
+
+    muzzle = overridemuzzle or muzzle
 
     if wpn:GetNWBool("ubgl", false) then
         muzzle = wpn:GetBuff_Override("UBGL_MuzzleEffect") or muzzle
     end
 
-    local att = data:GetAttachment() or 1
+    if GetConVar("arccw_fastmuzzles"):GetBool() then
+        muzzle = wpn.FastMuzzleEffect or "MuzzleEffect"
 
-    if !muzzle then return end
+        if overridemuzzle then
+            muzzle = nil
+        end
+
+        muzzle = wpn:GetBuff_Override("Override_FastMuzzleEffect") or muzzle
+    end
+
+    local att = data:GetAttachment() or 1
 
     local wm = false
 
@@ -29,7 +40,11 @@ function EFFECT:Init(data)
 
     if !IsValid(mdl) then return end
 
-    ParticleEffectAttach(muzzle, PATTACH_POINT_FOLLOW, mdl, att)
+    print(muzzle)
+
+    if muzzle then
+        ParticleEffectAttach(muzzle, PATTACH_POINT_FOLLOW, mdl, att)
+    end
 
     pos = (mdl:GetAttachment(att) or {}).Pos
 
