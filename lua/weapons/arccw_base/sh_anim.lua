@@ -11,6 +11,16 @@ end
 
 end
 
+function SWEP:SelectAnimation(anim)
+    if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
+        anim = anim .. "_empty"
+    end
+
+    if !self.Animations[anim] then return end
+
+    return anim
+end
+
 SWEP.LastAnimStartTime = 0
 
 function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorereload, absolute)
@@ -221,45 +231,20 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         self:SetTimer(ttime, function()
             local ianim
             local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
-            if self:GetState() == ArcCW.STATE_SPRINT and self.Animations.idle_sprint and !s then
-                if self:Clip1() == 0 and self.Animations.idle_sprint_empty then
-                    ianim = "idle_sprint_empty"
-                else
-                    ianim = "idle_sprint"
-                end
+            if self:GetState() == ArcCW.STATE_SPRINT and !s then
+                ianim = self:SelectAnimation("idle_sprint") or ianim
             end
 
-            if self:InBipod() and self.Animations.idle_bipod then
-                if self:Clip1() == 0 and self.Animations.idle_bipod_empty then
-                    ianim = "idle_bipod_empty"
-                else
-                    ianim = "idle_bipod"
-                end
+            if self:InBipod() then
+                ianim = self:SelectAnimation("idle_bipod") or ianim
             end
 
-            if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) and self.Animations.idle_sight then
-                if self:Clip1() == 0 and self.Animations.idle_sight_empty then
-                    ianim = "idle_sight_empty"
-                else
-                    ianim = "idle_sight"
-                end
-            end
-
-            -- because you just know SOMEONE is gonna make this mistake
-            if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) and self.Animations.idle_sights then
-                if self:Clip1() == 0 and self.Animations.idle_sights_empty then
-                    ianim = "idle_sights_empty"
-                else
-                    ianim = "idle_sights"
-                end
+            if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+                ianim = self:SelectAnimation("idle_sight") or self:SelectAnimation("idle_sights") or ianim
             end
 
             if self:GetState() == ArcCW.STATE_CUSTOMIZE then
-                if self:Clip1() == 0 and self.Animations.idle_inspect_empty then
-                    ianim = "idle_inspect_empty"
-                else
-                    ianim = "idle_inspect"
-                end
+                ianim = self:SelectAnimation("idle_inspect") or ianim
             end
 
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)

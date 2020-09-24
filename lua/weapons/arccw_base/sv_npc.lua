@@ -54,7 +54,7 @@ end
 function SWEP:NPC_SetupAttachments()
     if self:GetOwner():IsNPC() and !GetConVar("arccw_npc_atts"):GetBool() then return end
 
-    local pick = GetConVar("arccw_atts_pickx"):GetInt()
+    local pick = self:GetPickX()
 
     local chance = 25 * GetConVar("arccw_mult_attchance"):GetFloat()
     local chancestep = 0

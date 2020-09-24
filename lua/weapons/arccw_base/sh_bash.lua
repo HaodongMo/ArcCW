@@ -17,17 +17,9 @@ function SWEP:Bash(melee2)
     local bashanim = "bash"
 
     if melee2 then
-        if self.Animations.bash2_empty and self:Clip1() == 0 then
-            bashanim = "bash2_empty"
-        else
-            bashanim = "bash2"
-        end
-    elseif self.Animations.bash then
-        if self.Animations.bash_empty and self:Clip1() == 0 then
-            bashanim = "bash_empty"
-        else
-            bashanim = "bash"
-        end
+        bashanim = self:SelectAnimation("bash2") or bashanim
+    else
+        bashanim = self:SelectAnimation("bash") or bashanim
     end
 
     bashanim = self:GetBuff_Hook("Hook_SelectBashAnim", bashanim) or bashanim

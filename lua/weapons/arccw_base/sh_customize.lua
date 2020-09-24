@@ -312,7 +312,7 @@ function SWEP:CreateCustomizeHUD()
         surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
         surface.SetFont("ArcCW_12")
 
-        local pick = GetConVar("arccw_atts_pickx"):GetInt()
+        local pick = self:GetPickX()
 
         if pick <= 0 then
             surface.DrawText(ArcCW.TryTranslation(self.Trivia_Class))

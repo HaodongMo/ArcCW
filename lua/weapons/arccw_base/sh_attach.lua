@@ -19,7 +19,8 @@ SWEP.TickCache_Hooks = {}
 SWEP.TickCache_Tick_Overrides = {}
 SWEP.TickCache_Tick_Adds = {}
 SWEP.TickCache_Tick_Mults = {}
-SWEP.TickCache_Tick_Hooks = {}
+
+SWEP.AttCache_Hooks = {}
 
 function SWEP:RecalcAllBuffs()
     self.TickCache_Overrides = {}
@@ -30,17 +31,35 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Tick_Overrides = {}
     self.TickCache_Tick_Adds = {}
     self.TickCache_Tick_Mults = {}
-    self.TickCache_Tick_Hooks = {}
+
+    self.AttCache_Hooks = {}
 end
 
 function SWEP:GetBuff_Hook(buff, data)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
-    local hasany = false
+    -- Fesiug, this will only work if you have just one hook.
+    -- if self.TickCache_Hooks[buff] and self.TickCache_Tick_Hooks[buff] == CurTime() then
+    --     hook.Call(buff, ArcCW, self, data)
+    --     return data
+    -- end
 
-    if self.TickCache_Hooks[buff] and self.TickCache_Tick_Hooks[buff] == CurTime() then
+    if self.AttCache_Hooks[buff] then
+        for i, k in pairs(self.AttCache_Hooks[buff]) do
+            local ret = k(self, data)
+
+            if ret == nil then continue end
+
+            if ret == false then return end
+
+            data = ret
+        end
+
         hook.Call(buff, ArcCW, self, data)
+
         return data
+    else
+        self.AttCache_Hooks[buff] = {}
     end
 
     for i, k in pairs(self.Attachments) do
@@ -53,7 +72,7 @@ function SWEP:GetBuff_Hook(buff, data)
         if isfunction(atttbl[buff]) then
             local ret = atttbl[buff](self, data)
 
-            hasany = true
+            table.insert(self.AttCache_Hooks[buff], atttbl[buff])
 
             if ret == nil then continue end
 
@@ -67,6 +86,8 @@ function SWEP:GetBuff_Hook(buff, data)
 
     if cfm and isfunction(cfm[buff]) then
         local ret = cfm[buff](self, data)
+
+        table.insert(self.AttCache_Hooks[buff], cfm[buff])
 
         hasany = true
 
@@ -86,6 +107,8 @@ function SWEP:GetBuff_Hook(buff, data)
             if ele[buff] then
                 local ret = ele[buff](self, data)
 
+                table.insert(self.AttCache_Hooks[buff], ele[buff])
+
                 hasany = true
 
                 if ret != nil then
@@ -101,6 +124,8 @@ function SWEP:GetBuff_Hook(buff, data)
     if isfunction(self:GetTable()[buff]) then
         local ret = self:GetTable()[buff](self, data)
 
+        table.insert(self.AttCache_Hooks[buff], self:GetTable()[buff])
+
         hasany = true
 
         if ret != nil then
@@ -110,12 +135,6 @@ function SWEP:GetBuff_Hook(buff, data)
             data = ret
 
         end
-    end
-
-    self.TickCache_Tick_Hooks[buff] = CurTime()
-
-    if !hasany then
-        self.TickCache_Hooks[buff] = true
     end
 
     hook.Call(buff, ArcCW, self, data)
@@ -128,8 +147,30 @@ function SWEP:GetBuff_Override(buff)
     local current = nil
     local winningslot = nil
 
-    if self.TickCache_Overrides[buff] and self.TickCache_Tick_Overrides[buff] and self.TickCache_Tick_Overrides[buff] == CurTime() then
-        return self.TickCache_Overrides[buff][1], self.TickCache_Overrides[buff][2]
+    if self.TickCache_Overrides[buff] then
+        current = self.TickCache_Overrides[buff][1]
+        winningslot = self.TickCache_Overrides[buff][2]
+
+        local data = {
+            buff = buff,
+            current = current,
+            winningslot = winningslot
+        }
+
+        if !ArcCW.BuffStack then
+
+            ArcCW.BuffStack = true
+
+            local out = (self:GetBuff_Hook("O_Hook_" .. buff, data) or {})
+
+            current = out.current or current
+            winningslot = out.winningslot or winningslot
+
+            ArcCW.BuffStack = false
+
+        end
+
+        return current, winningslot
     end
 
     for i, k in pairs(self.Attachments) do
@@ -194,6 +235,8 @@ function SWEP:GetBuff_Override(buff)
         end
     end
 
+    self.TickCache_Overrides[buff] = {current, winningslot}
+
     local data = {
         buff = buff,
         current = current,
@@ -210,17 +253,30 @@ function SWEP:GetBuff_Override(buff)
 
     end
 
-    self.TickCache_Tick_Overrides[buff] = CurTime()
-    self.TickCache_Overrides[buff] = {current, winningslot}
-
     return current, winningslot
 end
 
 function SWEP:GetBuff_Mult(buff)
     local mult = 1
 
-    if self.TickCache_Mults[buff] and self.TickCache_Tick_Mults[buff] and self.TickCache_Tick_Mults[buff] == CurTime() then
-        return self.TickCache_Mults[buff]
+    if self.TickCache_Mults[buff] then
+        mult = self.TickCache_Mults[buff]
+        local data = {
+            buff = buff,
+            mult = mult
+        }
+
+        if !ArcCW.BuffStack then
+
+            ArcCW.BuffStack = true
+
+            mult = (self:GetBuff_Hook("M_Hook_" .. buff, data) or {}).mult or mult
+
+            ArcCW.BuffStack = false
+
+        end
+
+        return mult
     end
 
     for i, k in pairs(self.Attachments) do
@@ -257,6 +313,8 @@ function SWEP:GetBuff_Mult(buff)
         end
     end
 
+    self.TickCache_Mults[buff] = mult
+
     local data = {
         buff = buff,
         mult = mult
@@ -271,8 +329,6 @@ function SWEP:GetBuff_Mult(buff)
         ArcCW.BuffStack = false
 
     end
-    self.TickCache_Tick_Mults[buff] = CurTime()
-    self.TickCache_Mults[buff] = mult
 
     return mult
 end
@@ -280,8 +336,20 @@ end
 function SWEP:GetBuff_Add(buff)
     local add = 0
 
-    if self.TickCache_Adds[buff] and self.TickCache_Tick_Adds[buff] and self.TickCache_Tick_Adds[buff] == CurTime() then
-        return self.TickCache_Adds[buff]
+    if self.TickCache_Adds[buff] then
+        add = self.TickCache_Adds[buff]
+
+        if !ArcCW.BuffStack then
+
+            ArcCW.BuffStack = true
+
+            add = (self:GetBuff_Hook("A_Hook_" .. buff, data) or {}).add or add
+
+            ArcCW.BuffStack = false
+
+        end
+
+        return add
     end
 
     for i, k in pairs(self.Attachments) do
@@ -310,6 +378,8 @@ function SWEP:GetBuff_Add(buff)
         end
     end
 
+    self.TickCache_Adds[buff] = add
+
     local data = {
         buff = buff,
         add = add
@@ -324,9 +394,6 @@ function SWEP:GetBuff_Add(buff)
         ArcCW.BuffStack = false
 
     end
-
-    self.TickCache_Tick_Adds[buff] = CurTime()
-    self.TickCache_Adds[buff] = add
 
     return add
 end
@@ -738,6 +805,10 @@ function SWEP:RefreshBGs()
     self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae})
 end
 
+function SWEP:GetPickX()
+    return GetConVar("arccw_atts_pickx"):GetInt()
+end
+
 function SWEP:Attach(slot, attname, silent)
     silent = silent or false
     local attslot = self.Attachments[slot]
@@ -751,7 +822,7 @@ function SWEP:Attach(slot, attname, silent)
         return
     end
 
-    local pick = GetConVar("arccw_atts_pickx"):GetInt()
+    local pick = self:GetPickX()
 
     if pick > 0 then
         if self:CountAttachments() >= pick and !attslot.FreeSlot then
