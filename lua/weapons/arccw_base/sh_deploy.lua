@@ -16,7 +16,7 @@ function SWEP:Deploy()
 
     self.LHIKAnimation = nil
 
-    self.BurstCount = 0
+    self:SetBurstCount(0)
 
     -- Remove me shall I interfere
     --[[if CLIENT then
@@ -221,7 +221,7 @@ SWEP.HolsterSwitchTo = nil
 
 function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
-    if self.BurstCount > 0 and self:Clip1() > 0 then return false end
+    if self:GetBurstCount() > 0 and self:Clip1() > 0 then return false end
 
     local skip = GetConVar("arccw_holstering"):GetBool()
 
@@ -249,7 +249,7 @@ function SWEP:Holster(wep)
     local time = 0.25
     local anim = self:SelectAnimation("holster")
     if anim then
-        self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"))
+        self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
         time = self:GetAnimKeyTime(anim)
     else
         if CLIENT then

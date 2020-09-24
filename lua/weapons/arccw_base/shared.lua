@@ -46,8 +46,13 @@ SWEP.Range = 200 -- in METRES
 SWEP.Penetration = 4
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
-SWEP.MuzzleVelocity = 400 -- projectile or phys bullet muzzle velocity
+SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity
 -- IN M/S
+SWEP.PhysBulletMuzzleVelocity = nil -- override phys bullet muzzle velocity
+SWEP.PhysBulletDrag = 1
+
+SWEP.AlwaysPhysBullet = false
+SWEP.NeverPhysBullet = false
 
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.Tracer = nil -- override tracer effect
@@ -472,9 +477,12 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawCrosshair = true
+SWEP.m_WeaponDeploySpeed = 8008135
+        -- We don't do that here
 
 SWEP.ArcCW = true
-SWEP.BurstCount = 0
+--SWEP.BurstCount = 0
+        --Outdated, but if you could find a way to keep compatibility with older atts/weps :heart:
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true
@@ -568,6 +576,13 @@ end
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
+
+    
+    self:NetworkVar("Float", 0, "NextArcCWPrimaryFire")
+    self:NetworkVar("Int", 1, "BurstCount")
+    --self:NetworkVar("Int", 0, "NWState")
+
+
 end
 
 function SWEP:SetState(v)
@@ -630,4 +645,13 @@ function SWEP:BarrelHitWall()
     else
         return 0
     end
+end
+
+function SWEP:GetNextPrimaryFire()
+    return self:GetNextArcCWPrimaryFire()
+end
+
+function SWEP:SetNextPrimaryFire(value)
+    self:SetNextArcCWPrimaryFire(value)
+    return 
 end

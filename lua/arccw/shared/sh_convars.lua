@@ -56,3 +56,9 @@ CreateConVar("arccw_doorbust_time", 180, FCVAR_ARCHIVE, "The amount of time to k
 CreateConVar("arccw_holstering", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Take time to holster your weapon.")
 CreateConVar("arccw_clicktocycle", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to make it so left clicking after shooting cycles instead of on mouse release.")
 CreateConVar("arccw_throwinertia", 1, FCVAR_ARCHIVE, "Set to make throwable equipment inherit the player's velocity.", 0, 1)
+
+CreateConVar("arccw_bullet_enable", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Use physical bullets with drop and travel time.")
+CreateConVar("arccw_bullet_velocity", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED)
+CreateConVar("arccw_bullet_drag", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED)
+CreateConVar("arccw_bullet_lifetime", 10, FCVAR_ARCHIVE + FCVAR_REPLICATED)
+CreateConVar("arccw_bullet_gravity", 600, FCVAR_ARCHIVE + FCVAR_REPLICATED)

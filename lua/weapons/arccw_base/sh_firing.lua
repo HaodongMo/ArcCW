@@ -13,7 +13,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetNWBool("ubgl") then self:ShootUBGL() return end
 
-    if self:GetNextPrimaryFire() >= CurTime() then return end
+    if self:GetNextArcCWPrimaryFire() >= CurTime() then return end
 
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
 
@@ -26,7 +26,7 @@ function SWEP:PrimaryAttack()
     if self:GetState() == ArcCW.STATE_SPRINT and not (self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
     if self:Clip1() <= 0 then
-        self.BurstCount = 0
+        self:SetBurstCount(0)
         self:DryFire()
 
         return
@@ -34,18 +34,18 @@ function SWEP:PrimaryAttack()
 
     if self:GetNWBool("cycle", false) then return end
 
-    if (self.BurstCount or 0) >= self:GetBurstLength() then return end
+    if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
 
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
-        self.Primary.Automatic = false
+        --self.Primary.Automatic = false
 
         return
     end
 
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
 
-    m_derand(util.SharedRandom(self.BurstCount, -1337, 1337, CurTime()) * (self:EntIndex() % 30241))
+    m_derand(util.SharedRandom(self:GetBurstCount(), -1337, 1337, CurTime()) * (self:EntIndex() % 30241))
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
@@ -57,7 +57,7 @@ function SWEP:PrimaryAttack()
 
     local firstsound = self.FirstShootSound
 
-    if self.BurstCount == 0 and firstsound then
+    if self:GetBurstCount() == 0 and firstsound then
         fsound = firstsound
 
         local firstsil = self.FirstShootSoundSilenced
@@ -106,7 +106,7 @@ function SWEP:PrimaryAttack()
 
     delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
 
-    self:SetNextPrimaryFire(CurTime() + delay)
+    self:SetNextArcCWPrimaryFire(CurTime() + delay)
 
     local num = self:GetBuff_Override("Override_Num")
 
@@ -185,6 +185,7 @@ function SWEP:PrimaryAttack()
         if effect then
             local ed = EffectData()
             ed:SetOrigin(hitpos)
+            ed:SetNormal(hitnormal)
 
             util.Effect(effect, ed)
         end
@@ -287,7 +288,7 @@ function SWEP:PrimaryAttack()
 
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
-    if IsFirstTimePredicted() then self.BurstCount = self.BurstCount + 1 end
+    if IsFirstTimePredicted() then self:SetBurstCount(self:GetBurstCount() + 1) end
 
     self:TakePrimaryAmmo(1) -- add self.PrimaryTakeAmmo or smth
 
@@ -297,10 +298,10 @@ function SWEP:PrimaryAttack()
         self:SetNWBool("cycle", true)
     end
 
-    if self:GetCurrentFiremode().Mode < 0 and self.BurstCount == -self:GetCurrentFiremode().Mode then
+    if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == -self:GetCurrentFiremode().Mode then
         local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
 
-        self:SetNextPrimaryFire(CurTime() + postburst)
+        self:SetNextArcCWPrimaryFire(CurTime() + postburst)
     end
 
     self:ApplyAttachmentShootDamage()
@@ -315,12 +316,46 @@ end
 function SWEP:DoPrimaryFire(isent, data)
     local owner = self:GetOwner()
 
+    local shouldphysical = GetConVar("arccw_bullet_enable"):GetBool()
+
+    if self.AlwaysPhysBullet or self:GetBuff_Override("Override_AlwaysPhysBullet") then
+        shouldphysical = true
+    end
+
+    if self.NeverPhysBullet or self:GetBuff_Override("Override_NeverPhysBullet") then
+        shouldphysical = false
+    end
+
     if isent then
         self:FireRocket(data.ent, data.vel, data.ang)
     else
-        owner:LagCompensation(true)
-        owner:FireBullets(data)
-        owner:LagCompensation(false)
+        if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+        if shouldphysical then
+            local vel = self.PhysBulletMuzzleVelocity
+
+            if !vel then
+                vel = self.Range * self:GetBuff_Mult("Mult_Range") * 5.5
+
+                if self.DamageMin > self.Damage then
+                    vel = vel * 3
+                end
+            end
+
+            vel = vel / ArcCW.HUToM
+
+            vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity")
+
+            vel = vel * GetConVar("arccw_bullet_velocity"):GetFloat()
+
+            vel = vel * data.Dir:GetNormalized()
+
+            ArcCW:ShootPhysBullet(self, data.Src, vel)
+        else
+            owner:LagCompensation(true)
+            owner:FireBullets(data)
+            owner:LagCompensation(false)
+        end
     end
 end
 
@@ -353,137 +388,16 @@ function SWEP:DoPrimaryAnim()
 end
 
 function SWEP:DoPenetration(tr, penleft, alreadypenned)
-    if CLIENT then return end
+    local bullet = {
+        Damage = self:GetDamage((tr.HitPos - tr.StartPos):Length()),
+        DamageType = self:GetBuff_Override("Override_DamageType") or self.DamageType,
+        Weapon = self,
+        Penetration = self.Penetration * self:GetBuff_Mult("Mult_Penetration"),
+        Attacker = self:GetOwner(),
+        Travelled = (tr.HitPos - tr.StartPos):Length()
+    }
 
-    if tr.HitSky then return end
-
-    if penleft <= 0 then return end
-
-    alreadypenned = alreadypenned or {}
-
-    local trent = tr.Entity
-    local hitpos, startpos = tr.HitPos, tr.StartPos
-
-    local penmult     = ArcCW.PenTable[tr.MatType] or 1
-    local pentracelen = 2
-    local curr_ent    = trent
-
-    if not tr.HitWorld then penmult = penmult * 1.5 end
-
-    if trent.mmRHAe then penmult = trent.mmRHAe end
-
-    penmult = penmult * m_rand(0.9, 1.1) * m_rand(0.9, 1.1)
-
-    local dir    = (hitpos - startpos):GetNormalized()
-    local endpos = hitpos
-
-    local td  = {}
-    td.start  = endpos
-    td.endpos = endpos + (dir * pentracelen)
-    td.mask   = MASK_SHOT
-
-    local ptr = util.TraceLine(td)
-
-    local ptrent = ptr.Entity
-
-    while penleft > 0 and (not ptr.StartSolid or ptr.AllSolid) and ptr.Fraction < 1 and ptrent == curr_ent do
-        penleft = penleft - (pentracelen * penmult)
-
-        td.start  = endpos
-        td.endpos = endpos + (dir * pentracelen)
-        td.mask   = MASK_SHOT
-
-        ptr = util.TraceLine(td)
-
-        if ptrent ~= curr_ent then
-            ptrent = ptr.Entity
-
-            curr_ent = ptrent
-
-            local ptrhp  = ptr.HitPos
-            local dist   = (ptrhp - tr.StartPos):Length() * ArcCW.HUToM
-            local pdelta = penleft / (self.Penetration * self:GetBuff_Mult("Mult_Penetration"))
-
-            local dmg = DamageInfo()
-            dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-            dmg:SetDamage(self:GetDamage(dist, true) * pdelta)
-            dmg:SetDamagePosition(ptrhp)
-
-            if IsValid(ptrent) and not table.HasValue(alreadypenned, ptrent) then ptrent:TakeDamageInfo(dmg) end
-
-            penmult = ArcCW.PenTable[ptr.MatType] or 1
-
-            if not ptr.HitWorld then penmult = penmult * 1.5 end
-
-            if ptrent.mmRHAe then penmult = ptrent.mmRHAe end
-
-            penmult = penmult * m_rand(0.9, 1.1) * m_rand(0.9, 1.1)
-
-            debugoverlay.Line(endpos, endpos + (dir * pentracelen), 10, Color(0, 0, 255), true)
-        end
-
-        if GetConVar("developer"):GetBool() then
-            local pdeltap = penleft / self.Penetration
-            local colorlr = m_lerp(pdeltap, 0, 255)
-
-            debugoverlay.Line(endpos, endpos + (dir * pentracelen), 10, Color(255, colorlr, colorlr), true)
-        end
-
-        endpos = endpos + (dir * pentracelen)
-
-        dir = dir + (VectorRand() * 0.025 * penmult)
-    end
-
-    if penleft > 0 then
-        if (dir:Length() == 0) then return end
-
-        local pdelta = penleft / (self.Penetration * self:GetBuff_Mult("Mult_Penetration"))
-        local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
-
-        m_derand(self:GetOwner():GetCurrentCommand():CommandNumber() + (self:EntIndex() % 24977))
-
-        local owner = self:GetOwner()
-
-        local bullet = {}
-        bullet.Attacker = owner
-        bullet.Dir      = dir
-        bullet.Src      = endpos
-        bullet.Spread   = Vector(spread, spread, spread)
-        bullet.Damage   = 0
-        bullet.Num      = 1
-        bullet.Force    = 0
-        bullet.Distance = 33000
-        bullet.AmmoType = self.Primary.Ammo
-        bullet.Tracer   = 0
-        bullet.Callback = function(att, btr, dmg)
-            local dist = (btr.HitPos - endpos):Length() * ArcCW.HUToM
-
-            if table.HasValue(alreadypenned, ptr.Entity) then
-                dmg:SetDamage(0)
-            else
-                dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-                dmg:SetDamage(self:GetDamage(dist, true) * pdelta, true)
-            end
-
-            self:DoPenetration(btr, penleft)
-        end
-
-        owner:FireBullets(bullet)
-
-        if tr.HitWorld then
-
-            local supbullet = {}
-            supbullet.Src      = endpos
-            supbullet.Dir      = -dir
-            supbullet.Damage   = 0
-            supbullet.Distance = 8
-            supbullet.Tracer   = 0
-            supbullet.Force    = 0
-
-            owner:FireBullets(supbullet, true)
-
-        end
-    end
+    ArcCW:DoPenetration(tr, bullet.Damage, bullet, penleft, false, {})
 end
 
 function SWEP:GetShootSrc()
@@ -620,13 +534,16 @@ function SWEP:DoEffects()
 end
 
 function SWEP:DryFire()
-    if self.Animations.fire_dry then
+
+    if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.fire_dry_iron then
+        return self:PlayAnimation("fire_dry_iron", 1, true, 0, true)
+    elseif self.Animations.fire_dry then
         return self:PlayAnimation("fire_dry", 1, true, 0, true)
     end
 
     self.Primary.Automatic = false
     self:MyEmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
-    self:SetNextPrimaryFire(CurTime() + 0.25)
+    self:SetNextArcCWPrimaryFire(CurTime() + 0.25)
 end
 
 function SWEP:DoRecoil()
@@ -658,7 +575,7 @@ function SWEP:DoRecoil()
 
     local recoiltbl = self:GetBuff_Override("Override_ShotRecoilTable") or self.ShotRecoilTable
 
-    if recoiltbl and recoiltbl[self.BurstCount] then rmul = rmul * recoiltbl[self.BurstCount] end
+    if recoiltbl and recoiltbl[self:GetBurstCount()] then rmul = rmul * recoiltbl[self:GetBurstCount()] end
 
     rmul = rec and recoil or rmul
     recv = rec and visual or recv
@@ -692,21 +609,22 @@ end
 function SWEP:GetBurstLength()
     local len = self:GetCurrentFiremode().Mode
 
-    if not len then return self.BurstCount + 10 end
+    if not len then return self:GetBurstCount() + 10 end
 
     local hookedlen = self:GetBuff_Hook("Hook_GetBurstLength", len)
 
-    if len >= 2 then return self.BurstCount + 10 end
+    if len == 1 then return 1 end
+    if len >= 2 then return self:GetBurstCount() + 10 end
 
     if hookedlen ~= len then return hookedlen end
 
     if len < 0 then return -len end
 
-    return self.BurstCount + 10
+    return self:GetBurstCount() + 10
 end
 
 function SWEP:ShouldBeAutomatic()
-    if self:GetCurrentFiremode().Mode == 1 then return false end
+    if self:GetCurrentFiremode().Mode == 1 then return true end
 
     if self:GetCurrentFiremode().RunawayBurst then return true end
 

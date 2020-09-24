@@ -148,6 +148,9 @@ att.Bipod = false
 att.Mult_BipodRecoil = 0.25
 att.Mult_BipodDispersion = 0.1
 
+att.Override_AlwaysPhysBullet = nil
+att.Override_NeverPhysBullet = nil
+
 att.MagExtender = false
 att.MagReducer = false
 att.OverrideClipSize = nil
