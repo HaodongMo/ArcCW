@@ -66,6 +66,8 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.shelltime"]                 = "Case Lifetime",
         ["arccw.cvar.blur"]                      = "Customization Blur",
         ["arccw.cvar.blur_toytown"]              = "Aim Blur",
+        ["arccw.cvar.visibility"]                = "Worldmodel Visibility",
+        ["arccw.cvar.visibility.desc"]           = "Attachments will not render past this distance. -1 for always render.",
         -- ArcCW_Options_Viewmodel
         ["arccw.cvar.vm_coolsway"]               = "Custom Swaying",
         ["arccw.cvar.vm_coolview"]               = "Custom Camera Movement",

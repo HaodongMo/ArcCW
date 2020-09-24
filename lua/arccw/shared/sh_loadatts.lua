@@ -143,7 +143,22 @@ if CLIENT then
         net.SendToServer()
     end )
 
+    concommand.Add("arccw_reloadatts", function()
+        if !LocalPlayer():IsSuperAdmin() then return end
+
+        ArcCW_LoadAtts()
+
+        net.Start("arccw_reloadatts")
+        net.SendToServer()
+    end)
+
 elseif SERVER then
+
+    net.Receive("arccw_reloadatts", function(len, ply)
+        if !ply:IsSuperAdmin() then return end
+
+        ArcCW_LoadAtts()
+    end)
 
     local antiSpam = {}
     net.Receive("arccw_blacklist", function(len, ply)
@@ -180,9 +195,3 @@ elseif SERVER then
     end)
 
 end
-
-hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()
-    if !GetConVar("arccw_reloadonrefresh"):GetBool() then return end
-
-    ArcCW_LoadAtts()
-end)

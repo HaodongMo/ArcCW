@@ -573,6 +573,12 @@ function SWEP:KillModel(models)
 end
 
 function SWEP:DrawCustomModel(wm)
+    local disttoeye = self:GetPos():DistToSqr(EyePos())
+    local visibility = math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
+    local always = false
+    if GetConVar("arccw_visibility"):GetInt() < 0 then
+        always = true
+    end
     local models = self.VM
     local vm
     local selfmode = false
@@ -640,6 +646,10 @@ function SWEP:DrawCustomModel(wm)
             if wm and self.MirrorVMWM then
                 vm = self.WMModel or self
                 -- vm = self
+            end
+
+            if wm then
+                if !always and disttoeye >= visibility then continue end
             end
         end
 

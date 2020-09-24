@@ -56,9 +56,11 @@ local PerfomancePanel = {
     [0.70] = { type = "b", text = "#arccw.cvar.muzzleeffects", var = "arccw_muzzleeffects" },
     [0.80] = { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
     [0.90] = { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
-    [1.00] = { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
-    [1.10] = { type = "b", text = "#arccw.cvar.blur_toytown", var = "arccw_blur_toytown" },
-    [1.20] = { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
+    [1.00] = { type = "i", text = "#arccw.cvar.visibility", var = "arccw_visiblity", min = -1, max = 32000},
+    [1.10] = { type = "c", text = "#arccw.cvar.visibility.desc" },
+    [1.20] = { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
+    [1.30] = { type = "b", text = "#arccw.cvar.blur_toytown", var = "arccw_blur_toytown" },
+    [1.40] = { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
 }
 
 local ViewmodelPanel = {
