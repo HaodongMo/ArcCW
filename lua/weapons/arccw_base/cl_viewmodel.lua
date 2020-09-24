@@ -15,12 +15,14 @@ local eyeangles, lasteyeangles, coolswayang = Angle(), Angle(), Angle()
 local swayxmult, swayymult, swayzmult = -0.1, 0.1, -0.3
 local coolswaypos, vector_noup = Vector(), Vector(1, 1, 0)
 
-local function ApprVecAng(vec, tovec, d)
-    vec[1] = m_appor(vec[1], tovec[1], d)
-    vec[2] = m_appor(vec[2], tovec[2], d)
-    vec[3] = m_appor(vec[3], tovec[3], d)
+local function ApprVecAng(from, to, dlt)
+    local ret = (isangle(from) and isangle(to)) and Angle() or Vector()
 
-    return vec
+    ret[1] = m_appor(from[1], to[1], dlt)
+    ret[2] = m_appor(from[2], to[2], dlt)
+    ret[3] = m_appor(from[3], to[3], dlt)
+
+    return ret
 end
 
 function SWEP:GetViewModelPosition(pos, ang)
@@ -154,7 +156,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.bob  = 2
     end
 
-    if !isangle(target.ang) then target.ang = Angle(target.ang) end
+    if not isangle(target.ang) then target.ang = Angle(target.ang) end
 
     if self.InProcDraw then
         self.InProcHolster = false
@@ -418,12 +420,11 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:ShouldFlatScope()
-    if self:GetState() != ArcCW.STATE_SIGHTS then return false end
+    if self:GetState() ~= ArcCW.STATE_SIGHTS then return false end
+
     local irons = self:GetActiveSights()
 
-    if irons.FlatScope then
-        return true
-    elseif irons.MagnifiedOptic and GetConVar("arccw_flatscopes"):GetBool() then
+    if irons.FlatScope or (irons.MagnifiedOptic and GetConVar("arccw_flatscopes"):GetBool()) then
         return true
     end
 end
