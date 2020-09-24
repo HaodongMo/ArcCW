@@ -46,8 +46,13 @@ SWEP.Range = 200 -- in METRES
 SWEP.Penetration = 4
 SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
-SWEP.MuzzleVelocity = 400 -- projectile or phys bullet muzzle velocity
+SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity
 -- IN M/S
+SWEP.PhysBulletMuzzleVelocity = nil -- override phys bullet muzzle velocity
+SWEP.PhysBulletDrag = 1
+
+SWEP.AlwaysPhysBullet = false
+SWEP.NeverPhysBullet = false
 
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.Tracer = nil -- override tracer effect

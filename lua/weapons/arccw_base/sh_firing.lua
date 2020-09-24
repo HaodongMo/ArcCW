@@ -185,6 +185,7 @@ function SWEP:PrimaryAttack()
         if effect then
             local ed = EffectData()
             ed:SetOrigin(hitpos)
+            ed:SetNormal(hitnormal)
 
             util.Effect(effect, ed)
         end
@@ -315,12 +316,46 @@ end
 function SWEP:DoPrimaryFire(isent, data)
     local owner = self:GetOwner()
 
+    local shouldphysical = GetConVar("arccw_bullet_enable"):GetBool()
+
+    if self.AlwaysPhysBullet or self:GetBuff_Override("Override_AlwaysPhysBullet") then
+        shouldphysical = true
+    end
+
+    if self.NeverPhysBullet or self:GetBuff_Override("Override_NeverPhysBullet") then
+        shouldphysical = false
+    end
+
     if isent then
         self:FireRocket(data.ent, data.vel, data.ang)
     else
-        owner:LagCompensation(true)
-        owner:FireBullets(data)
-        owner:LagCompensation(false)
+        if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+        if shouldphysical then
+            local vel = self.PhysBulletMuzzleVelocity
+
+            if !vel then
+                vel = self.Range * self:GetBuff_Mult("Mult_Range") * 5.5
+
+                if self.DamageMin > self.Damage then
+                    vel = vel * 3
+                end
+            end
+
+            vel = vel / ArcCW.HUToM
+
+            vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity")
+
+            vel = vel * GetConVar("arccw_bullet_velocity"):GetFloat()
+
+            vel = vel * data.Dir:GetNormalized()
+
+            ArcCW:ShootPhysBullet(self, data.Src, vel)
+        else
+            owner:LagCompensation(true)
+            owner:FireBullets(data)
+            owner:LagCompensation(false)
+        end
     end
 end
 
@@ -353,137 +388,16 @@ function SWEP:DoPrimaryAnim()
 end
 
 function SWEP:DoPenetration(tr, penleft, alreadypenned)
-    if CLIENT then return end
+    local bullet = {
+        Damage = self:GetDamage((tr.HitPos - tr.StartPos):Length()),
+        DamageType = self:GetBuff_Override("Override_DamageType") or self.DamageType,
+        Weapon = self,
+        Penetration = self.Penetration * self:GetBuff_Mult("Mult_Penetration"),
+        Attacker = self:GetOwner(),
+        Travelled = (tr.HitPos - tr.StartPos):Length()
+    }
 
-    if tr.HitSky then return end
-
-    if penleft <= 0 then return end
-
-    alreadypenned = alreadypenned or {}
-
-    local trent = tr.Entity
-    local hitpos, startpos = tr.HitPos, tr.StartPos
-
-    local penmult     = ArcCW.PenTable[tr.MatType] or 1
-    local pentracelen = 2
-    local curr_ent    = trent
-
-    if not tr.HitWorld then penmult = penmult * 1.5 end
-
-    if trent.mmRHAe then penmult = trent.mmRHAe end
-
-    penmult = penmult * m_rand(0.9, 1.1) * m_rand(0.9, 1.1)
-
-    local dir    = (hitpos - startpos):GetNormalized()
-    local endpos = hitpos
-
-    local td  = {}
-    td.start  = endpos
-    td.endpos = endpos + (dir * pentracelen)
-    td.mask   = MASK_SHOT
-
-    local ptr = util.TraceLine(td)
-
-    local ptrent = ptr.Entity
-
-    while penleft > 0 and (not ptr.StartSolid or ptr.AllSolid) and ptr.Fraction < 1 and ptrent == curr_ent do
-        penleft = penleft - (pentracelen * penmult)
-
-        td.start  = endpos
-        td.endpos = endpos + (dir * pentracelen)
-        td.mask   = MASK_SHOT
-
-        ptr = util.TraceLine(td)
-
-        if ptrent ~= curr_ent then
-            ptrent = ptr.Entity
-
-            curr_ent = ptrent
-
-            local ptrhp  = ptr.HitPos
-            local dist   = (ptrhp - tr.StartPos):Length() * ArcCW.HUToM
-            local pdelta = penleft / (self.Penetration * self:GetBuff_Mult("Mult_Penetration"))
-
-            local dmg = DamageInfo()
-            dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-            dmg:SetDamage(self:GetDamage(dist, true) * pdelta)
-            dmg:SetDamagePosition(ptrhp)
-
-            if IsValid(ptrent) and not table.HasValue(alreadypenned, ptrent) then ptrent:TakeDamageInfo(dmg) end
-
-            penmult = ArcCW.PenTable[ptr.MatType] or 1
-
-            if not ptr.HitWorld then penmult = penmult * 1.5 end
-
-            if ptrent.mmRHAe then penmult = ptrent.mmRHAe end
-
-            penmult = penmult * m_rand(0.9, 1.1) * m_rand(0.9, 1.1)
-
-            debugoverlay.Line(endpos, endpos + (dir * pentracelen), 10, Color(0, 0, 255), true)
-        end
-
-        if GetConVar("developer"):GetBool() then
-            local pdeltap = penleft / self.Penetration
-            local colorlr = m_lerp(pdeltap, 0, 255)
-
-            debugoverlay.Line(endpos, endpos + (dir * pentracelen), 10, Color(255, colorlr, colorlr), true)
-        end
-
-        endpos = endpos + (dir * pentracelen)
-
-        dir = dir + (VectorRand() * 0.025 * penmult)
-    end
-
-    if penleft > 0 then
-        if (dir:Length() == 0) then return end
-
-        local pdelta = penleft / (self.Penetration * self:GetBuff_Mult("Mult_Penetration"))
-        local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
-
-        m_derand(self:GetOwner():GetCurrentCommand():CommandNumber() + (self:EntIndex() % 24977))
-
-        local owner = self:GetOwner()
-
-        local bullet = {}
-        bullet.Attacker = owner
-        bullet.Dir      = dir
-        bullet.Src      = endpos
-        bullet.Spread   = Vector(spread, spread, spread)
-        bullet.Damage   = 0
-        bullet.Num      = 1
-        bullet.Force    = 0
-        bullet.Distance = 33000
-        bullet.AmmoType = self.Primary.Ammo
-        bullet.Tracer   = 0
-        bullet.Callback = function(att, btr, dmg)
-            local dist = (btr.HitPos - endpos):Length() * ArcCW.HUToM
-
-            if table.HasValue(alreadypenned, ptr.Entity) then
-                dmg:SetDamage(0)
-            else
-                dmg:SetDamageType(self:GetBuff_Override("Override_DamageType") or self.DamageType)
-                dmg:SetDamage(self:GetDamage(dist, true) * pdelta, true)
-            end
-
-            self:DoPenetration(btr, penleft)
-        end
-
-        owner:FireBullets(bullet)
-
-        if tr.HitWorld then
-
-            local supbullet = {}
-            supbullet.Src      = endpos
-            supbullet.Dir      = -dir
-            supbullet.Damage   = 0
-            supbullet.Distance = 8
-            supbullet.Tracer   = 0
-            supbullet.Force    = 0
-
-            owner:FireBullets(supbullet, true)
-
-        end
-    end
+    ArcCW:DoPenetration(tr, bullet.Damage, bullet, penleft, false, {})
 end
 
 function SWEP:GetShootSrc()

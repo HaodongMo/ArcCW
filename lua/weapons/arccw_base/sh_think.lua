@@ -274,7 +274,7 @@ function SWEP:ProcessRecoil()
     local owner = self:GetOwner()
     local ft = FrameTime()
     if CLIENT then
-       ft = math.min(FrameTime(), RealFrameTime())
+       ft = math.max(FrameTime(), RealFrameTime())
     end
 
     local newang = owner:EyeAngles()
