@@ -13,7 +13,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetNWBool("ubgl") then self:ShootUBGL() return end
 
-    if self:GetNextCPrimaryFire() >= CurTime() then return end
+    if self:GetNextArcCWPrimaryFire() >= CurTime() then return end
 
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
 
@@ -106,7 +106,7 @@ function SWEP:PrimaryAttack()
 
     delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
 
-    self:SetNextCPrimaryFire(CurTime() + delay)
+    self:SetNextArcCWPrimaryFire(CurTime() + delay)
 
     local num = self:GetBuff_Override("Override_Num")
 
@@ -300,7 +300,7 @@ function SWEP:PrimaryAttack()
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == -self:GetCurrentFiremode().Mode then
         local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
 
-        self:SetNextCPrimaryFire(CurTime() + postburst)
+        self:SetNextArcCWPrimaryFire(CurTime() + postburst)
     end
 
     self:ApplyAttachmentShootDamage()
@@ -629,7 +629,7 @@ function SWEP:DryFire()
 
     self.Primary.Automatic = false
     self:MyEmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
-    self:SetNextCPrimaryFire(CurTime() + 0.25)
+    self:SetNextArcCWPrimaryFire(CurTime() + 0.25)
 end
 
 function SWEP:DoRecoil()

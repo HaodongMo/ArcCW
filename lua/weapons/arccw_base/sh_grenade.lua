@@ -17,7 +17,7 @@ function SWEP:PreThrow()
 
     self:PlayAnimation("pre_throw", 1, false, 0, true)
 
-    self:SetNextCPrimaryFire(CurTime() + self.PullPinTime)
+    self:SetNextArcCWPrimaryFire(CurTime() + self.PullPinTime)
 
     self:SetNWBool("grenadeprimed", true)
 
@@ -25,7 +25,7 @@ function SWEP:PreThrow()
 end
 
 function SWEP:Throw()
-    if self:GetNextCPrimaryFire() > CurTime() then return end
+    if self:GetNextArcCWPrimaryFire() > CurTime() then return end
 
     self:SetNWBool("grenadeprimed", false)
 
@@ -72,5 +72,5 @@ function SWEP:Throw()
         self:PlayAnimation("draw")
     end)
 
-    self:SetNextCPrimaryFire(CurTime() + 1)
+    self:SetNextArcCWPrimaryFire(CurTime() + 1)
 end
