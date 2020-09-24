@@ -21,6 +21,8 @@ SWEP.TickCache_Tick_Adds = {}
 SWEP.TickCache_Tick_Mults = {}
 SWEP.TickCache_Tick_Hooks = {}
 
+SWEP.AttCache_Hooks = {}
+
 function SWEP:RecalcAllBuffs()
     self.TickCache_Overrides = {}
     self.TickCache_Adds = {}
@@ -31,6 +33,8 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Tick_Adds = {}
     self.TickCache_Tick_Mults = {}
     self.TickCache_Tick_Hooks = {}
+
+    self.AttCache_Hooks = {}
 end
 
 function SWEP:GetBuff_Hook(buff, data)
@@ -738,6 +742,10 @@ function SWEP:RefreshBGs()
     self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae})
 end
 
+function SWEP:GetPickX()
+    return GetConVar("arccw_atts_pickx"):GetInt()
+end
+
 function SWEP:Attach(slot, attname, silent)
     silent = silent or false
     local attslot = self.Attachments[slot]
@@ -751,7 +759,7 @@ function SWEP:Attach(slot, attname, silent)
         return
     end
 
-    local pick = GetConVar("arccw_atts_pickx"):GetInt()
+    local pick = self:GetPickX()
 
     if pick > 0 then
         if self:CountAttachments() >= pick and !attslot.FreeSlot then

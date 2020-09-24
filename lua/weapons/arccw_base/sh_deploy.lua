@@ -245,12 +245,10 @@ function SWEP:Holster(wep)
     self.HolsterSwitchTo = wep
 
     local time = 0.25
-    if self:Clip1() == 0 and self.Animations.holster_empty then
-        self:PlayAnimation("holster_empty", self:GetBuff_Mult("Mult_DrawTime"))
-        time = self:GetAnimKeyTime("holster_empty")
-    elseif self.Animations.holster then
-        self:PlayAnimation("holster", self:GetBuff_Mult("Mult_DrawTime"))
-        time = self:GetAnimKeyTime("holster")
+    local anim = self:SelectAnimation("holster")
+    if anim then
+        self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"))
+        time = self:GetAnimKeyTime(anim)
     else
         if CLIENT then
             self:ProceduralHolster()

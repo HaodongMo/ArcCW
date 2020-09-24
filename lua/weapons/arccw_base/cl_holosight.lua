@@ -61,7 +61,7 @@ local rtmat_spare = GetRenderTarget("arccw_rtmat_spare", ScrW(), ScrH(), false)
 
 -- local shadow = Material("hud/scopes/shadow.png")
 
--- local thermal = Material("models/debug/debugwhite")
+local thermal = Material("models/debug/debugwhite")
 local colormod = Material("pp/colour")
 -- local warp = Material("models/props_c17/fisheyelens2")
 local coldtime = 30
@@ -173,61 +173,66 @@ function SWEP:FormThermalImaging(tex)
     render.SetStencilCompareFunction(STENCIL_EQUAL)
 
     if asight.ThermalScopeSimple then
-        surface.SetDrawColor(tvsc)
+        surface.SetDrawColor(Color(255, 255, 255))
         surface.DrawRect(0, 0, ScrW(), ScrH())
     end
 
+    DrawColorModify({
+        ["$pp_colour_addr"] = 0,
+        ["$pp_colour_addg"] = 0,
+        ["$pp_colour_addb"] = 0,
+        ["$pp_colour_brightness"] = 0,
+        ["$pp_colour_contrast"] = 1,
+        ["$pp_colour_colour"] = 0,
+        ["$pp_colour_mulr"] = 0,
+        ["$pp_colour_mulg"] = 0,
+        ["$pp_colour_mulb"] = 0
+    })
+
+    DrawColorModify({
+        ["$pp_colour_addr"] = tvsc.r - 255,
+        ["$pp_colour_addg"] = tvsc.g - 255,
+        ["$pp_colour_addb"] = tvsc.b - 255,
+        ["$pp_colour_addr"] = 0,
+        ["$pp_colour_addg"] = 0,
+        ["$pp_colour_addb"] = 0,
+        ["$pp_colour_brightness"] = 0,
+        ["$pp_colour_contrast"] = 1,
+        ["$pp_colour_colour"] = 1,
+        ["$pp_colour_mulr"] = 0,
+        ["$pp_colour_mulg"] = 0,
+        ["$pp_colour_mulb"] = 0
+    })
+
     if !asight.ThermalNoCC then
-        DrawColorModify({
-            ["$pp_colour_addr"] = 0,
-            ["$pp_colour_addg"] = 0,
-            ["$pp_colour_addb"] = 0,
-            ["$pp_colour_brightness"] = 0,
-            ["$pp_colour_contrast"] = 1,
-            ["$pp_colour_colour"] = 0,
-            ["$pp_colour_mulr"] = 0,
-            ["$pp_colour_mulg"] = 0,
-            ["$pp_colour_mulb"] = 0
-        })
-
-        DrawColorModify({
-            ["$pp_colour_addr"] = tvsc.r - 255,
-            ["$pp_colour_addg"] = tvsc.g - 255,
-            ["$pp_colour_addb"] = tvsc.b - 255,
-            ["$pp_colour_brightness"] = 0,
-            ["$pp_colour_contrast"] = 1,
-            ["$pp_colour_colour"] = 0,
-            ["$pp_colour_mulr"] = 0,
-            ["$pp_colour_mulg"] = 0,
-            ["$pp_colour_mulb"] = 0
-        })
-
         render.SetStencilCompareFunction(STENCIL_NOTEQUAL)
 
-        DrawColorModify({
-            ["$pp_colour_addr"] = 0,
-            ["$pp_colour_addg"] = 0,
-            ["$pp_colour_addb"] = 0,
-            ["$pp_colour_brightness"] = 0.1,
-            ["$pp_colour_contrast"] = 0.5,
-            ["$pp_colour_colour"] = 0,
-            ["$pp_colour_mulr"] = 0,
-            ["$pp_colour_mulg"] = 0,
-            ["$pp_colour_mulb"] = 0
-        })
+        -- DrawColorModify({
+        --     ["$pp_colour_addr"] = 0,
+        --     ["$pp_colour_addg"] = 0,
+        --     ["$pp_colour_addb"] = 0,
+        --     ["$pp_colour_brightness"] = 0.1,
+        --     ["$pp_colour_contrast"] = 0.5,
+        --     ["$pp_colour_colour"] = 0,
+        --     ["$pp_colour_mulr"] = 0,
+        --     ["$pp_colour_mulg"] = 0,
+        --     ["$pp_colour_mulb"] = 0
+        -- })
 
         DrawColorModify({
             ["$pp_colour_addr"] = nvsc.r - 255,
             ["$pp_colour_addg"] = nvsc.g - 255,
             ["$pp_colour_addb"] = nvsc.b - 255,
-            ["$pp_colour_brightness"] = 0,
-            ["$pp_colour_contrast"] = 1,
-            ["$pp_colour_colour"] = 0,
+            -- ["$pp_colour_addr"] = 0,
+            -- ["$pp_colour_addg"] = 0,
+            -- ["$pp_colour_addb"] = 0,
+            ["$pp_colour_brightness"] = asight.Brightness or 0.1,
+            ["$pp_colour_contrast"] = asight.Contrast or 0.5,
+            ["$pp_colour_colour"] = 1,
             ["$pp_colour_mulr"] = 0,
             ["$pp_colour_mulg"] = 0,
             ["$pp_colour_mulb"] = 0
         })
-
     end
 
     render.SetScissorRect( sx, sy, sx + sw, sy + sh, false )
@@ -270,8 +275,8 @@ function SWEP:FormNightVision(tex)
         ["$pp_colour_addr"] = nvsc.r - 255,
         ["$pp_colour_addg"] = nvsc.g - 255,
         ["$pp_colour_addb"] = nvsc.b - 255,
-        ["$pp_colour_brightness"] = -0.05,
-        ["$pp_colour_contrast"] = 4,
+        ["$pp_colour_brightness"] = asight.Brightness or -0.05,
+        ["$pp_colour_contrast"] = asight.Contrast or 4,
         ["$pp_colour_colour"] = 1,
         ["$pp_colour_mulr"] = 0,
         ["$pp_colour_mulg"] = 0,
@@ -432,7 +437,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     local size = hs.HolosightSize or 1
 
     if self:ShouldFlatScope() then
-        local screen = rtmat_cheap
+        render.UpdateScreenEffectTexture()
+        local screen = render.GetScreenEffectTexture()
 
         if asight.NVScope then
             self:FormNightVision(screen)
@@ -442,7 +448,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             self:FormThermalImaging(screen)
         end
 
-        render.UpdateScreenEffectTexture()
+        render.DrawTextureToScreen(screen)
+
         render.ClearStencil()
         render.SetStencilEnable(true)
         render.SetStencilPassOperation(STENCIL_REPLACE)
