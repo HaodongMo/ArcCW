@@ -377,6 +377,7 @@ att.Mult_GlintMagnitude = 1
 
 att.Override_MuzzleEffect = nil
 att.Override_FastMuzzleEffect = nil
+att.Override_GMMuzzleEffect = nil
 
 att.Override_ShellMaterial = nil
 
