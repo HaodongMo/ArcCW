@@ -661,6 +661,8 @@ function SWEP:RefreshBGs()
         vm:SetColor(vmc)
         vm:SetSkin(vms)
 
+        vmp["BaseClass"] = nil
+
         for i, k in pairs(vmp) do
             vm:SetPoseParameter(i, k)
         end
@@ -680,6 +682,8 @@ function SWEP:RefreshBGs()
         self.WMModel:SetColor(wmc)
         self.WMModel:SetSkin(wms)
 
+        wmp["BaseClass"] = nil
+
         for i, k in pairs(wmp) do
             self.WMModel:SetPoseParameter(i, k)
         end
@@ -693,6 +697,7 @@ function SWEP:RefreshBGs()
         if !ele then continue end
 
         if ele.VMPoseParams and vm and IsValid(vm) then
+            ele.VMPoseParams["BaseClass"] = nil
             for i, k in pairs(ele.VMPoseParams) do
                 vm:SetPoseParameter(i, k)
             end
@@ -700,10 +705,12 @@ function SWEP:RefreshBGs()
 
         if self.WMModel and self.WMModel:IsValid() then
             if self.MirrorVMWM and ele.VMPoseParams then
+                ele.VMPoseParams["BaseClass"] = nil
                 for i, k in pairs(ele.VMPoseParams) do
                     self.WMModel:SetPoseParameter(i, k)
                 end
-            elseif ele.WMSkin then
+            elseif ele.WMPoseParams then
+                ele.WMPoseParams["BaseClass"] = nil
                 for i, k in pairs(ele.WMPoseParams) do
                     self.WMModel:SetPoseParameter(i, k)
                 end
