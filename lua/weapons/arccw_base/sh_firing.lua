@@ -352,9 +352,13 @@ function SWEP:DoPrimaryFire(isent, data)
 
             ArcCW:ShootPhysBullet(self, data.Src, vel)
         else
-            owner:LagCompensation(true)
+            if owner:IsPlayer() then
+                owner:LagCompensation(true)
+            end
             owner:FireBullets(data)
-            owner:LagCompensation(false)
+            if owner:IsPlayer() then
+                owner:LagCompensation(false)
+            end
         end
     end
 end
