@@ -50,7 +50,9 @@ function ArcCW:ShootPhysBullet(wep, pos, vel)
 
     table.insert(ArcCW.PhysBullets, bullet)
 
-    ArcCW:SendBullet(bullet, wep:GetOwner())
+    if SERVER then
+        ArcCW:SendBullet(bullet, wep:GetOwner())
+    end
 end
 
 if CLIENT then
