@@ -229,7 +229,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                             end
                         end
 
-                        ArcCW.TryBustDoor(ctr.Entity, dmg)
+                        ArcCW.TryBustDoor(ctr.Entity, cdmg)
 
                         if bullet.Effect then
                             local ed = EffectData()

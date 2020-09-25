@@ -167,6 +167,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.override_crosshair_off"]    = "Force Disable Crosshair",
         ["arccw.cvar.override_deploychambered"]  = "Deploy with Rounds Chambered",
         ["arccw.cvar.override_barrellength"]     = "Enable Near-Walling",
+        ["arccw.cvar.doorbust"]                  = "Enable Door-Busting",
         -- TTT Menus
         ["arccw.cvar.attinv_loseondie.help"]     = "If enabled, players lose attachment on death and round end.",
         ["arccw.cvar.ammo_detonationmode.help"]  = "Determines what happens if ammo boxes are destroyed.",
