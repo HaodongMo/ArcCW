@@ -144,6 +144,7 @@ local ServerPanel = {
     [1.30] = { type = "b", text = "#arccw.cvar.override_crosshair_off", var = "arccw_override_crosshair_off" },
     [1.40] = { type = "b", text = "#arccw.cvar.override_deploychambered", var = "arccw_override_deploychambered" },
     [1.50] = { type = "b", text = "#arccw.cvar.override_barrellength", var = "arccw_override_nearwall" },
+    [1.60] = { type = "b", text = "#arccw.cvar.doorbust", var = "arccw_doorbust" },
 }
 
 local AmmoPanel = {
