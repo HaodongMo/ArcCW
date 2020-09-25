@@ -140,6 +140,10 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
         debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,0,0), true)
 
+        if bullet.Underwater then
+        else
+        end
+
         if tr.HitSky then
             if GetConVar("arccw_bullet_imaginary"):GetBool() then
                 bullet.Imaginary = true
