@@ -275,21 +275,21 @@ function ArcCW:DrawPhysBullets()
             if i.Travelled <= (i.Vel:Length() * 0.01) then continue end
         end
 
-        local size = 0.2
+        local size = 0.4
 
         size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(128, 2))
 
         size = math.Clamp(size, 0, math.huge)
 
-        local delta = (EyePos():DistToSqr(i.Pos) / math.pow(20000, 2))
+        local delta = (EyePos():DistToSqr(i.Pos) / math.pow(10000, 2))
 
-        size = math.pow(size, Lerp(delta, 1, 4)) * Lerp(delta, 0.25, 0.75)
+        size = math.pow(size, Lerp(delta, 1, 2))
 
         render.SetMaterial(head)
         render.DrawSprite(i.Pos, size, size, Color(255, 255, 255))
 
         render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.01), size, 0, 1, Color(255, 255, 255))
+        render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.01), size * 0.75, 0, 1, Color(255, 255, 255))
     end
 end
 

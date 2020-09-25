@@ -1014,12 +1014,14 @@ function SWEP:Detach(slot, silent)
 end
 
 function SWEP:AdjustAtts()
-    if SERVER then
-        local cs = self:GetChamberSize() * GetConVar("arccw_override_deploychambered"):GetInt()
+    self:RecalcAllBuffs()
 
-        if self:Clip1() > self:GetCapacity() + cs then
-            local diff = self:Clip1() - (self:GetCapacity() + cs)
-            self:SetClip1(self:GetCapacity() + cs)
+    if SERVER then
+        local cs = self:GetCapacity() + self:GetChamberSize()
+
+        if self:Clip1() > cs then
+            local diff = self:Clip1() - cs
+            self:SetClip1(cs)
 
             if self:GetOwner():IsValid() and !self:GetOwner():IsNPC() then
                 self:GetOwner():GiveAmmo(diff, self.Primary.Ammo, true)
@@ -1039,8 +1041,6 @@ function SWEP:AdjustAtts()
             end
         end
     end
-
-    self:RecalcAllBuffs()
 
     if self:GetBuff_Override("UBGL_Capacity") then
         self.Secondary.ClipSize = self:GetBuff_Override("UBGL_Capacity")
