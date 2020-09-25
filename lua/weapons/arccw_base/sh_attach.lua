@@ -1076,9 +1076,9 @@ function SWEP:AdjustAtts()
         self:Unload()
     end
 
-    if CLIENT and self:GetOwner():GetViewModel() then
-        self:PlayAnimation("idle")
-    end
+    -- if CLIENT and self:GetOwner():GetViewModel() then
+    --     self:PlayAnimation("idle")
+    -- end
 
     self.Primary.Ammo = ammo
 

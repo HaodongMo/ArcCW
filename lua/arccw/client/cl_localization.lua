@@ -17,6 +17,7 @@ ArcCW.PhraseTable = {
         ["arccw.menus.atts"]                     = "Attachments",
         ["arccw.menus.ammo"]                     = "Ammo",
         ["arccw.menus.xhair"]                    = "Crosshair",
+        ["arccw.menus.bullet"]                   = "Bullet Physics",
         -- ArcCW_Options_Ammo
         ["arccw.cvar.ammo_detonationmode"]       = "Ammo Detonation Mode",
         ["arccw.cvar.ammo_detonationmode.desc"]  = "-1 - don't explode\n 0 - simple explosion\n 1 - fragmentation\n 2 - frag + burning",
@@ -33,6 +34,14 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.hud_forceshow"]             = "Force HUD On (Useful w/ Custom HUDs)",
         ["arccw.cvar.hudpos_deadzone_x"]         = "Deadzone X",
         ["arccw.cvar.hudpos_deadzone_y"]         = "Deadzone Y",
+        -- ArcCW_Options_Bullet
+        ["arccw.cvar.bullet_enable"]             = "Physical Bullets",
+        ["arccw.cvar.bullet_gravity"]            = "Gravity",
+        ["arccw.cvar.bullet_drag"]               = "Drag",
+        ["arccw.cvar.bullet_lifetime"]           = "Despawn Time",
+        ["arccw.cvar.bullet_velocity"]           = "Multiply Velocity",
+        ["arccw.cvar.bullet_imaginary"]          = "Imaginary Bullets",
+        ["arccw.cvar.bullet_imaginary.desc"]     = "Bullets will appear to continue to travel through the 3D skybox.",
         -- ArcCW_Options_Client
         ["arccw.cvar.toggleads"]                 = "Toggle Aim",
         ["arccw.cvar.altfcgkey"]                 = "E+R To Toggle Firemode (Disables +ZOOM)",

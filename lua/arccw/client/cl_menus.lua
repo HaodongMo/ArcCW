@@ -23,6 +23,15 @@
     func - generator function
 ]]
 
+local BulletPanel = {
+    [0.10] = { type = "h", text = "#arccw.adminonly" },
+    [0.20] = { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable" },
+    [0.30] = { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 100 },
+    [0.40] = { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 32000 },
+    [0.50] = { type = "f", text = "#arccw.cvar.bullet_drag", var = "arccw_bullet_drag", min = 0, max = 10 },
+    [0.60] = { type = "f", text = "#arccw.cvar.bullet_lifetime", var = "arccw_bullet_lifetime", min = 1, max = 60},
+}
+
 local ClientPanel = {
     [0.10] = { type = "h", text = "#arccw.clientcfg" },
     [0.20] = { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
@@ -61,7 +70,9 @@ local PerfomancePanel = {
     [1.20] = { type = "c", text = "#arccw.cvar.visibility.desc" },
     [1.30] = { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
     [1.40] = { type = "b", text = "#arccw.cvar.blur_toytown", var = "arccw_blur_toytown" },
-    [1.50] = { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
+    [1.50] = { type = "b", text = "#arccw.cvar.bullet_imaginary", var = "arccw_bullet_imaginary" },
+    [1.70] = { type = "c", text = "#arccw.cvar.bullet_imaginary.desc" },
+    [1.80] = { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
 }
 
 local ViewmodelPanel = {
@@ -323,6 +334,10 @@ local CrosshairPresets = {
     },
 }
 
+function ArcCW_Options_Bullet(panel)
+    ArcCW.GeneratePanelElements(panel, BulletPanel)
+end
+
 function ArcCW_Options_Client(panel)
     ArcCW.GeneratePanelElements(panel, ClientPanel)
 end
@@ -373,6 +388,7 @@ end
 
 ArcCW.ClientMenus = {
     ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client },
+    ["ArcCW_Options_Bullet"]    = { text = "#arccw.menus.bullet", func = ArcCW_Options_Bullet },
     ["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf", func = ArcCW_Options_Perf },
     ["ArcCW_Options_Viewmodel"] = { text = "#arccw.menus.vmodel", func = ArcCW_Options_Viewmodel },
     ["ArcCW_Options_HUD"]       = { text = "#arccw.menus.hud",    func = ArcCW_Options_HUD },

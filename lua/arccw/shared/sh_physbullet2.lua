@@ -141,11 +141,19 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,0,0), true)
 
         if tr.HitSky then
-            bullet.Imaginary = true
+            if GetConVar("arccw_bullet_imaginary"):GetBool() then
+                bullet.Imaginary = true
+            else
+                bullet.Dead = true
+            end
 
             bullet.Pos = newpos
             bullet.Vel = newvel
             bullet.Travelled = bullet.Travelled + spd
+
+            if SERVER then
+                bullet.Dead = true
+            end
         elseif tr.Hit then
             bullet.Travelled = bullet.Travelled + (oldpos - tr.HitPos):Length()
             bullet.Pos = tr.HitPos
@@ -249,7 +257,11 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         end
     end
 
+    local MaxDimensions = 16384 * 8
+
     if bullet.StartTime <= (CurTime() - GetConVar("arccw_bullet_lifetime"):GetFloat()) then
+        bullet.Dead = true
+    elseif math.abs(bullet.Pos.x) > MaxDimensions or math.abs(bullet.Pos.y) > MaxDimensions or math.abs(bullet.Pos.z) > MaxDimensions then
         bullet.Dead = true
     end
 end
@@ -269,7 +281,7 @@ function ArcCW:DrawPhysBullets()
 
         size = math.Clamp(size, 0, math.huge)
 
-        local delta = (EyePos():DistToSqr(i.Pos) / math.pow(15000, 2))
+        local delta = (EyePos():DistToSqr(i.Pos) / math.pow(20000, 2))
 
         size = math.pow(size, Lerp(delta, 1, 4)) * Lerp(delta, 0.25, 0.75)
 

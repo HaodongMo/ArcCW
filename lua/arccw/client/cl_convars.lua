@@ -11,6 +11,8 @@ local NewConv = CreateClientConVar
 ]]
 
 ArcCW.ClientConVars = {
+    ["arccw_bullet_imaginary"]        = { def = 1 },
+
     ["arccw_crosshair"]               = { def = 1 },
     ["arccw_crosshair_clr_r"]         = { def = 255 },
     ["arccw_crosshair_clr_g"]         = { def = 255 },
