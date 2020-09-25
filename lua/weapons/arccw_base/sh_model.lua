@@ -560,6 +560,8 @@ function SWEP:SetupModel(wm)
     self.PrintName = self:GetBuff_Hook("Hook_NameChange", self.PrintName) or self.PrintName
 
     self:SetupActiveSights()
+
+    self:RefreshBGs()
 end
 
 function SWEP:KillModel(models)

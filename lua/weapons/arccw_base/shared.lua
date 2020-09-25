@@ -272,6 +272,9 @@ SWEP.BarrelLength = 24
 
 SWEP.SightPlusOffset = nil
 
+SWEP.DefaultPoseParams = {} -- {["pose"] = 0.5}
+SWEP.DefaultWMPoseParams = {}
+
 SWEP.DefaultElements = {} -- {"ele1", "ele2"}
 
 SWEP.AttachmentElements = {
@@ -283,6 +286,7 @@ SWEP.AttachmentElements = {
     --     TrueNameChange = "",
     --     AddPrefix = "",
     --     AddSuffix = "",
+    --     VMPoseParams = {}, -- {["pose"] = 0.5}
     --     VMColor = Color(),
     --     VMMaterial = "",
     --     VMBodygroups = {{ind = 1, bg = 1}},
@@ -304,6 +308,7 @@ SWEP.AttachmentElements = {
     --     VMBoneMods = {
     --         ["bone"] = Vector(0, 0, 0)
     --     },
+    --     WMPoseParams = {}, -- {["pose"] = 0.5}
     --     WMColor = Color(),
     --     WMMaterial = "",
     --     WMBodygroups = {},
