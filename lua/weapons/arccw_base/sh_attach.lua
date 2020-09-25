@@ -641,10 +641,14 @@ function SWEP:RefreshBGs()
     local vms = self:GetBuff_Override("Override_VMSkin") or self.DefaultSkin
     local wms = self:GetBuff_Override("Override_WMSkin") or self.DefaultWMSkin
 
+    local vmp = self.DefaultPoseParams
+    local wmp = self.DefaultWMPoseParams
+
     if self.MirrorVMWM then
         wmm = vmm
         wmc = vmc
         wms = vms
+        wmp = vmp
     end
 
     if self:GetOwner():IsPlayer() then
@@ -656,6 +660,10 @@ function SWEP:RefreshBGs()
         vm:SetMaterial(vmm)
         vm:SetColor(vmc)
         vm:SetSkin(vms)
+
+        for i, k in pairs(vmp) do
+            vm:SetPoseParameter(i, k)
+        end
     end
 
     self:SetMaterial(wmm)
@@ -671,6 +679,10 @@ function SWEP:RefreshBGs()
         self.WMModel:SetMaterial(wmm)
         self.WMModel:SetColor(wmc)
         self.WMModel:SetSkin(wms)
+
+        for i, k in pairs(wmp) do
+            self.WMModel:SetPoseParameter(i, k)
+        end
     end
 
     local ae = self:GetActiveElements()
@@ -679,6 +691,24 @@ function SWEP:RefreshBGs()
         local ele = self.AttachmentElements[e]
 
         if !ele then continue end
+
+        if ele.VMPoseParams and vm and IsValid(vm) then
+            for i, k in pairs(ele.VMPoseParams) do
+                vm:SetPoseParameter(i, k)
+            end
+        end
+
+        if self.WMModel and self.WMModel:IsValid() then
+            if self.MirrorVMWM and ele.VMPoseParams then
+                for i, k in pairs(ele.VMPoseParams) do
+                    self.WMModel:SetPoseParameter(i, k)
+                end
+            elseif ele.WMSkin then
+                for i, k in pairs(ele.WMPoseParams) do
+                    self.WMModel:SetPoseParameter(i, k)
+                end
+            end
+        end
 
         if ele.VMSkin and vm and IsValid(vm) then
             vm:SetSkin(ele.VMSkin)
