@@ -544,8 +544,6 @@ function SWEP:DryFire()
     elseif self.Animations.fire_dry then
         return self:PlayAnimation("fire_dry", 1, true, 0, true)
     end
-
-    self.Primary.Automatic = false
     self:MyEmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
     self:SetNextArcCWPrimaryFire(CurTime() + 0.25)
 end
