@@ -312,8 +312,6 @@ function ArcCW:DrawPhysBullets()
 
         local col = ArcCW.BulletProfiles[pro] or Color(255, 255, 255)
 
-        print(col)
-
         render.SetMaterial(head)
         render.DrawSprite(i.Pos, size, size, col)
 
