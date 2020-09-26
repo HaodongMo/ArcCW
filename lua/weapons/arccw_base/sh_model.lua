@@ -655,6 +655,8 @@ function SWEP:DrawCustomModel(wm)
         --     end
         -- end
 
+        local basewm = false
+
         if k.IsBaseWM then
             if self:GetOwner():IsValid() then
                 k.Model:SetParent(self:GetOwner())
@@ -663,6 +665,7 @@ function SWEP:DrawCustomModel(wm)
                 k.Model:SetParent(self)
                 vm = self
                 selfmode = true
+                basewm = true
             end
         else
             if wm and self.MirrorVMWM then
@@ -689,16 +692,17 @@ function SWEP:DrawCustomModel(wm)
         local bpos, bang
         local offset = k.OffsetPos
 
-        if bonename then
+        if bonename or selfmode then
             local boneindex = vm:LookupBone(bonename)
-
-            if selfmode then
-                boneindex = 0
-            end
 
             if !boneindex then continue end
 
             bpos, bang = vm:GetBonePosition(boneindex)
+
+            if selfmode and basewm then
+                bpos = self:GetPos()
+                bang = self:GetAngles()
+            end
 
             if bpos == vm:GetPos() then
                 local bonemat = vm:GetBoneMatrix(boneindex)
@@ -763,7 +767,26 @@ function SWEP:DrawCustomModel(wm)
 
         local apos, aang
 
-        if bang and bpos then
+        if k.CharmParent and IsValid(k.CharmParent.Model) then
+            local cm = k.CharmParent.Model
+            local boneindex = cm:LookupAttachment(k.CharmAtt)
+            local angpos = cm:GetAttachment(boneindex)
+            if angpos then
+                apos, aang = angpos.Pos, angpos.Ang
+
+                local pos = k.CharmOffset
+                local ang = k.CharmAngle
+                local scale = k.CharmScale or Vector(1, 1, 1)
+
+                apos = apos + aang:Forward() * pos.x * scale.x
+                apos = apos + aang:Right() * pos.y * scale.y
+                apos = apos + aang:Up() * pos.z * scale.z
+
+                aang:RotateAroundAxis(aang:Right(), ang.p)
+                aang:RotateAroundAxis(aang:Up(), ang.y)
+                aang:RotateAroundAxis(aang:Forward(), ang.r)
+            end
+        elseif bang and bpos then
 
             local pos = offset or Vector(0, 0, 0)
             local ang = k.OffsetAng or Angle(0, 0, 0)
@@ -786,26 +809,6 @@ function SWEP:DrawCustomModel(wm)
             apos = apos + aang:Forward() * moffset.x
             apos = apos + aang:Right() * moffset.y
             apos = apos + aang:Up() * moffset.z
-
-        elseif k.CharmParent and IsValid(k.CharmParent.Model) then
-            local cm = k.CharmParent.Model
-            local boneindex = cm:LookupAttachment(k.CharmAtt)
-            local angpos = cm:GetAttachment(boneindex)
-            if angpos then
-                apos, aang = angpos.Pos, angpos.Ang
-
-                local pos = k.CharmOffset
-                local ang = k.CharmAngle
-                local scale = k.CharmScale or Vector(1, 1, 1)
-
-                apos = apos + aang:Forward() * pos.x * scale.x
-                apos = apos + aang:Right() * pos.y * scale.y
-                apos = apos + aang:Up() * pos.z * scale.z
-
-                aang:RotateAroundAxis(aang:Right(), ang.p)
-                aang:RotateAroundAxis(aang:Up(), ang.y)
-                aang:RotateAroundAxis(aang:Forward(), ang.r)
-            end
         else
             continue
         end
