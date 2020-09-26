@@ -114,6 +114,13 @@ function SWEP:PrimaryAttack()
 
     num = num + self:GetBuff_Add("Add_Num")
 
+    local tracernum = self:GetBuff_Override("Override_TracerNum") or self.TracerNum
+    local lastout = self:GetBuff_Override("Override_TracerFinalMag") or self.TracerFinalMag
+
+    if lastout >= self:Clip1() then
+        tracernum = 1
+    end
+
     local bullet      = {}
     bullet.Attacker   = owner
     bullet.Dir        = dir:Forward()
@@ -125,7 +132,7 @@ function SWEP:PrimaryAttack()
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
     bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
-    bullet.Tracer     = self:GetBuff_Override("Override_TracerNum") or self.TracerNum
+    bullet.Tracer     = tracernum
     bullet.TracerName = self:GetBuff_Override("Override_Tracer") or self.Tracer
     bullet.Callback   = function(att, tr, dmg)
         local hitpos, hitnormal = tr.HitPos, tr.HitNormal
@@ -334,6 +341,13 @@ function SWEP:DoPrimaryFire(isent, data)
         if shouldphysical then
             local vel = self.PhysBulletMuzzleVelocity
 
+            local tracernum = data.Tracer
+            local prof
+
+            if tracernum == 0 or self:Clip1() % tracernum != 0 then
+                prof = 7
+            end
+
             if !vel then
                 vel = self.Range * self:GetBuff_Mult("Mult_Range") * 5.5
 
@@ -350,7 +364,7 @@ function SWEP:DoPrimaryFire(isent, data)
 
             vel = vel * data.Dir:GetNormalized()
 
-            ArcCW:ShootPhysBullet(self, data.Src, vel)
+            ArcCW:ShootPhysBullet(self, data.Src, vel, prof)
         else
             if owner:IsPlayer() then
                 owner:LagCompensation(true)

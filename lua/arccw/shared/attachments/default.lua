@@ -59,6 +59,7 @@ att.ModelScale = Vector(1, 1, 1)
 att.ModelOffset = Vector(0, 0, 0)
 att.OffsetAng = Angle(0, 0, 0)
 att.ModelIsShield = false
+att.ShieldBone = "ValveBiped.Bip01_R_Hand"
 att.DrawFunc = function(self, element, wm) end
 
 att.Charm = false
@@ -317,6 +318,14 @@ att.Hook_Think = function(wep) end
 -- thinking hook for att
 att.DrawFunc = function(wep, element, wm) end
 
+att.Override_Trivia_Class = nil -- "Submachine Gun"
+att.Override_Trivia_Desc = nil -- "Ubiquitous 9mm SMG. Created as a response to the need for a faster-firing and more reliable submachine gun than existing options at the time."
+att.Override_Trivia_Manufacturer = nil -- "Auschen Waffenfabrik"
+att.Override_Trivia_Calibre = nil -- "9x21mm Jager"
+att.Override_Trivia_Mechanism = nil -- "Roller-Delayed Blowback"
+att.Override_Trivia_Country = nil -- "Austria"
+att.Override_Trivia_Year = nil -- 1968
+
 att.Mult_Damage = 1
 att.Mult_DamageMin = 1
 att.Mult_DamageNPC = 1 -- damage WHEN USED BY NPCS not when used against them
@@ -347,6 +356,18 @@ att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil
 -- att.Override_TracerCol = nil
 -- att.Mult_TracerWidth = 1
+att.TracerFinalMag = nil
+
+att.Override_PhysTracerProfile = nil -- color for phys tracer.
+-- there are 8 options:
+-- 0 = normal
+-- 1 = red
+-- 2 = green
+-- 3 = blue
+-- 4 = yellow
+-- 5 = violet
+-- 6 = cyan
+-- 7 = black/invisible
 
 att.Override_CanBash = nil
 

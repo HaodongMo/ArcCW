@@ -33,6 +33,10 @@ function SWEP:SetupShields()
                 end
             end
 
+            bonename = atttbl.ShieldBone or "ValveBiped.Bip01_R_Hand"
+
+            boneindex = self:GetOwner():LookupBone(bonename)
+
             local delta = k.SlidePos or 0.5
 
             local offset = wmelemod or k.Offset.wpos or Vector(0, 0, 0)

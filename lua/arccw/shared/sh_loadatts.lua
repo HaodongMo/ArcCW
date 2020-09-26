@@ -146,10 +146,12 @@ if CLIENT then
     concommand.Add("arccw_reloadatts", function()
         if !LocalPlayer():IsSuperAdmin() then return end
 
-        ArcCW_LoadAtts()
-
         net.Start("arccw_reloadatts")
         net.SendToServer()
+    end)
+
+    net.Receive("arccw_reloadatts", function(len, ply)
+        ArcCW_LoadAtts()
     end)
 
 elseif SERVER then
@@ -158,6 +160,9 @@ elseif SERVER then
         if !ply:IsSuperAdmin() then return end
 
         ArcCW_LoadAtts()
+
+        net.Start("arccw_reloadatts")
+        net.Broadcast()
     end)
 
     local antiSpam = {}
