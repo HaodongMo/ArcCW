@@ -10,7 +10,7 @@ local function ArcCW_CollectGarbage()
     local removed, removedents = 0, {}
 
     for i, k in pairs(ArcCW.CSModels) do
-        if !IsValid(k.Weapon)then
+        if !IsValid(k.Weapon) then
             removed = removed + 1
 
             tbl_ins(removedents, i)
