@@ -722,6 +722,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         end
     end
 
+    render.ClearStencil()
     render.SetStencilEnable( false )
 
     cam.IgnoreZ( false )

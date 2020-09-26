@@ -276,6 +276,10 @@ function SWEP:GetBuff_Mult(buff)
 
         end
 
+        if ArcCW.ConVar_BuffMults[buff] then
+            mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+        end
+
         return mult
     end
 
@@ -299,10 +303,6 @@ function SWEP:GetBuff_Mult(buff)
         mult = mult * self:GetTable()[buff]
     end
 
-    if ArcCW.ConVar_BuffMults[buff] then
-        mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
-    end
-
     for i, e in pairs(self:GetActiveElements()) do
         local ele = self.AttachmentElements[e]
 
@@ -314,6 +314,10 @@ function SWEP:GetBuff_Mult(buff)
     end
 
     self.TickCache_Mults[buff] = mult
+
+    if ArcCW.ConVar_BuffMults[buff] then
+        mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+    end
 
     local data = {
         buff = buff,
