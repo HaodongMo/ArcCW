@@ -315,7 +315,7 @@ function SWEP:CreateCustomizeHUD()
         local pick = self:GetPickX()
 
         if pick <= 0 then
-            surface.DrawText(ArcCW.TryTranslation(self.Trivia_Class))
+            surface.DrawText(ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class))
         else
             local txt = self:CountAttachments() .. "/" .. pick .. " Attachments"
 
@@ -1187,20 +1187,22 @@ function SWEP:CreateCustomizeHUD()
         surface.DrawText(txt)
     end
 
-    local year = tostring(self.Trivia_Year)
+    local year = self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year
 
-    if isnumber(self.Trivia_Year) and self.Trivia_Year < 0 then
+    if isnumber(year) and year < 0 then
         year = tostring(math.abs(year)) .. "BC"
     end
 
+    year = tostring(year)
+
     local trivia = {
-        function() return translate("trivia.class") .. ": " .. ArcCW.TryTranslation(self.Trivia_Class) or "Unknown" end,
-        function() return translate("trivia.year") .. ": " .. tostring(self.Trivia_Year) or "Unknown" end,
-        function() return translate("trivia.mechanism") .. ": " .. self.Trivia_Mechanism or "Unknown" end,
-        function() return translate("trivia.calibre") .. ": " .. self.Trivia_Calibre or "Unknown" end,
+        function() return translate("trivia.class") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or "Unknown" end,
+        function() return translate("trivia.year") .. ": " .. year or "Unknown" end,
+        function() return translate("trivia.mechanism") .. ": " .. self:GetBuff_Override("Override_Trivia_Mechanism") or self.Trivia_Mechanism or "Unknown" end,
+        function() return translate("trivia.calibre") .. ": " .. self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre or "Unknown" end,
         function() return translate("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo or self.PrintName) end,
-        function() return translate("trivia.country") .. ": " .. self.Trivia_Country or "Unknown" end,
-        function() return translate("trivia.manufacturer") .. ": " .. self.Trivia_Manufacturer or "Unknown" end,
+        function() return translate("trivia.country") .. ": " .. self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country or "Unknown" end,
+        function() return translate("trivia.manufacturer") .. ": " .. self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer or "Unknown" end,
         function() return translate("trivia.clipsize") .. ": " .. self:GetCapacity() end,
         function() return translate("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
         function() return translate("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
