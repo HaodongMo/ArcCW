@@ -679,17 +679,12 @@ function SWEP:DrawCustomModel(wm)
         local bpos, bang
         local offset = k.OffsetPos
 
-        if bonename or selfmode then
+        if bonename then
             local boneindex = vm:LookupBone(bonename)
 
             if !boneindex then continue end
 
             bpos, bang = vm:GetBonePosition(boneindex)
-
-            if selfmode and basewm then
-                bpos = self:GetPos()
-                bang = self:GetAngles()
-            end
 
             if bpos == vm:GetPos() then
                 local bonemat = vm:GetBoneMatrix(boneindex)
