@@ -57,6 +57,7 @@ function SWEP:AddElement(elementname, wm)
         if self.MirrorVMWM then
             self.WorldModel = e.VMOverride or self.WorldModel
             self:SetSkin(e.VMSkin or self.DefaultSkin)
+            eles = e.VMElements
         else
             self.WorldModel = e.WMOverride or self.WorldModel
             self:SetSkin(e.WMSkin or self.DefaultWMSkin)
@@ -213,28 +214,14 @@ function SWEP:SetupModel(wm)
         table.insert(elements, element)
     end
 
-    for _, k in pairs(self.DefaultElements) do
+    for _, k in pairs(self:GetActiveElements()) do
         self:AddElement(k, wm)
     end
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
-        if self.AttachmentElements[k.Installed] then
-            self:AddElement(k.Installed, wm)
-        end
-
-        if k.InstalledEles then
-            for _, ele in pairs(k.InstalledEles or {}) do
-                self:AddElement(ele, wm)
-            end
-        end
-
         local atttbl = ArcCW.AttachmentTable[k.Installed]
-
-        for _, ele in pairs(atttbl.ActivateElements or {}) do
-            self:AddElement(ele, wm)
-        end
 
         local slots = atttbl.Slot
 
