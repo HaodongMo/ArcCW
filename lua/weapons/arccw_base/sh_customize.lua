@@ -1198,11 +1198,11 @@ function SWEP:CreateCustomizeHUD()
     local trivia = {
         function() return translate("trivia.class") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or "Unknown" end,
         function() return translate("trivia.year") .. ": " .. year or "Unknown" end,
-        function() return translate("trivia.mechanism") .. ": " .. self:GetBuff_Override("Override_Trivia_Mechanism") or self.Trivia_Mechanism or "Unknown" end,
-        function() return translate("trivia.calibre") .. ": " .. self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre or "Unknown" end,
+        function() return translate("trivia.mechanism") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Mechanism") or self.Trivia_Mechanism or "Unknown") end,
+        function() return translate("trivia.calibre") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre or "Unknown") end,
         function() return translate("trivia.ammo") .. ": " .. language.GetPhrase(self.Primary.Ammo or self.PrintName) end,
-        function() return translate("trivia.country") .. ": " .. self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country or "Unknown" end,
-        function() return translate("trivia.manufacturer") .. ": " .. self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer or "Unknown" end,
+        function() return translate("trivia.country") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country or "Unknown") end,
+        function() return translate("trivia.manufacturer") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer or "Unknown") end,
         function() return translate("trivia.clipsize") .. ": " .. self:GetCapacity() end,
         function() return translate("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
         function() return translate("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
@@ -1218,27 +1218,27 @@ function SWEP:CreateCustomizeHUD()
         end)
     end
 
-    if !self.Trivia_Class then
+    if !(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) then
         trivia[1] = nil
     end
 
-    if !self.Trivia_Year then
+    if !(self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year) then
         trivia[2] = nil
     end
 
-    if !self.Trivia_Mechanism then
+    if !(self:GetBuff_Override("Override_Trivia_Mechanism") or self.Trivia_Mechanism) then
         trivia[3] = nil
     end
 
-    if !self.Trivia_Calibre then
+    if !(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre) then
         trivia[4] = nil
     end
 
-    if !self.Trivia_Country then
+    if !(self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country) then
         trivia[6] = nil
     end
 
-    if !self.Trivia_Manufacturer then
+    if !(self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer) then
         trivia[7] = nil
     end
 
@@ -1287,7 +1287,7 @@ function SWEP:CreateCustomizeHUD()
 
     -- multlinetext(text, maxw, font)
 
-    local adesctext = multlinetext(translate("desc." .. self:GetClass()) or self.Trivia_Desc, barsize, "ArcCW_8")
+    local adesctext = ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Desc")) or multlinetext(translate("desc." .. self:GetClass()) or self.Trivia_Desc, barsize - smallgap, "ArcCW_8")
 
     table.insert(adesctext, "")
 
