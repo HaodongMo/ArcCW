@@ -157,44 +157,6 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
         debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,0,0), true)
 
-        if bullet.Underwater then
-            if bit.band( util.PointContents( tr.HitPos ), CONTENTS_WATER ) != CONTENTS_WATER then
-                local utr = util.TraceLine({
-                    start = tr.HitPos,
-                    endpos = oldpos,
-                    filter = bullet.Attacker,
-                    mask = MASK_WATER
-                })
-
-                if utr.Hit then
-                    local fx = EffectData()
-                    fx:SetOrigin(utr.HitPos)
-                    fx:SetScale(10)
-                    util.Effect("gunshotsplash", fx)
-                end
-
-                bullet.Underwater = false
-            end
-        else
-            if bit.band( util.PointContents( tr.HitPos ), CONTENTS_WATER ) == CONTENTS_WATER then
-                local utr = util.TraceLine({
-                    start = oldpos,
-                    endpos = tr.HitPos,
-                    filter = bullet.Attacker,
-                    mask = MASK_WATER
-                })
-
-                if utr.Hit then
-                    local fx = EffectData()
-                    fx:SetOrigin(utr.HitPos)
-                    fx:SetScale(10)
-                    util.Effect("gunshotsplash", fx)
-                end
-
-                bullet.Underwater = true
-            end
-        end
-
         if tr.HitSky then
             if GetConVar("arccw_bullet_imaginary"):GetBool() then
                 bullet.Imaginary = true
@@ -309,6 +271,44 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
             bullet.Pos = tr.HitPos
             bullet.Vel = newvel
             bullet.Travelled = bullet.Travelled + spd
+
+            if bullet.Underwater then
+                if bit.band( util.PointContents( tr.HitPos ), CONTENTS_WATER ) != CONTENTS_WATER then
+                    local utr = util.TraceLine({
+                        start = tr.HitPos,
+                        endpos = oldpos,
+                        filter = bullet.Attacker,
+                        mask = MASK_WATER
+                    })
+
+                    if utr.Hit then
+                        local fx = EffectData()
+                        fx:SetOrigin(utr.HitPos)
+                        fx:SetScale(10)
+                        util.Effect("gunshotsplash", fx)
+                    end
+
+                    bullet.Underwater = false
+                end
+            else
+                if bit.band( util.PointContents( tr.HitPos ), CONTENTS_WATER ) == CONTENTS_WATER then
+                    local utr = util.TraceLine({
+                        start = oldpos,
+                        endpos = tr.HitPos,
+                        filter = bullet.Attacker,
+                        mask = MASK_WATER
+                    })
+
+                    if utr.Hit then
+                        local fx = EffectData()
+                        fx:SetOrigin(utr.HitPos)
+                        fx:SetScale(10)
+                        util.Effect("gunshotsplash", fx)
+                    end
+
+                    bullet.Underwater = true
+                end
+            end
         end
     end
 
