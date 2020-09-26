@@ -169,8 +169,9 @@ function SWEP:SetupModel(wm)
         local sm = self.WorldModel
         if self.MirrorVMWM then
             sm = self.ViewModel
-            vscale = Vector(self.WorldModelOffset.scale, self.WorldModelOffset.scale, self.WorldModelOffset.scale) or vscale
         end
+        local vs = (self.WorldModelOffset or {}).scale or 1
+        vscale = Vector(vs, vs, vs)
         local model = ClientsideModel(sm)
 
         if !model then return end
