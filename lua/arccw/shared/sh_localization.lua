@@ -103,7 +103,7 @@ end
 -- Attempts to translate a string (could be either a raw string or a phrase).
 -- If fail, return the string itself.
 function ArcCW.TryTranslation(str, format)
-    if str == nil or str == "" then return nil end
+    if not str then return nil end
     local phrase = ArcCW.GetPhraseFromString(str)
     if not phrase then return str end
 

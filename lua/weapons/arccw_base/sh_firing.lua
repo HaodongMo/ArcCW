@@ -9,6 +9,8 @@ local m_lerp   = Lerp
 function SWEP:PrimaryAttack()
     local owner = self:GetOwner()
 
+    self.Primary.Automatic = true
+
     if owner:IsNPC() then self:NPC_Shoot() return end
 
     if self:GetNWBool("ubgl") then self:ShootUBGL() return end
@@ -29,12 +31,14 @@ function SWEP:PrimaryAttack()
         self:SetBurstCount(0)
         self:DryFire()
 
+        self.Primary.Automatic = false
+
         return
     end
 
-    if self:GetNWBool("cycle", false) then return end
-
     if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
+
+    if self:GetNWBool("cycle", false) then return end
 
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
@@ -623,6 +627,8 @@ function SWEP:DoRecoil()
 end
 
 function SWEP:GetBurstLength()
+    if self:Clip1() == 0 then return 1 end
+
     local len = self:GetCurrentFiremode().Mode
 
     if not len then return self:GetBurstCount() + 10 end
