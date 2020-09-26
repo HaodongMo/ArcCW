@@ -107,7 +107,6 @@ function SWEP:ShootUBGL()
     local ubglammo = self:GetBuff_Override("UBGL_Ammo")
 
     if self:Clip2() <= 0 and self:GetOwner():GetAmmoCount(ubglammo) <= 0 then
-        self.Primary.Automatic = false
         self:DeselectUBGL()
         return
     end

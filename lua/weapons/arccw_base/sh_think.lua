@@ -66,7 +66,6 @@ function SWEP:Think()
         end
 
         if self:GetBurstCount() == self:GetBurstLength() then
-            self.Primary.Automatic = false
             self:SetBurstCount(0)
         end
     end

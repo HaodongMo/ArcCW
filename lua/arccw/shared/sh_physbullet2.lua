@@ -50,7 +50,9 @@ function ArcCW:ShootPhysBullet(wep, pos, vel)
 
     table.insert(ArcCW.PhysBullets, bullet)
 
-    ArcCW:SendBullet(bullet, wep:GetOwner())
+    if SERVER then
+        ArcCW:SendBullet(bullet, wep:GetOwner())
+    end
 end
 
 if CLIENT then
@@ -139,6 +141,10 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         })
 
         debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,0,0), true)
+
+        if bullet.Underwater then
+        else
+        end
 
         if tr.HitSky then
             if GetConVar("arccw_bullet_imaginary"):GetBool() then
