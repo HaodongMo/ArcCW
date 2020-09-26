@@ -136,8 +136,6 @@ function SWEP:Reload()
         self.Sighted = false
     end
 
-    self.Primary.Automatic = false
-
     self:GetBuff_Hook("Hook_PostReload")
 end
 
