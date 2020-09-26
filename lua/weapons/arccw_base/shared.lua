@@ -65,7 +65,8 @@ SWEP.PhysTracerProfile = 0 -- color for phys tracer.
 -- 7 = black/invisible
 
 SWEP.TracerNum = 1 -- tracer every X
-SWEP.Tracer = nil -- override tracer effect
+SWEP.TracerFinalMag = 0 -- the last X bullets in a magazine are all tracers
+SWEP.Tracer = nil -- override tracer (hitscan) effect
 SWEP.TracerCol = Color(255, 255, 255)
 SWEP.HullSize = 0 -- HullSize used by FireBullets
 

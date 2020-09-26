@@ -30,7 +30,7 @@ function ArcCW:SendBullet(bullet, attacker)
     end
 end
 
-function ArcCW:ShootPhysBullet(wep, pos, vel)
+function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     local bullet = {
         DamageMax = wep.Damage * wep:GetBuff_Mult("Mult_Damage"),
         DamageMin = wep.DamageMin * wep:GetBuff_Mult("Mult_DamageMin"),
@@ -54,7 +54,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel)
         Damaged = {},
         Burrowing = false,
         Dead = false,
-        Profile = wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
+        Profile = prof or wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
     }
 
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then

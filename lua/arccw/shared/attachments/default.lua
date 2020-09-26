@@ -348,6 +348,7 @@ att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil
 -- att.Override_TracerCol = nil
 -- att.Mult_TracerWidth = 1
+att.TracerFinalMag = nil
 
 att.Override_PhysTracerProfile = nil -- color for phys tracer.
 -- there are 8 options:
