@@ -53,6 +53,16 @@ SWEP.PhysBulletDrag = 1
 
 SWEP.AlwaysPhysBullet = false
 SWEP.NeverPhysBullet = false
+SWEP.PhysTracerProfile = 0 -- color for phys tracer.
+-- there are 8 options:
+-- 0 = normal
+-- 1 = red
+-- 2 = green
+-- 3 = blue
+-- 4 = yellow
+-- 5 = violet
+-- 6 = cyan
+-- 7 = black/invisible
 
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.Tracer = nil -- override tracer effect

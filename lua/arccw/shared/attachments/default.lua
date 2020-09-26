@@ -348,6 +348,17 @@ att.Override_TracerNum = nil
 -- att.Override_TracerCol = nil
 -- att.Mult_TracerWidth = 1
 
+att.Override_PhysTracerProfile = nil -- color for phys tracer.
+-- there are 8 options:
+-- 0 = normal
+-- 1 = red
+-- 2 = green
+-- 3 = blue
+-- 4 = yellow
+-- 5 = violet
+-- 6 = cyan
+-- 7 = black/invisible
+
 att.Override_CanBash = nil
 
 att.Override_ShotgunReload = nil

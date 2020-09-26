@@ -1,12 +1,24 @@
 ArcCW.PhysBullets = {
 }
 
+ArcCW.BulletProfiles = {
+    [0] = Color(255, 255, 255),
+    [1] = Color(255, 0, 0),
+    [2] = Color(0, 255, 0),
+    [3] = Color(0, 0, 255),
+    [4] = Color(255, 255, 0),
+    [5] = Color(255, 0, 255),
+    [6] = Color(0, 255, 255),
+    [7] = Color(0, 0, 0),
+}
+
 function ArcCW:SendBullet(bullet, attacker)
     net.Start("arccw_sendbullet")
     net.WriteVector(bullet.Pos)
     net.WriteAngle(bullet.Vel:Angle())
     net.WriteFloat(bullet.Vel:Length())
     net.WriteFloat(bullet.Drag)
+    net.WriteUInt(bullet.Profile or 0, 3)
 
     if attacker and attacker:IsValid() and attacker:IsPlayer() and !game.SinglePlayer() then
         net.SendOmit(attacker)
@@ -41,7 +53,8 @@ function ArcCW:ShootPhysBullet(wep, pos, vel)
         Attacker = wep:GetOwner(),
         Damaged = {},
         Burrowing = false,
-        Dead = false
+        Dead = false,
+        Profile = wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
     }
 
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then
@@ -62,6 +75,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
     local ang = net.ReadAngle()
     local vel = net.ReadFloat()
     local drag = net.ReadFloat()
+    local profile = net.ReadUInt(3)
     local ent = nil
 
     if game.SinglePlayer() then
@@ -78,7 +92,8 @@ net.Receive("arccw_sendbullet", function(len, ply)
         Dead = false,
         Damaged = {},
         Drag = drag,
-        Attacker = ent
+        Attacker = ent,
+        Profile = profile
     }
 
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then
@@ -291,11 +306,19 @@ function ArcCW:DrawPhysBullets()
 
         size = math.pow(size, Lerp(delta, 1, 2))
 
+        local pro = i.Profile or 0
+
+        if pro == 7 then continue end
+
+        local col = ArcCW.BulletProfiles[pro] or Color(255, 255, 255)
+
+        print(col)
+
         render.SetMaterial(head)
-        render.DrawSprite(i.Pos, size, size, Color(255, 255, 255))
+        render.DrawSprite(i.Pos, size, size, col)
 
         render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.01), size * 0.75, 0, 1, Color(255, 255, 255))
+        render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.01), size * 0.75, 0, 1, col)
     end
 end
 

@@ -111,6 +111,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             newbullet.Drag = bullet.Drag or 1
             newbullet.Travelled = bullet.Travelled + (endpos - hitpos):Length()
             newbullet.Damaged = alreadypenned
+            newbullet.Profile = bullet.Profile or 0
             newbullet.StartTime = bullet.StartTime or CurTime()
 
             if bit.band( util.PointContents( endpos ), CONTENTS_WATER ) == CONTENTS_WATER then
