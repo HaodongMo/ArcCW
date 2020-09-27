@@ -25,11 +25,11 @@
 
 local BulletPanel = {
     [0.10] = { type = "h", text = "#arccw.adminonly" },
-    [0.20] = { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable" },
-    [0.30] = { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 100 },
-    [0.40] = { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 32000 },
-    [0.50] = { type = "f", text = "#arccw.cvar.bullet_drag", var = "arccw_bullet_drag", min = 0, max = 10 },
-    [0.60] = { type = "f", text = "#arccw.cvar.bullet_lifetime", var = "arccw_bullet_lifetime", min = 1, max = 60},
+    [0.20] = { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable", sv = true },
+    [0.30] = { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 100, sv = true },
+    [0.40] = { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 32000, sv = true },
+    [0.50] = { type = "f", text = "#arccw.cvar.bullet_drag", var = "arccw_bullet_drag", min = 0, max = 10, sv = true },
+    [0.60] = { type = "f", text = "#arccw.cvar.bullet_lifetime", var = "arccw_bullet_lifetime", min = 1, max = 60, sv = true},
 }
 
 local ClientPanel = {
@@ -130,71 +130,96 @@ local CrosshairPanel = {
 
 local ServerPanel = {
     [0.10] = { type = "h", text = "#arccw.adminonly" },
-    [0.20] = { type = "b", text = "#arccw.cvar.enable_penetration", var = "arccw_enable_penetration" },
-    [0.30] = { type = "b", text = "#arccw.cvar.enable_customization", var = "arccw_enable_customization" },
-    [0.40] = { type = "b", text = "#arccw.cvar.truenames", var = "arccw_truenames" },
-    [0.50] = { type = "b", text = "#arccw.cvar.equipmentammo", var = "arccw_equipmentammo" },
+    [0.20] = { type = "b", text = "#arccw.cvar.enable_penetration", var = "arccw_enable_penetration", sv = true },
+    [0.30] = { type = "b", text = "#arccw.cvar.enable_customization", var = "arccw_enable_customization", sv = true },
+    [0.40] = { type = "b", text = "#arccw.cvar.truenames", var = "arccw_truenames", sv = true },
+    [0.50] = { type = "b", text = "#arccw.cvar.equipmentammo", var = "arccw_equipmentammo", sv = true },
     [0.60] = { type = "c", text = "#arccw.cvar.equipmentammo.desc" },
-    [0.70] = { type = "b", text = "#arccw.cvar.equipmentsingleton", var = "arccw_equipmentsingleton" },
+    [0.70] = { type = "b", text = "#arccw.cvar.equipmentsingleton", var = "arccw_equipmentsingleton", sv = true },
     [0.80] = { type = "c", text = "#arccw.cvar.equipmentsingleton.desc" },
-    [0.90] = { type = "i", text = "#arccw.cvar.equipmenttime", var = "arccw_equipmenttime", min = 15, max = 3600 },
-    [1.00] = { type = "b", text = "#arccw.cvar.throwinertia", var = "arccw_throwinertia" },
-    [1.10] = { type = "b", text = "#arccw.cvar.limityear_enable", var = "arccw_limityear_enable" },
-    [1.20] = { type = "i", text = "#arccw.cvar.limityear", var = "arccw_limityear", min = 1800, max = 2100 },
-    [1.30] = { type = "b", text = "#arccw.cvar.override_crosshair_off", var = "arccw_override_crosshair_off" },
-    [1.40] = { type = "b", text = "#arccw.cvar.override_deploychambered", var = "arccw_override_deploychambered" },
-    [1.50] = { type = "b", text = "#arccw.cvar.override_barrellength", var = "arccw_override_nearwall" },
-    [1.60] = { type = "b", text = "#arccw.cvar.doorbust", var = "arccw_doorbust" },
+    [0.90] = { type = "i", text = "#arccw.cvar.equipmenttime", var = "arccw_equipmenttime", min = 15, max = 3600, sv = true },
+    [1.00] = { type = "b", text = "#arccw.cvar.throwinertia", var = "arccw_throwinertia", sv = true },
+    [1.10] = { type = "b", text = "#arccw.cvar.limityear_enable", var = "arccw_limityear_enable", sv = true },
+    [1.20] = { type = "i", text = "#arccw.cvar.limityear", var = "arccw_limityear", min = 1800, max = 2100, sv = true },
+    [1.30] = { type = "b", text = "#arccw.cvar.override_crosshair_off", var = "arccw_override_crosshair_off", sv = true },
+    [1.40] = { type = "b", text = "#arccw.cvar.override_deploychambered", var = "arccw_override_deploychambered", sv = true },
+    [1.50] = { type = "b", text = "#arccw.cvar.override_barrellength", var = "arccw_override_nearwall", sv = true },
+    [1.60] = { type = "b", text = "#arccw.cvar.doorbust", var = "arccw_doorbust", sv = true },
 }
 
 local AmmoPanel = {
     [0.10] = { type = "h", text = "#arccw.adminonly" },
-    [0.20] = { type = "i", text = "#arccw.cvar.ammo_detonationmode", var = "arccw_ammo_detonationmode", min = -1, max = 2 },
-    [0.30] = { type = "c", text = "#arccw.cvar.ammo_detonationmode.desc" },
-    [0.40] = { type = "b", text = "#arccw.cvar.ammo_autopickup", var = "arccw_ammo_autopickup" },
-    [0.50] = { type = "b", text = "#arccw.cvar.ammo_largetrigger", var = "arccw_ammo_largetrigger" },
-    [0.60] = { type = "f", text = "#arccw.cvar.ammo_rareskin", var = "arccw_ammo_rareskin", min = 0, max = 1 },
-    [0.70] = { type = "b", text = "#arccw.cvar.ammo_chaindet", var = "arccw_ammo_chaindet" },
-    [0.80] = { type = "f", text = "#arccw.cvar.mult_ammohealth", var = "arccw_mult_ammohealth", min = -1, max = 10 },
-    [0.90] = { type = "f", text = "#arccw.cvar.mult_ammoamount", var = "arccw_mult_ammoamount", min = 0.1, max = 10 },
+    [0.20] = { type = "i", text = "#arccw.cvar.ammo_detonationmode", var = "arccw_ammo_detonationmode", min = -1, max = 2, sv = true },
+    [0.30] = { type = "c", text = "#arccw.cvar.ammo_detonationmode.desc", sv = true },
+    [0.40] = { type = "b", text = "#arccw.cvar.ammo_autopickup", var = "arccw_ammo_autopickup", sv = true },
+    [0.50] = { type = "b", text = "#arccw.cvar.ammo_largetrigger", var = "arccw_ammo_largetrigger", sv = true },
+    [0.60] = { type = "f", text = "#arccw.cvar.ammo_rareskin", var = "arccw_ammo_rareskin", min = 0, max = 1, sv = true },
+    [0.70] = { type = "b", text = "#arccw.cvar.ammo_chaindet", var = "arccw_ammo_chaindet", sv = true },
+    [0.80] = { type = "f", text = "#arccw.cvar.mult_ammohealth", var = "arccw_mult_ammohealth", min = -1, max = 10, sv = true },
+    [0.90] = { type = "f", text = "#arccw.cvar.mult_ammoamount", var = "arccw_mult_ammoamount", min = 0.1, max = 10, sv = true },
 }
 
 local AttsPanel = {
     [0.10] = { type = "h", text = "#arccw.adminonly" },
     [0.20] = { type = "h", text = "#arccw.attdesc1" },
     [0.30] = { type = "h", text = "#arccw.attdesc2" },
-    [0.40] = { type = "b", text = "#arccw.cvar.attinv_free", var = "arccw_attinv_free" },
-    [0.50] = { type = "b", text = "#arccw.cvar.attinv_lockmode", var = "arccw_attinv_lockmode" },
-    [0.60] = { type = "i", text = "#arccw.cvar.attinv_loseondie", var = "arccw_attinv_loseondie", min = 0, max = 2 },
+    [0.40] = { type = "b", text = "#arccw.cvar.attinv_free", var = "arccw_attinv_free", sv = true },
+    [0.50] = { type = "b", text = "#arccw.cvar.attinv_lockmode", var = "arccw_attinv_lockmode", sv = true },
+    [0.60] = { type = "i", text = "#arccw.cvar.attinv_loseondie", var = "arccw_attinv_loseondie", min = 0, max = 2, sv = true },
     [0.70] = { type = "c", text = "#arccw.cvar.attinv_loseondie.desc" },
-    [0.80] = { type = "i", text = "#arccw.cvar.atts_pickx", var = "arccw_atts_pickx", min = 0, max = 10 },
-    [0.90] = { type = "c", text = "#arccw.cvar.atts_pickx.desc" },
-    [1.00] = { type = "b", text = "#arccw.cvar.enable_dropping", var = "arccw_enable_dropping" },
-    [1.10] = { type = "b", text = "#arccw.cvar.atts_spawnrand", var = "arccw_atts_spawnrand" },
-    [1.20] = { type = "b", text = "#arccw.cvar.atts_ubglautoload", var = "arccw_atts_ubglautoload" },
+    [0.80] = { type = "i", text = "#arccw.cvar.atts_pickx", var = "arccw_atts_pickx", min = 0, max = 10, sv = true },
+    [0.90] = { type = "c", text = "#arccw.cvar.atts_pickx.desc", sv = true },
+    [1.00] = { type = "b", text = "#arccw.cvar.enable_dropping", var = "arccw_enable_dropping", sv = true },
+    [1.10] = { type = "b", text = "#arccw.cvar.atts_spawnrand", var = "arccw_atts_spawnrand", sv = true },
+    [1.20] = { type = "b", text = "#arccw.cvar.atts_ubglautoload", var = "arccw_atts_ubglautoload", sv = true },
     [1.30] = { type = "p", text = "#arccw.blacklist", func = function() RunConsoleCommand("arccw_blacklist") end },
 }
 
 local MultsPanel = {
     [0.10] = { type = "h", text = "#arccw.adminonly" },
-    [0.20] = { type = "f", text = "Damage", var = "arccw_mult_damage", min = 0, max = 10 },
-    [0.30] = { type = "f", text = "NPC Damage", var = "arccw_mult_npcdamage", min = 0, max = 5 },
-    [0.40] = { type = "f", text = "Range", var = "arccw_mult_range", min = 0.01, max = 10 },
-    [0.50] = { type = "f", text = "Recoil", var = "arccw_mult_recoil", min = 0, max = 10 },
-    [0.60] = { type = "f", text = "Penetration", var = "arccw_mult_penetration", min = 0, max = 10 },
-    [0.70] = { type = "f", text = "Hip Dispersion", var = "arccw_mult_hipfire", min = 0, max = 10 },
-    [0.80] = { type = "f", text = "Move Dispersion", var = "arccw_mult_movedisp", min = 0, max = 10 },
-    [0.90] = { type = "f", text = "Reload Time", var = "arccw_mult_reloadtime", min = 0.01, max = 5 },
-    [1.00] = { type = "f", text = "ADS Time", var = "arccw_mult_sighttime", min = 0.1, max = 5 },
-    [1.10] = { type = "i", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10 },
-    [1.20] = { type = "f", text = "Random Att. Chance", var = "arccw_mult_attchance", min = 0, max = 10 },
+    [0.20] = { type = "f", text = "Damage", var = "arccw_mult_damage", min = 0, max = 10, sv = true },
+    [0.30] = { type = "f", text = "NPC Damage", var = "arccw_mult_npcdamage", min = 0, max = 5, sv = true },
+    [0.40] = { type = "f", text = "Range", var = "arccw_mult_range", min = 0.01, max = 10, sv = true },
+    [0.50] = { type = "f", text = "Recoil", var = "arccw_mult_recoil", min = 0, max = 10, sv = true },
+    [0.60] = { type = "f", text = "Penetration", var = "arccw_mult_penetration", min = 0, max = 10, sv = true },
+    [0.70] = { type = "f", text = "Hip Dispersion", var = "arccw_mult_hipfire", min = 0, max = 10, sv = true },
+    [0.80] = { type = "f", text = "Move Dispersion", var = "arccw_mult_movedisp", min = 0, max = 10, sv = true },
+    [0.90] = { type = "f", text = "Reload Time", var = "arccw_mult_reloadtime", min = 0.01, max = 5, sv = true },
+    [1.00] = { type = "f", text = "ADS Time", var = "arccw_mult_sighttime", min = 0.1, max = 5, sv = true },
+    [1.10] = { type = "i", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10, sv = true },
+    [1.20] = { type = "f", text = "Random Att. Chance", var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
 }
 
 local NPCsPanel = {
     [0.10] = { type = "h", text = "#arccw.adminonly" },
-    [0.20] = { type = "b", text = "Replace NPC Weapons", var = "arccw_npc_replace" },
-    [0.30] = { type = "b", text = "NPC Attachments", var = "arccw_npc_atts" },
+    [0.20] = { type = "b", text = "Replace NPC Weapons", var = "arccw_npc_replace", sv = true },
+    [0.30] = { type = "b", text = "NPC Attachments", var = "arccw_npc_atts", sv = true },
 }
+
+local function networktheconvar(convar, value, p)
+    if !LocalPlayer():IsAdmin() then return end
+    if (p.TickCreated or 0) == UnPredictedCurTime() then return end
+    if value == true or value == false then
+        value = value and 1 or 0
+    end
+    if IsColor(value) then
+        value = tostring(value.r) .. " " .. tostring(value.g) .. " " .. tostring(value.b) .. " " .. tostring(value.a)
+    end
+
+    local command = convar .. " " .. tostring(value)
+
+    local timername = "change" .. convar
+
+    if timer.Exists(timername) then
+        timer.Remove(timername)
+    end
+
+    timer.Create(timername, 0.25, 1, function()
+        net.Start("arccw_sendconvar")
+        net.WriteString(command)
+        net.SendToServer()
+    end)
+end
 
 function ArcCW.GeneratePanelElements(panel, table)
     local AddControl = {
@@ -207,8 +232,34 @@ function ArcCW.GeneratePanelElements(panel, table)
         ["p"] = function(p, d) local b = p:Button(d.text) b.DoClick = d.func return b end,
     }
 
+    local concommands = {
+        ["b"] = true,
+        ["i"] = true,
+        ["f"] = true,
+        ["m"] = true,
+    }
+
     for _, data in SortedPairs(table) do
-        AddControl[data.type](panel, data)
+        local p = AddControl[data.type](panel, data)
+
+        if concommands[data.type] then
+            if data.sv then
+                p.TickCreated = UnPredictedCurTime()
+                if data.type == "b" then
+                    p.OnChange = function(self, bval)
+                        networktheconvar(data.var, bval, self)
+                    end
+                elseif data.type == "i" or data.type == "f" then
+                    p.OnValueChanged = function(self, bval)
+                        networktheconvar(data.var, bval, self)
+                    end
+                elseif data.type == "m" then
+                    p.OnValueChanged = function(self, bval)
+                        networktheconvar(data.var, bval, self)
+                    end
+                end
+            end
+        end
     end
 end
 

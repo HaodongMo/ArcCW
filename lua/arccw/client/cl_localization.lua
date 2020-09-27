@@ -4,7 +4,7 @@
 ArcCW.PhraseTable = {
     ["en"] = {
         -- Generic
-        ["arccw.adminonly"]                      = "These options require admin privileges to change. They can only be changed using this menu in Listen (P2P) servers, but you can use this as reference.",
+        ["arccw.adminonly"]                      = "These options require admin privileges to change. They are automatically networked in multiplayer games.",
         ["arccw.clientcfg"]                      = "All options in this menu can be customized by players, and do not need admin privileges.",
         -- Menus
         ["arccw.menus.hud"]                      = "HUD",
