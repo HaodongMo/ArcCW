@@ -371,7 +371,7 @@ function SWEP:SetupModel(wm)
                 charmmodel:SetNoDraw(ArcCW.NoDraw)
                 charmmodel:DrawShadow(true)
                 charmmodel:SetupBones()
-                ScaleModel(charmmodel, scale)
+                ScaleModel(charmmodel, charmscale)
                 charmmodel:SetSkin(atttbl.CharmSkin or 0)
                 charmmodel:SetBodyGroups(atttbl.CharmBodygroups or "")
 
