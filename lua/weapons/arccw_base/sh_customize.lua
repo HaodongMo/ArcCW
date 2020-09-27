@@ -92,6 +92,7 @@ end
 function SWEP:OpenCustomizeHUD()
     if IsValid(ArcCW.InvHUD) then
         ArcCW.InvHUD:Show()
+        -- ArcCW.InvHUD:RequestFocus()
     else
         self:CreateCustomizeHUD()
         gui.SetMousePos(ScrW() / 2, ScrH() / 2)
