@@ -155,7 +155,11 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
             mask = MASK_SHOT
         })
 
-        debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,0,0), true)
+        if SERVER then
+            debugoverlay.Line(oldpos, tr.HitPos, 5, Color(100,100,255), true)
+        else
+            debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,200,100), true)
+        end
 
         if tr.HitSky then
             if GetConVar("arccw_bullet_imaginary"):GetBool() then

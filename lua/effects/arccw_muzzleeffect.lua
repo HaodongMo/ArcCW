@@ -58,6 +58,7 @@ function EFFECT:Init(data)
             fx:SetAttachment(att)
             fx:SetNormal((ang or Angle(0, 0, 0)):Forward())
             fx:SetStart(pos)
+            fx:SetScale(1)
 
             util.Effect(muzzle, fx)
         end
