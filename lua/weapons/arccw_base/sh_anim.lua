@@ -105,7 +105,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if startfrom > (time * mult) then return end
 
     if tt then
-        self:SetNextArcCWPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
+        self:SetNextPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
     end
 
     if anim.LHIK then

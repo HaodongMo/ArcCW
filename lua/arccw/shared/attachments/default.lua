@@ -195,7 +195,7 @@ att.Override_Firemodes = {}
 -- all hooks, mults, and adds will work on fire modes
 
 -- Use SWEP:GetBurstCount() instead of SWEP.BurstCount
--- Use SWEP:Get/SetNextArcCWPrimaryFire()
+-- Use SWEP:Get/SetNextPrimaryFire()
 
 -- Allows you to change the weapon's name
 -- string name

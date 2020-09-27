@@ -594,12 +594,18 @@ end
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
 
-    
-    self:NetworkVar("Float", 0, "NextArcCWPrimaryFire")
-    self:NetworkVar("Int", 1, "BurstCount")
+
+    -- self:NetworkVar("Float", 0, "NextPrimaryFire")
+    -- self:NetworkVar("Int", 1, "BurstCount")
     --self:NetworkVar("Int", 0, "NWState")
+end
 
+function SWEP:SetBurstCount(b)
+    self.BurstCount = b
+end
 
+function SWEP:GetBurstCount()
+    return self.BurstCount or 0
 end
 
 function SWEP:SetState(v)
@@ -662,13 +668,4 @@ function SWEP:BarrelHitWall()
     else
         return 0
     end
-end
-
-function SWEP:GetNextPrimaryFire()
-    return self:GetNextArcCWPrimaryFire()
-end
-
-function SWEP:SetNextPrimaryFire(value)
-    self:SetNextArcCWPrimaryFire(value)
-    return 
 end

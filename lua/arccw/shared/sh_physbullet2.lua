@@ -338,7 +338,7 @@ function ArcCW:DrawPhysBullets()
 
         local delta = (EyePos():DistToSqr(i.Pos) / math.pow(10000, 2))
 
-        size = math.pow(size, Lerp(delta, 1, 2))
+        size = math.pow(size, Lerp(delta, 1, 2.6))
 
         local pro = i.Profile or 0
 

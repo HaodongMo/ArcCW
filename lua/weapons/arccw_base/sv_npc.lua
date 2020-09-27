@@ -10,7 +10,7 @@ function SWEP:NPC_Initialize()
 
     self:SetHoldType(self.HoldtypeNPC or self:GetBuff_Override("Override_HoldtypeActive") or self.HoldtypeActive)
 
-    self:SetNextArcCWPrimaryFire(CurTime())
+    self:SetNextPrimaryFire(CurTime())
 
     self:SetClip1(self:GetCapacity() or self.Primary.ClipSize)
 
@@ -30,7 +30,7 @@ function SWEP:NPC_Initialize()
 
     self:GetOwner():Input("SetMaxLookDistance", nil, nil, range)
 
-    self:SetNextArcCWPrimaryFire(CurTime())
+    self:SetNextPrimaryFire(CurTime())
     self:SetNextSecondaryFire(CurTime() + 30)
     self:GetOwner():NextThink(CurTime())
 end
@@ -108,7 +108,7 @@ function SWEP:NPC_SetupAttachments()
 end
 
 function SWEP:NPC_Shoot()
-    -- if self:GetNextArcCWPrimaryFire() > CurTime() then return end
+    -- if self:GetNextPrimaryFire() > CurTime() then return end
 
     if !IsValid(self:GetOwner()) then return end
     if self:Clip1() <= 0 then self:GetOwner():SetSchedule(SCHED_HIDE_AND_RELOAD) return end
@@ -264,7 +264,7 @@ function SWEP:NPC_Shoot()
 
     self:SetClip1(self:Clip1() - 1)
 
-    self:SetNextArcCWPrimaryFire(CurTime() + delay)
+    self:SetNextPrimaryFire(CurTime() + delay)
     if delay < 0.1 then
         self:GetOwner():NextThink(CurTime() + delay)
     end
@@ -316,7 +316,7 @@ function SWEP:GetNPCBurstSettings()
 
     delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
 
-    self:SetNextArcCWPrimaryFire(CurTime() + delay)
+    self:SetNextPrimaryFire(CurTime() + delay)
 
     if !mode then return 1, 1, delay end
 

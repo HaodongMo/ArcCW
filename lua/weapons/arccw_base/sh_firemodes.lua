@@ -41,6 +41,8 @@ function SWEP:ChangeFiremode(pred)
 
     self:SetNWInt("firemode", fmi)
 
+    self:RecalcAllBuffs()
+
     if SERVER then
         if pred then
             SuppressHostEvents(self:GetOwner())
