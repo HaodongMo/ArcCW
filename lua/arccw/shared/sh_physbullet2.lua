@@ -169,7 +169,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         bullet.Vel = newvel
         bullet.Travelled = bullet.Travelled + spd
 
-        if !GetConVar("arccw_bullet_imaginary"):GetBool() then
+        if CLIENT and !GetConVar("arccw_bullet_imaginary"):GetBool() then
             bullet.Dead = true
         end
     else
@@ -187,7 +187,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         end
 
         if tr.HitSky then
-            if GetConVar("arccw_bullet_imaginary"):GetBool() then
+            if CLIENT and GetConVar("arccw_bullet_imaginary"):GetBool() then
                 bullet.Imaginary = true
             else
                 bullet.Dead = true
