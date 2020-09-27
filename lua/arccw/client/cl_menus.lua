@@ -249,11 +249,7 @@ function ArcCW.GeneratePanelElements(panel, table)
                     p.OnChange = function(self, bval)
                         networktheconvar(data.var, bval, self)
                     end
-                elseif data.type == "i" or data.type == "f" then
-                    p.OnValueChanged = function(self, bval)
-                        networktheconvar(data.var, bval, self)
-                    end
-                elseif data.type == "m" then
+                elseif data.type == "i" or data.type == "f" or data.type == "m" then
                     p.OnValueChanged = function(self, bval)
                         networktheconvar(data.var, bval, self)
                     end
