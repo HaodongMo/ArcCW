@@ -2,14 +2,14 @@ ArcCW.PhysBullets = {
 }
 
 ArcCW.BulletProfiles = {
-    [0] = Color(255, 255, 255),
-    [1] = Color(255, 0, 0),
-    [2] = Color(0, 255, 0),
-    [3] = Color(0, 0, 255),
-    [4] = Color(255, 255, 0),
-    [5] = Color(255, 0, 255),
-    [6] = Color(0, 255, 255),
-    [7] = Color(0, 0, 0),
+    [1] = Color(255, 255, 255),
+    [2] = Color(255, 0, 0),
+    [3] = Color(0, 255, 0),
+    [4] = Color(0, 0, 255),
+    [5] = Color(255, 255, 0),
+    [6] = Color(255, 0, 255),
+    [7] = Color(0, 255, 255),
+    [8] = Color(0, 0, 0),
 }
 
 function ArcCW:SendBullet(bullet, attacker)
@@ -18,7 +18,7 @@ function ArcCW:SendBullet(bullet, attacker)
     net.WriteAngle(bullet.Vel:Angle())
     net.WriteFloat(bullet.Vel:Length())
     net.WriteFloat(bullet.Drag)
-    net.WriteUInt(bullet.Profile or 0, 3)
+    net.WriteUInt((bullet.Profile - 1) or 1, 3)
 
     if attacker and attacker:IsValid() and attacker:IsPlayer() and !game.SinglePlayer() then
         net.SendOmit(attacker)
@@ -86,7 +86,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
     local ang = net.ReadAngle()
     local vel = net.ReadFloat()
     local drag = net.ReadFloat()
-    local profile = net.ReadUInt(3)
+    local profile = net.ReadUInt(3) + 1
     local ent = nil
 
     if game.SinglePlayer() then
