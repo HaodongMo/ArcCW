@@ -57,6 +57,7 @@ function SWEP:AddElement(elementname, wm)
         if self.MirrorVMWM then
             self.WorldModel = e.VMOverride or self.WorldModel
             self:SetSkin(e.VMSkin or self.DefaultSkin)
+            eles = e.VMElements
         else
             self.WorldModel = e.WMOverride or self.WorldModel
             self:SetSkin(e.WMSkin or self.DefaultWMSkin)
@@ -118,6 +119,13 @@ function SWEP:AddElement(elementname, wm)
 
 end
 
+local function ScaleModel(model, vscale)
+    if !model then return end
+    local scale = Matrix()
+    scale:Scale(vscale)
+    model:EnableMatrix("RenderMultiply", scale)
+end
+
 function SWEP:SetupModel(wm)
     local elements = {}
 
@@ -156,11 +164,15 @@ function SWEP:SetupModel(wm)
 
     end
 
+    local vscale = Vector(1, 1, 1)
+
     if wm and CLIENT then
         local sm = self.WorldModel
         if self.MirrorVMWM then
             sm = self.ViewModel
         end
+        local vs = (self.WorldModelOffset or {}).scale or 1
+        vscale = Vector(vs, vs, vs)
         local model = ClientsideModel(sm)
 
         if !model then return end
@@ -172,6 +184,7 @@ function SWEP:SetupModel(wm)
         model.Weapon = self
         model:SetSkin(self.DefaultWMSkin or 0)
         model:SetBodyGroups(self.DefaultWMBodygroups or "")
+        ScaleModel(model, vscale)
         model:SetupBones()
         local element = {}
         element.Model = model
@@ -201,28 +214,14 @@ function SWEP:SetupModel(wm)
         table.insert(elements, element)
     end
 
-    for _, k in pairs(self.DefaultElements) do
+    for _, k in pairs(self:GetActiveElements()) do
         self:AddElement(k, wm)
     end
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
-        if self.AttachmentElements[k.Installed] then
-            self:AddElement(k.Installed, wm)
-        end
-
-        if k.InstalledEles then
-            for _, ele in pairs(k.InstalledEles or {}) do
-                self:AddElement(ele, wm)
-            end
-        end
-
         local atttbl = ArcCW.AttachmentTable[k.Installed]
-
-        for _, ele in pairs(atttbl.ActivateElements or {}) do
-            self:AddElement(ele, wm)
-        end
 
         local slots = atttbl.Slot
 
@@ -298,13 +297,15 @@ function SWEP:SetupModel(wm)
 
         local element = {}
 
-        local scale = Matrix()
+        local scale
 
         if wm then
-            scale:Scale((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+            scale = (k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1)
         else
-            scale:Scale((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+            scale = (k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1)
         end
+
+        scale = scale * vscale
 
         model:SetNoDraw(ArcCW.NoDraw)
         model:DrawShadow(true)
@@ -313,7 +314,7 @@ function SWEP:SetupModel(wm)
         model:SetSkin(atttbl.ModelSkin or 0)
         model:SetBodyGroups(atttbl.ModelBodygroups or "")
         model:SetupBones()
-        model:EnableMatrix("RenderMultiply", scale)
+        ScaleModel(model, scale)
         element.Model = model
         element.DrawFunc = atttbl.DrawFunc
         element.WM = wm or false
@@ -352,25 +353,25 @@ function SWEP:SetupModel(wm)
         if atttbl.Charm and atttbl.CharmModel then
             local charmmodel = ClientsideModel(atttbl.CharmModel)
 
-            local charmscale = Matrix()
+            local charmscale = vscale
 
             if wm then
                 if self.MirrorVMWM then
-                    charmscale:Scale((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                    charmscale = charmscale * ((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
                 else
-                    charmscale:Scale((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                    charmscale = charmscale * ((k.WMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
                 end
             else
-                charmscale:Scale((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
+                charmscale = charmscale * ((k.VMScale or Vector(1, 1, 1)) * (atttbl.ModelScale or 1))
             end
 
-            charmscale:Scale(atttbl.CharmScale or Vector(1, 1, 1))
+            charmscale = charmscale * (atttbl.CharmScale or Vector(1, 1, 1))
 
             if IsValid(charmmodel) then
                 charmmodel:SetNoDraw(ArcCW.NoDraw)
                 charmmodel:DrawShadow(true)
                 charmmodel:SetupBones()
-                charmmodel:EnableMatrix("RenderMultiply", charmscale)
+                ScaleModel(charmmodel, scale)
                 charmmodel:SetSkin(atttbl.CharmSkin or 0)
                 charmmodel:SetBodyGroups(atttbl.CharmBodygroups or "")
 
@@ -419,7 +420,7 @@ function SWEP:SetupModel(wm)
             hspmodel.Weapon = self
 
             hspelement.Model = hspmodel
-            hspmodel:EnableMatrix("RenderMultiply", scale)
+            ScaleModel(charmmodel, scale)
 
             hspelement.WM = wm or false
             hspelement.Bone = repbone or k.Bone
@@ -470,7 +471,7 @@ function SWEP:SetupModel(wm)
             hspmodel:SetNoDraw(true)
             hspmodel:DrawShadow(true)
             hspmodel:SetPredictable(false)
-            hspmodel:EnableMatrix("RenderMultiply", scale)
+            ScaleModel(hspmodel, scale)
             hspmodel.Weapon = self
 
             hspelement.Model = hspmodel
@@ -590,6 +591,8 @@ function SWEP:DrawCustomModel(wm)
     -- self.VM = nil
     -- self.WM = nil
 
+    local vscale = 1
+
     if wm then
         if !self.WM then
             self:SetupModel(wm)
@@ -601,6 +604,10 @@ function SWEP:DrawCustomModel(wm)
 
         if self.MirrorVMWM or !IsValid(self:GetOwner()) then
             vm = self.WMModel or self
+        end
+
+        if self.WorldModelOffset then
+            vscale = self.WorldModelOffset.scale or 1
         end
 
         if !vm or !IsValid(vm) then return end
@@ -635,6 +642,8 @@ function SWEP:DrawCustomModel(wm)
         --     end
         -- end
 
+        local basewm = false
+
         if k.IsBaseWM then
             if self:GetOwner():IsValid() then
                 k.Model:SetParent(self:GetOwner())
@@ -643,6 +652,7 @@ function SWEP:DrawCustomModel(wm)
                 k.Model:SetParent(self)
                 vm = self
                 selfmode = true
+                basewm = true
             end
         else
             if wm and self.MirrorVMWM then
@@ -671,10 +681,6 @@ function SWEP:DrawCustomModel(wm)
 
         if bonename then
             local boneindex = vm:LookupBone(bonename)
-
-            if selfmode then
-                boneindex = 0
-            end
 
             if !boneindex then continue end
 
@@ -743,29 +749,7 @@ function SWEP:DrawCustomModel(wm)
 
         local apos, aang
 
-        if bang and bpos then
-
-            local pos = offset or Vector(0, 0, 0)
-            local ang = k.OffsetAng or Angle(0, 0, 0)
-
-            local moffset = (k.ModelOffset or Vector(0, 0, 0))
-
-            apos = bpos + bang:Forward() * pos.x
-            apos = apos + bang:Right() * pos.y
-            apos = apos + bang:Up() * pos.z
-
-            aang = Angle()
-            aang:Set(bang)
-
-            aang:RotateAroundAxis(aang:Right(), ang.p)
-            aang:RotateAroundAxis(aang:Up(), ang.y)
-            aang:RotateAroundAxis(aang:Forward(), ang.r)
-
-            apos = apos + aang:Forward() * moffset.x
-            apos = apos + aang:Right() * moffset.y
-            apos = apos + aang:Up() * moffset.z
-
-        elseif k.CharmParent and IsValid(k.CharmParent.Model) then
+        if k.CharmParent and IsValid(k.CharmParent.Model) then
             local cm = k.CharmParent.Model
             local boneindex = cm:LookupAttachment(k.CharmAtt)
             local angpos = cm:GetAttachment(boneindex)
@@ -784,6 +768,29 @@ function SWEP:DrawCustomModel(wm)
                 aang:RotateAroundAxis(aang:Up(), ang.y)
                 aang:RotateAroundAxis(aang:Forward(), ang.r)
             end
+        elseif bang and bpos then
+
+            local pos = offset or Vector(0, 0, 0)
+            local ang = k.OffsetAng or Angle(0, 0, 0)
+
+            pos = pos * vscale
+
+            local moffset = (k.ModelOffset or Vector(0, 0, 0))
+
+            apos = bpos + bang:Forward() * pos.x
+            apos = apos + bang:Right() * pos.y
+            apos = apos + bang:Up() * pos.z
+
+            aang = Angle()
+            aang:Set(bang)
+
+            aang:RotateAroundAxis(aang:Right(), ang.p)
+            aang:RotateAroundAxis(aang:Up(), ang.y)
+            aang:RotateAroundAxis(aang:Forward(), ang.r)
+
+            apos = apos + aang:Forward() * moffset.x
+            apos = apos + aang:Right() * moffset.y
+            apos = apos + aang:Up() * moffset.z
         else
             continue
         end

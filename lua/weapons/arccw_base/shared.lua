@@ -23,6 +23,7 @@ SWEP.WorldModelOffset = {
 	pos		=	Vector(0, 0, 0),
 	ang		=	Angle(0, 0, 0),
 	bone	=	"ValveBiped.Bip01_R_Hand",
+    scale   =   1
 }]]
 
 SWEP.PresetBase = nil -- make this weapon share presets with this one.

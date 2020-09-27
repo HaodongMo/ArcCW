@@ -276,6 +276,10 @@ function SWEP:GetBuff_Mult(buff)
 
         end
 
+        if ArcCW.ConVar_BuffMults[buff] then
+            mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+        end
+
         return mult
     end
 
@@ -299,10 +303,6 @@ function SWEP:GetBuff_Mult(buff)
         mult = mult * self:GetTable()[buff]
     end
 
-    if ArcCW.ConVar_BuffMults[buff] then
-        mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
-    end
-
     for i, e in pairs(self:GetActiveElements()) do
         local ele = self.AttachmentElements[e]
 
@@ -314,6 +314,10 @@ function SWEP:GetBuff_Mult(buff)
     end
 
     self.TickCache_Mults[buff] = mult
+
+    if ArcCW.ConVar_BuffMults[buff] then
+        mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+    end
 
     local data = {
         buff = buff,
@@ -709,7 +713,8 @@ function SWEP:RefreshBGs()
                 for i, k in pairs(ele.VMPoseParams) do
                     self.WMModel:SetPoseParameter(i, k)
                 end
-            elseif ele.WMPoseParams then
+            end
+            if ele.WMPoseParams then
                 ele.WMPoseParams["BaseClass"] = nil
                 for i, k in pairs(ele.WMPoseParams) do
                     self.WMModel:SetPoseParameter(i, k)
@@ -725,7 +730,8 @@ function SWEP:RefreshBGs()
             if self.MirrorVMWM and ele.VMSkin then
                 self.WMModel:SetSkin(ele.VMSkin)
                 self:SetSkin(ele.VMSkin)
-            elseif ele.WMSkin then
+            end
+            if ele.WMSkin then
                 self.WMModel:SetSkin(ele.WMSkin)
                 self:SetSkin(ele.WMSkin)
             end
@@ -739,7 +745,8 @@ function SWEP:RefreshBGs()
             if self.MirrorVMWM and ele.VMSkin then
                 self.WMModel:SetColor(ele.VMColor)
                 self:SetColor(ele.VMColor)
-            elseif ele.WMSkin then
+            end
+            if ele.WMSkin then
                 self.WMModel:SetColor(ele.WMColor)
                 self:SetColor(ele.WMColor)
             end
@@ -753,7 +760,8 @@ function SWEP:RefreshBGs()
             if self.MirrorVMWM and ele.VMMaterial then
                 self.WMModel:SetMaterial(ele.VMMaterial)
                 self:SetMaterial(ele.VMMaterial)
-            elseif ele.WMMaterial then
+            end
+            if ele.WMMaterial then
                 self.WMModel:SetMaterial(ele.WMMaterial)
                 self:SetMaterial(ele.WMMaterial)
             end
@@ -783,7 +791,7 @@ function SWEP:RefreshBGs()
             end
         end
 
-        if ele.WMBodygroups and !self.MirrorVMWM then
+        if ele.WMBodygroups then
             for _, i in pairs(ele.WMBodygroups) do
                 if !i.ind or !i.bg then continue end
 
@@ -818,7 +826,7 @@ function SWEP:RefreshBGs()
             end
         end
 
-        if ele.WMBoneMods and !self.MirrorVMWM then
+        if ele.WMBoneMods then
             for bone, i in pairs(ele.WMBoneMods) do
                 if !(self.WMModel and self.WMModel:IsValid()) then break end
                 local boneind = self:LookupBone(bone)

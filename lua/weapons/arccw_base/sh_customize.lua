@@ -1287,7 +1287,7 @@ function SWEP:CreateCustomizeHUD()
 
     -- multlinetext(text, maxw, font)
 
-    local adesctext = ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Desc")) or multlinetext(translate("desc." .. self:GetClass()) or self.Trivia_Desc, barsize - smallgap, "ArcCW_8")
+    local adesctext = multlinetext(ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Desc")) or translate("desc." .. self:GetClass()) or self.Trivia_Desc, barsize - smallgap, "ArcCW_8")
 
     table.insert(adesctext, "")
 
