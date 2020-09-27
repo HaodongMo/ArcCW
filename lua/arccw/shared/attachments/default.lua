@@ -197,6 +197,8 @@ att.Override_Firemodes = {}
 -- Use SWEP:GetBurstCount() instead of SWEP.BurstCount
 -- Use SWEP:Get/SetNextPrimaryFire()
 
+att.Hook_GetBurstCount = function(wep, burstcount) end
+
 -- Allows you to change the weapon's name
 -- string name
 att.Hook_NameChange = function(wep, name) end

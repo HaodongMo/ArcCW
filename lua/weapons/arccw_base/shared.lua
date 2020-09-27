@@ -605,7 +605,7 @@ function SWEP:SetBurstCount(b)
 end
 
 function SWEP:GetBurstCount()
-    return self.BurstCount or 0
+    return self:GetBuff_Hook("Hook_GetBurstCount", self.BurstCount) or self.BurstCount or 0
 end
 
 function SWEP:SetState(v)
