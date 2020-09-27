@@ -9,7 +9,7 @@ function SWEP:Reload()
         return
     end
 
-    if self:GetNextArcCWPrimaryFire() >= CurTime() then return end
+    if self:GetNextPrimaryFire() >= CurTime() then return end
     --if self:GetNextSecondaryFire() > CurTime() then return end
         -- don't succumb to
                 -- californication

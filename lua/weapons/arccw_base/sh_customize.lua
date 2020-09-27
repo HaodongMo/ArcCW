@@ -4,7 +4,7 @@ function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
 
     if ic then
-        if (self:GetNextArcCWPrimaryFire() + 0.1) >= CurTime() then return end
+        if (self:GetNextPrimaryFire() + 0.1) >= CurTime() then return end
 
         self:SetState(ArcCW.STATE_CUSTOMIZE)
         self:ExitSights()

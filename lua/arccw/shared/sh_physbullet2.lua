@@ -13,7 +13,7 @@ ArcCW.BulletProfiles = {
 }
 
 function ArcCW:SendBullet(bullet, attacker)
-    net.Start("arccw_sendbullet")
+    net.Start("arccw_sendbullet", true)
     net.WriteVector(bullet.Pos)
     net.WriteAngle(bullet.Vel:Angle())
     net.WriteFloat(bullet.Vel:Length())
@@ -62,6 +62,17 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     end
 
     table.insert(ArcCW.PhysBullets, bullet)
+
+    if wep:GetOwner():IsPlayer() then
+        local ping = wep:GetOwner():Ping() / 1000
+        ping = math.Clamp(ping, 0, 0.1)
+        local timestep = 0.025
+
+        while ping > 0 do
+            ArcCW:ProgressPhysBullet(bullet, math.min(timestep, ping))
+            ping = ping - timestep
+        end
+    end
 
     if SERVER then
         ArcCW:SendBullet(bullet, wep:GetOwner())
@@ -120,8 +131,18 @@ end
 
 hook.Add("Think", "ArcCW_DoPhysBullets", ArcCW.DoPhysBullets)
 
+local function indim(vec, maxdim)
+    if math.abs(vec.x) > maxdim or math.abs(vec.y) > maxdim or math.abs(vec.z) > maxdim then
+        return false
+    else
+        return true
+    end
+end
+
 function ArcCW:ProgressPhysBullet(bullet, timestep)
     timestep = timestep or FrameTime()
+
+    if bullet.Dead then return end
 
     local oldpos = bullet.Pos
     local oldvel = bullet.Vel
@@ -147,6 +168,10 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         bullet.Pos = newpos
         bullet.Vel = newvel
         bullet.Travelled = bullet.Travelled + spd
+
+        if !GetConVar("arccw_bullet_imaginary"):GetBool() then
+            bullet.Dead = true
+        end
     else
         local tr = util.TraceLine({
             start = oldpos,
@@ -155,7 +180,11 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
             mask = MASK_SHOT
         })
 
-        debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,0,0), true)
+        if SERVER then
+            debugoverlay.Line(oldpos, tr.HitPos, 5, Color(100,100,255), true)
+        else
+            debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,200,100), true)
+        end
 
         if tr.HitSky then
             if GetConVar("arccw_bullet_imaginary"):GetBool() then
@@ -182,7 +211,11 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 attacker = game.GetWorld()
             end
 
-            debugoverlay.Cross(tr.HitPos, 5, 5, Color(255, 0, 0), true)
+            if SERVER then
+                debugoverlay.Cross(tr.HitPos, 5, 5, Color(100,100,255), true)
+            else
+                debugoverlay.Cross(tr.HitPos, 5, 5, Color(255,200,100), true)
+            end
 
             if CLIENT then
                 -- do an impact effect and forget about it
@@ -313,11 +346,14 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
     end
 
     local MaxDimensions = 16384 * 8
+    local WorldDimensions = 16384
 
     if bullet.StartTime <= (CurTime() - GetConVar("arccw_bullet_lifetime"):GetFloat()) then
         bullet.Dead = true
-    elseif math.abs(bullet.Pos.x) > MaxDimensions or math.abs(bullet.Pos.y) > MaxDimensions or math.abs(bullet.Pos.z) > MaxDimensions then
+    elseif !indim(bullet.Pos, MaxDimensions) then
         bullet.Dead = true
+    elseif !indim(bullet.Pos, WorldDimensions) then
+        bullet.Imaginary = true
     end
 end
 
@@ -338,7 +374,7 @@ function ArcCW:DrawPhysBullets()
 
         local delta = (EyePos():DistToSqr(i.Pos) / math.pow(10000, 2))
 
-        size = math.pow(size, Lerp(delta, 1, 2))
+        size = math.pow(size, Lerp(delta, 1, 2.6))
 
         local pro = i.Profile or 0
 
