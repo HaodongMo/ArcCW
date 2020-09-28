@@ -17,7 +17,7 @@ function SWEP:AddHeat()
     local mult = 1 * self:GetBuff_Mult("Mult_FixTime")
     local heat = self:GetHeat()
     self.Heat = math.Clamp(heat + 1, 0, max)
-    self.NextHeatDissipateTime = CurTime() + 0.5
+    self.NextHeatDissipateTime = CurTime() + (self.HeatDelayTime * self:GetBuff_Mult("Mult_HeatDelayTime"))
 
     self:SetHeat(self.Heat)
 
@@ -29,6 +29,13 @@ function SWEP:AddHeat()
 
         if anim then
             self:PlayAnimation(anim, mult, true, 0, true)
+
+            if self.HeatFix or self:GetBuff_Override("Override_HeatFix") then
+            self:SetTimer(self:GetAnimKeyTime(anim) * mult,
+            function()
+                self:SetHeat(0)
+            end)
+            end
         end
 
         if self.HeatLockout then

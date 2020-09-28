@@ -225,6 +225,8 @@ SWEP.Jamming = false
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
 SWEP.HeatDissipation = 5 -- rounds' worth of heat lost per second
 SWEP.HeatLockout = false -- overheating means you cannot fire until heat has been fully depleted
+SWEP.HeatDelayTime = 0.5
+SWEP.HeatFix = false -- when the "fix" animation is played, all heat is restored.
 
 SWEP.HoldtypeHolstered = "passive"
 SWEP.HoldtypeActive = "shotgun"
