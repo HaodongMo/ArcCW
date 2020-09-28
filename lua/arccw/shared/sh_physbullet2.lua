@@ -376,9 +376,9 @@ function ArcCW:DrawPhysBullets()
 
         size = math.pow(size, Lerp(delta, 1, 2.6))
 
-        local pro = i.Profile or 0
+        local pro = (i.Profile + 1) or 1
 
-        if pro == 7 then continue end
+        if pro == 8 then continue end
 
         local col = ArcCW.BulletProfiles[pro] or Color(255, 255, 255)
 

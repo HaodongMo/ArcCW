@@ -613,9 +613,7 @@ function SWEP:DoRecoil()
 
         self.RecoilAmount     = self.RecoilAmount + (self.Recoil * rmul)
         self.RecoilAmountSide = self.RecoilAmountSide + (self.RecoilSide * irec * recs * rmul)
-        self.RecoilPunchBack  = self.Recoil * rmul * m_rand(2, 3)
-
-        self.RecoilPunchBack = math.Clamp(self.RecoilPunchBack, 0, 2)
+        self.RecoilPunchBack  = math.Clamp(self.Recoil * rmul * m_rand(2, 3), 0.5, 2)
 
         if self.MaxRecoilBlowback > 0 then
             self.RecoilPunchBack = m_clamp(self.RecoilPunchBack, 0, self.MaxRecoilBlowback)
