@@ -85,6 +85,10 @@ function SWEP:DrawHUD()
         MyDrawText(bip)
     end
 
+    if self:GetHeatLocked() then
+        col2 = col3
+    end
+
     if ArcCW:ShouldDrawHUDElement("CHudAmmo") then
 
         local curTime = CurTime()
@@ -125,7 +129,7 @@ function SWEP:DrawHUD()
             local visible = (lastinfotime + 4 > curTime or lastinfotime - 0.5 > curTime)
 
             -- Detect changes to stuff drawn in HUD
-            local curInfo = {ammo = ammo, clip = clip, plus = plus, firemode = mode}
+            local curInfo = {ammo = ammo, clip = clip, plus = plus, firemode = mode, heat = self:GetHeat()}
             for i, v in pairs(curInfo) do
                 if v != lastinfo[i] then
                     lastinfotime = visible and (curTime - 0.5) or curTime
@@ -238,6 +242,22 @@ function SWEP:DrawHUD()
                 }
                 MyDrawText(wmode)
 
+                -- overheat bar 3d
+
+                if self:HeatEnabled() then
+                    local wheat = {
+                        x = apan_bg.x + apan_bg.w - airgap,
+                        y = wmode.y + ScreenScale(14),
+                        font = "ArcCW_12",
+                        text = "HEAT " .. tostring(math.ceil(100 * self:GetHeat() / self:GetMaxHeat())) .. "%",
+                        col = col2,
+                        align = 1,
+                        shadow = true,
+                        alpha = alpha,
+                    }
+                    MyDrawText(wheat)
+                end
+
             end
         else
 
@@ -349,6 +369,52 @@ function SWEP:DrawHUD()
                 }
 
                 MyDrawText(wplus)
+            end
+
+            if self:HeatEnabled() then
+                local heat_bg = {
+                    x = apan_bg.x,
+                    w = apan_bg.w,
+                    h = ScreenScale(14)
+                }
+
+                heat_bg.y = apan_bg.y - heat_bg.h - ScreenScale(2)
+                surface.SetDrawColor(col1)
+                surface.DrawRect(heat_bg.x, heat_bg.y, heat_bg.w, heat_bg.h)
+
+                local theat = {
+                    x = heat_bg.x + ScreenScale(2),
+                    y = heat_bg.y,
+                    text = "HEAT: [",
+                    font = "ArcCW_12",
+                    col = col2
+                }
+
+                MyDrawText(theat)
+
+                local eheat = {
+                    x = heat_bg.x + heat_bg.w - ScreenScale(4),
+                    y = heat_bg.y,
+                    text = "]",
+                    font = "ArcCW_12",
+                    col = col2
+                }
+
+                MyDrawText(eheat)
+
+                local heat_bar = {
+                    x = heat_bg.x + ScreenScale(35),
+                    y = heat_bg.y + ScreenScale(4),
+                    h = heat_bg.h - ScreenScale(8),
+                    w = heat_bg.w - ScreenScale(40)
+                }
+
+                local perc = self:GetHeat() / self:GetMaxHeat()
+
+                heat_bar.w = heat_bar.w * perc
+
+                surface.SetDrawColor(col2)
+                surface.DrawRect(heat_bar.x, heat_bar.y, heat_bar.w, heat_bar.h)
             end
 
         end

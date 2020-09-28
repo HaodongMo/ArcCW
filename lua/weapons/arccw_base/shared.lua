@@ -224,6 +224,7 @@ SWEP.SightTime = 0.33
 SWEP.Jamming = false
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
 SWEP.HeatDissipation = 5 -- rounds' worth of heat lost per second
+SWEP.HeatLockout = false -- overheating means you cannot fire until heat has been fully depleted
 
 SWEP.HoldtypeHolstered = "passive"
 SWEP.HoldtypeActive = "shotgun"
@@ -594,8 +595,10 @@ end
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
 
+    self:NetworkVar("Bool", 0, "HeatLocked")
 
-    -- self:NetworkVar("Float", 0, "NextPrimaryFire")
+    self:NetworkVar("Float", 0, "Heat")
+
     -- self:NetworkVar("Int", 1, "BurstCount")
     --self:NetworkVar("Int", 0, "NWState")
 end

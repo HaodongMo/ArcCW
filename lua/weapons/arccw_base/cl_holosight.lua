@@ -397,6 +397,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     -- holosight structure
     -- holosight model
 
+    local ref = 32
+
     asight = asight or self:GetActiveSights()
     local delta = self:GetSightDelta()
 
@@ -474,7 +476,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         render.SetStencilWriteMask(255)
         render.SetStencilTestMask(255)
 
-        render.SetStencilReferenceValue(55)
+        render.SetStencilReferenceValue(ref)
 
         local spos = EyePos() + ((EyeAngles() + (Angle(0.1, 0, 0) * delta) + (self:GetOwner():GetViewPunchAngles() * 0.25)):Forward() * 2048)
 
@@ -522,7 +524,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     render.SetBlend(0)
 
-        render.SetStencilReferenceValue(55)
+        render.SetStencilReferenceValue(ref)
 
         ArcCW.Overdraw = true
 
@@ -541,9 +543,9 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             render.SetStencilReferenceValue(0)
 
             hsm:SetBodygroup(1, 1)
-            -- hsm:SetSubMaterial(0, "dev/no_pixel_write")
+            hsm:SetSubMaterial(0, "dev/no_pixel_write")
             hsm:DrawModel()
-            -- hsm:SetSubMaterial()
+            hsm:SetSubMaterial()
             hsm:SetBodygroup(1, 0)
 
             -- local vm = self:GetOwner():GetViewModel()
@@ -553,7 +555,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
             -- ArcCW.Overdraw = false
 
-            render.SetStencilReferenceValue(55)
+            render.SetStencilReferenceValue(ref)
 
             if hsp then
                 hsp:DrawModel()
@@ -692,7 +694,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         render.SetStencilPassOperation(STENCIL_ZERO)
         render.SetStencilCompareFunction(STENCIL_EQUAL)
 
-        render.SetStencilReferenceValue(55)
+        render.SetStencilReferenceValue(ref)
 
         render.SetMaterial(hs.HolosightReticle or defaultdot)
         render.DrawSprite(pos, size * hsx, size * hsy, hsc or Color(255, 255, 255))
@@ -708,7 +710,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         render.SetMaterial(black)
         render.DrawScreenQuad()
     else
-        render.SetStencilReferenceValue(55)
+        render.SetStencilReferenceValue(ref)
 
         render.SetMaterial(hs.HolosightReticle or defaultdot)
         render.DrawSprite( pos, size * hsx, size * hsy, hsc or Color(255, 255, 255) )
@@ -722,7 +724,6 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         end
     end
 
-    render.ClearStencil()
     render.SetStencilEnable( false )
 
     cam.IgnoreZ( false )

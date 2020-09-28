@@ -17,6 +17,8 @@ function SWEP:PrimaryAttack()
 
     if self:GetNextPrimaryFire() >= CurTime() then return end
 
+    if self:GetHeatLocked() then return end
+
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
 
     if self:GetState() ~= ArcCW.STATE_SIGHTS and owner:KeyDown(IN_USE) or self.PrimaryBash then self:Bash() return end
@@ -613,7 +615,7 @@ function SWEP:DoRecoil()
 
         self.RecoilAmount     = self.RecoilAmount + (self.Recoil * rmul)
         self.RecoilAmountSide = self.RecoilAmountSide + (self.RecoilSide * irec * recs * rmul)
-        self.RecoilPunchBack  = math.Clamp(self.Recoil * rmul * m_rand(2, 3), 0.5, 2)
+        self.RecoilPunchBack  = math.Clamp(self.Recoil * rmul * m_rand(2, 3), 0, 2)
 
         if self.MaxRecoilBlowback > 0 then
             self.RecoilPunchBack = m_clamp(self.RecoilPunchBack, 0, self.MaxRecoilBlowback)
