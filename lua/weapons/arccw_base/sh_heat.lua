@@ -8,11 +8,11 @@ end
 function SWEP:AddHeat()
     local single = game.SinglePlayer()
 
-    if !single and !IsFirstTimePredicted() then return end
+    if !(self.Jamming or self:GetBuff_Override("Override_Jamming")) then return end
 
     if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("AddHeat") end
+    if !single and !IsFirstTimePredicted() then return end
 
-    if !(self.Jamming or self:GetBuff_Override("Override_Jamming")) then return end
     local max = self.HeatCapacity * self:GetBuff_Mult("Mult_HeatCapacity")
     local mult = 1 * self:GetBuff_Mult("Mult_FixTime")
     local heat = self:GetHeat()

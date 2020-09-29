@@ -385,7 +385,7 @@ function SWEP:DrawHUD()
                 local theat = {
                     x = heat_bg.x + ScreenScale(2),
                     y = heat_bg.y,
-                    text = "HEAT: [",
+                    text = "HEAT [",
                     font = "ArcCW_12",
                     col = col2
                 }
@@ -403,10 +403,10 @@ function SWEP:DrawHUD()
                 MyDrawText(eheat)
 
                 local heat_bar = {
-                    x = heat_bg.x + ScreenScale(35),
+                    x = heat_bg.x + ScreenScale(33),
                     y = heat_bg.y + ScreenScale(4),
                     h = heat_bg.h - ScreenScale(8),
-                    w = heat_bg.w - ScreenScale(40)
+                    w = heat_bg.w - ScreenScale(38)
                 }
 
                 local perc = self:GetHeat() / self:GetMaxHeat()

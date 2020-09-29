@@ -501,8 +501,9 @@ SWEP.m_WeaponDeploySpeed = 8008135
         -- We don't do that here
 
 SWEP.ArcCW = true
---SWEP.BurstCount = 0
+SWEP.BurstCount = 0
         --Outdated, but if you could find a way to keep compatibility with older atts/weps :heart:
+        --Idiot! If you remove variables, old mods not only cease to work but throw errors! What were you thinking?
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true
