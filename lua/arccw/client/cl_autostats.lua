@@ -62,12 +62,12 @@ function ArcCW:GetProsCons(att)
     for i, v in pairs(pros) do pros[i] = ArcCW.TryTranslation(v) end
     for i, v in pairs(cons) do cons[i] = ArcCW.TryTranslation(v) end
 
-    if not att.AutoStats then return pros, cons end
+    if !att.AutoStats then return pros, cons end
 
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
 
     for i, stat in pairs(ArcCW.AutoStats) do
-        if not att[i] then continue end
+        if !att[i] then continue end
 
         local k, txt  = att[i], ""
         local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]

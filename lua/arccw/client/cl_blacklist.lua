@@ -72,9 +72,9 @@ local function CreateAttButton(parent, attName, attTbl)
         srf.SetFont("ArcCW_12")
         srf.DrawText(txt)
 
-        local listed   = (blacklistTbl[attName] and not attTbl.Blacklisted)
-        local unlisted = (attTbl.Blacklisted and not blacklistTbl[attName])
-        local saved = (listed or unlisted) and " [not saved]" or ""
+        local listed   = (blacklistTbl[attName] and !attTbl.Blacklisted)
+        local unlisted = (attTbl.Blacklisted and !blacklistTbl[attName])
+        local saved = (listed or unlisted) and " [!saved]" or ""
         srf.SetTextColor(Bfg_col)
         srf.SetTextPos(spaa:GetWide() - Scr36, Scr4)
         srf.SetFont("ArcCW_8")
@@ -82,7 +82,7 @@ local function CreateAttButton(parent, attName, attTbl)
     end
 
     attBtn.OnMousePressed = function(spaa, kc)
-        blacklistTbl[attName] = not blacklistTbl[attName] and not attTbl.Blacklisted or not blacklistTbl[attName]
+        blacklistTbl[attName] = !blacklistTbl[attName] and !attTbl.Blacklisted or !blacklistTbl[attName]
     end
 
     return attBtn
@@ -158,7 +158,7 @@ function ArcCW.MakeBlacklistWindow()
     FilterButton:SetContentAlignment(5)
 
     FilterButton.OnMousePressed = function(spaa, kc)
-        onlyblacklisted = not onlyblacklisted
+        onlyblacklisted = !onlyblacklisted
 
         attList:GenerateButtonsToList()
     end
@@ -225,9 +225,9 @@ function ArcCW.MakeBlacklistWindow()
 
             if attTbl.Blacklisted then blacklistTbl[attName] = true end
 
-            if onlyblacklisted and not (attTbl.Blacklisted or blacklistTbl[attName]) then continue end
+            if onlyblacklisted and !(attTbl.Blacklisted or blacklistTbl[attName]) then continue end
 
-            if filter ~= "" and not string.find((attTbl.PrintName):lower(), filter) then continue end
+            if filter ~= "" and !string.find((attTbl.PrintName):lower(), filter) then continue end
 
             --if attTbl.Slot == "charm" then continue end why the fuck would you do this
 

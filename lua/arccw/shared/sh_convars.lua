@@ -16,7 +16,7 @@ CreateConVar("arccw_npc_atts", 1, FCVAR_ARCHIVE, "Randomly give NPC weapons atta
 CreateConVar("arccw_truenames", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Use true names instead of fake names, where applicable. Requires restart.")
 
 CreateConVar("arccw_equipmentammo", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Automatically assign unique ammo types to each throwable weapon. Prone to running into the ammo type limit.", 0, 1)
-CreateConVar("arccw_equipmentsingleton", 0, FCVAR_ARCHIVE, "Make grenades and equipment not use ammo, and remove themselves on use.", 0, 1)
+CreateConVar("arccw_equipmentsingleton", 0, FCVAR_ARCHIVE, "Make grenades and equipment !use ammo, and remove themselves on use.", 0, 1)
 CreateConVar("arccw_equipmenttime", 180, FCVAR_ARCHIVE, "How long equipment such as Claymores will remain on the map before self-destructing.")
 
 CreateConVar("arccw_mult_damage", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for damage done by all ArcCW weapons.")
@@ -41,7 +41,7 @@ CreateConVar("arccw_ammo_detonationmode", 2, FCVAR_ARCHIVE + FCVAR_REPLICATED, "
 CreateConVar("arccw_ammo_autopickup", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to pick up ammo when walking over in addition to pressing Use.", 0, 1)
 CreateConVar("arccw_ammo_largetrigger", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to use larger trigger boxes for ammo, similar to HL2. Only useful when autopickup is true.", 0, 1)
 CreateConVar("arccw_ammo_rareskin", 0.08, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Chance for a rare skin to appear. Only specific models have these.", 0, 1)
-CreateConVar("arccw_ammo_chaindet", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to allow ammoboxes to detonate each other. If disabled, they will still be destroyed but not explode.", 0, 1)
+CreateConVar("arccw_ammo_chaindet", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to allow ammoboxes to detonate each other. If disabled, they will still be destroyed but !explode.", 0, 1)
 
 CreateConVar("arccw_mult_ammohealth", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much health ammo boxes have. Set to -1 for indestructible boxes.", -1)
 CreateConVar("arccw_mult_ammoamount", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much ammo are in ammo boxes.", 0)

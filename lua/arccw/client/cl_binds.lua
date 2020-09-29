@@ -61,18 +61,18 @@ local function DoUbgl(wep)
 end
 
 local function ArcCW_PlayerBindPress(ply, bind, pressed)
-    if not (ply:IsValid() and pressed) then return end
+    if !(ply:IsValid() and pressed) then return end
 
     local wep = ply:GetActiveWeapon()
 
-    if not wep.ArcCW then return end
+    if !wep.ArcCW then return end
 
     local block = false
 
     bind = ArcCW_TranslateBindToEffect(bind)
 
-    if bind == "firemode" and not GetConVar("arccw_altfcgkey"):GetBool() then
-        if wep:GetBuff_Override("UBGL") and not GetConVar("arccw_altubglkey"):GetBool() then
+    if bind == "firemode" and !GetConVar("arccw_altfcgkey"):GetBool() then
+        if wep:GetBuff_Override("UBGL") and !GetConVar("arccw_altubglkey"):GetBool() then
             if lastpressZ >= CurTime() - 0.25 then
                 DoUbgl(wep)
 
@@ -83,7 +83,7 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
                 lastpressZ = CurTime()
 
                 timer.Create("ArcCW_doubletapZ", 0.25, 1, function()
-                    if not (IsValid(ply) and IsValid(wep)) then return end
+                    if !(IsValid(ply) and IsValid(wep)) then return end
 
                     if ply:GetActiveWeapon() ~= wep then return end
 
@@ -149,8 +149,8 @@ hook.Add("PlayerBindPress", "ArcCW_PlayerBindPress", ArcCW_PlayerBindPress)
 --     for _, i in pairs(ArcCW.CaptureKeys) do
 --         -- local conv = GetConVar(i)
 
---         -- if not conv then continue end
---         -- if not IsValid(conv) then continue end
+--         -- if !conv then continue end
+--         -- if !IsValid(conv) then continue end
 
 --         local kc = i
 
@@ -168,7 +168,7 @@ hook.Add("PlayerBindPress", "ArcCW_PlayerBindPress", ArcCW_PlayerBindPress)
 -- hook.Add("Think", "ArcCW_CustomInputs", ArcCW_CustomInputs)
 
 -- function ArcCW:KeyPressed(key)
---     if not ArcCW.LastInputs[key] and ArcCW.Inputs[key] then
+--     if !ArcCW.LastInputs[key] and ArcCW.Inputs[key] then
 --         return true
 --     end
 

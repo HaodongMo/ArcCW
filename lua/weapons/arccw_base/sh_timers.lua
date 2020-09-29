@@ -8,7 +8,7 @@ function SWEP:InitTimers()
 end
 
 function SWEP:SetTimer(time, callback, id)
-    if not IsFirstTimePredicted() then return end
+    if !IsFirstTimePredicted() then return end
 
     tbl_ins(self.ActiveTimers, { time + UnPredictedCurTime(), id or "", callback })
 end
@@ -40,7 +40,7 @@ function SWEP:ProcessTimers()
 
     if CLIENT and UCT == tick then return end
 
-    if not self.ActiveTimers then self:InitTimers() end
+    if !self.ActiveTimers then self:InitTimers() end
 
     for _, v in pairs(self.ActiveTimers) do
         if v[1] <= UCT then v[3]() end
@@ -54,17 +54,17 @@ function SWEP:ProcessTimers()
 end
 
 local function DoShell(wep, data)
-    if not (IsValid(wep) and IsValid(wep:GetOwner())) then return end
+    if !(IsValid(wep) and IsValid(wep:GetOwner())) then return end
 
-    if not data.e then return end
+    if !data.e then return end
 
     local att = data.att or wep:GetBuff_Override("Override_CaseEffectAttachment") or wep.CaseEffectAttachment or 2
 
-    if not att then return end
+    if !att then return end
 
     local getatt = wep:GetAttachment(att)
 
-    if not getatt then return end
+    if !getatt then return end
 
     local pos, ang = getatt.Pos, getatt.Ang
 
@@ -89,15 +89,15 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
     mult  = 1 / (mult or 1)
 
     for _, v in pairs(soundtable) do
-        if table.IsEmpty(v) or not v.t then continue end
+        if table.IsEmpty(v) or !v.t then continue end
 
         local ttime = (v.t * mult) - start
 
-        if not isnumber(v.t) then continue end
+        if !isnumber(v.t) then continue end
 
         if ttime < 0 then continue end
 
-        if not (IsValid(self) and IsValid(owner)) then continue end
+        if !(IsValid(self) and IsValid(owner)) then continue end
 
         self:SetTimer(ttime, function()
             DoShell(self, v)
@@ -116,7 +116,7 @@ if CLIENT then
         local wep = LocalPlayer():GetActiveWeapon()
         local snd = net.ReadTable()
 
-        if not (IsValid(wep) and wep.ArcCW and snd.s) then return end
+        if !(IsValid(wep) and wep.ArcCW and snd.s) then return end
 
         wep:MyEmitSound(snd.s, snd.v or 75, snd.p or 100, 1, snd.c or CHAN_AUTO)
     end)

@@ -1,5 +1,5 @@
 hook.Add("OnEntityCreated", "ArcCW_DefaultClip", function(ent)
-    if not ent.ArcCW then return end
+    if !ent.ArcCW then return end
     if ent.Primary.DefaultClip <= 0 then return end
 
     if ent.ForceDefaultClip then

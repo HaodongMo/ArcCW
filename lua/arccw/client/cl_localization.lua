@@ -5,7 +5,7 @@ ArcCW.PhraseTable = {
     ["en"] = {
         -- Generic
         ["arccw.adminonly"]                      = "These options require admin privileges to change. They are automatically networked in multiplayer games.",
-        ["arccw.clientcfg"]                      = "All options in this menu can be customized by players, and do not need admin privileges.",
+        ["arccw.clientcfg"]                      = "All options in this menu can be customized by players, and do !need admin privileges.",
         -- Menus
         ["arccw.menus.hud"]                      = "HUD",
         ["arccw.menus.client"]                   = "Client",
@@ -68,7 +68,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.cheapscopes"]               = "Cheap Scopes",
         ["arccw.cvar.cheapscopes.desc"]          = "A cheaper PIP scope implementation that is very low quality but saves a significant amount of performance. Scoped weapons will appear to clip into surfaces.\nWill reduce scope quality!",
         ["arccw.cvar.flatscopes"]                = "Flat Scopes",
-        ["arccw.cvar.flatscopes.desc"]           = "For the ultimate performance gain.\nUse a traditional-style scope implementation that's not very impressive, but actually saves performance relative to even not being scoped in.",
+        ["arccw.cvar.flatscopes.desc"]           = "For the ultimate performance gain.\nUse a traditional-style scope implementation that's !very impressive, but actually saves performance relative to even !being scoped in.",
         ["arccw.cvar.muzzleeffects"]             = "Enable World Muzzle Effects",
         ["arccw.cvar.fastmuzzles"]               = "Low Performance Muzzle Effects",
         ["arccw.cvar.shelleffects"]              = "Enable World Case Effects",
@@ -77,7 +77,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.blur"]                      = "Customization Blur",
         ["arccw.cvar.blur_toytown"]              = "Aim Blur",
         ["arccw.cvar.visibility"]                = "Worldmodel Visibility",
-        ["arccw.cvar.visibility.desc"]           = "Attachments will not render past this distance. -1 for always render.",
+        ["arccw.cvar.visibility.desc"]           = "Attachments will !render past this distance. -1 for always render.",
         -- ArcCW_Options_Viewmodel
         ["arccw.cvar.vm_coolsway"]               = "Custom Swaying",
         ["arccw.cvar.vm_coolview"]               = "Custom Camera Movement",
@@ -192,7 +192,7 @@ ArcCW.PhraseTable = {
 
 local lang = string.lower(GetConVar("gmod_language"):GetString())
 
-if not ArcCW.PhraseTable[lang] then lang = "en" end
+if !ArcCW.PhraseTable[lang] then lang = "en" end
 
 for key, value in pairs(ArcCW.PhraseTable[lang]) do
     if key ~= "" and (value and value ~= "") then language.Add(key, value) end

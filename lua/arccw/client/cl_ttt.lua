@@ -32,11 +32,11 @@ hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
         }
         local count = table.Count(attTbl)
         if count == 1 then
-            if not ArcCW.AttachmentTable[attTbl[1]] then return end
+            if !ArcCW.AttachmentTable[attTbl[1]] then return end
             local printName = ArcCW.GetTranslation("name." .. attTbl[1]) or ArcCW.AttachmentTable[attTbl[1]].PrintName
             finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att1", {att = printName})
         elseif count == 2 then
-            if not ArcCW.AttachmentTable[attTbl[1]] or not ArcCW.AttachmentTable[attTbl[2]] then return end
+            if !ArcCW.AttachmentTable[attTbl[1]] or !ArcCW.AttachmentTable[attTbl[2]] then return end
             local printName1 = ArcCW.GetTranslation("name." .. attTbl[1]) or ArcCW.AttachmentTable[attTbl[1]].PrintName
             local printName2 = ArcCW.GetTranslation("name." .. attTbl[2]) or ArcCW.AttachmentTable[attTbl[2]].PrintName
             finalTbl.text = finalTbl.text .. ArcCW.GetTranslation("ttt.bodyatt.att2", {att1 = printName1, att2 = printName2})
@@ -122,7 +122,7 @@ local function CreateInfoBox(t)
     att_str = ArcCW.GetTranslation(att_str)
     if att_cvar3 == 0 then
         att_str = att_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.persist")
-    elseif not att_cvar and not att_cvar2 and att_cvar3 == 2 then
+    elseif !att_cvar and !att_cvar2 and att_cvar3 == 2 then
         att_str = att_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.drop")
     end
     if GetConVar("arccw_atts_pickx"):GetInt() > 0 then
@@ -191,7 +191,7 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
     dgui:CheckBox("#arccw.cvar.altfcgkey", "arccw_altfcgkey")
     panellist:AddItem(dgui)
 
-    if not game.IsDedicated() and LocalPlayer():IsSuperAdmin() then
+    if !game.IsDedicated() and LocalPlayer():IsSuperAdmin() then
         local dgui2 = vgui.Create("DForm", panellist)
         dgui2:SetName("#arccw.menus.server")
         dgui2:Help("#arccw.adminonly")
@@ -245,9 +245,9 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
     local client = LocalPlayer()
     local ent = tData:GetEntity()
 
-    if not IsValid(client) or not client:IsTerror() or not client:Alive()
-    or not IsValid(ent) or tData:GetEntityDistance() > 100 or not ent:IsWeapon()
-    or not ent.ArcCW or ent.Throwable then
+    if !IsValid(client) or !client:IsTerror() or !client:Alive()
+    or !IsValid(ent) or tData:GetEntityDistance() > 100 or !ent:IsWeapon()
+    or !ent.ArcCW or ent.Throwable then
         return
     end
 
@@ -261,16 +261,16 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
         tData:AddDescriptionLine(tostring(ent:CountAttachments()) .. (pickx > 0 and ("/" .. pickx) or "") .. ArcCW.GetTranslation("ttt.attachments"), nil)
         for i, v in pairs(ent.Attachments) do
             local attName = v.Installed
-            if not attName and not v.MergeSlots then
+            if !attName and !v.MergeSlots then
                 continue
-            elseif v.MergeSlots and not attName then
+            elseif v.MergeSlots and !attName then
                 for _, s in pairs(v.MergeSlots) do
                     if ent.Attachments[s] and ent.Attachments[s].Installed then
                         attName = ent.Attachments[s].Installed
                         break
                     end
                 end
-                if not attName then continue end
+                if !attName then continue end
             end
             local attTbl = ArcCW.AttachmentTable[attName]
             if attTbl and v.PrintName and attTbl.PrintName then
@@ -285,8 +285,8 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Ammo", function(tData)
     local client = LocalPlayer()
     local ent = tData:GetEntity()
 
-    if not IsValid(client) or not client:IsTerror() or not client:Alive()
-    or not IsValid(ent) or tData:GetEntityDistance() > 100 or not scripted_ents.IsBasedOn(ent:GetClass(), "arccw_ammo") then
+    if !IsValid(client) or !client:IsTerror() or !client:Alive()
+    or !IsValid(ent) or tData:GetEntityDistance() > 100 or !scripted_ents.IsBasedOn(ent:GetClass(), "arccw_ammo") then
         return
     end
 

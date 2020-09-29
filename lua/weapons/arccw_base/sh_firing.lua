@@ -27,7 +27,7 @@ function SWEP:PrimaryAttack()
 
     if self:BarrelHitWall() > 0 then return end
 
-    if self:GetState() == ArcCW.STATE_SPRINT and not (self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
+    if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
     if self:Clip1() <= 0 then
         self:SetBurstCount(0)
@@ -98,7 +98,7 @@ function SWEP:PrimaryAttack()
     local dir = owner:EyeAngles()
     local src = self:GetShootSrc()
 
-    if bit.band(util.PointContents(src), CONTENTS_WATER) == CONTENTS_WATER and not (self.CanFireUnderwater or self:GetBuff_Override("Override_CanFireUnderwater")) then
+    if bit.band(util.PointContents(src), CONTENTS_WATER) == CONTENTS_WATER and !(self.CanFireUnderwater or self:GetBuff_Override("Override_CanFireUnderwater")) then
         self:DryFire()
 
         return
@@ -116,7 +116,7 @@ function SWEP:PrimaryAttack()
 
     local num = self:GetBuff_Override("Override_Num")
 
-    if not num then num = self.Num end
+    if !num then num = self.Num end
 
     num = num + self:GetBuff_Add("Add_Num")
 
@@ -164,7 +164,7 @@ function SWEP:PrimaryAttack()
 
         hit = self:GetBuff_Hook("Hook_BulletHit", hit)
 
-        if not hit then return end
+        if !hit then return end
 
         dmg:SetDamageType(hit.dmgtype)
         dmg:SetDamage(hit.damage)
@@ -224,7 +224,7 @@ function SWEP:PrimaryAttack()
 
         bullet = self:GetBuff_Hook("Hook_FireBullets", bullet)
 
-        if not bullet then return end
+        if !bullet then return end
 
         local doent = shootent and num or bullet.Num
         local minnum = shootent and 1 or 0
@@ -239,7 +239,7 @@ function SWEP:PrimaryAttack()
 
                 local ang = owner:EyeAngles() + calcoff
 
-                if not self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
+                if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
                     ang = ang + AngleRand() * spread / 10
                 end
 
@@ -256,7 +256,7 @@ function SWEP:PrimaryAttack()
         elseif shootent then
             local ang = owner:EyeAngles()
 
-            if not self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
+            if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
                 ang = ang + (AngleRand() * spread / 10)
             end
 
@@ -267,12 +267,12 @@ function SWEP:PrimaryAttack()
     else
         bullet = self:GetBuff_Hook("Hook_FireBullets", bullet)
 
-        if not bullet then return end
+        if !bullet then return end
 
         for n = 1, bullet.Num do
             bullet.Num = 1
 
-            if not self:GetBuff_Override("Override_NoRandSpread") then
+            if !self:GetBuff_Override("Override_NoRandSpread") then
                 local ang = dir + AngleRand() * spread / 5
                 bullet.Dir = ang:Forward()
             end
@@ -291,7 +291,7 @@ function SWEP:PrimaryAttack()
     volume = m_clamp(volume, 51, 149)
     pitch  = m_clamp(pitch, 51, 149)
 
-    local shouldsupp = SERVER and not game.SinglePlayer()
+    local shouldsupp = SERVER and !game.SinglePlayer()
 
     if shouldsupp then SuppressHostEvents(owner) end
 
@@ -307,7 +307,7 @@ function SWEP:PrimaryAttack()
 
     self:DoPrimaryAnim()
 
-    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and not (self.NoLastCycle and self:Clip1() == 0) then
+    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and self:Clip1() == 0) then
         self:SetNWBool("cycle", true)
     end
 
@@ -402,7 +402,7 @@ function SWEP:DoPrimaryAnim()
         anim = self:SelectAnimation("fire") or anim
     end
 
-    if (self.ProceduralIronFire and iron) or (self.ProceduralRegularFire and not iron) then anim = nil end
+    if (self.ProceduralIronFire and iron) or (self.ProceduralRegularFire and !iron) then anim = nil end
 
     anim = self:GetBuff_Hook("Hook_SelectFireAnimation", anim) or anim
 
@@ -510,15 +510,15 @@ end
 function SWEP:DoShellEject()
     local owner = self:GetOwner()
 
-    if not IsValid(owner) then return end
+    if !IsValid(owner) then return end
 
     local vm = self
 
-    if not owner:IsNPC() then owner:GetViewModel() end
+    if !owner:IsNPC() then owner:GetViewModel() end
 
     local att = vm:GetAttachment(self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
 
-    if not att then return end
+    if !att then return end
 
     local pos, ang = att.Pos, att.Ang
 
@@ -541,7 +541,7 @@ function SWEP:DoShellEject()
 end
 
 function SWEP:DoEffects()
-    if not game.SinglePlayer() and not IsFirstTimePredicted() then return end
+    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     local ed = EffectData()
     ed:SetScale(1)
@@ -571,7 +571,7 @@ end
 function SWEP:DoRecoil()
     local single = game.SinglePlayer()
 
-    if not single and not IsFirstTimePredicted() then return end
+    if !single and !IsFirstTimePredicted() then return end
 
     if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("DoRecoil") end
 
@@ -631,7 +631,7 @@ function SWEP:GetBurstLength()
 
     local len = self:GetCurrentFiremode().Mode
 
-    if not len then return self:GetBurstCount() + 10 end
+    if !len then return self:GetBurstCount() + 10 end
 
     local hookedlen = self:GetBuff_Hook("Hook_GetBurstLength", len)
 
@@ -667,7 +667,7 @@ function SWEP:GetDamage(range, pellet)
 
     mul = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num ~= nbr) and (num / nbr)) or 1
 
-    if not pellet then mul = mul * nbr end
+    if !pellet then mul = mul * nbr end
 
     local dmgmax = self.Damage * self:GetBuff_Mult("Mult_Damage") * mul
     local dmgmin = self.DamageMin * self:GetBuff_Mult("Mult_DamageMin") * mul

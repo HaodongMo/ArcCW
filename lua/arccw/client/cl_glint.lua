@@ -14,15 +14,15 @@ hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
 
     cam.Start3D()
         for _, ply in pairs(players) do
-            if not IsValid(ply) then continue end
+            if !IsValid(ply) then continue end
 
-            if ply == LocalPlayer() and not ply:ShouldDrawLocalPlayer() then continue end
+            if ply == LocalPlayer() and !ply:ShouldDrawLocalPlayer() then continue end
 
             local wep = ply:GetActiveWeapon()
 
-            if not (IsValid(wep) and wep.ArcCW) then continue end
+            if !(IsValid(wep) and wep.ArcCW) then continue end
 
-            if not wep:GetBuff_Override("ScopeGlint") then continue end
+            if !wep:GetBuff_Override("ScopeGlint") then continue end
 
             if wep:GetState() ~= ArcCW.STATE_SIGHTS then continue end
 

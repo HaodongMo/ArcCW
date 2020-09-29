@@ -40,6 +40,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Penetration = wep.Penetration * wep:GetBuff_Mult("Mult_Penetration"),
         ImpactEffect = wep:GetBuff_Override("Override_ImpactEffect") or wep.ImpactEffect,
         ImpactDecal = wep:GetBuff_Override("Override_ImpactDecal") or wep.ImpactDecal,
+        Gravity = wep.PhysBulletGravity * wep:GetBuff_Mult("Mult_PhysBulletGravity"),
         Num = wep:GetBuff_Override("Override_Num") or wep.Num,
         Pos = pos,
         Vel = vel,
@@ -149,7 +150,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
     local dir = bullet.Vel:GetNormalized()
     local spd = bullet.Vel:Length() * timestep
     local drag = bullet.Drag * spd * spd * (1 / 150000)
-    local gravity = timestep * GetConVar("arccw_bullet_gravity"):GetFloat()
+    local gravity = timestep * GetConVar("arccw_bullet_gravity"):GetFloat() * (bullet.Gravity or 1)
 
     if bullet.Underwater then
         drag = drag * 3
@@ -300,7 +301,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 bullet.Dead = true
             end
         else
-            -- bullet did not impact anything
+            -- bullet did !impact anything
             bullet.Pos = tr.HitPos
             bullet.Vel = newvel
             bullet.Travelled = bullet.Travelled + spd

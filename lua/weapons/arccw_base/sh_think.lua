@@ -97,7 +97,7 @@ function SWEP:Think()
     -- local laserdown, laserpress = altlaser and IN_USE or IN_WALK, altlaser and IN_WALK or IN_USE -- Can't find good alt keys
 
     -- if owner:KeyDown(laserdown) and owner:KeyPressed(laserpress) then
-    --     self:SetNWBool("laserenabled", not self:GetNWBool("laserenabled", true))
+    --     self:SetNWBool("laserenabled", !self:GetNWBool("laserenabled", true))
     -- end
 
     -- Yeah, this would be OP unless we can also turn off the laser stats, too.
@@ -265,7 +265,7 @@ function SWEP:Think()
 
     self:GetBuff_Hook("Hook_Think")
 
-    -- Running this only serverside in SP breaks animation processing and causes CheckpointAnimation to not reset.
+    -- Running this only serverside in SP breaks animation processing and causes CheckpointAnimation to !reset.
     --if SERVER or !game.SinglePlayer() then
         self:ProcessTimers()
     --end
