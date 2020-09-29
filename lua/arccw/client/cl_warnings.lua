@@ -1,5 +1,5 @@
 ArcCW.IncompatibleAddons = {
-    --["2140007767"] = "Not incompatible - this is a test line (but what if it is very long?)",
+    --["2140007767"] = "!incompatible - this is a test line (but what if it is very long?)",
     --["2131161276"] = "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues.",
     -- ["2137567877"] = "Causes viewmodel flickering with LHIK attachments",
     ["847269692"] = "Causes viewmodel flickering, may crash when customization menu opens",
@@ -39,7 +39,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
     desc:Dock(TOP)
     desc:DockMargin(ScreenScale(4), 0, ScreenScale(4), 0)
     desc:SetFont("ArcCW_12")
-    desc:SetText("You have some addons that are known to not work with ArcCW.")
+    desc:SetText("You have some addons that are known to !work with ArcCW.")
     desc:SetContentAlignment(5)
 
     local desc2 = vgui.Create("DLabel", window)
@@ -168,7 +168,7 @@ end
 
 hook.Add("InitPostEntity", "ArcCW_CheckContent", function()
     for _, k in pairs(weapons.GetList()) do
-        if weapons.IsBasedOn(k.ClassName, "arccw_base") and k.ClassName ~= "arccw_base" then
+        if weapons.IsBasedOn(k.ClassName, "arccw_base") and k.ClassName != "arccw_base" then
             return
         end
     end

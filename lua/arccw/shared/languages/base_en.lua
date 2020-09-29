@@ -1,6 +1,6 @@
 L = {}
 
--- Not a translate string, but in case a language needs its own font
+-- not a translate string, but in case a language needs its own font
 L["default_font"] = "Bahnschrift"
 
 -- Attachment Slots

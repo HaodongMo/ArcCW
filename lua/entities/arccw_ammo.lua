@@ -45,7 +45,7 @@ function ENT:Initialize()
         self.AmmoType = ArcCW.TTTReplaceTable[self.AmmoType] or self.AmmoType
     end
 
-    if self.Scale ~= 1 then
+    if self.Scale != 1 then
         self:SetModelScale(self.Scale)
     end
 
@@ -91,7 +91,7 @@ end
 
 -- Ditto - unused outside of TTT
 function ENT:TTT_CheckForWeapon(ply)
-    if not self.CachedWeapons then
+    if !self.CachedWeapons then
         local tbl = {}
         for k,v in pairs(weapons.GetList()) do
             if v and v.Primary.Ammo == self.AmmoType then
@@ -116,7 +116,7 @@ function ENT:ApplyAmmo(ply)
     if self.USED then return end
     if engine.ActiveGamemode() == "terrortown" then
         -- Stupid checks mate... but we'll play along unless an override exists
-        if not self.IgnoreTTTChecks and not self:TTT_PlayerCanPickup(ply) or not self:TTT_CheckForWeapon(ply) then return end
+        if !self.IgnoreTTTChecks and !self:TTT_PlayerCanPickup(ply) or !self:TTT_CheckForWeapon(ply) then return end
 
         local giveCount = math.min(self.AmmoCount, ArcCW.TTTAmmo_To_ClipMax[string.lower(self.AmmoType)] - ply:GetAmmoCount(self.AmmoType))
         if giveCount <= 0 then return end
@@ -292,7 +292,7 @@ elseif CLIENT then
                 surface.SetTextColor(255, 255, 255, 255)
                 surface.DrawText(self.PrintName)
 
-                local ammo = self:GetNWInt("truecount", -1) ~= -1 and self:GetNWInt("truecount", -1) or self.AmmoCount
+                local ammo = self:GetNWInt("truecount", -1) != -1 and self:GetNWInt("truecount", -1) or self.AmmoCount
                 if ammo then
                     w = surface.GetTextSize("×" .. ammo)
                     surface.SetTextPos(-w / 2, 25)

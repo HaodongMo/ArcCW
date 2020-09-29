@@ -15,10 +15,10 @@ local delta    = 1
 function SWEP:DoLaser(world)
     local toworld = world or false
 
-    if not self:GetNWBool("laserenabled", true) then return end
+    if !self:GetNWBool("laserenabled", true) then return end
 
     for _, k in pairs(self.Attachments) do
-        if not k.Installed then continue end
+        if !k.Installed then continue end
 
         local attach = ArcCW.AttachmentTable[k.Installed]
 
@@ -26,13 +26,13 @@ function SWEP:DoLaser(world)
             local color = attach.ColorOptionsTable[k.ColorOptionIndex or 1]
 
             if toworld then
-                if not k.WElement then continue end
+                if !k.WElement then continue end
 
                 cam.Start3D()
                     self:DrawLaser(attach, k.WElement.Model, color, true)
                 cam.End3D()
             else
-                if not k.VElement then continue end
+                if !k.VElement then continue end
                 self:DrawLaser(attach, k.VElement.Model, color)
             end
         end
@@ -43,13 +43,13 @@ function SWEP:DrawLaser(laser, model, color, world)
     local owner = self:GetOwner()
     local behav = ArcCW.LaserBehavior
 
-    if not owner then return end
+    if !owner then return end
 
-    if not IsValid(owner) then return end
+    if !IsValid(owner) then return end
 
-    if not model then return end
+    if !model then return end
 
-    if not IsValid(model) then return end
+    if !IsValid(model) then return end
 
     local att = model:LookupAttachment(laser.LaserBone or "laser")
 
@@ -69,7 +69,7 @@ function SWEP:DrawLaser(laser, model, color, world)
         dir = ang:Forward()
 
         local eyeang   = owner:EyeAngles() + (owner:GetViewPunchAngles() * 0.5)
-        local canlaser = self:GetCurrentFiremode().Mode ~= 0 and not self:GetNWBool("reloading", 0) and self:BarrelHitWall() <= 0
+        local canlaser = self:GetCurrentFiremode().Mode != 0 and !self:GetNWBool("reloading", 0) and self:BarrelHitWall() <= 0
 
         delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
 
@@ -82,7 +82,7 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     beamdir = world and (-ang:Right()) or beamdir
 
-    if behav and not world then
+    if behav and !world then
         local cheap = GetConVar("arccw_cheapscopes"):GetBool()
         if self:ShouldFlatScope() then
             cheap = true
@@ -126,7 +126,7 @@ function SWEP:DrawLaser(laser, model, color, world)
         cam.Start3D()
     end
 
-    if not behav or world then
+    if !behav or world then
         if hit then
             SetMat(lasermat)
             DrawBeam(pos, btr.HitPos, width, 1, 0, color)
@@ -135,7 +135,7 @@ function SWEP:DrawLaser(laser, model, color, world)
         IgnoreZ(true)
     end
 
-    if hit and not tr.HitSky then
+    if hit and !tr.HitSky then
         local mul = 1 * strength
         -- if !self:ShouldFlatScope() then
             mul = m_log10((hitpos - EyePos()):Length()) * strength

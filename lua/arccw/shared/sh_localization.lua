@@ -1,5 +1,5 @@
 ArcCW.LangTable = {}
--- Converts raw string to a lang phrase. Not case sensitive.
+-- Converts raw string to a lang phrase. not case sensitive.
 ArcCW.StringToLang = {
     -- Class
     ["pistol"] = "class.pistol",
@@ -86,7 +86,7 @@ end
 function ArcCW.GetTranslation(phrase, format)
     if phrase == nil or phrase == "" then return nil end
     local lang = string.lower(GetConVar("gmod_language"):GetString())
-    if not lang or lang == "" or not ArcCW.LangTable[lang] or not ArcCW.LangTable[lang][phrase] then
+    if !lang or lang == "" or !ArcCW.LangTable[lang] or !ArcCW.LangTable[lang][phrase] then
         lang = "en"
     end
     if ArcCW.LangTable[lang][phrase] then
@@ -103,9 +103,9 @@ end
 -- Attempts to translate a string (could be either a raw string or a phrase).
 -- If fail, return the string itself.
 function ArcCW.TryTranslation(str, format)
-    if not str then return nil end
+    if !str then return nil end
     local phrase = ArcCW.GetPhraseFromString(str)
-    if not phrase then return str end
+    if !phrase then return str end
 
     return ArcCW.GetTranslation(phrase, format) or str
 end
@@ -126,11 +126,11 @@ function ArcCW.LoadLanguages()
         local exp = string.Explode("_", string.lower(string.Replace(v, ".lua", "")))
         local lang = exp[#exp]
 
-        if not lang then
-            print("Failed to load ArcCW language file " .. v .. ", did not get language name (naming convention incorrect?)")
+        if !lang then
+            print("Failed to load ArcCW language file " .. v .. ", did !get language name (naming convention incorrect?)")
             continue
-        elseif not L then
-            print("Failed to load ArcCW language file " .. v .. ", did not get language table")
+        elseif !L then
+            print("Failed to load ArcCW language file " .. v .. ", did !get language table")
             continue
         end
 

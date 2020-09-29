@@ -50,9 +50,9 @@ function ArcCW.DoorBust(ent, vel)
 end
 
 function ArcCW.TryBustDoor(ent, dmginfo)
-    if GetConVar("arccw_doorbust"):GetInt() == 0 or not IsValid(ent) or not string.find(ent:GetClass(), "door") then return end
+    if GetConVar("arccw_doorbust"):GetInt() == 0 or !IsValid(ent) or !string.find(ent:GetClass(), "door") then return end
     local wep = IsValid(dmginfo:GetAttacker()) and ((dmginfo:GetInflictor():IsWeapon() and dmginfo:GetInflictor()) or dmginfo:GetAttacker():GetActiveWeapon())
-    if not wep or not wep:IsWeapon() or not wep.ArcCW or not dmginfo:IsDamageType(DMG_BUCKSHOT) then return end
+    if !wep or !wep:IsWeapon() or !wep.ArcCW or !dmginfo:IsDamageType(DMG_BUCKSHOT) then return end
     if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
 
     -- Magic number: 119.506 is the size of door01_left
@@ -75,7 +75,7 @@ function ArcCW.TryBustDoor(ent, dmginfo)
     ArcCW.DoorBust(ent, dmginfo:GetDamageForce() * 0.5)
     -- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
     for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
-        if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and not otherDoor:GetNoDraw() then
+        if ent != otherDoor and otherDoor:GetClass() == ent:GetClass() and !otherDoor:GetNoDraw() then
             ArcCW.DoorBust(otherDoor, dmginfo:GetDamageForce() * 0.5)
             break
         end

@@ -13,7 +13,7 @@ att.Spawnable = false -- generate entity
 att.AdminOnly = false -- see above
 att.Ignore = true
 att.InvAtt = nil -- use this other attachment in inventory
-att.Free = false -- attachment is always available, and does not need to be picked up or unlocked
+att.Free = false -- attachment is always available, and doesn't need to be picked up or unlocked
 att.Hidden = false
 
 att.AddPrefix = ""
@@ -25,7 +25,7 @@ att.GivesFlags = {}
 att.RequireFlags = {}
 att.ExcludeFlags = {}
 
--- Not yet implemented
+-- not yet implemented
 att.SubSlots = {
     PrintName = "Optic",
     Slot = {"optic", "optic_lp"}, -- OR
@@ -305,7 +305,7 @@ att.Hook_GetCapacity = function(wep, cap) end
 -- return false to suppress shoot sound
 -- string sound = default sound
 att.Hook_GetShootSound = function(wep, sound) end
-att.Hook_GetShootDrySound = function(wep, sound) end -- NOT DONE!
+att.Hook_GetShootDrySound = function(wep, sound) end
 att.Hook_GetDistantShootSound = function(wep, sound) end
 
 -- allows you to modify the weapon's rate of fire

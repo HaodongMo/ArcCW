@@ -16,6 +16,9 @@ ArcCW.STATE_BIPOD     = 5
 ArcCW.SCROLL_NONE = 0
 ArcCW.SCROLL_ZOOM = 1
 
+COND_WEAPON_HAS_LOS = 41
+COND_WEAPON_SIGHT_OCCLUDED = 45
+
 ArcCW.ShellSoundsTable = {
     "player/pl_shell1.wav",
     "player/pl_shell2.wav",

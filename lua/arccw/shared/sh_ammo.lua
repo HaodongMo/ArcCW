@@ -8,7 +8,7 @@ hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", function()
                 local ammoid = game.GetAmmoID(class)
 
                 if ammoid == -1 then
-                    -- if ammo type does not exist, build it
+                    -- if ammo type does !exist, build it
                     game.AddAmmoType({
                         name = class,
                     })

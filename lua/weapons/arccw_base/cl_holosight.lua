@@ -534,18 +534,20 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             hsp:DrawModel()
         else
 
+            hsm:SetBodygroup(1, 0)
+
             if !hsp or hs.HolosightNoHSP then
                 hsm:DrawModel()
             end
 
-            render.MaterialOverride()
+            -- render.MaterialOverride()
 
             render.SetStencilReferenceValue(0)
 
             hsm:SetBodygroup(1, 1)
-            hsm:SetSubMaterial(0, "dev/no_pixel_write")
+            -- hsm:SetSubMaterial(0, "dev/no_pixel_write")
             hsm:DrawModel()
-            hsm:SetSubMaterial()
+            -- hsm:SetSubMaterial()
             hsm:SetBodygroup(1, 0)
 
             -- local vm = self:GetOwner():GetViewModel()
@@ -562,7 +564,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             end
         end
 
-        render.MaterialOverride()
+        -- render.MaterialOverride()
 
         render.OverrideDepthEnable( false, true )
 

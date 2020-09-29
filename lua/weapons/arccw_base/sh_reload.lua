@@ -96,7 +96,7 @@ function SWEP:Reload()
         -- Yes, this will cause an issue in mag-fed manual action weapons where
         -- despite an empty casing being in the chamber, you can load +1 and 
         -- cycle an empty shell afterwards.
-        -- No, I am not in the correct mental state to fix this. - 8Z
+        -- No, I am !in the correct mental state to fix this. - 8Z
         if self:Clip1() == 0 then
             self:SetNWBool("cycle", false)
         end

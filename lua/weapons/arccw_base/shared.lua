@@ -51,6 +51,7 @@ SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity
 -- IN M/S
 SWEP.PhysBulletMuzzleVelocity = nil -- override phys bullet muzzle velocity
 SWEP.PhysBulletDrag = 1
+SWEP.PhysBulletGravity = 1
 
 SWEP.AlwaysPhysBullet = false
 SWEP.NeverPhysBullet = false
@@ -411,7 +412,7 @@ SWEP.Attachments = {}
 --     -- All attachments automatically give themselves as a flag, e.g. "optic_mrs"
 --     -- If requirements are not satisfied, the slot or attachment will not be attachable
 --     ExcludeFlags = {}, -- if the weapon has this flag, hide this slot
---     RequireFlags = {}, -- if the weapon does NOT have all these flags, hide this slot
+--     RequireFlags = {}, -- if the weapon does not have all these flags, hide this slot
 --     GivesFlags = {} -- give these slots if something is installed here
 -- }
 
@@ -501,8 +502,9 @@ SWEP.m_WeaponDeploySpeed = 8008135
         -- We don't do that here
 
 SWEP.ArcCW = true
---SWEP.BurstCount = 0
+SWEP.BurstCount = 0
         --Outdated, but if you could find a way to keep compatibility with older atts/weps :heart:
+        --Idiot! If you remove variables, old mods !only cease to work but throw errors! What were you thinking?
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true

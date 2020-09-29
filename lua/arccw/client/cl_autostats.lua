@@ -62,25 +62,25 @@ function ArcCW:GetProsCons(att)
     for i, v in pairs(pros) do pros[i] = ArcCW.TryTranslation(v) end
     for i, v in pairs(cons) do cons[i] = ArcCW.TryTranslation(v) end
 
-    if not att.AutoStats then return pros, cons end
+    if !att.AutoStats then return pros, cons end
 
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
 
     for i, stat in pairs(ArcCW.AutoStats) do
-        if not att[i] then continue end
+        if !att[i] then continue end
 
         local k, txt  = att[i], ""
         local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
 
         local tcon, tpro = st and cons or pros, st and pros or cons
 
-        if stat[2] == "mult" and k ~= 1 then
+        if stat[2] == "mult" and k != 1 then
             local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
 
             txt = simple and getsimpleamt(k) or sign .. tostr(math.Round(percent * 100, 2)) .. "% "
 
             tbl_ins(k > 1 and tcon or tpro, txt .. str)
-        elseif stat[2] == "add" and k ~= 0 then
+        elseif stat[2] == "add" and k != 0 then
             local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
 
             txt = simple and "+ " or sign .. tostr(state) .. " "

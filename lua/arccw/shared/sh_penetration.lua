@@ -19,7 +19,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
     local curr_ent    = trent
     local startpen = penleft
 
-    if not tr.HitWorld then penmult = penmult * 1.5 end
+    if !tr.HitWorld then penmult = penmult * 1.5 end
 
     if trent.mmRHAe then penmult = trent.mmRHAe end
 
@@ -37,7 +37,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
     local ptrent = ptr.Entity
 
-    while penleft > 0 and (not ptr.StartSolid or ptr.AllSolid) and ptr.Fraction < 1 and ptrent == curr_ent do
+    while penleft > 0 and (!ptr.StartSolid or ptr.AllSolid) and ptr.Fraction < 1 and ptrent == curr_ent do
         penleft = penleft - (pentracelen * penmult)
 
         td.start  = endpos
@@ -46,7 +46,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
         ptr = util.TraceLine(td)
 
-        if ptrent ~= curr_ent then
+        if ptrent != curr_ent then
             ptrent = ptr.Entity
 
             curr_ent = ptrent
@@ -60,11 +60,11 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             dmg:SetDamage(damage * pdelta)
             dmg:SetDamagePosition(ptrhp)
 
-            if IsValid(ptrent) and not table.HasValue(alreadypenned, ptrent) then ptrent:TakeDamageInfo(dmg) end
+            if IsValid(ptrent) and !table.HasValue(alreadypenned, ptrent) then ptrent:TakeDamageInfo(dmg) end
 
             penmult = ArcCW.PenTable[ptr.MatType] or 1
 
-            if not ptr.HitWorld then penmult = penmult * 1.5 end
+            if !ptr.HitWorld then penmult = penmult * 1.5 end
 
             if ptrent.mmRHAe then penmult = ptrent.mmRHAe end
 
@@ -111,7 +111,8 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             newbullet.Drag = bullet.Drag or 1
             newbullet.Travelled = bullet.Travelled + (endpos - hitpos):Length()
             newbullet.Damaged = alreadypenned
-            newbullet.Profile = bullet.Profile or 0
+            newbullet.Profile = bullet.Profile or 1
+            newbullet.Gravity = bullet.Gravity or 1
             newbullet.StartTime = bullet.StartTime or CurTime()
 
             if bit.band( util.PointContents( endpos ), CONTENTS_WATER ) == CONTENTS_WATER then

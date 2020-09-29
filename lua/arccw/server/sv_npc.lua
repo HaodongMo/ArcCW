@@ -16,6 +16,11 @@ net.Receive("arccw_npcgivereturn", function(len, ply)
 
     local wpn = weapons.Get(class)
 
+    if wpn and wpn.AdminOnly and !ply:IsPlayer() then return end
+    if !ArcCW:WithinYearLimit(wpn) then
+        return
+    end
+
     local cap = ent:CapabilitiesGet()
 
     if bit.band(cap, CAP_USE_WEAPONS) != CAP_USE_WEAPONS then return end
@@ -36,12 +41,8 @@ function ArcCW:GetRandomWeapon(wpn, nades)
         if !nades and k.NotForNPCs then continue end
         if nades and k.AutoSpawnable == false then continue end
 
-        if GetConVar("arccw_limityear_enable"):GetBool() then
-            local year = GetConVar("arccw_limityear"):GetInt()
-
-            if k.Trivia_Year and isnumber(k.Trivia_Year) and k.Trivia_Year > year then
-                continue
-            end
+        if !ArcCW:WithinYearLimit(k) then
+            continue
         end
 
         local weight = (k.NPCWeight or 100)

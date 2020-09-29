@@ -28,10 +28,10 @@ end
 function SWEP:GetViewModelPosition(pos, ang)
     local owner = self:GetOwner()
 
-    if not owner:IsValid() or not owner:Alive() then return end
+    if !owner:IsValid() or !owner:Alive() then return end
 
     local SP = game.SinglePlayer()
-    local FT = m_min(FrameTime(), RealFrameTime()) -- RealFrameTime() for previous behavior, which not works well with slow motion
+    local FT = m_min(FrameTime(), RealFrameTime()) -- RealFrameTime() for previous behavior, which does not work well with slow motion
     local CT = UnPredictedCurTime()
 
     local FT5, FT10 = FT * 5, FT * 10
@@ -109,7 +109,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.ang = target.ang + Angle(0, my * 2, mx * 2)
 
         if self.InAttMenu then target.ang = target.ang + Angle(0, -5, 0) end
-    elseif (sprinted and not (self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint)) or holstered then
+    elseif (sprinted and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint)) or holstered then
         target.pos  = Vector()
         target.ang  = Angle()
         target.down = 1
@@ -156,7 +156,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.bob  = 2
     end
 
-    if not isangle(target.ang) then target.ang = Angle(target.ang) end
+    if !isangle(target.ang) then target.ang = Angle(target.ang) end
 
     if self.InProcDraw then
         self.InProcHolster = false
@@ -225,7 +225,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         target.pos = target.pos + nap
 
-        if not self.ViewModel_Hit:IsZero() then
+        if !self.ViewModel_Hit:IsZero() then
             local naa = Angle()
 
             naa[1] = self.ViewModel_Hit[1]
@@ -273,7 +273,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local swaymodifier = (target.sway / ((self:InSprint() and target.bob) or 2))
         local vel = m_min((owner:GetVelocity() * vector_noup):Length() * swaymodifier, 600)
 
-        if self:GetState() ~= ArcCW.STATE_SIGHTS then vel = mth.max(vel, 10) end
+        if self:GetState() != ArcCW.STATE_SIGHTS then vel = mth.max(vel, 10) end
 
         local movespeed = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
         movespeed = m_clamp(movespeed, 0.01, 1)
@@ -368,11 +368,11 @@ local function ShouldCheapWorldModel(wep)
         return true
     end
 
-    return not GetConVar("arccw_att_showothers"):GetBool()
+    return !GetConVar("arccw_att_showothers"):GetBool()
 end
 
 function SWEP:DrawWorldModel()
-    if not IsValid(self:GetOwner()) and not TTT2 and GetConVar("arccw_2d3d"):GetBool() and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then -- 512^2
+    if !IsValid(self:GetOwner()) and !TTT2 and GetConVar("arccw_2d3d"):GetBool() and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then -- 512^2
         local ang = LocalPlayer():EyeAngles()
 
         ang:RotateAroundAxis(ang:Forward(), 180)
@@ -412,15 +412,19 @@ function SWEP:DrawWorldModel()
 
     if self:ShouldGlint() then self:DoScopeGlint()  end
 
-    if not self.CertainAboutAtts then
+    if !self.CertainAboutAtts then
         net.Start("arccw_rqwpnnet")
         net.WriteEntity(self)
         net.SendToServer()
     end
 end
 
+function SWEP:ShouldCheapScope()
+    if !self:GetConVar("arccw_cheapscopes"):GetBool() then return end
+end
+
 function SWEP:ShouldFlatScope()
-    if self:GetState() ~= ArcCW.STATE_SIGHTS then return false end
+    if self:GetState() != ArcCW.STATE_SIGHTS then return false end
 
     local irons = self:GetActiveSights()
 
@@ -430,7 +434,7 @@ function SWEP:ShouldFlatScope()
 end
 
 function SWEP:PreDrawViewModel(vm)
-    if not vm then return end
+    if !vm then return end
 
     if self:ShouldFlatScope() then
         render.SetBlend(0)
