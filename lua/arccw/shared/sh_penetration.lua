@@ -46,7 +46,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
         ptr = util.TraceLine(td)
 
-        if ptrent ~= curr_ent then
+        if ptrent != curr_ent then
             ptrent = ptr.Entity
 
             curr_ent = ptrent

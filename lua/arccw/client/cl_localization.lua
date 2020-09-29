@@ -195,5 +195,5 @@ local lang = string.lower(GetConVar("gmod_language"):GetString())
 if !ArcCW.PhraseTable[lang] then lang = "en" end
 
 for key, value in pairs(ArcCW.PhraseTable[lang]) do
-    if key ~= "" and (value and value ~= "") then language.Add(key, value) end
+    if key != "" and (value and value != "") then language.Add(key, value) end
 end

@@ -74,13 +74,13 @@ function ArcCW:GetProsCons(att)
 
         local tcon, tpro = st and cons or pros, st and pros or cons
 
-        if stat[2] == "mult" and k ~= 1 then
+        if stat[2] == "mult" and k != 1 then
             local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
 
             txt = simple and getsimpleamt(k) or sign .. tostr(math.Round(percent * 100, 2)) .. "% "
 
             tbl_ins(k > 1 and tcon or tpro, txt .. str)
-        elseif stat[2] == "add" and k ~= 0 then
+        elseif stat[2] == "add" and k != 0 then
             local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
 
             txt = simple and "+ " or sign .. tostr(state) .. " "

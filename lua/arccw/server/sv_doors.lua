@@ -75,7 +75,7 @@ function ArcCW.TryBustDoor(ent, dmginfo)
     ArcCW.DoorBust(ent, dmginfo:GetDamageForce() * 0.5)
     -- Double doors are usually linked to the same areaportal. We must destroy the second half of the double door no matter what
     for _, otherDoor in pairs(ents.FindInSphere(ent:GetPos(), 64)) do
-        if ent ~= otherDoor and otherDoor:GetClass() == ent:GetClass() and !otherDoor:GetNoDraw() then
+        if ent != otherDoor and otherDoor:GetClass() == ent:GetClass() and !otherDoor:GetNoDraw() then
             ArcCW.DoorBust(otherDoor, dmginfo:GetDamageForce() * 0.5)
             break
         end
@@ -86,5 +86,5 @@ hook.Add("PlayerUse", "ArcCW_DoorBust", function(ply, ent)
     if ent.ArcCW_DoorBusted then return false end
 end)
 
--- This hook is !called on brush doors. Let's call this, uhh, intended behavior.
+-- This hook is not called on brush doors. Let's call this, uhh, intended behavior.
 -- hook.Add("EntityTakeDamage", "ArcCW_DoorBust", ArcCW.TryBustDoor)

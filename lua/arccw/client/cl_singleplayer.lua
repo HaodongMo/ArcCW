@@ -66,7 +66,7 @@ local lastwpn = nil
 hook.Add("Think", "ArcCW_FixDeploy", function()
     local wep = LocalPlayer():GetActiveWeapon()
 
-    if wep.ArcCW and wep ~= lastwpn then wep:Deploy() end
+    if wep.ArcCW and wep != lastwpn then wep:Deploy() end
 
     lastwpn = wep
 end)

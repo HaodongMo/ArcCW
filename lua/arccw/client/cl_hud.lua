@@ -42,7 +42,7 @@ ArcCW.PollingDefaultHUDElements = false
 function ArcCW:ShouldDrawHUDElement(ele)
     if !GetConVar("cl_drawhud"):GetBool() then return false end
 
-    if engine.ActiveGamemode() == "terrortown" and (ele ~= "CHudAmmo") then return false end
+    if engine.ActiveGamemode() == "terrortown" and (ele != "CHudAmmo") then return false end
 
     if ArcCW.HUDElementConVars[ele] and !ArcCW.HUDElementConVars[ele]:GetBool() then
         return false

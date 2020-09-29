@@ -45,7 +45,7 @@ function ENT:Initialize()
         self.AmmoType = ArcCW.TTTReplaceTable[self.AmmoType] or self.AmmoType
     end
 
-    if self.Scale ~= 1 then
+    if self.Scale != 1 then
         self:SetModelScale(self.Scale)
     end
 
@@ -292,7 +292,7 @@ elseif CLIENT then
                 surface.SetTextColor(255, 255, 255, 255)
                 surface.DrawText(self.PrintName)
 
-                local ammo = self:GetNWInt("truecount", -1) ~= -1 and self:GetNWInt("truecount", -1) or self.AmmoCount
+                local ammo = self:GetNWInt("truecount", -1) != -1 and self:GetNWInt("truecount", -1) or self.AmmoCount
                 if ammo then
                     w = surface.GetTextSize("×" .. ammo)
                     surface.SetTextPos(-w / 2, 25)

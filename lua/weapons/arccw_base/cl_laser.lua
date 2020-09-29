@@ -69,7 +69,7 @@ function SWEP:DrawLaser(laser, model, color, world)
         dir = ang:Forward()
 
         local eyeang   = owner:EyeAngles() + (owner:GetViewPunchAngles() * 0.5)
-        local canlaser = self:GetCurrentFiremode().Mode ~= 0 and !self:GetNWBool("reloading", 0) and self:BarrelHitWall() <= 0
+        local canlaser = self:GetCurrentFiremode().Mode != 0 and !self:GetNWBool("reloading", 0) and self:BarrelHitWall() <= 0
 
         delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
 

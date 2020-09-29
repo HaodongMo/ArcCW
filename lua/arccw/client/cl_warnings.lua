@@ -168,7 +168,7 @@ end
 
 hook.Add("InitPostEntity", "ArcCW_CheckContent", function()
     for _, k in pairs(weapons.GetList()) do
-        if weapons.IsBasedOn(k.ClassName, "arccw_base") and k.ClassName ~= "arccw_base" then
+        if weapons.IsBasedOn(k.ClassName, "arccw_base") and k.ClassName != "arccw_base" then
             return
         end
     end

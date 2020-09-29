@@ -227,7 +227,7 @@ function ArcCW.MakeBlacklistWindow()
 
             if onlyblacklisted and !(attTbl.Blacklisted or blacklistTbl[attName]) then continue end
 
-            if filter ~= "" and !string.find((attTbl.PrintName):lower(), filter) then continue end
+            if filter != "" and !string.find((attTbl.PrintName):lower(), filter) then continue end
 
             --if attTbl.Slot == "charm" then continue end why the fuck would you do this
 

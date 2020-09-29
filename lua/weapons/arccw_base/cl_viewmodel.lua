@@ -273,7 +273,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local swaymodifier = (target.sway / ((self:InSprint() and target.bob) or 2))
         local vel = m_min((owner:GetVelocity() * vector_noup):Length() * swaymodifier, 600)
 
-        if self:GetState() ~= ArcCW.STATE_SIGHTS then vel = mth.max(vel, 10) end
+        if self:GetState() != ArcCW.STATE_SIGHTS then vel = mth.max(vel, 10) end
 
         local movespeed = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
         movespeed = m_clamp(movespeed, 0.01, 1)
@@ -424,7 +424,7 @@ function SWEP:ShouldCheapScope()
 end
 
 function SWEP:ShouldFlatScope()
-    if self:GetState() ~= ArcCW.STATE_SIGHTS then return false end
+    if self:GetState() != ArcCW.STATE_SIGHTS then return false end
 
     local irons = self:GetActiveSights()
 

@@ -29,7 +29,7 @@ function ENT:Draw()
             surface.DrawText(self:GetNWString("boxname", nil) or self.PrintName)
 
             local count = self:GetNWInt("boxcount", 0)
-            local str = count .. " Attachment" .. (count ~= 1 and "s" or "")
+            local str = count .. " Attachment" .. (count != 1 and "s" or "")
             local w2 = surface.GetTextSize(str)
             surface.SetTextPos(-w2 / 2, 24)
             surface.SetTextColor(255, 255, 255, 255)

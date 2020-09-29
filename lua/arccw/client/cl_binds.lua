@@ -85,7 +85,7 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
                 timer.Create("ArcCW_doubletapZ", 0.25, 1, function()
                     if !(IsValid(ply) and IsValid(wep)) then return end
 
-                    if ply:GetActiveWeapon() ~= wep then return end
+                    if ply:GetActiveWeapon() != wep then return end
 
                     if wep:GetNWBool("ubgl") then return end
 
@@ -102,7 +102,7 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
 
         block = true
     elseif bind == "inv" then
-        local state = wep:GetState() ~= ArcCW.STATE_CUSTOMIZE
+        local state = wep:GetState() != ArcCW.STATE_CUSTOMIZE
 
         SendNet("arccw_togglecustomize", state)
 

@@ -46,7 +46,7 @@ function SWEP:DrawHUD()
 
     -- info panel
 
-    if self:GetState() ~= ArcCW.STATE_CUSTOMIZE then
+    if self:GetState() != ArcCW.STATE_CUSTOMIZE then
         self:GetBuff_Hook("Hook_DrawHUD")
     end
 

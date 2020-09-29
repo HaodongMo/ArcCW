@@ -7,7 +7,7 @@ local players
 local playerssaver = {}
 
 hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
-    if playerssaver ~= players then -- less calls on GetAll
+    if playerssaver != players then -- less calls on GetAll
         players      = player.GetAll()
         playerssaver = players
     end
@@ -24,7 +24,7 @@ hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
 
             if !wep:GetBuff_Override("ScopeGlint") then continue end
 
-            if wep:GetState() ~= ArcCW.STATE_SIGHTS then continue end
+            if wep:GetState() != ArcCW.STATE_SIGHTS then continue end
 
             local vec = (ply:EyePos() - EyePos()):GetNormalized()
             local dot = vec:Dot(-ply:EyeAngles():Forward())

@@ -21,7 +21,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
 
-    if self:GetState() ~= ArcCW.STATE_SIGHTS and owner:KeyDown(IN_USE) or self.PrimaryBash then self:Bash() return end
+    if self:GetState() != ArcCW.STATE_SIGHTS and owner:KeyDown(IN_USE) or self.PrimaryBash then self:Bash() return end
 
     if self.Throwing then self:PreThrow() return end
 
@@ -638,7 +638,7 @@ function SWEP:GetBurstLength()
     if len == 1 then return 1 end
     if len >= 2 then return self:GetBurstCount() + 10 end
 
-    if hookedlen ~= len then return hookedlen end
+    if hookedlen != len then return hookedlen end
 
     if len < 0 then return -len end
 
@@ -665,7 +665,7 @@ function SWEP:GetDamage(range, pellet)
     local nbr = (ovr or num) + add
     local mul = 1
 
-    mul = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num ~= nbr) and (num / nbr)) or 1
+    mul = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num != nbr) and (num / nbr)) or 1
 
     if !pellet then mul = mul * nbr end
 

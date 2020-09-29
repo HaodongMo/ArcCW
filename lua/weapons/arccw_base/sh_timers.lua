@@ -25,7 +25,7 @@ function SWEP:KillTimer(id)
     local keeptimers = {}
 
     for _, v in pairs(self.ActiveTimers) do
-        if v[2] ~= id then tbl_ins(keeptimers, v) end
+        if v[2] != id then tbl_ins(keeptimers, v) end
     end
 
     self.ActiveTimers = keeptimers
