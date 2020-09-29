@@ -517,7 +517,7 @@ end
 function SWEP:CheckFlags(reject, need)
     local flags
     if ArcCW.Overflow then
-        flags = {}
+        flags = self:GetWeaponFlags()
     else
         flags = self:GetActiveElements()
     end
