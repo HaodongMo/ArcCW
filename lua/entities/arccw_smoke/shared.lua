@@ -18,6 +18,8 @@ ENT.SmokeColor = Color(150, 150, 150)
 ENT.BillowTime = 1
 ENT.Life = 15
 
+ENT.ArcCWSmoke = true
+
 AddCSLuaFile()
 
 function ENT:Initialize()
@@ -79,7 +81,7 @@ function ENT:Think()
         local targets = ents.FindInSphere(self:GetPos(), 256)
         for _, k in pairs(targets) do
             if k:IsNPC() then
-                k:SetNPCState(NPC_STATE_PRONE)
+                k:SetCondition(COND_WEAPON_SIGHT_OCCLUDED)
             end
         end
     end

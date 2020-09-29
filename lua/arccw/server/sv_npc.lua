@@ -16,7 +16,7 @@ net.Receive("arccw_npcgivereturn", function(len, ply)
 
     local wpn = weapons.Get(class)
 
-    if wpn.AdminOnly and !ply:IsPlayer() then return end
+    if wpn and wpn.AdminOnly and !ply:IsPlayer() then return end
     if !ArcCW:WithinYearLimit(wpn) then
         return
     end
