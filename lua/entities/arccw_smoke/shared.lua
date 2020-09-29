@@ -16,7 +16,7 @@ ENT.Particles = nil
 ENT.SmokeRadius = 256
 ENT.SmokeColor = Color(150, 150, 150)
 ENT.BillowTime = 1
-ENT.Life = 15
+ENT.Life = 60
 
 ENT.ArcCWSmoke = true
 

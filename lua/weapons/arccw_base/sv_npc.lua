@@ -46,6 +46,9 @@ function SWEP:AssignRandomAttToSlot(slot)
 
     local atttbl = ArcCW.AttachmentTable[slot.Installed]
 
+    if !ArcCW:SlotAcceptsAtt(slot.Slot, self, slot.Installed) then return end
+    if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
+
     if atttbl.MountPositionOverride then
         slot.SlidePos = atttbl.MountPositionOverride
     end
@@ -95,6 +98,13 @@ function SWEP:NPC_SetupAttachments()
         n = n + 1
     end
 
+    for i, slot in pairs(self.Attachments) do
+        if !slot.Installed then continue end
+        local atttbl = ArcCW.AttachmentTable[slot.Installed]
+        if !self:CheckFlags(slot.ExcludeFlags, slot.RequireFlags) then slot.Installed = nil continue end
+        if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then slot.Installed = nil continue end
+    end
+
     if self:GetBuff_Override("UBGL") and self:GetBuff_Override("UBGL_Capacity") then
         self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
     end
@@ -112,6 +122,8 @@ function SWEP:NPC_Shoot()
 
     if !IsValid(self:GetOwner()) then return end
     if self:Clip1() <= 0 then self:GetOwner():SetSchedule(SCHED_HIDE_AND_RELOAD) return end
+
+    if self:GetOwner().ArcCW_Smoked then return end
 
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
