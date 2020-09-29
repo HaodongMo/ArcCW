@@ -15,9 +15,16 @@ function ArcCW:ProcessNPCSmoke()
                 if npc.ArcCW_Smoked_Target == target then
                     npc:SetSchedule(SCHED_STANDOFF)
                     debugoverlay.Cross(npc:EyePos(), 5, 0.1, Color(50, 0, 0), true)
+                    continue
+                else
+                    npc.ArcCW_Smoked = false
                 end
+            elseif npc.ArcCW_Smoked_Target != target then
+                npc:SetSchedule(SCHED_IDLE_STAND)
+                npc.ArcCW_Smoked = false
+            else
+                continue
             end
-            continue
         else
             npc.ArcCW_Smoked = false
         end
@@ -43,9 +50,6 @@ function ArcCW:ProcessNPCSmoke()
             debugoverlay.Line(npc:EyePos(), target:WorldSpaceCenter(), 1, Color(50, 0, 0), true)
         else
             npc.ArcCW_Smoked = false
-            if npc:GetCurrentSchedule() == SCHED_STANDOFF then
-                npc:SetSchedule(SCHED_NONE)
-            end
         end
 
         npc.ArcCW_Smoked_Time = CurTime() + 1

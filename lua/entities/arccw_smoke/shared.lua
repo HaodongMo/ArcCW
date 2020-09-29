@@ -81,7 +81,7 @@ function ENT:Think()
         local targets = ents.FindInSphere(self:GetPos(), 256)
         for _, k in pairs(targets) do
             if k:IsNPC() then
-                k:SetCondition(COND_WEAPON_SIGHT_OCCLUDED)
+                k:SetSchedule(SCHED_STANDOFF)
             end
         end
     end
