@@ -107,6 +107,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             newbullet.Num = bullet.Num or 1
             newbullet.Pos = endpos
             local spd = bullet.Vel:Length()
+            newbullet.Attacker = bullet.Attacker
             newbullet.Vel = dir * spd * (penleft / startpen)
             newbullet.Drag = bullet.Drag or 1
             newbullet.Travelled = bullet.Travelled + (endpos - hitpos):Length()

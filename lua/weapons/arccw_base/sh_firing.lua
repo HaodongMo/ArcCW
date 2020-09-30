@@ -34,6 +34,10 @@ function SWEP:PrimaryAttack()
 
     if self:HasBottomlessClip() then
         clip = self:Ammo1()
+
+        if self:HasInfiniteAmmo() then
+            clip = 10
+        end
     end
 
     if clip < aps then

@@ -22,6 +22,8 @@ function SWEP:PreThrow()
     self:SetNWBool("grenadeprimed", true)
 
     self.GrenadePrimeTime = CurTime()
+
+    self:GetBuff_Hook("Hook_PreThrow")
 end
 
 function SWEP:Throw()
@@ -73,4 +75,6 @@ function SWEP:Throw()
     end)
 
     self:SetNextPrimaryFire(CurTime() + 1)
+
+    self:GetBuff_Hook("Hook_PostThrow")
 end

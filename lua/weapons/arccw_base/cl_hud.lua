@@ -337,7 +337,7 @@ function SWEP:DrawHUD()
 
             wammo.col = col2
 
-            if self:Clip1() == 0 then
+            if data.clip == 0 then
                 wammo.col = col3
             end
 
@@ -426,8 +426,6 @@ function SWEP:DrawHUD()
         if LocalPlayer():Health() <= 30 then
             colhp = col3
         end
-
-
 
         local whp = {
             x = airgap + ScreenScale( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
