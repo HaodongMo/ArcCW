@@ -26,7 +26,7 @@ SWEP.WorldModelOffset = {
     scale   =   1
 }]]
 
-SWEP.PresetBase = nil -- make this weapon share presets with this one.
+SWEP.PresetBase = nil -- make this weapon share saves with this one.
 
 SWEP.KillIconAlias = nil -- set to other weapon class to share select and kill icons
 
@@ -76,6 +76,10 @@ SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 50
 SWEP.ReducedClipSize = 10
+
+SWEP.AmmoPerShot = 1
+SWEP.InfiniteAmmo = false -- weapon can reload for free
+SWEP.BottomlessClip = false -- weapon never has to reload
 
 SWEP.ShotgunReload = false -- reloads like shotgun instead of magazines
 SWEP.HybridReload = false -- reload normally when empty, reload like shotgun when part full
@@ -173,7 +177,7 @@ SWEP.ExitBipodSound = "weapons/arccw/m249/m249_coverup.wav"
 SWEP.SelectUBGLSound =  "weapons/arccw/ubgl_select.wav"
 SWEP.ExitUBGLSound = "weapons/arccw/ubgl_exit.wav"
 
-SWEP.MuzzleEffect = "arccw_muzzleeffect"
+SWEP.MuzzleEffect = nil
 SWEP.FastMuzzleEffect = nil
 SWEP.GMMuzzleEffect = false -- Use Gmod muzzle effects rather than particle effects
 SWEP.ImpactEffect = nil
@@ -217,6 +221,16 @@ SWEP.IronSightStruct = {
     ScrollFunc = ArcCW.SCROLL_NONE,
     CrosshairInSights = false,
 }
+
+-- add lasers to your weapon without attachments
+SWEP.Lasers = nil
+-- {
+--     {
+--         LaserStrength = 1,
+--         LaserBone = "laser",
+--         Color = Color(255, 0, 0)
+--     }
+-- }
 
 SWEP.ProceduralRegularFire = false
 SWEP.ProceduralIronFire = false

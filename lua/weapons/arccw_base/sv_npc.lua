@@ -373,6 +373,5 @@ function SWEP:OnDrop()
 
     if self.Singleton or self.Primary.ClipSize == -1 then
         self.Primary.DefaultClip = 1
-        if self:Ammo1() == 0 then self:Remove() end
     end
 end

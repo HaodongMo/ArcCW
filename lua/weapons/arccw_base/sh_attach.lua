@@ -1206,8 +1206,17 @@ function SWEP:SendAttHP()
     net.Send(self:GetOwner())
 end
 
-function SWEP:ClearSubAttachments()
-end
+example = {
+    [1] = {
+        PrintName = "Optic",
+        SubSlots = {
+            [1] = {
+                PrintName = "Optic",
+                Installed = "Bruhzogg"
+            }
+        } 
+    }
+}
 
-function SWEP:AssembleAttachments()
+function SWEP:AssembleSubSlots()
 end

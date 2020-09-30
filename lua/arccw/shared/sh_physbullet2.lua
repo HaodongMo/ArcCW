@@ -58,6 +58,11 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Profile = prof or wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
     }
 
+    if wep:GetOwner() and wep:GetOwner():IsNPC() then
+        bullet.DamageMax = bullet.DamageMax * GetConVar("arccw_mult_npcdamage"):GetFloat()
+        bullet.DamageMin = bullet.DamageMin * GetConVar("arccw_mult_npcdamage"):GetFloat()
+    end
+
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then
         bullet.Underwater = true
     end

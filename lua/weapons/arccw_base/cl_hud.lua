@@ -42,6 +42,48 @@ local lastwpn = ""
 local lastinfo = {ammo = 0, clip = 0, firemode = "", plus = 0}
 local lastinfotime = 0
 
+function SWEP:GetHUDData()
+    local data = {
+        clip = math.Round(vclip or self:Clip1()),
+        ammo = math.Round(vreserve or self:Ammo1()),
+        bars = self:GetFiremodeBars(),
+        mode = self:GetFiremodeName()
+    }
+
+    if data.clip > self:GetCapacity() then
+        data.plus = data.clip - self:GetCapacity()
+        data.clip = self:GetCapacity()
+    end
+
+    if self.PrimaryBash or self:Clip1() == -1 or self:GetCapacity() == 0 or self.Primary.ClipSize == -1 then
+        data.clip = "-"
+    end
+
+    if self.PrimaryBash or self:HasInfiniteAmmo() then
+        data.ammo = "-"
+    end
+
+    if self:HasBottomlessClip() then
+        data.clip = data.ammo
+        data.ammo = "-"
+    end
+
+    if self:GetNWBool("ubgl") then
+        data.clip = self:Clip2()
+        local ubglammo = self:GetBuff_Override("UBGL_Ammo")
+
+        if ubglammo then
+            data.ammo = tostring(self:GetOwner():GetAmmoCount(ubglammo))
+        end
+
+        data.plus = nil
+    end
+
+    data = self:GetBuff_Hook("Hook_GetHUDData", data) or data
+
+    return data
+end
+
 function SWEP:DrawHUD()
 
     -- info panel
@@ -89,18 +131,12 @@ function SWEP:DrawHUD()
         col2 = col3
     end
 
+    local data = self:GetHUDData()
+
     if ArcCW:ShouldDrawHUDElement("CHudAmmo") then
 
         local curTime = CurTime()
-        local ammo = math.Round(vreserve)
-        local clip = math.Round(vclip)
-        local plus = 0
         local mode = self:GetFiremodeName()
-
-        if clip > self:GetCapacity() then
-            plus = clip - self:GetCapacity()
-            clip = clip - plus
-        end
 
         local muzz = self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1
 
@@ -129,7 +165,7 @@ function SWEP:DrawHUD()
             local visible = (lastinfotime + 4 > curTime or lastinfotime - 0.5 > curTime)
 
             -- Detect changes to stuff drawn in HUD
-            local curInfo = {ammo = ammo, clip = clip, plus = plus, firemode = mode, heat = self:GetHeat()}
+            local curInfo = {ammo = data.ammo, clip = data.clip, plus = data.plus, firemode = data.mode, heat = self:GetHeat()}
             for i, v in pairs(curInfo) do
                 if v != lastinfo[i] then
                     lastinfotime = visible and (curTime - 0.5) or curTime
@@ -159,14 +195,10 @@ function SWEP:DrawHUD()
                 apan_bg.x = toscreen.x - apan_bg.w - ScreenScale(8)
                 apan_bg.y = toscreen.y - apan_bg.h * 0.5
 
-                if self.PrimaryBash or self:Clip1() == -1 or self:GetCapacity() == 0 or self.Primary.ClipSize == -1 then
-                    clip = "-"
-                end
-
                 local wammo = {
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = apan_bg.y,
-                    text = tostring(clip),
+                    text = tostring(data.clip),
                     font = "ArcCW_26",
                     col = col2,
                     align = 1,
@@ -176,23 +208,18 @@ function SWEP:DrawHUD()
 
                 wammo.col = col2
 
-                if self:Clip1() == 0 then
+                if data.clip == 0 then
                     wammo.col = col3
-                end
-
-                if self:GetNWBool("ubgl") then
-                    wammo.col = col2
-                    wammo.text = self:Clip2()
                 end
 
                 MyDrawText(wammo)
                 wammo.w, wammo.h = surface.GetTextSize(wammo.text)
 
-                if plus > 0 and !self:GetNWBool("ubgl") then
+                if data.plus then
                     local wplus = {
                         x = wammo.x,
                         y = wammo.y,
-                        text = "+" .. tostring(plus),
+                        text = "+" .. tostring(data.plus),
                         font = "ArcCW_16",
                         col = col2,
                         shadow = true,
@@ -206,7 +233,7 @@ function SWEP:DrawHUD()
                 local wreserve = {
                     x = wammo.x - wammo.w - ScreenScale(4),
                     y = apan_bg.y + ScreenScale(26 - 12),
-                    text = tostring(ammo) .. " /",
+                    text = tostring(data.ammo) .. " /",
                     font = "ArcCW_12",
                     col = col2,
                     align = 1,
@@ -214,14 +241,6 @@ function SWEP:DrawHUD()
                     shadow = true,
                     alpha = alpha,
                 }
-
-                if self:GetNWBool("ubgl") then
-                    local ubglammo = self:GetBuff_Override("UBGL_Ammo")
-
-                    if ubglammo then
-                        wreserve.text = tostring(self:GetOwner():GetAmmoCount(ubglammo)) .. " /"
-                    end
-                end
 
                 if self.PrimaryBash then
                     wreserve.text = ""
@@ -234,7 +253,7 @@ function SWEP:DrawHUD()
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = wammo.y + wammo.h,
                     font = "ArcCW_12",
-                    text = mode,
+                    text = data.mode,
                     col = col2,
                     align = 1,
                     shadow = true,
@@ -274,10 +293,8 @@ function SWEP:DrawHUD()
                 y = apan_bg.y + ScreenScale(14)
             }
 
-            local bars = self:GetFiremodeBars()
-
             for i = 1, 5 do
-                local c = bars[i]
+                local c = data.bars[i]
 
                 surface.SetDrawColor(col2)
 
@@ -304,20 +321,16 @@ function SWEP:DrawHUD()
                 x = apan_bg.x + apan_bg.w - ScreenScale(4) - surface.GetTextSize(mode),
                 y = apan_bg.y,
                 font = "ArcCW_12",
-                text = mode,
+                text = data.mode,
                 col = col2
             }
 
             MyDrawText(wmode)
 
-            if self.PrimaryBash or self:Clip1() == -1 or self:GetCapacity() == 0 or self.Primary.ClipSize == -1 then
-                clip = "-"
-            end
-
             local wammo = {
                 x = apan_bg.x + airgap,
                 y = bar.y + ScreenScale(4),
-                text = tostring(clip),
+                text = tostring(data.clip),
                 font = "ArcCW_26",
                 col = col2
             }
@@ -328,42 +341,25 @@ function SWEP:DrawHUD()
                 wammo.col = col3
             end
 
-            if self:GetNWBool("ubgl") then
-                wammo.col = col2
-                wammo.text = self:Clip2()
-            end
-
             MyDrawText(wammo)
 
             local wreserve = {
                 x = apan_bg.x + ScreenScale(64) - airgap,
                 y = bar.y + ScreenScale(4),
-                text = "/ " .. tostring(ammo),
+                text = "/ " .. tostring(data.ammo),
                 font = "ArcCW_26",
                 col = col2,
             }
 
-            if self:GetNWBool("ubgl") then
-                local ubglammo = self:GetBuff_Override("UBGL_Ammo")
-
-                if ubglammo then
-                    wreserve.text = "/ " .. tostring(self:GetOwner():GetAmmoCount(ubglammo))
-                end
-            end
-
-            if self.PrimaryBash then
-                wreserve.text = "/ -"
-            end
-
             MyDrawText(wreserve)
 
-            wammo.w = surface.GetTextSize(tostring(clip))
+            wammo.w = surface.GetTextSize(tostring(data.clip))
 
-            if plus > 0 and !self:GetNWBool("ubgl") then
+            if data.plus then
                 local wplus = {
                     x = wammo.x + bargap + wammo.w,
                     y = wammo.y,
-                    text = "+" .. tostring(plus),
+                    text = "+" .. tostring(data.plus),
                     font = "ArcCW_16",
                     col = col2
                 }

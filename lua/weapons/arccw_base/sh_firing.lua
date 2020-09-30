@@ -29,7 +29,14 @@ function SWEP:PrimaryAttack()
 
     if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
-    if self:Clip1() <= 0 then
+    local clip = self:Clip1()
+    local aps = self:GetBuff_Override("Override_AmmoPerShot") or self.AmmoPerShot
+
+    if self:HasBottomlessClip() then
+        clip = self:Ammo1()
+    end
+
+    if clip < aps then
         self:SetBurstCount(0)
         self:DryFire()
 
@@ -75,7 +82,7 @@ function SWEP:PrimaryAttack()
 
     local lastsound = self.LastShootSound
 
-    if self:Clip1() == 1 and lastsound then
+    if clip == 1 and lastsound then
         fsound = lastsound
 
         local lastsil = self.LastShootSoundSilenced
@@ -123,7 +130,7 @@ function SWEP:PrimaryAttack()
     local tracernum = self:GetBuff_Override("Override_TracerNum") or self.TracerNum
     local lastout = self:GetBuff_Override("Override_TracerFinalMag") or self.TracerFinalMag
 
-    if lastout >= self:Clip1() then
+    if lastout >= clip then
         tracernum = 1
     end
 
@@ -303,11 +310,17 @@ function SWEP:PrimaryAttack()
 
     if IsFirstTimePredicted() then self:SetBurstCount(self:GetBurstCount() + 1) end
 
-    self:TakePrimaryAmmo(1) -- add self.PrimaryTakeAmmo or smth
+    if self:HasBottomlessClip() then
+        if self:Clip1() > 0 then
+            self:Unload()
+        end
+    end
+
+    self:TakePrimaryAmmo(aps)
 
     self:DoPrimaryAnim()
 
-    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and self:Clip1() == 0) then
+    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and clip == 0) then
         self:SetNWBool("cycle", true)
     end
 
@@ -327,6 +340,10 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:DoPrimaryFire(isent, data)
+    local clip = self:Clip1()
+    if self:HasBottomlessClip() then
+        clip = self:Ammo1()
+    end
     local owner = self:GetOwner()
 
     local shouldphysical = GetConVar("arccw_bullet_enable"):GetBool()
@@ -350,7 +367,7 @@ function SWEP:DoPrimaryFire(isent, data)
             local tracernum = data.Tracer
             local prof
 
-            if tracernum == 0 or self:Clip1() % tracernum != 0 then
+            if tracernum == 0 or clip % tracernum != 0 then
                 prof = 7
             end
 
@@ -627,7 +644,11 @@ function SWEP:DoRecoil()
 end
 
 function SWEP:GetBurstLength()
-    if self:Clip1() == 0 then return 1 end
+    local clip = self:Clip1()
+    if self:HasBottomlessClip() then
+        clip = self:Ammo1()
+    end
+    if clip == 0 then return 1 end
 
     local len = self:GetCurrentFiremode().Mode
 

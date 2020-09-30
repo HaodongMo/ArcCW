@@ -25,7 +25,7 @@ att.GivesFlags = {}
 att.RequireFlags = {}
 att.ExcludeFlags = {}
 
--- not yet implemented
+-- Not Yet Implemented
 att.SubSlots = {
     PrintName = "Optic",
     Slot = {"optic", "optic_lp"}, -- OR
@@ -152,6 +152,10 @@ att.Mult_BipodDispersion = 0.1
 att.Override_AlwaysPhysBullet = nil
 att.Override_NeverPhysBullet = nil
 
+att.Override_AmmoPerShot = 1
+att.Override_InfiniteAmmo = nil
+att.Override_BottomlessClip = nil
+
 att.MagExtender = false
 att.MagReducer = false
 att.OverrideClipSize = nil
@@ -160,6 +164,7 @@ att.Add_ClipSize = 0
 att.Laser = false
 att.LaserStrength = 1
 att.LaserBone = "laser"
+att.LaserColor = Color(255, 0, 0)
 
 att.Holosight = false
 att.HolosightReticle = nil

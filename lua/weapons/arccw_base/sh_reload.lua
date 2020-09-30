@@ -19,6 +19,8 @@ function SWEP:Reload()
     if self.Throwing then return end
     if self.PrimaryBash then return end
 
+    if self:HasBottomlessClip() then return end
+
     -- Don't accidently reload when changing firemode
     if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
 
@@ -147,10 +149,25 @@ function SWEP:Unload()
     self:SetClip1(0)
 end
 
+function SWEP:HasBottomlessClip()
+    if self.BottomlessClip or self:GetBuff_Override("Override_BottomlessClip") then return true end
+    return false
+end
+
+function SWEP:HasInfiniteAmmo()
+    if self.InfiniteAmmo or self:GetBuff_Override("Override_InfiniteAmmo") then return true end
+    return false
+end
+
 function SWEP:RestoreAmmo(count)
     if self:GetOwner():IsNPC() then return end
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
     local clip = self:GetCapacity()
+
+    if self:HasInfiniteAmmo() then
+        self:SetClip1(clip + chamber)
+        return
+    end
 
     count = count or (clip + chamber)
 
