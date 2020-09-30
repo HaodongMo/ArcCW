@@ -222,6 +222,16 @@ SWEP.IronSightStruct = {
     CrosshairInSights = false,
 }
 
+-- add lasers to your weapon without attachments
+SWEP.Lasers = nil
+-- {
+--     {
+--         LaserStrength = 1,
+--         LaserBone = "laser",
+--         Color = Color(255, 0, 0)
+--     }
+-- }
+
 SWEP.ProceduralRegularFire = false
 SWEP.ProceduralIronFire = false
 SWEP.SightTime = 0.33

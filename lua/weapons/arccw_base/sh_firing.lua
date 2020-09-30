@@ -30,12 +30,13 @@ function SWEP:PrimaryAttack()
     if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
     local clip = self:Clip1()
+    local aps = self:GetBuff_Override("Override_AmmoPerShot") or self.AmmoPerShot
 
     if self:HasBottomlessClip() then
         clip = self:Ammo1()
     end
 
-    if clip <= 0 then
+    if clip < aps then
         self:SetBurstCount(0)
         self:DryFire()
 
@@ -308,8 +309,6 @@ function SWEP:PrimaryAttack()
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
     if IsFirstTimePredicted() then self:SetBurstCount(self:GetBurstCount() + 1) end
-
-    local aps = self:GetBuff_Override("Override_AmmoPerShot") or self.AmmoPerShot
 
     if self:HasBottomlessClip() then
         if self:Clip1() > 0 then
