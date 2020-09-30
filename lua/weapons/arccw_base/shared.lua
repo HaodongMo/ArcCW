@@ -26,7 +26,7 @@ SWEP.WorldModelOffset = {
     scale   =   1
 }]]
 
-SWEP.PresetBase = nil -- make this weapon share presets with this one.
+SWEP.PresetBase = nil -- make this weapon share saves with this one.
 
 SWEP.KillIconAlias = nil -- set to other weapon class to share select and kill icons
 
@@ -76,6 +76,10 @@ SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 50
 SWEP.ReducedClipSize = 10
+
+SWEP.AmmoPerShot = 1
+SWEP.InfiniteAmmo = false -- weapon can reload for free
+SWEP.BottomlessClip = false -- weapon never has to reload
 
 SWEP.ShotgunReload = false -- reloads like shotgun instead of magazines
 SWEP.HybridReload = false -- reload normally when empty, reload like shotgun when part full
