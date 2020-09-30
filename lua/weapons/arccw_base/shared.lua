@@ -177,7 +177,7 @@ SWEP.ExitBipodSound = "weapons/arccw/m249/m249_coverup.wav"
 SWEP.SelectUBGLSound =  "weapons/arccw/ubgl_select.wav"
 SWEP.ExitUBGLSound = "weapons/arccw/ubgl_exit.wav"
 
-SWEP.MuzzleEffect = "arccw_muzzleeffect"
+SWEP.MuzzleEffect = nil
 SWEP.FastMuzzleEffect = nil
 SWEP.GMMuzzleEffect = false -- Use Gmod muzzle effects rather than particle effects
 SWEP.ImpactEffect = nil

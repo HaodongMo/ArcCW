@@ -19,7 +19,7 @@ function SWEP:DoLaser(world)
 
     if self.Lasers then
         for _, k in pairs(self.Lasers) do
-            self:DrawLaser(k, self:GetOwner():GetViewModel(), k.Color)
+            self:DrawLaser(k, self:GetOwner():GetViewModel(), k.LaserColor)
         end
     end
 
