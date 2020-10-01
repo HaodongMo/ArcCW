@@ -34,6 +34,10 @@ function SWEP:PrimaryAttack()
 
     if self:HasBottomlessClip() then
         clip = self:Ammo1()
+
+        if self:HasInfiniteAmmo() then
+            clip = 10
+        end
     end
 
     if clip < aps then
@@ -608,8 +612,11 @@ function SWEP:DoRecoil()
         local biprec = self.BipodRecoil
         local bipmul = self:GetBuff_Mult("Mult_BipodRecoil")
 
-        rmul = rmul * ((biprec or 1) * bipmul or 0.25)
-        recs = recs * ((biprec or 1) * bipmul or 0.25)
+        local b = ((biprec or 1) * bipmul or 0.25)
+
+        rmul = rmul * b
+        recs = recs * b
+        recv = recv / b
     end
 
     local recoiltbl = self:GetBuff_Override("Override_ShotRecoilTable") or self.ShotRecoilTable
@@ -632,7 +639,7 @@ function SWEP:DoRecoil()
 
         self.RecoilAmount     = self.RecoilAmount + (self.Recoil * rmul)
         self.RecoilAmountSide = self.RecoilAmountSide + (self.RecoilSide * irec * recs * rmul)
-        self.RecoilPunchBack  = math.Clamp(self.Recoil * rmul * m_rand(2, 3), 0, 2)
+        self.RecoilPunchBack  = math.Clamp(self.Recoil * recv * m_rand(2, 3), 0, 2)
 
         if self.MaxRecoilBlowback > 0 then
             self.RecoilPunchBack = m_clamp(self.RecoilPunchBack, 0, self.MaxRecoilBlowback)

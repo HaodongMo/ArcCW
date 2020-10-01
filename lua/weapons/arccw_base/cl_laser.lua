@@ -17,12 +17,6 @@ function SWEP:DoLaser(world)
 
     if !self:GetNWBool("laserenabled", true) then return end
 
-    if self.Lasers then
-        for _, k in pairs(self.Lasers) do
-            self:DrawLaser(k, self:GetOwner():GetViewModel(), k.LaserColor)
-        end
-    end
-
     for _, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
@@ -43,6 +37,22 @@ function SWEP:DoLaser(world)
             end
         end
     end
+
+    if self.Lasers then
+        if world then
+            cam.Start3D()
+            for _, k in pairs(self.Lasers) do
+                self:DrawLaser(k, self.WMModel or self, k.LaserColor, true)
+            end
+            cam.End3D()
+        else
+            -- cam.Start3D(nil, nil, self.ViewmodelFOV)
+            for _, k in pairs(self.Lasers) do
+                self:DrawLaser(k, self:GetOwner():GetViewModel(), k.LaserColor)
+            end
+            -- cam.End3D()
+        end
+    end
 end
 
 function SWEP:DrawLaser(laser, model, color, world)
@@ -61,11 +71,17 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     att = att == 0 and model:LookupAttachment("muzzle") or att
 
-    if att == 0 then return end
+    local pos, ang, dir
 
-    local attdata  = model:GetAttachment(att)
-    local pos, ang = attdata.Pos, attdata.Ang
-    local dir      = -ang:Right()
+    if att == 0 then
+        pos = model:GetPos()
+        ang = owner:EyeAngles()
+        dir = ang:Forward()
+    else
+        local attdata  = model:GetAttachment(att)
+        pos, ang = attdata.Pos, attdata.Ang
+        dir      = -ang:Right()
+    end
 
     if world then
         dir = owner:IsNPC() and (-ang:Right()) or dir
