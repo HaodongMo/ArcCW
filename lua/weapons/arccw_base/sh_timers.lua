@@ -10,7 +10,7 @@ end
 function SWEP:SetTimer(time, callback, id)
     if !IsFirstTimePredicted() then return end
 
-    tbl_ins(self.ActiveTimers, { time + UnPredictedCurTime(), id or "", callback })
+    tbl_ins(self.ActiveTimers, { time + CurTime(), id or "", callback })
 end
 
 function SWEP:TimerExists(id)
@@ -36,7 +36,7 @@ function SWEP:KillTimers()
 end
 
 function SWEP:ProcessTimers()
-    local keeptimers, UCT = {}, UnPredictedCurTime()
+    local keeptimers, UCT = {}, CurTime()
 
     if CLIENT and UCT == tick then return end
 
@@ -55,6 +55,8 @@ end
 
 local function DoShell(wep, data)
     if !(IsValid(wep) and IsValid(wep:GetOwner())) then return end
+
+    if !IsFirstTimePredicted() then return end
 
     if !data.e then return end
 

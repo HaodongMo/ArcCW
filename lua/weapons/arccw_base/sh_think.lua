@@ -14,7 +14,7 @@ function SWEP:Think()
     self.BurstCount = self:GetBurstCount()
 
     if owner:KeyPressed(IN_ATTACK) then
-        self:SetNWBool("reqend", true)
+        self:GetReqEnd(true)
     end
 
     if CLIENT then
@@ -27,7 +27,7 @@ function SWEP:Think()
 
     self:InBipod()
 
-    if IsFirstTimePredicted() and self:GetNWBool("cycle", false) and !self:GetNWBool("reloading", false) and
+    if self:GetNeedCycle() and !self:GetReloading() and
             (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
             or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 and owner:KeyDown(IN_ATTACK) or owner:KeyPressed(IN_ATTACK))) then
         local anim = "cycle"
@@ -36,15 +36,17 @@ function SWEP:Think()
         end
         anim = self:GetBuff_Hook("Hook_SelectCycleAnimation", anim) or anim
         local mult = self:GetBuff_Mult("Mult_CycleTime")
-        self:PlayAnimation(anim, mult, true, 0, true)
-        self:SetNWBool("cycle", false)
+        if IsFirstTimePredicted() then
+            self:PlayAnimation(anim, mult, true, 0, true)
+        end
+        self:SetNeedCycle(false)
     end
 
-    if self:GetNWBool("grenadeprimed") and !owner:KeyDown(IN_ATTACK) then
+    if self:GetGrenadePrimed() and !owner:KeyDown(IN_ATTACK) then
         self:Throw()
     end
 
-    if self:GetNWBool("grenadeprimed") and self.GrenadePrimeTime > 0 then
+    if self:GetGrenadePrimed() and self.GrenadePrimeTime > 0 then
         local heldtime = (CurTime() - self.GrenadePrimeTime)
 
         if self.FuseTime and (heldtime >= self.FuseTime) then
@@ -111,8 +113,8 @@ function SWEP:Think()
                 self:ChangeFiremode()
             end
         end
-    elseif (!(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and (self:GetNWBool("reloading", false) or owner:KeyDown(IN_RELOAD))) then
-        if !(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and self:GetNWBool("reloading", false) then
+    elseif (!(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and (self:GetReloading() or owner:KeyDown(IN_RELOAD))) then
+        if !(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and self:GetReloading() then
             self:ExitSights()
         end
     end
@@ -121,7 +123,7 @@ function SWEP:Think()
         if owner:KeyDown(IN_ATTACK2) and CLIENT then
             if (lastUBGL or 0) + 0.25 > CurTime() then return end
             lastUBGL = CurTime()
-            if self:GetNWBool("ubgl") then
+            if self:GetInUBGL() then
                 net.Start("arccw_ubgl")
                 net.WriteBool(false)
                 net.SendToServer()
@@ -162,7 +164,9 @@ function SWEP:Think()
 
     if (CLIENT or game.SinglePlayer()) and (IsFirstTimePredicted() or game.SinglePlayer()) then
         self:ProcessRecoil()
+    end
 
+    if CLIENT then
         if IsValid(vm) then
             local vec1 = Vector(1, 1, 1)
             local vec0 = vec1 * 0

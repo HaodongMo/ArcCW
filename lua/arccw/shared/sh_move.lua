@@ -18,7 +18,7 @@ function ArcCW.Move(ply, mv, cmd)
         s = s * math.Clamp(wpn.SightedSpeedMult * wpn:GetBuff_Mult("Mult_SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1)
     end
 
-    if wpn:GetNWBool("bipod", false) then
+    if wpn:GetInBipod() then
         s = 0.0001
     end
 
@@ -34,7 +34,7 @@ function ArcCW.CreateMove(cmd)
     local wpn = ply:GetActiveWeapon()
 
     if !wpn.ArcCW then return end
-    if wpn:GetNWBool("bipod", false) then
+    if wpn:GetInBipod() then
         if wpn.BipodAngle then
             local bipang = wpn.BipodAngle
             local ang = cmd:GetViewAngles()

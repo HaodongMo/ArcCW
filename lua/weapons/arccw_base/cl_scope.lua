@@ -212,7 +212,7 @@ function SWEP:CalcView(ply, pos, ang, fov)
 end
 
 function SWEP:ShouldGlint()
-    return self:GetBuff_Override("ScopeGlint") and self:GetNWBool("state") == ArcCW.STATE_SIGHTS
+    return self:GetBuff_Override("ScopeGlint") and self:GetState() == ArcCW.STATE_SIGHTS
 end
 
 function SWEP:DoScopeGlint()

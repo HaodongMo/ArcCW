@@ -34,7 +34,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     if !self.Animations[key] then return end
 
-    if self:GetNWBool("reloading", false) and !ignorereload then return end
+    if self:GetReloading() and !ignorereload then return end
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
@@ -248,12 +248,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             end
 
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
-            if self:GetBuff_Override("UBGL_BaseAnims") and self:GetNWBool("ubgl") 
+            if self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL() 
                     and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
                 ianim = "idle_ubgl_empty"
-            elseif self:GetBuff_Override("UBGL_BaseAnims") and self:GetNWBool("ubgl") and self.Animations.idle_ubgl then
+            elseif self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL() and self.Animations.idle_ubgl then
                 ianim = "idle_ubgl"
-            elseif (self:Clip1() == 0 or self:GetNWBool("cycle")) and self.Animations.idle_empty then
+            elseif (self:Clip1() == 0 or self:GetNeedCycle()) and self.Animations.idle_empty then
                 ianim = ianim or "idle_empty"
             else
                 ianim = ianim or "idle"

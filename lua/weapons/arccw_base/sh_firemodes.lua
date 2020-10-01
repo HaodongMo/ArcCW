@@ -6,7 +6,7 @@ function SWEP:ChangeFiremode(pred)
 
     if table.Count(fmt) == 1 then return end
 
-    local fmi = self:GetNWInt("firemode", 1)
+    local fmi = self:GetFireMode()
     local lastfmi = fmi
 
     fmi = fmi + 1
@@ -39,7 +39,7 @@ function SWEP:ChangeFiremode(pred)
 
     if !fmt[fmi] then fmi = 1 end
 
-    self:SetNWInt("firemode", fmi)
+    self:SetFireMode(fmi)
 
     self:RecalcAllBuffs()
 
@@ -75,15 +75,15 @@ end
 function SWEP:GetCurrentFiremode()
     local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
 
-    if self:GetNWInt("firemode", 1) > table.Count(fmt) then
-        self:SetNWInt("firemode", 1)
+    if self:GetFireMode() > table.Count(fmt) then
+        self:SetFireMode(1)
     end
 
-    return fmt[self:GetNWInt("firemode", 1)]
+    return fmt[self:GetFireMode()]
 end
 
 function SWEP:GetFiremodeName()
-    if self:GetNWBool("ubgl", false) then
+    if self:GetInUBGL() then
         return self:GetBuff_Override("UBGL_PrintName") or "UBGL"
     end
 
@@ -100,7 +100,7 @@ function SWEP:GetFiremodeName()
 end
 
 function SWEP:GetFiremodeBars()
-    if self:GetNWBool("ubgl", false) then
+    if self:GetInUBGL() then
         return "____-"
     end
 
