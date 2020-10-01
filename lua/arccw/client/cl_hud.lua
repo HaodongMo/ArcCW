@@ -65,11 +65,14 @@ local font = ArcCW.GetTranslation("default_font") or "Bahnschrift"
 local sizes_to_make = {
     6,
     8,
+    10,
     12,
     16,
+    18,
     20,
     24,
-    26
+    26,
+    32
 }
 
 local unscaled_sizes_to_make = {

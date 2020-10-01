@@ -286,14 +286,16 @@ function SWEP:DrawHUD()
             surface.SetDrawColor(col1)
             surface.DrawRect(apan_bg.x, apan_bg.y, apan_bg.w, apan_bg.h)
 
+            local segcount = string.len( self:GetFiremodeBars() or "-----" )
+
             local bar = {
-                w = (apan_bg.w - (6 * bargap)) / 5,
+                w = (apan_bg.w - ((segcount + 1) * bargap)) / segcount,
                 h = ScreenScale(3),
                 x = apan_bg.x + bargap,
-                y = apan_bg.y + ScreenScale(14)
+                y = apan_bg.y + ScreenScale(43)
             }
 
-            for i = 1, 5 do
+            for i = 1, segcount do
                 local c = data.bars[i]
 
                 surface.SetDrawColor(col2)
@@ -307,19 +309,28 @@ function SWEP:DrawHUD()
                 bar.x = bar.x + bar.w + bargap
             end
 
+            -- why do i have to do this? for gettextsize
+            -- sajfksda
+            -- i am very confused
+
+            --oh i know why its the shit it doesnt get changed until mydrawtext
+            surface.SetFont("ArcCW_16")
+
             local wname = {
-                x = apan_bg.x + ScreenScale(4),
+                x = apan_bg.x + apan_bg.w - ScreenScale(4) - surface.GetTextSize(self.PrintName),
                 y = apan_bg.y,
-                font = "ArcCW_12",
+                font = "ArcCW_16",
                 text = self.PrintName,
                 col = col2
             }
 
             MyDrawText(wname)
 
+            surface.SetFont("ArcCW_12")
+
             local wmode = {
-                x = apan_bg.x + apan_bg.w - ScreenScale(4) - surface.GetTextSize(mode),
-                y = apan_bg.y,
+                x = apan_bg.x + apan_bg.w - ScreenScale(4) - surface.GetTextSize(data.mode),
+                y = apan_bg.y + ScreenScale(16),
                 font = "ArcCW_12",
                 text = data.mode,
                 col = col2
@@ -328,10 +339,10 @@ function SWEP:DrawHUD()
             MyDrawText(wmode)
 
             local wammo = {
-                x = apan_bg.x + airgap,
-                y = bar.y + ScreenScale(4),
+                x = apan_bg.x + ScreenScale(11),
+                y = apan_bg.y + ScreenScale(5),
                 text = tostring(data.clip),
-                font = "ArcCW_26",
+                font = "ArcCW_32",
                 col = col2
             }
 
@@ -343,22 +354,52 @@ function SWEP:DrawHUD()
 
             MyDrawText(wammo)
 
+            surface.SetFont("ArcCW_20")
             local wreserve = {
-                x = apan_bg.x + ScreenScale(64) - airgap,
-                y = bar.y + ScreenScale(4),
-                text = "/ " .. tostring(data.ammo),
-                font = "ArcCW_26",
+                x = apan_bg.x + ScreenScale(56),
+                y = apan_bg.y + ScreenScale(12),
+                text = tostring(data.ammo),
+                font = "ArcCW_20",
                 col = col2,
             }
 
             MyDrawText(wreserve)
 
+            surface.SetFont("ArcCW_20")
+            local wammo_symbol = {
+                x = apan_bg.x + ScreenScale(4),
+                y = apan_bg.y + ScreenScale(15.5),
+                text = "A",
+                font = "ArcCW_12",
+                col = col2
+            }
+
+            wammo_symbol.col = col2
+
+            if data.clip == 0 then
+                wammo_symbol.col = col3
+            end
+
+            MyDrawText(wammo_symbol)
+
+            surface.SetFont("ArcCW_10")
+            local wreserve_symbol = {
+                x = apan_bg.x + ScreenScale(50),
+                y = apan_bg.y + ScreenScale(17),
+                text = "R",
+                font = "ArcCW_10",
+                col = col2,
+            }
+
+            MyDrawText(wreserve_symbol)
+
+            surface.SetFont("ArcCW_32")
             wammo.w = surface.GetTextSize(tostring(data.clip))
 
             if data.plus then
                 local wplus = {
-                    x = wammo.x + bargap + wammo.w,
-                    y = wammo.y,
+                    x = wammo.x + wammo.w + ScreenScale(2),
+                    y = wammo.y + ScreenScale(3),
                     text = "+" .. tostring(data.plus),
                     font = "ArcCW_16",
                     col = col2
