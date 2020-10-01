@@ -37,7 +37,6 @@ local ClientPanel = {
     { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
     { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
     { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
-    { type = "b", text = "#arccw.cvar.altlaserkey", var = "arccw_altlaserkey" },
     { type = "b", text = "#arccw.cvar.altsafety", var = "arccw_altsafety" },
     { type = "b", text = "#arccw.cvar.autosave", var = "arccw_autosave" },
     { type = "c", text = "#arccw.cvar.autosave.desc" },
