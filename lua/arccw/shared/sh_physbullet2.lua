@@ -71,7 +71,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
 
     if wep:GetOwner():IsPlayer() then
         local ping = wep:GetOwner():Ping() / 1000
-        ping = math.Clamp(ping, 0, 0.1)
+        ping = math.Clamp(ping, 0, 0.3)
         local timestep = 0.025
 
         while ping > 0 do

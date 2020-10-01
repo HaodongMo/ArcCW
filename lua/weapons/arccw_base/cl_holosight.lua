@@ -386,6 +386,7 @@ hook.Add("RenderScene", "ArcCW", function()
     local wpn = LocalPlayer():GetActiveWeapon()
 
     if !wpn.ArcCW then return end
+    if wpn:ShouldFlatScope() then return end
 
     wpn:FormRTScope()
 end)

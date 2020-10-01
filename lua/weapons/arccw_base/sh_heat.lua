@@ -19,6 +19,8 @@ function SWEP:AddHeat()
     self.Heat = math.Clamp(heat + 1, 0, max)
     self.NextHeatDissipateTime = CurTime() + (self.HeatDelayTime * self:GetBuff_Mult("Mult_HeatDelayTime"))
 
+    if single and CLIENT then return end
+
     self:SetHeat(self.Heat)
 
     if self.Heat >= max then
