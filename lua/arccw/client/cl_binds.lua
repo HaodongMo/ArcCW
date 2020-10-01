@@ -49,7 +49,7 @@ local function SendNet(string, bool)
 end
 
 local function DoUbgl(wep)
-    if wep:GetNWBool("ubgl") then
+    if wep:GetInUBGL() then
         SendNet("arccw_ubgl", false)
 
         wep:DeselectUBGL()
@@ -87,7 +87,7 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
 
                     if ply:GetActiveWeapon() != wep then return end
 
-                    if wep:GetNWBool("ubgl") then return end
+                    if wep:GetInUBGL() then return end
 
                     SendNet("arccw_firemode")
 

@@ -32,7 +32,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     local SP = game.SinglePlayer()
     local FT = m_min(FrameTime(), RealFrameTime()) -- RealFrameTime() for previous behavior, which does not work well with slow motion
-    local CT = UnPredictedCurTime()
+    local CT = CurTime()
 
     local FT5, FT10 = FT * 5, FT * 10
 

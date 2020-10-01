@@ -16,7 +16,7 @@ SWEP.AutoSpawnable = nil -- If not set, automatically set to true in InitPostEnt
 -- does not occur when a drop happens for some reason. Hence this thing.
 function SWEP:PreDrop()
     if self.Throwing then
-        if self:GetNWBool("grenadeprimed") then
+        if self:GetGrenadePrimed() then
             self:Throw()
         end
     else

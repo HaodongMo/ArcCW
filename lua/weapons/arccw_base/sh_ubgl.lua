@@ -1,11 +1,11 @@
 
 function SWEP:SelectUBGL()
-    self:SetNWBool("ubgl", true)
+    self:SetInUBGL(true)
 
     if !IsFirstTimePredicted() then return end
 
     self:MyEmitSound(self.SelectUBGLSound)
-    self:SetNWInt("firemode", 1)
+    self:SetFireMode(1)
 
     if CLIENT then
         if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
@@ -28,8 +28,8 @@ function SWEP:SelectUBGL()
 end
 
 function SWEP:DeselectUBGL()
-    if !self:GetNWBool("ubgl", false) then return end
-    self:SetNWBool("ubgl", false)
+    if !self:GetInUBGL() then return end
+    self:SetInUBGL(false)
 
     if !IsFirstTimePredicted() then return end
 

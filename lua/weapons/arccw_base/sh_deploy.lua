@@ -9,10 +9,9 @@ function SWEP:Deploy()
 
     self:SetShouldHoldType()
 
-    self:SetNWBool("reloading", false)
-    self:SetNWBool("incustomize", false)
+    self:SetReloading(false)
     self:SetState(0)
-    self:SetNWBool("ubgl", false)
+    self:SetInUBGL(false)
 
     self.LHIKAnimation = nil
 
@@ -39,36 +38,36 @@ function SWEP:Deploy()
                 end
                 self.UnReady = false
 
-                self:SetNWBool("reloading", true)
+                self:SetReloading(true)
 
                 self:SetTimer(self:GetAnimKeyTime("ready"),
                 function()
-                    self:SetNWBool("reloading", false)
+                    self:SetReloading(false)
                 end)
 
                 prd = self.Animations.ready.ProcDraw
 
-                self:SetNWBool("reloading", true)
+                self:SetReloading(true)
             else
                 if self.Animations.draw_empty and self:Clip1() == 0 then
                 self:PlayAnimation("draw_empty", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
 
-                self:SetNWBool("reloading", true)
+                self:SetReloading(true)
 
                 self:SetTimer(self:GetAnimKeyTime("draw_empty") * self:GetBuff_Mult("Mult_DrawTime"),
                 function()
-                    self:SetNWBool("reloading", false)
+                    self:SetReloading(false)
                 end)
 
                 prd = self.Animations.draw_empty.ProcDraw
                 else
                 self:PlayAnimation("draw", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
 
-                self:SetNWBool("reloading", true)
+                self:SetReloading(true)
 
                 self:SetTimer(self:GetAnimKeyTime("draw") * self:GetBuff_Mult("Mult_DrawTime"),
                 function()
-                    self:SetNWBool("reloading", false)
+                    self:SetReloading(false)
                 end)
 
                 prd = self.Animations.draw.ProcDraw
@@ -233,7 +232,7 @@ function SWEP:Holster(wep)
         self:CallOnClient("Holster")
     end
 
-    if self:GetNWBool("grenadeprimed") then
+    if self:GetGrenadePrimed() then
         self:Throw()
     end
 

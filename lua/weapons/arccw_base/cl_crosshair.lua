@@ -6,7 +6,7 @@ local clump_outer = Material("hud/clump_outer.png", "mips smooth")
 function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
     if !GetConVar("arccw_crosshair"):GetBool() then return false end
-    if self:GetNWBool("reloading") then return false end
+    if self:GetReloading() then return false end
     local asight = self:GetActiveSights()
 
     if !self:GetOwner():ShouldDrawLocalPlayer() then

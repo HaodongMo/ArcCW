@@ -13,7 +13,7 @@ function SWEP:PrimaryAttack()
 
     if owner:IsNPC() then self:NPC_Shoot() return end
 
-    if self:GetNWBool("ubgl") then self:ShootUBGL() return end
+    if self:GetInUBGL() then self:ShootUBGL() return end
 
     if self:GetNextPrimaryFire() >= CurTime() then return end
 
@@ -51,7 +51,7 @@ function SWEP:PrimaryAttack()
 
     if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
 
-    if self:GetNWBool("cycle", false) then return end
+    if self:GetNeedCycle() then return end
 
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
@@ -325,7 +325,7 @@ function SWEP:PrimaryAttack()
     self:DoPrimaryAnim()
 
     if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and clip == 0) then
-        self:SetNWBool("cycle", true)
+        self:SetNeedCycle(true)
     end
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == -self:GetCurrentFiremode().Mode then

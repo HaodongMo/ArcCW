@@ -62,7 +62,7 @@ function SWEP:EnterSights()
     local asight = self:GetActiveSights()
     if !asight then return end
     if self:GetState() != ArcCW.STATE_IDLE then return end
-    if !self.ReloadInSights and (self:GetNWBool("reloading", false) or self:GetOwner():KeyDown(IN_RELOAD)) then return end
+    if !self.ReloadInSights and (self:GetReloading() or self:GetOwner():KeyDown(IN_RELOAD)) then return end
     if self:GetBuff_Hook("Hook_ShouldNotSight") then return end
 
     self:SetupActiveSights()
@@ -89,7 +89,7 @@ end
 function SWEP:ExitSights()
     local asight = self:GetActiveSights()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
-    if self.LockSightsInReload and self:GetNWBool("reloading") then return end
+    if self.LockSightsInReload and self:GetReloading() then return end
 
     --print("yeah yeah beebis")
 

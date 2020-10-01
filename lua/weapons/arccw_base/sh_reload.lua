@@ -3,7 +3,7 @@ function SWEP:Reload()
         return
     end
 
-    if self:GetNWBool("ubgl") then
+    if self:GetInUBGL() then
         if self:GetNextSecondaryFire() > CurTime() then return end
             self:ReloadUBGL()
         return
@@ -14,7 +14,7 @@ function SWEP:Reload()
         -- don't succumb to
                 -- californication
 
-    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     if self.Throwing then return end
     if self.PrimaryBash then return end
@@ -43,7 +43,7 @@ function SWEP:Reload()
     if load <= self:Clip1() then return end
     self.LastLoadClip1 = load - self:Clip1()
 
-    self:SetNWBool("reqend", false)
+    self:GetReqEnd(false)
     self:SetBurstCount(0)
 
     local shouldshotgunreload = self.ShotgunReload
@@ -70,7 +70,7 @@ function SWEP:Reload()
         local anim = "sgreload_start"
         local insertcount = 0
 
-        local empty = (self:Clip1() == 0) or self:GetNWBool("cycle", false)
+        local empty = (self:Clip1() == 0) or self:GetNeedCycle()
 
         if self.Animations.sgreload_start_empty and empty then
             anim = "sgreload_start_empty"
@@ -100,7 +100,7 @@ function SWEP:Reload()
         -- cycle an empty shell afterwards.
         -- No, I am !in the correct mental state to fix this. - 8Z
         if self:Clip1() == 0 then
-            self:SetNWBool("cycle", false)
+            self:SetNeedCycle(false)
         end
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
@@ -108,7 +108,7 @@ function SWEP:Reload()
         self:PlayAnimation(anim, mult, true, 0, true)
         self:SetTimer(self:GetAnimKeyTime(anim) * mult * 0.95,
         function()
-            self:SetNWBool("reloading", false)
+            self:SetReloading(false)
             -- if self:GetOwner():KeyDown(IN_ATTACK2) then
             --     self:EnterSights()
             -- end
@@ -122,7 +122,7 @@ function SWEP:Reload()
         end
     end
 
-    self:SetNWBool("reloading", true)
+    self:SetReloading(true)
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -206,7 +206,7 @@ function SWEP:GetVisualBullets()
     else
         self.LastClip1_B = self:Clip1()
 
-        if self:GetNWBool("reloading") and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
+        if self:GetReloading() and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
             return abouttoload
         else
             return self:Clip1()
@@ -235,7 +235,7 @@ function SWEP:GetVisualClip()
             lastframeclip1 = self:Clip1()
         end
 
-        if self:GetNWBool("reloading") and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
+        if self:GetReloading() and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
             return abouttoload
         else
             return self:Clip1()
@@ -248,7 +248,7 @@ function SWEP:GetVisualLoadAmount()
         local clip = self:GetCapacity()
         local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
         self.LastLoadClip1 = math.Clamp(clip + chamber, 0, self:Ammo1() + self:Clip1()) - lastframeloadclip1
-        if self:GetNWBool("cycle", false) == false and lastframeloadclip1 != 0 then
+        if self:GetNeedCycle() == false and lastframeloadclip1 != 0 then
             self.LastLoadClip1 = self.LastLoadClip1 + 1
         end
     end
@@ -274,25 +274,25 @@ end
 function SWEP:ReloadInsert(empty)
     local total = self:GetCapacity()
 
-    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     if !empty then
         total = total + (self:GetChamberSize())
     end
 
-    self:SetNWBool("reloading", true)
+    self:SetReloading(true)
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
 
-    self:SetNWBool("reloading", false)
+    self:SetReloading(false)
 
-    if self:Clip1() >= total or self:Ammo1() == 0 or self:GetNWBool("reqend", false) then
+    if self:Clip1() >= total or self:Ammo1() == 0 or self:GetReqEnd() then
         local ret = "sgreload_finish"
 
         if empty then
             ret = "sgreload_finish_empty"
-            if self:GetNWBool("cycle") then
-                self:SetNWBool("cycle", false)
+            if self:GetNeedCycle() then
+                self:SetNeedCycle(false)
             end
         end
 
@@ -301,13 +301,13 @@ function SWEP:ReloadInsert(empty)
         self:PlayAnimation(ret, mult, true, 0, true, nil, true)
             self:SetTimer(self:GetAnimKeyTime(ret) * mult,
             function()
-                self:SetNWBool("reloading", false)
+                self:SetReloading(false)
                 if self:GetOwner():KeyDown(IN_ATTACK2) then
                     self:EnterSights()
                 end
             end)
 
-        self:SetNWBool("reqend", false)
+        self:GetReqEnd(false)
     else
         local insertcount = self:GetBuff_Override("Override_InsertAmount") or 1
         local insertanim = "sgreload_insert"
@@ -328,7 +328,7 @@ function SWEP:ReloadInsert(empty)
         end)
     end
 
-    self:SetNWBool("reloading", true)
+    self:SetReloading(true)
 end
 
 function SWEP:GetCapacity()

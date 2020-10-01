@@ -68,7 +68,7 @@ function SWEP:GetHUDData()
         data.ammo = "-"
     end
 
-    if self:GetNWBool("ubgl") then
+    if self:GetInUBGL() then
         data.clip = self:Clip2()
         local ubglammo = self:GetBuff_Override("UBGL_Ammo")
 
@@ -105,7 +105,7 @@ function SWEP:DrawHUD()
 
     local bargap = ScreenScale(2)
 
-    if self:CanBipod() or self:GetNWBool("bipod", false) then
+    if self:CanBipod() or self:GetInBipod() then
         local txt = "[" .. string.upper(ArcCW:GetBind("+use")) .. "]"
 
         if self:InBipod() then

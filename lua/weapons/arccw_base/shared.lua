@@ -613,8 +613,16 @@ end
 
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
+    self:NetworkVar("Int", 1, "FireMode")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
+    self:NetworkVar("Bool", 1, "NeedCycle")
+    self:NetworkVar("Bool", 2, "InBipod")
+    self:NetworkVar("Bool", 3, "InUBGL")
+    self:NetworkVar("Bool", 4, "Reloading")
+    self:NetworkVar("Bool", 5, "InCustomize")
+    self:NetworkVar("Bool", 6, "GrenadePrimed")
+    self:NetworkVar("Bool", 7, "ReqEnd")
 
     self:NetworkVar("Float", 0, "Heat")
 

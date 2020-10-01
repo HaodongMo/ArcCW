@@ -490,7 +490,7 @@ function SWEP:GetMuzzleDevice(wm)
         end
     end
 
-    if self:GetNWBool("ubgl") then
+    if self:GetInUBGL() then
         local _, slot = self:GetBuff_Override("UBGL")
 
         if wm then
@@ -929,10 +929,10 @@ function SWEP:Attach(slot, attname, silent)
     ArcCW:PlayerTakeAtt(self:GetOwner(), attname)
 
     local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
-    local fmi = self:GetNWInt("firemode", 1)
+    local fmi = self:GetFireMode()
 
     if fmi > table.Count(fmt) then
-        self:SetNWInt("firemode", 1)
+        self:SetFireMode(1)
     end
 
     --self.UnReady = false
@@ -1106,11 +1106,11 @@ function SWEP:AdjustAtts()
 
     fmt["BaseClass"] = nil
 
-    local fmi = self:GetNWInt("firemode", 1)
+    local fmi = self:GetFireMode()
 
     if !fmt[fmi] then fmi = 1 end
 
-    self:SetNWInt("firemode", fmi)
+    self:SetFireMode(fmi)
 
     local wpn = weapons.Get(self:GetClass())
 

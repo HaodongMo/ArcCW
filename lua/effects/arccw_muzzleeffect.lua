@@ -11,7 +11,7 @@ function EFFECT:Init(data)
 
     muzzle = overridemuzzle or muzzle
 
-    if wpn:GetNWBool("ubgl", false) then
+    if wpn:GetInUBGL() then
         muzzle = wpn:GetBuff_Override("UBGL_MuzzleEffect") or muzzle
     end
 

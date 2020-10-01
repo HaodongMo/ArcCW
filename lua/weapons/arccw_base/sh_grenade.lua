@@ -9,7 +9,7 @@ function SWEP:PreThrow()
             self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
         end
     end
-    if self:GetNWBool("grenadeprimed") then return end
+    if self:GetGrenadePrimed() then return end
 
     if engine.ActiveGamemode() == "terrortown" and GetRoundState() == ROUND_PREP and GetConVar("ttt_no_nade_throw_during_prep"):GetBool() then
         return
@@ -19,7 +19,7 @@ function SWEP:PreThrow()
 
     self:SetNextPrimaryFire(CurTime() + self.PullPinTime)
 
-    self:SetNWBool("grenadeprimed", true)
+    self:SetGrenadePrimed(true)
 
     self.GrenadePrimeTime = CurTime()
 
@@ -29,7 +29,7 @@ end
 function SWEP:Throw()
     if self:GetNextPrimaryFire() > CurTime() then return end
 
-    self:SetNWBool("grenadeprimed", false)
+    self:SetGrenadePrimed(false)
 
     self:PlayAnimation("throw", 1, false, 0, true)
 

@@ -1,5 +1,5 @@
 function SWEP:InBipod()
-    local bip = self:GetNWBool("bipod", false)
+    local bip = self:GetInBipod()
 
     -- if !self:CanBipod() then
     --     self:ExitBipod()
@@ -21,7 +21,7 @@ function SWEP:CanBipod()
 
     if self.CachedCanBipodTime >= CurTime() then return self.CachedCanBipod end
 
-    -- local bip = self:GetNWBool("bipod", false)
+    -- local bip = self:GetInBipod()
 
     local maxs = Vector(2, 2, 2)
     local mins = Vector(-2, -2, -2)
@@ -76,7 +76,7 @@ function SWEP:CanBipod()
 end
 
 function SWEP:EnterBipod()
-    if self:GetNWBool("bipod", false) then return end
+    if self:GetInBipod() then return end
     if !self:CanBipod() then return end
     --if CurTime() < self:GetNextSecondaryFire() then return end
 
@@ -92,11 +92,11 @@ function SWEP:EnterBipod()
 
     self:SetNextSecondaryFire(CurTime() + 0.075)
 
-    self:SetNWBool("bipod", true)
+    self:SetInBipod(true)
 end
 
 function SWEP:ExitBipod()
-    if !self:GetNWBool("bipod", false) then return end
+    if !self:GetInBipod() then return end
     if CurTime() < self:GetNextSecondaryFire() then return end
 
     if self.Animations.exit_bipod then
@@ -108,5 +108,5 @@ function SWEP:ExitBipod()
 
     self:SetNextSecondaryFire(CurTime() + 0.075)
 
-    self:SetNWBool("bipod", false)
+    self:SetInBipod(false)
 end
