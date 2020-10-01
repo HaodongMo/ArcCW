@@ -312,15 +312,13 @@ function SWEP:PrimaryAttack()
 
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
-    if IsFirstTimePredicted() then self:SetBurstCount(self:GetBurstCount() + 1) end
+    if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) self:SetBurstCount(self:GetBurstCount() + 1) end
 
     if self:HasBottomlessClip() then
         if self:Clip1() > 0 then
             self:Unload()
         end
     end
-
-    self:TakePrimaryAmmo(aps)
 
     self:DoPrimaryAnim()
 
