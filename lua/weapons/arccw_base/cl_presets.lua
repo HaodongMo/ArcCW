@@ -1,6 +1,10 @@
 -- atts are comma separated
 -- optic_mrs,,,perk_quickdraw,ammo_match
 
+local function ScreenScaleMulti(input)
+    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+end
+
 function SWEP:GetPresetBase()
     return self.PresetBase or self:GetClass()
 end
@@ -126,16 +130,16 @@ function SWEP:CreatePresetSave()
     bg:MakePopup()
 
     local text = vgui.Create("DTextEntry", bg)
-    text:SetSize(ScreenScale(256), ScreenScale(26))
+    text:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(26))
     text:Center()
     text:RequestFocus()
     text:SetFont("ArcCW_24")
     text:SetText("")
 
     local accept = vgui.Create("DButton", bg)
-    accept:SetSize((ScreenScale(256) - ScreenScale(2)) / 2, ScreenScale(14))
+    accept:SetSize((ScreenScaleMulti(256) - ScreenScaleMulti(2)) / 2, ScreenScaleMulti(14))
     accept:SetText("")
-    accept:SetPos((ScrW() - ScreenScale(256)) / 2, ((ScrH() - ScreenScale(14)) / 2) + ScreenScale(26) + ScreenScale(2))
+    accept:SetPos((ScrW() - ScreenScaleMulti(256)) / 2, ((ScrH() - ScreenScaleMulti(14)) / 2) + ScreenScaleMulti(26) + ScreenScaleMulti(2))
 
     accept.OnMousePressed = function(spaa, kc)
         local txt = text:GetText()
@@ -161,15 +165,15 @@ function SWEP:CreatePresetSave()
         local txt = "Save"
 
         surface.SetTextColor(Bfg_col)
-        surface.SetTextPos(ScreenScale(2), ScreenScale(1))
+        surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))
         surface.SetFont("ArcCW_12")
         surface.DrawText(txt)
     end
 
     local cancel = vgui.Create("DButton", bg)
-    cancel:SetSize((ScreenScale(256) - ScreenScale(2)) / 2, ScreenScale(14))
+    cancel:SetSize((ScreenScaleMulti(256) - ScreenScaleMulti(2)) / 2, ScreenScaleMulti(14))
     cancel:SetText("")
-    cancel:SetPos(((ScrW() - ScreenScale(256)) / 2) + ScreenScale(128 + 1), ((ScrH() - ScreenScale(14)) / 2) + ScreenScale(26) + ScreenScale(2))
+    cancel:SetPos(((ScrW() - ScreenScaleMulti(256)) / 2) + ScreenScaleMulti(128 + 1), ((ScrH() - ScreenScaleMulti(14)) / 2) + ScreenScaleMulti(26) + ScreenScaleMulti(2))
 
     cancel.OnMousePressed = function(spaa, kc)
         bg:Close()
@@ -192,7 +196,7 @@ function SWEP:CreatePresetSave()
         local txt = "Cancel"
 
         surface.SetTextColor(Bfg_col)
-        surface.SetTextPos(ScreenScale(2), ScreenScale(1))
+        surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))
         surface.SetFont("ArcCW_12")
         surface.DrawText(txt)
     end
@@ -215,9 +219,9 @@ function SWEP:CreatePresetMenu()
     end
 
     local cancel = vgui.Create("DButton", bg)
-    cancel:SetSize(ScreenScale(128), ScreenScale(14))
+    cancel:SetSize(ScreenScaleMulti(128), ScreenScaleMulti(14))
     cancel:SetText("")
-    cancel:SetPos((ScrW() - ScreenScale(128)) / 2, ScrH() - ScreenScale(32))
+    cancel:SetPos((ScrW() - ScreenScaleMulti(128)) / 2, ScrH() - ScreenScaleMulti(32))
 
     cancel.OnMousePressed = function(spaa, kc)
         bg:Close()
@@ -240,15 +244,15 @@ function SWEP:CreatePresetMenu()
         local txt = "Cancel"
 
         surface.SetTextColor(Bfg_col)
-        surface.SetTextPos(ScreenScale(2), ScreenScale(1))
+        surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))
         surface.SetFont("ArcCW_12")
         surface.DrawText(txt)
     end
 
     local presetsmenu = vgui.Create("DScrollPanel", bg)
     presetsmenu:SetText("")
-    presetsmenu:SetSize(ScreenScale(256), ScrH() - ScreenScale(64))
-    presetsmenu:SetPos((ScrW() - ScreenScale(256)) / 2, ScreenScale(8))
+    presetsmenu:SetSize(ScreenScaleMulti(256), ScrH() - ScreenScaleMulti(64))
+    presetsmenu:SetPos((ScrW() - ScreenScaleMulti(256)) / 2, ScreenScaleMulti(8))
     presetsmenu.Paint = function(span, w, h)
     end
 
@@ -271,10 +275,10 @@ function SWEP:CreatePresetMenu()
     for i, k in pairs(self:GetPresets()) do
         if k == "autosave.txt" then continue end
         local preset = vgui.Create("DButton", presetsmenu)
-        preset:SetSize(ScreenScale(254), ScreenScale(14))
+        preset:SetSize(ScreenScaleMulti(254), ScreenScaleMulti(14))
         preset:SetText("")
         preset:Dock(TOP)
-        preset:DockMargin( 0, 0, 0, ScreenScale(2) )
+        preset:DockMargin( 0, 0, 0, ScreenScaleMulti(2) )
 
         preset.PresetName = string.sub(k, 1, -5)
 
@@ -298,13 +302,13 @@ function SWEP:CreatePresetMenu()
             surface.DrawRect(0, 0, w, h)
 
             surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(ScreenScale(2), ScreenScale(1))
+            surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))
             surface.SetFont("ArcCW_12")
             surface.DrawText(string.upper(spaa.PresetName))
         end
 
         local close = vgui.Create("DButton", preset)
-        close:SetSize(ScreenScale(16), ScreenScale(16))
+        close:SetSize(ScreenScaleMulti(16), ScreenScaleMulti(16))
         close:SetText("")
         close:Dock(RIGHT)
 
@@ -329,7 +333,7 @@ function SWEP:CreatePresetMenu()
 
             local w_x, h_x = surface.GetTextSize("×")
             surface.SetTextColor(Bfg_col)
-            surface.SetTextPos((ScreenScale(16) - w_x) / 2, (ScreenScale(16) - h_x) / 2)
+            surface.SetTextPos((ScreenScaleMulti(16) - w_x) / 2, (ScreenScaleMulti(16) - h_x) / 2)
             surface.SetFont("ArcCW_12")
             surface.DrawText("×")
         end
@@ -338,10 +342,10 @@ function SWEP:CreatePresetMenu()
 
     if c == 0 then
         local label = vgui.Create("DLabel", presetsmenu)
-        label:SetSize(ScreenScale(254), ScreenScale(14))
+        label:SetSize(ScreenScaleMulti(254), ScreenScaleMulti(14))
         label:SetText("")
         label:Dock(TOP)
-        label:DockMargin( 0, 0, 0, ScreenScale(2) )
+        label:DockMargin( 0, 0, 0, ScreenScaleMulti(2) )
 
         label.Paint = function(spaa, w, h)
             local Bfg_col = Color(255, 255, 255, 255)
@@ -349,7 +353,7 @@ function SWEP:CreatePresetMenu()
             local txt = "No presets found! Go make some!"
 
             surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(ScreenScale(2), ScreenScale(1))
+            surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))
             surface.SetFont("ArcCW_12")
             surface.DrawText(txt)
         end

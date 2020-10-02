@@ -1,5 +1,9 @@
 local translate = ArcCW.GetTranslation
 
+local function ScreenScaleMulti(input)
+    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+end
+
 function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
 
@@ -121,11 +125,11 @@ local activeslot = nil
 SWEP.InAttMenu = false
 
 function SWEP:CreateCustomizeHUD()
-    local barsize = ScreenScale(160)
-    local airgap = ScreenScale(16)
-    local smallgap = ScreenScale(2)
-    local linesize = ScreenScale(1)
-    local buttonsize = ScreenScale(32)
+    local barsize = ScreenScaleMulti(160)
+    local airgap = ScreenScaleMulti(16)
+    local smallgap = ScreenScaleMulti(2)
+    local linesize = ScreenScaleMulti(1)
+    local buttonsize = ScreenScaleMulti(32)
     local fg_col = Color(255, 255, 255, 255)
     local bg_col = Color(0, 0, 0, 150)
 
@@ -186,7 +190,7 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local loadpresets = vgui.Create("DButton", ArcCW.InvHUD)
-    loadpresets:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+    loadpresets:SetSize((barsize - ScreenScaleMulti(2)) / 2, ScreenScaleMulti(14))
     loadpresets:SetText("")
     loadpresets:SetPos(scrw - barsize - airgap, airgap)
 
@@ -211,15 +215,15 @@ function SWEP:CreateCustomizeHUD()
         local txt = (translate("ui.loadpreset"))
 
         surface.SetTextColor(Bfg_col)
-        surface.SetTextPos(smallgap, ScreenScale(1))
+        surface.SetTextPos(smallgap, ScreenScaleMulti(1))
         surface.SetFont("ArcCW_12")
         surface.DrawText(txt)
     end
 
     local savepresets = vgui.Create("DButton", ArcCW.InvHUD)
-    savepresets:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+    savepresets:SetSize((barsize - ScreenScaleMulti(2)) / 2, ScreenScaleMulti(14))
     savepresets:SetText("")
-    savepresets:SetPos(scrw - (barsize / 2) + ScreenScale(1) - airgap, airgap)
+    savepresets:SetPos(scrw - (barsize / 2) + ScreenScaleMulti(1) - airgap, airgap)
 
     savepresets.OnMousePressed = function(spaa, kc)
         self:CreatePresetSave()
@@ -242,12 +246,12 @@ function SWEP:CreateCustomizeHUD()
         local txt = (translate("ui.savepreset"))
 
         surface.SetTextColor(Bfg_col)
-        surface.SetTextPos(smallgap, ScreenScale(1))
+        surface.SetTextPos(smallgap, ScreenScaleMulti(1))
         surface.SetFont("ArcCW_12")
         surface.DrawText(txt)
     end
 
-    local attcatsy = scrh - ScreenScale(64) - airgap
+    local attcatsy = scrh - ScreenScaleMulti(64) - airgap
 
     local attcats = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     attcats:SetText("")
@@ -260,7 +264,7 @@ function SWEP:CreateCustomizeHUD()
 
     local triviabox = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     triviabox:SetText("")
-    triviabox:SetSize(barsize, scrh - ScreenScale(64) - (3 * airgap))
+    triviabox:SetSize(barsize, scrh - ScreenScaleMulti(64) - (3 * airgap))
     triviabox:SetPos(scrw - barsize - airgap, 2 * airgap)
     triviabox.Paint = function(span, w, h)
         surface.SetDrawColor(bg_col)
@@ -326,7 +330,7 @@ function SWEP:CreateCustomizeHUD()
 
     local statbox = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     statbox:SetText("")
-    statbox:SetSize(barsize, scrh - ScreenScale(64) - (3 * airgap))
+    statbox:SetSize(barsize, scrh - ScreenScaleMulti(64) - (3 * airgap))
     statbox:SetPos(scrw - barsize - airgap, 2 * airgap)
     statbox.Paint = function(span, w, h)
         surface.SetDrawColor(bg_col)
@@ -353,7 +357,7 @@ function SWEP:CreateCustomizeHUD()
 
     local attmenu = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     attmenu:SetText("")
-    attmenu:SetSize(barsize + ScreenScale(12), attmenuh)
+    attmenu:SetSize(barsize + ScreenScaleMulti(12), attmenuh)
     attmenu:SetPos(airgap + barsize + smallgap, airgap)
     attmenu.Paint = function(span, w, h)
         -- surface.SetDrawColor(bg_col)
@@ -376,8 +380,8 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local attslidebox = vgui.Create("DPanel", ArcCW.InvHUD)
-    attslidebox:SetSize(barsize, ScreenScale(20))
-    attslidebox:SetPos(scrw - barsize - airgap, scrh - ScreenScale(64) - (1 * airgap))
+    attslidebox:SetSize(barsize, ScreenScaleMulti(20))
+    attslidebox:SetPos(scrw - barsize - airgap, scrh - ScreenScaleMulti(64) - (1 * airgap))
     attslidebox.Paint = function(span, w, h)
         surface.SetDrawColor(bg_col)
         surface.DrawRect(0, 0, w, h)
@@ -389,12 +393,12 @@ function SWEP:CreateCustomizeHUD()
     end
 
     local attslider = vgui.Create("DSlider", attslidebox)
-    attslider:SetPos(ScreenScale(4), ScreenScale(12))
-    attslider:SetSize(barsize - ScreenScale(4 * 2), ScreenScale(4))
+    attslider:SetPos(ScreenScaleMulti(4), ScreenScaleMulti(12))
+    attslider:SetSize(barsize - ScreenScaleMulti(4 * 2), ScreenScaleMulti(4))
 
     attslider.Paint = function(span, w, h)
         surface.SetDrawColor(fg_col)
-        surface.DrawRect(0, h / 2, w, ScreenScale(1))
+        surface.DrawRect(0, h / 2, w, ScreenScaleMulti(1))
     end
 
     local lastslidepos = 0
@@ -406,10 +410,10 @@ function SWEP:CreateCustomizeHUD()
 
         if span:IsHovered() or attslider:GetDragging() then
             surface.SetDrawColor(fg_col)
-            surface.DrawRect((w - ScreenScale(2)) / 2, 0, ScreenScale(2), h)
+            surface.DrawRect((w - ScreenScaleMulti(2)) / 2, 0, ScreenScaleMulti(2), h)
         else
             surface.SetDrawColor(fg_col)
-            surface.DrawRect((w - ScreenScale(1)) / 2, 0, ScreenScale(1), h)
+            surface.DrawRect((w - ScreenScaleMulti(1)) / 2, 0, ScreenScaleMulti(1), h)
         end
 
         if attslider:GetDragging() then
@@ -441,7 +445,7 @@ function SWEP:CreateCustomizeHUD()
     attslidebox:Hide()
 
     local atttrivia = vgui.Create("DScrollPanel", ArcCW.InvHUD)
-    atttrivia:SetSize(barsize, scrh - ScreenScale(116))
+    atttrivia:SetSize(barsize, scrh - ScreenScaleMulti(116))
     atttrivia:SetPos(scrw - barsize - airgap, 2 * airgap)
     atttrivia.Paint = function(span, w, h)
         surface.SetDrawColor(bg_col)
@@ -497,7 +501,7 @@ function SWEP:CreateCustomizeHUD()
         -- att name
 
         local triv_attname = vgui.Create("DLabel", atttrivia)
-            triv_attname:SetSize(barsize, ScreenScale(16))
+            triv_attname:SetSize(barsize, ScreenScaleMulti(16))
             triv_attname:Dock(TOP)
             triv_attname:DockMargin( 0, 0, 0, 0 )
             triv_attname:SetText("")
@@ -520,7 +524,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetTextColor(fg_col)
                     surface.DrawText(i)
 
-                    c = c + ScreenScale(16)
+                    c = c + ScreenScaleMulti(16)
                 end
 
                 span:SetSize(barsize, c)
@@ -546,18 +550,18 @@ function SWEP:CreateCustomizeHUD()
         desctext = multlinetext(translate("desc." .. att) or atttbl.Description, barsize - smallgap * 2, "ArcCW_8")
 
         local triv_desc = vgui.Create("DLabel", atttrivia)
-        triv_desc:SetSize(barsize, ScreenScale(8) * (table.Count(desctext) + 1))
+        triv_desc:SetSize(barsize, ScreenScaleMulti(8) * (table.Count(desctext) + 1))
         triv_desc:SetText("")
         triv_desc:DockMargin( 0, 0, 0, smallgap )
         triv_desc:Dock(TOP)
         triv_desc.Paint = function(span, w, h)
-            local y = ScreenScale(8)
+            local y = ScreenScaleMulti(8)
             for i, line in pairs(desctext) do
                 surface.SetFont("ArcCW_8")
                 surface.SetTextPos(smallgap * 2, y)
                 surface.SetTextColor(fg_col)
                 surface.DrawText(line)
-                y = y + ScreenScale(8)
+                y = y + ScreenScaleMulti(8)
             end
         end
 
@@ -568,7 +572,7 @@ function SWEP:CreateCustomizeHUD()
         if (pros and #pros or 0) > 0 then
 
             local triv_pros = vgui.Create("DLabel", atttrivia)
-            triv_pros:SetSize(barsize, ScreenScale(10))
+            triv_pros:SetSize(barsize, ScreenScaleMulti(10))
             triv_pros:SetText("")
             triv_pros:Dock(TOP)
             triv_pros.Paint = function(span, w, h)
@@ -583,7 +587,7 @@ function SWEP:CreateCustomizeHUD()
 
             for _, i in pairs(pros) do
                 local triv_pro = vgui.Create("DLabel", atttrivia)
-                triv_pro:SetSize(barsize, ScreenScale(10))
+                triv_pro:SetSize(barsize, ScreenScaleMulti(10))
                 triv_pro:SetText("")
                 triv_pro:Dock(TOP)
                 triv_pro.Paint = function(span, w, h)
@@ -598,7 +602,7 @@ function SWEP:CreateCustomizeHUD()
 
         if (cons and #cons or 0) > 0 then
             local triv_cons = vgui.Create("DLabel", atttrivia)
-            triv_cons:SetSize(barsize, ScreenScale(10))
+            triv_cons:SetSize(barsize, ScreenScaleMulti(10))
             triv_cons:SetText("")
             triv_cons:Dock(TOP)
             triv_cons.Paint = function(span, w, h)
@@ -613,7 +617,7 @@ function SWEP:CreateCustomizeHUD()
 
             for _, i in pairs(cons) do
                 local triv_con = vgui.Create("DLabel", atttrivia)
-                triv_con:SetSize(barsize, ScreenScale(10))
+                triv_con:SetSize(barsize, ScreenScaleMulti(10))
                 triv_con:SetText("")
                 triv_con:Dock(TOP)
                 triv_con.Paint = function(span, w, h)
@@ -629,7 +633,7 @@ function SWEP:CreateCustomizeHUD()
         if #neutrals > 0 then
 
             local triv_neutrals = vgui.Create("DLabel", atttrivia)
-            triv_neutrals:SetSize(barsize, ScreenScale(10))
+            triv_neutrals:SetSize(barsize, ScreenScaleMulti(10))
             triv_neutrals:SetText("")
             triv_neutrals:Dock(TOP)
             triv_neutrals.Paint = function(span, w, h)
@@ -644,7 +648,7 @@ function SWEP:CreateCustomizeHUD()
 
             for _, i in pairs(neutrals) do
                 local triv_neutral = vgui.Create("DLabel", atttrivia)
-                triv_neutral:SetSize(barsize, ScreenScale(10))
+                triv_neutral:SetSize(barsize, ScreenScaleMulti(10))
                 triv_neutral:SetText("")
                 triv_neutral:Dock(TOP)
                 triv_neutral.Paint = function(span, w, h)
@@ -755,7 +759,7 @@ function SWEP:CreateCustomizeHUD()
                 if !owned and GetConVar("arccw_attinv_hideunowned"):GetBool() then continue end
 
                 local attbtn = attmenu:Add("DButton")
-                attbtn:SetSize(barsize + ScreenScale(12), ScreenScale(14))
+                attbtn:SetSize(barsize + ScreenScaleMulti(12), ScreenScaleMulti(14))
                 attbtn:SetText("")
                 attbtn:Dock( TOP )
                 attbtn:DockMargin( 0, 0, 0, smallgap )
@@ -917,7 +921,7 @@ function SWEP:CreateCustomizeHUD()
                     end
 
                     surface.SetTextColor(Bfg_col)
-                    surface.SetTextPos((h * 1.5) + smallgap, ScreenScale(1))
+                    surface.SetTextPos((h * 1.5) + smallgap, ScreenScaleMulti(1))
                     surface.SetFont("ArcCW_12")
                     surface.DrawText(txt)
 
@@ -933,9 +937,9 @@ function SWEP:CreateCustomizeHUD()
                 end
             end
 
-            local specsize = ca * (ScreenScale(14) + smallgap)
+            local specsize = ca * (ScreenScaleMulti(14) + smallgap)
 
-            attmenu:SetSize(barsize + ScreenScale(12), math.min(specsize, attmenuh))
+            attmenu:SetSize(barsize + ScreenScaleMulti(12), math.min(specsize, attmenuh))
         end
 
         attcatb.OnMousePressed = function(span, kc)
@@ -1271,7 +1275,7 @@ function SWEP:CreateCustomizeHUD()
     for _, i in pairs(trivia) do
         if !i then continue end
         local triv_misc = vgui.Create("DLabel", triviabox)
-        triv_misc:SetSize(barsize, ScreenScale(8))
+        triv_misc:SetSize(barsize, ScreenScaleMulti(8))
         triv_misc:Dock(TOP)
         triv_misc:SetText("")
         triv_misc:DockMargin( 0, 0, 0, 0 )
@@ -1293,30 +1297,30 @@ function SWEP:CreateCustomizeHUD()
     table.insert(adesctext, "")
 
     local triv_desc = vgui.Create("DLabel", triviabox)
-    triv_desc:SetSize(barsize, ScreenScale(8) * (table.Count(adesctext) + 1))
+    triv_desc:SetSize(barsize, ScreenScaleMulti(8) * (table.Count(adesctext) + 1))
     triv_desc:SetText("")
     triv_desc:Dock(TOP)
     triv_desc.Paint = function(span, w, h)
-        local y = ScreenScale(8)
+        local y = ScreenScaleMulti(8)
         for _, line in pairs(adesctext) do
             surface.SetFont("ArcCW_8")
             surface.SetTextPos(smallgap, y)
             surface.SetTextColor(fg_col)
             surface.DrawText(line)
-            y = y + ScreenScale(8)
+            y = y + ScreenScaleMulti(8)
         end
     end
 
     if !self.ShootEntity and !self.PrimaryBash and !self.Throwing and !self.NoRangeGraph then
         local rangegraph = vgui.Create("DLabel", triviabox)
-        rangegraph:SetSize(barsize, ScreenScale(64))
+        rangegraph:SetSize(barsize, ScreenScaleMulti(64))
         rangegraph:SetText("")
         rangegraph:Dock(TOP)
         rangegraph.Paint = function(span, w, h)
             if !IsValid(self) then return end
             local sidegap = 0
             local gx, gy = 0, smallgap
-            local gw, gh = w - (2 * sidegap), h - smallgap - ScreenScale(6)
+            local gw, gh = w - (2 * sidegap), h - smallgap - ScreenScaleMulti(6)
 
             local dmgmax = math.Round(self:GetDamage(0))
             local dmgmin = math.Round(self:GetDamage(self.Range))
@@ -1353,7 +1357,7 @@ function SWEP:CreateCustomizeHUD()
             -- start dmg
             surface.SetTextColor(fg_col)
             surface.SetFont("ArcCW_6")
-            surface.SetTextPos(gx + startx, gy + starty - ScreenScale(7) - 1)
+            surface.SetTextPos(gx + startx, gy + starty - ScreenScaleMulti(7) - 1)
             surface.DrawText(tostring(dmgmax) .. "DMG")
 
             -- end dmg
@@ -1361,7 +1365,7 @@ function SWEP:CreateCustomizeHUD()
             surface.SetFont("ArcCW_6")
 
             local dtw = surface.GetTextSize(tostring(dmgmin) .. "DMG")
-            surface.SetTextPos(gx + gw - dtw, gy + endy - ScreenScale(7) - 1)
+            surface.SetTextPos(gx + gw - dtw, gy + endy - ScreenScaleMulti(7) - 1)
             surface.DrawText(tostring(dmgmin) .. "DMG")
 
             -- start range
@@ -1406,7 +1410,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.DrawLine(gx, gy + shy, gw, gy + shy)
                 surface.DrawLine(mousex, gy, mousex, gh + gy)
 
-                shy = shy + ScreenScale(4)
+                shy = shy + ScreenScaleMulti(4)
 
                 mouser = math.Round(mouser)
                 shdmg = math.Round(shdmg)
@@ -1417,25 +1421,25 @@ function SWEP:CreateCustomizeHUD()
                 local twmr = surface.GetTextSize(tostring(mouser) .. "m")
                 local twmb = surface.GetTextSize(tostring(shdmg) .. "DMG")
 
-                if mousex < math.max(twmr, twmb) + ScreenScale(2) then
+                if mousex < math.max(twmr, twmb) + ScreenScaleMulti(2) then
                     alignleft = false
                 end
 
                 surface.SetTextColor(fg_col)
                 surface.SetFont("ArcCW_6")
                 if alignleft then
-                    surface.SetTextPos(mousex - ScreenScale(2) - twmr, shy)
+                    surface.SetTextPos(mousex - ScreenScaleMulti(2) - twmr, shy)
                 else
-                    surface.SetTextPos(mousex + ScreenScale(2), shy)
+                    surface.SetTextPos(mousex + ScreenScaleMulti(2), shy)
                 end
                 surface.DrawText(tostring(mouser) .. "m")
 
                 surface.SetTextColor(fg_col)
                 surface.SetFont("ArcCW_6")
                 if alignleft then
-                    surface.SetTextPos(mousex - ScreenScale(2) - twmb, ScreenScale(2) + gy)
+                    surface.SetTextPos(mousex - ScreenScaleMulti(2) - twmb, ScreenScaleMulti(2) + gy)
                 else
-                    surface.SetTextPos(mousex + ScreenScale(2), ScreenScale(2) + gy)
+                    surface.SetTextPos(mousex + ScreenScaleMulti(2), ScreenScaleMulti(2) + gy)
                 end
                 surface.DrawText(tostring(shdmg) .. "DMG")
             end
@@ -1628,10 +1632,10 @@ function SWEP:CreateCustomizeHUD()
         for _, i in pairs(statList) do
             if !i then continue end
             local stat_panel = vgui.Create("DPanel", statbox)
-            stat_panel:SetSize(barsize, ScreenScale(10))
+            stat_panel:SetSize(barsize, ScreenScaleMulti(10))
             stat_panel:Dock(TOP)
             stat_panel:SetText("")
-            stat_panel:DockMargin( 0, ScreenScale(1), 0, ScreenScale(1) )
+            stat_panel:DockMargin( 0, ScreenScaleMulti(1), 0, ScreenScaleMulti(1) )
             stat_panel.Paint = function(spaa, w, h)
                 local Bbg_col = Color(0, 0, 0, 50)
 
@@ -1644,7 +1648,7 @@ function SWEP:CreateCustomizeHUD()
             end
 
             local stat_title = vgui.Create("DLabel", stat_panel)
-            stat_title:SetSize(barsize * 0.5, ScreenScale(10))
+            stat_title:SetSize(barsize * 0.5, ScreenScaleMulti(10))
             stat_title:SetText("")
             stat_title:Dock(LEFT)
             stat_title.Paint = function(span, w, h)
@@ -1657,7 +1661,7 @@ function SWEP:CreateCustomizeHUD()
             local origStat, curStat = i[3]()
             local better = i[4]()
             local stat_orig = vgui.Create("DLabel", stat_panel)
-            stat_orig:SetSize(barsize * 0.25, ScreenScale(10))
+            stat_orig:SetSize(barsize * 0.25, ScreenScaleMulti(10))
             stat_orig:SetText("")
             stat_orig:Dock(LEFT)
             stat_orig.Paint = function(span, w, h)
@@ -1667,7 +1671,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.DrawText(origStat)
             end
             local stat_cur = vgui.Create("DLabel", stat_panel)
-            stat_cur:SetSize(barsize * 0.25, ScreenScale(10))
+            stat_cur:SetSize(barsize * 0.25, ScreenScaleMulti(10))
             stat_cur:SetText("")
             stat_cur:Dock(LEFT)
             stat_cur.Paint = function(span, w, h)
@@ -1683,9 +1687,9 @@ function SWEP:CreateCustomizeHUD()
 
     if !self.Throwing and !self.PrimaryBash and !self.ShootEntity then
         local togglestat = vgui.Create("DButton", ArcCW.InvHUD)
-        togglestat:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+        togglestat:SetSize((barsize - ScreenScaleMulti(2)) / 2, ScreenScaleMulti(14))
         togglestat:SetText("")
-        togglestat:SetPos(scrw - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap)
+        togglestat:SetPos(scrw - barsize - airgap - ScreenScaleMulti(1) - (barsize / 2), airgap)
 
         togglestat.OnMousePressed = function(spaa, kc)
             if statbox:IsVisible() then
@@ -1719,7 +1723,7 @@ function SWEP:CreateCustomizeHUD()
             local txt = translate(statbox:IsVisible() and "ui.trivia" or "ui.stats")
 
             surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(smallgap, ScreenScale(1))
+            surface.SetTextPos(smallgap, ScreenScaleMulti(1))
             surface.SetFont("ArcCW_12")
             surface.DrawText(txt)
         end
@@ -1730,9 +1734,9 @@ function SWEP:CreateCustomizeHUD()
 
         if GetRoundState() == ROUND_ACTIVE and (LocalPlayer():GetTraitor() or LocalPlayer():GetDetective() or (TTT2 and LocalPlayer().IsShopper and LocalPlayer():IsShopper())) then
             local buymenu = vgui.Create("DButton", ArcCW.InvHUD)
-            buymenu:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+            buymenu:SetSize((barsize - ScreenScaleMulti(2)) / 2, ScreenScaleMulti(14))
             buymenu:SetText("")
-            buymenu:SetPos(scrw - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap + gap)
+            buymenu:SetPos(scrw - barsize - airgap - ScreenScaleMulti(1) - (barsize / 2), airgap + gap)
             gap = gap + airgap
 
             buymenu.OnMousePressed = function(spaa, kc)
@@ -1756,16 +1760,16 @@ function SWEP:CreateCustomizeHUD()
                 local txt = translate("ui.tttequip")
 
                 surface.SetTextColor(Bfg_col)
-                surface.SetTextPos(smallgap, ScreenScale(1))
+                surface.SetTextPos(smallgap, ScreenScaleMulti(1))
                 surface.SetFont("ArcCW_12")
                 surface.DrawText(txt)
             end
         end
 
         local radiomenu = vgui.Create("DButton", ArcCW.InvHUD)
-        radiomenu:SetSize((barsize - ScreenScale(2)) / 2, ScreenScale(14))
+        radiomenu:SetSize((barsize - ScreenScaleMulti(2)) / 2, ScreenScaleMulti(14))
         radiomenu:SetText("")
-        radiomenu:SetPos(scrw - barsize - airgap - ScreenScale(1) - (barsize / 2), airgap + gap)
+        radiomenu:SetPos(scrw - barsize - airgap - ScreenScaleMulti(1) - (barsize / 2), airgap + gap)
 
         radiomenu.OnMousePressed = function(spaa, kc)
             RADIO:ShowRadioCommands(!RADIO.Show)
@@ -1788,7 +1792,7 @@ function SWEP:CreateCustomizeHUD()
             local txt = translate("ui.tttchat")
 
             surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(smallgap, ScreenScale(1))
+            surface.SetTextPos(smallgap, ScreenScaleMulti(1))
             surface.SetFont("ArcCW_12")
             surface.DrawText(txt)
         end
