@@ -1,16 +1,5 @@
-local mth      = math
-local m_derand = mth.randomseed
-local m_rand   = mth.Rand
-local m_clamp  = mth.Clamp
-local m_fmod   = mth.fmod
-local m_max    = mth.max
-local m_lerp   = Lerp
-
-function SWEP:PrimaryAttack()
+function SWEP:CanPrimaryAttack()
     local owner = self:GetOwner()
-
-    self.Primary.Automatic = true
-
     if owner:IsNPC() then self:NPC_Shoot() return end
 
     if self:GetInUBGL() then self:ShootUBGL() return end
@@ -28,6 +17,31 @@ function SWEP:PrimaryAttack()
     if self:BarrelHitWall() > 0 then return end
 
     if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
+
+    if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
+
+    if self:GetNeedCycle() then return end
+
+    if self:GetCurrentFiremode().Mode == 0 then
+        self:ChangeFiremode(false)
+        --self.Primary.Automatic = false
+
+        return
+    end
+
+    if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
+
+    return true
+end
+
+
+
+function SWEP:PrimaryAttack()
+    local owner = self:GetOwner()
+    
+    self.Primary.Automatic = true
+
+    if !self:CanPrimaryAttack() then return end
 
     local clip = self:Clip1()
     local aps = self:GetBuff_Override("Override_AmmoPerShot") or self.AmmoPerShot
@@ -49,20 +63,7 @@ function SWEP:PrimaryAttack()
         return
     end
 
-    if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
-
-    if self:GetNeedCycle() then return end
-
-    if self:GetCurrentFiremode().Mode == 0 then
-        self:ChangeFiremode(false)
-        --self.Primary.Automatic = false
-
-        return
-    end
-
-    if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
-
-    m_derand(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand()) * (self:EntIndex() % 30241))
+    math.randomseed(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand()) * (self:EntIndex() % 30241))
 
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
@@ -297,10 +298,10 @@ function SWEP:PrimaryAttack()
     owner:DoAnimationEvent(self:GetBuff_Override("Override_AnimShoot") or self.AnimShoot)
 
     local volume = self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")
-    local pitch  = self.ShootPitch * m_rand(1 - self.ShootPitchVariation, 1 + self.ShootPitchVariation) * self:GetBuff_Mult("Mult_ShootPitch")
+    local pitch  = self.ShootPitch * math.Rand(1 - self.ShootPitchVariation, 1 + self.ShootPitchVariation) * self:GetBuff_Mult("Mult_ShootPitch")
 
-    volume = m_clamp(volume, 51, 149)
-    pitch  = m_clamp(pitch, 51, 149)
+    volume = math.Clamp(volume, 51, 149)
+    pitch  = math.Clamp(pitch, 51, 149)
 
     local shouldsupp = SERVER and !game.SinglePlayer()
 
@@ -475,10 +476,10 @@ function SWEP:GetShotgunSpreadOffset(num)
         if num > #spreadpt then
             if spo then
                 num = num - #spreadpt
-                num = m_fmod(num, #spreadov) + 1
+                num = math.fmod(num, #spreadov) + 1
                 rotate = spreadov[num]
             else
-                num = m_fmod(num, #spreadpt) + 1
+                num = math.fmod(num, #spreadpt) + 1
                 rotate = spreadpt[num]
             end
         else
@@ -514,11 +515,11 @@ function SWEP:GetDispersion()
 
         if sights then maxspeed = maxspeed * self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult") end
 
-        speed = m_clamp(speed / maxspeed, 0, 2)
+        speed = math.Clamp(speed / maxspeed, 0, 2)
 
         hip = hip + (speed * self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
     else
-        hip = hip + m_max(self.JumpDispersion * self:GetBuff_Mult("Mult_JumpDispersion"), self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion") * 2)
+        hip = hip + math.max(self.JumpDispersion * self:GetBuff_Mult("Mult_JumpDispersion"), self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion") * 2)
     end
 
     if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
@@ -603,8 +604,8 @@ function SWEP:DoRecoil()
     local recv = (visual or 1) * self:GetBuff_Mult("Mult_VisualRecoilMult")
     local recs = (side or 1)   * self:GetBuff_Mult("Mult_RecoilSide")
 
-    local irec = m_rand(-1, 1)
-    local recu = m_rand(0.75, 1.25)
+    local irec = math.Rand(-1, 1)
+    local recu = math.Rand(0.75, 1.25)
 
     if self:InBipod() then
         local biprec = self.BipodRecoil
@@ -637,14 +638,14 @@ function SWEP:DoRecoil()
 
         self.RecoilAmount     = self.RecoilAmount + (self.Recoil * rmul)
         self.RecoilAmountSide = self.RecoilAmountSide + (self.RecoilSide * irec * recs * rmul)
-        self.RecoilPunchBack  = math.Clamp(self.Recoil * recv * m_rand(2, 3), 0, 2)
+        self.RecoilPunchBack  = math.Clamp(self.Recoil * recv * math.Rand(2, 3), 0, 2)
 
         if self.MaxRecoilBlowback > 0 then
-            self.RecoilPunchBack = m_clamp(self.RecoilPunchBack, 0, self.MaxRecoilBlowback)
+            self.RecoilPunchBack = math.Clamp(self.RecoilPunchBack, 0, self.MaxRecoilBlowback)
         end
 
         self.RecoilPunchSide = self.RecoilSide * 0.1 * irec * recv * rmul
-        self.RecoilPunchUp   = m_clamp(self.Recoil * self.RecoilRise * 0.6 * recu * recv * rmul, 0, 0.1)
+        self.RecoilPunchUp   = math.Clamp(self.Recoil * self.RecoilRise * 0.6 * recu * recv * rmul, 0, 0.1)
     end
 end
 
@@ -703,9 +704,9 @@ function SWEP:GetDamage(range, pellet)
     local bran = self:GetBuff_Mult("Mult_Range")
 
     delta = (dmgmax < dmgmin and (range / (sran / bran))) or (range / (sran * bran))
-    delta = m_clamp(delta, 0, 1)
+    delta = math.Clamp(delta, 0, 1)
 
-    local lerped = m_lerp(delta, dmgmax, dmgmin)
+    local lerped = Lerp(delta, dmgmax, dmgmin)
 
     return lerped
 end

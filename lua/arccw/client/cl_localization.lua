@@ -34,6 +34,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.hud_forceshow"]             = "Force HUD On (Useful w/ Custom HUDs)",
         ["arccw.cvar.hudpos_deadzone_x"]         = "Deadzone X",
         ["arccw.cvar.hudpos_deadzone_y"]         = "Deadzone Y",
+        ["arccw.cvar.hudpos_size"]               = "HUD and Font Size",
         -- ArcCW_Options_Bullet
         ["arccw.cvar.bullet_enable"]             = "Physical Bullets",
         ["arccw.cvar.bullet_gravity"]            = "Gravity",

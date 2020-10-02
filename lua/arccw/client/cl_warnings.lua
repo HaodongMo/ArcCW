@@ -11,6 +11,10 @@ ArcCW.IncompatibleAddons = {
     -- ["1429489453"] = "Causes issues with arms." -- bio annihilation extended sninctbur
 }
 
+local function ScreenScaleMulti(input)
+    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+end
+
 function ArcCW.MakeIncompatibleWindow(tbl)
     local startTime = CurTime()
 
@@ -28,33 +32,33 @@ function ArcCW.MakeIncompatibleWindow(tbl)
     end
 
     local title = vgui.Create("DLabel", window)
-    title:SetSize(ScreenScale(256), ScreenScale(26))
+    title:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(26))
     title:Dock(TOP)
     title:SetFont("ArcCW_24")
     title:SetText("ArcCW: INCOMPATIBLE ADDONS")
-    title:DockMargin(ScreenScale(16), 0, ScreenScale(16), ScreenScale(8))
+    title:DockMargin(ScreenScaleMulti(16), 0, ScreenScaleMulti(16), ScreenScaleMulti(8))
 
     local desc = vgui.Create("DLabel", window)
-    desc:SetSize(ScreenScale(256), ScreenScale(12))
+    desc:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(12))
     desc:Dock(TOP)
-    desc:DockMargin(ScreenScale(4), 0, ScreenScale(4), 0)
+    desc:DockMargin(ScreenScaleMulti(4), 0, ScreenScaleMulti(4), 0)
     desc:SetFont("ArcCW_12")
     desc:SetText("You have some addons that are known to !work with ArcCW.")
     desc:SetContentAlignment(5)
 
     local desc2 = vgui.Create("DLabel", window)
-    desc2:SetSize(ScreenScale(256), ScreenScale(12))
+    desc2:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(12))
     desc2:Dock(TOP)
-    desc2:DockMargin(ScreenScale(4), 0, ScreenScale(4), ScreenScale(4))
+    desc2:DockMargin(ScreenScaleMulti(4), 0, ScreenScaleMulti(4), ScreenScaleMulti(4))
     desc2:SetFont("ArcCW_12")
     desc2:SetText("Disable them or expect broken behavior!")
     desc2:SetContentAlignment(5)
 
     local neverAgain = vgui.Create("DButton", window)
-    neverAgain:SetSize(ScreenScale(256), ScreenScale(20))
+    neverAgain:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(20))
     neverAgain:SetText("")
     neverAgain:Dock(BOTTOM)
-    neverAgain:DockMargin(ScreenScale(48), ScreenScale(2), ScreenScale(48), ScreenScale(2))
+    neverAgain:DockMargin(ScreenScaleMulti(48), ScreenScaleMulti(2), ScreenScaleMulti(48), ScreenScaleMulti(2))
     neverAgain.OnMousePressed = function(spaa, kc)
         if CurTime() > startTime + 10 then
             local simpleTbl = {}
@@ -79,7 +83,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
 
         local txt = (CurTime() > startTime + 10) and (spaa:IsHovered() and "Are you absolutely sure you understand the consequences?" or "Never warn me again") or ("Wait - " .. math.ceil(startTime + 10 - CurTime()))
         surface.SetTextColor(Bfg_col)
-        surface.SetTextPos(ScreenScale(8), ScreenScale(2))
+        surface.SetTextPos(ScreenScaleMulti(8), ScreenScaleMulti(2))
         surface.SetFont("ArcCW_12")
         surface.DrawText(txt)
     end
@@ -99,10 +103,10 @@ function ArcCW.MakeIncompatibleWindow(tbl)
 
 
     local accept = vgui.Create("DButton", window)
-    accept:SetSize(ScreenScale(256), ScreenScale(20))
+    accept:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(20))
     accept:SetText("")
     accept:Dock(BOTTOM)
-    accept:DockMargin(ScreenScale(48), ScreenScale(2), ScreenScale(48), ScreenScale(2))
+    accept:DockMargin(ScreenScaleMulti(48), ScreenScaleMulti(2), ScreenScaleMulti(48), ScreenScaleMulti(2))
     accept.OnMousePressed = function(spaa, kc)
         if CurTime() > startTime + 5 then
             window:Close()
@@ -123,16 +127,16 @@ function ArcCW.MakeIncompatibleWindow(tbl)
 
         local txt = (CurTime() > startTime + 5) and "Acknowledge" or ("Wait - " .. math.ceil(startTime + 5 - CurTime()))
         surface.SetTextColor(Bfg_col)
-        surface.SetTextPos(ScreenScale(8), ScreenScale(2))
+        surface.SetTextPos(ScreenScaleMulti(8), ScreenScaleMulti(2))
         surface.SetFont("ArcCW_12")
         surface.DrawText(txt)
     end
 
     for _, addon in pairs(tbl) do
         local addonBtn = vgui.Create("DButton", window)
-        addonBtn:SetSize(ScreenScale(256), ScreenScale(28))
+        addonBtn:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(28))
         addonBtn:Dock(TOP)
-        addonBtn:DockMargin(ScreenScale(36), ScreenScale(2), ScreenScale(36), ScreenScale(2))
+        addonBtn:DockMargin(ScreenScaleMulti(36), ScreenScaleMulti(2), ScreenScaleMulti(36), ScreenScaleMulti(2))
         addonBtn:SetFont("ArcCW_12")
         addonBtn:SetText("")
         addonBtn:SetContentAlignment(5)
@@ -150,13 +154,13 @@ function ArcCW.MakeIncompatibleWindow(tbl)
 
             local txt = addon.title
             surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(ScreenScale(18), ScreenScale(2))
+            surface.SetTextPos(ScreenScaleMulti(18), ScreenScaleMulti(2))
             surface.SetFont("ArcCW_12")
             surface.DrawText(txt)
 
             local txt2 = ArcCW.IncompatibleAddons[tostring(addon.wsid)]
             surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(ScreenScale(18), ScreenScale(16))
+            surface.SetTextPos(ScreenScaleMulti(18), ScreenScaleMulti(16))
             surface.SetFont("ArcCW_8")
             surface.DrawText(txt2)
         end
