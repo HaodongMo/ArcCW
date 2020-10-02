@@ -107,15 +107,6 @@ local HudPanel = {
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_x", var = "arccw_hud_deadzone_x", min = 0, max = 1 },
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_y", var = "arccw_hud_deadzone_y", min = 0, max = 1 },
     { type = "f", text = "#arccw.cvar.hudpos_size", var = "arccw_hud_size", min = 0, max = 1.5 },
-    --{ type = "f", text = "#arccw.cvar.hudpos_size_font", var = "arccw_hud_size_font", min = 0, max = 1.5 },
-
-    { type = "h", text = "" },
-    { type = "h", text = "#arccw.clientcfg" },
-    { type = "b", text = "#arccw.cvar.hud_dis_firemodename", var = "arccw_hud_dis_firemodename" },
-    { type = "b", text = "#arccw.cvar.hud_dis_firemodebar", var = "arccw_hud_dis_firemodebar" },
-    { type = "b", text = "#arccw.cvar.hud_dis_printname", var = "arccw_hud_dis_printname" },
-    { type = "b", text = "#arccw.cvar.hud_dis_magazine", var = "arccw_hud_dis_magazine" },
-    { type = "b", text = "#arccw.cvar.hud_dis_reserve", var = "arccw_hud_dis_reserve" },
 }
 
 local CrosshairPanel = {

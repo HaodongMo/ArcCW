@@ -61,16 +61,6 @@ ArcCW.ClientConVars = {
     ["arccw_hud_deadzone_x"]          = { def =  0 },
     ["arccw_hud_deadzone_y"]          = { def =  0 },
     ["arccw_hud_size"]                = { def =  1 },
-    --["arccw_hud_size_font"]           = { def =  1 },
-
-    -- Seven segments of a pie, like an apple
-    ["arccw_hud_dis_firemodename"]    = { def =  0 },
-    ["arccw_hud_dis_firemodebar"]     = { def =  0 },
-    ["arccw_hud_dis_printname"]       = { def =  0 },
-    --["arccw_hud_dis_sym_a"]           = { def =  0 },
-    --["arccw_hud_dis_sym_r"]           = { def =  0 },
-    ["arccw_hud_dis_magazine"]        = { def =  0 },
-    ["arccw_hud_dis_reserve"]         = { def =  0 },
 
     ["arccw_scope_r"]                 = { def =  255 },
     ["arccw_scope_g"]                 = { def =  0 },
