@@ -48,10 +48,6 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.shake_info" },
     { type = "b", text = "#arccw.cvar.2d3d", var = "arccw_2d3d" },
     { type = "c", text = "#arccw.cvar.2d3d_info" },
-    { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
-    { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
-    { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
-    { type = "b", text = "#arccw.cvar.attinv_simpleproscons", var = "arccw_attinv_simpleproscons" },
 }
 
 local PerfomancePanel = {
@@ -107,6 +103,11 @@ local HudPanel = {
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_x", var = "arccw_hud_deadzone_x", min = 0, max = 1 },
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_y", var = "arccw_hud_deadzone_y", min = 0, max = 1 },
     { type = "f", text = "#arccw.cvar.hudpos_size", var = "arccw_hud_size", min = 0, max = 1.5 },
+    
+    { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
+    { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
+    { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
+    { type = "b", text = "#arccw.cvar.attinv_simpleproscons", var = "arccw_attinv_simpleproscons" },
 }
 
 local CrosshairPanel = {
