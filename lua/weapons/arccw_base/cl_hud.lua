@@ -1,3 +1,8 @@
+local function ScreenScaleMulti(input)
+    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+end
+
+
 local function MyDrawText(tbl)
     local x = tbl.x
     local y = tbl.y
@@ -96,14 +101,14 @@ function SWEP:DrawHUD()
     local col2 = Color(255, 255, 255, 255)
     local col3 = Color(255, 0, 0, 255)
 
-    local airgap = ScreenScale(8)
+    local airgap = ScreenScaleMulti(8)
 
     local apan_bg = {
-        w = ScreenScale(128),
-        h = ScreenScale(48),
+        w = ScreenScaleMulti(128),
+        h = ScreenScaleMulti(48),
     }
 
-    local bargap = ScreenScale(2)
+    local bargap = ScreenScaleMulti(2)
 
     if self:CanBipod() or self:GetInBipod() then
         local txt = "[" .. string.upper(ArcCW:GetBind("+use")) .. "]"
@@ -117,7 +122,7 @@ function SWEP:DrawHUD()
         local bip = {
             shadow = true,
             x = ScrW() / 2,
-            y = (ScrH() / 2) + ScreenScale(36),
+            y = (ScrH() / 2) + ScreenScaleMulti(36),
             font = "ArcCW_12",
             text = txt,
             col = col2,
@@ -192,7 +197,7 @@ function SWEP:DrawHUD()
                     local toscreen = angpos.Pos:ToScreen()
                 cam.End3D()
 
-                apan_bg.x = toscreen.x - apan_bg.w - ScreenScale(8)
+                apan_bg.x = toscreen.x - apan_bg.w - ScreenScaleMulti(8)
                 apan_bg.y = toscreen.y - apan_bg.h * 0.5
 
                 local wammo = {
@@ -231,8 +236,8 @@ function SWEP:DrawHUD()
 
 
                 local wreserve = {
-                    x = wammo.x - wammo.w - ScreenScale(4),
-                    y = apan_bg.y + ScreenScale(26 - 12),
+                    x = wammo.x - wammo.w - ScreenScaleMulti(4),
+                    y = apan_bg.y + ScreenScaleMulti(26 - 12),
                     text = tostring(data.ammo) .. " /",
                     font = "ArcCW_12",
                     col = col2,
@@ -266,7 +271,7 @@ function SWEP:DrawHUD()
                 if self:HeatEnabled() then
                     local wheat = {
                         x = apan_bg.x + apan_bg.w - airgap,
-                        y = wmode.y + ScreenScale(14),
+                        y = wmode.y + ScreenScaleMulti(14),
                         font = "ArcCW_12",
                         text = "HEAT " .. tostring(math.ceil(100 * self:GetHeat() / self:GetMaxHeat())) .. "%",
                         col = col2,
@@ -280,8 +285,8 @@ function SWEP:DrawHUD()
             end
         else
 
-            apan_bg.x = ScrW() - apan_bg.w - airgap - ScreenScale( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 )
-            apan_bg.y = ScrH() - apan_bg.h - airgap - ScreenScale( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 )
+            apan_bg.x = ScrW() - apan_bg.w - airgap - ScreenScaleMulti( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 )
+            apan_bg.y = ScrH() - apan_bg.h - airgap - ScreenScaleMulti( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 )
 
             surface.SetDrawColor(col1)
             surface.DrawRect(apan_bg.x, apan_bg.y, apan_bg.w, apan_bg.h)
@@ -290,9 +295,9 @@ function SWEP:DrawHUD()
 
             local bar = {
                 w = (apan_bg.w - ((segcount + 1) * bargap)) / segcount,
-                h = ScreenScale(3),
+                h = ScreenScaleMulti(3),
                 x = apan_bg.x + bargap,
-                y = apan_bg.y + ScreenScale(43)
+                y = apan_bg.y + ScreenScaleMulti(43)
             }
 
             for i = 1, segcount do
@@ -317,7 +322,7 @@ function SWEP:DrawHUD()
             surface.SetFont("ArcCW_16")
 
             local wname = {
-                x = apan_bg.x + apan_bg.w - ScreenScale(4) - surface.GetTextSize(self.PrintName),
+                x = apan_bg.x + apan_bg.w - ScreenScaleMulti(4) - surface.GetTextSize(self.PrintName),
                 y = apan_bg.y,
                 font = "ArcCW_16",
                 text = self.PrintName,
@@ -329,8 +334,8 @@ function SWEP:DrawHUD()
             surface.SetFont("ArcCW_12")
 
             local wmode = {
-                x = apan_bg.x + apan_bg.w - ScreenScale(4) - surface.GetTextSize(data.mode),
-                y = apan_bg.y + ScreenScale(16),
+                x = apan_bg.x + apan_bg.w - ScreenScaleMulti(4) - surface.GetTextSize(data.mode),
+                y = apan_bg.y + ScreenScaleMulti(16),
                 font = "ArcCW_12",
                 text = data.mode,
                 col = col2
@@ -338,89 +343,104 @@ function SWEP:DrawHUD()
 
             MyDrawText(wmode)
 
-            local wammo = {
-                x = apan_bg.x + ScreenScale(11),
-                y = apan_bg.y + ScreenScale(5),
-                text = tostring(data.clip),
-                font = "ArcCW_32",
-                col = col2
-            }
-
-            wammo.col = col2
-
-            if data.clip == 0 then
-                wammo.col = col3
+            local slash = "/ "
+            local oneortheother = 0
+            if GetConVar("arccw_hud_dis_magazine"):GetBool() or GetConVar("arccw_hud_dis_reserve"):GetBool() then
+                slash = ""
+                oneortheother = ScreenScaleMulti(6)                
             end
 
-            MyDrawText(wammo)
-
-            surface.SetFont("ArcCW_20")
-            local wreserve = {
-                x = apan_bg.x + ScreenScale(56),
-                y = apan_bg.y + ScreenScale(12),
-                text = tostring(data.ammo),
-                font = "ArcCW_20",
-                col = col2,
-            }
-
-            MyDrawText(wreserve)
-
-            surface.SetFont("ArcCW_20")
-            local wammo_symbol = {
-                x = apan_bg.x + ScreenScale(4),
-                y = apan_bg.y + ScreenScale(15.5),
-                text = "A",
-                font = "ArcCW_12",
-                col = col2
-            }
-
-            wammo_symbol.col = col2
-
-            if data.clip == 0 then
-                wammo_symbol.col = col3
-            end
-
-            MyDrawText(wammo_symbol)
-
-            surface.SetFont("ArcCW_10")
-            local wreserve_symbol = {
-                x = apan_bg.x + ScreenScale(50),
-                y = apan_bg.y + ScreenScale(17),
-                text = "R",
-                font = "ArcCW_10",
-                col = col2,
-            }
-
-            MyDrawText(wreserve_symbol)
-
-            surface.SetFont("ArcCW_32")
-            wammo.w = surface.GetTextSize(tostring(data.clip))
-
-            if data.plus then
-                local wplus = {
-                    x = wammo.x + wammo.w + ScreenScale(2),
-                    y = wammo.y + ScreenScale(3),
-                    text = "+" .. tostring(data.plus),
-                    font = "ArcCW_16",
+            if !GetConVar("arccw_hud_dis_magazine"):GetBool() then
+                local wammo = {
+                    x = apan_bg.x + ScreenScaleMulti(11) + oneortheother,
+                    y = apan_bg.y + ScreenScaleMulti(5),
+                    text = tostring(data.clip),
+                    font = "ArcCW_32",
                     col = col2
                 }
 
-                MyDrawText(wplus)
+                wammo.col = col2
+
+                if data.clip == 0 then
+                    wammo.col = col3
+                end
+
+                MyDrawText(wammo)
+
+                surface.SetFont("ArcCW_32")
+                wammo.w = surface.GetTextSize(tostring(data.clip))
+
+                if data.plus then
+                    local wplus = {
+                        x = wammo.x + wammo.w + ScreenScaleMulti(2),
+                        y = wammo.y + ScreenScaleMulti(3),
+                        text = "+" .. tostring(data.plus),
+                        font = "ArcCW_16",
+                        col = col2
+                    }
+
+                    MyDrawText(wplus)
+                end
             end
+
+            if !GetConVar("arccw_hud_dis_reserve"):GetBool() then
+                surface.SetFont("ArcCW_20")
+                local wreserve = {
+                    x = apan_bg.x + ScreenScaleMulti(52) - oneortheother,
+                    y = apan_bg.y + ScreenScaleMulti(12),
+                    text = slash .. tostring(data.ammo),
+                    font = "ArcCW_20",
+                    col = col2,
+                }
+
+                MyDrawText(wreserve)
+            end
+
+            --[[if !GetConVar("arccw_hud_dis_sym_a"):GetBool() then
+                surface.SetFont("ArcCW_20")
+                local wammo_symbol = {
+                    x = apan_bg.x + ScreenScaleMulti(4),
+                    y = apan_bg.y + ScreenScaleMulti(15.5),
+                    text = "A",
+                    font = "ArcCW_12",
+                    col = col2
+                }
+
+                wammo_symbol.col = col2
+
+                if data.clip == 0 then
+                    wammo_symbol.col = col3
+                end
+
+                MyDrawText(wammo_symbol)
+            end
+
+            if !GetConVar("arccw_hud_dis_sym_r"):GetBool() then
+                surface.SetFont("ArcCW_10")
+                local wreserve_symbol = {
+                    x = apan_bg.x + ScreenScaleMulti(50),
+                    y = apan_bg.y + ScreenScaleMulti(17),
+                    text = "R",
+                    font = "ArcCW_10",
+                    col = col2,
+                }
+
+                MyDrawText(wreserve_symbol)
+            end]]
 
             if self:HeatEnabled() then
                 local heat_bg = {
                     x = apan_bg.x,
                     w = apan_bg.w,
-                    h = ScreenScale(14)
+                    h = ScreenScaleMulti(14)
                 }
 
-                heat_bg.y = apan_bg.y - heat_bg.h - ScreenScale(2)
+                heat_bg.y = apan_bg.y - heat_bg.h - ScreenScaleMulti(2)
                 surface.SetDrawColor(col1)
                 surface.DrawRect(heat_bg.x, heat_bg.y, heat_bg.w, heat_bg.h)
 
                 local theat = {
-                    x = heat_bg.x + ScreenScale(2),
+                    x = heat_bg.x + ScreenScaleMulti(2),
                     y = heat_bg.y,
                     text = "HEAT [",
                     font = "ArcCW_12",
@@ -430,7 +450,7 @@ function SWEP:DrawHUD()
                 MyDrawText(theat)
 
                 local eheat = {
-                    x = heat_bg.x + heat_bg.w - ScreenScale(4),
+                    x = heat_bg.x + heat_bg.w - ScreenScaleMulti(4),
                     y = heat_bg.y,
                     text = "]",
                     font = "ArcCW_12",
@@ -440,10 +460,10 @@ function SWEP:DrawHUD()
                 MyDrawText(eheat)
 
                 local heat_bar = {
-                    x = heat_bg.x + ScreenScale(33),
-                    y = heat_bg.y + ScreenScale(4),
-                    h = heat_bg.h - ScreenScale(8),
-                    w = heat_bg.w - ScreenScale(38)
+                    x = heat_bg.x + ScreenScaleMulti(33),
+                    y = heat_bg.y + ScreenScaleMulti(4),
+                    h = heat_bg.h - ScreenScaleMulti(8),
+                    w = heat_bg.w - ScreenScaleMulti(38)
                 }
 
                 local perc = self:GetHeat() / self:GetMaxHeat()
@@ -469,8 +489,8 @@ function SWEP:DrawHUD()
         end
 
         local whp = {
-            x = airgap + ScreenScale( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
-            y = ScrH() - ScreenScale(26) - ScreenScale(16) - airgap - ScreenScale( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 ),
+            x = airgap + ScreenScaleMulti( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
+            y = ScrH() - ScreenScaleMulti(26) - ScreenScaleMulti(16) - airgap - ScreenScaleMulti( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 ),
             font = "ArcCW_26",
             text = "HP: " .. tostring(math.Round(vhp)),
             col = colhp,
@@ -481,8 +501,8 @@ function SWEP:DrawHUD()
 
         if LocalPlayer():Armor() > 0 then
             local war = {
-                x = airgap + ScreenScale( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
-                y = ScrH() - ScreenScale(16) - airgap - ScreenScale( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 ),
+                x = airgap + ScreenScaleMulti( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
+                y = ScrH() - ScreenScaleMulti(16) - airgap - ScreenScaleMulti( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 ),
                 font = "ArcCW_16",
                 text = "ARMOR: " .. tostring(math.Round(varmor)),
                 col = col2,

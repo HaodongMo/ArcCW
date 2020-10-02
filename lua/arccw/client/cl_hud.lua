@@ -86,14 +86,14 @@ local function generatefonts()
 
         surface.CreateFont( "ArcCW_" .. tostring(i), {
             font = font,
-            size = ScreenScale(i),
+            size = ScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
         } )
 
         surface.CreateFont( "ArcCW_" .. tostring(i) .. "_Glow", {
             font = font,
-            size = ScreenScale(i),
+            size = ScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
             blursize = 8,
@@ -128,6 +128,10 @@ hook.Add("HUDPaint", "ArcCW_FontRegen", function()
 
     lastScrH = ScrH()
     lastScrW = ScrW()
+end)
+
+cvars.AddChangeCallback("arccw_hud_size", function()
+    generatefonts()
 end)
 
 -- surface.CreateFont( "ArcCW_12", {
