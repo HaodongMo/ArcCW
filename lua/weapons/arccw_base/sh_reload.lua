@@ -86,7 +86,7 @@ function SWEP:Reload()
         self:GetOwner():SetAmmo(self:Ammo1() - insertcount, self.Primary.Ammo)
         self:SetClip1(self:Clip1() + insertcount)
 
-        self:PlayAnimation(anim, mult, true, 0, true)
+        self:PlayAnimation(anim, mult, true, 0, true, nil, true)
 
         self:SetTimer(self:GetAnimKeyTime(anim) * mult,
         function()
@@ -105,7 +105,7 @@ function SWEP:Reload()
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
-        self:PlayAnimation(anim, mult, true, 0, true)
+        self:PlayAnimation(anim, mult, true, 0, true, nil, true)
         self:SetTimer(self:GetAnimKeyTime(anim) * mult * 0.95,
         function()
             self:SetReloading(false)

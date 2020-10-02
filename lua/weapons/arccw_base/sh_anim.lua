@@ -1,16 +1,3 @@
-if SERVER then
-
-function SWEP:DoLHIKAnimation(key, time)
-    if game.SinglePlayer() then
-        net.Start("arccw_sp_lhikanim")
-        net.WriteString(key)
-        net.WriteFloat(time)
-        net.Send(self:GetOwner())
-    end
-end
-
-end
-
 function SWEP:SelectAnimation(anim)
     if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
         anim = anim .. "_empty"
