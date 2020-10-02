@@ -1,5 +1,8 @@
 local srf      = surface
-local ScrScale = ScreenScale
+
+local function ScreenScaleMulti(input)
+    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+end
 
 local blacklistWindow = nil
 local blacklistTbl    = {}
@@ -10,9 +13,6 @@ local color_arccwbred = Color(150, 50, 50, 255)
 local color_arccwlred = Color(125, 25, 25, 150)
 local color_arccwdred = Color(75, 0, 0, 150)
 local color_arccwdtbl = Color(0, 0, 0, 200)
-
-local Scr256, Scr48, Scr36, Scr20    = ScrScale(256), ScrScale(48), ScrScale(36), ScrScale(20)
-local Scr16, Scr12, Scr4, Scr2, Scr1 =  ScrScale(16), ScrScale(12), ScrScale(4), ScrScale(2), ScrScale(1)
 
 local function SaveBlacklist()
     -- We send ID over instead of strings to save on network costs
@@ -41,9 +41,9 @@ local function CreateAttButton(parent, attName, attTbl)
     local attBtn = vgui.Create("DButton", parent)
     attBtn:SetFont("ArcCW_8")
     attBtn:SetText("")
-    attBtn:SetSize(Scr256, Scr16)
+    attBtn:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(16))
     attBtn:Dock(TOP)
-    attBtn:DockMargin(Scr36, Scr1, Scr36, Scr1)
+    attBtn:DockMargin(ScreenScaleMulti(36), ScreenScaleMulti(1), ScreenScaleMulti(36), ScreenScaleMulti(1))
     attBtn:SetContentAlignment(5)
 
     attBtn.Paint = function(spaa, w, h)
@@ -63,12 +63,12 @@ local function CreateAttButton(parent, attName, attTbl)
         if img then
             srf.SetDrawColor(Bfg_col)
             srf.SetMaterial(img)
-            srf.DrawTexturedRect(Scr2, 0, h, h)
+            srf.DrawTexturedRect(ScreenScaleMulti(2), 0, h, h)
         end
 
         local txt = attTbl.PrintName
         srf.SetTextColor(Bfg_col)
-        srf.SetTextPos(Scr20, Scr2)
+        srf.SetTextPos(ScreenScaleMulti(20), ScreenScaleMulti(2))
         srf.SetFont("ArcCW_12")
         srf.DrawText(txt)
 
@@ -76,7 +76,7 @@ local function CreateAttButton(parent, attName, attTbl)
         local unlisted = (attTbl.Blacklisted and !blacklistTbl[attName])
         local saved = (listed or unlisted) and " [!saved]" or ""
         srf.SetTextColor(Bfg_col)
-        srf.SetTextPos(spaa:GetWide() - Scr36, Scr4)
+        srf.SetTextPos(spaa:GetWide() - ScreenScaleMulti(36), ScreenScaleMulti(4))
         srf.SetFont("ArcCW_8")
         srf.DrawText(saved)
     end
@@ -107,16 +107,16 @@ function ArcCW.MakeBlacklistWindow()
     end
 
     local title = vgui.Create("DLabel", blacklistWindow)
-    title:SetSize(Scr256, ScrScale(26))
+    title:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(26))
     title:Dock(TOP)
     title:SetFont("ArcCW_24")
     title:SetText("ArcCW Blacklist")
-    title:DockMargin(Scr16, 0, Scr16, ScrScale(8))
+    title:DockMargin(ScreenScaleMulti(16), 0, ScreenScaleMulti(16), ScreenScaleMulti(8))
 
     local desc = vgui.Create("DLabel", blacklistWindow)
-    desc:SetSize(Scr256, Scr12)
+    desc:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(12))
     desc:Dock(TOP)
-    desc:DockMargin(Scr4, 0, Scr4, Scr4)
+    desc:DockMargin(ScreenScaleMulti(4), 0, ScreenScaleMulti(4), ScreenScaleMulti(4))
     desc:SetFont("ArcCW_12")
     desc:SetText("Attachments checked here will stop showing up at all.")
     desc:SetContentAlignment(5)
@@ -138,23 +138,23 @@ function ArcCW.MakeBlacklistWindow()
 
     local FilterPanel = vgui.Create("DPanel", blacklistWindow)
     FilterPanel:Dock(TOP)
-    FilterPanel:DockMargin(Scr16, Scr2, Scr16, Scr2)
-    FilterPanel:SetSize(Scr256, Scr12)
+    FilterPanel:DockMargin(ScreenScaleMulti(16), ScreenScaleMulti(2), ScreenScaleMulti(16), ScreenScaleMulti(2))
+    FilterPanel:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(12))
     FilterPanel:SetPaintBackground(false)
 
     local FilterLabel = vgui.Create("DLabel", FilterPanel)
     FilterLabel:Dock(LEFT)
-    FilterLabel:SetWidth(Scr36)
-    FilterLabel:DockMargin(Scr2, Scr2, Scr2, Scr2)
+    FilterLabel:SetWidth(ScreenScaleMulti(36))
+    FilterLabel:DockMargin(ScreenScaleMulti(2), ScreenScaleMulti(2), ScreenScaleMulti(2), ScreenScaleMulti(2))
     FilterLabel:SetFont("ArcCW_12")
     FilterLabel:SetText("FILTER")
 
     local FilterButton = vgui.Create("DButton", FilterPanel)
     FilterButton:SetFont("ArcCW_8")
     FilterButton:SetText("")
-    FilterButton:SetSize(Scr48, Scr12)
+    FilterButton:SetSize(ScreenScaleMulti(48), ScreenScaleMulti(12))
     FilterButton:Dock(RIGHT)
-    FilterButton:DockMargin(Scr1, 0, 0, 0)
+    FilterButton:DockMargin(ScreenScaleMulti(1), 0, 0, 0)
     FilterButton:SetContentAlignment(5)
 
     FilterButton.OnMousePressed = function(spaa, kc)
@@ -187,10 +187,10 @@ function ArcCW.MakeBlacklistWindow()
     end
 
     local accept = vgui.Create("DButton", blacklistWindow)
-    accept:SetSize(Scr256, Scr20)
+    accept:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(20))
     accept:SetText("")
     accept:Dock(BOTTOM)
-    accept:DockMargin(Scr48, Scr2, Scr48, Scr2)
+    accept:DockMargin(ScreenScaleMulti(48), ScreenScaleMulti(2), ScreenScaleMulti(48), ScreenScaleMulti(2))
     accept:SetContentAlignment(5)
 
     accept.OnMousePressed = function(spaa, kc)
@@ -210,7 +210,7 @@ function ArcCW.MakeBlacklistWindow()
         srf.DrawRect(0, 0, w, h)
 
         srf.SetTextColor(Bfg_col)
-        srf.SetTextPos(Scr4, Scr4)
+        srf.SetTextPos(ScreenScaleMulti(4), ScreenScaleMulti(4))
         srf.SetFont("ArcCW_12")
         srf.DrawText("Save")
     end

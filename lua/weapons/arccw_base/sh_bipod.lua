@@ -85,7 +85,10 @@ function SWEP:EnterBipod()
     end
 
     self:MyEmitSound(self.EnterBipodSound)
-    self:DoLHIKAnimation("enter", 0.5)
+
+    if self:GetBuff_Override("LHIK") then
+        self:DoLHIKAnimation("enter", 0.5)
+    end
 
     self.BipodPos = self:GetOwner():EyePos()
     self.BipodAngle = self:GetOwner():EyeAngles()
@@ -104,7 +107,10 @@ function SWEP:ExitBipod()
     end
 
     self:MyEmitSound(self.ExitBipodSound)
-    self:DoLHIKAnimation("exit", 0.5)
+
+    if self:GetBuff_Override("LHIK") then
+        self:DoLHIKAnimation("exit", 0.5)
+    end
 
     self:SetNextSecondaryFire(CurTime() + 0.075)
 

@@ -5,7 +5,7 @@ ArcCW.PhraseTable = {
     ["en"] = {
         -- Generic
         ["arccw.adminonly"]                      = "These options require admin privileges to change. They are automatically networked in multiplayer games.",
-        ["arccw.clientcfg"]                      = "All options in this menu can be customized by players, and do !need admin privileges.",
+        ["arccw.clientcfg"]                      = "All options in this menu can be customized by players, and do not need admin privileges.",
         -- Menus
         ["arccw.menus.hud"]                      = "HUD",
         ["arccw.menus.client"]                   = "Client",
@@ -34,6 +34,7 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.hud_forceshow"]             = "Force HUD On (Useful w/ Custom HUDs)",
         ["arccw.cvar.hudpos_deadzone_x"]         = "Deadzone X",
         ["arccw.cvar.hudpos_deadzone_y"]         = "Deadzone Y",
+        ["arccw.cvar.hudpos_size"]               = "HUD and Font Size",
         -- ArcCW_Options_Bullet
         ["arccw.cvar.bullet_enable"]             = "Physical Bullets",
         ["arccw.cvar.bullet_gravity"]            = "Gravity",
