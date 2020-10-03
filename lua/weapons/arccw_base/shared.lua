@@ -614,7 +614,6 @@ end
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
     self:NetworkVar("Int", 1, "FireMode")
-    self:NetworkVar("Int", 2, "BurstCount")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
@@ -627,16 +626,17 @@ function SWEP:SetupDataTables()
 
     self:NetworkVar("Float", 0, "Heat")
 
+    --self:NetworkVar("Int", 2, "BurstCount")
     --self:NetworkVar("Int", 0, "NWState")
 end
 
---[[function SWEP:SetBurstCount(b)
+function SWEP:SetBurstCount(b)
     self.BurstCount = b
 end
 
 function SWEP:GetBurstCount()
     return self:GetBuff_Hook("Hook_GetBurstCount", self.BurstCount) or self.BurstCount or 0
-end]]
+end
 
 function SWEP:SetState(v)
     self:SetNWState(v)
