@@ -142,6 +142,8 @@ local ServerPanel = {
     { type = "b", text = "#arccw.cvar.throwinertia", var = "arccw_throwinertia", sv = true },
     { type = "b", text = "#arccw.cvar.limityear_enable", var = "arccw_limityear_enable", sv = true },
     { type = "i", text = "#arccw.cvar.limityear", var = "arccw_limityear", min = 1800, max = 2100, sv = true },
+    { type = "b", text = "#arccw.cvar.desync", var = "arccw_desync", sv = true },
+    { type = "c", text = "#arccw.cvar.desync.desc" },
     { type = "b", text = "#arccw.cvar.override_crosshair_off", var = "arccw_override_crosshair_off", sv = true },
     { type = "b", text = "#arccw.cvar.override_deploychambered", var = "arccw_override_deploychambered", sv = true },
     { type = "b", text = "#arccw.cvar.override_barrellength", var = "arccw_override_nearwall", sv = true },

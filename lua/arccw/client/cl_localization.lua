@@ -169,6 +169,8 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.override_deploychambered"]  = "Deploy with Rounds Chambered",
         ["arccw.cvar.override_barrellength"]     = "Enable Near-Walling",
         ["arccw.cvar.doorbust"]                  = "Enable Door-Busting",
+        ["arccw.cvar.desync"]                    = "Desync Bullets",
+        ["arccw.cvar.desync.desc"]               = "Desync bullets between the server and the client, making the nospread cheat useless.",
         -- TTT Menus
         ["arccw.cvar.attinv_loseondie.help"]     = "If enabled, players lose attachment on death and round end.",
         ["arccw.cvar.ammo_detonationmode.help"]  = "Determines what happens if ammo boxes are destroyed.",
