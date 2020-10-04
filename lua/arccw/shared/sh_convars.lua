@@ -62,3 +62,5 @@ CreateConVar("arccw_bullet_velocity", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED)
 CreateConVar("arccw_bullet_drag", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED)
 CreateConVar("arccw_bullet_lifetime", 10, FCVAR_ARCHIVE + FCVAR_REPLICATED)
 CreateConVar("arccw_bullet_gravity", 600, FCVAR_ARCHIVE + FCVAR_REPLICATED)
+
+CreateConVar("arccw_desync", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Turning this on prevents cheaters from predicting the bullet direction/spread, making the nospread cheat useless.")

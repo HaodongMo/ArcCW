@@ -48,10 +48,6 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.shake_info" },
     { type = "b", text = "#arccw.cvar.2d3d", var = "arccw_2d3d" },
     { type = "c", text = "#arccw.cvar.2d3d_info" },
-    { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
-    { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
-    { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
-    { type = "b", text = "#arccw.cvar.attinv_simpleproscons", var = "arccw_attinv_simpleproscons" },
 }
 
 local PerfomancePanel = {
@@ -107,6 +103,11 @@ local HudPanel = {
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_x", var = "arccw_hud_deadzone_x", min = 0, max = 1 },
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_y", var = "arccw_hud_deadzone_y", min = 0, max = 1 },
     { type = "f", text = "#arccw.cvar.hudpos_size", var = "arccw_hud_size", min = 0, max = 1.5 },
+    
+    { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
+    { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
+    { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
+    { type = "b", text = "#arccw.cvar.attinv_simpleproscons", var = "arccw_attinv_simpleproscons" },
 }
 
 local CrosshairPanel = {
@@ -141,6 +142,8 @@ local ServerPanel = {
     { type = "b", text = "#arccw.cvar.throwinertia", var = "arccw_throwinertia", sv = true },
     { type = "b", text = "#arccw.cvar.limityear_enable", var = "arccw_limityear_enable", sv = true },
     { type = "i", text = "#arccw.cvar.limityear", var = "arccw_limityear", min = 1800, max = 2100, sv = true },
+    { type = "b", text = "#arccw.cvar.desync", var = "arccw_desync", sv = true },
+    { type = "c", text = "#arccw.cvar.desync.desc" },
     { type = "b", text = "#arccw.cvar.override_crosshair_off", var = "arccw_override_crosshair_off", sv = true },
     { type = "b", text = "#arccw.cvar.override_deploychambered", var = "arccw_override_deploychambered", sv = true },
     { type = "b", text = "#arccw.cvar.override_barrellength", var = "arccw_override_nearwall", sv = true },
