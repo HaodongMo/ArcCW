@@ -62,8 +62,11 @@ function SWEP:PrimaryAttack()
 
         return
     end
- 
-    math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)))
+	
+	
+	local desync = GetConVar("arccw_desync"):GetBool()
+	local desyncnum = (desync and math.random()) or 0
+    math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)) + desyncnum)
 	
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
@@ -283,7 +286,7 @@ function SWEP:PrimaryAttack()
 
         for n = 1, bullet.Num do
             bullet.Num = 1
-			math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)))
+			math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)) + desyncnum)
             if !self:GetBuff_Override("Override_NoRandSpread") then
                 local ang = dir + AngleRand() * spread / 5
                 bullet.Dir = ang:Forward()
