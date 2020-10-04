@@ -62,9 +62,9 @@ function SWEP:PrimaryAttack()
 
         return
     end
-
-    math.randomseed(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand()) * (self:EntIndex() % 30241))
-
+ 
+    math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)))
+	
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
     local fsound = self.ShootSound
@@ -283,7 +283,7 @@ function SWEP:PrimaryAttack()
 
         for n = 1, bullet.Num do
             bullet.Num = 1
-
+			math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)))
             if !self:GetBuff_Override("Override_NoRandSpread") then
                 local ang = dir + AngleRand() * spread / 5
                 bullet.Dir = ang:Forward()
