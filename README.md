@@ -1,4 +1,4 @@
-# ArcCW
+# ArcCW - an amazing project
 
 Welcome to the ArcCW GitHub page!
 
