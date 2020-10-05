@@ -121,13 +121,13 @@ SWEP.RecoilDirectionSide = Angle(0, 1, 0)
 SWEP.Delay = 60 / 750 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemode = 1 -- 0: safe, 1: semi, 2: auto, negative: burst
-SWEP.RunawayBurst = false
 SWEP.Firemodes = {
     -- {
     --     Mode = 1,
-    --     CustomBars = "----_", -- custom bar setup
+    --     CustomBars = "----_--_-_", -- custom bar setup
     --     PrintName = "PUMP",
     --     RunAwayBurst = false,
+    --     AutoBurst = false, -- hold fire to continue firing bursts
     --     PostBurstDelay = 0,
     --     ActivateElements = {}
     -- }
