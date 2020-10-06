@@ -198,5 +198,8 @@ elseif SERVER then
         file.Write("arccw_blacklist.txt", util.TableToJSON(ArcCW.AttachmentBlacklistTable))
         ArcCW_SendBlacklist()
     end)
-
 end
+
+hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()
+    if GetConVar("arccw_reloadatts_mapcleanup"):GetBool() then ArcCW_LoadAtts() end
+end)
