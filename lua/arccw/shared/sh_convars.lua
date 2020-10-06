@@ -31,7 +31,7 @@ CreateConVar("arccw_mult_penetration", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Mul
 CreateConVar("arccw_mult_defaultclip", -1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for default clip size. Set to -1 for default.")
 CreateConVar("arccw_mult_attchance", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for random attachment chance on NPCs and in TTT.")
 
-CreateConVar("arccw_reloadonrefresh", 1, FCVAR_ARCHIVE, "Whether to reload ArcCW attachments on admin clean up.")
+CreateConVar("arccw_reloadatts_mapcleanup", 0, FCVAR_ARCHIVE, "Whether to reload ArcCW attachments on admin clean up.")
 
 CreateConVar("arccw_override_crosshair_off", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Set to true to force everyone's crosshairs off.", 0, 1)
 CreateConVar("arccw_override_deploychambered", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Draw the weapon with a round in chamber.", 0, 1)

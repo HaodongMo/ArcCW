@@ -199,4 +199,7 @@ elseif SERVER then
         ArcCW_SendBlacklist()
     end)
 
+    hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()
+        if GetConVar("arccw_reloadatts_mapcleanup"):GetBool() then ArcCW_LoadAtts() end
+    end)
 end
