@@ -30,10 +30,7 @@ function SWEP:Think()
     if self:GetNeedCycle() and !self:GetReloading() and
             (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
             or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 and owner:KeyDown(IN_ATTACK) or owner:KeyPressed(IN_ATTACK))) then
-        local anim = "cycle"
-        if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.cycle_iron then
-            anim = "cycle_iron"
-        end
+        local anim = self:SelectAnimation("cycle")
         anim = self:GetBuff_Hook("Hook_SelectCycleAnimation", anim) or anim
         local mult = self:GetBuff_Mult("Mult_CycleTime")
         if IsFirstTimePredicted() then

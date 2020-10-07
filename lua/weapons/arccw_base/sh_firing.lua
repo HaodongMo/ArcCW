@@ -414,13 +414,7 @@ function SWEP:DoPrimaryAnim()
 
     -- Needs testing
     if inbipod then
-        if iron then
-            anim = self:SelectAnimation("fire_bipod_iron") or self:SelectAnimation("fire_iron") or anim
-        else
-            anim = self:SelectAnimation("fire_bipod") or self:SelectAnimation("fire") or anim
-        end
-    elseif iron then
-        anim = self:SelectAnimation("fire_iron") or self:SelectAnimation("fire") or anim
+        anim = self:SelectAnimation("fire_bipod") or self:SelectAnimation("fire") or anim
     else
         anim = self:SelectAnimation("fire") or anim
     end
@@ -582,9 +576,7 @@ end
 
 function SWEP:DryFire()
 
-    if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.fire_dry_iron then
-        return self:PlayAnimation("fire_dry_iron", 1, true, 0, true)
-    elseif self.Animations.fire_dry then
+    if self.Animations.fire_dry then
         return self:PlayAnimation("fire_dry", 1, true, 0, true)
     end
     self:MyEmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
