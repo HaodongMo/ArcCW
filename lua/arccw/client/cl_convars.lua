@@ -40,6 +40,8 @@ ArcCW.ClientConVars = {
     ["arccw_attinv_darkunowned"]      = { def =  0 },
     ["arccw_attinv_closeonhurt"]      = { def =  0, usri = true },
 
+    ["arccw_language"]      		  = { def =  "", usri = true },
+
     ["arccw_cheapscopes"]             = { def =  1 },
     ["arccw_cheapscopesautoconfig"]   = { def =  0 },
 
@@ -86,6 +88,10 @@ ArcCW.ClientConVars = {
     ["arccw_vm_swayxmult"]            = { def =  -0.1 },
     ["arccw_vm_swayymult"]            = { def =  0.1 },
     ["arccw_vm_swayzmult"]            = { def =  -0.3 },
+	
+    ["arccw_vm_swaywigglemult"]       = { def =  1 },
+    ["arccw_vm_swayspeedmult"]        = { def =  1 },
+    ["arccw_vm_swayrotatemult"]       = { def =  1 },
 
     ["arccw_toggleads"]               = { def = 0, usri = true },
     ["arccw_altubglkey"]              = { def = 0, usri = true },

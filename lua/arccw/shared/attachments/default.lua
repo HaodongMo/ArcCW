@@ -314,7 +314,7 @@ att.Hook_GetShootDrySound = function(wep, sound) end
 att.Hook_GetDistantShootSound = function(wep, sound) end
 
 -- or just add more!
-att.Hook_AddShootSound = function(wep)
+att.Hook_AddShootSound = function(wep) end
 --	att.Hook_AddShootSound = function(wep)	
 --		return {
 --				sound = "weapons/pistol/pistol_fire2.wav",
