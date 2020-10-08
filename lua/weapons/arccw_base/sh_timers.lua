@@ -89,11 +89,15 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
     mult  = 1 / (mult or 1)
 
     for _, v in pairs(soundtable) do
-        if table.IsEmpty(v) or !v.t then continue end
+        if table.IsEmpty(v) then continue end
 
-        local ttime = (v.t * mult) - start
+        local ttime
 
-        if !isnumber(v.t) then continue end
+        if v.t then
+            ttime = (v.t * mult) - start
+        else
+            continue
+        end
 
         if ttime < 0 then continue end
 
@@ -104,16 +108,16 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
                 DoShell(self, v)
             end
 
-            if v.s then
-                if game.SinglePlayer() then
-                    if SERVER then
-                        net.Start("arccw_networksound")
-                        net.WriteTable(v)
-                        net.Send(owner)
-                    end
-                else
-                    self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
+            if game.SinglePlayer() then
+                if SERVER then
+                    net.Start("arccw_networksound")
+                    net.WriteTable(v)
+                    net.Send(owner)
                 end
+            end
+
+            if v.s then
+                self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
             end
 
             if v.bg then
@@ -128,10 +132,18 @@ end
 if CLIENT then
     net.Receive("arccw_networksound", function(len)
         local wep = LocalPlayer():GetActiveWeapon()
-        local snd = net.ReadTable()
+        local v = net.ReadTable()
 
-        if !(IsValid(wep) and wep.ArcCW and snd.s) then return end
+        if !(IsValid(wep) and wep.ArcCW) then return end
 
-        wep:MyEmitSound(snd.s, snd.v or 75, snd.p or 100, 1, snd.c or CHAN_AUTO)
+        if v.s then
+            wep:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
+        end
+
+        if v.bg then
+            local vm = LocalPlayer():GetViewModel()
+
+            vm:SetBodygroup(v.ind or 0, v.bg)
+        end
     end)
 end
