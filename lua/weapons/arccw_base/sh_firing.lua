@@ -469,8 +469,12 @@ function SWEP:GetShootSrc()
     local dir    = owner:EyeAngles()
     local offset = self:GetBuff_Override("Override_BarrelOffsetHip") or self.BarrelOffsetHip
 
+    if self:GetOwner():Crouching() then
+        offset = self:GetBuff_Override("Override_BarrelOffsetCrouch") or self.BarrelOffsetCrouch or offset
+    end
+
     if self:GetState() == ArcCW.STATE_SIGHTS then
-        offset = self:GetBuff_Override("Override_BarrelOffsetSighted") or self.BarrelOffsetSighted
+        offset = self:GetBuff_Override("Override_BarrelOffsetSighted") or self.BarrelOffsetSighted or offset
     end
 
     local src = owner:EyePos()
