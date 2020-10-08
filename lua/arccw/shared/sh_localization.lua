@@ -63,6 +63,13 @@ ArcCW.StringToLang = {
     ["standard fcg"] = "attslot.fcg.default",
 }
 
+-- Helper function for getting the overwrite or default language
+function ArcCW.GetLanguage()
+    local l = string.lower(GetConVar("arccw_language"):GetString())
+    if l == "" then l = string.lower(GetConVar("gmod_language"):GetString()) end
+    return l
+end
+
 -- Adds a string to the StringToLang table.
 function ArcCW.AddStringToLang(str, phrase)
     if phrase == nil or phrase == "" or str == nil or str == "" then return nil end
@@ -85,7 +92,7 @@ end
 -- Returns nil if no such phrase exists.
 function ArcCW.GetTranslation(phrase, format)
     if phrase == nil or phrase == "" then return nil end
-    local lang = string.lower(GetConVar("arccw_language"):GetString()) or string.lower(GetConVar("gmod_language"):GetString())
+    local lang = ArcCW.GetLanguage()
     if !lang or lang == "" or !ArcCW.LangTable[lang] or !ArcCW.LangTable[lang][phrase] then
         lang = "en"
     end
