@@ -355,6 +355,14 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
     if distancesound then self:MyEmitSound(distancesound, 149, pitch, 0.5, CHAN_WEAPON + 1) end
 
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
+
+	local addiftable	= self:GetBuff_Hook("Hook_AddShootSound") or {}
+	local addifsound	= addiftable.sound
+	local addifvolume	= addiftable.volume	or volume
+	local addifpitch	= addiftable.pitch	or pitch
+	
+
+	if addifsound then self:MyEmitSound(addifsound, addifvolume, addifpitch, 1, CHAN_WEAPON - 1) end
 end
 
 function SWEP:DoPrimaryFire(isent, data)
