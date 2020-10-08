@@ -340,29 +340,35 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     distancesound = self:GetBuff_Hook("Hook_GetDistantShootSound", distancesound)
 
-	local spv = self.ShootPitchVariation
-    local volume = self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")
+    local spv = self.ShootPitchVariation
+    local volume = self.ShootVol
     local pitch  = self.ShootPitch * math.Rand(1 - spv, 1 + spv) * self:GetBuff_Mult("Mult_ShootPitch")
+
+    local v = GetConVar("arccw_weakensounds"):GetFloat()
+
+    volume = volume - v
+
+    volume = volume * self:GetBuff_Mult("Mult_ShootVol")
 
     volume = math.Clamp(volume, 51, 149)
     pitch  = math.Clamp(pitch, 51, 149)
 
-	if	sndoverride		then	fsound	= sndoverride end
-	if	dsndoverride	then	distancesound = dsndoverride end
-	if	voloverride		then	volume	= voloverride end
-	if	pitchoverride	then	pitch	= pitchoverride end
+    if	sndoverride		then	fsound	= sndoverride end
+    if	dsndoverride	then	distancesound = dsndoverride end
+    if	voloverride		then	volume	= voloverride end
+    if	pitchoverride	then	pitch	= pitchoverride end
 
     if distancesound then self:MyEmitSound(distancesound, 149, pitch, 0.5, CHAN_WEAPON + 1) end
 
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
-	local addiftable	= self:GetBuff_Hook("Hook_AddShootSound") or {}
-	local addifsound	= addiftable.sound
-	local addifvolume	= addiftable.volume	or volume
-	local addifpitch	= addiftable.pitch	or pitch
-	
+    local addiftable	= self:GetBuff_Hook("Hook_AddShootSound") or {}
+    local addifsound	= addiftable.sound
+    local addifvolume	= addiftable.volume	or volume
+    local addifpitch	= addiftable.pitch	or pitch
 
-	if addifsound then self:MyEmitSound(addifsound, addifvolume, addifpitch, 1, CHAN_WEAPON - 1) end
+
+    if addifsound then self:MyEmitSound(addifsound, addifvolume, addifpitch, 1, CHAN_WEAPON - 1) end
 end
 
 function SWEP:DoPrimaryFire(isent, data)
