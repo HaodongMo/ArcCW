@@ -104,14 +104,22 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
                 DoShell(self, v)
             end
 
-            if game.SinglePlayer() then
-                if SERVER and v.s then
-                    net.Start("arccw_networksound")
-                    net.WriteTable(v)
-                    net.Send(owner)
+            if v.s then
+                if game.SinglePlayer() then
+                    if SERVER then
+                        net.Start("arccw_networksound")
+                        net.WriteTable(v)
+                        net.Send(owner)
+                    end
+                else
+                    self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
                 end
-            else
-                self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
+            end
+
+            if v.bg then
+                local vm = self:GetOwner():GetViewModel()
+
+                vm:SetBodygroup(v.ind or 0, v.bg)
             end
         end, "soundtable")
     end
