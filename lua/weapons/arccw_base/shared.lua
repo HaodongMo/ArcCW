@@ -195,6 +195,7 @@ SWEP.ShellTime = 1 -- add shell life time
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
+SWEP.ProceduralViewBobAttachment = nil -- attachment on which coolview is affected by, default is muzzleeffect
 
 SWEP.SpeedMult = 0.9
 SWEP.SightedSpeedMult = 0.75
@@ -520,6 +521,7 @@ SWEP.ArcCW = true
 SWEP.BurstCount = 0
         --Outdated, but if you could find a way to keep compatibility with older atts/weps :heart:
         --Idiot! If you remove variables, old mods !only cease to work but throw errors! What were you thinking?
+SWEP.DelayCycleAnim = 0
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true

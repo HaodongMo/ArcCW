@@ -278,7 +278,10 @@ function SWEP:PrimaryAttack()
     self:DoPrimaryAnim()
 
     if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and clip == 0) then
+		local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+		local firedelay = self.Animations[fireanim].MinProgress or 0
         self:SetNeedCycle(true)
+		self.DelayCycleAnim = CurTime() + firedelay
     end
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == -self:GetCurrentFiremode().Mode then
