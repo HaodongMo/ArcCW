@@ -58,8 +58,6 @@ local function DoShell(wep, data)
 
     if !IsFirstTimePredicted() then return end
 
-    if !data.e then return end
-
     local att = data.att or wep:GetBuff_Override("Override_CaseEffectAttachment") or wep.CaseEffectAttachment or 2
 
     if !att then return end
@@ -102,12 +100,18 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
         if !(IsValid(self) and IsValid(owner)) then continue end
 
         self:SetTimer(ttime, function()
-            DoShell(self, v)
+            if v.e then
+                DoShell(self, v)
+            end
 
-            if SERVER and v.s then
-                net.Start("arccw_networksound")
-                net.WriteTable(v)
-                net.Send(owner)
+            if game.SinglePlayer() then
+                if SERVER and v.s then
+                    net.Start("arccw_networksound")
+                    net.WriteTable(v)
+                    net.Send(owner)
+                end
+            else
+                self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
             end
         end, "soundtable")
     end
