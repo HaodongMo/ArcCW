@@ -1206,17 +1206,17 @@ function SWEP:SendAttHP()
     net.Send(self:GetOwner())
 end
 
-example = {
-    [1] = {
-        PrintName = "Optic",
-        SubSlots = {
-            [1] = {
-                PrintName = "Optic",
-                Installed = "Bruhzogg"
-            }
-        } 
-    }
-}
+-- example = {
+--     [1] = {
+--         PrintName = "Optic",
+--         SubSlots = {
+--             [1] = {
+--                 PrintName = "Optic",
+--                 Installed = "Bruhzogg"
+--             }
+--         } 
+--     }
+-- }
 
 function SWEP:AssembleSubSlots()
 end

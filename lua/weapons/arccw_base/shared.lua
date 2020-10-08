@@ -291,6 +291,7 @@ SWEP.SprintPos = nil
 SWEP.SprintAng = nil
 
 SWEP.BarrelOffsetSighted = Vector(0, 0, 0)
+SWEP.BarrelOffsetCrouch = nil
 SWEP.BarrelOffsetHip = Vector(3, 0, -3)
 
 SWEP.CustomizePos = Vector(9.824, 0, -4.897)

@@ -31,8 +31,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     if !owner:IsValid() or !owner:Alive() then return end
 
     local SP = game.SinglePlayer()
-    local FT = m_min(FrameTime(), RealFrameTime()) -- RealFrameTime() for previous behavior, which does not work well with slow motion
+    -- local FT = m_min(FrameTime(), RealFrameTime()) -- RealFrameTime() for previous behavior, which does not work well with slow motion
     local CT = CurTime()
+    local FT = RealFrameTime()
 
     local FT5, FT10 = FT * 5, FT * 10
 
