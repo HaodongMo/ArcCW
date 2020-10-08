@@ -821,7 +821,7 @@ function SWEP:DrawCustomModel(wm)
         end
     end
 
-    self:RefreshBGs()
+    -- self:RefreshBGs()
 end
 
 SWEP.ReferencePosCache = {}
