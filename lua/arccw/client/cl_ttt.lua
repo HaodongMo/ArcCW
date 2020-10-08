@@ -205,9 +205,6 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
         local cb = dgui2:CheckBox("#arccw.cvar.enable_customization", "arccw_enable_customization")
         cb:SetTooltip("arccw.cvar.enable_customization.help")
 
-        cb = dgui2:CheckBox("#arccw.cvar.ttt_weakensounds", "arccw_ttt_weakensounds")
-        cb:SetTooltip("#arccw.cvar.ttt_weakensounds.help")
-
         cb = dgui2:CheckBox("#arccw.cvar.attinv_free", "arccw_attinv_free")
         cb:SetTooltip("#arccw.cvar.attinv_free.help")
         cb = dgui2:CheckBox("#arccw.cvar.attinv_lockmode", "arccw_attinv_lockmode")
@@ -216,6 +213,9 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
         local ns = dgui2:NumSlider("#arccw.cvar.ttt_bodyattinfo", "arccw_ttt_bodyattinfo", 0, 2, 0)
         ns:SetTooltip("#arccw.cvar.ttt_bodyattinfo.help")
         dgui2:Help("#arccw.cvar.ttt_bodyattinfo.desc")
+
+        ns = dgui2:NumSlider("#arccw.cvar.weakensounds", "arccw_weakensounds", -20, 30, 0)
+        ns:SetTooltip("#arccw.cvar.weakensounds.desc")
 
         ns = dgui2:NumSlider("#arccw.cvar.attinv_loseondie", "arccw_attinv_loseondie", 0, 2, 0)
         ns:SetTooltip("#arccw.cvar.attinv_loseondie.help")

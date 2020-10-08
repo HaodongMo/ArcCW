@@ -50,8 +50,6 @@ CreateConVar("arccw_ttt_replaceammo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Forc
 CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Automatically set up ArcCW weapons with an attachment loadout.", 0, 1)
 CreateConVar("arccw_ttt_customizemode", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "If set to 1, disallow customization on ArcCW weapons. If set to 2, players can customize during setup and postgame. If set to 3, only T and Ds can customize.", 0, 3)
 CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
-CreateConVar("arccw_ttt_weakensounds", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Reduce all weapons' sound volume, making it easier to hide shooting sounds.", 0, 1)
-
 
 function ArcCW:TTT_GetRandomWeapon(class)
     if class and ArcCW.TTTReplaceTable[class] then
@@ -122,10 +120,6 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
             wep.Icon = path3
         elseif !Material(path):IsError() then
             wep.Icon = path
-        end
-
-        if GetConVar("arccw_ttt_weakensounds"):GetBool() and wep.ShootVol then
-            wep.ShootVol = math.Clamp(wep.ShootVol - 20, 70, 115)
         end
 
     end
