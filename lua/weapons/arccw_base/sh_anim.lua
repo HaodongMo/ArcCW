@@ -17,6 +17,10 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_empty"
     end
 
+    if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
+        anim = anim .. "_empty"
+    end
+
     if !self.Animations[anim] then return end
 
     return anim
