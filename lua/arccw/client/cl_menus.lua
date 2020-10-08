@@ -64,7 +64,7 @@ local PerfomancePanel = {
     { type = "b", text = "#arccw.cvar.fastmuzzles", var = "arccw_fastmuzzles" },
     { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
     { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
-    { type = "i", text = "#arccw.cvar.visibility", var = "arccw_visiblity", min = -1, max = 32000},
+    { type = "i", text = "#arccw.cvar.visibility", var = "arccw_visibility", min = -1, max = 32000},
     { type = "c", text = "#arccw.cvar.visibility.desc" },
     { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
     { type = "b", text = "#arccw.cvar.blur_toytown", var = "arccw_blur_toytown" },
