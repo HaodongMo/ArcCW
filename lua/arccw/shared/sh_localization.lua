@@ -85,7 +85,7 @@ end
 -- Returns nil if no such phrase exists.
 function ArcCW.GetTranslation(phrase, format)
     if phrase == nil or phrase == "" then return nil end
-    local lang = string.lower(GetConVar("gmod_language"):GetString())
+    local lang = string.lower(GetConVar("arccw_language"):GetString()) or string.lower(GetConVar("gmod_language"):GetString())
     if !lang or lang == "" or !ArcCW.LangTable[lang] or !ArcCW.LangTable[lang][phrase] then
         lang = "en"
     end
@@ -127,10 +127,10 @@ function ArcCW.LoadLanguages()
         local lang = exp[#exp]
 
         if !lang then
-            print("Failed to load ArcCW language file " .. v .. ", did !get language name (naming convention incorrect?)")
+            print("Failed to load ArcCW language file " .. v .. ", did not get language name (naming convention incorrect?)")
             continue
         elseif !L then
-            print("Failed to load ArcCW language file " .. v .. ", did !get language table")
+            print("Failed to load ArcCW language file " .. v .. ", did not get language table")
             continue
         end
 
@@ -145,7 +145,7 @@ function ArcCW.LoadLanguages()
             end
         end
 
-        --print("Loaded ArcCW language file " .. v .. " with " .. table.Count(L) .. " strings.")
+        print("Loaded ArcCW language file " .. v .. " with " .. table.Count(L) .. " strings.")
         L = nil
     end
 

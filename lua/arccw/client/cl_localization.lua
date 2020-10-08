@@ -64,6 +64,9 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.attinv_onlyinspect"]        = "Hide Customization UI",
         ["arccw.cvar.attinv_simpleproscons"]     = "Simple Pros And Cons",
         ["arccw.cvar.attinv_closeonhurt"]        = "Close menu on damage taken",
+
+        ["arccw.cvar.language"]                  = "Language",
+        ["arccw.cvar.language_info"]             = "\nOverride the language. Leave blank for gmod_language.",
         -- ArcCW_Options_Perf
         ["arccw.performance"]                    = "The options below may change performance.",
         ["arccw.cvar.cheapscopes"]               = "Cheap Scopes",
@@ -91,9 +94,13 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.vm_swaywarn"]               = "The following only applies when Custom Swaying is enabled",
         ["arccw.cvar.vm_lookymult"]              = "Horizontal Look Sway",
         ["arccw.cvar.vm_lookxmult"]              = "Vertical Look Sway",
-        ["arccw.cvar.vm_swayxmult"]              = "Bob Right Multiplier",
-        ["arccw.cvar.vm_swayymult"]              = "Bob Forward Multiplier",
-        ["arccw.cvar.vm_swayzmult"]              = "Bob Up Multiplier",
+        ["arccw.cvar.vm_swayxmult"]              = "Bob Right",
+        ["arccw.cvar.vm_swayymult"]              = "Bob Forward",
+        ["arccw.cvar.vm_swayzmult"]              = "Bob Up",
+        ["arccw.cvar.vm_swaywigglemult"]         = "Bob Wiggle",
+        ["arccw.cvar.vm_swayspeedmult"]          = "Bob Speed",
+        ["arccw.cvar.vm_swayrotatemult"]         = "Bob Rotate",
+
         ["arccw.cvar.vm_accelmult"]              = "Sway Tightness",
         ["arccw.cvar.vm_viewwarn"]               = "The following only applies when Custom Camera Movement is enabled",
         ["arccw.cvar.vm_coolviewmult"]           = "View Move Multiplier",
@@ -193,7 +200,7 @@ ArcCW.PhraseTable = {
     },
 }
 
-local lang = string.lower(GetConVar("gmod_language"):GetString())
+local lang = string.lower(GetConVar("arccw_language"):GetString()) or string.lower(GetConVar("gmod_language"):GetString())
 
 if !ArcCW.PhraseTable[lang] then lang = "en" end
 

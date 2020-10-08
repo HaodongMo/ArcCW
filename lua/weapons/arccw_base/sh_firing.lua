@@ -70,46 +70,6 @@ function SWEP:PrimaryAttack()
 	
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
-    local fsound = self.ShootSound
-
-    if self:GetBuff_Override("Silencer") then
-        fsound = self.ShootSoundSilenced
-    end
-
-    local firstsound = self.FirstShootSound
-
-    if self:GetBurstCount() == 0 and firstsound then
-        fsound = firstsound
-
-        local firstsil = self.FirstShootSoundSilenced
-
-        if self:GetBuff_Override("Silencer") then
-            fsound = firstsil and firstsil or self.ShootSoundSilenced
-        end
-    end
-
-    local lastsound = self.LastShootSound
-
-    if clip == 1 and lastsound then
-        fsound = lastsound
-
-        local lastsil = self.LastShootSoundSilenced
-
-        if self:GetBuff_Override("Silencer") then
-            fsound = lastsil and lastsil or self.ShootSoundSilenced
-        end
-    end
-
-    fsound = self:GetBuff_Hook("Hook_GetShootSound", fsound)
-
-    local distancesound = self.DistantShootSound
-
-    if self:GetBuff_Override("Silencer") then
-        distancesound = nil
-    end
-
-    distancesound = self:GetBuff_Hook("Hook_GetDistantShootSound", distancesound)
-
     local dir = owner:EyeAngles()
     local src = self:GetShootSrc()
 
@@ -300,21 +260,11 @@ function SWEP:PrimaryAttack()
 
     owner:DoAnimationEvent(self:GetBuff_Override("Override_AnimShoot") or self.AnimShoot)
 
-    local volume = self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")
-    local pitch  = self.ShootPitch * math.Rand(1 - self.ShootPitchVariation, 1 + self.ShootPitchVariation) * self:GetBuff_Mult("Mult_ShootPitch")
-
-    volume = math.Clamp(volume, 51, 149)
-    pitch  = math.Clamp(pitch, 51, 149)
-
     local shouldsupp = SERVER and !game.SinglePlayer()
 
     if shouldsupp then SuppressHostEvents(owner) end
 
     self:DoEffects()
-
-    if distancesound then self:MyEmitSound(distancesound, 149, pitch, 0.5, CHAN_WEAPON + 1) end
-
-    if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
     if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) self:SetBurstCount(self:GetBurstCount() + 1) end
 
@@ -324,10 +274,14 @@ function SWEP:PrimaryAttack()
         end
     end
 
+	self:DoShootSound()
     self:DoPrimaryAnim()
 
     if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and clip == 0) then
+		local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+		local firedelay = self.Animations[fireanim].MinProgress or 0
         self:SetNeedCycle(true)
+		self.DelayCycleAnim = CurTime() + firedelay
     end
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == -self:GetCurrentFiremode().Mode then
@@ -343,6 +297,72 @@ function SWEP:PrimaryAttack()
     self:GetBuff_Hook("Hook_PostFireBullets")
 
     if shouldsupp then SuppressHostEvents(nil) end
+end
+
+function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride)
+    local fsound = self.ShootSound
+
+    if self:GetBuff_Override("Silencer") then
+        fsound = self.ShootSoundSilenced
+    end
+
+    local firstsound = self.FirstShootSound
+
+    if self:GetBurstCount() == 0 and firstsound then
+        fsound = firstsound
+
+        local firstsil = self.FirstShootSoundSilenced
+
+        if self:GetBuff_Override("Silencer") then
+            fsound = firstsil and firstsil or self.ShootSoundSilenced
+        end
+    end
+
+    local lastsound = self.LastShootSound
+
+    if clip == 1 and lastsound then
+        fsound = lastsound
+
+        local lastsil = self.LastShootSoundSilenced
+
+        if self:GetBuff_Override("Silencer") then
+            fsound = lastsil and lastsil or self.ShootSoundSilenced
+        end
+    end
+
+    fsound = self:GetBuff_Hook("Hook_GetShootSound", fsound)
+
+    local distancesound = self.DistantShootSound
+
+    if self:GetBuff_Override("Silencer") then
+        distancesound = nil
+    end
+
+    distancesound = self:GetBuff_Hook("Hook_GetDistantShootSound", distancesound)
+
+	local spv = self.ShootPitchVariation
+    local volume = self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")
+    local pitch  = self.ShootPitch * math.Rand(1 - spv, 1 + spv) * self:GetBuff_Mult("Mult_ShootPitch")
+
+    volume = math.Clamp(volume, 51, 149)
+    pitch  = math.Clamp(pitch, 51, 149)
+
+	if	sndoverride		then	fsound	= sndoverride end
+	if	dsndoverride	then	distancesound = dsndoverride end
+	if	voloverride		then	volume	= voloverride end
+	if	pitchoverride	then	pitch	= pitchoverride end
+
+    if distancesound then self:MyEmitSound(distancesound, 149, pitch, 0.5, CHAN_WEAPON + 1) end
+
+    if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
+
+	local addiftable	= self:GetBuff_Hook("Hook_AddShootSound") or {}
+	local addifsound	= addiftable.sound
+	local addifvolume	= addiftable.volume	or volume
+	local addifpitch	= addiftable.pitch	or pitch
+	
+
+	if addifsound then self:MyEmitSound(addifsound, addifvolume, addifpitch, 1, CHAN_WEAPON - 1) end
 end
 
 function SWEP:DoPrimaryFire(isent, data)
@@ -414,13 +434,7 @@ function SWEP:DoPrimaryAnim()
 
     -- Needs testing
     if inbipod then
-        if iron then
-            anim = self:SelectAnimation("fire_bipod_iron") or self:SelectAnimation("fire_iron") or anim
-        else
-            anim = self:SelectAnimation("fire_bipod") or self:SelectAnimation("fire") or anim
-        end
-    elseif iron then
-        anim = self:SelectAnimation("fire_iron") or self:SelectAnimation("fire") or anim
+        anim = self:SelectAnimation("fire_bipod") or self:SelectAnimation("fire") or anim
     else
         anim = self:SelectAnimation("fire") or anim
     end
@@ -582,9 +596,7 @@ end
 
 function SWEP:DryFire()
 
-    if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations.fire_dry_iron then
-        return self:PlayAnimation("fire_dry_iron", 1, true, 0, true)
-    elseif self.Animations.fire_dry then
+    if self.Animations.fire_dry then
         return self:PlayAnimation("fire_dry", 1, true, 0, true)
     end
     self:MyEmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)

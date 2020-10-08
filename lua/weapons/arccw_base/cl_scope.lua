@@ -163,6 +163,12 @@ function SWEP:CoolView(ply, pos, ang, fov)
     else return
     end
 
+	--	If the gun is inoperable, don't coolview.
+	--	If you can find a smoother way to do this, go ahead.
+	if !self:GetReloading() then
+		viewbobintensity = 0
+	end
+
     self.ProceduralViewOffset:Normalize()
 
     if mzang_fixed_last then

@@ -12,6 +12,7 @@
     f - float slider (2 nums after .) text var min max
     m - color mixer                   text r g b a 
     p - press or button               text func
+    t - textbox                       text string
     (you can add custom types in ArcCW.GeneratePanelElements's AddControl table)
 
     Generate elements via ArcCW.GeneratePanelElements:
@@ -48,6 +49,8 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.shake_info" },
     { type = "b", text = "#arccw.cvar.2d3d", var = "arccw_2d3d" },
     { type = "c", text = "#arccw.cvar.2d3d_info" },
+    { type = "t", text = "#arccw.cvar.language", var = "arccw_language"  },
+    { type = "c", text = "#arccw.cvar.language_info" },
 }
 
 local PerfomancePanel = {
@@ -80,7 +83,7 @@ local ViewmodelPanel = {
     { type = "f", text = "#arccw.cvar.vm_right", var = "arccw_vm_right", min = -5, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_forward", var = "arccw_vm_forward", min = -5, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_up", var = "arccw_vm_up", min = -5, max = 5 },
-    { type = "h", text = "" },
+    { type = "c", text = "" },
     { type = "c", text = "#arccw.cvar.vm_swaywarn" },
     { type = "f", text = "#arccw.cvar.vm_lookxmult", var = "arccw_vm_lookxmult", min = -10, max = 10 },
     { type = "f", text = "#arccw.cvar.vm_lookymult", var = "arccw_vm_lookymult", min = -10, max = 10 },
@@ -88,6 +91,9 @@ local ViewmodelPanel = {
     { type = "f", text = "#arccw.cvar.vm_swayxmult", var = "arccw_vm_swayxmult", min = -1, max = 1 },
     { type = "f", text = "#arccw.cvar.vm_swayymult", var = "arccw_vm_swayymult", min = -2, max = 2 },
     { type = "f", text = "#arccw.cvar.vm_swayzmult", var = "arccw_vm_swayzmult", min = -2, max = 2 },
+    { type = "f", text = "#arccw.cvar.vm_swaywigglemult", var = "arccw_vm_swaywigglemult", min = -3, max = 3 },
+    { type = "f", text = "#arccw.cvar.vm_swayspeedmult", var = "arccw_vm_swayspeedmult", min = 0, max = 3 },
+    { type = "f", text = "#arccw.cvar.vm_swayrotatemult", var = "arccw_vm_swayrotatemult", min = -3, max = 3 },
     { type = "h", text = "" },
     { type = "c", text = "#arccw.cvar.vm_viewwarn" },
     { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -10, max = 10 },
@@ -233,6 +239,7 @@ function ArcCW.GeneratePanelElements(panel, table)
         ["f"] = function(p, d) return p:NumSlider(d.text, d.var, d.min, d.max, 2) end,
         ["m"] = function(p, d) return p:AddControl("color", { Label = d.text, Red = d.r, Green = d.g, Blue = d.b, Alpha = d.a }) end, -- change this someday
         ["p"] = function(p, d) local b = p:Button(d.text) b.DoClick = d.func return b end,
+		["t"] = function(p, d) return p:TextEntry(d.text, d.var) end
     }
 
     local concommands = {
@@ -240,6 +247,7 @@ function ArcCW.GeneratePanelElements(panel, table)
         ["i"] = true,
         ["f"] = true,
         ["m"] = true,
+        ["t"] = true,
     }
 
     for _, data in SortedPairs(table) do
@@ -252,7 +260,7 @@ function ArcCW.GeneratePanelElements(panel, table)
                     p.OnChange = function(self, bval)
                         networktheconvar(data.var, bval, self)
                     end
-                elseif data.type == "i" or data.type == "f" or data.type == "m" then
+                elseif data.type == "i" or data.type == "f" or data.type == "m" or data.type == "t" then
                     p.OnValueChanged = function(self, bval)
                         networktheconvar(data.var, bval, self)
                     end

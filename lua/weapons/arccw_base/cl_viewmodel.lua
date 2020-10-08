@@ -263,6 +263,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     swayxmult = GetConVar("arccw_vm_swayxmult"):GetFloat()
     swayymult = GetConVar("arccw_vm_swayymult"):GetFloat()
     swayzmult = GetConVar("arccw_vm_swayzmult"):GetFloat()
+	swaywiggle = GetConVar("arccw_vm_swaywigglemult"):GetFloat()
+	swayspeed 	= GetConVar("arccw_vm_swayspeedmult"):GetFloat()
+	swayrotate = GetConVar("arccw_vm_swayrotatemult"):GetFloat()
 
     if coolsway then
         eyeangles = owner:EyeAngles()
@@ -282,8 +285,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         vel = vel * self.BobMult or 1
 
-        local velmult  = m_min(vel / 600 * (actual.bob / 2), 3)
-        local swaymult = actual.sway / 2
+        local velmult  = m_min(vel / 600 * (actual.bob / 2), 3) * swaywiggle
+        local swaymult = actual.sway / 2 * swayrotate
 
         local xangdiff = m_angdif(eyeangles.x, lasteyeangles.x)
         local yangdiff = m_angdif(eyeangles.y, lasteyeangles.y) * 0.3
@@ -297,7 +300,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local xang = coolxang * swaymult
         local yang = coolyang * swaymult
 
-        local ctpower = CT * 5
+        local ctpower = CT * 5 * swayspeed
         local ctsin = m_sin(ctpower * sprintmult)
 
         local mag = 0.01
