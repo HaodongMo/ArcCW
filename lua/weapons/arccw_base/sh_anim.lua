@@ -1,10 +1,6 @@
 
 
 function SWEP:SelectAnimation(anim)
-    if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
-        anim = anim .. "_empty"
-    end
-
     if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations[anim .. "_iron"] then
         anim = anim .. "_iron"
     end
@@ -15,6 +11,14 @@ function SWEP:SelectAnimation(anim)
 
     if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations[anim .. "_sight"] then
         anim = anim .. "_sight"
+    end
+	
+    if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
+        anim = anim .. "_empty"
+    end
+
+    if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
+        anim = anim .. "_empty"
     end
 
     if !self.Animations[anim] then return end

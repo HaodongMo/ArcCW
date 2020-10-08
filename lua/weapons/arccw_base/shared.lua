@@ -491,6 +491,9 @@ SWEP.Animations = {
     --             e = "", -- effect name
     --             att = nil, -- attachment, defaults to shell attachment
     --             mag = 100, -- magnitude
+    --             -- also capable of modifying bodygroups
+    --             ind = 0,
+    --             bg = 0,
     --         }
     --     },
     --     ViewPunchTable = {
