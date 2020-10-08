@@ -1573,7 +1573,7 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("RecoilSide", true) end,
             },
             {translate("stat.sighttime"), translate("stat.sighttime.tooltip"),
-                function() return defaultStatFunc("SightTime", "ms", 2) end,
+                function() return defaultStatFunc("SightTime", "ms") end,
                 function() return defaultBetterFunc("SightTime", true) end,
             },
             {translate("stat.speedmult"), translate("stat.speedmult.tooltip"),
