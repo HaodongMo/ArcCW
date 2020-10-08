@@ -13,8 +13,8 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_sight"
     end
 	
-    if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
-        anim = anim .. "_empty"
+    if self:GetState() == ArcCW.STATE_SPRINT and self.Animations[anim .. "_sprint"] then
+        anim = anim .. "_sprint"
     end
 
     if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
