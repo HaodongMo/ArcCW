@@ -53,7 +53,7 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.language_info" },
 }
 
-local PerfomancePanel = {
+local PerformancePanel = {
     --{ type = "h", text = "#arccw.clientcfg" },
     { type = "h", text = "#arccw.performance" },
     { type = "b", text = "#arccw.cvar.cheapscopes", var = "arccw_cheapscopes" },
@@ -404,7 +404,7 @@ function ArcCW_Options_Client(panel)
 end
 
 function ArcCW_Options_Perf(panel)
-    ArcCW.GeneratePanelElements(panel, PerfomancePanel)
+    ArcCW.GeneratePanelElements(panel, PerformancePanel)
 end
 
 function ArcCW_Options_Viewmodel(panel)
