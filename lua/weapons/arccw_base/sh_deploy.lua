@@ -174,6 +174,10 @@ function SWEP:Initialize()
         end
     end
 
+    --if GetConVar("arccw_override_deploychambered"):GetBool() and self.ChamberSize > 0 then 
+    --    self.UnReady = false
+    --end
+
     if GetConVar("arccw_equipmentsingleton"):GetBool() and self.Throwing then
         self.Singleton = true
         self.Primary.ClipSize = -1

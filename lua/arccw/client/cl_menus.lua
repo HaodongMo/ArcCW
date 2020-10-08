@@ -154,6 +154,8 @@ local ServerPanel = {
     { type = "b", text = "#arccw.cvar.override_deploychambered", var = "arccw_override_deploychambered", sv = true },
     { type = "b", text = "#arccw.cvar.override_barrellength", var = "arccw_override_nearwall", sv = true },
     { type = "b", text = "#arccw.cvar.doorbust", var = "arccw_doorbust", sv = true },
+    { type = "f", text = "#arccw.cvar.weakensounds", var = "arccw_weakensounds", min = -20, max = 30, sv = true},
+    { type = "c", text = "#arccw.cvar.weakensounds.desc" },
 }
 
 local AmmoPanel = {

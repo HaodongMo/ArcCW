@@ -88,7 +88,7 @@ ArcCW.ClientConVars = {
     ["arccw_vm_swayxmult"]            = { def =  -0.1 },
     ["arccw_vm_swayymult"]            = { def =  0.1 },
     ["arccw_vm_swayzmult"]            = { def =  -0.3 },
-	
+
     ["arccw_vm_swaywigglemult"]       = { def =  1 },
     ["arccw_vm_swayspeedmult"]        = { def =  1 },
     ["arccw_vm_swayrotatemult"]       = { def =  1 },
