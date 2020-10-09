@@ -12,7 +12,7 @@ function SWEP:SelectAnimation(anim)
     if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations[anim .. "_sight"] then
         anim = anim .. "_sight"
     end
-	
+
     if self:GetState() == ArcCW.STATE_SPRINT and self.Animations[anim .. "_sprint"] then
         anim = anim .. "_sprint"
     end
@@ -253,7 +253,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             end
 
             -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
-            if self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL() 
+            if self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL()
                     and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
                 ianim = "idle_ubgl_empty"
             elseif self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL() and self.Animations.idle_ubgl then
