@@ -197,8 +197,14 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         local bp, ba = self.BashPos, self.BashAng
 
+        bp = self:GetBuff_Override("Override_BashPos") or bp
+        ba = self:GetBuff_Override("Override_BashAng") or ba
+
         if delta > 0.3 then
             bp, ba = self.BashPreparePos, self.BashPrepareAng
+
+            bp = self:GetBuff_Override("Override_BashPreparePos") or bp
+            ba = self:GetBuff_Override("Override_BashPrepareAng") or ba
             delta = (delta - 0.5) * 2
         else
             delta = delta * 2
