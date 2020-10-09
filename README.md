@@ -1,4 +1,4 @@
-# ArcCW - an amazing project
+# ArcCW - Arctic's Customizable Weaponry
 
 Welcome to the ArcCW GitHub page!
 

@@ -84,6 +84,7 @@ function EFFECT:Init(data)
         plyvel = ent.Owner:GetAbsVelocity()
     end
 
+
     phys:Wake()
     phys:SetDamping(0, 0)
     phys:SetMass(1)

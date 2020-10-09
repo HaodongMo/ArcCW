@@ -38,7 +38,7 @@ end
 
 function SWEP:PrimaryAttack()
     local owner = self:GetOwner()
-    
+
     self.Primary.Automatic = true
 
     if !self:CanPrimaryAttack() then return end
@@ -62,12 +62,12 @@ function SWEP:PrimaryAttack()
 
         return
     end
-	
-	
-	local desync = GetConVar("arccw_desync"):GetBool()
-	local desyncnum = (desync and math.random()) or 0
+
+
+    local desync = GetConVar("arccw_desync"):GetBool()
+    local desyncnum = (desync and math.random()) or 0
     math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)) + desyncnum)
-	
+
     self.Primary.Automatic = self:ShouldBeAutomatic()
 
     local dir = owner:EyeAngles()
@@ -246,7 +246,7 @@ function SWEP:PrimaryAttack()
 
         for n = 1, bullet.Num do
             bullet.Num = 1
-			math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)) + desyncnum)
+            math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)) + desyncnum)
             if !self:GetBuff_Override("Override_NoRandSpread") then
                 local ang = dir + AngleRand() * spread / 5
                 bullet.Dir = ang:Forward()
@@ -274,14 +274,14 @@ function SWEP:PrimaryAttack()
         end
     end
 
-	self:DoShootSound()
+    self:DoShootSound()
     self:DoPrimaryAnim()
 
     if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and clip == 0) then
-		local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
-		local firedelay = self.Animations[fireanim].MinProgress or 0
+        local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+        local firedelay = self.Animations[fireanim].MinProgress or 0
         self:SetNeedCycle(true)
-		self.DelayCycleAnim = CurTime() + firedelay / self:GetBuff_Mult("Mult_RPM")
+        self.DelayCycleAnim = CurTime() + firedelay / self:GetBuff_Mult("Mult_RPM")
     end
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == -self:GetCurrentFiremode().Mode then
@@ -320,6 +320,8 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     local lastsound = self.LastShootSound
 
+    local clip = self:Clip1()
+
     if clip == 1 and lastsound then
         fsound = lastsound
 
@@ -340,21 +342,35 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     distancesound = self:GetBuff_Hook("Hook_GetDistantShootSound", distancesound)
 
-	local spv = self.ShootPitchVariation
-    local volume = self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")
+    local spv = self.ShootPitchVariation
+    local volume = self.ShootVol
     local pitch  = self.ShootPitch * math.Rand(1 - spv, 1 + spv) * self:GetBuff_Mult("Mult_ShootPitch")
+
+    local v = GetConVar("arccw_weakensounds"):GetFloat()
+
+    volume = volume - v
+
+    volume = volume * self:GetBuff_Mult("Mult_ShootVol")
 
     volume = math.Clamp(volume, 51, 149)
     pitch  = math.Clamp(pitch, 51, 149)
 
-	if	sndoverride		then	fsound	= sndoverride end
-	if	dsndoverride	then	distancesound = dsndoverride end
-	if	voloverride		then	volume	= voloverride end
-	if	pitchoverride	then	pitch	= pitchoverride end
+    if	sndoverride		then	fsound	= sndoverride end
+    if	dsndoverride	then	distancesound = dsndoverride end
+    if	voloverride		then	volume	= voloverride end
+    if	pitchoverride	then	pitch	= pitchoverride end
 
     if distancesound then self:MyEmitSound(distancesound, 149, pitch, 0.5, CHAN_WEAPON + 1) end
 
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
+
+    local addiftable	= self:GetBuff_Hook("Hook_AddShootSound") or {}
+    local addifsound	= addiftable.sound
+    local addifvolume	= addiftable.volume	or volume
+    local addifpitch	= addiftable.pitch	or pitch
+
+
+    if addifsound then self:MyEmitSound(addifsound, addifvolume, addifpitch, 1, CHAN_WEAPON - 1) end
 end
 
 function SWEP:DoPrimaryFire(isent, data)

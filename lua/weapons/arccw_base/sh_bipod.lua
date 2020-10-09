@@ -93,9 +93,9 @@ function SWEP:EnterBipod()
 
     self:SetNextSecondaryFire(CurTime() + 0.075)
 
-	if game.SinglePlayer() and CLIENT then return end
+    if game.SinglePlayer() and CLIENT then return end
 
-	self:MyEmitSound(self.EnterBipodSound)
+    self:MyEmitSound(self.EnterBipodSound)
     self:SetInBipod(true)
 end
 
@@ -113,8 +113,8 @@ function SWEP:ExitBipod()
 
     self:SetNextSecondaryFire(CurTime() + 0.075)
 
-	if game.SinglePlayer() and CLIENT then return end
-	
+    if game.SinglePlayer() and CLIENT then return end
+
     self:MyEmitSound(self.ExitBipodSound)
     self:SetInBipod(false)
 end

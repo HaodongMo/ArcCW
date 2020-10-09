@@ -26,7 +26,7 @@ function SWEP:EnterSprint()
 
     local anim = self:SelectAnimation("enter_sprint")
     if anim and !s then
-        self:PlayAnimation(anim, 1, true, nil, nil, nil, false, false)
+        self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
     end
 end
 
@@ -53,7 +53,7 @@ function SWEP:ExitSprint()
 
     local anim = self:SelectAnimation("exit_sprint")
     if anim and !s then
-        self:PlayAnimation(anim, 1, true, nil, nil, nil, false, false)
+        self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
     end
 end
 
@@ -84,7 +84,7 @@ function SWEP:EnterSights()
 
     local anim = self:SelectAnimation("enter_sight")
     if anim then
-        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, nil, nil, false, false)
+        self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
     end
 end
 
@@ -116,7 +116,7 @@ function SWEP:ExitSights()
 
     local anim = self:SelectAnimation("exit_sight")
     if anim then
-        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, nil, nil, false, false)
+        self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
     end
 end
 
