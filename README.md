@@ -2,8 +2,8 @@
 
 Welcome to the ArcCW GitHub page!
 
-
 You are free to contribute by sending pull requests.
+
 
 Weapon/attachment/translation author? Check these out for more info.
 - Refer to this for SWEP parameters: https://github.com/HaodongMo/ArcCW/blob/master/lua/weapons/arccw_base/shared.lua

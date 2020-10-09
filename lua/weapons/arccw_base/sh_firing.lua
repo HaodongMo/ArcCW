@@ -486,6 +486,8 @@ function SWEP:GetShootSrc()
     end
 
     local src = owner:EyePos()
+
+
     src = src + dir:Right()   * offset[1]
     src = src + dir:Forward() * offset[2]
     src = src + dir:Up()      * offset[3]
