@@ -438,11 +438,9 @@ SWEP.Attachments = {}
 -- holster
 -- reload
 -- fire
--- fire_empty
--- cycle (for bolt actions)
+-- cycle (for bolt/pump actions)
 -- bash
 -- fix
--- fix_empty
 -- enter_bipod
 -- exit_bipod
 -- enter_sight
@@ -458,8 +456,26 @@ SWEP.Attachments = {}
 -- enter_ubgl
 -- exit_ubgl
 -- idle_ubgl
--- append _empty for empty variation
--- use SWEP.Hook_TranslateAnimation, same as in attachment, to do even more behaviours
+
+-- you can append suffixes for different states
+-- append list:
+
+-- _iron, _sights, or _sight	for sighted variation
+-- _sprint						for sprinting variation
+-- _bipod						for bipod variation
+-- _empty						for empty variation
+
+-- this does not apply to reload animations.
+
+-- !! they MUST be in the order of this list.
+-- example: fire_iron_bipod_empty
+
+-- use SWEP/wep.Hook_TranslateAnimation, same as in attachment, to do even more behaviours
+-- use SWEP/wep.Hook_SelectReloadAnimation to change the reload animation
+-- use SWEP/wep.Hook_SelectInsertAnimation to change the shotgun reload insert animation
+-- use SWEP/wep.Hook_SelectFireAnimation to change the fire animation
+-- use SWEP/wep.Hook_SelectCycleAnimation to change the cycle/pump animation
+-- use SWEP/wep.Hook_SelectBashAnimation to change the bash animation
 
 SWEP.Animations = {
     -- ["idle"] = {
