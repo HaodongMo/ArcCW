@@ -15,4 +15,4 @@ ENT.Scale = 1.5
 
 ENT.DetonationDamage = 50
 ENT.DetonationRadius = 128
-ENT.DetonationSound = "weapons/arccw/deagle/deagle-1.wav"
+ENT.DetonationSound = "weapons/357_fire2.wav"

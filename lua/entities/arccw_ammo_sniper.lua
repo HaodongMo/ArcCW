@@ -17,4 +17,4 @@ end
 
 ENT.DetonationDamage = 80
 ENT.DetonationRadius = 128
-ENT.DetonationSound = "weapons/arccw/ssg08/ssg08-1.wav"
+ENT.DetonationSound = "npc/sniper/echo1.wav"
