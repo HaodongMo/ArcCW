@@ -17,6 +17,10 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_sprint"
     end
 
+    if self:InBipod() and self.Animations[anim .. "_bipod"] then
+        anim = anim .. "_bipod"
+    end
+
     if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
         anim = anim .. "_empty"
     end

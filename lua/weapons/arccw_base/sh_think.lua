@@ -66,6 +66,9 @@ function SWEP:Think()
 
         if self:GetBurstCount() == self:GetBurstLength() then
             self:SetBurstCount(0)
+			if !self:GetCurrentFiremode().AutoBurst then
+				self.Primary.Automatic = false
+			end
         end
     end
 
