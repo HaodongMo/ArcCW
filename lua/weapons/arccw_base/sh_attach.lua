@@ -201,9 +201,10 @@ function SWEP:GetBuff_Override(buff)
         if !atttbl then continue end
 
         if atttbl[buff] != nil then
-            if level == 0 or (atttbl[buff .. "_Priority"] and atttbl[buff .. "_Priority"] > level) then
+            local pri = atttbl[buff .. "_Priority"] or 1
+            if level == 0 or (pri > level) then
                 current = atttbl[buff]
-                level = atttbl[buff .. "_Priority"] or 1
+                level = pri
                 winningslot = i
             end
         end
@@ -216,9 +217,10 @@ function SWEP:GetBuff_Override(buff)
         local cfm = self:GetCurrentFiremode()
 
         if cfm and cfm[buff] != nil then
-            if level == 0 or (cfm[buff .. "_Priority"] and cfm[buff .. "_Priority"] > level) then
+            local pri = cfm[buff .. "_Priority"] or 1
+            if level == 0 or (pri > level) then
                 current = cfm[buff]
-                level = cfm[buff .. "_Priority"] or 1
+                level = pri
             end
         end
 
@@ -235,9 +237,10 @@ function SWEP:GetBuff_Override(buff)
 
             if ele then
                 if ele[buff] != nil then
-                    if level == 0 or (ele[buff .. "_Priority"] and ele[buff .. "_Priority"] > level) then
+                    local pri = ele[buff .. "_Priority"] or 1
+                    if level == 0 or (pri > level) then
                         current = ele[buff]
-                        level = ele[buff .. "_Priority"] or 1
+                        level = pri
                         winningslot = i
                     end
                 end
@@ -249,9 +252,10 @@ function SWEP:GetBuff_Override(buff)
     end
 
     if self:GetTable()[buff] != nil then
-        if level == 0 or (self:GetTable()[buff .. "_Priority"] and self:GetTable()[buff .. "_Priority"] > level) then
+        local pri = self:GetTable()[buff .. "_Priority"] or 1
+        if level == 0 or (pri > level) then
             current = self:GetTable()[buff]
-            level = self:GetTable()[buff .. "_Priority"] or 1
+            level = pri
         end
     end
 

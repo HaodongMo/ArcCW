@@ -409,7 +409,7 @@ function SWEP:DoPrimaryFire(isent, data)
 
             vel = vel / ArcCW.HUToM
 
-            vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity")
+            vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity") * self:GetBuff_Mult("Mult_Range")
 
             vel = vel * GetConVar("arccw_bullet_velocity"):GetFloat()
 
