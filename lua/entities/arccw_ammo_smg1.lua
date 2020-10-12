@@ -16,4 +16,4 @@ end
 
 ENT.DetonationDamage = 30
 ENT.DetonationRadius = 256
-ENT.DetonationSound = "weapons/arccw/galilar/galil-1.wav"
+ENT.DetonationSound = "weapons/smg1/npc_smg1_fire1.wav"

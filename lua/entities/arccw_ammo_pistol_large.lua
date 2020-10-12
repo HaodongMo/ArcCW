@@ -14,4 +14,4 @@ ENT.AmmoCount = 200
 
 ENT.DetonationDamage = 10
 ENT.DetonationRadius = 256
-ENT.DetonationSound = "weapons/arccw/glock18/glock18-1.wav"
+ENT.DetonationSound = "weapons/pistol/pistol_fire3.wav"

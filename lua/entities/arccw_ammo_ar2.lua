@@ -14,4 +14,4 @@ ENT.AmmoCount = 30
 
 ENT.DetonationDamage = 50
 ENT.DetonationRadius = 256
-ENT.DetonationSound = "weapons/arccw/ak47/ak47-1.wav"
+ENT.DetonationSound = "weapons/ar1/ar1_dist2.wav"

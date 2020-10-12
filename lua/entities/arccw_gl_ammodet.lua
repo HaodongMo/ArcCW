@@ -1,8 +1,22 @@
+ENT.Type 				= "anim"
+ENT.Base 				= "base_entity"
+ENT.PrintName 			= "HE Round"
+ENT.Author 				= ""
+ENT.Information 		= ""
+
+ENT.Spawnable 			= false
+
+
 AddCSLuaFile()
 
-ENT.Base 					= "arccw_gl_he"
 ENT.Model = "models/items/ar2_grenade.mdl"
-ENT.Spawnable 				= false
+ENT.Ticks = 0
+ENT.FuseTime = 10
+
+function ENT:Draw()
+    self:DrawModel()
+end
+
 ENT.Ticks = 0
 
 function ENT:Detonate()
@@ -68,4 +82,35 @@ if CLIENT then
 
         self.Ticks = self.Ticks + 1
     end
+else
+
+    function ENT:Initialize()
+        local pb_vert = 1
+        local pb_hor = 1
+        self:SetModel(self.Model)
+        self:PhysicsInitBox( Vector(-pb_vert,-pb_hor,-pb_hor), Vector(pb_vert,pb_hor,pb_hor) )
+
+        local phys = self:GetPhysicsObject()
+        if phys:IsValid() then
+            phys:Wake()
+        end
+
+        self.SpawnTime = CurTime()
+
+        timer.Simple(0.1, function()
+            if !IsValid(self) then return end
+            self:SetCollisionGroup(COLLISION_GROUP_PROJECTILE)
+        end)
+    end
+
+    function ENT:Think()
+        if SERVER and CurTime() - self.SpawnTime >= self.FuseTime then
+            self:Detonate()
+        end
+    end
+
+    function ENT:PhysicsCollide(colData, collider)
+        self:Detonate()
+    end
+
 end
