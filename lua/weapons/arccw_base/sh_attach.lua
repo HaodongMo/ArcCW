@@ -49,7 +49,7 @@ function SWEP:GetIsShotgun()
 
         local atttbl = ArcCW.AttachmentTable[i.Installed]
 
-        if atttbl.Override_Num > num then num = atttbl.Override_Num end
+        if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
     end
 
     return num > 1
