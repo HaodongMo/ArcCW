@@ -299,7 +299,9 @@ function SWEP:ProcessRecoil()
     -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
     -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
 
-    owner:SetEyeAngles(newang)
+    if newang.r == 0 or CLIENT then
+        owner:SetEyeAngles(newang)
+    end
 
     local rpb = self.RecoilPunchBack
     local rps = self.RecoilPunchSide

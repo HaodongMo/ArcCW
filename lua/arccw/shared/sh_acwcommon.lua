@@ -74,7 +74,7 @@ ArcCW.PenTable = {
    [MAT_VENT]        = 0.75,
    [MAT_WOOD]        = 0.5,
    [MAT_DEFAULT]     = 0.75,
-   [MAT_GLASS]       = 0.1,
+   [MAT_GLASS]       = 0.025,
    [MAT_WARPSHIELD]  = 1
 }
 
