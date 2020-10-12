@@ -126,7 +126,7 @@ function SWEP:NPC_Shoot()
     if self:GetOwner().ArcCW_Smoked then return end
 
 
-    self.Primary.Automatic = self:ShouldBeAutomatic()
+    self.Primary.Automatic = true
 
 
     local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))

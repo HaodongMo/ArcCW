@@ -68,7 +68,7 @@ function SWEP:PrimaryAttack()
     local desyncnum = (desync and math.random()) or 0
     math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, self:GetOwner():GetCurrentCommand():CommandNumber()) * (self:EntIndex() % 30241)) + desyncnum)
 
-    self.Primary.Automatic = self:ShouldBeAutomatic()
+    self.Primary.Automatic = true
 
     local dir = owner:EyeAngles()
     local src = self:GetShootSrc()
@@ -409,7 +409,7 @@ function SWEP:DoPrimaryFire(isent, data)
 
             vel = vel / ArcCW.HUToM
 
-            vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity")
+            vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity") * self:GetBuff_Mult("Mult_Range")
 
             vel = vel * GetConVar("arccw_bullet_velocity"):GetFloat()
 
@@ -693,14 +693,6 @@ function SWEP:GetBurstLength()
     if len < 0 then return -len end
 
     return self:GetBurstCount() + 10
-end
-
-function SWEP:ShouldBeAutomatic()
-    if self:GetCurrentFiremode().Mode == 1 then return true end
-
-    if self:GetCurrentFiremode().RunawayBurst then return true end
-
-    return true
 end
 
 function SWEP:FireAnimationEvent(pos, ang, event, options)

@@ -3,7 +3,6 @@ function SWEP:TableRandom(table)
 end
 
 function SWEP:MyEmitSound(fsound, level, pitch, vol, chan)
-    -- some retard made this "sound". Fuck you, whoever did that.
     fsound = self:GetBuff_Hook("Hook_TranslateSound", fsound) or fsound
 
     if istable(fsound) then fsound = self:TableRandom(fsound) end

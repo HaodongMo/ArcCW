@@ -60,7 +60,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             dmg:SetDamage(damage * pdelta)
             dmg:SetDamagePosition(ptrhp)
 
-            if IsValid(ptrent) and !table.HasValue(alreadypenned, ptrent) then ptrent:TakeDamageInfo(dmg) end
+            if IsValid(ptrent) and !alreadypenned[ptrent] then ptrent:TakeDamageInfo(dmg) end
 
             penmult = ArcCW.PenTable[ptr.MatType] or 1
 
@@ -97,6 +97,8 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         end
 
         if physical then
+            alreadypenned[ptr.Entity:EntIndex()] = true
+
             local newbullet = {}
             newbullet.DamageMin = bullet.DamageMin or 1
             newbullet.DamageMax = bullet.DamageMax or 10

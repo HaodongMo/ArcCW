@@ -15,6 +15,7 @@ SWEP.TickCache_Overrides = {}
 SWEP.TickCache_Adds = {}
 SWEP.TickCache_Mults = {}
 SWEP.TickCache_Hooks = {}
+SWEP.TickCache_IsShotgun = nil
 
 SWEP.TickCache_Tick_Overrides = {}
 SWEP.TickCache_Tick_Adds = {}
@@ -27,12 +28,31 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Adds = {}
     self.TickCache_Mults = {}
     self.TickCache_Hooks = {}
+    self.TickCache_IsShotgun = self:GetIsShotgun()
 
     self.TickCache_Tick_Overrides = {}
     self.TickCache_Tick_Adds = {}
     self.TickCache_Tick_Mults = {}
 
     self.AttCache_Hooks = {}
+end
+
+function SWEP:GetIsShotgun()
+    if self.TickCache_IsShotgun then return self.TickCache_IsShotgun end
+
+    num = self:GetBuff_Override("Override_Num") or self.Num
+
+    if num > 1 then return true end
+
+    for _, i in pairs(self.Attachments) do
+        if !i.Installed then continue end
+
+        local atttbl = ArcCW.AttachmentTable[i.Installed]
+
+        if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
+    end
+
+    return num > 1
 end
 
 function SWEP:GetBuff_Hook(buff, data)
@@ -181,9 +201,10 @@ function SWEP:GetBuff_Override(buff)
         if !atttbl then continue end
 
         if atttbl[buff] != nil then
-            if level == 0 or (atttbl[buff .. "_Priority"] and atttbl[buff .. "_Priority"] > level) then
+            local pri = atttbl[buff .. "_Priority"] or 1
+            if level == 0 or (pri > level) then
                 current = atttbl[buff]
-                level = atttbl[buff .. "_Priority"] or 1
+                level = pri
                 winningslot = i
             end
         end
@@ -196,9 +217,10 @@ function SWEP:GetBuff_Override(buff)
         local cfm = self:GetCurrentFiremode()
 
         if cfm and cfm[buff] != nil then
-            if level == 0 or (cfm[buff .. "_Priority"] and cfm[buff .. "_Priority"] > level) then
+            local pri = cfm[buff .. "_Priority"] or 1
+            if level == 0 or (pri > level) then
                 current = cfm[buff]
-                level = cfm[buff .. "_Priority"] or 1
+                level = pri
             end
         end
 
@@ -215,9 +237,10 @@ function SWEP:GetBuff_Override(buff)
 
             if ele then
                 if ele[buff] != nil then
-                    if level == 0 or (ele[buff .. "_Priority"] and ele[buff .. "_Priority"] > level) then
+                    local pri = ele[buff .. "_Priority"] or 1
+                    if level == 0 or (pri > level) then
                         current = ele[buff]
-                        level = ele[buff .. "_Priority"] or 1
+                        level = pri
                         winningslot = i
                     end
                 end
@@ -229,9 +252,10 @@ function SWEP:GetBuff_Override(buff)
     end
 
     if self:GetTable()[buff] != nil then
-        if level == 0 or (self:GetTable()[buff .. "_Priority"] and self:GetTable()[buff .. "_Priority"] > level) then
+        local pri = self:GetTable()[buff .. "_Priority"] or 1
+        if level == 0 or (pri > level) then
             current = self:GetTable()[buff]
-            level = self:GetTable()[buff .. "_Priority"] or 1
+            level = pri
         end
     end
 
@@ -1119,6 +1143,19 @@ function SWEP:AdjustAtts()
 
     if ammo != oldammo then
         self:Unload()
+    end
+
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        if ArcCW:SlotAcceptsAtt(k.Slot, self, k.Installed) then continue end
+        -- if self:CheckFlags(k.ExcludeFlags, k.RequireFlags) then continue end
+
+        -- local atttbl = ArcCW.AttachmentTable[k.Installed]
+
+        -- if !atttbl then continue end
+        -- if self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then continue end
+
+        self:Detach(i, true)
     end
 
     -- if CLIENT and self:GetOwner():GetViewModel() then

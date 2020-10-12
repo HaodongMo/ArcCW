@@ -41,6 +41,11 @@ function EFFECT:Init(data)
     end
 
     local mdl = wpn:GetMuzzleDevice(wm)
+    local parent = mdl
+
+    if !wm then
+        parent = LocalPlayer():GetViewModel()
+    end
 
     if !IsValid(mdl) then return end
 
@@ -54,7 +59,7 @@ function EFFECT:Init(data)
             local fx = EffectData()
 
             fx:SetOrigin(pos)
-            fx:SetEntity(mdl)
+            fx:SetEntity(parent)
             fx:SetAttachment(att)
             fx:SetNormal((ang or Angle(0, 0, 0)):Forward())
             fx:SetStart(pos)
