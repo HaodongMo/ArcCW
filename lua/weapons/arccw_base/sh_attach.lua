@@ -15,6 +15,7 @@ SWEP.TickCache_Overrides = {}
 SWEP.TickCache_Adds = {}
 SWEP.TickCache_Mults = {}
 SWEP.TickCache_Hooks = {}
+SWEP.TickCache_IsShotgun = nil
 
 SWEP.TickCache_Tick_Overrides = {}
 SWEP.TickCache_Tick_Adds = {}
@@ -27,12 +28,31 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Adds = {}
     self.TickCache_Mults = {}
     self.TickCache_Hooks = {}
+    self.TickCache_IsShotgun = self:GetIsShotgun()
 
     self.TickCache_Tick_Overrides = {}
     self.TickCache_Tick_Adds = {}
     self.TickCache_Tick_Mults = {}
 
     self.AttCache_Hooks = {}
+end
+
+function SWEP:GetIsShotgun()
+    if self.TickCache_IsShotgun then return self.TickCache_IsShotgun end
+
+    num = self:GetBuff_Override("Override_Num") or self.Num
+
+    if num > 1 then return true end
+
+    for _, i in pairs(self.Attachments) do
+        if !i.Installed then continue end
+
+        local atttbl = ArcCW.AttachmentTable[i.Installed]
+
+        if atttbl.Override_Num > num then num = atttbl.Override_Num end
+    end
+
+    return num > 1
 end
 
 function SWEP:GetBuff_Hook(buff, data)
@@ -1119,6 +1139,19 @@ function SWEP:AdjustAtts()
 
     if ammo != oldammo then
         self:Unload()
+    end
+
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        if ArcCW:SlotAcceptsAtt(k.Slot, self, k.Installed) then continue end
+        -- if self:CheckFlags(k.ExcludeFlags, k.RequireFlags) then continue end
+
+        -- local atttbl = ArcCW.AttachmentTable[k.Installed]
+
+        -- if !atttbl then continue end
+        -- if self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then continue end
+
+        self:Detach(i, true)
     end
 
     -- if CLIENT and self:GetOwner():GetViewModel() then
