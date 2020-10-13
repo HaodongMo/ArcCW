@@ -7,5 +7,7 @@ function SWEP:MyEmitSound(fsound, level, pitch, vol, chan)
 
     if istable(fsound) then fsound = self:TableRandom(fsound) end
 
-    self:EmitSound(fsound, level, pitch, vol, chan or CHAN_AUTO)
+    if fsound != "" then
+        self:EmitSound(fsound, level, pitch, vol, chan or CHAN_AUTO)
+    end
 end
