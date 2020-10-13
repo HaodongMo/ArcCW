@@ -135,3 +135,10 @@ function SWEP:ReloadUBGL()
         reloadfunc(self, self.Attachments[slot].VElement)
     end
 end
+
+if SERVER then
+
+function SWEP:DoLHIKAnimation(key, time)
+end
+
+end

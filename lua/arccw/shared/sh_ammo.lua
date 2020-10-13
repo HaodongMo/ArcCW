@@ -4,14 +4,15 @@ hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", function()
             local class = k.ClassName
             local wpntbl = weapons.Get(class)
 
-            if wpntbl.Throwing and !wpntbl.Singleton then
+            if (wpntbl.Throwing or wpntbl.Disposable) and !wpntbl.Singleton then
                 local ammoid = game.GetAmmoID(class)
 
                 if ammoid == -1 then
-                    -- if ammo type does !exist, build it
+                    -- if ammo type does not exist, build it
                     game.AddAmmoType({
                         name = class,
                     })
+                    print("ArcCW adding " .. class)
                     if CLIENT then
                         language.Add(class .. "_ammo", wpntbl.PrintName)
                     end

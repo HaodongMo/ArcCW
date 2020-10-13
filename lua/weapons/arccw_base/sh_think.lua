@@ -14,7 +14,7 @@ function SWEP:Think()
     self.BurstCount = self:GetBurstCount()
 
     if owner:KeyPressed(IN_ATTACK) then
-        self:GetReqEnd(true)
+        self:SetReqEnd(true)
     end
 
     if CLIENT then
@@ -66,9 +66,9 @@ function SWEP:Think()
 
         if self:GetBurstCount() == self:GetBurstLength() then
             self:SetBurstCount(0)
-			if !self:GetCurrentFiremode().AutoBurst then
-				self.Primary.Automatic = false
-			end
+            if !self:GetCurrentFiremode().AutoBurst then
+                self.Primary.Automatic = false
+            end
         end
     end
 

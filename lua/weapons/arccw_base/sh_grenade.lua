@@ -71,6 +71,7 @@ function SWEP:Throw()
         end
     end)
     self:SetTimer(self:GetAnimKeyTime("throw"), function()
+        if !self:IsValid() then return end
         self:PlayAnimation("draw")
     end)
 
