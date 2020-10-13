@@ -108,7 +108,7 @@ function SWEP:Reload()
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
         
         if self.Animations[anim].MinProgress then
-            reloadtime = self.Animations[anim].MinProgress * self:GetBuff_Mult("Mult_ReloadTime") * mult
+            reloadtime = self.Animations[anim].MinProgress * mult
         else
             reloadtime = self:GetAnimKeyTime(anim) * mult
         end
