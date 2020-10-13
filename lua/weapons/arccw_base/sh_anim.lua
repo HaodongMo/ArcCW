@@ -94,6 +94,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         end)
     end
 
+    if !self:GetOwner() then return end
+    if !self:GetOwner().GetViewModel then return end
     local vm = self:GetOwner():GetViewModel()
 
     if !vm then return end

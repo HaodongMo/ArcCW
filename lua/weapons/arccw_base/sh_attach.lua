@@ -28,6 +28,7 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Adds = {}
     self.TickCache_Mults = {}
     self.TickCache_Hooks = {}
+    self.TickCache_IsShotgun = nil
     self.TickCache_IsShotgun = self:GetIsShotgun()
 
     self.TickCache_Tick_Overrides = {}

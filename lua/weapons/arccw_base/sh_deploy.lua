@@ -265,7 +265,7 @@ function SWEP:Holster(wep)
     if !self.FullyHolstered then
 
         self:SetTimer(time, function()
-            self.ReqEnd = true
+            self:SetReqEnd(true)
             self:KillTimers()
 
             self.FullyHolstered = true

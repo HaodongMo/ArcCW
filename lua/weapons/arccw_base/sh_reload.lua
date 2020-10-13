@@ -43,7 +43,7 @@ function SWEP:Reload()
     if load <= self:Clip1() then return end
     self.LastLoadClip1 = load - self:Clip1()
 
-    self:GetReqEnd(false)
+    self:SetReqEnd(false)
     self:SetBurstCount(0)
 
     local shouldshotgunreload = self.ShotgunReload
@@ -307,7 +307,7 @@ function SWEP:ReloadInsert(empty)
                 end
             end)
 
-        self:GetReqEnd(false)
+        self:SetReqEnd(false)
     else
         local insertcount = self:GetBuff_Override("Override_InsertAmount") or 1
         local insertanim = "sgreload_insert"
