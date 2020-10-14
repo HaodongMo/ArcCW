@@ -204,11 +204,16 @@ SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
     -- [0] = "bulletchamber",
     -- [1] = "bullet1"
 }
-
 SWEP.CaseBones = {}
-
 -- Unlike BulletBones, these bones are determined by the missing bullet amount when reloading
 SWEP.StripperClipBones = {}
+
+-- the same as the bone versions but works via bodygroups.
+-- bodygroups work the same as in attachmentelements.
+-- [0] = {ind = 0, bg = 1}
+SWEP.BulletBGs = {}
+SWEP.CaseBGs = {}
+SWEP.StripperClipBGs = {}
 
 SWEP.KeepBaseIrons = false -- do not override iron sights when scope installed
 
@@ -511,6 +516,9 @@ SWEP.Animations = {
     --             -- also capable of modifying bodygroups
     --             ind = 0,
     --             bg = 0,
+    --             -- and poseparams
+    --             pp = "pose",
+    --             ppv = 0.25,
     --         }
     --     },
     --     ViewPunchTable = {

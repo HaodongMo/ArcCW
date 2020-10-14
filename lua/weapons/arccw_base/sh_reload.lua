@@ -106,7 +106,16 @@ function SWEP:Reload()
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
-        self:SetTimer(self:GetAnimKeyTime(anim) * mult * 0.95,
+        
+        if self.Animations[anim].MinProgress then
+            reloadtime = self.Animations[anim].MinProgress * mult
+        else
+            reloadtime = self:GetAnimKeyTime(anim) * mult
+        end
+
+        self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim) * mult)
+            
+        self:SetTimer(reloadtime * 0.95,
         function()
             self:SetReloading(false)
             -- if self:GetOwner():KeyDown(IN_ATTACK2) then
@@ -321,7 +330,7 @@ function SWEP:ReloadInsert(empty)
 
         self:RestoreAmmo(insertcount)
 
-		local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
+        local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(time * mult,

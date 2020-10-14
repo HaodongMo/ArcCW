@@ -111,6 +111,17 @@ local function generatefonts()
 
 end
 
+local og_ScreenScale = ScreenScale
+
+local ScreenScale_Cache = {}
+
+function ScreenScale(a)
+    if ScreenScale_Cache[a] then return ScreenScale_Cache[a] end
+
+    ScreenScale_Cache[a] = og_ScreenScale(a)
+    return ScreenScale_Cache[a]
+end
+
 generatefonts()
 
 language.Add("SniperPenetratedRound_ammo", "Sniper Ammo")
@@ -121,6 +132,7 @@ local lastScrW = ScrW()
 hook.Add("HUDPaint", "ArcCW_FontRegen", function()
     if (lastScrH != ScrH()) or (lastScrW != ScrW()) then
         generatefonts()
+        ScreenScale_Cache = {}
     end
 
     lastScrH = ScrH()

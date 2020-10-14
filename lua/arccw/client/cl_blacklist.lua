@@ -1,5 +1,7 @@
 local srf      = surface
 
+
+
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end

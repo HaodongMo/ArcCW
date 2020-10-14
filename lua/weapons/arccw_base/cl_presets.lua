@@ -1,6 +1,8 @@
 -- atts are comma separated
 -- optic_mrs,,,perk_quickdraw,ammo_match
 
+
+
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end

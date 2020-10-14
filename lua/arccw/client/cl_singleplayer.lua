@@ -51,6 +51,20 @@ concommand.Add("arccw_listvmanims", function()
     PrintTable(vm:GetSequenceList())
 end)
 
+concommand.Add("arccw_listvmbones", function()
+    local wep = LocalPlayer():GetActiveWeapon()
+
+    if !wep then return end
+
+    local vm = LocalPlayer():GetViewModel()
+
+    if !vm then return end
+
+    for i = 0, (vm:GetBoneCount() - 1) do
+        print(vm:GetBoneName(i))
+    end
+end)
+
 net.Receive("arccw_sp_loadautosave", function(len, ply)
     local wep = LocalPlayer():GetActiveWeapon()
 

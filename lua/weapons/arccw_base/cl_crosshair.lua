@@ -3,6 +3,9 @@ local size = 0
 local cw = nil
 local clump_inner = Material("hud/clump_inner.png", "mips smooth")
 local clump_outer = Material("hud/clump_outer.png", "mips smooth")
+
+
+
 function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
     if !GetConVar("arccw_crosshair"):GetBool() then return false end

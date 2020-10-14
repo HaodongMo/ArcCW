@@ -144,8 +144,10 @@ function SWEP:CoolView(ply, pos, ang, fov)
     if ply:ShouldDrawLocalPlayer() then return end
     local vm = ply:GetViewModel()
     if !IsValid(vm) then return end
-    local ftv = math.max(FrameTime(), 0.001)
+    local ftv = RealFrameTime()
     local viewbobintensity = self.ProceduralViewBobIntensity or 0.3
+
+    if viewbobintensity == 0 then return end
 
     oldpostmp = pos * 1
     oldangtmp = ang * 1

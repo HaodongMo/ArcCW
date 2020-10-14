@@ -172,25 +172,46 @@ function SWEP:Think()
             local vec0 = vec1 * 0
 
             for i = 1, vm:GetBoneCount() do
-                vm:ManipulateBoneScale(i, vec1 )
+                vm:ManipulateBoneScale(i, vec1)
             end
 
-            for i, k in pairs(self:GetBuff_Override("Override_CaseBones") or self.CaseBones or {}) do
+            for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
                 if !isnumber(i) then continue end
                 local bone = vm:LookupBone(k)
 
                 if !bone then continue end
 
-                vm:ManipulateBoneScale(bone, vec0)
+                if self:GetVisualClip() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
             end
 
-            for i, k in pairs(self:GetBuff_Override("Override_BulletBones") or self.BulletBones or {}) do
+            for i, k in pairs(self:GetBuff_Override("Override_BulletBGs") or self.BulletBGs or {}) do
                 if !isnumber(i) then continue end
                 local bone = vm:LookupBone(k)
 
                 if !bone then continue end
 
-                vm:ManipulateBoneScale(bone, vec0)
+                if self:GetVisualBullets() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
+            end
+
+            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBGs") or self.StripperClipBGs or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualLoadAmount() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
             end
 
             for i, k in pairs(self:GetBuff_Override("Override_CaseBones") or self.CaseBones or {}) do
@@ -201,6 +222,8 @@ function SWEP:Think()
 
                 if self:GetVisualClip() >= i then
                     vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
                 end
             end
 
@@ -212,6 +235,8 @@ function SWEP:Think()
 
                 if self:GetVisualBullets() >= i then
                     vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
                 end
             end
 
