@@ -113,7 +113,7 @@ function SWEP:Reload()
             reloadtime = self:GetAnimKeyTime(anim) * mult
         end
 
-        self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim))
+        self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim) * mult)
             
         self:SetTimer(reloadtime * 0.95,
         function()
