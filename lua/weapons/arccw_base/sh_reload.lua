@@ -321,7 +321,7 @@ function SWEP:ReloadInsert(empty)
 
         self:RestoreAmmo(insertcount)
 
-		local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
+        local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(time * mult,

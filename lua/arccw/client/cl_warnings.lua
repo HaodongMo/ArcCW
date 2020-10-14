@@ -11,6 +11,17 @@ ArcCW.IncompatibleAddons = {
     -- ["1429489453"] = "Causes issues with arms." -- bio annihilation extended sninctbur
 }
 
+local og_ScreenScale = ScreenScale
+
+local ScreenScale_Cache = {}
+
+local function ScreenScale(a)
+    if ScreenScale_Cache[a] then return ScreenScale_Cache[a] end
+
+    ScreenScale_Cache[a] = og_ScreenScale(a)
+    return ScreenScale_Cache[a]
+end
+
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end

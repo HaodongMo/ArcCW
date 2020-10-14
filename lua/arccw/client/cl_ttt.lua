@@ -1,5 +1,16 @@
 if engine.ActiveGamemode() != "terrortown" then return end
 
+local og_ScreenScale = ScreenScale
+
+local ScreenScale_Cache = {}
+
+local function ScreenScale(a)
+    if ScreenScale_Cache[a] then return ScreenScale_Cache[a] end
+
+    ScreenScale_Cache[a] = og_ScreenScale(a)
+    return ScreenScale_Cache[a]
+end
+
 CreateClientConVar("arccw_ttt_inforoundstart", "1", true, false, "Whether to show ArcCW config every round.")
 CreateClientConVar("arccw_ttt_rolecrosshair", "1", true, false, "Whether to color your crosshair according to your role.")
 
