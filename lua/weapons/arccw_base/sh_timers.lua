@@ -120,13 +120,13 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
                 self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
             end
 
-            if v.bg and (CLIENT or game.SinglePlayer()) then
+            if v.bg then
                 local vm = self:GetOwner():GetViewModel()
 
                 vm:SetBodygroup(v.ind or 0, v.bg)
             end
 
-            if v.pp and (CLIENT or game.SinglePlayer()) then
+            if v.pp then
                 local vm = self:GetOwner():GetViewModel()
 
                 vm:SetPoseParameter(pp, ppv)

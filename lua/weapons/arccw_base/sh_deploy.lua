@@ -94,6 +94,8 @@ function SWEP:Deploy()
         self:NetworkWeapon()
     end
 
+    -- self:RefreshBGs()
+
     return true
 end
 
@@ -222,7 +224,9 @@ SWEP.HolsterSwitchTo = nil
 
 function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
+    if wep == self then return end
     if self:GetBurstCount() > 0 and self:Clip1() > 0 then return false end
+    if self.FullyHolstered then return true end
 
     local skip = GetConVar("arccw_holstering"):GetBool()
 
@@ -245,7 +249,9 @@ function SWEP:Holster(wep)
         self:ToggleCustomizeHUD(false)
     end
 
-    self.HolsterSwitchTo = wep
+    if !self.FullyHolstered then
+        self.HolsterSwitchTo = wep
+    end
 
     local time = 0.25
     local anim = self:SelectAnimation("holster")
