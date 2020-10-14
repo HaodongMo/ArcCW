@@ -266,7 +266,9 @@ function SWEP:PrimaryAttack()
 
     self:DoEffects()
 
-    if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) self:SetBurstCount(self:GetBurstCount() + 1) end
+    if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) end
+
+    self:SetBurstCount(self:GetBurstCount() + 1)
 
     if self:HasBottomlessClip() then
         if self:Clip1() > 0 then
