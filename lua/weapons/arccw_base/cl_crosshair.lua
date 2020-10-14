@@ -4,16 +4,7 @@ local cw = nil
 local clump_inner = Material("hud/clump_inner.png", "mips smooth")
 local clump_outer = Material("hud/clump_outer.png", "mips smooth")
 
-local og_ScreenScale = ScreenScale
 
-local ScreenScale_Cache = {}
-
-local function ScreenScale(a)
-    if ScreenScale_Cache[a] then return ScreenScale_Cache[a] end
-
-    ScreenScale_Cache[a] = og_ScreenScale(a)
-    return ScreenScale_Cache[a]
-end
 
 function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
