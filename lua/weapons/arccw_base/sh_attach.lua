@@ -529,14 +529,14 @@ function SWEP:GetMuzzleDevice(wm)
 end
 
 function SWEP:GetTracerOrigin()
-    -- local wm = self:GetOwner():ShouldDrawLocalPlayer()
-    -- local muzz = self:GetMuzzleDevice(wm)
+    local wm = self:GetOwner():ShouldDrawLocalPlayer()
+    local muzz = self:GetMuzzleDevice(wm)
 
-    -- if muzz then
-    --     local pos = muzz:GetAttachment(1).Pos
+    if muzz then
+        local pos = muzz:GetAttachment(1).Pos
 
-    --     return pos
-    -- end
+        return pos
+    end
 end
 
 function SWEP:CheckFlags(reject, need)
