@@ -182,9 +182,9 @@ function SWEP:Think()
                 if !bone then continue end
 
                 if self:GetVisualClip() >= i then
-                    self:SetBodygroupVM(k.ind, k.bg)
+                    vm:SetBodygroup(k.ind, k.bg)
                 else
-                    self:SetBodygroupVM(k.ind, 0)
+                    vm:SetBodygroup(k.ind, 0)
                 end
             end
 
@@ -195,9 +195,9 @@ function SWEP:Think()
                 if !bone then continue end
 
                 if self:GetVisualBullets() >= i then
-                    self:SetBodygroupVM(k.ind, k.bg)
+                    vm:SetBodygroup(k.ind, k.bg)
                 else
-                    self:SetBodygroupVM(k.ind, 0)
+                    vm:SetBodygroup(k.ind, 0)
                 end
             end
 
@@ -208,9 +208,9 @@ function SWEP:Think()
                 if !bone then continue end
 
                 if self:GetVisualLoadAmount() >= i then
-                    self:SetBodygroupVM(k.ind, k.bg)
+                    vm:SetBodygroup(k.ind, k.bg)
                 else
-                    self:SetBodygroupVM(k.ind, 0)
+                    vm:SetBodygroup(k.ind, 0)
                 end
             end
 

@@ -306,7 +306,7 @@ function SWEP:Holster(wep)
 
                     if IsValid(vm) then
                         for i = 0, vm:GetNumBodyGroups() do
-                            self:SetBodygroupVM(i, 0)
+                            vm:SetBodygroup(i, 0)
                         end
                         vm:SetSkin(0)
                     end

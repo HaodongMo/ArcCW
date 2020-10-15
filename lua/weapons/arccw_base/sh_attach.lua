@@ -660,11 +660,6 @@ function SWEP:CountAttachments()
     return total
 end
 
-function SWEP:SetBodygroupVM(ind, bg)
-    self.Bodygroups[ind] = bg
-    self:GetOwner():GetViewModel():SetBodygroup(ind, bg)
-end
-
 function SWEP:RefreshBGs()
     local vm
 
@@ -692,10 +687,7 @@ function SWEP:RefreshBGs()
     end
 
     if vm and vm:IsValid() then
-        for i, k in pairs(string.ToTable(self.DefaultBodygroups)) do
-            local bg = tonumber(k)
-            self:SetBodygroupVM(i, bg)
-        end
+        vm:SetBodyGroups(self.DefaultBodygroups)
         vm:SetMaterial(vmm)
         vm:SetColor(vmc)
         vm:SetSkin(vms)
@@ -807,7 +799,7 @@ function SWEP:RefreshBGs()
                 if !i.ind or !i.bg then continue end
 
                 if vm and IsValid(vm) and vm:GetBodygroup(i.ind) != i.bg then
-                    self:SetBodygroupVM(i.ind, i.bg)
+                    vm:SetBodygroup(i.ind, i.bg)
                 end
             end
 

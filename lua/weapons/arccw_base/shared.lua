@@ -560,8 +560,6 @@ SWEP.ProneMod_DisableTransitions = true
 SWEP.DrawWeaponInfoBox = false
 SWEP.BounceWeaponIcon = false
 
-SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
-
 if CLIENT or game.SinglePlayer() then
 
 SWEP.RecoilAmount = 0
@@ -573,6 +571,8 @@ SWEP.HammerDown = false
 
 SWEP.LHIKTimeline = nil
 -- {number starttime, number intime, number outtime, number finishouttime}
+
+SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
 end
 
 if SERVER then
