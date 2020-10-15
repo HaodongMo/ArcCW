@@ -30,7 +30,6 @@ CreateConVar("arccw_mult_movedisp", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multip
 CreateConVar("arccw_mult_penetration", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for ArcCW penetration amount.")
 CreateConVar("arccw_mult_defaultclip", -1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for default clip size. Set to -1 for default.")
 CreateConVar("arccw_mult_attchance", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for random attachment chance on NPCs and in TTT.")
-CreateConVar("arccw_mult_attchance", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for random attachment chance on NPCs and in TTT.")
 CreateConVar("arccw_mult_heat", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much heat increases per shot on certain weapons.", 0)
 
 
