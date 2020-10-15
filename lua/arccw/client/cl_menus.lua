@@ -199,6 +199,7 @@ local MultsPanel = {
     { type = "f", text = "ADS Time", var = "arccw_mult_sighttime", min = 0.1, max = 5, sv = true },
     { type = "i", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10, sv = true },
     { type = "f", text = "Random Att. Chance", var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
+    { type = "f", text = "Heat Gain", var = "arccw_mult_heat", min = 0, max = 5, sv = true },
 }
 
 local NPCsPanel = {
