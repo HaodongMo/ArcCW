@@ -41,7 +41,7 @@ end
 function SWEP:GetIsShotgun()
     if self.TickCache_IsShotgun then return self.TickCache_IsShotgun end
 
-    num = self:GetBuff_Override("Override_Num") or self.Num
+    local num = self.Num
 
     if num > 1 then return true end
 
