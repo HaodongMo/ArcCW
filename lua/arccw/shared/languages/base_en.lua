@@ -201,6 +201,16 @@ L["pro.ubsg"] = "Selectable underbarrel shotgun"
 L["con.obstruction"] = "May obstruct sights"
 L["autostat.underwater"] = "Shoot underwater"
 
+-- Incompatibility Menu
+L["incompatible.title"] = "ArcCW: INCOMPATIBLE ADDONS"
+L["incompatible.line1"] = "You have some addons that are known to not work with ArcCW."
+L["incompatible.line2"] = "Disable them or expect broken behavior!"
+L["incompatible.confirm"] = "Acknowledge"
+L["incompatible.wait"] = "Wait {time}s"
+L["incompatible.never"] = "Never warn me again"
+L["incompatible.never.hover"] = "Are you absolutely sure you understand the consequences?"
+L["incompatible.never.confirm"] = "You have chosen to never show incompatiblity warnings again. If you encounter errors or broken behaviour, it is your own responsibility."
+
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
 -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]
