@@ -44,6 +44,8 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.bullet_imaginary"]          = "Imaginary Bullets",
         ["arccw.cvar.bullet_imaginary.desc"]     = "Bullets will appear to continue to travel through the 3D skybox.",
         -- ArcCW_Options_Client
+        ["arccw.cvar.automaticreload"]           = "Automatic Reload",
+        ["arccw.cvar.automaticreload.desc"]      = "Automatically reload when your clip is empty.",
         ["arccw.cvar.toggleads"]                 = "Toggle Aim",
         ["arccw.cvar.altfcgkey"]                 = "E+R To Toggle Firemode (Disables +ZOOM)",
         ["arccw.cvar.altubglkey"]                = "E+RMB To Toggle UBGL (Disables 2x +ZOOM)",

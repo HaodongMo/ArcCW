@@ -35,6 +35,8 @@ local BulletPanel = {
 
 local ClientPanel = {
     { type = "h", text = "#arccw.clientcfg" },
+    { type = "b", text = "#arccw.cvar.automaticreload", var = "arccw_automaticreload" },
+    { type = "c", text = "#arccw.cvar.automaticreload.desc" },
     { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
     { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
     { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
