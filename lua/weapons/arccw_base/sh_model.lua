@@ -142,6 +142,46 @@ function SWEP:SetupModel(wm)
 
         vm.RenderOverride = function(v)
             self:RefreshBGs()
+
+            for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualClip() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
+            end
+
+            for i, k in pairs(self:GetBuff_Override("Override_BulletBGs") or self.BulletBGs or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualBullets() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
+            end
+
+            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBGs") or self.StripperClipBGs or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualLoadAmount() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
+            end
+
             ArcCW.VM_OverDraw = true
             v:DrawModel()
             ArcCW.VM_OverDraw = false
