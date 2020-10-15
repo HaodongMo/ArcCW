@@ -98,6 +98,8 @@ SWEP.Disposable = false -- when all ammo is expended, the gun will remove itself
 
 SWEP.AutoReload = false -- when weapon is drawn, the gun will reload itself.
 
+SWEP.IsShotgun = false -- weapon receives shotgun ammo types
+
 SWEP.Recoil = 2
 SWEP.RecoilSide = 1
 SWEP.RecoilRise = 1
@@ -548,8 +550,6 @@ SWEP.m_WeaponDeploySpeed = 8008135
 
 SWEP.ArcCW = true
 SWEP.BurstCount = 0
-        --Outdated, but if you could find a way to keep compatibility with older atts/weps :heart:
-        --Idiot! If you remove variables, old mods !only cease to work but throw errors! What were you thinking?
 SWEP.DelayCycleAnim = 0
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
@@ -571,8 +571,9 @@ SWEP.HammerDown = false
 
 SWEP.LHIKTimeline = nil
 -- {number starttime, number intime, number outtime, number finishouttime}
-
 end
+
+SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
 
 if SERVER then
 
@@ -645,6 +646,7 @@ end
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
     self:NetworkVar("Int", 1, "FireMode")
+    self:NetworkVar("Int", 2, "BurstCount")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
@@ -661,13 +663,13 @@ function SWEP:SetupDataTables()
     --self:NetworkVar("Int", 0, "NWState")
 end
 
-function SWEP:SetBurstCount(b)
-    self.BurstCount = b
-end
+-- function SWEP:SetBurstCount(b)
+--     self.BurstCount = b
+-- end
 
-function SWEP:GetBurstCount()
-    return self:GetBuff_Hook("Hook_GetBurstCount", self.BurstCount) or self.BurstCount or 0
-end
+-- function SWEP:GetBurstCount()
+--     return self:GetBuff_Hook("Hook_GetBurstCount", self.BurstCount) or self.BurstCount or 0
+-- end
 
 function SWEP:SetState(v)
     self:SetNWState(v)

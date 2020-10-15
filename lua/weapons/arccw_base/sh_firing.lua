@@ -113,7 +113,8 @@ function SWEP:PrimaryAttack()
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
     bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
-    bullet.Tracer     = tracernum
+    bullet.Tracer     = 0
+    bullet.TracerNum  = tracernum
     bullet.TracerName = self:GetBuff_Override("Override_Tracer") or self.Tracer
     bullet.Callback   = function(att, tr, dmg)
         local hitpos, hitnormal = tr.HitPos, tr.HitNormal
@@ -126,6 +127,14 @@ function SWEP:PrimaryAttack()
             debugoverlay.Cross(hitpos, 5, 5, Color(255, 0, 0), true)
         else
             debugoverlay.Cross(hitpos, 5, 5, Color(0, 0, 255), true)
+        end
+
+        if !(tracernum == 0 or clip % tracernum != 0) and CLIENT then
+            local fx = EffectData()
+            fx:SetStart(self:GetTracerOrigin())
+            fx:SetOrigin(tr.HitPos)
+            fx:SetScale(5000)
+            util.Effect(bullet.TracerName or "tracer", fx)
         end
 
         local hit   = {}
@@ -240,7 +249,7 @@ function SWEP:PrimaryAttack()
             self:DoPrimaryFire(true, projectiledata)
         end
     else
-        bullet = self:GetBuff_Hook("Hook_FireBullets", bullet)
+        bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
 
         if !bullet then return end
 
@@ -266,7 +275,9 @@ function SWEP:PrimaryAttack()
 
     self:DoEffects()
 
-    if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) self:SetBurstCount(self:GetBurstCount() + 1) end
+    if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) end
+
+    self:SetBurstCount(self:GetBurstCount() + 1)
 
     if self:HasBottomlessClip() then
         if self:Clip1() > 0 then
@@ -392,7 +403,7 @@ function SWEP:DoPrimaryFire(isent, data)
         if shouldphysical then
             local vel = self.PhysBulletMuzzleVelocity
 
-            local tracernum = data.Tracer
+            local tracernum = data.TracerNum or 1
             local prof
 
             if tracernum == 0 or clip % tracernum != 0 then
