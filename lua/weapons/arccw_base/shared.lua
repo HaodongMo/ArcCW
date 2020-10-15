@@ -550,8 +550,6 @@ SWEP.m_WeaponDeploySpeed = 8008135
 
 SWEP.ArcCW = true
 SWEP.BurstCount = 0
-        --Outdated, but if you could find a way to keep compatibility with older atts/weps :heart:
-        --Idiot! If you remove variables, old mods !only cease to work but throw errors! What were you thinking?
 SWEP.DelayCycleAnim = 0
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
@@ -573,9 +571,9 @@ SWEP.HammerDown = false
 
 SWEP.LHIKTimeline = nil
 -- {number starttime, number intime, number outtime, number finishouttime}
+end
 
 SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
-end
 
 if SERVER then
 

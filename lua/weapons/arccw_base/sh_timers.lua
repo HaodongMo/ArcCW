@@ -121,9 +121,7 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
             end
 
             if v.bg then
-                local vm = self:GetOwner():GetViewModel()
-
-                vm:SetBodygroup(v.ind or 0, v.bg)
+                self:SetBodygroupTr(v.ind or 0, v.bg)
             end
 
             if v.pp then
@@ -147,9 +145,7 @@ if CLIENT then
         end
 
         if v.bg then
-            local vm = LocalPlayer():GetViewModel()
-
-            vm:SetBodygroup(v.ind or 0, v.bg)
+            wep:SetBodygroupTr(v.ind or 0, v.bg)
         end
 
         if v.pp then

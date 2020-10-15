@@ -662,6 +662,10 @@ function SWEP:CountAttachments()
     return total
 end
 
+function SWEP:SetBodygroupTr(ind, bg)
+    self.Bodygroups[ind] = bg
+end
+
 function SWEP:RefreshBGs()
     local vm
 
@@ -873,10 +877,16 @@ function SWEP:RefreshBGs()
         end
     end
 
-    if vm and vm:IsValid() then
-        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae})
+    for i = 0, (vm:GetNumBodyGroups()) do
+        if self.Bodygroups[i] then
+            vm:SetBodygroup(i, self.Bodygroups[i])
+        end
     end
-    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae})
+
+    if vm and vm:IsValid() then
+        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae, wm = false})
+    end
+    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae, wm = true})
 end
 
 function SWEP:GetPickX()
