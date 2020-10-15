@@ -45,15 +45,17 @@ function SWEP:GetIsShotgun()
 
     if num > 1 then return true end
 
-    for _, i in pairs(self.Attachments) do
-        if !i.Installed then continue end
+    -- for _, i in pairs(self.Attachments) do
+    --     if !i.Installed then continue end
 
-        local atttbl = ArcCW.AttachmentTable[i.Installed]
+    --     local atttbl = ArcCW.AttachmentTable[i.Installed]
 
-        if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
-    end
+    --     if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
+    -- end
 
-    return num > 1
+    return self:GetBuff_Override("Override_IsShotgun") or self.IsShotgun
+
+    -- return num > 1
 end
 
 function SWEP:GetBuff_Hook(buff, data)

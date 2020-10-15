@@ -98,6 +98,8 @@ SWEP.Disposable = false -- when all ammo is expended, the gun will remove itself
 
 SWEP.AutoReload = false -- when weapon is drawn, the gun will reload itself.
 
+SWEP.IsShotgun = false -- weapon receives shotgun ammo types
+
 SWEP.Recoil = 2
 SWEP.RecoilSide = 1
 SWEP.RecoilRise = 1

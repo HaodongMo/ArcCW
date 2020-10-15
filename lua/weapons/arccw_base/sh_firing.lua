@@ -403,7 +403,7 @@ function SWEP:DoPrimaryFire(isent, data)
         if shouldphysical then
             local vel = self.PhysBulletMuzzleVelocity
 
-            local tracernum = data.TracerNum
+            local tracernum = data.TracerNum or 1
             local prof
 
             if tracernum == 0 or clip % tracernum != 0 then
