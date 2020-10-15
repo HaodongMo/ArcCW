@@ -141,6 +141,7 @@ function SWEP:SetupModel(wm)
         local vm = self:GetOwner():GetViewModel()
 
         vm.RenderOverride = function(v)
+            if !self or !self.ArcCW then v.RenderOverride = nil return end
             self:RefreshBGs()
 
             for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
