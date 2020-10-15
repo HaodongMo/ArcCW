@@ -572,6 +572,7 @@ SWEP.HammerDown = false
 SWEP.LHIKTimeline = nil
 -- {number starttime, number intime, number outtime, number finishouttime}
 
+SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
 end
 
 if SERVER then

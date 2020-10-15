@@ -533,7 +533,9 @@ function SWEP:GetTracerOrigin()
     local muzz = self:GetMuzzleDevice(wm)
 
     if muzz then
-        local pos = muzz:GetAttachment(1).Pos
+        local posang = muzz:GetAttachment(1)
+        if !posang then return muzz:GetPos() end
+        local pos = posang.Pos
 
         return pos
     end

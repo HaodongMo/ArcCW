@@ -444,6 +444,7 @@ function SWEP:ShouldFlatScope()
 end
 
 function SWEP:PreDrawViewModel(vm)
+    if ArcCW.VM_OverDraw then return end
     if !vm then return end
 
     if self:ShouldFlatScope() then
@@ -477,6 +478,7 @@ function SWEP:PreDrawViewModel(vm)
 end
 
 function SWEP:PostDrawViewModel()
+    if ArcCW.VM_OverDraw then return end
     render.SetBlend(1)
 
     if ArcCW.Overdraw then
