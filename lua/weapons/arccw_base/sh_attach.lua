@@ -877,13 +877,13 @@ function SWEP:RefreshBGs()
         end
     end
 
-    for i = 0, (vm:GetNumBodyGroups()) do
-        if self.Bodygroups[i] then
-            vm:SetBodygroup(i, self.Bodygroups[i])
-        end
-    end
-
     if vm and vm:IsValid() then
+        for i = 0, (vm:GetNumBodyGroups()) do
+            if self.Bodygroups[i] then
+                vm:SetBodygroup(i, self.Bodygroups[i])
+            end
+        end
+
         self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae, wm = false})
     end
     self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae, wm = true})
