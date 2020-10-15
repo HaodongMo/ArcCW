@@ -141,7 +141,12 @@ function SWEP:SetupModel(wm)
         local vm = self:GetOwner():GetViewModel()
 
         vm.RenderOverride = function(v)
-            self:RefreshBGs()
+            if ArcCW.VM_OverDraw then return end
+            -- self:RefreshBGs()
+            for i = 0, vm:GetNumBodyGroups() do
+                v:SetBodygroup(i, self.Bodygroups[i] or 0)
+                print(self.Bodygroups[i] or 0)
+            end
             ArcCW.VM_OverDraw = true
             v:DrawModel()
             ArcCW.VM_OverDraw = false
