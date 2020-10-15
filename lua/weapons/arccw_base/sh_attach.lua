@@ -41,19 +41,21 @@ end
 function SWEP:GetIsShotgun()
     if self.TickCache_IsShotgun then return self.TickCache_IsShotgun end
 
-    num = self:GetBuff_Override("Override_Num") or self.Num
+    local num = self.Num
 
     if num > 1 then return true end
 
-    for _, i in pairs(self.Attachments) do
-        if !i.Installed then continue end
+    -- for _, i in pairs(self.Attachments) do
+    --     if !i.Installed then continue end
 
-        local atttbl = ArcCW.AttachmentTable[i.Installed]
+    --     local atttbl = ArcCW.AttachmentTable[i.Installed]
 
-        if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
-    end
+    --     if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
+    -- end
 
-    return num > 1
+    return self:GetBuff_Override("Override_IsShotgun") or self.IsShotgun
+
+    -- return num > 1
 end
 
 function SWEP:GetBuff_Hook(buff, data)
@@ -529,14 +531,16 @@ function SWEP:GetMuzzleDevice(wm)
 end
 
 function SWEP:GetTracerOrigin()
-    -- local wm = self:GetOwner():ShouldDrawLocalPlayer()
-    -- local muzz = self:GetMuzzleDevice(wm)
+    local wm = self:GetOwner():ShouldDrawLocalPlayer()
+    local muzz = self:GetMuzzleDevice(wm)
 
-    -- if muzz then
-    --     local pos = muzz:GetAttachment(1).Pos
+    if muzz then
+        local posang = muzz:GetAttachment(1)
+        if !posang then return muzz:GetPos() end
+        local pos = posang.Pos
 
-    --     return pos
-    -- end
+        return pos
+    end
 end
 
 function SWEP:CheckFlags(reject, need)
@@ -656,6 +660,10 @@ function SWEP:CountAttachments()
     end
 
     return total
+end
+
+function SWEP:SetBodygroupTr(ind, bg)
+    self.Bodygroups[ind] = bg
 end
 
 function SWEP:RefreshBGs()
@@ -870,9 +878,15 @@ function SWEP:RefreshBGs()
     end
 
     if vm and vm:IsValid() then
-        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae})
+        for i = 0, (vm:GetNumBodyGroups()) do
+            if self.Bodygroups[i] then
+                vm:SetBodygroup(i, self.Bodygroups[i])
+            end
+        end
+
+        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae, wm = false})
     end
-    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae})
+    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae, wm = true})
 end
 
 function SWEP:GetPickX()

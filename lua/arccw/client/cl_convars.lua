@@ -99,6 +99,7 @@ ArcCW.ClientConVars = {
     ["arccw_altlaserkey"]             = { def = 0, usri = true },
     ["arccw_altbindsonly"]            = { def = 0, usri = true },
     ["arccw_altsafety"]               = { def = 0, usri = true },
+    ["arccw_automaticreload"]         = { def = 0, usri = true },
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do

@@ -35,6 +35,8 @@ local BulletPanel = {
 
 local ClientPanel = {
     { type = "h", text = "#arccw.clientcfg" },
+    { type = "b", text = "#arccw.cvar.automaticreload", var = "arccw_automaticreload" },
+    { type = "c", text = "#arccw.cvar.automaticreload.desc" },
     { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
     { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
     { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
@@ -242,7 +244,7 @@ function ArcCW.GeneratePanelElements(panel, table)
         ["f"] = function(p, d) return p:NumSlider(d.text, d.var, d.min, d.max, 2) end,
         ["m"] = function(p, d) return p:AddControl("color", { Label = d.text, Red = d.r, Green = d.g, Blue = d.b, Alpha = d.a }) end, -- change this someday
         ["p"] = function(p, d) local b = p:Button(d.text) b.DoClick = d.func return b end,
-		["t"] = function(p, d) return p:TextEntry(d.text, d.var) end
+        ["t"] = function(p, d) return p:TextEntry(d.text, d.var) end
     }
 
     local concommands = {
@@ -396,6 +398,28 @@ local CrosshairPresets = {
     },
 }
 
+local ViewmodelPresets = {
+    ["#preset.default"] = {
+        arccw_vm_coolsway				= "1",
+        arccw_vm_coolview				= "1",
+        arccw_vm_sway_sprint			= "3",
+        arccw_vm_bob_sprint				= "3",
+        arccw_vm_right					= "0",
+        arccw_vm_forward				= "0",
+        arccw_vm_up						= "0",
+        arccw_vm_lookxmult				= "1",
+        arccw_vm_lookymult				= "2",
+        arccw_vm_accelmult				= "1",
+        arccw_vm_swayxmult				= "-0.1",
+        arccw_vm_swayymult				= "0.1",
+        arccw_vm_swayzmult				= "-0.3",
+        arccw_vm_swaywigglemult			= "1",
+        arccw_vm_swayspeedmult			= "1",
+        arccw_vm_swayrotatemult			= "1",
+        arccw_vm_coolview_mult			= "1",
+    }
+}
+
 function ArcCW_Options_Bullet(panel)
     ArcCW.GeneratePanelElements(panel, BulletPanel)
 end
@@ -409,6 +433,14 @@ function ArcCW_Options_Perf(panel)
 end
 
 function ArcCW_Options_Viewmodel(panel)
+    panel:AddControl("ComboBox", {
+        MenuButton = "1",
+        Label      = "#Presets",
+        Folder     = "arccw_vm",
+        CVars      = { "" },
+        Options    = ViewmodelPresets
+    })
+
     ArcCW.GeneratePanelElements(panel, ViewmodelPanel)
 end
 

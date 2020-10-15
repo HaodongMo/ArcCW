@@ -104,6 +104,10 @@ function SWEP:Think()
 
     -- Yeah, this would be OP unless we can also turn off the laser stats, too.
 
+	if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
+		self:Reload()
+	end
+
     if owner:GetInfoNum("arccw_altfcgkey", 0) == 1 and owner:KeyPressed(IN_RELOAD) and owner:KeyDown(IN_USE) then
         if (lastfiremode or 0) + 0.1 < CurTime() then
             lastfiremode = CurTime()
@@ -173,45 +177,6 @@ function SWEP:Think()
 
             for i = 1, vm:GetBoneCount() do
                 vm:ManipulateBoneScale(i, vec1)
-            end
-
-            for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
-                if !isnumber(i) then continue end
-                local bone = vm:LookupBone(k)
-
-                if !bone then continue end
-
-                if self:GetVisualClip() >= i then
-                    vm:SetBodygroup(k.ind, k.bg)
-                else
-                    vm:SetBodygroup(k.ind, 0)
-                end
-            end
-
-            for i, k in pairs(self:GetBuff_Override("Override_BulletBGs") or self.BulletBGs or {}) do
-                if !isnumber(i) then continue end
-                local bone = vm:LookupBone(k)
-
-                if !bone then continue end
-
-                if self:GetVisualBullets() >= i then
-                    vm:SetBodygroup(k.ind, k.bg)
-                else
-                    vm:SetBodygroup(k.ind, 0)
-                end
-            end
-
-            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBGs") or self.StripperClipBGs or {}) do
-                if !isnumber(i) then continue end
-                local bone = vm:LookupBone(k)
-
-                if !bone then continue end
-
-                if self:GetVisualLoadAmount() >= i then
-                    vm:SetBodygroup(k.ind, k.bg)
-                else
-                    vm:SetBodygroup(k.ind, 0)
-                end
             end
 
             for i, k in pairs(self:GetBuff_Override("Override_CaseBones") or self.CaseBones or {}) do

@@ -137,6 +137,58 @@ function SWEP:SetupModel(wm)
 
     self:GetActiveElements(true)
 
+    if !wm then
+        local vm = self:GetOwner():GetViewModel()
+
+        vm.RenderOverride = function(v)
+            if !self or !self.ArcCW then v.RenderOverride = nil return end
+            self:RefreshBGs()
+
+            for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualClip() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
+            end
+
+            for i, k in pairs(self:GetBuff_Override("Override_BulletBGs") or self.BulletBGs or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualBullets() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
+            end
+
+            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBGs") or self.StripperClipBGs or {}) do
+                if !isnumber(i) then continue end
+                local bone = vm:LookupBone(k)
+
+                if !bone then continue end
+
+                if self:GetVisualLoadAmount() >= i then
+                    vm:SetBodygroup(k.ind, k.bg)
+                else
+                    vm:SetBodygroup(k.ind, 0)
+                end
+            end
+
+            ArcCW.VM_OverDraw = true
+            v:DrawModel()
+            ArcCW.VM_OverDraw = false
+        end
+    end
+
     if CLIENT then
 
     if wm then
@@ -165,6 +217,34 @@ function SWEP:SetupModel(wm)
     end
 
     local vscale = Vector(1, 1, 1)
+
+    -- if !wm and CLIENT then
+    --     local sm = self.ViewModel
+
+    --     local model = ClientsideModel(sm)
+
+    --     if !model then return end
+    --     if !IsValid(model) then return end
+
+    --     model:SetNoDraw(ArcCW.NoDraw)
+    --     model:DrawShadow(true)
+    --     model:SetPredictable(false)
+    --     model.Weapon = self
+    --     model:SetSkin(self.DefaultVMSkin or 0)
+    --     model:SetBodyGroups(self.DefaultVMBodygroups or "")
+    --     model:SetupBones()
+    --     local element = {}
+    --     element.Model = model
+
+    --     model:SetParent(self:GetOwner():GetViewModel())
+    --     model:AddEffects(EF_BONEMERGE)
+    --     element.BoneMerge = true
+    --     element.IsBaseVM = true
+
+    --     self.VMModel = model
+
+    --     table.insert(elements, element)
+    -- end
 
     if wm and CLIENT then
         local sm = self.WorldModel
@@ -576,6 +656,7 @@ function SWEP:KillModel(models)
 end
 
 function SWEP:DrawCustomModel(wm)
+    if ArcCW.VM_OverDraw then return end
     local disttoeye = self:GetPos():DistToSqr(EyePos())
     local visibility = math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
     local always = false
@@ -584,7 +665,6 @@ function SWEP:DrawCustomModel(wm)
     end
     local models = self.VM
     local vm
-    local selfmode = false
 
     -- self:KillModel(self.VM)
     -- self:KillModel(self.WM)
@@ -642,8 +722,6 @@ function SWEP:DrawCustomModel(wm)
         --     end
         -- end
 
-        local basewm = false
-
         if k.IsBaseWM then
             if self:GetOwner():IsValid() then
                 k.Model:SetParent(self:GetOwner())
@@ -654,6 +732,11 @@ function SWEP:DrawCustomModel(wm)
                 selfmode = true
                 basewm = true
             end
+        elseif k.IsBaseVM then
+            k.Model:SetParent(self:GetOwner():GetViewModel())
+            vm = self
+            selfmode = true
+            basewm = true
         else
             if wm and self.MirrorVMWM then
                 vm = self.WMModel or self
