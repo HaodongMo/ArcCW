@@ -16,7 +16,7 @@ function SWEP:AddHeat()
     local max = self.HeatCapacity * self:GetBuff_Mult("Mult_HeatCapacity")
     local mult = 1 * self:GetBuff_Mult("Mult_FixTime")
     local heat = self:GetHeat()
-    self.Heat = math.Clamp(heat + 1, 0, max)
+    self.Heat = math.Clamp(heat + 1 * GetConVar("arccw_mult_heat"):GetFloat(), 0, max)
     self.NextHeatDissipateTime = CurTime() + (self.HeatDelayTime * self:GetBuff_Mult("Mult_HeatDelayTime"))
 
     if single and CLIENT then return end

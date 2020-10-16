@@ -8,10 +8,11 @@ ArcCW.IncompatibleAddons = {
     ["541434990"] = "Neurotec is ancient, half the base is missing, and it flat-out doesn't work. Causes all sorts of problems. For the love of god, let go.", -- Neurotec
     --["1100368137"] = "May cause Lua errors. Use the wOS version instead.", -- Prone Mod
     ["476997621"] = "Causes issues with arms.",
+    ["1308077613"] = "Will make near-walling look exaggerated; known to conflict with cBobbing.", -- View model bump
     -- ["1429489453"] = "Causes issues with arms." -- bio annihilation extended sninctbur
 }
 
-
+local t = ArcCW.GetTranslation
 
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
@@ -37,7 +38,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
     title:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(26))
     title:Dock(TOP)
     title:SetFont("ArcCW_24")
-    title:SetText("ArcCW: INCOMPATIBLE ADDONS")
+    title:SetText(t("incompatible.title"))
     title:DockMargin(ScreenScaleMulti(16), 0, ScreenScaleMulti(16), ScreenScaleMulti(8))
 
     local desc = vgui.Create("DLabel", window)
@@ -45,7 +46,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
     desc:Dock(TOP)
     desc:DockMargin(ScreenScaleMulti(4), 0, ScreenScaleMulti(4), 0)
     desc:SetFont("ArcCW_12")
-    desc:SetText("You have some addons that are known to !work with ArcCW.")
+    desc:SetText(t("incompatible.line1"))
     desc:SetContentAlignment(5)
 
     local desc2 = vgui.Create("DLabel", window)
@@ -53,7 +54,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
     desc2:Dock(TOP)
     desc2:DockMargin(ScreenScaleMulti(4), 0, ScreenScaleMulti(4), ScreenScaleMulti(4))
     desc2:SetFont("ArcCW_12")
-    desc2:SetText("Disable them or expect broken behavior!")
+    desc2:SetText(t("incompatible.line2"))
     desc2:SetContentAlignment(5)
 
     local neverAgain = vgui.Create("DButton", window)
@@ -68,7 +69,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
             file.Write("arccw_incompatible.txt", util.TableToJSON(simpleTbl))
             window:Close()
             window:Remove()
-            chat.AddText(Color(255,0,0),"You have chosen to never show incompatiblity warnings again. If you encounter errors or broken behaviour, it is your own responsibility.")
+            chat.AddText(Color(255,0,0),t("incompatible.never.confirm"))
         end
     end
     neverAgain.Paint = function(spaa, w, h)
@@ -83,7 +84,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
         surface.SetDrawColor(Bbg_col)
         surface.DrawRect(0, 0, w, h)
 
-        local txt = (CurTime() > startTime + 10) and (spaa:IsHovered() and "Are you absolutely sure you understand the consequences?" or "Never warn me again") or ("Wait - " .. math.ceil(startTime + 10 - CurTime()))
+        local txt = (CurTime() > startTime + 10) and (spaa:IsHovered() and t("incompatible.never.hover") or t("incompatible.never")) or t("incompatible.wait", {time = math.ceil(startTime + 10 - CurTime())})
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(ScreenScaleMulti(8), ScreenScaleMulti(2))
         surface.SetFont("ArcCW_12")
@@ -127,7 +128,7 @@ function ArcCW.MakeIncompatibleWindow(tbl)
         surface.SetDrawColor(Bbg_col)
         surface.DrawRect(0, 0, w, h)
 
-        local txt = (CurTime() > startTime + 5) and "Acknowledge" or ("Wait - " .. math.ceil(startTime + 5 - CurTime()))
+        local txt = t("incompatible.confirm") .. ((CurTime() > startTime + 5) and "" or (" - " .. t("incompatible.wait", {time = math.ceil(startTime + 5 - CurTime())})))
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(ScreenScaleMulti(8), ScreenScaleMulti(2))
         surface.SetFont("ArcCW_12")

@@ -239,11 +239,11 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end, key)
 
     self:SetTimer(ttime, function()
-        self:PlayIdleAnimation()
+        self:PlayIdleAnimation(pred)
     end, "idlereset")
 end
 
-function SWEP:PlayIdleAnimation()
+function SWEP:PlayIdleAnimation(pred)
     local ianim
     local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
     if self:GetState() == ArcCW.STATE_SPRINT and !s then

@@ -30,48 +30,34 @@ function SWEP:Deploy()
     if !self:GetOwner():InVehicle() then
             local prd = false
 
-            if self.Animations.ready and self.UnReady then
-                if self.Animations.ready_empty and self:Clip1() == 0 then
-                    self:PlayAnimation("ready_empty", 1, true, 0, true)
-                else
-                    self:PlayAnimation("ready", 1, true, 0, true)
-                end
+            local r_anim = self:SelectAnimation("ready")
+            local d_anim = self:SelectAnimation("draw")
+
+            if self.Animations[r_anim] and self.UnReady then
+                self:PlayAnimation(r_anim, 1, true, 0, true)
                 self.UnReady = false
 
                 self:SetReloading(true)
 
-                self:SetTimer(self:GetAnimKeyTime("ready"),
+                self:SetTimer(self:GetAnimKeyTime(r_anim),
                 function()
                     self:SetReloading(false)
                 end)
 
-                prd = self.Animations.ready.ProcDraw
+                prd = self.Animations[r_anim].ProcDraw
 
                 self:SetReloading(true)
             else
-                if self.Animations.draw_empty and self:Clip1() == 0 then
-                self:PlayAnimation("draw_empty", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
+                self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
 
                 self:SetReloading(true)
 
-                self:SetTimer(self:GetAnimKeyTime("draw_empty") * self:GetBuff_Mult("Mult_DrawTime"),
+                self:SetTimer(self:GetAnimKeyTime(d_anim) * self:GetBuff_Mult("Mult_DrawTime"),
                 function()
                     self:SetReloading(false)
                 end)
 
-                prd = self.Animations.draw_empty.ProcDraw
-                else
-                self:PlayAnimation("draw", self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
-
-                self:SetReloading(true)
-
-                self:SetTimer(self:GetAnimKeyTime("draw") * self:GetBuff_Mult("Mult_DrawTime"),
-                function()
-                    self:SetReloading(false)
-                end)
-
-                prd = self.Animations.draw.ProcDraw
-                end
+                prd = self.Animations[d_anim].ProcDraw
             end
 
             if prd then

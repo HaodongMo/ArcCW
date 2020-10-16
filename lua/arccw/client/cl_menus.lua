@@ -35,6 +35,8 @@ local BulletPanel = {
 
 local ClientPanel = {
     { type = "h", text = "#arccw.clientcfg" },
+    { type = "b", text = "#arccw.cvar.automaticreload", var = "arccw_automaticreload" },
+    { type = "c", text = "#arccw.cvar.automaticreload.desc" },
     { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
     { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
     { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
@@ -199,6 +201,7 @@ local MultsPanel = {
     { type = "f", text = "ADS Time", var = "arccw_mult_sighttime", min = 0.1, max = 5, sv = true },
     { type = "i", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10, sv = true },
     { type = "f", text = "Random Att. Chance", var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
+    { type = "f", text = "Heat Gain", var = "arccw_mult_heat", min = 0, max = 5, sv = true },
 }
 
 local NPCsPanel = {

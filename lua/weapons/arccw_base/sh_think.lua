@@ -104,6 +104,10 @@ function SWEP:Think()
 
     -- Yeah, this would be OP unless we can also turn off the laser stats, too.
 
+	if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
+		self:Reload()
+	end
+
     if owner:GetInfoNum("arccw_altfcgkey", 0) == 1 and owner:KeyPressed(IN_RELOAD) and owner:KeyDown(IN_USE) then
         if (lastfiremode or 0) + 0.1 < CurTime() then
             lastfiremode = CurTime()
