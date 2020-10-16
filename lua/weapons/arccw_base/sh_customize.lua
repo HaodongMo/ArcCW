@@ -1,18 +1,53 @@
 local translate = ArcCW.GetTranslation
 
-local og_ScreenScale = ScreenScale
-
-local ScreenScale_Cache = {}
-
-local function ScreenScale(a)
-    if ScreenScale_Cache[a] then return ScreenScale_Cache[a] end
-
-    ScreenScale_Cache[a] = og_ScreenScale(a)
-    return ScreenScale_Cache[a]
-end
-
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+end
+
+local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
+    local tw, th = surface.GetTextSize(txt)
+
+    if tw > maxw then
+        local realx, realy = span:LocalToScreen(x, y)
+        render.SetScissorRect(realx, realy, realx + maxw, realy + (th * 2), true)
+
+        if !only then
+            span.TextRot = span.TextRot or 0
+            span.StartTextRot = span.StartTextRot or CurTime()
+            span.TextRotState = span.TextRotState or 0 -- 0: start, 1: moving, 2: end
+            if span.TextRotState == 0 then
+                span.TextRot = 0
+                if span.StartTextRot < CurTime() - 2 then
+                    span.TextRotState = 1
+                end
+            elseif span.TextRotState == 1 then
+                span.TextRot = span.TextRot + (FrameTime() * ScreenScaleMulti(16))
+                if span.TextRot >= (tw - maxw) + ScreenScaleMulti(8) then
+                    span.StartTextRot = CurTime()
+                    span.TextRotState = 2
+                end
+            elseif span.TextRotState == 2 then
+                if span.StartTextRot < CurTime() - 2 then
+                    span.TextRotState = 0
+                    span.StartTextRot = CurTime()
+                end
+            end
+        end
+        -- print(span.TextRot)
+        -- print(span.TextRotState)
+        surface.SetTextPos(tx - span.TextRot, ty)
+        -- if span.StartTextRot < CurTime() - 1 then
+        --     if span.TextRot >= (tw - (w - 2 * h)) then
+        --         span.TextRotState = 2
+        --     else
+        --         span.TextRot = span.TextRot + (FrameTime() * ScreenScale(8))
+        --     end
+        -- end
+        surface.DrawText(txt)
+        render.SetScissorRect(0, 0, 0, 0, false)
+    else
+        surface.DrawText(txt)
+    end
 end
 
 function SWEP:ToggleCustomizeHUD(ic)
@@ -925,7 +960,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetDrawColor(Bfg_col)
                     surface.DrawRect((h * 1.5) - (linesize / 2), 0, linesize, h)
 
-                    local txt = translate("name." .. spaa.AttName) or atttbl.PrintName
+                    local txt = translate("name." .. spaa.AttName) or atttbl.PrintName or "???"
 
                     if showqty then
                         txt = txt .. " (" .. tostring(qty) .. ")"
@@ -934,7 +969,10 @@ function SWEP:CreateCustomizeHUD()
                     surface.SetTextColor(Bfg_col)
                     surface.SetTextPos((h * 1.5) + smallgap, ScreenScaleMulti(1))
                     surface.SetFont("ArcCW_12")
-                    surface.DrawText(txt)
+
+                    DrawTextRot(spaa, txt, h * 1.5, 0, (h * 1.5) + smallgap, ScreenScaleMulti(1), w - (h * 1.5))
+
+                    -- surface.DrawText(txt)
 
                     surface.SetDrawColor(Bfg_col)
                     surface.SetMaterial(atttbl.Icon or k.DefaultAttIcon or defaultatticon)
@@ -975,6 +1013,10 @@ function SWEP:CreateCustomizeHUD()
                     attslider:SetSlideX(self.Attachments[span.AttIndex].SlidePos)
                     lastslidepos = self.Attachments[span.AttIndex].SlidePos
                     self.InAttMenu = true
+
+                    span.TextRot = 0
+                    span.StartTextRot = CurTime()
+                    span.TextRotState = 0
 
                     if self.Attachments[span.AttIndex].Installed then
                         atttrivia_do(self.Attachments[span.AttIndex].Installed)
@@ -1047,7 +1089,7 @@ function SWEP:CreateCustomizeHUD()
                     if atttbl.Icon then
                         att_icon = atttbl.Icon
                     end
-                end 
+                end
             end
 
             if GetConVar("arccw_hud_embracetradition"):GetBool() then
@@ -1087,7 +1129,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Bfg_col)
                 surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
                 surface.SetFont("ArcCW_12")
-                surface.DrawText(att_txt)
+                DrawTextRot(span, att_txt, 0, h / 2, smallgap * 2, (h - linesize) / 2 + smallgap, w - 1.5 * h)
 
                 surface.SetDrawColor(Bfg_col)
                 surface.DrawRect(w - (1.5 * h), 0, linesize, h)
@@ -1120,7 +1162,8 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(Bfg_col)
                 surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
                 surface.SetFont("ArcCW_12")
-                surface.DrawText(att_txt)
+
+                DrawTextRot(span, att_txt, 0, h / 2, smallgap * 2, (h - linesize) / 2 + smallgap, w - 1.5 * h)
 
                 surface.SetDrawColor(Bfg_col)
                 surface.DrawRect(w - (1.5 * h), 0, linesize, h)
@@ -1149,12 +1192,13 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetTextColor(0, 0, 0)
                 surface.SetTextPos(smallgap, 0)
                 surface.SetFont("ArcCW_12_Glow")
-                surface.DrawText(txt)
+                -- surface.DrawText(txt)
+                DrawTextRot(span, txt, 0, 0, smallgap, 0, w - 1.5 * h)
 
                 surface.SetTextColor(Bfg_col)
                 surface.SetTextPos(smallgap, 0)
                 surface.SetFont("ArcCW_12")
-                surface.DrawText(txt)
+                DrawTextRot(span, txt, 0, 0, smallgap, 0, w - 1.5 * h, true)
 
                 surface.SetDrawColor(Bfg_col)
                 surface.DrawRect(w - (1.5 * h), 0, linesize, h)
