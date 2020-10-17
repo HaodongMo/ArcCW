@@ -32,8 +32,8 @@ end
 
 function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     local bullet = {
-        DamageMax = wep.Damage * wep:GetBuff_Mult("Mult_Damage"),
-        DamageMin = wep.DamageMin * wep:GetBuff_Mult("Mult_DamageMin"),
+        DamageMax = wep:GetDamage(0),
+        DamageMin = wep:GetDamage(wep.Range * wep:GetBuff_Mult("Mult_Range")),
         Range = wep.Range * wep:GetBuff_Mult("Mult_Range"),
         DamageType = wep:GetBuff_Override("Override_DamageType") or wep.DamageType,
         Penleft = wep.Penetration * wep:GetBuff_Mult("Mult_Penetration"),
@@ -57,6 +57,8 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Dead = false,
         Profile = prof or wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
     }
+
+    -- print(bullet.DamageMax)
 
     if wep:GetOwner() and wep:GetOwner():IsNPC() then
         bullet.DamageMax = bullet.DamageMax * GetConVar("arccw_mult_npcdamage"):GetFloat()
