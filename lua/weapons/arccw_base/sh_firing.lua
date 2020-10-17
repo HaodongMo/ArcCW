@@ -88,9 +88,7 @@ function SWEP:PrimaryAttack()
 
     self:SetNextPrimaryFire(CurTime() + delay)
 
-    local num = self:GetBuff_Override("Override_Num")
-
-    if !num then num = self.Num end
+    local num = self:GetBuff_Override("Override_Num") or self.Num
 
     num = num + self:GetBuff_Add("Add_Num")
 
