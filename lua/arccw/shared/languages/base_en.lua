@@ -122,6 +122,7 @@ L["autostat.bipodrecoil"] = "Recoil in bipod"
 L["autostat.bipoddisp"] = "Dispersion in bipod"
 L["autostat.damage"] = "Close range damage"
 L["autostat.damagemin"] = "Long range damage"
+L["autostat.damageboth"] = "Damage" -- When damage and damagemin are the same value
 L["autostat.range"] = "Range"
 L["autostat.penetration"] = "Penetration"
 L["autostat.muzzlevel"] = "Muzzle velocity"

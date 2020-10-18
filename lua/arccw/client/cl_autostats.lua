@@ -67,12 +67,21 @@ function ArcCW:GetProsCons(att)
     if !att.AutoStats then return pros, cons end
 
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
+    local dmgboth = false
 
     for i, stat in pairs(ArcCW.AutoStats) do
         if !att[i] then continue end
+        if i == "Mult_DamageMin" and dmgboth then continue end
 
         local k, txt  = att[i], ""
         local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
+
+        -- Special case: If both damage and min damage are the same value, we combine them
+        -- This assumes Mult_Damage will always come before Mult_DamageMin so pls no break
+        if i == "Mult_Damage" and att["Mult_DamageMin"] and k == att["Mult_DamageMin"] then
+            dmgboth = true
+            str = ArcCW.GetTranslation("autostat.damageboth") or stat[1]
+        end
 
         local tcon, tpro = st and cons or pros, st and pros or cons
 
