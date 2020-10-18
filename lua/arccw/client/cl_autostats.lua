@@ -43,6 +43,7 @@ ArcCW.AutoStats = {
     ["Mult_DrawTime"]         = { "autostat.drawtime",    "mult", true },
     ["Mult_SightTime"]        = { "autostat.sighttime",   "mult", true },
     ["Mult_CycleTime"]        = { "autostat.cycletime",   "mult", true },
+    --["Add_Sway"]              = { "autostat.sway",        "add",  true },
 }
 
 local function getsimpleamt(stat)
