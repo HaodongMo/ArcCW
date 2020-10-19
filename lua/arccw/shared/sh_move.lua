@@ -34,33 +34,32 @@ function ArcCW.CreateMove(cmd)
     local wpn = ply:GetActiveWeapon()
 
     if !wpn.ArcCW then return end
-    if wpn:GetInBipod() then
-        if wpn.BipodAngle then
-            local bipang = wpn.BipodAngle
-            local ang = cmd:GetViewAngles()
 
-            local dy = math.AngleDifference(ang.y, bipang.y)
-            local dp = math.AngleDifference(ang.p, bipang.p)
+    if wpn:GetInBipod() and wpn.BipodAngle then
+        local bipang = wpn.BipodAngle
+        local ang = cmd:GetViewAngles()
 
-            local limy_p = 75
-            local limy_n = -75
-            local limp_p = 30
-            local limp_n = -30
+        local dy = math.AngleDifference(ang.y, bipang.y)
+        local dp = math.AngleDifference(ang.p, bipang.p)
 
-            if dy > limy_p then
-                ang.y = bipang.y + limy_p
-            elseif dy < limy_n then
-                ang.y = bipang.y + limy_n
-            end
+        local limy_p = 75
+        local limy_n = -75
+        local limp_p = 30
+        local limp_n = -30
 
-            if dp > limp_p then
-                ang.p = bipang.p + limp_p
-            elseif dp < limp_n then
-                ang.p = bipang.p + limp_n
-            end
-
-            cmd:SetViewAngles(ang)
+        if dy > limy_p then
+            ang.y = bipang.y + limy_p
+        elseif dy < limy_n then
+            ang.y = bipang.y + limy_n
         end
+
+        if dp > limp_p then
+            ang.p = bipang.p + limp_p
+        elseif dp < limp_n then
+            ang.p = bipang.p + limp_n
+        end
+
+        cmd:SetViewAngles(ang)
     end
 end
 
