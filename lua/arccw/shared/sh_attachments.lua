@@ -85,6 +85,17 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
     return true
 end
 
+function ArcCW:WeaponAcceptsAtt(wep, att)
+    if wep.ArcCW and wep.Attachments then
+        local tbl = {}
+        for i, v in pairs(wep.Attachments) do
+            table.insert(tbl, i)
+        end
+        return ArcCW:SlotAcceptsAtt(wep, wep, att)
+    end
+    return false
+end
+
 function ArcCW:PlayerGetAtts(ply, att)
     if GetConVar("arccw_attinv_free"):GetBool() then return 999 end
 
