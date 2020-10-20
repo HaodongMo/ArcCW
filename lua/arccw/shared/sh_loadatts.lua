@@ -99,6 +99,8 @@ local function ArcCW_LoadAtts()
         end
         print("Loaded blacklist with " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " attachments.")
     end
+
+    hook.Run("ArcCW_PostLoadAtts")
 end
 
 function ArcCW.GetBitNecessity()
