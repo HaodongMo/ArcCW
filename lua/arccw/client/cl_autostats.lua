@@ -44,6 +44,10 @@ ArcCW.AutoStats = {
     ["Mult_SightTime"]        = { "autostat.sighttime",   "mult", true },
     ["Mult_CycleTime"]        = { "autostat.cycletime",   "mult", true },
     --["Add_Sway"]              = { "autostat.sway",        "add",  true },
+    ["Mult_HeatCapacity"]     = { "autostat.heatcap",     "mult", false },
+    ["Mult_HeatDissipation"]  = { "autostat.heatdrain",   "mult", false },
+    ["Mult_FixTime"]          = { "autostat.heatfix",     "mult", true },
+    ["Mult_HeatDelayTime"]    = { "autostat.heatdelay",   "mult", true },
 }
 
 local function getsimpleamt(stat)
