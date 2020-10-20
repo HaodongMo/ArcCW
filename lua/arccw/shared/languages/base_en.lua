@@ -155,6 +155,10 @@ L["autostat.thermal"] = "Thermal vision"
 L["autostat.silencer"] = "Suppresses firing sound"
 L["autostat.norandspr"] = "No random spread"
 L["autostat.sway"] = "Aim sway"
+L["autostat.heatcap"] = "Heat capacity"
+L["autostat.heatfix"] = "Overheat fix time"
+L["autostat.heatdelay"] = "Heat recovery delay"
+L["autostat.heatdrain"] = "Heat recovery rate"
 
 -- TTT
 L["ttt.roundinfo"] = "ArcCW Configuration"
