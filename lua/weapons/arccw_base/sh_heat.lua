@@ -67,5 +67,5 @@ function SWEP:DoHeat()
 end
 
 function SWEP:HeatEnabled()
-    return (self.Jamming or self:GetBuff_Override("Override_Jamming")) and self.Animations["fix"]
+    return self.Jamming or self:GetBuff_Override("Override_Jamming")
 end
