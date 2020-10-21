@@ -40,7 +40,7 @@ function SWEP:AddHeat()
             end
         end
 
-        if self.HeatLockout then
+        if self.HeatLockout or self:GetBuff_Override("Override_HeatLockout") then
             self:SetHeatLocked(true)
         end
     end
