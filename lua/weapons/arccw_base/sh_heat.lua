@@ -40,7 +40,7 @@ function SWEP:AddHeat()
             end
         end
 
-        if self.HeatLockout then
+        if self.HeatLockout or self:GetBuff_Override("Override_HeatLockout") then
             self:SetHeatLocked(true)
         end
     end
@@ -67,5 +67,5 @@ function SWEP:DoHeat()
 end
 
 function SWEP:HeatEnabled()
-    return (self.Jamming or self:GetBuff_Override("Override_Jamming")) and self.Animations["fix"]
+    return self.Jamming or self:GetBuff_Override("Override_Jamming")
 end
