@@ -142,6 +142,8 @@ function SWEP:SetupModel(wm)
 
         vm.RenderOverride = function(v)
             if !self or !self.ArcCW then v.RenderOverride = nil return end
+            local wep = LocalPlayer():GetActiveWeapon()
+            if wep and !wep.ArcCW then v.RenderOverride = nil return end
             self:RefreshBGs()
 
             for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
