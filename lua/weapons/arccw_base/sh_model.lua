@@ -641,6 +641,8 @@ function SWEP:SetupModel(wm)
     end
 
     self.PrintName = self:GetBuff_Hook("Hook_NameChange", self.PrintName) or self.PrintName
+    self.Trivia_Class = self:GetBuff_Hook("Hook_ClassChange", self.Trivia_Class) or self.Trivia_Class
+    self.Trivia_Desc = self:GetBuff_Hook("Hook_DescChange", self.Trivia_Desc) or self.Trivia_Desc
 
     self:SetupActiveSights()
 
