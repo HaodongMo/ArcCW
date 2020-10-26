@@ -336,6 +336,36 @@ function SWEP:DrawHUD()
             }
 
             MyDrawText(wmode)
+			
+			if self:GetBuff_Override("UBGL") then
+				local size = ScreenScaleMulti(32)
+				local awesomematerial = Material( "hud/ubgl.png", "smooth" )
+				local whatsthecolor = self:GetInUBGL() and Color(255, 255, 255, 255) or Color(255, 255, 255, 0)
+				local bar = {
+					w = size,
+					h = size,
+					x = apan_bg.x - size - ScreenScaleMulti(8),
+					y = apan_bg.y + apan_bg.h - size,
+				}
+				surface.SetDrawColor( whatsthecolor )
+				surface.SetMaterial( awesomematerial )
+				surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
+			end
+			
+			if self:GetBuff_Override("Bipod") or self.Bipod_Integral then
+				local size = ScreenScaleMulti(32)
+				local awesomematerial = Material( "hud/bipod.png", "smooth" )
+				local whatsthecolor = self:GetInBipod() and Color(255, 255, 255, 255) or Color(255, 255, 255, 0)
+				local bar = {
+					w = size,
+					h = size,
+					x = apan_bg.x - size - ScreenScaleMulti(8),
+					y = apan_bg.y,
+				}
+				surface.SetDrawColor( whatsthecolor )
+				surface.SetMaterial( awesomematerial )
+				surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
+			end
 
             surface.SetFont("ArcCW_26")
             local wammo = {

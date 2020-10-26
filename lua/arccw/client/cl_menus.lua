@@ -108,9 +108,9 @@ local HudPanel = {
     { type = "b", text = "#arccw.cvar.hud_3dfun", var = "arccw_hud_3dfun" },
     { type = "b", text = "#arccw.cvar.hud_forceshow", var = "arccw_hud_forceshow" },
     { type = "b", text = "#arccw.cvar.attinv_closeonhurt", var = "arccw_attinv_closeonhurt" },
-    { type = "f", text = "#arccw.cvar.hudpos_deadzone_x", var = "arccw_hud_deadzone_x", min = 0, max = 1 },
-    { type = "f", text = "#arccw.cvar.hudpos_deadzone_y", var = "arccw_hud_deadzone_y", min = 0, max = 1 },
-    { type = "f", text = "#arccw.cvar.hudpos_size", var = "arccw_hud_size", min = 0, max = 1.5 },
+    { type = "f", text = "#arccw.cvar.hudpos_deadzone_x", var = "arccw_hud_deadzone_x", min = 0, max = 0.5 },
+    { type = "f", text = "#arccw.cvar.hudpos_deadzone_y", var = "arccw_hud_deadzone_y", min = 0, max = 0.5 },
+    { type = "f", text = "#arccw.cvar.hudpos_size", var = "arccw_hud_size", min = 0.67, max = 1.5 },
     
     { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
@@ -190,18 +190,35 @@ local AttsPanel = {
 
 local MultsPanel = {
     { type = "h", text = "#arccw.adminonly" },
-    { type = "f", text = "Damage", var = "arccw_mult_damage", min = 0, max = 10, sv = true },
-    { type = "f", text = "NPC Damage", var = "arccw_mult_npcdamage", min = 0, max = 5, sv = true },
-    { type = "f", text = "Range", var = "arccw_mult_range", min = 0.01, max = 10, sv = true },
-    { type = "f", text = "Recoil", var = "arccw_mult_recoil", min = 0, max = 10, sv = true },
-    { type = "f", text = "Penetration", var = "arccw_mult_penetration", min = 0, max = 10, sv = true },
-    { type = "f", text = "Hip Dispersion", var = "arccw_mult_hipfire", min = 0, max = 10, sv = true },
-    { type = "f", text = "Move Dispersion", var = "arccw_mult_movedisp", min = 0, max = 10, sv = true },
-    { type = "f", text = "Reload Time", var = "arccw_mult_reloadtime", min = 0.01, max = 5, sv = true },
-    { type = "f", text = "ADS Time", var = "arccw_mult_sighttime", min = 0.1, max = 5, sv = true },
-    { type = "i", text = "Default Clip", var = "arccw_mult_defaultclip", min = -1, max = 10, sv = true },
-    { type = "f", text = "Random Att. Chance", var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
-    { type = "f", text = "Heat Gain", var = "arccw_mult_heat", min = 0, max = 5, sv = true },
+    { type = "f", text = "Damage", 				var = "arccw_mult_damage", min = 0, max = 10, sv = true },
+    { type = "f", text = "NPC Damage", 			var = "arccw_mult_npcdamage", min = 0, max = 5, sv = true },
+    { type = "f", text = "Range", 				var = "arccw_mult_range", min = 0.1, max = 5, sv = true },
+    { type = "f", text = "Recoil", 				var = "arccw_mult_recoil", min = 0, max = 5, sv = true },
+    { type = "f", text = "Penetration", 		var = "arccw_mult_penetration", min = 0, max = 5, sv = true },
+    { type = "f", text = "Hip Dispersion", 		var = "arccw_mult_hipfire", min = 0, max = 3, sv = true },
+    { type = "f", text = "Move Dispersion",		var = "arccw_mult_movedisp", min = 0, max = 3, sv = true },
+    { type = "f", text = "Reload Time", 		var = "arccw_mult_reloadtime", min = 0.2, max = 3, sv = true },
+    { type = "f", text = "ADS Time", 			var = "arccw_mult_sighttime", min = 0.25, max = 3, sv = true },
+    { type = "i", text = "Default Clip", 		var = "arccw_mult_defaultclip", min = -1, max = 1, sv = true }, -- Fix default clip first
+    { type = "f", text = "Random Att. Chance", 	var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
+    { type = "f", text = "Heat Gain", 			var = "arccw_mult_heat", min = 0, max = 3, sv = true },
+}
+
+local MultPresets = {
+    ["#preset.default"] = {
+        arccw_mult_damage					= "1",
+        arccw_mult_npcdamage				= "1",
+        arccw_mult_range					= "1",
+        arccw_mult_recoil					= "1",
+        arccw_mult_penetration				= "1",
+        arccw_mult_hipfire					= "1",
+        arccw_mult_movedisp					= "1",
+        arccw_mult_reloadtime				= "1",
+        arccw_mult_sighttime				= "1",
+        arccw_mult_defaultclip				= "1",
+        arccw_mult_attchance				= "1",
+        arccw_mult_heat						= "1",
+    }
 }
 
 local NPCsPanel = {
@@ -469,6 +486,14 @@ function ArcCW_Options_Ammo(panel)
 end
 
 function ArcCW_Options_Mults(panel)
+    panel:AddControl("ComboBox", {
+        MenuButton = "1",
+        Label      = "#Presets",
+        Folder     = "arccw_mults",
+        CVars      = { "" },
+        Options    = MultPresets
+    })
+	
     ArcCW.GeneratePanelElements(panel, MultsPanel)
 end
 
