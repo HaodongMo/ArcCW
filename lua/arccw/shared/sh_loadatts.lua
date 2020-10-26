@@ -54,14 +54,16 @@ local function ArcCW_SendBlacklist(ply)
             ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
             print("Loaded " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " blacklisted ArcCW attachments.")
         end
-        timer.Simple(0, function()
-            net.Start("arccw_blacklist")
-                net.WriteUInt(table.Count(ArcCW.AttachmentBlacklistTable), ArcCW.GetBitNecessity())
-                for attName, bStatus in pairs(ArcCW.AttachmentBlacklistTable) do
-                    net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
-                end
-            if ply then net.Send(ply) else net.Broadcast() end
-        end)
+        if player.GetCount() > 0 then
+            timer.Simple(0, function()
+                net.Start("arccw_blacklist")
+                    net.WriteUInt(table.Count(ArcCW.AttachmentBlacklistTable), ArcCW.GetBitNecessity())
+                    for attName, bStatus in pairs(ArcCW.AttachmentBlacklistTable) do
+                        net.WriteUInt(ArcCW.AttachmentTable[attName].ID, ArcCW.GetBitNecessity())
+                    end
+                if ply then net.Send(ply) else net.Broadcast() end
+            end)
+        end
     elseif CLIENT and ArcCW.AttachmentBlacklistTable == nil then
         -- Actively request the table, this happens on player load into server once
         net.Start("arccw_blacklist")
