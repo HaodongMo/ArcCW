@@ -106,7 +106,7 @@ function SWEP:Reload()
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
-        
+
         if self.Animations[anim].MinProgress then
             reloadtime = self.Animations[anim].MinProgress * mult
         else
@@ -114,7 +114,7 @@ function SWEP:Reload()
         end
 
         self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim) * mult)
-            
+
         self:SetTimer(reloadtime * 0.95,
         function()
             self:SetReloading(false)
@@ -122,6 +122,7 @@ function SWEP:Reload()
             --     self:EnterSights()
             -- end
             self:RestoreAmmo()
+            self:SetLastLoad(self:Clip1())
         end)
         self.CheckpointAnimation = anim
         self.CheckpointTime = 0
@@ -224,6 +225,33 @@ function SWEP:GetVisualBullets()
 end
 
 function SWEP:GetVisualClip()
+    -- local reserve = self:Ammo1()
+    -- local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    -- local abouttoload = math.Clamp(self:GetCapacity() + chamber, 0, reserve + self:Clip1())
+
+    -- local h = self:GetBuff_Hook("Hook_GetVisualClip")
+
+    -- if h then return h end
+    -- if self.LastClipOutTime > CurTime() then
+    --     return self.LastClip1 or self:Clip1()
+    -- else
+    --     if !self.RevolverReload then
+    --         self.LastClip1 = self:Clip1()
+    --     else
+    --         if self:Clip1() > lastframeclip1 then
+    --             self.LastClip1 = self:Clip1()
+    --         end
+
+    --         lastframeclip1 = self:Clip1()
+    --     end
+
+    --     if self:GetReloading() and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
+    --         return abouttoload
+    --     else
+    --         return self.LastClip1 or self:Clip1()
+    --     end
+    -- end
+
     local reserve = self:Ammo1()
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
     local abouttoload = math.Clamp(self:GetCapacity() + chamber, 0, reserve + self:Clip1())
@@ -231,24 +259,19 @@ function SWEP:GetVisualClip()
     local h = self:GetBuff_Hook("Hook_GetVisualClip")
 
     if h then return h end
+
     if self.LastClipOutTime > CurTime() then
-        return self.LastClip1 or self:Clip1()
-    else
-        if !self.RevolverReload then
-            self.LastClip1 = self:Clip1()
-        else
-            if self:Clip1() > lastframeclip1 then
-                self.LastClip1 = self:Clip1()
-            end
+        return self:GetLastLoad() or self:Clip1()
+    end
 
-            lastframeclip1 = self:Clip1()
-        end
-
+    if self.RevolverReload then
         if self:GetReloading() and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
             return abouttoload
         else
-            return self:Clip1()
+            return self:GetLastLoad() or self:Clip1()
         end
+    else
+        return self:Clip1()
     end
 end
 

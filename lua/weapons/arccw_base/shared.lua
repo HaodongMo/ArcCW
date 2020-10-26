@@ -647,6 +647,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
     self:NetworkVar("Int", 1, "FireMode")
     self:NetworkVar("Int", 2, "BurstCount")
+    self:NetworkVar("Int", 3, "LastLoad")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")

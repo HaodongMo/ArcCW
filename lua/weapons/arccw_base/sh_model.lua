@@ -791,7 +791,7 @@ function SWEP:DrawCustomModel(wm)
                 local wmelemod = nil
                 local slidemod = nil
 
-                for _, e in pairs(self:GetActiveElements()) do
+                for _, e in pairs(self:GetActiveElements(true)) do
                     local ele = self.AttachmentElements[e]
 
                     if !ele then continue end
