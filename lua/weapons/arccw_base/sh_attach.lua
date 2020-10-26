@@ -482,8 +482,9 @@ function SWEP:GetActiveElements(recache)
 
         for g = f, table.Count(eles) do
             if eles[g] == i then c = c + 1 end
+            if a then continue end
 
-            if c > 1 then a = true break end
+            if c > 1 then a = true end
         end
 
         if a then continue end

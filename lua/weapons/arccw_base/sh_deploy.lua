@@ -176,6 +176,7 @@ function SWEP:Initialize()
 
     self:SetState(0)
     self:SetClip2(0)
+    self:SetLastLoad(self:Clip1())
 
     self:SetNWBool("laserenabled", true) -- J
 

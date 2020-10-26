@@ -142,6 +142,8 @@ function SWEP:SetupModel(wm)
 
         vm.RenderOverride = function(v)
             if !self or !self.ArcCW then v.RenderOverride = nil return end
+            local wep = LocalPlayer():GetActiveWeapon()
+            if wep and !wep.ArcCW then v.RenderOverride = nil return end
             self:RefreshBGs()
 
             for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
@@ -657,7 +659,7 @@ function SWEP:KillModel(models)
     end
 end
 
-function SWEP:DrawCustomModel(wm)
+function SWEP:DrawCustomModel(wm,origin,angle)
     if ArcCW.VM_OverDraw then return end
     local disttoeye = self:GetPos():DistToSqr(EyePos())
     local visibility = math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
@@ -667,6 +669,14 @@ function SWEP:DrawCustomModel(wm)
     end
     local models = self.VM
     local vm
+	
+	if origin and !angle then
+		angle = Angle()
+	end
+	local custompos = origin and angle
+	if custompos then
+		wm = true --VM drawing borked
+	end
 
     -- self:KillModel(self.VM)
     -- self:KillModel(self.WM)
@@ -725,7 +735,7 @@ function SWEP:DrawCustomModel(wm)
         -- end
 
         if k.IsBaseWM then
-            if self:GetOwner():IsValid() then
+            if self:GetOwner():IsValid() and !custompos then
                 k.Model:SetParent(self:GetOwner())
                 vm = self:GetOwner()
             else
@@ -734,7 +744,7 @@ function SWEP:DrawCustomModel(wm)
                 selfmode = true
                 basewm = true
             end
-        elseif k.IsBaseVM then
+        elseif k.IsBaseVM and !custompos then
             k.Model:SetParent(self:GetOwner():GetViewModel())
             vm = self
             selfmode = true
@@ -778,6 +788,11 @@ function SWEP:DrawCustomModel(wm)
                     bang = bonemat:GetAngles()
                 end
             end
+			
+			if custompos and (!self.MirrorVMWM or (self.MirrorVMWM and k.Model:GetModel() == self.ViewModel) ) then
+				bpos = origin
+				bang = angle
+			end
 
             if k.Slot then
 
@@ -789,7 +804,7 @@ function SWEP:DrawCustomModel(wm)
                 local wmelemod = nil
                 local slidemod = nil
 
-                for _, e in pairs(self:GetActiveElements()) do
+                for _, e in pairs(self:GetActiveElements(true)) do
                     local ele = self.AttachmentElements[e]
 
                     if !ele then continue end
