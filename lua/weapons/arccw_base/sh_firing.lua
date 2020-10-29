@@ -719,6 +719,11 @@ function SWEP:GetDamage(range, pellet)
 
     if !pellet then mul = mul * nbr end
 
+	if(self.DamageRand)then
+		local Randomness=math.Rand(1-self.DamageRand,1+self.DamageRand)
+		mul=mul*Randomness
+	end
+
     local dmgmax = self.Damage * self:GetBuff_Mult("Mult_Damage") * mul
     local dmgmin = self.DamageMin * self:GetBuff_Mult("Mult_DamageMin") * mul
     local delta = 1
