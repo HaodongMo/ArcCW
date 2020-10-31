@@ -23,7 +23,7 @@ function ArcCW.LoadAttachmentType(att)
 
         att.ID = ArcCW.NumAttachments
 
-        if ArcCW.GenerateAttEntities and !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
+        if GetConVar("arccw_reloadatts_registerentities"):GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
             local attent = {}
             attent.Base = "arccw_att_base"
             attent.Icon = att.Icon

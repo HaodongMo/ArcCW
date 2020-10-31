@@ -83,6 +83,8 @@ function SWEP:GetCurrentFiremode()
 end
 
 function SWEP:GetFiremodeName()
+    if self:GetBuff_Hook("Hook_FiremodeName") then return self:GetBuff_Hook("FiremodeName") end
+
     if self:GetInUBGL() then
         return self:GetBuff_Override("UBGL_PrintName") or "UBGL"
     end
@@ -100,6 +102,8 @@ function SWEP:GetFiremodeName()
 end
 
 function SWEP:GetFiremodeBars()
+    if self:GetBuff_Hook("Hook_FiremodeBars") then return self:GetBuff_Hook("Hook_FiremodeBars") end
+
     if self:GetInUBGL() then
         return "____-"
     end

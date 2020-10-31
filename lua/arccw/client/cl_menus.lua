@@ -188,6 +188,18 @@ local AttsPanel = {
     { type = "p", text = "#arccw.blacklist", func = function() RunConsoleCommand("arccw_blacklist") end },
 }
 
+local DevPanel = {
+    { type = "h", text = "#arccw.adminonly" },
+    { type = "h", text = "#arccw.dev_info1" },
+    { type = "h", text = "#arccw.dev_info2" },
+    { type = "b", text = "#arccw.cvar.dev_reloadonadmincleanup", var = "arccw_reloadatts_mapcleanup", sv = true },
+    { type = "c", text = "#arccw.cvar.dev_reloadonadmincleanup.desc" },
+    { type = "b", text = "#arccw.cvar.dev_registerentities", var = "arccw_reloadatts_registerentities", sv = true },
+    { type = "c", text = "#arccw.cvar.dev_registerentities.desc" },
+    { type = "p", text = "#arccw.cvar.dev_reloadatts", func = function() RunConsoleCommand("arccw_reloadatts") end },
+    { type = "h", text = "#arccw.cvar.dev_reloadatts.desc" },
+}
+
 local MultsPanel = {
     { type = "h", text = "#arccw.adminonly" },
     { type = "f", text = "Damage", 				var = "arccw_mult_damage", min = 0, max = 10, sv = true },
@@ -465,6 +477,10 @@ function ArcCW_Options_HUD(panel)
     ArcCW.GeneratePanelElements(panel, HudPanel)
 end
 
+function ArcCW_Options_Dev(panel)
+    ArcCW.GeneratePanelElements(panel, DevPanel)
+end
+
 function ArcCW_Options_Crosshair(panel)
     panel:AddControl("ComboBox", {
         MenuButton = "1",
@@ -516,6 +532,7 @@ ArcCW.ClientMenus = {
     ["ArcCW_Options_Ammo"]      = { text = "#arccw.menus.ammo",   func = ArcCW_Options_Ammo },
     ["ArcCW_Options_Atts"]      = { text = "#arccw.menus.atts",   func = ArcCW_Options_Atts },
     ["ArcCW_Options_Mults"]     = { text = "#arccw.menus.mults",  func = ArcCW_Options_Mults },
+    ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",   func = ArcCW_Options_Dev },
     ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",   func = ArcCW_Options_NPC },
 }
 

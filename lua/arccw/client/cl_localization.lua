@@ -16,6 +16,7 @@ ArcCW.PhraseTable = {
         ["arccw.menus.npcs"]                     = "NPCs",
         ["arccw.menus.atts"]                     = "Attachments",
         ["arccw.menus.ammo"]                     = "Ammo",
+        ["arccw.menus.dev"]                    = "Developer",
         ["arccw.menus.xhair"]                    = "Crosshair",
         ["arccw.menus.bullet"]                   = "Bullet Physics",
         -- ArcCW_Options_Ammo
@@ -182,6 +183,15 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.desync.desc"]               = "Desync bullets between the server and the client, making the nospread cheat useless.",
         ["arccw.cvar.weakensounds"]              = "Weaken Sounds",
         ["arccw.cvar.weakensounds.desc"]         = "Reduce all weapons' firing volume by this much decibels, making it easier to hide shooting sounds. Clamped to 60-150dB.",
+        -- ArcCW_Options_Dev
+        ["arccw.dev_info1"]                      = "These are primarily related to attachments and are of use to developers only.",
+        ["arccw.dev_info2"]                      = "Settings will not save.",
+        ["arccw.cvar.dev_reloadonadmincleanup"]  = "Reload on Admin Cleanup",
+        ["arccw.cvar.dev_reloadonadmincleanup.desc"]    = "Disabled by default.\nDoing an admin cleanup will reload all attachment data.",
+        ["arccw.cvar.dev_registerentities"]      = "Register Att. Entities",
+        ["arccw.cvar.dev_registerentities.desc"] = "Enabled by default.\nCreates entities for ArcCW attachments. Increases time to reload attachment data.",
+        ["arccw.cvar.dev_reloadatts"]            = "Reload Attachment Data",
+        ["arccw.cvar.dev_reloadatts.desc"]       = "Reloads attachment data. Use after making a change to an attachment.",
         -- TTT Menus
         ["arccw.cvar.attinv_loseondie.help"]     = "If enabled, players lose attachment on death and round end.",
         ["arccw.cvar.ammo_detonationmode.help"]  = "Determines what happens if ammo boxes are destroyed.",

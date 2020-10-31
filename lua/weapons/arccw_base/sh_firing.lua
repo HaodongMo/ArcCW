@@ -1,27 +1,40 @@
 function SWEP:CanPrimaryAttack()
     local owner = self:GetOwner()
+
+    -- If we are an NPC, do our own little methods
     if owner:IsNPC() then self:NPC_Shoot() return end
 
+    -- If we are in a UBGL, shoot the UBGL, not the gun
     if self:GetInUBGL() then self:ShootUBGL() return end
 
+    -- Too early, come back later.
     if self:GetNextPrimaryFire() >= CurTime() then return end
 
+    -- Gun is locked from heat.
     if self:GetHeatLocked() then return end
 
+    -- Coostimzing
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
 
+    -- Attempting a bash
     if self:GetState() != ArcCW.STATE_SIGHTS and owner:KeyDown(IN_USE) or self.PrimaryBash then self:Bash() return end
 
+    -- Throwing weapon
     if self.Throwing then self:PreThrow() return end
 
+    -- Too close to a wall
     if self:BarrelHitWall() > 0 then return end
 
+    -- Can't shoot while sprinting
     if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return end
 
+    -- Maximum burst shots
     if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
 
+    -- We need to cycle
     if self:GetNeedCycle() then return end
 
+    -- Safety's on, turn it off.
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
         --self.Primary.Automatic = false
@@ -29,8 +42,10 @@ function SWEP:CanPrimaryAttack()
         return
     end
 
+    -- Should we not fire?
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return end
 
+    -- We made it
     return true
 end
 

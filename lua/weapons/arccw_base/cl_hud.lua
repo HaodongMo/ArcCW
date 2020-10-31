@@ -111,7 +111,7 @@ function SWEP:DrawHUD()
 
     local bargap = ScreenScaleMulti(2)
 
-    if self:CanBipod() or self:GetInBipod() then
+    --[[if self:CanBipod() or self:GetInBipod() then
         local txt = "[" .. string.upper(ArcCW:GetBind("+use")) .. "]"
 
         if self:InBipod() then
@@ -131,7 +131,7 @@ function SWEP:DrawHUD()
         }
 
         MyDrawText(bip)
-    end
+    end]]
 
     if self:GetHeatLocked() then
         col2 = col3
@@ -171,7 +171,16 @@ function SWEP:DrawHUD()
             local visible = (lastinfotime + 4 > curTime or lastinfotime - 0.5 > curTime)
 
             -- Detect changes to stuff drawn in HUD
-            local curInfo = {ammo = data.ammo, clip = data.clip, plus = data.plus, firemode = data.mode, heat = self:GetHeat()}
+            local curInfo = {
+                                ammo = data.ammo,
+                                clip = data.clip,
+                                plus = data.plus,
+                                firemode = data.mode,
+                                heat = self:GetHeat(),
+                                self:GetInUBGL(),
+                                self:GetInBipod(),
+                                self:CanBipod(),
+                            }
             for i, v in pairs(curInfo) do
                 if v != lastinfo[i] then
                     lastinfotime = visible and (curTime - 0.5) or curTime
@@ -282,7 +291,54 @@ function SWEP:DrawHUD()
                     }
                     MyDrawText(wheat)
                 end
+                if self:GetBuff_Override("UBGL") then
+                    local size = ScreenScaleMulti(32)
+                    local awesomematerial = Material( "hud/ubgl.png", "smooth" )
+                    local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, alpha) or
+                                                        Color(255, 255, 255, 0)
+                    local bar = {
+                        w = size,
+                        h = size,
+                        x = apan_bg.x + apan_bg.w - airgap - size,
+                        y = wmode.y + ScreenScaleMulti(14),
+                    }
+                    surface.SetDrawColor( whatsthecolor )
+                    surface.SetMaterial( awesomematerial )
+                    surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
+                end
+                
+                if self:CanBipod() or self:GetInBipod() then
+                    local size = ScreenScaleMulti(32)
+                    local awesomematerial = Material( "hud/bipod.png", "smooth" )
+                    local whatsthecolor =   self:GetInBipod() and     Color(255, 255, 255, alpha) or
+                                            self:CanBipod() and   Color(255, 255, 255, alpha/2) or
+                                                                    Color(255, 255, 255, 0)
+                    local bar = {
+                        w = size,
+                        h = size,
+                        x = apan_bg.x + apan_bg.w - airgap - ScreenScaleMulti(32) - (self:GetInUBGL() and ScreenScaleMulti(32) or 0),
+                        y = wmode.y + ScreenScaleMulti(14),
+                    }
+                    surface.SetDrawColor( whatsthecolor )
+                    surface.SetMaterial( awesomematerial )
+                    surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
 
+                    if self:CanBipod() or self:GetInBipod() then
+                        local txt = string.upper(ArcCW:GetBind("+use"))
+
+                        local bip = {
+                            shadow = true,
+                            x = apan_bg.x + apan_bg.w - airgap - ScreenScaleMulti(32) - (self:GetInUBGL() and ScreenScaleMulti(32) or 0),
+                            y = wmode.y + ScreenScaleMulti(14),
+                            font = "ArcCW_12",
+                            text = txt,
+                            col = whatsthecolor,
+                            alpha = alpha,
+                        }
+
+                        MyDrawText(bip)
+                    end
+                end
             end
         else
 
@@ -304,11 +360,19 @@ function SWEP:DrawHUD()
             for i = 1, segcount do
                 local c = data.bars[i]
 
-                surface.SetDrawColor(col2)
-
                 if c == "-" then
+                        surface.SetDrawColor(col2)
                     surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
+                elseif c == "#" then
+                        --surface.SetDrawColor(col2)
+                    --surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
+                elseif c == "!" then
+                        surface.SetDrawColor(col3)
+                    surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
+                        surface.SetDrawColor(col2)
+                    surface.DrawOutlinedRect(bar.x, bar.y, bar.w, bar.h)
                 else
+                        surface.SetDrawColor(col2)
                     surface.DrawOutlinedRect(bar.x, bar.y, bar.w, bar.h)
                 end
 
@@ -340,7 +404,8 @@ function SWEP:DrawHUD()
 			if self:GetBuff_Override("UBGL") then
 				local size = ScreenScaleMulti(32)
 				local awesomematerial = Material( "hud/ubgl.png", "smooth" )
-				local whatsthecolor = self:GetInUBGL() and Color(255, 255, 255, 255) or Color(255, 255, 255, 0)
+				local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, 255) or
+                                                       Color(255, 255, 255, 0)
 				local bar = {
 					w = size,
 					h = size,
@@ -352,19 +417,34 @@ function SWEP:DrawHUD()
 				surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
 			end
 			
-			if self:GetBuff_Override("Bipod") or self.Bipod_Integral then
+			if self:CanBipod() or self:GetInBipod() then
 				local size = ScreenScaleMulti(32)
 				local awesomematerial = Material( "hud/bipod.png", "smooth" )
-				local whatsthecolor = self:GetInBipod() and Color(255, 255, 255, 255) or Color(255, 255, 255, 0)
+				local whatsthecolor =   self:GetInBipod() and   Color(255, 255, 255, 255) or
+                                        self:CanBipod() and     Color(255, 255, 255, 127) or
+                                                                Color(255, 255, 255, 0)
 				local bar = {
 					w = size,
 					h = size,
-					x = apan_bg.x - size - ScreenScaleMulti(8),
-					y = apan_bg.y,
+					x = apan_bg.x - size - ScreenScaleMulti(8) - (self:GetInUBGL() and ScreenScaleMulti(32) or 0),
+					y = apan_bg.y + apan_bg.h - size,
 				}
 				surface.SetDrawColor( whatsthecolor )
 				surface.SetMaterial( awesomematerial )
 				surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
+
+                local txt = string.upper(ArcCW:GetBind("+use"))
+
+                local bip = {
+                    shadow = true,
+                    x = apan_bg.x - size - ScreenScaleMulti(8) - (self:GetInUBGL() and ScreenScaleMulti(32) or 0),
+                    y = apan_bg.y + apan_bg.h - size,
+                    font = "ArcCW_12",
+                    text = txt,
+                    col = whatsthecolor,
+                }
+
+                MyDrawText(bip)
 			end
 
             surface.SetFont("ArcCW_26")
@@ -517,4 +597,21 @@ function SWEP:DrawHUD()
     end
 
     lastwpn = self
+end
+
+function SWEP:CustomAmmoDisplay()
+    local data = self:GetHUDData()
+	self.AmmoDisplay = self.AmmoDisplay or {} 
+ 
+	self.AmmoDisplay.Draw = true -- draw the display?
+ 
+	if self.Primary.ClipSize > 0 or self:GetInUBGL() then
+		self.AmmoDisplay.PrimaryClip = data.clip -- amount in clip
+		self.AmmoDisplay.PrimaryAmmo = tonumber(data.ammo) -- amount in reserve
+	end
+	--[[if self.Secondary.ClipSize > 0 then
+		self.AmmoDisplay.SecondaryAmmo = self:Clip2() + self:Ammo2() -- amount of secondary ammo
+	end]]
+ 
+	return self.AmmoDisplay -- return the table
 end
