@@ -111,6 +111,8 @@ local HudPanel = {
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_x", var = "arccw_hud_deadzone_x", min = 0, max = 0.5 },
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_y", var = "arccw_hud_deadzone_y", min = 0, max = 0.5 },
     { type = "f", text = "#arccw.cvar.hudpos_size", var = "arccw_hud_size", min = 0.67, max = 1.5 },
+    { type = "t", text = "#arccw.cvar.font", var = "arccw_font"  },
+    { type = "c", text = "#arccw.cvar.font_info" },
     
     { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },

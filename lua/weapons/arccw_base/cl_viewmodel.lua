@@ -60,7 +60,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local vm_up      = GetConVar("arccw_vm_up"):GetFloat()
     local vm_forward = GetConVar("arccw_vm_forward"):GetFloat()
 
-    if owner:Crouching() then
+    if owner:Crouching() or owner:KeyDown(IN_DUCK) then
         target.down = 0
 
         if self.CrouchPos then

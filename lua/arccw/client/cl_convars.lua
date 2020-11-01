@@ -41,6 +41,7 @@ ArcCW.ClientConVars = {
     ["arccw_attinv_closeonhurt"]      = { def =  0, usri = true },
 
     ["arccw_language"]      		  = { def =  "", usri = true },
+    ["arccw_font"]      		      = { def =  "", usri = true },
 
     ["arccw_cheapscopes"]             = { def =  1 },
     ["arccw_cheapscopesautoconfig"]   = { def =  0 },

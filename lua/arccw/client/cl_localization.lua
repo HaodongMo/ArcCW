@@ -67,9 +67,10 @@ ArcCW.PhraseTable = {
         ["arccw.cvar.attinv_onlyinspect"]        = "Hide Customization UI",
         ["arccw.cvar.attinv_simpleproscons"]     = "Simple Pros And Cons",
         ["arccw.cvar.attinv_closeonhurt"]        = "Close menu on damage taken",
-
         ["arccw.cvar.language"]                  = "Language",
         ["arccw.cvar.language_info"]             = "\nOverride the language. Leave blank for gmod_language.",
+        ["arccw.cvar.font"]                      = "Font",
+        ["arccw.cvar.font_info"]                 = "\nOverride the font. Leave blank for default.",
         -- ArcCW_Options_Perf
         ["arccw.performance"]                    = "The options below may change performance.",
         ["arccw.cvar.cheapscopes"]               = "Cheap Scopes",
