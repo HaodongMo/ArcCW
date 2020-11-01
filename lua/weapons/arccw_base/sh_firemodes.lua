@@ -59,11 +59,11 @@ function SWEP:ChangeFiremode(pred)
 
     self:SetShouldHoldType()
 
-    if CLIENT then
+    --[[if CLIENT then
         if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
             self:GetOwner():ChatPrint(self:GetFiremodeName() .. "|" .. self:GetFiremodeBars())
         end
-    end
+    end]]
 
     if self.Animations[a] then
         self:PlayAnimation(a)
