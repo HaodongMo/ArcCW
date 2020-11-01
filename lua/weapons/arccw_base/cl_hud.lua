@@ -4,6 +4,14 @@ local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end
 
+local function CopeX()
+    return ScreenScaleMulti( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 )
+end
+
+local function CopeY()
+    return ScreenScaleMulti( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 )
+end
+
 local function MyDrawText(tbl)
     local x = tbl.x
     local y = tbl.y
@@ -340,8 +348,8 @@ function SWEP:DrawHUD()
             end
         else
 
-            apan_bg.x = ScrW() - apan_bg.w - airgap - ScreenScaleMulti( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 )
-            apan_bg.y = ScrH() - apan_bg.h - airgap - ScreenScaleMulti( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 )
+            apan_bg.x = ScrW() - apan_bg.w - airgap - CopeX()
+            apan_bg.y = ScrH() - apan_bg.h - airgap - CopeY()
 
             surface.SetDrawColor(col1)
             surface.DrawRect(apan_bg.x, apan_bg.y, apan_bg.w, apan_bg.h)
@@ -639,8 +647,8 @@ function SWEP:DrawHUD()
         end
 
         local whp = {
-            x = airgap + ScreenScaleMulti( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
-            y = ScrH() - ScreenScaleMulti(26) - ScreenScaleMulti(16) - airgap - ScreenScaleMulti( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 ),
+            x = airgap + CopeX(),
+            y = ScrH() - ScreenScaleMulti(26) - ScreenScaleMulti(16) - airgap - CopeY(),
             font = "ArcCW_26",
             text = "HP: " .. tostring(math.Round(vhp)),
             col = colhp,
@@ -651,8 +659,8 @@ function SWEP:DrawHUD()
 
         if LocalPlayer():Armor() > 0 then
             local war = {
-                x = airgap + ScreenScaleMulti( GetConVar("arccw_hud_deadzone_x"):GetFloat() * 320 ),
-                y = ScrH() - ScreenScaleMulti(16) - airgap - ScreenScaleMulti( GetConVar("arccw_hud_deadzone_y"):GetFloat() * 240 ),
+                x = airgap + CopeX(),
+                y = ScrH() - ScreenScaleMulti(16) - airgap - CopeY(),
                 font = "ArcCW_16",
                 text = "ARMOR: " .. tostring(math.Round(varmor)),
                 col = col2,
