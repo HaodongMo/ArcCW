@@ -634,6 +634,24 @@ function SWEP:DrawHUD()
                 MyDrawText(bip)
 			end
 
+            if self:HeatEnabled() then
+                local perc = self:GetHeat() / self:GetMaxHeat()
+                surface.DrawRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124) * perc, ScreenScaleMulti(3))
+
+
+                surface.SetFont("ArcCW_8")
+                local bip = {
+                    shadow = false,
+					x = (ScrW()/2) - (surface.GetTextSize("HEAT")/2),
+					y = bar.y + ScreenScaleMulti(4) + (perc>0.4 and ScreenScaleMulti(4) or 0),
+                    font = "ArcCW_8",
+                    text = "HEAT",
+                    col = col2,
+                }
+
+                MyDrawText(bip)
+            end
+
     end
 
     -- health + armor
