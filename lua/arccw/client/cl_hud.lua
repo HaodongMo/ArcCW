@@ -60,7 +60,19 @@ function ArcCW:ShouldDrawHUDElement(ele)
     return true
 end
 
-local font = ArcCW.GetTranslation("default_font") or "Bahnschrift"
+local function GetFont()
+    local font = "Bahnschrift"
+
+    if ArcCW.GetTranslation("default_font") then
+        font = ArcCW.GetTranslation("default_font")
+    end
+
+    if GetConVar("arccw_font"):GetString() != "" then
+        font = GetConVar("arccw_font"):GetString()
+    end
+
+    return font
+end
 
 local sizes_to_make = {
     6,
@@ -82,14 +94,14 @@ local function generatefonts()
     for _, i in pairs(sizes_to_make) do
 
         surface.CreateFont( "ArcCW_" .. tostring(i), {
-            font = font,
+            font = GetFont(),
             size = ScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
         } )
 
         surface.CreateFont( "ArcCW_" .. tostring(i) .. "_Glow", {
-            font = font,
+            font = GetFont(),
             size = ScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
@@ -101,7 +113,7 @@ local function generatefonts()
     for _, i in pairs(unscaled_sizes_to_make) do
 
         surface.CreateFont( "ArcCW_" .. tostring(i) .. "_Unscaled", {
-            font = font,
+            font = GetFont(),
             size = i,
             weight = 0,
             antialias = true,
@@ -140,6 +152,9 @@ hook.Add("HUDPaint", "ArcCW_FontRegen", function()
 end)
 
 cvars.AddChangeCallback("arccw_hud_size", function()
+    generatefonts()
+end)
+cvars.AddChangeCallback("arccw_font", function()
     generatefonts()
 end)
 

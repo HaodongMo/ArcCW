@@ -23,7 +23,7 @@ function ArcCW.LoadAttachmentType(att)
 
         att.ID = ArcCW.NumAttachments
 
-        if ArcCW.GenerateAttEntities and !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
+        if GetConVar("arccw_reloadatts_registerentities"):GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
             local attent = {}
             attent.Base = "arccw_att_base"
             attent.Icon = att.Icon
@@ -54,7 +54,7 @@ local function ArcCW_SendBlacklist(ply)
             ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
             print("Loaded " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " blacklisted ArcCW attachments.")
         end
-        if player.GetCount() > 0 then
+        if ArcCW.AttachmentBlacklistTable and player.GetCount() > 0 then
             timer.Simple(0, function()
                 net.Start("arccw_blacklist")
                     net.WriteUInt(table.Count(ArcCW.AttachmentBlacklistTable), ArcCW.GetBitNecessity())

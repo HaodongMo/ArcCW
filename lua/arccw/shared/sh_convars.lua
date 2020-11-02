@@ -34,8 +34,8 @@ CreateConVar("arccw_mult_attchance", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multi
 CreateConVar("arccw_mult_heat", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much heat increases per shot on certain weapons.", 0)
 CreateConVar("arccw_mult_sway", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much sway exists when in sights.", 0)
 
-
-CreateConVar("arccw_reloadatts_mapcleanup", 0, FCVAR_ARCHIVE, "Whether to reload ArcCW attachments on admin clean up.")
+CreateConVar("arccw_reloadatts_mapcleanup", 0, 0, "Whether to reload ArcCW attachments on admin clean up.")
+CreateConVar("arccw_reloadatts_registerentities", 1, 0, "Register attachment entities. This may increase time to reload attachments.")
 
 CreateConVar("arccw_override_crosshair_off", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Set to true to force everyone's crosshairs off.", 0, 1)
 CreateConVar("arccw_override_deploychambered", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Draw the weapon with a round in chamber.", 0, 1)

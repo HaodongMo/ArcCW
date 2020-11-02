@@ -78,10 +78,10 @@ function SWEP:Think()
         end
 
         if self:GetCurrentFiremode().Mode < 0 and !self:GetCurrentFiremode().RunawayBurst then
-            local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
+            local postburst = self:GetCurrentFiremode().PostBurstDelay / self:GetBuff_Mult("Mult_RPM") or 0
 
             if (CurTime() + postburst) > self:GetNextPrimaryFire() then
-            self:SetNextPrimaryFire(CurTime() + postburst)
+                self:SetNextPrimaryFire(CurTime() + postburst)
             end
         end
     end

@@ -104,13 +104,23 @@ local ViewmodelPanel = {
 local HudPanel = {
     { type = "h", text = "#arccw.clientcfg" },
     { type = "b", text = "#arccw.cvar.hud_showhealth", var = "arccw_hud_showhealth" },
+    { type = "c", text = "#arccw.cvar.hud_showhealth.desc" },
     { type = "b", text = "#arccw.cvar.hud_showammo", var = "arccw_hud_showammo" },
+    { type = "c", text = "#arccw.cvar.hud_showammo.desc" },
     { type = "b", text = "#arccw.cvar.hud_3dfun", var = "arccw_hud_3dfun" },
+    { type = "c", text = "#arccw.cvar.hud_3dfun.desc" },
+    { type = "b", text = "#arccw.cvar.hud_minimal", var = "arccw_hud_minimal" },
+    { type = "c", text = "#arccw.cvar.hud_minimal.desc" },
     { type = "b", text = "#arccw.cvar.hud_forceshow", var = "arccw_hud_forceshow" },
+    { type = "c", text = "#arccw.cvar.hud_forceshow.desc" },
     { type = "b", text = "#arccw.cvar.attinv_closeonhurt", var = "arccw_attinv_closeonhurt" },
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_x", var = "arccw_hud_deadzone_x", min = 0, max = 0.5 },
     { type = "f", text = "#arccw.cvar.hudpos_deadzone_y", var = "arccw_hud_deadzone_y", min = 0, max = 0.5 },
+    { type = "c", text = "#arccw.cvar.hudpos_deadzone.desc" },
     { type = "f", text = "#arccw.cvar.hudpos_size", var = "arccw_hud_size", min = 0.67, max = 1.5 },
+    { type = "c", text = "#arccw.cvar.hudpos_size.desc" },
+    { type = "t", text = "#arccw.cvar.font", var = "arccw_font"  },
+    { type = "c", text = "#arccw.cvar.font_info" },
     
     { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
@@ -186,6 +196,18 @@ local AttsPanel = {
     { type = "b", text = "#arccw.cvar.atts_spawnrand", var = "arccw_atts_spawnrand", sv = true },
     { type = "b", text = "#arccw.cvar.atts_ubglautoload", var = "arccw_atts_ubglautoload", sv = true },
     { type = "p", text = "#arccw.blacklist", func = function() RunConsoleCommand("arccw_blacklist") end },
+}
+
+local DevPanel = {
+    { type = "h", text = "#arccw.adminonly" },
+    { type = "h", text = "#arccw.dev_info1" },
+    { type = "h", text = "#arccw.dev_info2" },
+    { type = "b", text = "#arccw.cvar.dev_reloadonadmincleanup", var = "arccw_reloadatts_mapcleanup", sv = true },
+    { type = "c", text = "#arccw.cvar.dev_reloadonadmincleanup.desc" },
+    { type = "b", text = "#arccw.cvar.dev_registerentities", var = "arccw_reloadatts_registerentities", sv = true },
+    { type = "c", text = "#arccw.cvar.dev_registerentities.desc" },
+    { type = "p", text = "#arccw.cvar.dev_reloadatts", func = function() RunConsoleCommand("arccw_reloadatts") end },
+    { type = "h", text = "#arccw.cvar.dev_reloadatts.desc" },
 }
 
 local MultsPanel = {
@@ -465,6 +487,10 @@ function ArcCW_Options_HUD(panel)
     ArcCW.GeneratePanelElements(panel, HudPanel)
 end
 
+function ArcCW_Options_Dev(panel)
+    ArcCW.GeneratePanelElements(panel, DevPanel)
+end
+
 function ArcCW_Options_Crosshair(panel)
     panel:AddControl("ComboBox", {
         MenuButton = "1",
@@ -516,6 +542,7 @@ ArcCW.ClientMenus = {
     ["ArcCW_Options_Ammo"]      = { text = "#arccw.menus.ammo",   func = ArcCW_Options_Ammo },
     ["ArcCW_Options_Atts"]      = { text = "#arccw.menus.atts",   func = ArcCW_Options_Atts },
     ["ArcCW_Options_Mults"]     = { text = "#arccw.menus.mults",  func = ArcCW_Options_Mults },
+    ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",   func = ArcCW_Options_Dev },
     ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",   func = ArcCW_Options_NPC },
 }
 
