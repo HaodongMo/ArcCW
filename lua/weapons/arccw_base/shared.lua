@@ -43,6 +43,7 @@ SWEP.WorldModelOffset = nil
 
 SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
+SWEP.DamageRand = 0 -- damage will vary randomly each shot by this fraction
 SWEP.Range = 200 -- in METRES
 SWEP.Penetration = 4
 SWEP.DamageType = DMG_BULLET
