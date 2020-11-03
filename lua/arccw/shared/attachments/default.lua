@@ -341,6 +341,7 @@ att.Override_Trivia_Year = nil -- 1968
 
 att.Mult_Damage = 1
 att.Mult_DamageMin = 1
+att.Mult_DamageRand = 1
 att.Mult_DamageNPC = 1 -- damage WHEN USED BY NPCS not when used against them
 att.Mult_Range = 1
 att.Mult_Penetration = 1
