@@ -59,7 +59,7 @@ function SWEP:Think()
         end
     end
 
-    if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 then
+    if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 and IsFirstTimePredicted() then
         if self:GetBurstCount() > 0 then
             self:PrimaryAttack()
         end
