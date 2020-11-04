@@ -352,7 +352,9 @@ function SWEP:GetNPCBurstSettings()
 end
 
 function SWEP:GetNPCRestTimes()
-    local postburst = self:GetCurrentFiremode().PostBurstDelay / self:GetBuff_Mult("Mult_RPM") or 0
+    local postburst
+    if self:GetCurrentFiremode().PostBurstDelay then postburst = self:GetCurrentFiremode().PostBurstDelay else postburst = 0 end
+    postburst = postburst / self:GetBuff_Mult("Mult_RPM") or 0
     local m = 1 * self:GetBuff_Mult("Mult_Recoil")
     local rs = 1 * self:GetBuff_Mult("Mult_RecoilSide")
 
