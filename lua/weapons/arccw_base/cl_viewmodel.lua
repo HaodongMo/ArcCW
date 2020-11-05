@@ -360,7 +360,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos = pos + actual.pos.y * ang:Forward()
     pos = pos + actual.pos.z * ang:Up()
 
-    if true then
+    if false then
         pos = pos - Vector(0, 0, actual.down)
     end
     -- This shit brings the viewmodel down one unit... wtf?
