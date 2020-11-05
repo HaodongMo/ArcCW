@@ -7,6 +7,7 @@ ArcCW.NumAttachments = 1
 ArcCW.GenerateAttEntities = true
 
 local shortname = ""
+local genAttCvar = GetConVar("arccw_reloadatts_registerentities")
 
 function ArcCW.LoadAttachmentType(att)
     if !att.Ignore then
@@ -23,7 +24,7 @@ function ArcCW.LoadAttachmentType(att)
 
         att.ID = ArcCW.NumAttachments
 
-        if GetConVar("arccw_reloadatts_registerentities"):GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
+        if genAttCvar:GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
             local attent = {}
             attent.Base = "arccw_att_base"
             attent.Icon = att.Icon
