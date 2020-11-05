@@ -61,7 +61,12 @@ function SWEP:GetHUDData()
         clip = math.Round(vclip or self:Clip1()),
         ammo = math.Round(vreserve or self:Ammo1()),
         bars = self:GetFiremodeBars(),
-        mode = self:GetFiremodeName()
+        mode = self:GetFiremodeName(),
+        heat_enabled        = self:HeatEnabled(),
+        heat_name           = "HEAT",
+        heat_level          = self:GetHeat(),
+        heat_maxlevel       = self:GetMaxHeat(),
+        heat_locked         = self:GetHeatLocked(),
     }
 
     if data.clip > self:GetCapacity() then
@@ -141,11 +146,11 @@ function SWEP:DrawHUD()
         MyDrawText(bip)
     end]]
 
-    if self:GetHeatLocked() then
+    local data = self:GetHUDData()
+
+    if data.heat_locked then
         col2 = col3
     end
-
-    local data = self:GetHUDData()
 
     if ArcCW:ShouldDrawHUDElement("CHudAmmo") then
 
@@ -184,7 +189,7 @@ function SWEP:DrawHUD()
                                 clip = data.clip,
                                 plus = data.plus,
                                 firemode = data.mode,
-                                heat = self:GetHeat(),
+                                heat = data.heat_level,
                                 self:GetInUBGL(),
                                 self:GetInBipod(),
                                 self:CanBipod(),
@@ -286,12 +291,12 @@ function SWEP:DrawHUD()
 
                 -- overheat bar 3d
 
-                if self:HeatEnabled() then
+                if data.heat_enabled then
                     local wheat = {
                         x = apan_bg.x + apan_bg.w - airgap,
                         y = wmode.y + ScreenScaleMulti(14),
                         font = "ArcCW_12",
-                        text = "HEAT " .. tostring(math.ceil(100 * self:GetHeat() / self:GetMaxHeat())) .. "%",
+                        text = data.heat_name .. " " .. tostring(math.ceil(100 * data.heat_level / data.heat_maxlevel)) .. "%",
                         col = col2,
                         align = 1,
                         shadow = true,
@@ -360,7 +365,7 @@ function SWEP:DrawHUD()
                 w = (apan_bg.w - ((segcount + 1) * bargap)) / segcount,
                 h = ScreenScaleMulti(3),
                 x = apan_bg.x + bargap,
-                y = apan_bg.y + ScreenScaleMulti(14)
+                y = apan_bg.y + apan_bg.h - ScreenScaleMulti(5)
             }
 
             for i = 1, segcount do
@@ -385,28 +390,110 @@ function SWEP:DrawHUD()
                 bar.x = bar.x + bar.w + bargap
             end
 
-            surface.SetFont("ArcCW_12")
+            surface.SetFont("ArcCW_16")
             local wname = {
-                x = apan_bg.x + ScreenScaleMulti(4),
+                x = apan_bg.x + apan_bg.w - ScreenScaleMulti(4),
                 y = apan_bg.y,
-                font = "ArcCW_12",
+                font = "ArcCW_16",
                 text = self.PrintName,
-                col = col2
+                col = col2,
+                align = 1,
             }
-
-            MyDrawText(wname)
 
             surface.SetFont("ArcCW_12")
             local wmode = {
-                x = apan_bg.x + apan_bg.w - ScreenScaleMulti(4) - surface.GetTextSize(mode),
-                y = apan_bg.y,
+                x = apan_bg.x + apan_bg.w - ScreenScaleMulti(4),
+                y = apan_bg.y + ScreenScaleMulti(14),
                 font = "ArcCW_12",
                 text = data.mode,
-                col = col2
+                col = col2,
+                align = 1,
             }
 
+            
+            if surface.GetTextSize(self.PrintName) > ScreenScaleMulti(65) then
+                wname.font = "ArcCW_12"
+                wname.y = wname.y + ScreenScaleMulti(2)
+            end
+
+            MyDrawText(wname)
             MyDrawText(wmode)
+
+            surface.SetFont("ArcCW_26")
+            local wammo = {
+                x = apan_bg.x + ScreenScaleMulti(30),
+                y = apan_bg.y + apan_bg.h/2 - ScreenScaleMulti(10),
+                text = tostring(data.clip),
+                font = "ArcCW_26",
+                col = col2,
+                align = 2,
+                yalign = 2
+            }
+
+            wammo.col = col2
+
+            if data.clip == 0 then
+                wammo.col = col3
+            end
+
+            MyDrawText(wammo)
+
+            surface.SetFont("ArcCW_16")
+            local wreserve = {
+                x = apan_bg.x + ScreenScaleMulti(30),
+                y = apan_bg.y + apan_bg.h/2 + ScreenScaleMulti(6),
+                text = tostring(data.ammo),
+                font = "ArcCW_16",
+                col = col2,
+                align = 2,
+                yalign = 2
+            }
+
+            MyDrawText(wreserve)
+
+            wammo.w = surface.GetTextSize(tostring(data.clip))
+
+            surface.SetFont("ArcCW_16")
+            if data.plus then
+                local wplus = {
+                    x = wammo.x + bargap + wammo.w,
+                    y = wammo.y,
+                    text = "+" .. tostring(data.plus),
+                    font = "ArcCW_16",
+                    col = col2
+                }
+
+                MyDrawText(wplus)
+            end
 			
+            if data.heat_enabled then
+                local perc = data.heat_level / data.heat_maxlevel
+
+                local sizenshit = {
+                    x = apan_bg.x + ScreenScaleMulti(2),
+                    y = apan_bg.y + apan_bg.h - ScreenScaleMulti(10),
+                    w = apan_bg.w - ScreenScaleMulti(4),
+                    h = ScreenScaleMulti(3),
+                }
+                surface.SetDrawColor(col2)
+                surface.DrawOutlinedRect( sizenshit.x, sizenshit.y, sizenshit.w, sizenshit.h )
+                sizenshit.w = sizenshit.w * perc
+                surface.DrawRect( sizenshit.x, sizenshit.y, sizenshit.w, sizenshit.h )
+
+
+                surface.SetFont("ArcCW_8")
+                local bip = {
+                    shadow = false,
+					x = apan_bg.x + apan_bg.w - ScreenScaleMulti(4),
+					y = apan_bg.y + apan_bg.h - ScreenScaleMulti(19),
+                    font = "ArcCW_8",
+                    text = data.heat_name,
+                    col = col2,
+                    align = 1
+                }
+
+                MyDrawText(bip)
+            end
 			if self:GetBuff_Override("UBGL") then
 				local size = ScreenScaleMulti(32)
 				local awesomematerial = Material( "hud/ubgl.png", "smooth" )
@@ -452,96 +539,6 @@ function SWEP:DrawHUD()
 
                 MyDrawText(bip)
 			end
-
-            surface.SetFont("ArcCW_26")
-            local wammo = {
-                x = apan_bg.x + airgap,
-                y = bar.y + ScreenScaleMulti(4),
-                text = tostring(data.clip),
-                font = "ArcCW_26",
-                col = col2
-            }
-
-            wammo.col = col2
-
-            if data.clip == 0 then
-                wammo.col = col3
-            end
-
-            MyDrawText(wammo)
-
-            surface.SetFont("ArcCW_26")
-            local wreserve = {
-                x = apan_bg.x + ScreenScaleMulti(64) - airgap,
-                y = bar.y + ScreenScaleMulti(4),
-                text = "/ " .. tostring(data.ammo),
-                font = "ArcCW_26",
-                col = col2,
-            }
-
-            MyDrawText(wreserve)
-
-            wammo.w = surface.GetTextSize(tostring(data.clip))
-
-            surface.SetFont("ArcCW_16")
-            if data.plus then
-                local wplus = {
-                    x = wammo.x + bargap + wammo.w,
-                    y = wammo.y,
-                    text = "+" .. tostring(data.plus),
-                    font = "ArcCW_16",
-                    col = col2
-                }
-
-                MyDrawText(wplus)
-            end
-
-            if self:HeatEnabled() then
-                local heat_bg = {
-                    x = apan_bg.x,
-                    w = apan_bg.w,
-                    h = ScreenScaleMulti(14)
-                }
-
-                heat_bg.y = apan_bg.y - heat_bg.h - ScreenScaleMulti(2)
-                surface.SetDrawColor(col1)
-                surface.DrawRect(heat_bg.x, heat_bg.y, heat_bg.w, heat_bg.h)
-
-                local theat = {
-                    x = heat_bg.x + ScreenScaleMulti(2),
-                    y = heat_bg.y,
-                    text = "HEAT [",
-                    font = "ArcCW_12",
-                    col = col2
-                }
-
-                MyDrawText(theat)
-
-                local eheat = {
-                    x = heat_bg.x + heat_bg.w - ScreenScaleMulti(4),
-                    y = heat_bg.y,
-                    text = "]",
-                    font = "ArcCW_12",
-                    col = col2
-                }
-
-                MyDrawText(eheat)
-
-                local heat_bar = {
-                    x = heat_bg.x + ScreenScaleMulti(33),
-                    y = heat_bg.y + ScreenScaleMulti(4),
-                    h = heat_bg.h - ScreenScaleMulti(8),
-                    w = heat_bg.w - ScreenScaleMulti(38)
-                }
-
-                local perc = self:GetHeat() / self:GetMaxHeat()
-
-                heat_bar.w = heat_bar.w * perc
-
-                surface.SetDrawColor(col2)
-                surface.DrawRect(heat_bar.x, heat_bar.y, heat_bar.w, heat_bar.h)
-            end
-
         end
 
     elseif GetConVar("arccw_hud_minimal"):GetBool() then
@@ -634,8 +631,8 @@ function SWEP:DrawHUD()
                 MyDrawText(bip)
 			end
 
-            if self:HeatEnabled() then
-                local perc = self:GetHeat() / self:GetMaxHeat()
+            if data.heat_enabled then
+                local perc = data.heat_level / data.heat_maxlevel
                 surface.DrawOutlinedRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124), ScreenScaleMulti(3))
                 surface.DrawRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124) * perc, ScreenScaleMulti(3))
 
@@ -643,10 +640,10 @@ function SWEP:DrawHUD()
                 surface.SetFont("ArcCW_8")
                 local bip = {
                     shadow = false,
-					x = (ScrW()/2) - (surface.GetTextSize("HEAT")/2),
+					x = (ScrW()/2) - (surface.GetTextSize(data.heat_name)/2),
 					y = bar.y + ScreenScaleMulti(8),
                     font = "ArcCW_8",
-                    text = "HEAT",
+                    text = data.heat_name,
                     col = col2,
                 }
 
