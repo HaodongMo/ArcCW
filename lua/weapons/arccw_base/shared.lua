@@ -270,7 +270,7 @@ SWEP.GuaranteeLaser = false -- GUARANTEE that the laser position will be accurat
 SWEP.CanBash = true
 SWEP.PrimaryBash = false -- primary attack triggers melee attack
 
-SWEP.UseWorldSounds = false -- use sound.Play( instead of :EmitSound(
+SWEP.UseWorldSounds = false -- use sound.Play instead of EmitSound
 
 SWEP.MeleeDamage = 25
 SWEP.MeleeRange = 16
