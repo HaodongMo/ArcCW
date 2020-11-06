@@ -53,7 +53,7 @@ function SWEP:GetIsShotgun()
     --     if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
     -- end
 
-    return self:GetBuff("IsShotgun")
+    return self:GetBuff_Override("Override_IsShotgun") or self.IsShotgun
 
     -- return num > 1
 end
@@ -1133,7 +1133,7 @@ function SWEP:AdjustAtts()
             end
         end
     else
-        local se = self:GetBuff("ShootEntity")
+        local se = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
         if se then
             local path = "arccw/weaponicons/" .. self:GetClass()
             local mat = Material(path)
@@ -1174,7 +1174,7 @@ function SWEP:AdjustAtts()
 
     local wpn = weapons.Get(self:GetClass())
 
-    local ammo = self:GetBuff("Ammo") or wpn.Primary.Ammo
+    local ammo = self:GetBuff_Overrride("Override_Ammo") or wpn.Primary.Ammo
     local oldammo = self.OldAmmo or self.Primary.Ammo
 
     if ammo != oldammo then
