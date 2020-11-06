@@ -279,6 +279,8 @@ function SWEP:PrimaryAttack()
 
     self:DoRecoil()
 
+    self:SetNthShot(self:GetNthShot() + 1)
+
     owner:DoAnimationEvent(self:GetBuff_Override("Override_AnimShoot") or self.AnimShoot)
 
     local shouldsupp = SERVER and !game.SinglePlayer()
