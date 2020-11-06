@@ -53,9 +53,29 @@ function SWEP:GetIsShotgun()
     --     if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
     -- end
 
-    return self:GetBuff_Override("Override_IsShotgun") or self.IsShotgun
+    return self:GetBuff("IsShotgun")
 
     -- return num > 1
+end
+
+-- ONE FUNCTION TO RULE THEM ALL
+function SWEP:GetBuff(buff)
+    local stable = self:GetTable()
+
+    local result = stable[buff] or 1
+
+    if self:GetBuff_Override("Override_" .. buff) == false then
+        result = false
+    else
+        result = self:GetBuff_Override("Override_" .. buff) or result
+    end
+
+    if isnumber(result) then
+        result = self:GetBuff_Add("Add_" .. buff) + result
+        result = self:GetBuff_Mult("Mult_" .. buff) * result
+    end
+
+    return result
 end
 
 function SWEP:GetBuff_Hook(buff, data)
@@ -670,14 +690,14 @@ end
 function SWEP:RefreshBGs()
     local vm
 
-    local vmm = self:GetBuff_Override("Override_VMMaterial") or ""
-    local wmm = self:GetBuff_Override("Override_WMMaterial") or ""
+    local vmm = self:GetBuff("VMMaterial") or ""
+    local wmm = self:GetBuff("WMMaterial") or ""
 
-    local vmc = self:GetBuff_Override("Override_VMColor") or Color(255, 255, 255)
-    local wmc = self:GetBuff_Override("Override_WMColor") or Color(255, 255, 255)
+    local vmc = self:GetBuff("VMColor") or Color(255, 255, 255)
+    local wmc = self:GetBuff("WMColor") or Color(255, 255, 255)
 
-    local vms = self:GetBuff_Override("Override_VMSkin") or self.DefaultSkin
-    local wms = self:GetBuff_Override("Override_WMSkin") or self.DefaultWMSkin
+    local vms = self:GetBuff("VMSkin") or self.DefaultSkin
+    local wms = self:GetBuff("WMSkin") or self.DefaultWMSkin
 
     local vmp = self.DefaultPoseParams
     local wmp = self.DefaultWMPoseParams
@@ -968,7 +988,7 @@ function SWEP:Attach(slot, attname, silent)
 
     ArcCW:PlayerTakeAtt(self:GetOwner(), attname)
 
-    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
+    local fmt = self:GetBuff("Firemodes") or self.Firemodes
     local fmi = self:GetFireMode()
 
     if fmi > table.Count(fmt) then
@@ -1113,7 +1133,7 @@ function SWEP:AdjustAtts()
             end
         end
     else
-        local se = self:GetBuff_Override("Override_ShootEntity")
+        local se = self:GetBuff("ShootEntity")
         if se then
             local path = "arccw/weaponicons/" .. self:GetClass()
             local mat = Material(path)
@@ -1142,7 +1162,7 @@ function SWEP:AdjustAtts()
         self.Secondary.Ammo = "none"
     end
 
-    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
+    local fmt = self:GetBuff("Firemodes") or self.Firemodes
 
     fmt["BaseClass"] = nil
 
@@ -1154,7 +1174,7 @@ function SWEP:AdjustAtts()
 
     local wpn = weapons.Get(self:GetClass())
 
-    local ammo = self:GetBuff_Override("Override_Ammo") or wpn.Primary.Ammo
+    local ammo = self:GetBuff("Ammo") or wpn.Primary.Ammo
     local oldammo = self.OldAmmo or self.Primary.Ammo
 
     if ammo != oldammo then
