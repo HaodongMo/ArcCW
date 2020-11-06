@@ -411,7 +411,7 @@ function SWEP:DrawHUD()
             }
 
             
-            if surface.GetTextSize(self.PrintName) > ScreenScaleMulti(65) then
+            if surface.GetTextSize(self.PrintName) > ScreenScaleMulti(62) then
                 wname.font = "ArcCW_12"
                 wname.y = wname.y + ScreenScaleMulti(2)
             end
