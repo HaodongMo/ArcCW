@@ -1174,7 +1174,7 @@ function SWEP:AdjustAtts()
 
     local wpn = weapons.Get(self:GetClass())
 
-    local ammo = self:GetBuff_Overrride("Override_Ammo") or wpn.Primary.Ammo
+    local ammo = self:GetBuff_Override("Override_Ammo") or wpn.Primary.Ammo
     local oldammo = self.OldAmmo or self.Primary.Ammo
 
     if ammo != oldammo then
