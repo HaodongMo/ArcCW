@@ -690,14 +690,14 @@ end
 function SWEP:RefreshBGs()
     local vm
 
-    local vmm = self:GetBuff("VMMaterial") or ""
-    local wmm = self:GetBuff("WMMaterial") or ""
+    local vmm = self:GetBuff_Override("Override_VMMaterial") or self.VMMaterial or ""
+    local wmm = self:GetBuff_Override("Override_WMMaterial") or self.WMMaterial or  ""
 
-    local vmc = self:GetBuff("VMColor") or Color(255, 255, 255)
-    local wmc = self:GetBuff("WMColor") or Color(255, 255, 255)
+    local vmc = self:GetBuff_Override("Override_VMColor") or self.VMColor or Color(255, 255, 255)
+    local wmc = self:GetBuff_Override("Override_WMColor") or self.WMColor or Color(255, 255, 255)
 
-    local vms = self:GetBuff("VMSkin") or self.DefaultSkin
-    local wms = self:GetBuff("WMSkin") or self.DefaultWMSkin
+    local vms = self:GetBuff_Override("Override_VMSkin") or self.DefaultSkin
+    local wms = self:GetBuff_Override("Override_WMSkin") or self.DefaultWMSkin
 
     local vmp = self.DefaultPoseParams
     local wmp = self.DefaultWMPoseParams
@@ -988,7 +988,7 @@ function SWEP:Attach(slot, attname, silent)
 
     ArcCW:PlayerTakeAtt(self:GetOwner(), attname)
 
-    local fmt = self:GetBuff("Firemodes") or self.Firemodes
+    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
     local fmi = self:GetFireMode()
 
     if fmi > table.Count(fmt) then
@@ -1162,7 +1162,7 @@ function SWEP:AdjustAtts()
         self.Secondary.Ammo = "none"
     end
 
-    local fmt = self:GetBuff("Firemodes") or self.Firemodes
+    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
 
     fmt["BaseClass"] = nil
 
