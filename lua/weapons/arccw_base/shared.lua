@@ -653,6 +653,11 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 1, "FireMode")
     self:NetworkVar("Int", 2, "BurstCount")
     self:NetworkVar("Int", 3, "LastLoad")
+    self:NetworkVar("Int", 4, "NthReload")
+    self:NetworkVar("Int", 5, "NthShot")
+
+    self:SetNthReload(0)
+    self:SetNthShot(0)
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
