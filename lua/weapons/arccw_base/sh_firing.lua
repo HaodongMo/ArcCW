@@ -272,7 +272,8 @@ function SWEP:PrimaryAttack()
             bullet.Num = 1
             math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
             if !self:GetBuff_Override("Override_NoRandSpread") then
-                bullet.Dir = dir + VectorRand() * spread / 5
+                bullet.Dir = dir + VectorRand() * spread
+                print(spread)
             end
 
             self:DoPrimaryFire(false, bullet)
