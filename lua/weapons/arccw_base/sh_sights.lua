@@ -2,7 +2,7 @@ SWEP.Sighted = false
 SWEP.Sprinted = false
 
 function SWEP:GetSightTime()
-    return self.SightTime * self:GetBuff_Mult("Mult_SightTime")
+    return self:GetBuff("SightTime")
 end
 
 function SWEP:EnterSprint()

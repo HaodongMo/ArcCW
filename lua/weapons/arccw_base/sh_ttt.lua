@@ -95,7 +95,7 @@ end
 function SWEP:TTT_PostAttachments()
     self.IsSilent = self:GetBuff_Override("Suppressor")
 
-    if !self.IsSilent and self.ShootVol * self:GetBuff_Mult("Mult_ShootVol") <= 90 then
+    if !self.IsSilent and self:GetBuff("ShootVol") <= 90 then
         self.IsSilent = true
     end
 end
