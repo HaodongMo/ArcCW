@@ -403,8 +403,9 @@ function SWEP:DrawWorldModel()
 
             srf.SetFont("ArcCW_24_Unscaled")
 
-            if #self.Attachments > 0 then
-                local t = tostring(self:CountAttachments()) .. " Attachments"
+            local count = self:CountAttachments()
+            if count > 0 then
+                local t = tostring(count) .. " Attachments"
 
                 w = srf.GetTextSize(t)
 
