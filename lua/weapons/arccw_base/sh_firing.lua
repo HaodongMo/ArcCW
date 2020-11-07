@@ -84,7 +84,7 @@ function SWEP:PrimaryAttack()
 
     self.Primary.Automatic = true
 
-    local dir = owner:EyeAngles()
+    local dir = owner:GetAimVector()
     local src = self:GetShootSrc()
 
     if bit.band(util.PointContents(src), CONTENTS_WATER) == CONTENTS_WATER and !(self.CanFireUnderwater or self:GetBuff_Override("Override_CanFireUnderwater")) then
@@ -95,11 +95,7 @@ function SWEP:PrimaryAttack()
 
     local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
 
-    -- Use RotateAroundAxis to fix pesudo-yawlock
-    local dispspread = AngleRand() * self:GetDispersion() / 360 / 60
-    dir:RotateAroundAxis(owner:EyeAngles():Right(), dispspread.p)
-    dir:RotateAroundAxis(owner:EyeAngles():Up(), dispspread.y)
-    dir:RotateAroundAxis(owner:EyeAngles():Forward(), dispspread.r)
+    dir = dir + VectorRand() * self:GetDispersion() / 360 / 60
 
     local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
 
@@ -120,9 +116,9 @@ function SWEP:PrimaryAttack()
 
     local bullet      = {}
     bullet.Attacker   = owner
-    bullet.Dir        = dir:Forward()
+    bullet.Dir        = dir
     bullet.Src        = src
-    bullet.Spread     = Vector(spread, spread, spread)
+    bullet.Spread     = Vector(0, 0, 0) --Vector(spread, spread, spread)
     bullet.Damage     = 0
     bullet.Num        = num
     bullet.Force      = 1 / num
@@ -235,15 +231,15 @@ function SWEP:PrimaryAttack()
 
                 local dispers = self:GetBuff_Override("Override_ShotgunSpreadDispersion") or self.ShotgunSpreadDispersion
                 local offset  = self:GetShotgunSpreadOffset(n)
-                local calcoff = dispers and (offset * self:GetDispersion() / 60) or (offset + extraspread)
+                local calcoff = dispers and (offset * self:GetDispersion() / 360 / 60) or (offset + extraspread)
 
                 local ang = owner:EyeAngles()
-                ang:RotateAroundAxis(dir:Right(), -1 * calcoff.p)
-                ang:RotateAroundAxis(dir:Up(), calcoff.y)
-                ang:RotateAroundAxis(dir:Forward(), calcoff.r)
+                ang:RotateAroundAxis(owner:EyeAngles():Right(), -1 * calcoff.p)
+                ang:RotateAroundAxis(owner:EyeAngles():Up(), calcoff.y)
+                ang:RotateAroundAxis(owner:EyeAngles():Forward(), calcoff.r)
 
                 if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
-                    ang = ang + AngleRand() * spread / 10
+                    ang = ang + AngleRand() * spread / 5
                 end
 
                 if shootent then
@@ -259,11 +255,8 @@ function SWEP:PrimaryAttack()
         elseif shootent then
             local ang = owner:EyeAngles()
 
-            if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
-                local randomspread = AngleRand() * spread / 10
-                ang:RotateAroundAxis(dir:Right(), randomspread.p)
-                ang:RotateAroundAxis(dir:Up(), randomspread.y)
-                ang:RotateAroundAxis(dir:Forward(), randomspread.r)
+            if !self:GetBuff_Override("Override_NoRandSpread") then
+                ang = (dir + VectorRand() * spread / 5):Angle()
             end
 
             projectiledata.ang = ang
@@ -279,13 +272,7 @@ function SWEP:PrimaryAttack()
             bullet.Num = 1
             math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
             if !self:GetBuff_Override("Override_NoRandSpread") then
-                local ang = owner:EyeAngles() --dir
-                local randomspread = AngleRand() * spread / 5
-                ang:RotateAroundAxis(dir:Right(), randomspread.p)
-                ang:RotateAroundAxis(dir:Up(), randomspread.y)
-                ang:RotateAroundAxis(dir:Forward(), randomspread.r)
-                bullet.Dir = ang:Forward()
-                bullet.Spread = Vector(0, 0, 0) -- We already got the offset in dir
+                bullet.Dir = dir + VectorRand() * spread / 5
             end
 
             self:DoPrimaryFire(false, bullet)
