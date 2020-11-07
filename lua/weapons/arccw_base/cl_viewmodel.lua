@@ -360,10 +360,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos = pos + actual.pos.y * ang:Forward()
     pos = pos + actual.pos.z * ang:Up()
 
-    if false then
-        pos = pos - Vector(0, 0, actual.down)
-    end
-    -- This shit brings the viewmodel down one unit... wtf?
+    pos = pos - Vector(0, 0, actual.down)
 
     if asight and asight.Holosight then ang = ang - (owner:GetViewPunchAngles() * 0.5) end
 
