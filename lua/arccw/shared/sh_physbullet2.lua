@@ -242,10 +242,6 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 delta = math.Clamp(delta, 0, 1)
                 local dmg = Lerp(delta, bullet.DamageMax, bullet.DamageMin)
 
-                -- print(dmg)
-
-                bullet.Damaged[eid] = true
-
                 -- deal some damage
                 attacker:FireBullets({
                     Src = oldpos,
@@ -270,8 +266,12 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                             if !hit then return end
                         end
 
-                        cdmg:SetDamage(dmg)
-                        cdmg:SetDamageType(bullet.DamageType)
+                        if bullet.Damaged[ctr.Entity:EntIndex()] then
+                            cdmg:SetDamage(0)
+                        else
+                            cdmg:SetDamage(dmg)
+                            cdmg:SetDamageType(bullet.DamageType)
+                        end
 
                         if bullet.DamageType == DMG_BURN and delta < 1 then
                             cdmg:SetDamageType(DMG_BULLET)
@@ -304,7 +304,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                         ArcCW:DoPenetration(ctr, dmg, bullet, bullet.Penleft, true, bullet.Damaged)
                     end
                 })
-
+                bullet.Damaged[eid] = true
                 bullet.Dead = true
             end
         else
