@@ -1635,10 +1635,10 @@ function SWEP:CreateCustomizeHUD()
             },
             {translate("stat.speedmult"), translate("stat.speedmult.tooltip"),
                 function()
-                    return math.Round(self.SpeedMult * 100) .. "%", math.Round(math.Clamp(self:GetBuff("SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) * 100) .. "%"
+                    return math.Round(self.SpeedMult * 100) .. "%", math.Round(math.Clamp(self:GetBuff("SpeedMult"), 0, 1) * 100) .. "%"
                 end,
                 function()
-                    local mult = self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
+                    local mult = self:GetBuff_Mult("Mult_SpeedMult")
                     if mult == 1 then return nil
                     elseif mult > 1 then return true
                     else return false end
@@ -1646,10 +1646,10 @@ function SWEP:CreateCustomizeHUD()
             },
             {translate("stat.sightspeed"), translate("stat.sightspeed.tooltip"),
                 function()
-                    return math.Round(self.SightedSpeedMult * 100) .. "%", math.Round(math.Clamp(self:GetBuff("SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) * 100) .. "%"
+                    return math.Round(self.SightedSpeedMult * 100) .. "%", math.Round(math.Clamp(self:GetBuff("SightedSpeedMult"), 0, 1) * 100) .. "%"
                 end,
                 function()
-                    local mult = self:GetBuff_Mult("Mult_SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed")
+                    local mult = self:GetBuff_Mult("Mult_SightedSpeedMult")
                     if mult == 1 then return nil
                     elseif mult > 1 then return true
                     else return false end

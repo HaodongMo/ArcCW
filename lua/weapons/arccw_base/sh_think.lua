@@ -321,7 +321,7 @@ end
 function SWEP:InSprint()
     local owner = self:GetOwner()
 
-    local sm = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
+    local sm = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
 
     sm = math.Clamp(sm, 0, 1)
 
