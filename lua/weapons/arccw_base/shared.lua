@@ -735,7 +735,7 @@ function SWEP:BarrelHitWall()
             mask = mask
         })
 
-        if tr.Hit then
+        if tr.Hit and not tr.Entity.ArcCWProjectile then
             local l = (tr.HitPos - src):Length()
             l = l
             return 1 - math.Clamp(l / (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength")), 0, 1)
