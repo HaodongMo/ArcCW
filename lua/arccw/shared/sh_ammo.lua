@@ -19,6 +19,7 @@ hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", function()
                 end
 
                 k.Primary.Ammo = class
+                k.OldAmmo = class
             end
         end
     end

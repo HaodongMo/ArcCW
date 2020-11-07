@@ -816,6 +816,8 @@ function SWEP:CreateCustomizeHUD()
 
                 attbtn.OnMousePressed = function(spaa, kc2)
 
+                    owned = self:PlayerOwnsAtt(spaa.AttName)
+
                     local atttbl = ArcCW.AttachmentTable[spaa.AttName]
                     if atttbl then
                         if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
@@ -826,7 +828,7 @@ function SWEP:CreateCustomizeHUD()
                         end
                     end
 
-                    if kc2 == MOUSE_LEFT then
+                    if kc2 == MOUSE_LEFT and owned then
 
                         if spaa.AttName == "" then
                             self:DetachAllMergeSlots(span.AttIndex)
@@ -838,7 +840,7 @@ function SWEP:CreateCustomizeHUD()
                         if span.AttSlot.Installed == spaa.AttName then
                             -- Unequip
                             self:DetachAllMergeSlots(span.AttIndex)
-                        else
+                        elseif owned then
                             -- Drop attachment
                             if GetConVar("arccw_attinv_free"):GetBool() then return end
                             if GetConVar("arccw_attinv_lockmode"):GetBool() then return end

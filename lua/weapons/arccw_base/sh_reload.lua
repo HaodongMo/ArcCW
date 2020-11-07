@@ -123,6 +123,7 @@ function SWEP:Reload()
             -- end
             self:RestoreAmmo()
             self:SetLastLoad(self:Clip1())
+            self:SetNthReload(self:GetNthReload() + 1)
         end)
         self.CheckpointAnimation = anim
         self.CheckpointTime = 0
@@ -199,7 +200,7 @@ function SWEP:RestoreAmmo(count)
     self:SetClip1(load)
 end
 
-local lastframeclip1 = 0
+-- local lastframeclip1 = 0
 local lastframeloadclip1 = 0
 
 SWEP.LastClipOutTime = 0
@@ -334,6 +335,7 @@ function SWEP:ReloadInsert(empty)
             self:SetTimer(self:GetAnimKeyTime(ret) * mult,
             function()
                 self:SetReloading(false)
+                self:SetNthReload(self:GetNthReload() + 1)
                 if self:GetOwner():KeyDown(IN_ATTACK2) then
                     self:EnterSights()
                 end
