@@ -93,7 +93,7 @@ function SWEP:PrimaryAttack()
         return
     end
 
-    local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
+    local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
 
     -- Use RotateAroundAxis to fix pesudo-yawlock
     local dispspread = AngleRand() * self:GetDispersion() / 360 / 60
@@ -137,7 +137,7 @@ function SWEP:PrimaryAttack()
         local trent = tr.Entity
 
         local dist = (hitpos - src):Length() * ArcCW.HUToM
-        local pen  = self.Penetration * self:GetBuff_Mult("Mult_Penetration")
+        local pen  = self:GetBuff("Penetration")
 
         if SERVER then
             debugoverlay.Cross(hitpos, 5, 5, Color(255, 0, 0), true)
@@ -440,7 +440,7 @@ function SWEP:DoPrimaryFire(isent, data)
             end
 
             if !vel then
-                vel = self.Range * self:GetBuff_Mult("Mult_Range") * 5.5
+                vel = self:GetBuff("Range") * 5.5
 
                 if self.DamageMin > self.Damage then
                     vel = vel * 3
@@ -495,7 +495,7 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
         Damage = self:GetDamage((tr.HitPos - tr.StartPos):Length()),
         DamageType = self:GetBuff_Override("Override_DamageType") or self.DamageType,
         Weapon = self,
-        Penetration = self.Penetration * self:GetBuff_Mult("Mult_Penetration"),
+        Penetration = self:GetBuff("Penetration"),
         Attacker = self:GetOwner(),
         Travelled = (tr.HitPos - tr.StartPos):Length()
     }
@@ -572,19 +572,19 @@ function SWEP:GetDispersion()
 
     local hip = delta * hipdisp * self.HipDispersion
 
-    if sights then hip = (delta <= 0) and (self.SightsDispersion * self:GetBuff_Mult("Mult_SightsDispersion")) or (hipdisp * self.HipDispersion) end
+    if sights then hip = (delta <= 0) and (self:GetBuff("SightsDispersion")) or (hipdisp * self.HipDispersion) end
 
     if owner:OnGround() or owner:WaterLevel() > 0 or owner:GetMoveType() == MOVETYPE_NOCLIP then
         local speed    = owner:GetAbsVelocity():Length()
-        local maxspeed = owner:GetWalkSpeed() * self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
+        local maxspeed = owner:GetWalkSpeed() * self:GetBuff("SpeedMult")
 
-        if sights then maxspeed = maxspeed * self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult") end
+        if sights then maxspeed = maxspeed * self:GetBuff("SightedSpeedMult") end
 
         speed = math.Clamp(speed / maxspeed, 0, 2)
 
-        hip = hip + (speed * self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion"))
+        hip = hip + (speed * self:GetBuff("MoveDispersion"))
     else
-        hip = hip + math.max(self.JumpDispersion * self:GetBuff_Mult("Mult_JumpDispersion"), self.MoveDispersion * self:GetBuff_Mult("Mult_MoveDispersion") * 2)
+        hip = hip + math.max(self:GetBuff("JumpDispersion"), self:GetBuff("MoveDispersion") * 2)
     end
 
     if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
@@ -751,13 +751,13 @@ function SWEP:GetDamage(range, pellet)
 
     if !pellet then mul = mul * nbr end
 
-    local randfactor = self.DamageRand * self:GetBuff_Mult("Mult_DamageRand")
+    local randfactor = self:GetBuff("DamageRand")
     if randfactor > 0 then
         mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
     end
 
-    local dmgmax = self.Damage * self:GetBuff_Mult("Mult_Damage") * mul
-    local dmgmin = self.DamageMin * self:GetBuff_Mult("Mult_DamageMin") * mul
+    local dmgmax = self:GetBuff("Damage") * mul
+    local dmgmin = self:GetBuff("DamageMin") * mul
     local delta = 1
 
     local sran = self.Range

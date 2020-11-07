@@ -170,7 +170,7 @@ function SWEP:DoDrawCrosshair(x, y)
     end
 
     if GetConVar("arccw_crosshair_clump"):GetBool() and (GetConVar("arccw_crosshair_clump_always"):GetBool() or num > 1) then
-        local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
+        local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
         local clumpSize = 1024 * spread
 
         if GetConVar("arccw_crosshair_clump_outline"):GetBool() then

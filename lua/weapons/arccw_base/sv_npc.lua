@@ -146,7 +146,7 @@ function SWEP:NPC_Shoot()
     num = num + self:GetBuff_Add("Add_Num")
 
     if num > 0 then
-        local spread = ArcCW.MOAToAcc * self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA")
+        local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
 
         local btabl = {
             Attacker = self:GetOwner(),
@@ -162,7 +162,7 @@ function SWEP:NPC_Shoot()
             Callback = function(att, tr, dmg)
                 local dist = (tr.HitPos - tr.StartPos):Length() * ArcCW.HUToM
 
-                local pen = self.Penetration * self:GetBuff_Mult("Mult_Penetration")
+                local pen = self:GetBuff("Penetration")
 
                 -- local frags = math.random(1, self.Frangibility)
 
@@ -257,7 +257,7 @@ function SWEP:NPC_Shoot()
 
     dss = self:GetBuff_Hook("Hook_GetDistantShootSound", dss)
 
-    local svol = self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")
+    local svol = self:GetBuff("ShootVol")
     local spitch = self.ShootPitch * math.Rand(0.95, 1.05) * self:GetBuff_Mult("Mult_ShootPitch")
 
     svol = svol * 0.75

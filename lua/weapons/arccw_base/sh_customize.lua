@@ -1266,10 +1266,10 @@ function SWEP:CreateCustomizeHUD()
         function() return translate("trivia.country") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country or "Unknown") end,
         function() return translate("trivia.manufacturer") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer or "Unknown") end,
         function() return translate("trivia.clipsize") .. ": " .. self:GetCapacity() end,
-        function() return translate("trivia.precision") .. ": " .. self.AccuracyMOA * self:GetBuff_Mult("Mult_AccuracyMOA") .. " MOA" end,
-        function() return translate("trivia.noise") .. ": " .. (self.ShootVol * self:GetBuff_Mult("Mult_ShootVol")) .. "dB" end,
+        function() return translate("trivia.precision") .. ": " .. self:GetBuff("AccuracyMOA") .. " MOA" end,
+        function() return translate("trivia.noise") .. ": " .. (self:GetBuff("ShootVol")) .. "dB" end,
         function() return translate("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. " lb-fps" end,
-        function() return translate("trivia.penetration") .. ": " .. math.Round(self.Penetration * self:GetBuff_Mult("Mult_Penetration"), 1) .. "mm" end,
+        function() return translate("trivia.penetration") .. ": " .. math.Round(self:GetBuff("Penetration"), 1) .. "mm" end,
     }
 
     if !self.ManualAction and !self:GetBuff_Override("Override_ManualAction") then
@@ -1386,7 +1386,7 @@ function SWEP:CreateCustomizeHUD()
 
             grsh = math.ceil((grsh / 25) + 1) * 25
 
-            local maxgr = (self.Range * self:GetBuff_Mult("Mult_Range"))
+            local maxgr = (self:GetBuff("Range"))
 
             if dmgmax < dmgmin then
                 maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
@@ -1552,7 +1552,7 @@ function SWEP:CreateCustomizeHUD()
                 end,
                 function()
                     local orig = self.DamageMin * self.Num * GetConVar("arccw_mult_damage"):GetFloat()
-                    local maxgr = (self.Range * self:GetBuff_Mult("Mult_Range"))
+                    local maxgr = (self:GetBuff("Range"))
                     if math.Round(self:GetDamage(self.Range)) < math.Round(self:GetDamage(0)) then
                         maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
                     end
@@ -1635,7 +1635,7 @@ function SWEP:CreateCustomizeHUD()
             },
             {translate("stat.speedmult"), translate("stat.speedmult.tooltip"),
                 function()
-                    return math.Round(self.SpeedMult * 100) .. "%", math.Round(math.Clamp(self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) * 100) .. "%"
+                    return math.Round(self.SpeedMult * 100) .. "%", math.Round(math.Clamp(self:GetBuff("SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) * 100) .. "%"
                 end,
                 function()
                     local mult = self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
@@ -1646,7 +1646,7 @@ function SWEP:CreateCustomizeHUD()
             },
             {translate("stat.sightspeed"), translate("stat.sightspeed.tooltip"),
                 function()
-                    return math.Round(self.SightedSpeedMult * 100) .. "%", math.Round(math.Clamp(self.SightedSpeedMult * self:GetBuff_Mult("Mult_SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) * 100) .. "%"
+                    return math.Round(self.SightedSpeedMult * 100) .. "%", math.Round(math.Clamp(self:GetBuff("SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) * 100) .. "%"
                 end,
                 function()
                     local mult = self:GetBuff_Mult("Mult_SightedSpeedMult") * self:GetBuff_Mult("Mult_SightedMoveSpeed")
