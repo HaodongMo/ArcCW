@@ -121,7 +121,7 @@ function SWEP:PrimaryAttack()
     bullet.Spread     = Vector(0, 0, 0) --Vector(spread, spread, spread)
     bullet.Damage     = 0
     bullet.Num        = num
-    bullet.Force      = 1 / num
+    bullet.Force      = (self:GetDamage(0) + self:GetDamage(self:GetBuff("Range"))) / 50
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
     bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
