@@ -185,7 +185,7 @@ function SWEP:PrimaryAttack()
             end
         end
 
-        if SERVER then ArcCW.TryBustDoor(trent, dmg) end
+        if SERVER then self:TryBustDoor(trent, dmg) end
 
         self:DoPenetration(tr, hit.penleft, { trent })
 
@@ -300,6 +300,7 @@ function SWEP:PrimaryAttack()
     end
 
     self:DoShootSound()
+	if self.DoExtraFiringEvents then self:DoExtraFiringEvents() end
     self:DoPrimaryAnim()
 
     if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and clip == 0) then
@@ -326,10 +327,14 @@ function SWEP:PrimaryAttack()
     if shouldsupp then SuppressHostEvents(nil) end
 end
 
-function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride)
-    local fsound = self.ShootSound
+function SWEP:TryBustDoor(ent, dmg)
+	ArcCW.TryBustDoor(ent, dmg)
+end
 
-    if self:GetBuff_Override("Silencer") then
+function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride)
+    local fsound, Suppressed = self.ShootSound, self:GetBuff_Override("Silencer")
+
+    if Suppressed then
         fsound = self.ShootSoundSilenced
     end
 
@@ -340,7 +345,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
         local firstsil = self.FirstShootSoundSilenced
 
-        if self:GetBuff_Override("Silencer") then
+        if Suppressed then
             fsound = firstsil and firstsil or self.ShootSoundSilenced
         end
     end
@@ -354,7 +359,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
         local lastsil = self.LastShootSoundSilenced
 
-        if self:GetBuff_Override("Silencer") then
+        if Suppressed then
             fsound = lastsil and lastsil or self.ShootSoundSilenced
         end
     end
@@ -363,7 +368,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     local distancesound = self.DistantShootSound
 
-    if self:GetBuff_Override("Silencer") then
+    if Suppressed then
         distancesound = nil
     end
 
@@ -389,7 +394,14 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     if distancesound then self:MyEmitSound(distancesound, 149, pitch, 0.5, CHAN_WEAPON + 1) end
 
-    if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
+    if fsound then
+		self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON)
+		if self.ShootSoundWorldCount > 0 and not Suppressed then
+			for i=1, self.ShootSoundWorldCount do
+				self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON, true)
+			end
+		end
+	end
 
     self:GetBuff_Hook("Hook_AddShootSound", fsound, volume, pitch)
 end
