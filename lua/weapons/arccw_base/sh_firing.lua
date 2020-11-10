@@ -380,7 +380,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
     volume = volume * self:GetBuff_Mult("Mult_ShootVol")
 
     volume = math.Clamp(volume, 51, 149)
-    pitch  = math.Clamp(pitch, 51, 149)
+    pitch  = math.Clamp(pitch, 0, 255)
 
     if	sndoverride		then	fsound	= sndoverride end
     if	dsndoverride	then	distancesound = dsndoverride end
