@@ -3,6 +3,7 @@ if CLIENT then
 end
 
 local lastUBGL = 0
+local LastAttack2 = false
 
 function SWEP:Think()
     local owner = self:GetOwner()
@@ -59,7 +60,7 @@ function SWEP:Think()
         end
     end
 
-    if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 then
+    if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 and IsFirstTimePredicted() then
         if self:GetBurstCount() > 0 then
             self:PrimaryAttack()
         end
@@ -78,7 +79,9 @@ function SWEP:Think()
         end
 
         if self:GetCurrentFiremode().Mode < 0 and !self:GetCurrentFiremode().RunawayBurst then
-            local postburst = self:GetCurrentFiremode().PostBurstDelay / self:GetBuff_Mult("Mult_RPM") or 0
+            local postburst
+            if self:GetCurrentFiremode().PostBurstDelay then postburst = self:GetCurrentFiremode().PostBurstDelay else postburst = 0 end
+            postburst = postburst / self:GetBuff_Mult("Mult_RPM") or 0
 
             if (CurTime() + postburst) > self:GetNextPrimaryFire() then
                 self:SetNextPrimaryFire(CurTime() + postburst)
@@ -104,9 +107,9 @@ function SWEP:Think()
 
     -- Yeah, this would be OP unless we can also turn off the laser stats, too.
 
-	if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
-		self:Reload()
-	end
+    if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
+        self:Reload()
+    end
 
     if owner:GetInfoNum("arccw_altfcgkey", 0) == 1 and owner:KeyPressed(IN_RELOAD) and owner:KeyDown(IN_USE) then
         if (lastfiremode or 0) + 0.1 < CurTime() then
@@ -154,8 +157,8 @@ function SWEP:Think()
                     self:ExitSights()
                 end
             else
-                if owner:KeyPressed(IN_ATTACK2) then
-                    if !self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS then
+                if owner:KeyDown(IN_ATTACK2) and !LastAttack2 then
+                    if self:GetState() != ArcCW.STATE_SIGHTS then
                         self:EnterSights()
                     else
                         self:ExitSights()
@@ -163,6 +166,8 @@ function SWEP:Think()
                 end
             end
         end
+
+        LastAttack2 = owner:KeyDown(IN_ATTACK2)
 
     end
 
@@ -316,7 +321,7 @@ end
 function SWEP:InSprint()
     local owner = self:GetOwner()
 
-    local sm = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
+    local sm = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
 
     sm = math.Clamp(sm, 0, 1)
 

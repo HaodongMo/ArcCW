@@ -38,7 +38,7 @@ ENT.ResistanceMult = {
 function ENT:Initialize()
     self:SetModel(self.Model)
     self:SetHealth(math.max(math.ceil(self.MaxHealth * GetConVar("arccw_mult_ammohealth"):GetFloat()), 1))
-    self.AmmoCount = self.AmmoCount * GetConVar("arccw_mult_ammoamount"):GetFloat()
+    self.AmmoCount = math.max(math.ceil(self.AmmoCount * GetConVar("arccw_mult_ammoamount"):GetFloat(), 1))
     self.MaxAmmoCount = self.AmmoCount
 
     if engine.ActiveGamemode() == "terrortown" and ArcCW.TTTReplaceTable then

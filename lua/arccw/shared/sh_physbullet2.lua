@@ -33,18 +33,18 @@ end
 function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     local bullet = {
         DamageMax = wep:GetDamage(0),
-        DamageMin = wep:GetDamage(wep.Range * wep:GetBuff_Mult("Mult_Range")),
-        Range = wep.Range * wep:GetBuff_Mult("Mult_Range"),
+        DamageMin = wep:GetDamage(wep:GetBuff("Range")),
+        Range = wep:GetBuff("Range"),
         DamageType = wep:GetBuff_Override("Override_DamageType") or wep.DamageType,
-        Penleft = wep.Penetration * wep:GetBuff_Mult("Mult_Penetration"),
-        Penetration = wep.Penetration * wep:GetBuff_Mult("Mult_Penetration"),
+        Penleft = wep:GetBuff("Penetration"),
+        Penetration = wep:GetBuff("Penetration"),
         ImpactEffect = wep:GetBuff_Override("Override_ImpactEffect") or wep.ImpactEffect,
         ImpactDecal = wep:GetBuff_Override("Override_ImpactDecal") or wep.ImpactDecal,
-        Gravity = wep.PhysBulletGravity * wep:GetBuff_Mult("Mult_PhysBulletGravity"),
+        Gravity = wep:GetBuff("PhysBulletGravity"),
         Num = wep:GetBuff_Override("Override_Num") or wep.Num,
         Pos = pos,
         Vel = vel,
-        Drag = wep.PhysBulletDrag * wep:GetBuff_Mult("Mult_PhysBulletDrag"),
+        Drag = wep:GetBuff("PhysBulletDrag"),
         Travelled = 0,
         StartTime = CurTime(),
         Imaginary = false,
@@ -242,10 +242,6 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 delta = math.Clamp(delta, 0, 1)
                 local dmg = Lerp(delta, bullet.DamageMax, bullet.DamageMin)
 
-                -- print(dmg)
-
-                bullet.Damaged[eid] = true
-
                 -- deal some damage
                 attacker:FireBullets({
                     Src = oldpos,
@@ -270,8 +266,12 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                             if !hit then return end
                         end
 
-                        cdmg:SetDamage(dmg)
-                        cdmg:SetDamageType(bullet.DamageType)
+                        if bullet.Damaged[ctr.Entity:EntIndex()] then
+                            cdmg:SetDamage(0)
+                        else
+                            cdmg:SetDamage(dmg)
+                            cdmg:SetDamageType(bullet.DamageType)
+                        end
 
                         if bullet.DamageType == DMG_BURN and delta < 1 then
                             cdmg:SetDamageType(DMG_BULLET)
@@ -304,7 +304,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                         ArcCW:DoPenetration(ctr, dmg, bullet, bullet.Penleft, true, bullet.Damaged)
                     end
                 })
-
+                bullet.Damaged[eid] = true
                 bullet.Dead = true
             end
         else

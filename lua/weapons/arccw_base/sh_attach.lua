@@ -58,6 +58,26 @@ function SWEP:GetIsShotgun()
     -- return num > 1
 end
 
+-- ONE FUNCTION TO RULE THEM ALL
+function SWEP:GetBuff(buff)
+    local stable = self:GetTable()
+
+    local result = stable[buff] or 1
+
+    if self:GetBuff_Override("Override_" .. buff) == false then
+        result = false
+    else
+        result = self:GetBuff_Override("Override_" .. buff) or result
+    end
+
+    if isnumber(result) then
+        result = self:GetBuff_Add("Add_" .. buff) + result
+        result = self:GetBuff_Mult("Mult_" .. buff) * result
+    end
+
+    return result
+end
+
 function SWEP:GetBuff_Hook(buff, data)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
@@ -670,11 +690,11 @@ end
 function SWEP:RefreshBGs()
     local vm
 
-    local vmm = self:GetBuff_Override("Override_VMMaterial") or ""
-    local wmm = self:GetBuff_Override("Override_WMMaterial") or ""
+    local vmm = self:GetBuff_Override("Override_VMMaterial") or self.VMMaterial or ""
+    local wmm = self:GetBuff_Override("Override_WMMaterial") or self.WMMaterial or  ""
 
-    local vmc = self:GetBuff_Override("Override_VMColor") or Color(255, 255, 255)
-    local wmc = self:GetBuff_Override("Override_WMColor") or Color(255, 255, 255)
+    local vmc = self:GetBuff_Override("Override_VMColor") or self.VMColor or Color(255, 255, 255)
+    local wmc = self:GetBuff_Override("Override_WMColor") or self.WMColor or Color(255, 255, 255)
 
     local vms = self:GetBuff_Override("Override_VMSkin") or self.DefaultSkin
     local wms = self:GetBuff_Override("Override_WMSkin") or self.DefaultWMSkin
@@ -1113,7 +1133,7 @@ function SWEP:AdjustAtts()
             end
         end
     else
-        local se = self:GetBuff_Override("Override_ShootEntity")
+        local se = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
         if se then
             local path = "arccw/weaponicons/" .. self:GetClass()
             local mat = Material(path)

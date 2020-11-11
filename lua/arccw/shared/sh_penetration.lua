@@ -46,6 +46,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
         ptr = util.TraceLine(td)
 
+        -- This is apparently never called?
         if ptrent != curr_ent then
             ptrent = ptr.Entity
 
@@ -60,7 +61,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             dmg:SetDamage(damage * pdelta)
             dmg:SetDamagePosition(ptrhp)
 
-            if IsValid(ptrent) and !alreadypenned[ptrent] then ptrent:TakeDamageInfo(dmg) end
+            if IsValid(ptrent) and !alreadypenned[ptrent:EntIndex()] then ptrent:TakeDamageInfo(dmg) end
 
             penmult = ArcCW.PenTable[ptr.MatType] or 1
 
@@ -138,16 +139,15 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             abullet.Tracer   = 0
             abullet.Callback = function(att, btr, dmg)
                 local dist = bullet.Travelled * ArcCW.HUToM
-
                 bullet.Travelled = bullet.Travelled + (btr.HitPos - endpos):Length()
-
-                if alreadypenned[ptr.Entity:EntIndex()] then
+                -- This is the part causing double damage during penetration
+                -- Workaround: Don't do damage on the first entity (normal damage is applied by original bullet)
+                if alreadypenned[ptr.Entity:EntIndex()] or table.Count(alreadypenned) == 0 then
                     dmg:SetDamage(0)
                 else
                     dmg:SetDamageType(bullet.DamageType)
                     dmg:SetDamage(bullet.Weapon:GetDamage(dist, true) * pdelta, true)
                 end
-
                 alreadypenned[ptr.Entity:EntIndex()] = true
 
                 ArcCW:DoPenetration(btr, damage, bullet, penleft, false, alreadypenned)

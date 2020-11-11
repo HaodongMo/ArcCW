@@ -2,7 +2,7 @@ SWEP.NextHeatDissipateTime = 0
 SWEP.Heat = 0
 
 function SWEP:GetMaxHeat()
-    return self.HeatCapacity * self:GetBuff_Mult("Mult_HeatCapacity")
+    return self:GetBuff("HeatCapacity")
 end
 
 function SWEP:AddHeat()
@@ -13,30 +13,34 @@ function SWEP:AddHeat()
     if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("AddHeat") end
     -- if !single and !IsFirstTimePredicted() then return end
 
-    local max = self.HeatCapacity * self:GetBuff_Mult("Mult_HeatCapacity")
+    local max = self:GetBuff("HeatCapacity")
     local mult = 1 * self:GetBuff_Mult("Mult_FixTime")
     local heat = self:GetHeat()
+    local anim = self:SelectAnimation("fix")
     self.Heat = math.Clamp(heat + 1 * GetConVar("arccw_mult_heat"):GetFloat(), 0, max)
-    self.NextHeatDissipateTime = CurTime() + (self.HeatDelayTime * self:GetBuff_Mult("Mult_HeatDelayTime"))
+
+    self.NextHeatDissipateTime = CurTime() + (self:GetBuff("HeatDelayTime"))
+    if self.Heat >= max then
+        if self.HeatFix or self:GetBuff_Override("Override_HeatFix") then
+            self.NextHeatDissipateTime = CurTime() + self:GetAnimKeyTime(anim) * mult
+        elseif self.HeatLockout or self:GetBuff_Override("Override_HeatLockout") then
+            self.NextHeatDissipateTime = CurTime() + (self:GetAnimKeyTime(anim) or 1) * mult
+        end
+    end
 
     if single and CLIENT then return end
 
     self:SetHeat(self.Heat)
 
     if self.Heat >= max then
-        local anim = self:SelectAnimation("fix")
-
-        -- print(self.Heat)
-        -- print("max: " .. tostring(max))
-
         if anim then
             self:PlayAnimation(anim, mult, true, 0, true)
 
             if self.HeatFix or self:GetBuff_Override("Override_HeatFix") then
-            self:SetTimer(self:GetAnimKeyTime(anim) * mult,
-            function()
-                self:SetHeat(0)
-            end)
+                self:SetTimer(self:GetAnimKeyTime(anim) * mult,
+                function()
+                    self:SetHeat(0)
+                end)
             end
         end
 

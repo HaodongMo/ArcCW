@@ -285,7 +285,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         if self:GetState() != ArcCW.STATE_SIGHTS then vel = mth.max(vel, 10) end
 
-        local movespeed = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
+        local movespeed = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
         movespeed = m_clamp(movespeed, 0.01, 1)
 
         vel = vel / movespeed
@@ -400,8 +400,9 @@ function SWEP:DrawWorldModel()
 
             srf.SetFont("ArcCW_24_Unscaled")
 
-            if #self.Attachments > 0 then
-                local t = tostring(self:CountAttachments()) .. " Attachments"
+            local count = self:CountAttachments()
+            if count > 0 then
+                local t = tostring(count) .. " Attachments"
 
                 w = srf.GetTextSize(t)
 

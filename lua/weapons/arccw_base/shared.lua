@@ -43,6 +43,7 @@ SWEP.WorldModelOffset = nil
 
 SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
+SWEP.DamageRand = 0 -- damage will vary randomly each shot by this fraction
 SWEP.Range = 200 -- in METRES
 SWEP.Penetration = 4
 SWEP.DamageType = DMG_BULLET
@@ -489,6 +490,9 @@ SWEP.Attachments = {}
 -- use SWEP/wep.Hook_SelectCycleAnimation to change the cycle/pump animation
 -- use SWEP/wep.Hook_SelectBashAnimation to change the bash animation
 
+-- Disclaimer: LHIK is *actually* a type of forward kinematics.
+-- If you prefer, LHIK can stand for "Left Hand Individual Kinematics" or some shit
+
 SWEP.Animations = {
     -- ["idle"] = {
     --     Source = "idle",
@@ -504,7 +508,7 @@ SWEP.Animations = {
     --     TPAnimStartTime = 0, -- when to start it from
     --     Checkpoints = {}, -- time checkpoints. If weapon is unequipped, the animation will continue to play from these checkpoints when reequipped.
     --     ShellEjectAt = 0, -- animation includes a shell eject at these times
-    --     LHIKIn = 0.25, -- left hand inverse kinematics. In/Out controls how long it takes to switch to regular animation.
+    --     LHIKIn = 0.25, -- In/Out controls how long it takes to switch to regular animation.
     --     LHIKOut = 0.25, -- (not actually inverse kinematics)
     --     LHIK = true, -- basically disable foregrips on this anim
     --     SoundTable = {
@@ -652,6 +656,11 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 1, "FireMode")
     self:NetworkVar("Int", 2, "BurstCount")
     self:NetworkVar("Int", 3, "LastLoad")
+    self:NetworkVar("Int", 4, "NthReload")
+    self:NetworkVar("Int", 5, "NthShot")
+
+    self:SetNthReload(0)
+    self:SetNthShot(0)
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
@@ -726,7 +735,7 @@ function SWEP:BarrelHitWall()
             mask = mask
         })
 
-        if tr.Hit then
+        if tr.Hit and not tr.Entity.ArcCWProjectile then
             local l = (tr.HitPos - src):Length()
             l = l
             return 1 - math.Clamp(l / (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength")), 0, 1)
