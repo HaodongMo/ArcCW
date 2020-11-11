@@ -490,6 +490,9 @@ SWEP.Attachments = {}
 -- use SWEP/wep.Hook_SelectCycleAnimation to change the cycle/pump animation
 -- use SWEP/wep.Hook_SelectBashAnimation to change the bash animation
 
+-- which sequence to derive the sight autosolver from.
+SWEP.AutosolveSourceSeq = "idle"
+
 -- Disclaimer: LHIK is *actually* a type of forward kinematics.
 -- If you prefer, LHIK can stand for "Left Hand Individual Kinematics" or some shit
 

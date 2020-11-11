@@ -950,6 +950,10 @@ function SWEP:GetFromReference(boneid)
     ArcCW.ReferenceModel:SetNoDraw(true)
     ArcCW.ReferenceModel:SetupBones()
 
+    local seq = "idle"
+
+    seq = self.AutosolveSourceSeq or seq
+
     local id = ArcCW.ReferenceModel:LookupSequence("idle")
 
     ArcCW.ReferenceModel:SetSequence(id)
