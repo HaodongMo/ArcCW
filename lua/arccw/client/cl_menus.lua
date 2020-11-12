@@ -214,18 +214,18 @@ local DevPanel = {
 
 local MultsPanel = {
     { type = "h", text = "#arccw.adminonly" },
-    { type = "f", text = "Damage", 				var = "arccw_mult_damage", min = 0, max = 10, sv = true },
-    { type = "f", text = "NPC Damage", 			var = "arccw_mult_npcdamage", min = 0, max = 5, sv = true },
-    { type = "f", text = "Range", 				var = "arccw_mult_range", min = 0.1, max = 5, sv = true },
-    { type = "f", text = "Recoil", 				var = "arccw_mult_recoil", min = 0, max = 5, sv = true },
-    { type = "f", text = "Penetration", 		var = "arccw_mult_penetration", min = 0, max = 5, sv = true },
-    { type = "f", text = "Hip Dispersion", 		var = "arccw_mult_hipfire", min = 0, max = 3, sv = true },
-    { type = "f", text = "Move Dispersion",		var = "arccw_mult_movedisp", min = 0, max = 3, sv = true },
-    { type = "f", text = "Reload Time", 		var = "arccw_mult_reloadtime", min = 0.2, max = 3, sv = true },
-    { type = "f", text = "ADS Time", 			var = "arccw_mult_sighttime", min = 0.25, max = 3, sv = true },
-    { type = "i", text = "Default Clip", 		var = "arccw_mult_defaultclip", min = -1, max = 1, sv = true }, -- Fix default clip first
-    { type = "f", text = "Random Att. Chance", 	var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
-    { type = "f", text = "Heat Gain", 			var = "arccw_mult_heat", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_damage", 				var = "arccw_mult_damage", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_npcdamage", 			var = "arccw_mult_npcdamage", min = 0, max = 5, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_range", 				var = "arccw_mult_range", min = 0.1, max = 5, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_recoil", 				var = "arccw_mult_recoil", min = 0, max = 5, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_penetration", 		var = "arccw_mult_penetration", min = 0, max = 5, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_hipfire", 		var = "arccw_mult_hipfire", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_movedisp",		var = "arccw_mult_movedisp", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_reloadtime", 		var = "arccw_mult_reloadtime", min = 0.2, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_sighttime", 			var = "arccw_mult_sighttime", min = 0.25, max = 3, sv = true },
+    { type = "i", text = "#arccw.cvar.mult_defaultclip", 		var = "arccw_mult_defaultclip", min = -1, max = 1, sv = true }, -- Fix default clip first
+    { type = "f", text = "#arccw.cvar.mult_attchance", 	var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_heat", 			var = "arccw_mult_heat", min = 0, max = 3, sv = true },
 }
 
 local MultPresets = {
