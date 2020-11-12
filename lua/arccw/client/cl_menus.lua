@@ -208,6 +208,8 @@ local DevPanel = {
     { type = "c", text = "#arccw.cvar.dev_registerentities.desc" },
     { type = "p", text = "#arccw.cvar.dev_reloadatts", func = function() RunConsoleCommand("arccw_reloadatts") end },
     { type = "h", text = "#arccw.cvar.dev_reloadatts.desc" },
+    { type = "p", text = "#arccw.cvar.dev_reloadlangs", func = function() RunConsoleCommand("arccw_reloadlangs") end },
+    { type = "h", text = "#arccw.cvar.dev_reloadlangs.desc" },
 }
 
 local MultsPanel = {
@@ -297,17 +299,15 @@ function ArcCW.GeneratePanelElements(panel, table)
     for _, data in SortedPairs(table) do
         local p = AddControl[data.type](panel, data)
 
-        if concommands[data.type] then
-            if data.sv then
-                p.TickCreated = UnPredictedCurTime()
-                if data.type == "b" then
-                    p.OnChange = function(self, bval)
-                        networktheconvar(data.var, bval, self)
-                    end
-                elseif data.type == "i" or data.type == "f" or data.type == "m" or data.type == "t" then
-                    p.OnValueChanged = function(self, bval)
-                        networktheconvar(data.var, bval, self)
-                    end
+        if concommands[data.type] and data.sv then
+            p.TickCreated = UnPredictedCurTime()
+            if data.type == "b" then
+                p.OnChange = function(self, bval)
+                    networktheconvar(data.var, bval, self)
+                end
+            elseif data.type == "i" or data.type == "f" or data.type == "m" or data.type == "t" then
+                p.OnValueChanged = function(self, bval)
+                    networktheconvar(data.var, bval, self)
                 end
             end
         end

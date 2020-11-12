@@ -158,4 +158,27 @@ function ArcCW.LoadLanguages()
 
     hook.Run("ArcCW_LocalizationLoaded")
 end
-ArcCW.LoadLanguages()
+
+if CLIENT then
+    -- Load up the clientside localization table for our language
+    -- Has to be done in InitPostEntity because we need to check the gmod_language convar
+    function ArcCW.LoadClientLanguage()
+        local lang = ArcCW.GetLanguage()
+        if !file.Exists("arccw/client/cl_languages/" .. lang .. ".lua", "DATA") then
+            lang = "en"
+        end
+        include("arccw/client/cl_languages/" .. lang .. ".lua")
+
+        for phrase, str in pairs(L) do
+            language.Add(phrase, str)
+        end
+        print("Loaded clientside language " .. lang .. " with " .. table.Count(L) .. " strings.")
+        L = nil
+    end
+    hook.Add("InitPostEntity", "ArcCW_Localization", ArcCW.LoadClientLanguage)
+end
+
+concommand.Add("arccw_reloadlangs", function()
+    ArcCW.LoadLanguages()
+    if CLIENT then ArcCW.LoadClientLanguage() end
+end, nil, "Reloads all language files.")
