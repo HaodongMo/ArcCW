@@ -302,7 +302,7 @@ function SWEP:PrimaryAttack()
     self:DoShootSound()
     self:DoPrimaryAnim()
 
-    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and clip == 0) then
+    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and self:Clip1() == 0) then
         local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
         local firedelay = self.Animations[fireanim].MinProgress or 0
         self:SetNeedCycle(true)
@@ -380,7 +380,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
     volume = volume * self:GetBuff_Mult("Mult_ShootVol")
 
     volume = math.Clamp(volume, 51, 149)
-    pitch  = math.Clamp(pitch, 51, 149)
+    pitch  = math.Clamp(pitch, 0, 255)
 
     if	sndoverride		then	fsound	= sndoverride end
     if	dsndoverride	then	distancesound = dsndoverride end
@@ -391,7 +391,13 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
-    self:GetBuff_Hook("Hook_AddShootSound", fsound, volume, pitch)
+    local data = {
+        sound   = fsound,
+        volume  = volume,
+        pitch   = pitch,
+    }
+
+    self:GetBuff_Hook("Hook_AddShootSound", data)
 end
 
 function SWEP:DoPrimaryFire(isent, data)
