@@ -433,7 +433,7 @@ function SWEP:DoPrimaryFire(isent, data)
             end
 
             if !vel then
-                vel = self:GetBuff("Range") * 5.5
+                vel = math.Clamp(self:GetBuff("Range"), 30, 300) * 8
 
                 if self.DamageMin > self.Damage then
                     vel = vel * 3
