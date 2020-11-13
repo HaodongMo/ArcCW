@@ -18,6 +18,7 @@ function ArcCW:SendBullet(bullet, attacker)
     net.WriteAngle(bullet.Vel:Angle())
     net.WriteFloat(bullet.Vel:Length())
     net.WriteFloat(bullet.Drag)
+    net.WriteFloat(bullet.Gravity)
     net.WriteUInt((bullet.Profile - 1) or 1, 3)
 
     if attacker and attacker:IsValid() and attacker:IsPlayer() and !game.SinglePlayer() then
@@ -94,6 +95,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
     local ang = net.ReadAngle()
     local vel = net.ReadFloat()
     local drag = net.ReadFloat()
+    local grav = net.ReadFloat()
     local profile = net.ReadUInt(3) + 1
     local ent = nil
 
@@ -112,6 +114,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
         Damaged = {},
         Drag = drag,
         Attacker = ent,
+        Gravity = grav,
         Profile = profile
     }
 
