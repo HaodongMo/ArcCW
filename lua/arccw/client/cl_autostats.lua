@@ -14,6 +14,7 @@ ArcCW.AutoStats = {
     ["Silencer"]              = { "autostat.silencer",    "override", false },
     ["Override_NoRandSpread"] = { "autostat.norandspr",   "override", false },
     ["Override_CanFireUnderwater"] = { "autostat.underwater",   "override", false },
+    ["Override_ShootWhileSprint"] = { "autostat.sprintshoot",   "override", false },
     -- Multipliers
     ["Mult_BipodRecoil"]      = { "autostat.bipodrecoil", "mult", true },
     ["Mult_BipodDispersion"]  = { "autostat.bipoddisp",   "mult", true },

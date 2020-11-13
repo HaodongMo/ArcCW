@@ -206,6 +206,7 @@ L["pro.ubgl"] = "Selectable underbarrel launcher"
 L["pro.ubsg"] = "Selectable underbarrel shotgun"
 L["con.obstruction"] = "May obstruct sights"
 L["autostat.underwater"] = "Shoot underwater"
+L["autostat.sprintshoot"] = "Shoot while sprinting"
 
 -- Incompatibility Menu
 L["incompatible.title"] = "ArcCW: INCOMPATIBLE ADDONS"
