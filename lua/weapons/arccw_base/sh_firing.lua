@@ -391,7 +391,13 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     if fsound then self:MyEmitSound(fsound, volume, pitch, 1, CHAN_WEAPON) end
 
-    self:GetBuff_Hook("Hook_AddShootSound", fsound, volume, pitch)
+    local data = {
+        sound   = fsound,
+        volume  = volume,
+        pitch   = pitch,
+    }
+
+    self:GetBuff_Hook("Hook_AddShootSound", data)
 end
 
 function SWEP:DoPrimaryFire(isent, data)
@@ -417,7 +423,7 @@ function SWEP:DoPrimaryFire(isent, data)
         if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
         if shouldphysical then
-            local vel = self.PhysBulletMuzzleVelocity
+            local vel = self:GetBuff_Override("Override_PhysBulletMuzzleVelocity") or self.PhysBulletMuzzleVelocity
 
             local tracernum = data.TracerNum or 1
             local prof
@@ -427,7 +433,7 @@ function SWEP:DoPrimaryFire(isent, data)
             end
 
             if !vel then
-                vel = self:GetBuff("Range") * 5.5
+                vel = math.Clamp(self:GetBuff("Range"), 30, 300) * 8
 
                 if self.DamageMin > self.Damage then
                     vel = vel * 3

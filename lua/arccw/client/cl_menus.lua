@@ -208,22 +208,24 @@ local DevPanel = {
     { type = "c", text = "#arccw.cvar.dev_registerentities.desc" },
     { type = "p", text = "#arccw.cvar.dev_reloadatts", func = function() RunConsoleCommand("arccw_reloadatts") end },
     { type = "h", text = "#arccw.cvar.dev_reloadatts.desc" },
+    { type = "p", text = "#arccw.cvar.dev_reloadlangs", func = function() RunConsoleCommand("arccw_reloadlangs") end },
+    { type = "h", text = "#arccw.cvar.dev_reloadlangs.desc" },
 }
 
 local MultsPanel = {
     { type = "h", text = "#arccw.adminonly" },
-    { type = "f", text = "Damage", 				var = "arccw_mult_damage", min = 0, max = 10, sv = true },
-    { type = "f", text = "NPC Damage", 			var = "arccw_mult_npcdamage", min = 0, max = 5, sv = true },
-    { type = "f", text = "Range", 				var = "arccw_mult_range", min = 0.1, max = 5, sv = true },
-    { type = "f", text = "Recoil", 				var = "arccw_mult_recoil", min = 0, max = 5, sv = true },
-    { type = "f", text = "Penetration", 		var = "arccw_mult_penetration", min = 0, max = 5, sv = true },
-    { type = "f", text = "Hip Dispersion", 		var = "arccw_mult_hipfire", min = 0, max = 3, sv = true },
-    { type = "f", text = "Move Dispersion",		var = "arccw_mult_movedisp", min = 0, max = 3, sv = true },
-    { type = "f", text = "Reload Time", 		var = "arccw_mult_reloadtime", min = 0.2, max = 3, sv = true },
-    { type = "f", text = "ADS Time", 			var = "arccw_mult_sighttime", min = 0.25, max = 3, sv = true },
-    { type = "i", text = "Default Clip", 		var = "arccw_mult_defaultclip", min = -1, max = 1, sv = true }, -- Fix default clip first
-    { type = "f", text = "Random Att. Chance", 	var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
-    { type = "f", text = "Heat Gain", 			var = "arccw_mult_heat", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_damage", 				var = "arccw_mult_damage", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_npcdamage", 			var = "arccw_mult_npcdamage", min = 0, max = 5, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_range", 				var = "arccw_mult_range", min = 0.1, max = 5, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_recoil", 				var = "arccw_mult_recoil", min = 0, max = 5, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_penetration", 		var = "arccw_mult_penetration", min = 0, max = 5, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_hipfire", 		var = "arccw_mult_hipfire", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_movedisp",		var = "arccw_mult_movedisp", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_reloadtime", 		var = "arccw_mult_reloadtime", min = 0.2, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_sighttime", 			var = "arccw_mult_sighttime", min = 0.25, max = 3, sv = true },
+    { type = "i", text = "#arccw.cvar.mult_defaultclip", 		var = "arccw_mult_defaultclip", min = -1, max = 1, sv = true }, -- Fix default clip first
+    { type = "f", text = "#arccw.cvar.mult_attchance", 	var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_heat", 			var = "arccw_mult_heat", min = 0, max = 3, sv = true },
 }
 
 local MultPresets = {
@@ -297,17 +299,15 @@ function ArcCW.GeneratePanelElements(panel, table)
     for _, data in SortedPairs(table) do
         local p = AddControl[data.type](panel, data)
 
-        if concommands[data.type] then
-            if data.sv then
-                p.TickCreated = UnPredictedCurTime()
-                if data.type == "b" then
-                    p.OnChange = function(self, bval)
-                        networktheconvar(data.var, bval, self)
-                    end
-                elseif data.type == "i" or data.type == "f" or data.type == "m" or data.type == "t" then
-                    p.OnValueChanged = function(self, bval)
-                        networktheconvar(data.var, bval, self)
-                    end
+        if concommands[data.type] and data.sv then
+            p.TickCreated = UnPredictedCurTime()
+            if data.type == "b" then
+                p.OnChange = function(self, bval)
+                    networktheconvar(data.var, bval, self)
+                end
+            elseif data.type == "i" or data.type == "f" or data.type == "m" or data.type == "t" then
+                p.OnValueChanged = function(self, bval)
+                    networktheconvar(data.var, bval, self)
                 end
             end
         end

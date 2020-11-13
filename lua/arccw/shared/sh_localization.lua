@@ -65,8 +65,8 @@ ArcCW.StringToLang = {
 
 -- Helper function for getting the overwrite or default language
 function ArcCW.GetLanguage()
-    local l = string.lower(GetConVar("arccw_language"):GetString())
-    if l == "" then l = string.lower(GetConVar("gmod_language"):GetString()) end
+    local l = GetConVar("arccw_language") and string.lower(GetConVar("arccw_language"):GetString())
+    if !l or l == "" then l = string.lower(GetConVar("gmod_language"):GetString()) end
     return l
 end
 
@@ -125,7 +125,28 @@ function ArcCW.AddTranslation(phrase, str, lang)
     ArcCW.LangTable[lang][string.lower(phrase)] = str
 end
 
+if CLIENT then
+    function ArcCW.LoadClientLanguage()
+        local lang = ArcCW.GetLanguage()
+        -- file.Exists will return false even if it exists. WTF garry?
+        local f = file.Open("arccw/client/cl_languages/" .. lang .. ".lua", "r", "LUA")
+        if !f then
+            lang = "en"
+        else
+            f:Close()
+        end
+        include("arccw/client/cl_languages/" .. lang .. ".lua")
+
+        for phrase, str in pairs(L) do
+            language.Add(phrase, str)
+        end
+        print("Loaded ArcCW cl_language " .. lang .. " with " .. table.Count(L) .. " strings.")
+        L = nil
+    end
+end
+
 function ArcCW.LoadLanguages()
+    ArcCW.LangTable = {}
     for _, v in pairs(file.Find("arccw/shared/languages/*", "LUA")) do
         include("arccw/shared/languages/" .. v)
         AddCSLuaFile("arccw/shared/languages/" .. v)
@@ -154,8 +175,31 @@ function ArcCW.LoadLanguages()
 
         print("Loaded ArcCW language file " .. v .. " with " .. table.Count(L) .. " strings.")
         L = nil
+
+        if CLIENT then
+            ArcCW.LoadClientLanguage()
+        end
     end
 
     hook.Run("ArcCW_LocalizationLoaded")
 end
 ArcCW.LoadLanguages()
+
+concommand.Add("arccw_reloadlangs", function(ply)
+    if game.SinglePlayer() then
+        net.Start("arccw_sp_reloadlangs")
+        net.Broadcast()
+    elseif CLIENT then
+        ArcCW.LoadClientLanguage()
+    end
+    ArcCW.LoadLanguages()
+end, nil, "Reloads all language files.")
+
+if game.SinglePlayer() then
+    net.Receive("arccw_sp_reloadlangs", function()
+        ArcCW.LoadLanguages()
+        ArcCW.LoadClientLanguage()
+        -- Titles won't change, but reloading is kinda slow and annoying
+        -- RunConsoleCommand("spawnmenu_reload")
+    end)
+end
