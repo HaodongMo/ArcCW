@@ -289,16 +289,16 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
                         ArcCW.TryBustDoor(ctr.Entity, cdmg)
 
-                        if bullet.Effect then
+                        if bullet.ImpactEffect then
                             local ed = EffectData()
                             ed:SetOrigin(ctr.HitPos)
                             ed:SetNormal(ctr.HitNormal)
 
-                            util.Effect(bullet.Effect, ed)
+                            util.Effect(bullet.ImpactEffect, ed)
                         end
 
-                        if bullet.Decal then
-                            util.Decal(bullet.Decal, ctr.StartPos, ctr.HitPos - (ctr.HitNormal * 16), bullet.Attacker)
+                        if bullet.ImpactDecal then
+                            util.Decal(bullet.ImpactDecal, ctr.StartPos, ctr.HitPos - (ctr.HitNormal * 16), bullet.Attacker)
                         end
 
                         ArcCW:DoPenetration(ctr, dmg, bullet, bullet.Penleft, true, bullet.Damaged)

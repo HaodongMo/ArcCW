@@ -184,7 +184,8 @@ if CLIENT then
         L = nil
     end
     if game.SinglePlayer() then
-        hook.Add("InitPostEntity", "ArcCW_Localization", ArcCW.LoadClientLanguage)
+        ArcCW.LoadClientLanguage()
+        -- hook.Add("InitPostEntity", "ArcCW_Localization", ArcCW.LoadClientLanguage)
     end
 end
 
