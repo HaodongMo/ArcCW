@@ -37,8 +37,15 @@ function SWEP:CanPrimaryAttack()
     -- Safety's on, turn it off.
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
+        --self:SetNextPrimaryFire(CurTime() + 0.5)
         --self.Primary.Automatic = false
 
+        return
+    end
+
+    -- If we have a trigger delay, make sure its progress is done
+    local td = self:GetBuff_Override("Override_TriggerDelay")
+    if ((td != nil and td) or (td == nil and self.TriggerDelay)) and self:GetTriggerDelta() < 1 then
         return
     end
 

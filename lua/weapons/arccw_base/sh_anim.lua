@@ -276,7 +276,7 @@ function SWEP:PlayIdleAnimation(pred)
     self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
 end
 
-function SWEP:GetAnimKeyTime(key)
+function SWEP:GetAnimKeyTime(key, min)
     if !self:GetOwner() then return 1 end
 
     local anim = self.Animations[key]
@@ -302,6 +302,10 @@ function SWEP:GetAnimKeyTime(key)
         tseq = vm:LookupSequence(tseq)
 
         anim.Time = vm:SequenceDuration(tseq) or 1
+    end
+
+    if min and anim.MinProgress then
+        return anim.MinProgress
     end
 
     return anim.Time
