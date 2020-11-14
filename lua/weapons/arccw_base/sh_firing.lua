@@ -584,6 +584,8 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject()
+	if self.ShellEffect and self.ShellEffect == "NONE" then return end
+
     local owner = self:GetOwner()
 
     if !IsValid(owner) then return end
@@ -597,6 +599,11 @@ function SWEP:DoShellEject()
     if !att then return end
 
     local pos, ang = att.Pos, att.Ang
+	
+	if pos and ang and self.ShellEjectPosCorrection then
+		local up, right, forward = ang:Up(), ang:Right(), ang:Forward()
+		pos = pos + up * self.ShellEjectPosCorrection.z + right * self.ShellEjectPosCorrection.x + forward * self.ShellEjectPosCorrection.y
+	end
 
     local ed = EffectData()
     ed:SetOrigin(pos)
@@ -606,14 +613,16 @@ function SWEP:DoShellEject()
     ed:SetEntity(self)
     ed:SetNormal(ang:Forward())
     ed:SetMagnitude(100)
+	
+	local Eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
 
     local efov = {}
-    efov.eff = "arccw_shelleffect"
+    efov.eff = Eff
     efov.fx  = ed
 
     if self:GetBuff_Hook("Hook_PreDoEffects", efov) == true then return end
 
-    util.Effect("arccw_shelleffect", ed)
+    util.Effect(Eff, ed)
 end
 
 function SWEP:DoEffects()
