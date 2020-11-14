@@ -4,13 +4,16 @@ Welcome to the ArcCW GitHub page!
 
 You are free to contribute by sending pull requests.
 
-Style Guide:
+## Style Guide:
  - 4-space indents
  - "!" and "!=", not "not" and "~="
  - CamelCase for global/class variables, lowercase for local variables
  - (no spaces) inside parentheses
  - but (spaces) between them and other variables
  - Use fptje's Glualint -> https://fptje.github.io/glualint-web/ <- to detect other style issues. Basically I don't like when my glualint has lots of yellow squiggly lines on it.
+
+## Additional Links
+We have a [Trello](https://trello.com/b/T4E9Fj8u/arccw-base) page.
 
 Weapon/attachment/translation author? Check these out for more info.
 - Refer to this for SWEP parameters: https://github.com/HaodongMo/ArcCW/blob/master/lua/weapons/arccw_base/shared.lua
