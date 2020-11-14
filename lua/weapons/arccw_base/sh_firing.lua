@@ -585,7 +585,7 @@ end
 
 function SWEP:DoShellEject()
 	local Eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
-	
+
 	if Eff == "NONE" then return end
 
     local owner = self:GetOwner()
