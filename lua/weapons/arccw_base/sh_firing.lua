@@ -584,7 +584,9 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject()
-	if self.ShellEffect and self.ShellEffect == "NONE" then return end
+	local Eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
+	
+	if Eff == "NONE" then return end
 
     local owner = self:GetOwner()
 
@@ -613,8 +615,6 @@ function SWEP:DoShellEject()
     ed:SetEntity(self)
     ed:SetNormal(ang:Forward())
     ed:SetMagnitude(100)
-	
-	local Eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
 
     local efov = {}
     efov.eff = Eff
