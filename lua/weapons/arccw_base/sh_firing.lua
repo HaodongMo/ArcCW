@@ -423,7 +423,7 @@ function SWEP:DoPrimaryFire(isent, data)
         if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
         if shouldphysical then
-            local vel = self.PhysBulletMuzzleVelocity
+            local vel = self:GetBuff_Override("Override_PhysBulletMuzzleVelocity") or self.PhysBulletMuzzleVelocity
 
             local tracernum = data.TracerNum or 1
             local prof

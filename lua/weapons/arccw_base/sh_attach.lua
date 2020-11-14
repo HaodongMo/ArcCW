@@ -1,3 +1,6 @@
+-- Used to prevent stack overflow. Set false here so luarefresh clears it
+ArcCW.BuffStack = false
+
 ArcCW.ConVar_BuffMults = {
     ["Mult_Damage"] = "arccw_mult_damage",
     ["Mult_DamageMin"] = "arccw_mult_damage",
@@ -205,6 +208,7 @@ function SWEP:GetBuff_Override(buff)
             ArcCW.BuffStack = true
 
             local out = (self:GetBuff_Hook("O_Hook_" .. buff, data) or {})
+            --print("O_Hook_" .. buff .. ": " .. tostring(out))
 
             current = out.current or current
             winningslot = out.winningslot or winningslot
