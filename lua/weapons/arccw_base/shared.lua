@@ -101,6 +101,8 @@ SWEP.AutoReload = false -- when weapon is drawn, the gun will reload itself.
 
 SWEP.IsShotgun = false -- weapon receives shotgun ammo types
 
+SWEP.TriggerDelay = false -- Set to true to play the "trigger" animation before firing. Delay time is dependent on animation time.
+
 SWEP.Recoil = 2
 SWEP.RecoilSide = 1
 SWEP.RecoilRise = 1

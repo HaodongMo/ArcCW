@@ -128,6 +128,7 @@ end
 
 function SWEP:GetSightDelta()
     local lst = self.LastExitSightTime
+    local st = self:GetSightTime()
     local minus = 0
 
     if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
@@ -138,16 +139,16 @@ function SWEP:GetSightDelta()
         lst = self.LastEnterSightTime
         minus = 1
 
-        if CurTime() - lst >= self:GetSightTime() then
+        if CurTime() - lst >= st then
             return 0
         end
     else
-        if CurTime() - lst >= self:GetSightTime() then
+        if CurTime() - lst >= st then
             return 1
         end
     end
 
-    local delta = minus - math.Clamp((CurTime() - lst) / self:GetSightTime(), 0, 1)
+    local delta = minus - math.Clamp((CurTime() - lst) / st, 0, 1)
 
     delta = math.abs(delta)
 

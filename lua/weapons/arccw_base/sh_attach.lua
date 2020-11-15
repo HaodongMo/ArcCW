@@ -208,7 +208,6 @@ function SWEP:GetBuff_Override(buff)
             ArcCW.BuffStack = true
 
             local out = (self:GetBuff_Hook("O_Hook_" .. buff, data) or {})
-            --print("O_Hook_" .. buff .. ": " .. tostring(out))
 
             current = out.current or current
             winningslot = out.winningslot or winningslot
