@@ -372,6 +372,7 @@ att.Mult_HeatDissipation = 1
 att.Mult_HeatDelayTime = 1
 att.Override_HeatFix = nil
 att.Override_HeatLockout = nil
+att.Hook_Overheat = function(wep, heat) end
 
 att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil

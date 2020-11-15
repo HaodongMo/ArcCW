@@ -58,8 +58,9 @@ end
 function SWEP:DoHeat()
     if self.NextHeatDissipateTime > CurTime() then return end
 
-    local diss = self.HeatDissipation or 2
-    diss = diss * self:GetBuff_Mult("Mult_HeatDissipation")
+    --local diss = self.HeatDissipation or 2
+    --diss = diss * self:GetBuff_Mult("Mult_HeatDissipation")
+    local diss = self:GetBuff("HeatDissipation") or 2
     local ft = FrameTime()
     if CLIENT then
         ft = math.min(ft, RealFrameTime())
