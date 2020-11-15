@@ -331,9 +331,10 @@ function SWEP:TryBustDoor(ent, dmg)
 end
 
 function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride)
-    local fsound, Suppressed = self.ShootSound, self:GetBuff_Override("Silencer")
+    local fsound = self.ShootSound
+	local suppressed = self:GetBuff_Override("Silencer")
 
-    if Suppressed then
+    if suppressed then
         fsound = self.ShootSoundSilenced
     end
 
@@ -344,7 +345,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
         local firstsil = self.FirstShootSoundSilenced
 
-        if Suppressed then
+        if suppressed then
             fsound = firstsil and firstsil or self.ShootSoundSilenced
         end
     end
@@ -358,7 +359,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
         local lastsil = self.LastShootSoundSilenced
 
-        if Suppressed then
+        if suppressed then
             fsound = lastsil and lastsil or self.ShootSoundSilenced
         end
     end
@@ -367,7 +368,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     local distancesound = self.DistantShootSound
 
-    if Suppressed then
+    if suppressed then
         distancesound = nil
     end
 
@@ -584,9 +585,9 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject()
-	local Eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
+	local eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
 
-	if Eff == "NONE" then return end
+	if eff == "NONE" then return end
 
     local owner = self:GetOwner()
 
@@ -603,7 +604,9 @@ function SWEP:DoShellEject()
     local pos, ang = att.Pos, att.Ang
 	
 	if pos and ang and self.ShellEjectPosCorrection then
-		local up, right, forward = ang:Up(), ang:Right(), ang:Forward()
+		local up = ang:Up()
+		local right = ang:Right()
+		local forward = ang:Forward()
 		pos = pos + up * self.ShellEjectPosCorrection.z + right * self.ShellEjectPosCorrection.x + forward * self.ShellEjectPosCorrection.y
 	end
 
@@ -617,12 +620,12 @@ function SWEP:DoShellEject()
     ed:SetMagnitude(100)
 
     local efov = {}
-    efov.eff = Eff
+    efov.eff = eff
     efov.fx  = ed
 
     if self:GetBuff_Hook("Hook_PreDoEffects", efov) == true then return end
 
-    util.Effect(Eff, ed)
+    util.Effect(eff, ed)
 end
 
 function SWEP:DoEffects()

@@ -11,7 +11,9 @@ function SWEP:FireRocket(ent, vel, ang)
 	
 	local rocketAng = Angle(ang.p, ang.y, ang.r)
 	if ang and self.ShootEntityAngleCorrection then
-		local up, right, forward = ang:Up(), ang:Right(), ang:Forward()
+		local up = ang:Up()
+		local right = ang:Right()
+		local forward = ang:Forward()
 		rocketAng:RotateAroundAxis(up, self.ShootEntityAngleCorrection.y)
 		rocketAng:RotateAroundAxis(right, self.ShootEntityAngleCorrection.p)
 		rocketAng:RotateAroundAxis(forward, self.ShootEntityAngleCorrection.r)
