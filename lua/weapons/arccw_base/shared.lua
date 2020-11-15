@@ -195,6 +195,8 @@ SWEP.ImpactDecal = nil
 
 SWEP.ShellModel = "models/shells/shell_556.mdl"
 SWEP.ShellMaterial = nil
+SWEP.ShellEffect = nil
+SWEP.ShellEjectPosCorrection = nil
 SWEP.ShellScale = 1
 SWEP.ShellPhysScale = 1
 SWEP.ShellPitch = 100
