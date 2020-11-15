@@ -192,7 +192,7 @@ function SWEP:PrimaryAttack()
             end
         end
 
-        if SERVER then ArcCW.TryBustDoor(trent, dmg) end
+        if SERVER then self:TryBustDoor(trent, dmg) end
 
         self:DoPenetration(tr, hit.penleft, { trent })
 
@@ -333,10 +333,15 @@ function SWEP:PrimaryAttack()
     if shouldsupp then SuppressHostEvents(nil) end
 end
 
+function SWEP:TryBustDoor(ent, dmg)
+	ArcCW.TryBustDoor(ent, dmg)
+end
+
 function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride)
     local fsound = self.ShootSound
+	local suppressed = self:GetBuff_Override("Silencer")
 
-    if self:GetBuff_Override("Silencer") then
+    if suppressed then
         fsound = self.ShootSoundSilenced
     end
 
@@ -347,7 +352,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
         local firstsil = self.FirstShootSoundSilenced
 
-        if self:GetBuff_Override("Silencer") then
+        if suppressed then
             fsound = firstsil and firstsil or self.ShootSoundSilenced
         end
     end
@@ -361,7 +366,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
         local lastsil = self.LastShootSoundSilenced
 
-        if self:GetBuff_Override("Silencer") then
+        if suppressed then
             fsound = lastsil and lastsil or self.ShootSoundSilenced
         end
     end
@@ -370,7 +375,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     local distancesound = self.DistantShootSound
 
-    if self:GetBuff_Override("Silencer") then
+    if suppressed then
         distancesound = nil
     end
 
@@ -593,6 +598,10 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject()
+	local eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
+
+	if eff == "NONE" then return end
+
     local owner = self:GetOwner()
 
     if !IsValid(owner) then return end
@@ -606,6 +615,13 @@ function SWEP:DoShellEject()
     if !att then return end
 
     local pos, ang = att.Pos, att.Ang
+	
+	if pos and ang and self.ShellEjectPosCorrection then
+		local up = ang:Up()
+		local right = ang:Right()
+		local forward = ang:Forward()
+		pos = pos + up * self.ShellEjectPosCorrection.z + right * self.ShellEjectPosCorrection.x + forward * self.ShellEjectPosCorrection.y
+	end
 
     local ed = EffectData()
     ed:SetOrigin(pos)
@@ -617,12 +633,12 @@ function SWEP:DoShellEject()
     ed:SetMagnitude(100)
 
     local efov = {}
-    efov.eff = "arccw_shelleffect"
+    efov.eff = eff
     efov.fx  = ed
 
     if self:GetBuff_Hook("Hook_PreDoEffects", efov) == true then return end
 
-    util.Effect("arccw_shelleffect", ed)
+    util.Effect(eff, ed)
 end
 
 function SWEP:DoEffects()

@@ -372,6 +372,7 @@ att.Mult_HeatDissipation = 1
 att.Mult_HeatDelayTime = 1
 att.Override_HeatFix = nil
 att.Override_HeatLockout = nil
+att.Hook_Overheat = function(wep, heat) end
 
 att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil
@@ -427,6 +428,7 @@ att.Override_MuzzleEffect = nil
 att.Override_FastMuzzleEffect = nil
 att.Override_GMMuzzleEffect = nil
 
+att.Override_ShellEffect = nil
 att.Override_ShellMaterial = nil
 
 att.Override_MuzzleEffectAttachment = nil

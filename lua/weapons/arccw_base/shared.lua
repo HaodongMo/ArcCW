@@ -195,6 +195,8 @@ SWEP.ImpactDecal = nil
 
 SWEP.ShellModel = "models/shells/shell_556.mdl"
 SWEP.ShellMaterial = nil
+SWEP.ShellEffect = nil
+SWEP.ShellEjectPosCorrection = nil
 SWEP.ShellScale = 1
 SWEP.ShellPhysScale = 1
 SWEP.ShellPitch = 100
@@ -254,7 +256,7 @@ SWEP.SightTime = 0.33
 
 SWEP.Jamming = false
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
-SWEP.HeatDissipation = 5 -- rounds' worth of heat lost per second
+SWEP.HeatDissipation = 2 -- rounds' worth of heat lost per second
 SWEP.HeatLockout = false -- overheating means you cannot fire until heat has been fully depleted
 SWEP.HeatDelayTime = 0.5
 SWEP.HeatFix = false -- when the "fix" animation is played, all heat is restored.
@@ -508,7 +510,8 @@ SWEP.Animations = {
     --     Source = "deploy",
     --     RareSource = "", -- 1/RareSourceChance of playing this animation instead
     --     RareSourceChance = 100 -- Chance the rapper
-    --     Time = 0.5,
+    --     Time = 0.5, -- Overwrites the duration of the animation (changes speed). Don't set to use sequence length
+    --     Mult = 1, -- Multiplies the rate of animation.
     --     TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2, -- third person animation to play when this animation is played
     --     TPAnimStartTime = 0, -- when to start it from
     --     Checkpoints = {}, -- time checkpoints. If weapon is unequipped, the animation will continue to play from these checkpoints when reequipped.
