@@ -285,7 +285,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         if self:GetState() != ArcCW.STATE_SIGHTS then vel = mth.max(vel, 10) end
 
-        local movespeed = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
+        local movespeed = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
         movespeed = m_clamp(movespeed, 0.01, 1)
 
         vel = vel / movespeed
