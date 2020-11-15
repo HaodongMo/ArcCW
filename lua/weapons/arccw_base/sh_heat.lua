@@ -20,7 +20,12 @@ function SWEP:AddHeat()
     self.Heat = math.Clamp(heat + 1 * GetConVar("arccw_mult_heat"):GetFloat(), 0, max)
 
     self.NextHeatDissipateTime = CurTime() + (self:GetBuff("HeatDelayTime"))
-    if self.Heat >= max then
+    local overheat = self.Heat >= max
+    if overheat then
+        local h = self:GetBuff_Hook("Hook_Overheat", self.Heat)
+        if h == true then overheat = false end
+    end
+    if overheat then
         if self.HeatFix or self:GetBuff_Override("Override_HeatFix") then
             self.NextHeatDissipateTime = CurTime() + self:GetAnimKeyTime(anim) * mult
         elseif self.HeatLockout or self:GetBuff_Override("Override_HeatLockout") then
@@ -32,7 +37,7 @@ function SWEP:AddHeat()
 
     self:SetHeat(self.Heat)
 
-    if self.Heat >= max then
+    if overheat then
         if anim then
             self:PlayAnimation(anim, mult, true, 0, true)
 
