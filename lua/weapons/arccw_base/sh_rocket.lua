@@ -9,17 +9,42 @@ function SWEP:FireRocket(ent, vel, ang)
 
     if !rocket:IsValid() then print("!!! INVALID ROUND " .. ent) return end
 
-    rocket:SetAngles(ang)
+    local rocketAng = Angle(ang.p, ang.y, ang.r)
+    if ang and self.ShootEntityAngleCorrection then
+        local up = ang:Up()
+        local right = ang:Right()
+        local forward = ang:Forward()
+        rocketAng:RotateAroundAxis(up, self.ShootEntityAngleCorrection.y)
+        rocketAng:RotateAroundAxis(right, self.ShootEntityAngleCorrection.p)
+        rocketAng:RotateAroundAxis(forward, self.ShootEntityAngleCorrection.r)
+    end
+
+    rocket:SetAngles(rocketAng)
     rocket:SetPos(src)
 
     rocket:SetOwner(self:GetOwner())
+    rocket.Owner = self.Owner
     rocket.Inflictor = self
+
+    rocket.Damage = self.Damage * math.Rand(1 - self.DamageRand, 1 + self.DamageRand)
+    if self.BlastRadius then
+        rocket.BlastRadius = self.BlastRadius * math.Rand(1 - (self.BlastRadiusRand or 0), 1 + (self.BlastRadiusRand or 0))
+    end
+
+    local RealVelocity = self:GetOwner():GetAbsVelocity() + ang:Forward() * vel / ArcCW.HUToM
+    rocket.CurVel = RealVelocity -- for non-physical projectiles that move themselves
 
     rocket:Spawn()
     rocket:Activate()
-    rocket:GetPhysicsObject():SetVelocity(self:GetOwner():GetAbsVelocity())
-    rocket:GetPhysicsObject():SetVelocityInstantaneous(ang:Forward() * vel)
-    rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
+    if !rocket.NoPhys then
+        rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
+        rocket:GetPhysicsObject():SetVelocityInstantaneous(RealVelocity)
+    end
+
+    if rocket.Launch and rocket.SetState then
+        rocket:SetState(1)
+        rocket:Launch()
+    end
 
     if rocket.ArcCW_Killable == nil then
         rocket.ArcCW_Killable = true

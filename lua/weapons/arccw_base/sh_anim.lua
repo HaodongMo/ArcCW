@@ -57,10 +57,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         anim = self.Animations[tranim]
     end
 
-    if anim.Mult then
-        mult = mult * anim.Mult
-    end
-
     if game.SinglePlayer() and SERVER and pred then
         net.Start("arccw_sp_anim")
         net.WriteString(key)
@@ -276,7 +272,7 @@ function SWEP:PlayIdleAnimation(pred)
     self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
 end
 
-function SWEP:GetAnimKeyTime(key)
+function SWEP:GetAnimKeyTime(key, min)
     if !self:GetOwner() then return 1 end
 
     local anim = self.Animations[key]
@@ -304,7 +300,17 @@ function SWEP:GetAnimKeyTime(key)
         anim.Time = vm:SequenceDuration(tseq) or 1
     end
 
-    return anim.Time
+    local t = anim.Time
+
+    if min and anim.MinProgress then
+        t = anim.MinProgress
+    end
+
+    if anim.Mult then
+        t = t * anim.Mult
+    end
+
+    return t
 end
 
 function SWEP:QueueAnimation(key, mult, pred, sf)

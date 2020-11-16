@@ -60,6 +60,11 @@ function SWEP:Think()
         end
     end
 
+    local td = self:GetBuff_Override("Override_TriggerDelay")
+    if (td != nil and td) or (td == nil and self.TriggerDelay) then
+        self:DoTriggerDelay()
+    end
+
     if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 and IsFirstTimePredicted() then
         if self:GetBurstCount() > 0 then
             self:PrimaryAttack()
@@ -175,54 +180,51 @@ function SWEP:Think()
         self:ProcessRecoil()
     end
 
-    if CLIENT then
-        if IsValid(vm) then
-            local vec1 = Vector(1, 1, 1)
-            local vec0 = vec1 * 0
+    if CLIENT and IsValid(vm) then
+        local vec1 = Vector(1, 1, 1)
+        local vec0 = vec1 * 0
 
-            for i = 1, vm:GetBoneCount() do
-                vm:ManipulateBoneScale(i, vec1)
+        for i = 1, vm:GetBoneCount() do
+            vm:ManipulateBoneScale(i, vec1)
+        end
+
+        for i, k in pairs(self:GetBuff_Override("Override_CaseBones") or self.CaseBones or {}) do
+            if !isnumber(i) then continue end
+            local bone = vm:LookupBone(k)
+
+            if !bone then continue end
+
+            if self:GetVisualClip() >= i then
+                vm:ManipulateBoneScale(bone, vec1)
+            else
+                vm:ManipulateBoneScale(bone, vec0)
             end
+        end
 
-            for i, k in pairs(self:GetBuff_Override("Override_CaseBones") or self.CaseBones or {}) do
-                if !isnumber(i) then continue end
-                local bone = vm:LookupBone(k)
+        for i, k in pairs(self:GetBuff_Override("Override_BulletBones") or self.BulletBones or {}) do
+            if !isnumber(i) then continue end
+            local bone = vm:LookupBone(k)
 
-                if !bone then continue end
+            if !bone then continue end
 
-                if self:GetVisualClip() >= i then
-                    vm:ManipulateBoneScale(bone, vec1)
-                else
-                    vm:ManipulateBoneScale(bone, vec0)
-                end
+            if self:GetVisualBullets() >= i then
+                vm:ManipulateBoneScale(bone, vec1)
+            else
+                vm:ManipulateBoneScale(bone, vec0)
             end
+        end
 
-            for i, k in pairs(self:GetBuff_Override("Override_BulletBones") or self.BulletBones or {}) do
-                if !isnumber(i) then continue end
-                local bone = vm:LookupBone(k)
+        for i, k in pairs(self:GetBuff_Override("Override_StripperClipBones") or self.StripperClipBones or {}) do
+            if !isnumber(i) then continue end
+            local bone = vm:LookupBone(k)
 
-                if !bone then continue end
+            if !bone then continue end
 
-                if self:GetVisualBullets() >= i then
-                    vm:ManipulateBoneScale(bone, vec1)
-                else
-                    vm:ManipulateBoneScale(bone, vec0)
-                end
+            if self:GetVisualLoadAmount() >= i then
+                vm:ManipulateBoneScale(bone, vec1)
+            else
+                vm:ManipulateBoneScale(bone, vec0)
             end
-
-            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBones") or self.StripperClipBones or {}) do
-                if !isnumber(i) then continue end
-                local bone = vm:LookupBone(k)
-
-                if !bone then continue end
-
-                if self:GetVisualLoadAmount() >= i then
-                    vm:ManipulateBoneScale(bone, vec1)
-                else
-                    vm:ManipulateBoneScale(bone, vec0)
-                end
-            end
-
         end
     end
 
@@ -321,7 +323,7 @@ end
 function SWEP:InSprint()
     local owner = self:GetOwner()
 
-    local sm = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult")
+    local sm = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
 
     sm = math.Clamp(sm, 0, 1)
 
@@ -339,4 +341,33 @@ function SWEP:InSprint()
     if !owner:OnGround() then return false end
 
     return true
+end
+
+SWEP.LastTriggerTime = 0
+SWEP.LastTriggerDuration = 0
+function SWEP:GetTriggerDelta()
+    return math.Clamp((CurTime() - self.LastTriggerTime) / self.LastTriggerDuration, 0, 1)
+end
+
+function SWEP:DoTriggerDelay()
+    local shouldHold = self:GetOwner():KeyDown(IN_ATTACK) and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT)
+    if self.LastTriggerTime > 0 and !shouldHold then
+        -- Attack key is released. Stop the animation and clear progress
+        local anim = self:SelectAnimation("untrigger")
+        if anim then
+            self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
+            --self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim))
+        else
+            self:PlayIdleAnimation(true)
+        end
+        self.LastTriggerTime = 0
+        self.LastTriggerDuration = 0
+        return
+    elseif self.LastTriggerTime <= 0 and shouldHold then
+        -- We haven't played the animation yet. Pull it!
+        local anim = self:SelectAnimation("trigger")
+        self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
+        self.LastTriggerTime = CurTime()
+        self.LastTriggerDuration = self:GetAnimKeyTime(anim, true)
+    end
 end
