@@ -317,9 +317,7 @@ function SWEP:PrimaryAttack()
     end
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == self:GetBurstLength() then
-        local postburst
-        if self:GetCurrentFiremode().PostBurstDelay then postburst = self:GetCurrentFiremode().PostBurstDelay else postburst = 0 end
-        postburst = postburst / self:GetBuff_Mult("Mult_RPM") or 0
+        local postburst = self:GetCurrentFiremode().PostBurstDelay / self:GetBuff_Mult("Mult_RPM") or 0
 
         self:SetNextPrimaryFire(CurTime() + postburst)
     end
