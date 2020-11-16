@@ -632,10 +632,12 @@ function SWEP:DrawHUD()
 			end
 
             if data.heat_enabled then
+                surface.SetDrawColor(col2)
+
                 local perc = data.heat_level / data.heat_maxlevel
+
                 surface.DrawOutlinedRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124), ScreenScaleMulti(3))
                 surface.DrawRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124) * perc, ScreenScaleMulti(3))
-
 
                 surface.SetFont("ArcCW_8")
                 local bip = {
