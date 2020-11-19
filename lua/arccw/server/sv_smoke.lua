@@ -1,13 +1,36 @@
-function ArcCW:ProcessNPCSmoke()
-    for _, npc in pairs(ents.GetAll()) do
-        if !npc then continue end
-        if !npc:IsValid() then continue end
-        if !npc:IsNPC() then continue end
+ArcCW.NPCsCache = ArcCW.NPCsCache or {}
+local npcs = ArcCW.NPCsCache
 
+ArcCW.SmokeCache = ArcCW.SmokeCache or {}
+local smokes = ArcCW.SmokeCache
+
+hook.Add("OnEntityCreated", "ArcCW_NPCSmokeCache", function(ent)
+    if !ent:IsValid() then return end
+
+    if ent:IsNPC() then
+        npcs[#npcs + 1] = ent
+    elseif ent.ArcCWSmoke then
+        smokes[#smokes + 1] = ent
+    end
+
+end)
+
+hook.Add("EntityRemoved", "ArcCW_NPCSmokeCache", function(ent)
+    if ent:IsNPC() then
+        table.RemoveByValue(npcs, ent)
+    elseif ent.ArcCWSmoke then
+        table.RemoveByValue(smokes, ent)
+    end
+end)
+
+
+function ArcCW:ProcessNPCSmoke()
+    if #npcs == 0 or #smokes == 0 then return end
+
+    for _, npc in ipairs(npcs) do
         local target = npc:GetEnemy()
 
-        if !target then continue end
-        if !IsValid(target) then continue end
+        if !target or !target:IsValid() then continue end
 
         npc.ArcCW_Smoked_Time = npc.ArcCW_Smoked_Time or 0
         if npc.ArcCW_Smoked_Time > CurTime() then
@@ -33,10 +56,10 @@ function ArcCW:ProcessNPCSmoke()
         local maxs = Vector(sr, sr, sr)
         local mins = -maxs
 
-        local smokes = ents.FindAlongRay(npc:EyePos(), target:WorldSpaceCenter(), mins, maxs)
+        local rayEnts = ents.FindAlongRay(npc:EyePos(), target:WorldSpaceCenter(), mins, maxs)
         local anysmoke = false
 
-        for _, i in pairs(smokes) do
+        for _, i in ipairs(rayEnts) do
             if i.ArcCWSmoke then
                 anysmoke = true
                 break
