@@ -12,8 +12,9 @@ function SWEP:ShouldDrawCrosshair()
     if self:GetReloading() then return false end
     local asight = self:GetActiveSights()
 
-    if !self:GetOwner():ShouldDrawLocalPlayer() then
-        if self:GetState() == ArcCW.STATE_SIGHTS and !asight.CrosshairInSights then return false end
+    if !self:GetOwner():ShouldDrawLocalPlayer() 
+            and self:GetState() == ArcCW.STATE_SIGHTS and !asight.CrosshairInSights then
+        return false
     end
 
     if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return false end
@@ -25,8 +26,8 @@ function SWEP:ShouldDrawCrosshair()
 end
 
 function SWEP:DoDrawCrosshair(x, y)
-    local pos = EyePos()
-    local ang = EyeAngles() - self:GetOurViewPunchAngles()
+    local pos = LocalPlayer():EyePos()
+    local ang = LocalPlayer():EyeAngles() - self:GetOurViewPunchAngles()
     local dot = true
     local prong_top = true
     local prong_left = true
