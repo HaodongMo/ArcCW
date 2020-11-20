@@ -90,7 +90,7 @@ end
 function SWEP:ResetCheckpoints()
     self.CheckpointAnimation = nil
 
-    if game.SinglePlayer() then
+    if game.SinglePlayer() and SERVER then
         net.Start("arccw_sp_checkpoints")
         net.Broadcast()
     end
