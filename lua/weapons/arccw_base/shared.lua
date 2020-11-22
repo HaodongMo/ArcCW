@@ -77,6 +77,7 @@ SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 50
 SWEP.ReducedClipSize = 10
+SWEP.Unobtrusive3DHUD = false -- if true, the 3DHUD won't show during firing, only during reload
 
 SWEP.AmmoPerShot = 1
 SWEP.InfiniteAmmo = false -- weapon can reload for free

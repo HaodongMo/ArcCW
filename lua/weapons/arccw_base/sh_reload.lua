@@ -21,6 +21,11 @@ function SWEP:Reload()
 
     if self:HasBottomlessClip() then return end
 
+	-- with Unobtrusive3DHUD, you may want to check your ammo without reloading
+	if self.Unobtrusive3DHUD and self.Owner:KeyDown(IN_WALK) then
+		return
+	end
+
     -- Don't accidently reload when changing firemode
     if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
 

@@ -180,15 +180,20 @@ function SWEP:DrawHUD()
 
             -- Detect changes to stuff drawn in HUD
             local curInfo = {
-                                ammo = data.ammo,
-                                clip = data.clip,
-                                plus = data.plus,
-                                firemode = data.mode,
-                                heat = self:GetHeat(),
-                                self:GetInUBGL(),
-                                self:GetInBipod(),
-                                self:CanBipod(),
-                            }
+				ammo = data.ammo,
+				clip = data.clip,
+				plus = data.plus,
+				firemode = data.mode,
+				heat = self:GetHeat(),
+				self:GetInUBGL(),
+				self:GetInBipod(),
+				self:CanBipod(),
+			}
+			if self.Unobtrusive3DHUD then
+				curInfo.clip = nil
+				curInfo.plus = nil
+				curInfo.heat = nil
+			end
             for i, v in pairs(curInfo) do
                 if v != lastinfo[i] then
                     lastinfotime = visible and (curTime - 0.5) or curTime
