@@ -109,6 +109,8 @@ local HudPanel = {
     { type = "c", text = "#arccw.cvar.hud_showammo.desc" },
     { type = "b", text = "#arccw.cvar.hud_3dfun", var = "arccw_hud_3dfun" },
     { type = "c", text = "#arccw.cvar.hud_3dfun.desc" },
+    { type = "b", text = "#arccw.cvar.hud_3dfun_lite", var = "arccw_hud_3dfun_lite" },
+	{ type = "c", text = "#arccw.cvar.hud_3dfun_lite.desc" },
     { type = "b", text = "#arccw.cvar.hud_minimal", var = "arccw_hud_minimal" },
     { type = "c", text = "#arccw.cvar.hud_minimal.desc" },
     { type = "b", text = "#arccw.cvar.hud_forceshow", var = "arccw_hud_forceshow" },

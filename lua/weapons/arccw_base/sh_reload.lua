@@ -21,8 +21,10 @@ function SWEP:Reload()
 
     if self:HasBottomlessClip() then return end
 
-	-- with Unobtrusive3DHUD, you may want to check your ammo without reloading
-	if self.Unobtrusive3DHUD and self.Owner:KeyDown(IN_WALK) then
+	-- with the lite 3D HUD, you may want to check your ammo without reloading
+	local Lite3DHUD = self.Owner:GetInfo("arccw_hud_3dfun") == "1" and self.Owner:GetInfo("arccw_hud_3dfun_lite") == "1"
+	print(CLIENT,self.Owner:GetInfo("arccw_hud_3dfun"),self.Owner:GetInfo("arccw_hud_3dfun_lite"))
+	if self.Owner:KeyDown(IN_WALK)and Lite3DHUD then
 		return
 	end
 

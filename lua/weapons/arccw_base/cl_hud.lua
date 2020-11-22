@@ -189,7 +189,7 @@ function SWEP:DrawHUD()
 				self:GetInBipod(),
 				self:CanBipod(),
 			}
-			if self.Unobtrusive3DHUD then
+			if GetConVar("arccw_hud_3dfun_lite"):GetBool() then
 				curInfo.clip = nil
 				curInfo.plus = nil
 				curInfo.heat = nil
