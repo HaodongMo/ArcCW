@@ -209,3 +209,6 @@ L["arccw.cvar.ttt_customizemode"]         = "Customization Mode"
 L["arccw.cvar.ttt_customizemode.desc"]    = "0 - No restrictions; 1 - Restricted; 2 - Pregame only; 3 - Traitor/Detective only"
 L["arccw.cvar.ttt_rolecrosshair"]         = "Enable role-based crosshair color"
 L["arccw.cvar.ttt_inforoundstart"]        = "Enable round startup info"
+
+-- 2020-11-22
+L["arccw.cvar.ammo_replace"]              = "Replace HL2 Ammo Entities"

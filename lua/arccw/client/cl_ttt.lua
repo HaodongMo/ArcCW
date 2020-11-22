@@ -135,7 +135,7 @@ local function CreateInfoBox(t)
     local binfo_cvar = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
     AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.bmode") .. " " .. ArcCW.GetTranslation("ttt.roundinfo.bmode" .. binfo_cvar))
 
-    if GetConVar("arccw_ttt_replaceammo"):GetBool() and GetConVar("arccw_mult_ammohealth"):GetFloat() > 0 then
+    if GetConVar("arccw_ammo_replace"):GetBool() and GetConVar("arccw_mult_ammohealth"):GetFloat() > 0 then
         local ainfo_cvar = GetConVar("arccw_ammo_detonationmode"):GetInt()
         local ainfo_str = ArcCW.GetTranslation("ttt.roundinfo.amode" .. ainfo_cvar)
         if GetConVar("arccw_ammo_chaindet"):GetBool() then
@@ -199,7 +199,7 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
         dgui2:Help("#arccw.adminonly")
         dgui2:Help("")
         dgui2:CheckBox("#arccw.cvar.ttt_replace", "arccw_ttt_replace")
-        dgui2:CheckBox("#arccw.cvar.ttt_replaceammo", "arccw_ttt_replaceammo")
+        dgui2:CheckBox("#arccw.cvar.ttt_replaceammo", "arccw_ammo_replace")
         dgui2:CheckBox("#arccw.cvar.ttt_atts", "arccw_ttt_atts")
         dgui2:NumSlider("#arccw.cvar.ttt_customizemode", "arccw_ttt_customizemode", 0, 3, 0)
         dgui2:Help("#arccw.cvar.ttt_customizemode.desc")

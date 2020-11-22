@@ -12,7 +12,7 @@ function SWEP:ShouldDrawCrosshair()
     if self:GetReloading() then return false end
     local asight = self:GetActiveSights()
 
-    if !self:GetOwner():ShouldDrawLocalPlayer() 
+    if !self:GetOwner():ShouldDrawLocalPlayer()
             and self:GetState() == ArcCW.STATE_SIGHTS and !asight.CrosshairInSights then
         return false
     end
