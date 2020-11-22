@@ -216,7 +216,7 @@ function SWEP:DrawHUD()
 
             if alpha > 0 then
 
-				angpos.Pos = angpos.Pos - Vector(0,0,5) - EyeAngles():Right() * 5
+				angpos.Pos = angpos.Pos - Vector(0,0,5) - EyeAngles():Right() * 4
 
                 cam.Start3D()
                     local toscreen = angpos.Pos:ToScreen()
