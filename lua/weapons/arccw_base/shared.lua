@@ -695,15 +695,13 @@ end
 
 function SWEP:SetState(v)
     self:SetNWState(v)
-
-    if CLIENT then
-        self.State = v
-    end
+    -- if CLIENT then
+    --     self.State = v
+    -- end
 end
 
 function SWEP:GetState(v)
-    if CLIENT and self.State then return self.State end
-
+    -- if CLIENT and self.State then return self.State end
     return self:GetNWState(v)
 end
 
