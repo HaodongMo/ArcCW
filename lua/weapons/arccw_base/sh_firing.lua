@@ -592,6 +592,9 @@ function SWEP:GetDispersion()
 
     if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
 
+    local t = hook.Run("ArcCW_ModDispersion", self, {dispersion = hip})
+    hip = t and t.dispersion or hip
+
     return hip
 end
 
