@@ -231,7 +231,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     self:SetTimer(ttime, function()
         self:NextAnimation()
 
-        self:ResetCheckpoints()
+        -- self:ResetCheckpoints()
     end, key)
 
     self:SetTimer(ttime, function()
