@@ -180,15 +180,20 @@ function SWEP:DrawHUD()
 
             -- Detect changes to stuff drawn in HUD
             local curInfo = {
-                                ammo = data.ammo,
-                                clip = data.clip,
-                                plus = data.plus,
-                                firemode = data.mode,
-                                heat = self:GetHeat(),
-                                self:GetInUBGL(),
-                                self:GetInBipod(),
-                                self:CanBipod(),
-                            }
+				ammo = data.ammo,
+				clip = data.clip,
+				plus = data.plus,
+				firemode = data.mode,
+				heat = self:GetHeat(),
+				self:GetInUBGL(),
+				self:GetInBipod(),
+				self:CanBipod(),
+			}
+			if GetConVar("arccw_hud_3dfun_lite"):GetBool() then
+				curInfo.clip = nil
+				curInfo.plus = nil
+				curInfo.heat = nil
+			end
             for i, v in pairs(curInfo) do
                 if v != lastinfo[i] then
                     lastinfotime = visible and (curTime - 0.5) or curTime
@@ -210,6 +215,9 @@ function SWEP:DrawHUD()
             end
 
             if alpha > 0 then
+
+				local EyeAng = EyeAngles()
+				angpos.Pos = angpos.Pos - EyeAng:Up() * 5 - EyeAng:Right() * 4
 
                 cam.Start3D()
                     local toscreen = angpos.Pos:ToScreen()
