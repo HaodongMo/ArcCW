@@ -509,7 +509,7 @@ SWEP.Animations = {
     --     RestoreAmmo = 1, -- only used by shotgun empty insert reload
     --     Source = "deploy",
     --     RareSource = "", -- 1/RareSourceChance of playing this animation instead
-    --     RareSourceChance = 100 -- Chance the rapper
+    --     RareSourceChance = 100, -- Chance the rapper
     --     Time = 0.5, -- Overwrites the duration of the animation (changes speed). Don't set to use sequence length
     --     Mult = 1, -- Multiplies the rate of animation.
     --     TPAnim = ACT_HL2MP_GESTURE_RELOAD_AR2, -- third person animation to play when this animation is played
@@ -518,6 +518,18 @@ SWEP.Animations = {
     --     ShellEjectAt = 0, -- animation includes a shell eject at these times
     --     LHIKIn = 0.25, -- In/Out controls how long it takes to switch to regular animation.
     --     LHIKOut = 0.25, -- (not actually inverse kinematics)
+    --     LHIKEaseIn = 0.1, -- how long LHIK eases in.
+    --     LHIKEaseOut = 0.1, -- if no value is specified then ease = lhikin
+    --     LHIKTimeline = { -- allows arbitrary LHIK values to be interpolated between
+    --         {
+    --             t = 0.1,
+    --             lhik = 0,
+    --         },
+    --         {
+    --             t = 0.25,
+    --             lhik = 1
+    --         }
+    --     },
     --     LHIK = true, -- basically disable foregrips on this anim
     --     SoundTable = {
     --         {
@@ -526,7 +538,7 @@ SWEP.Animations = {
     --             v = 75, -- volume
     --             t = 1, -- time at which to play relative to Animations.Time
     --             c = CHAN_ITEM, -- channel to play the sound
-    --
+
     --             -- Can also play an effect at the same time
     --             e = "", -- effect name
     --             att = nil, -- attachment, defaults to shell attachment
@@ -586,6 +598,7 @@ SWEP.RecoilPunchSide = 0
 SWEP.HammerDown = false
 
 SWEP.LHIKTimeline = nil
+SWEP.LHIKStartTime = 0
 -- {number starttime, number intime, number outtime, number finishouttime}
 end
 
