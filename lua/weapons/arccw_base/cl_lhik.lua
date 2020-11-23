@@ -127,7 +127,30 @@ function SWEP:DoLHIK()
         local delta_time = next_stage.t - stage.t
         delta_time = (local_time - stage.t) / delta_time
 
-        delta = Lerp(delta_time, stage.lhik, next_stage.lhik)
+        delta = qerp(delta_time, stage.lhik, next_stage.lhik)
+
+        if lhik_model and IsValid(lhik_model) then
+            local key
+
+            if stage.lhik > next_stage.lhik then
+                key = "in"
+            elseif next_stage.lhik > stage.lhik then
+                key = "out"
+            end
+
+            if key then
+                local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
+
+                key = tranim or key
+
+                local seq = lhik_model:LookupSequence(key)
+
+                if seq and seq > 0 then
+                    lhik_model:SetSequence(seq)
+                    lhik_model:SetCycle(delta)
+                end
+            end
+        end
 
         -- if tl[4] <= UnPredictedCurTime() then
         --     -- it's over
