@@ -109,6 +109,8 @@ local HudPanel = {
     { type = "c", text = "#arccw.cvar.hud_showammo.desc" },
     { type = "b", text = "#arccw.cvar.hud_3dfun", var = "arccw_hud_3dfun" },
     { type = "c", text = "#arccw.cvar.hud_3dfun.desc" },
+    { type = "b", text = "#arccw.cvar.hud_3dfun_lite", var = "arccw_hud_3dfun_lite" },
+	{ type = "c", text = "#arccw.cvar.hud_3dfun_lite.desc" },
     { type = "b", text = "#arccw.cvar.hud_minimal", var = "arccw_hud_minimal" },
     { type = "c", text = "#arccw.cvar.hud_minimal.desc" },
     { type = "b", text = "#arccw.cvar.hud_forceshow", var = "arccw_hud_forceshow" },
@@ -178,6 +180,7 @@ local AmmoPanel = {
     { type = "b", text = "#arccw.cvar.ammo_largetrigger", var = "arccw_ammo_largetrigger", sv = true },
     { type = "f", text = "#arccw.cvar.ammo_rareskin", var = "arccw_ammo_rareskin", min = 0, max = 1, sv = true },
     { type = "b", text = "#arccw.cvar.ammo_chaindet", var = "arccw_ammo_chaindet", sv = true },
+    { type = "b", text = "#arccw.cvar.ammo_replace", var = "arccw_ammo_replace", sv = true },
     { type = "f", text = "#arccw.cvar.mult_ammohealth", var = "arccw_mult_ammohealth", min = -1, max = 10, sv = true },
     { type = "f", text = "#arccw.cvar.mult_ammoamount", var = "arccw_mult_ammoamount", min = 0.1, max = 10, sv = true },
 }

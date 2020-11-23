@@ -7,7 +7,7 @@ function SWEP:MyEmitSound(fsound, level, pitch, vol, chan, useWorld)
 
     if istable(fsound) then fsound = self:TableRandom(fsound) end
 
-    if fsound != "" then
+    if fsound and fsound != "" then
 		if useWorld then
 			sound.Play(fsound, self.Owner:GetShootPos(), level, pitch, vol)
 		else

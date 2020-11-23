@@ -3,7 +3,7 @@ function SWEP:AdjustMouseSensitivity()
 
     local irons = self:GetActiveSights()
 
-    return 1 / (irons.Magnification + (irons.ScopeMagnification or 0))
+    return 1 / ((irons.Magnification or 1) + (irons.ScopeMagnification or 0))
 end
 
 function SWEP:Scroll(var)

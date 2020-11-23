@@ -65,14 +65,6 @@ function SWEP:GetLHIKAnim()
     return self.LHIKAnimation
 end
 
--- features:
--- ability to focus on multiple LHIK objects
--- ability to control LHIK timelines more finely
-function SWEP:DoLHIK2()
-    local delta = 1
-    local lhik_model = nil
-end
-
 function SWEP:DoLHIK()
     local justhide = false
     local lhik_model = nil
@@ -99,54 +91,107 @@ function SWEP:DoLHIK()
     if self.LHIKTimeline then
         local tl = self.LHIKTimeline
 
-        if tl[4] <= UnPredictedCurTime() then
-            -- it's over
-            delta = 1
-        elseif tl[3] <= UnPredictedCurTime() then
-            -- transition back to 1
-            delta = (UnPredictedCurTime() - tl[3]) / (tl[4] - tl[3])
-            delta = qerp(delta, 0, 1)
+        local stage, next_stage, next_stage_index
 
-            if lhik_model and IsValid(lhik_model) then
-                local key = "out"
-
-                local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
-
-                key = tranim or key
-
-                local seq = lhik_model:LookupSequence(key)
-
-                if seq and seq > 0 then
-                    lhik_model:SetSequence(seq)
-                    lhik_model:SetCycle(delta)
-                end
+        for i, k in pairs(tl) do
+            if !k or !k.t then continue end
+            if k.t + self.LHIKStartTime > CurTime() then
+                next_stage_index = i
+                break
             end
-        elseif tl[2] <= UnPredictedCurTime() then
-            -- hold 0
-            delta = 0
-        elseif tl[1] <= UnPredictedCurTime() then
-            -- transition to 0
-            delta = (UnPredictedCurTime() - tl[1]) / (tl[2] - tl[1])
-            delta = qerp(delta, 1, 0)
+        end
 
-            if lhik_model and IsValid(lhik_model) then
-                local key = "in"
-
-                local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
-
-                key = tranim or key
-
-                local seq = lhik_model:LookupSequence(key)
-
-                if seq and seq > 0 then
-                    lhik_model:SetSequence(seq)
-                    lhik_model:SetCycle(delta)
-                end
+        if next_stage_index then
+            if next_stage_index == 1 then
+                -- we are on the first stage.
+                stage = {t = 0, lhik = 0}
+                next_stage = self.LHIKTimeline[next_stage_index]
+            else
+                stage = self.LHIKTimeline[next_stage_index - 1]
+                next_stage = self.LHIKTimeline[next_stage_index]
             end
         else
-            -- hasn't started yet
-            delta = 1
+            stage = self.LHIKTimeline[#self.LHIKTimeline]
+            next_stage = {t = self.LHIKEndTime, lhik = self.LHIKTimeline[#self.LHIKTimeline].lhik}
         end
+
+        local local_time = CurTime() - self.LHIKStartTime
+
+        local delta_time = next_stage.t - stage.t
+        delta_time = (local_time - stage.t) / delta_time
+
+        delta = qerp(delta_time, stage.lhik, next_stage.lhik)
+
+        if lhik_model and IsValid(lhik_model) then
+            local key
+
+            if stage.lhik > next_stage.lhik then
+                key = "in"
+            elseif next_stage.lhik > stage.lhik then
+                key = "out"
+            end
+
+            if key then
+                local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
+
+                key = tranim or key
+
+                local seq = lhik_model:LookupSequence(key)
+
+                if seq and seq > 0 then
+                    lhik_model:SetSequence(seq)
+                    lhik_model:SetCycle(delta)
+                end
+            end
+        end
+
+        -- if tl[4] <= UnPredictedCurTime() then
+        --     -- it's over
+        --     delta = 1
+        -- elseif tl[3] <= UnPredictedCurTime() then
+        --     -- transition back to 1
+        --     delta = (UnPredictedCurTime() - tl[3]) / (tl[4] - tl[3])
+        --     delta = qerp(delta, 0, 1)
+
+        --     if lhik_model and IsValid(lhik_model) then
+        --         local key = "out"
+
+        --         local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
+
+        --         key = tranim or key
+
+        --         local seq = lhik_model:LookupSequence(key)
+
+        --         if seq and seq > 0 then
+        --             lhik_model:SetSequence(seq)
+        --             lhik_model:SetCycle(delta)
+        --         end
+        --     end
+        -- elseif tl[2] <= UnPredictedCurTime() then
+        --     -- hold 0
+        --     delta = 0
+        -- elseif tl[1] <= UnPredictedCurTime() then
+        --     -- transition to 0
+        --     delta = (UnPredictedCurTime() - tl[1]) / (tl[2] - tl[1])
+        --     delta = qerp(delta, 1, 0)
+
+        --     if lhik_model and IsValid(lhik_model) then
+        --         local key = "in"
+
+        --         local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
+
+        --         key = tranim or key
+
+        --         local seq = lhik_model:LookupSequence(key)
+
+        --         if seq and seq > 0 then
+        --             lhik_model:SetSequence(seq)
+        --             lhik_model:SetCycle(delta)
+        --         end
+        --     end
+    else
+        -- hasn't started yet
+        delta = 1
     end
 
     if justhide then
