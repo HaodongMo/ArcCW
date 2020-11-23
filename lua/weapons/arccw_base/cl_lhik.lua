@@ -102,7 +102,7 @@ function SWEP:DoLHIK()
         local stage, next_stage, next_stage_index
 
         for i, k in pairs(tl) do
-            if !k.t then continue end
+            if !k or !k.t then continue end
             if k.t + self.LHIKStartTime > CurTime() then
                 next_stage_index = i
                 break
