@@ -153,9 +153,11 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
             if anim.LHIKIn == 0 then
                 self.LHIKTimeline[1].lhik = 0
+                self.LHIKTimeline[2].lhik = 0
             end
 
             if anim.LHIKOut == 0 then
+                self.LHIKTimeline[#self.LHIKTimeline - 1].lhik = 0
                 self.LHIKTimeline[#self.LHIKTimeline].lhik = 0
             end
         end
