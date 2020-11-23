@@ -46,6 +46,7 @@ CreateConVar("arccw_ammo_autopickup", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whet
 CreateConVar("arccw_ammo_largetrigger", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to use larger trigger boxes for ammo, similar to HL2. Only useful when autopickup is true.", 0, 1)
 CreateConVar("arccw_ammo_rareskin", 0.08, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Chance for a rare skin to appear. Only specific models have these.", 0, 1)
 CreateConVar("arccw_ammo_chaindet", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to allow ammoboxes to detonate each other. If disabled, they will still be destroyed but !explode.", 0, 1)
+CreateConVar("arccw_ammo_replace", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "If enabled, all vanilla ammo entities will be forcefully replaced with ArcCW equivalents.", 0, 1)
 
 CreateConVar("arccw_mult_ammohealth", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much health ammo boxes have. Set to -1 for indestructible boxes.", -1)
 CreateConVar("arccw_mult_ammoamount", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much ammo are in ammo boxes.", 0)

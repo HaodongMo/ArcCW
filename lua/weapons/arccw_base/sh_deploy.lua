@@ -268,7 +268,12 @@ function SWEP:Holster(wep)
             self:Holster(self.HolsterSwitchTo)
 
             if CLIENT then
-                input.SelectWeapon(self.HolsterSwitchTo)
+                if isstring(self.HolsterSwitchTo) then
+                    self.HolsterSwitchTo = LocalPlayer():GetWeapon(self.HolsterSwitchTo)
+                end
+                if IsValid(self.HolsterSwitchTo) then
+                    input.SelectWeapon(self.HolsterSwitchTo)
+                end
             else
                 if SERVER then
                     if self:GetBuff_Override("UBGL_UnloadOnDequip") then
