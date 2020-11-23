@@ -121,7 +121,7 @@ function SWEP:MeleeAttack(melee2)
                 util.Effect("BloodImpact", fx)
             end
         else
-            self:MyEmitSound(self.MeleeMissSound or "weapons/iceaxe/iceaxe_swing1.wav", 75, 100, 1, CHAN_USER_BASE + 3)
+            self:MyEmitSound(self.MeleeMissSound, 75, 100, 1, CHAN_USER_BASE + 3)
         end
     end
 

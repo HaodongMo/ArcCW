@@ -61,7 +61,12 @@ function SWEP:GetHUDData()
         clip = math.Round(vclip or self:Clip1()),
         ammo = math.Round(vreserve or self:Ammo1()),
         bars = self:GetFiremodeBars(),
-        mode = self:GetFiremodeName()
+        mode = self:GetFiremodeName(),
+        heat_enabled        = self:HeatEnabled(),
+        heat_name           = "HEAT",
+        heat_level          = self:GetHeat(),
+        heat_maxlevel       = self:GetMaxHeat(),
+        heat_locked         = self:GetHeatLocked(),
     }
 
     if data.clip > self:GetCapacity() then
@@ -141,11 +146,11 @@ function SWEP:DrawHUD()
         MyDrawText(bip)
     end]]
 
-    if self:GetHeatLocked() then
+    local data = self:GetHUDData()
+
+    if data.heat_locked then
         col2 = col3
     end
-
-    local data = self:GetHUDData()
 
     if ArcCW:ShouldDrawHUDElement("CHudAmmo") then
 
@@ -184,7 +189,7 @@ function SWEP:DrawHUD()
 				clip = data.clip,
 				plus = data.plus,
 				firemode = data.mode,
-				heat = self:GetHeat(),
+                heat = data.heat_level,
 				self:GetInUBGL(),
 				self:GetInBipod(),
 				self:CanBipod(),
@@ -294,12 +299,12 @@ function SWEP:DrawHUD()
 
                 -- overheat bar 3d
 
-                if self:HeatEnabled() then
+                if data.heat_enabled then
                     local wheat = {
                         x = apan_bg.x + apan_bg.w - airgap,
                         y = wmode.y + ScreenScaleMulti(14),
                         font = "ArcCW_12",
-                        text = "HEAT " .. tostring(math.ceil(100 * self:GetHeat() / self:GetMaxHeat())) .. "%",
+                        text = data.heat_name .. " " .. tostring(math.ceil(100 * data.heat_level / data.heat_maxlevel)) .. "%",
                         col = col2,
                         align = 1,
                         shadow = true,
@@ -504,7 +509,7 @@ function SWEP:DrawHUD()
                 MyDrawText(wplus)
             end
 
-            if self:HeatEnabled() then
+            if data.heat_enabled then
                 local heat_bg = {
                     x = apan_bg.x,
                     w = apan_bg.w,
@@ -542,7 +547,7 @@ function SWEP:DrawHUD()
                     w = heat_bg.w - ScreenScaleMulti(38)
                 }
 
-                local perc = self:GetHeat() / self:GetMaxHeat()
+                local perc = data.heat_level / data.heat_maxlevel
 
                 heat_bar.w = heat_bar.w * perc
 
@@ -642,19 +647,20 @@ function SWEP:DrawHUD()
                 MyDrawText(bip)
 			end
 
-            if self:HeatEnabled() then
-                local perc = self:GetHeat() / self:GetMaxHeat()
+            if data.heat_enabled then                
+                surface.SetDrawColor(col2)
+                local perc = data.heat_level / data.heat_maxlevel
+
                 surface.DrawOutlinedRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124), ScreenScaleMulti(3))
                 surface.DrawRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124) * perc, ScreenScaleMulti(3))
-
 
                 surface.SetFont("ArcCW_8")
                 local bip = {
                     shadow = false,
-					x = (ScrW()/2) - (surface.GetTextSize("HEAT")/2),
+					x = (ScrW()/2) - (surface.GetTextSize(data.heat_name)/2),
 					y = bar.y + ScreenScaleMulti(8),
                     font = "ArcCW_8",
-                    text = "HEAT",
+                    text = data.heat_name,
                     col = col2,
                 }
 
