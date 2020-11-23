@@ -116,21 +116,50 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end
 
     if anim.LHIK then
-        self.LHIKTimeline = {
-            CurTime() - startfrom,
-            CurTime() - startfrom + ((anim.LHIKIn or 0.1) * mult),
-            CurTime() - startfrom + ttime - ((anim.LHIKOut or 0.1) * mult),
-            CurTime() - startfrom + ttime
-        }
+        -- self.LHIKTimeline = {
+        --     CurTime() - startfrom,
+        --     CurTime() - startfrom + ((anim.LHIKIn or 0.1) * mult),
+        --     CurTime() - startfrom + ttime - ((anim.LHIKOut or 0.1) * mult),
+        --     CurTime() - startfrom + ttime
+        -- }
 
-        if anim.LHIKIn == 0 then
-            self.LHIKTimeline[1] = -math.huge
-            self.LHIKTimeline[2] = -math.huge
-        end
+        -- if anim.LHIKIn == 0 then
+        --     self.LHIKTimeline[1] = -math.huge
+        --     self.LHIKTimeline[2] = -math.huge
+        -- end
 
-        if anim.LHIKOut == 0 then
-            self.LHIKTimeline[3] = math.huge
-            self.LHIKTimeline[4] = math.huge
+        -- if anim.LHIKOut == 0 then
+        --     self.LHIKTimeline[3] = math.huge
+        --     self.LHIKTimeline[4] = math.huge
+        -- end
+        self.LHIKStartTime = CurTime()
+        self.LHIKEndTime = CurTime() + ttime
+
+        if anim.LHIKTimeline then
+            self.LHIKTimeline = {}
+
+            for i, k in pairs(anim.LHIKTimeline) do
+                table.Add(self.LHIKTimeline, {t = (k.t or 0) * mult, lhik = k.lhik or 1})
+            end
+        else
+            self.LHIKTimeline = {
+                {t = 0, lhik = 1},
+                {t = ((anim.LHIKIn or 0.1) - (anim.LHIKEaseIn or anim.LHIKIn or 0.1)) * mult, lhik = 1},
+                {t = (anim.LHIKIn or 0.1) * mult, lhik = 0},
+                {t = ttime - (anim.LHIKOut or 0.1) * mult, lhik = 0},
+                {t = ttime - ((anim.LHIKOut or 0.1) + (anim.LHIKEaseOut or anim.LHIKOut or 0.1) * mult), lhik = 1},
+                {t = ttime, lhik = 1}
+            }
+
+            if anim.LHIKIn == 0 then
+                self.LHIKTimeline[1].lhik = 0
+                self.LHIKTimeline[2].lhik = 0
+            end
+
+            if anim.LHIKOut == 0 then
+                self.LHIKTimeline[#self.LHIKTimeline - 1].lhik = 0
+                self.LHIKTimeline[#self.LHIKTimeline].lhik = 0
+            end
         end
     else
         self.LHIKTimeline = nil
@@ -231,7 +260,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     self:SetTimer(ttime, function()
         self:NextAnimation()
 
-        self:ResetCheckpoints()
+        -- self:ResetCheckpoints()
     end, key)
 
     self:SetTimer(ttime, function()

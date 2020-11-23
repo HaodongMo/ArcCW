@@ -56,8 +56,6 @@ end
 local function DoShell(wep, data)
     if !(IsValid(wep) and IsValid(wep:GetOwner())) then return end
 
-    if !IsFirstTimePredicted() then return end
-
     local att = data.att or wep:GetBuff_Override("Override_CaseEffectAttachment") or wep.CaseEffectAttachment or 2
 
     if !att then return end
@@ -104,7 +102,7 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
         if !(IsValid(self) and IsValid(owner)) then continue end
 
         self:SetTimer(ttime, function()
-            if v.e then
+            if v.e and IsFirstTimePredicted() then
                 DoShell(self, v)
             end
 

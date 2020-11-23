@@ -108,6 +108,8 @@ att.AdditionalSights = {
     {
         Pos = Vector(0, 0, 0), -- relative to where att.Model is placed
         Ang = Angle(0, 0, 0),
+        GlobalPos = false, -- solver will not correct position relative to att.Model position
+        GlobalAng = false, -- solver will not correct angle
         ScrollFunc = ArcCW.SCROLL_ZOOM,
         ZoomLevels = 6,
         ZoomSound = "weapons/arccw/fiveseven/fiveseven_slideback.wav",

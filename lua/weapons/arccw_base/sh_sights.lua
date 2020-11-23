@@ -353,8 +353,18 @@ function SWEP:SetupActiveSights()
                 evpos = evpos + (k.CorrectivePos or Vector(0, 0, 0))
 
                 stab.Pos, stab.Ang = vpos, bang
+
                 stab.EVPos = evpos
                 stab.EVAng = s.Ang
+
+                if s.GlobalPos then
+                    stab.EVPos = Vector(0, 0, 0)
+                    stab.Pos = s.Pos
+                end
+
+                if s.GlobalAng then
+                    stab.Ang = Angle(0, 0, 0)
+                end
 
             end
 
