@@ -146,7 +146,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 {t = 0, lhik = 1},
                 {t = ((anim.LHIKIn or 0.1) - (anim.LHIKEaseIn or anim.LHIKIn or 0.1)) * mult, lhik = 1},
                 {t = (anim.LHIKIn or 0.1) * mult, lhik = 0},
-                {t = ttime - (anim.LHIKOut or 0.1) * mult, lhik = 0},
+                {t = ttime - ((anim.LHIKOut or 0.1) * mult), lhik = 0},
                 {t = ttime - ((anim.LHIKOut or 0.1) - (anim.LHIKEaseOut or anim.LHIKOut or 0.1) * mult), lhik = 1},
                 {t = ttime, lhik = 1}
             }
