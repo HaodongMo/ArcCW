@@ -17,7 +17,17 @@ ArcCW.AmmoEntToArcCW = {
     ["item_ammo_smg1_grenade"] = "arccw_ammo_smg1_grenade",
     ["item_ammo_crossbow"] = "arccw_ammo_sniper",
     ["item_box_buckshot"] = "arccw_ammo_buckshot",
-    ["item_ammo_ar2_altfire"] = "arccw_ammo_smg1_grenade"
+    ["item_ammo_ar2_altfire"] = "arccw_ammo_smg1_grenade",
+    -- HL:S
+    ["ammo_357"] = "arccw_ammo_357",
+    ["ammo_crossbow"] = "arccw_ammo_sniper",
+    ["ammo_glockclip"] = "arccw_ammo_pistol",
+    ["ammo_9mmbox"] = "arccw_ammo_ar2",
+    ["ammo_mp5clip"] = "arccw_ammo_smg1",
+    ["ammo_mp5grenades"] = "arccw_ammo_smg1_grenade",
+    ["ammo_rpgclip"] = "arccw_ammo_smg1_grenade_large",
+    ["ammo_buckshot"] = "arccw_ammo_buckshot",
+    ["ammo_gaussclip"] = "arccw_ammo_ar2_large"
 }
 
 hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", function()
