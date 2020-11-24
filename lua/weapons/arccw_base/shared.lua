@@ -210,6 +210,7 @@ SWEP.ProceduralViewBobAttachment = nil -- attachment on which coolview is affect
 
 SWEP.SpeedMult = 0.9
 SWEP.SightedSpeedMult = 0.75
+SWEP.ShootSpeedMult = 1
 
 SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
     -- [0] = "bulletchamber",

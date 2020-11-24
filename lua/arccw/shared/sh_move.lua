@@ -15,12 +15,27 @@ function ArcCW.Move(ply, mv, cmd)
     if wpn:GetState() == ArcCW.STATE_SIGHTS or
         wpn:GetState() == ArcCW.STATE_CUSTOMIZE then
         basespd = math.min(basespd, ply:GetWalkSpeed())
-        s = s * math.Clamp(wpn.SightedSpeedMult * wpn:GetBuff_Mult("Mult_SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1)
+        s = s * math.Clamp(wpn:GetBuff("SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1)
     end
 
     if wpn:GetInBipod() then
         s = 0.0001
     end
+
+    local shootmove = wpn:GetBuff("ShootSpeedMult")
+
+    local delta = 0 -- how close should we be to the shoot speed mult
+    local shottime = wpn:GetNextPrimaryFire() - CurTime()
+
+    if shottime > 0 then -- apply full shoot move speed
+        delta = 1
+    else -- apply partial shoot move speed
+        local delay = wpn:GetFiringDelay()
+        local aftershottime = shottime / delay
+        delta = math.Clamp(aftershottime, 0, 1)
+    end
+
+    s = s * Lerp(delta, 1, shootmove)
 
     mv:SetMaxSpeed(basespd * s)
     mv:SetMaxClientSpeed(basespd * s)
