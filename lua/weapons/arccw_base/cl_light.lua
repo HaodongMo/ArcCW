@@ -176,6 +176,8 @@ function SWEP:DrawFlashlightsWM()
     --     self:CreateFlashlightsWM()
     -- end
 
+    local owner = self:GetOwner()
+
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
         local atttbl = ArcCW.AttachmentTable[k.Installed]

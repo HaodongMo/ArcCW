@@ -26,7 +26,7 @@ local function ArcCW_CollectGarbage()
     local newpile = {}
 
     for _, k in pairs(ArcCW.CSModelPile) do
-        if IsValid(k.Weapon) and k.Weapon == LocalPlayer():GetActiveWeapon() then
+        if IsValid(k.Weapon) then
             tbl_ins(newpile, k)
 
             continue
