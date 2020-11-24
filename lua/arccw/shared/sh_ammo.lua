@@ -15,6 +15,9 @@ ArcCW.AmmoEntToArcCW = {
     ["item_ammo_smg1"] = "arccw_ammo_smg1",
     ["item_ammo_smg1_large"] = "arccw_ammo_smg1_large",
     ["item_ammo_smg1_grenade"] = "arccw_ammo_smg1_grenade",
+    ["item_ammo_crossbow"] = "arccw_ammo_sniper",
+    ["item_box_buckshot"] = "arccw_ammo_buckshot",
+    ["item_ammo_ar2_altfire"] = "arccw_ammo_smg1_grenade"
 }
 
 hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", function()
