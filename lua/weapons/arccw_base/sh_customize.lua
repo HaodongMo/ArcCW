@@ -918,6 +918,11 @@ function SWEP:CreateCustomizeHUD()
                         return
                     end
 
+                    if !owned and atttbl.HideIfUnavailable then
+                        attbtn:Remove()
+                        return
+                    end
+
                     if spaa.AttName == "" and !span.AttSlot.Installed then
                         installed = true
 

@@ -1187,12 +1187,12 @@ function SWEP:AdjustAtts()
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
         if ArcCW:SlotAcceptsAtt(k.Slot, self, k.Installed) then continue end
-        -- if self:CheckFlags(k.ExcludeFlags, k.RequireFlags) then continue end
+        if self:CheckFlags(k.ExcludeFlags, k.RequireFlags) then continue end
 
-        -- local atttbl = ArcCW.AttachmentTable[k.Installed]
+        local atttbl = ArcCW.AttachmentTable[k.Installed]
 
-        -- if !atttbl then continue end
-        -- if self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then continue end
+        if !atttbl then continue end
+        if self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then continue end
 
         self:Detach(i, true)
     end
