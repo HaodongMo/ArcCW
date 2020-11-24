@@ -107,6 +107,7 @@ function SWEP:PrimaryAttack()
     local delay = self:GetFiringDelay()
 
     self:SetNextPrimaryFire(CurTime() + delay)
+    self:SetNextSecondaryFire(CurTime() + delay) -- shadow for ONLY fire time
 
     local num = self:GetBuff_Override("Override_Num") or self.Num
 
