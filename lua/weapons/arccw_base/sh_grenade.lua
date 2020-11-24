@@ -39,7 +39,7 @@ function SWEP:Throw()
 
     windup = math.Clamp(windup, 0, 1)
 
-    local mv = self:GetBuff("MuzzleVelocity") * ArcCW.HUToM
+    local mv = self:GetBuff("MuzzleVelocity") / ArcCW.HUToM
 
     local force = Lerp(windup, mv * 0.25, mv)
 
