@@ -88,7 +88,6 @@ function SWEP:AddElement(elementname, wm)
 
         model:SetNoDraw(ArcCW.NoDraw)
         model:DrawShadow(true)
-        model:SetPredictable(false)
         model.Weapon = self
         model:SetSkin(i.ModelSkin or 0)
         model:SetBodyGroups(i.ModelBodygroups or "")
@@ -638,6 +637,12 @@ function SWEP:SetupModel(wm)
 
     render.OverrideDepthEnable( false, true )
 
+    if !wm then
+    --     self:CreateFlashlightsWM()
+    -- else
+        self:CreateFlashlightsVM()
+    end
+
     end
 
     self.PrintName = self:GetBuff_Hook("Hook_NameChange", self.PrintName) or self.PrintName
@@ -669,14 +674,14 @@ function SWEP:DrawCustomModel(wm,origin,angle)
     end
     local models = self.VM
     local vm
-	
-	if origin and !angle then
-		angle = Angle()
-	end
-	local custompos = origin and angle
-	if custompos then
-		wm = true --VM drawing borked
-	end
+
+    if origin and !angle then
+        angle = Angle()
+    end
+    local custompos = origin and angle
+    if custompos then
+        wm = true --VM drawing borked
+    end
 
     -- self:KillModel(self.VM)
     -- self:KillModel(self.WM)
@@ -788,11 +793,11 @@ function SWEP:DrawCustomModel(wm,origin,angle)
                     bang = bonemat:GetAngles()
                 end
             end
-			
-			if custompos and (!self.MirrorVMWM or (self.MirrorVMWM and k.Model:GetModel() == self.ViewModel) ) then
-				bpos = origin
-				bang = angle
-			end
+
+            if custompos and (!self.MirrorVMWM or (self.MirrorVMWM and k.Model:GetModel() == self.ViewModel) ) then
+                bpos = origin
+                bang = angle
+            end
 
             if k.Slot then
 
@@ -919,6 +924,13 @@ function SWEP:DrawCustomModel(wm,origin,angle)
                 k.Model:SetBodygroup(1, 0)
             end
         end
+    end
+
+    if wm then
+        self:DrawFlashlightsWM()
+        self:KillFlashlightsVM()
+    else
+        self:DrawFlashlightsVM()
     end
 
     -- self:RefreshBGs()

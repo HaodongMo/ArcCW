@@ -4,6 +4,7 @@ local rem_ent = SafeRemoveEntity
 
 ArcCW.CSModels       = {} -- [entid] = { Weapon = NULL, WModels = {}, VModels = {} }
 ArcCW.CSModelPile    = {} -- { {Model = NULL, Weapon = NULL} }
+ArcCW.FlashlightPile = {} -- { {Weapon = NULL, ProjectedTexture = NULL}}
 ArcCW.ReferenceModel = NULL
 
 local function ArcCW_CollectGarbage()
@@ -25,7 +26,7 @@ local function ArcCW_CollectGarbage()
     local newpile = {}
 
     for _, k in pairs(ArcCW.CSModelPile) do
-        if IsValid(k.Weapon) then
+        if IsValid(k.Weapon) and k.Weapon == LocalPlayer():GetActiveWeapon() then
             tbl_ins(newpile, k)
 
             continue
@@ -37,6 +38,20 @@ local function ArcCW_CollectGarbage()
     end
 
     ArcCW.CSModelPile = newpile
+
+    local newflashlightpile = {}
+
+    for _, k in pairs(ArcCW.FlashlightPile) do
+        if IsValid(k.Weapon) and k.Weapon == LocalPlayer():GetActiveWeapon() then
+            tbl_ins(newflashlightpile, k)
+
+            continue
+        end
+
+        if k.ProjectedTexture and k.ProjectedTexture:IsValid() then
+            k.ProjectedTexture:Remove()
+        end
+    end
 
     if GetConVar("developer"):GetBool() and removed > 0 then
         print("Removed " .. tostring(removed) .. " CSModels")

@@ -274,6 +274,8 @@ function SWEP:Holster(wep)
                 if IsValid(self.HolsterSwitchTo) then
                     input.SelectWeapon(self.HolsterSwitchTo)
                 end
+
+                self:KillFlashlights()
             else
                 if SERVER then
                     if self:GetBuff_Override("UBGL_UnloadOnDequip") then
