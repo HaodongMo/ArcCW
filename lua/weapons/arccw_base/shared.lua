@@ -677,7 +677,7 @@ end
 function SWEP:SetupDataTables()
     self:NetworkVar("Int", 0, "NWState")
     self:NetworkVar("Int", 1, "FireMode")
-    self:NetworkVar("Int", 2, "BurstCount")
+    self:NetworkVar("Int", 2, "BurstCountUM")
     self:NetworkVar("Int", 3, "LastLoad")
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
@@ -689,25 +689,55 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 1, "NeedCycle")
     self:NetworkVar("Bool", 2, "InBipod")
     self:NetworkVar("Bool", 3, "InUBGL")
-    self:NetworkVar("Bool", 4, "Reloading")
+    --self:NetworkVar("Bool", 4, "Reloading")
     self:NetworkVar("Bool", 5, "InCustomize")
     self:NetworkVar("Bool", 6, "GrenadePrimed")
     self:NetworkVar("Bool", 7, "ReqEnd")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
+    self:NetworkVar("Float", 2, "ReloadingREAL")
+
+    self:SetReloadingREAL(CurTime())
 
     --self:NetworkVar("Int", 2, "BurstCount")
     --self:NetworkVar("Int", 0, "NWState")
 end
 
--- function SWEP:SetBurstCount(b)
---     self.BurstCount = b
--- end
 
--- function SWEP:GetBurstCount()
---     return self:GetBuff_Hook("Hook_GetBurstCount", self.BurstCount) or self.BurstCount or 0
--- end
+function SWEP:SetReloading( v )
+    if isbool(v) then
+        if v then
+            self:SetReloadingREAL(math.huge)
+        else
+            self:SetReloadingREAL(0)
+        end
+    elseif isnumber(v) and v > self:GetReloadingREAL() then
+        self:SetReloadingREAL( v )
+    end
+end
+
+function SWEP:GetReloading()
+    local decide
+
+    if self:GetReloadingREAL() > CurTime() then
+        decide = true
+    else
+        decide = false
+    end
+
+    self:GetBuff_Hook("Hook_GetReloading", decide)
+    
+    return decide
+end
+
+function SWEP:SetBurstCount(b)
+    self:SetBurstCountUM(b)
+end
+
+function SWEP:GetBurstCount()
+    return self:GetBuff_Hook("Hook_GetBurstCount", self:GetBurstCountUM()) or self:GetBurstCountUM() or 0
+end
 
 function SWEP:SetState(v)
     self:SetNWState(v)

@@ -34,6 +34,9 @@ function SWEP:CanPrimaryAttack()
     -- We need to cycle
     if self:GetNeedCycle() then return end
 
+    -- Inoperable
+    if self:GetReloading() then return end
+
     -- Safety's on, turn it off.
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)

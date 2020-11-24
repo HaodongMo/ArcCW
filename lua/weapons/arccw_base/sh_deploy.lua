@@ -37,25 +37,13 @@ function SWEP:Deploy()
                 self:PlayAnimation(r_anim, 1, true, 0, true)
                 self.UnReady = false
 
-                self:SetReloading(true)
-
-                self:SetTimer(self:GetAnimKeyTime(r_anim),
-                function()
-                    self:SetReloading(false)
-                end)
+                self:SetReloading(CurTime() + self:GetAnimKeyTime(r_anim))
 
                 prd = self.Animations[r_anim].ProcDraw
-
-                self:SetReloading(true)
             else
                 self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
 
-                self:SetReloading(true)
-
-                self:SetTimer(self:GetAnimKeyTime(d_anim) * self:GetBuff_Mult("Mult_DrawTime"),
-                function()
-                    self:SetReloading(false)
-                end)
+                self:SetReloading(CurTime() + (self:GetAnimKeyTime(d_anim) * self:GetBuff_Mult("Mult_DrawTime")))
 
                 prd = self.Animations[d_anim].ProcDraw
             end

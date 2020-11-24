@@ -1,3 +1,26 @@
+
+
+function SWEP:GetReloadTime()
+    -- Only works with classic mag-fed weapons.
+    local mult = self:GetBuff_Mult("Mult_ReloadTime")
+    local anim = self:SelectReloadAnimation()
+
+    if !self.Animations[anim] then return {1.337, .69} end
+
+    local full  = 0
+    local magin = 0
+
+    full = self:GetAnimKeyTime(anim) * mult
+
+    if self.Animations[anim].MinProgress then
+        magin = self.Animations[anim].MinProgress * mult
+    else
+        magin = full
+    end
+
+    return { full, magin }
+end
+
 function SWEP:Reload()
     if self:GetOwner():IsNPC() then
         return
@@ -93,6 +116,7 @@ function SWEP:Reload()
         self:SetClip1(self:Clip1() + insertcount)
 
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
+        self:SetReloading(CurTime() + (self:GetAnimKeyTime(anim) * mult))
 
         self:SetTimer(self:GetAnimKeyTime(anim) * mult,
         function()
@@ -121,12 +145,9 @@ function SWEP:Reload()
 
         self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim) * mult)
 
-        self:SetTimer(reloadtime * 0.95,
+        self:SetReloading(CurTime() + reloadtime)
+        self:SetTimer(reloadtime,
         function()
-            self:SetReloading(false)
-            -- if self:GetOwner():KeyDown(IN_ATTACK2) then
-            --     self:EnterSights()
-            -- end
             self:RestoreAmmo()
             self:SetLastLoad(self:Clip1())
             self:SetNthReload(self:GetNthReload() + 1)
@@ -139,7 +160,6 @@ function SWEP:Reload()
         end
     end
 
-    self:SetReloading(true)
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -319,11 +339,7 @@ function SWEP:ReloadInsert(empty)
         total = total + (self:GetChamberSize())
     end
 
-    self:SetReloading(true)
-
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
-
-    self:SetReloading(false)
 
     if self:Clip1() >= total or self:Ammo1() == 0 or self:GetReqEnd() then
         local ret = "sgreload_finish"
@@ -338,9 +354,9 @@ function SWEP:ReloadInsert(empty)
         ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
         self:PlayAnimation(ret, mult, true, 0, true, nil, true)
+            self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret) * mult))
             self:SetTimer(self:GetAnimKeyTime(ret) * mult,
             function()
-                self:SetReloading(false)
                 self:SetNthReload(self:GetNthReload() + 1)
                 if self:GetOwner():KeyDown(IN_ATTACK2) then
                     self:EnterSights()
@@ -363,14 +379,14 @@ function SWEP:ReloadInsert(empty)
 
         local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
 
+        self:SetReloading(CurTime() + time)
+
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(time * mult,
         function()
             self:ReloadInsert(empty)
         end)
     end
-
-    self:SetReloading(true)
 end
 
 function SWEP:GetCapacity()
