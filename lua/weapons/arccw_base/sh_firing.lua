@@ -104,11 +104,10 @@ function SWEP:PrimaryAttack()
 
     dir = dir + VectorRand() * self:GetDispersion() / 360 / 60
 
-    local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
-
-    delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
+    local delay = self:GetFiringDelay()
 
     self:SetNextPrimaryFire(CurTime() + delay)
+    self:SetNextSecondaryFire(CurTime() + delay) -- shadow for ONLY fire time
 
     local num = self:GetBuff_Override("Override_Num") or self.Num
 
@@ -504,6 +503,14 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
     }
 
     ArcCW:DoPenetration(tr, bullet.Damage, bullet, penleft, false, {})
+end
+
+function SWEP:GetFiringDelay()
+    local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
+
+    delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
+
+    return delay
 end
 
 function SWEP:GetShootSrc()
