@@ -579,7 +579,6 @@ SWEP.m_WeaponDeploySpeed = 8008135
 
 SWEP.ArcCW = true
 SWEP.BurstCount = 0
-SWEP.DelayCycleAnim = 0
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true
@@ -696,6 +695,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 7, "ReqEnd")
 
     self:NetworkVar("Float", 0, "Heat")
+    self:NetworkVar("Float", 1, "WeaponOpDelay")
 
     --self:NetworkVar("Int", 2, "BurstCount")
     --self:NetworkVar("Int", 0, "NWState")

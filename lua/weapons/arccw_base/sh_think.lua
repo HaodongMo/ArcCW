@@ -28,7 +28,7 @@ function SWEP:Think()
 
     self:InBipod()
 
-    if self:GetNeedCycle() and !self:GetReloading() and self.DelayCycleAnim < CurTime() and
+    if self:GetNeedCycle() and !self:GetReloading() and self:GetWeaponOpDelay() < CurTime() and
             (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
             or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 and owner:KeyDown(IN_ATTACK) or owner:KeyPressed(IN_ATTACK))) then
         local anim = self:SelectAnimation("cycle")
@@ -88,6 +88,7 @@ function SWEP:Think()
 
             if (CurTime() + postburst) > self:GetNextPrimaryFire() then
                 self:SetNextPrimaryFire(CurTime() + postburst)
+                self:SetWeaponOpDelay(CurTime() + postburst)
             end
         end
     end

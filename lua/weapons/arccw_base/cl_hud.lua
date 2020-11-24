@@ -523,7 +523,7 @@ function SWEP:DrawHUD()
                 local theat = {
                     x = heat_bg.x + ScreenScaleMulti(2),
                     y = heat_bg.y,
-                    text = "HEAT [",
+                    text = data.heat_name .. " [",
                     font = "ArcCW_12",
                     col = col2
                 }
