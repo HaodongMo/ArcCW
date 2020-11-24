@@ -106,6 +106,51 @@ end
 function SWEP:DrawHUD()
 
     -- info panel
+    if true then
+        local mr = math.Round
+
+        --local awesome
+        --if  !(self.ShotgunReload or self.HybridReload or self:GetBuff_Override("Override_ShotgunReload") or self:GetBuff_Override("Override_HybridReload")) then
+            local awesome = self:GetReloadTime()
+        --else
+            --awesome = { 0, 0 }
+        --end
+
+        surface.SetFont("ArcCW_26")
+        surface.SetTextPos(ScrW()/2, 26*4)
+        surface.SetTextColor(255, 255, 255, 255)
+        surface.DrawText(tostring(self:GetReloading()))
+
+
+        surface.SetTextPos(ScrW()/2, 26*6)
+        surface.DrawText(mr(self:GetReloadingREAL(),2))
+
+        surface.SetTextPos(ScrW()/2, 26*8)
+        surface.DrawText(mr(CurTime(),2))
+
+        surface.SetTextPos(ScrW()/2, 26*10)
+        surface.DrawText(awesome[1])
+
+        surface.SetTextPos(ScrW()/2, 26*12)
+        surface.DrawText(awesome[2])
+
+        
+        surface.SetFont("ArcCW_8")
+        surface.SetTextPos(ScrW()/2, 26*4)
+        surface.DrawText("RELOADING")
+        
+        surface.SetTextPos(ScrW()/2, 26*6)
+        surface.DrawText("RELOADING TIMER")
+
+        surface.SetTextPos(ScrW()/2, 26*8)
+        surface.DrawText("CURRENT TIME")
+
+        surface.SetTextPos(ScrW()/2, 26*10)
+        surface.DrawText("RELOAD: FULL")
+
+        surface.SetTextPos(ScrW()/2, 26*12)
+        surface.DrawText("RELOAD: MAGIN")
+    end
 
     if self:GetState() != ArcCW.STATE_CUSTOMIZE then
         self:GetBuff_Hook("Hook_DrawHUD")
@@ -523,7 +568,7 @@ function SWEP:DrawHUD()
                 local theat = {
                     x = heat_bg.x + ScreenScaleMulti(2),
                     y = heat_bg.y,
-                    text = "HEAT [",
+                    text = data.heat_name .. " [",
                     font = "ArcCW_12",
                     col = col2
                 }

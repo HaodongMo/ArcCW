@@ -34,6 +34,9 @@ function SWEP:CanPrimaryAttack()
     -- We need to cycle
     if self:GetNeedCycle() then return end
 
+    -- Inoperable
+    if self:GetReloading() then return end
+
     -- Safety's on, turn it off.
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
@@ -312,7 +315,7 @@ function SWEP:PrimaryAttack()
         local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
         local firedelay = self.Animations[fireanim].MinProgress or 0
         self:SetNeedCycle(true)
-        self.DelayCycleAnim = CurTime() + firedelay / self:GetBuff_Mult("Mult_RPM")
+        self:SetWeaponOpDelay(CurTime() + firedelay / self:GetBuff_Mult("Mult_RPM"))
     end
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == self:GetBurstLength() then
