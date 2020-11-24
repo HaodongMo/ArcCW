@@ -17,7 +17,9 @@ function SWEP:CreateFlashlightsVM()
             local newlight = {
                 att = i,
                 light = ProjectedTexture(),
-                bone = atttbl.FlashlightBone or "laser"
+                bone = atttbl.FlashlightBone or "laser",
+                col = atttbl.FlashlightColor or Color(255, 255, 255),
+                br = atttbl.FlashlightBrightness or 2
             }
             total_lights = total_lights + 1
 
@@ -166,7 +168,7 @@ local function solvetriangle(angle, dist)
     return b * math.tan(a) * 2
 end
 
-local flashlight_mat = Material("models/effects/vol_light001")
+local flashlight_mat = Material("models/effects/vol_light002")
 -- local flashlight_mat = Material("effects/blueblacklargebeam")
 
 function SWEP:DrawFlashlightsWM()
@@ -218,7 +220,6 @@ function SWEP:DrawFlashlightsWM()
             maxs = maxs
         })
 
-        local maxz = atttbl.FlashlightFarZ
         local z = (tr.HitPos - tr.StartPos):Length()
         -- local s_z = z / ArcCW.VolumetricLightZ
 
@@ -307,5 +308,21 @@ function SWEP:DrawFlashlightsVM()
         k.light:SetPos(pos)
         k.light:SetAngles(ang)
         k.light:Update()
+
+        -- local col = k.col
+
+        -- local dl = DynamicLight(self:EntIndex())
+
+        -- if dl then
+        --     dl.pos = pos
+        --     dl.r = col.r
+        --     dl.g = col.g
+        --     dl.b = col.b
+        --     dl.brightness = k.br or 2
+        --     -- print(z / maxz)
+        --     dl.Decay = 1000 / 0.1
+        --     dl.dietime = CurTime() + 0.1
+        --     dl.size = (k.br or 2) * 64
+        -- end
     end
 end

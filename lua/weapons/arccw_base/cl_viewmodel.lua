@@ -270,9 +270,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     swayxmult = GetConVar("arccw_vm_swayxmult"):GetFloat()
     swayymult = GetConVar("arccw_vm_swayymult"):GetFloat()
     swayzmult = GetConVar("arccw_vm_swayzmult"):GetFloat()
-	swaywiggle = GetConVar("arccw_vm_swaywigglemult"):GetFloat()
-	swayspeed 	= GetConVar("arccw_vm_swayspeedmult"):GetFloat()
-	swayrotate = GetConVar("arccw_vm_swayrotatemult"):GetFloat()
+    swaywiggle = GetConVar("arccw_vm_swaywigglemult"):GetFloat()
+    swayspeed 	= GetConVar("arccw_vm_swayspeedmult"):GetFloat()
+    swayrotate = GetConVar("arccw_vm_swayrotatemult"):GetFloat()
 
     if coolsway then
         eyeangles = owner:EyeAngles()

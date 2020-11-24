@@ -928,7 +928,7 @@ function SWEP:DrawCustomModel(wm,origin,angle)
 
     if wm then
         self:DrawFlashlightsWM()
-        self:KillFlashlightsVM()
+        -- self:KillFlashlightsVM()
     else
         self:DrawFlashlightsVM()
     end

@@ -39,6 +39,18 @@ local function ArcCW_CollectGarbage()
 
     ArcCW.CSModelPile = newpile
 
+    if GetConVar("developer"):GetBool() and removed > 0 then
+        print("Removed " .. tostring(removed) .. " CSModels")
+    end
+end
+
+hook.Add("PostCleanupMap", "ArcCW_CleanGarbage", function()
+    ArcCW_CollectGarbage()
+end)
+
+timer.Create("ArcCW CSModel Garbage Collector", 5, 0, ArcCW_CollectGarbage)
+
+hook.Add("PostDrawEffects", "ArcCW_CleanFlashlights", function()
     local newflashlightpile = {}
 
     for _, k in pairs(ArcCW.FlashlightPile) do
@@ -53,13 +65,15 @@ local function ArcCW_CollectGarbage()
         end
     end
 
-    if GetConVar("developer"):GetBool() and removed > 0 then
-        print("Removed " .. tostring(removed) .. " CSModels")
-    end
-end
+    ArcCW.FlashlightPile = newflashlightpile
 
-hook.Add("PostCleanupMap", "ArcCW_CleanGarbage", function()
-    ArcCW_CollectGarbage()
+    local wpn = LocalPlayer():GetActiveWeapon()
+
+    if !wpn then return end
+    if !IsValid(wpn) then return end
+    if !wpn.ArcCW then return end
+
+    if GetViewEntity() == LocalPlayer() then return end
+
+    wpn:KillFlashlightsVM()
 end)
-
-timer.Create("ArcCW CSModel Garbage Collector", 5, 0, ArcCW_CollectGarbage)
