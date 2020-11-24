@@ -28,7 +28,9 @@ end
 function SWEP:GetViewModelPosition(pos, ang)
     local owner = self:GetOwner()
 
-    if !owner:IsValid() or !owner:Alive() then return end
+    if !IsValid(owner) or !owner:Alive() then return end
+	
+	local proceduralRecoilMult = 1
 
     local SP = game.SinglePlayer()
     -- local FT = m_min(FrameTime(), RealFrameTime())
@@ -127,6 +129,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         target.ang.p = m_clamp(target.ang.p, -80, 80)
     elseif sighted then
+		proceduralRecoilMult = proceduralRecoilMult * .7
+	
         local irons = self:GetActiveSights()
 
         target.pos   = irons.Pos
@@ -340,7 +344,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     self.SwayScale = (coolsway and 0) or actual.sway
     self.BobScale  = (coolsway and 0) or actual.bob
 
-    pos = pos + self.RecoilPunchBack * -oldang:Forward()
+    pos = pos + self.RecoilPunchBack * -oldang:Forward() * proceduralRecoilMult
     pos = pos + self.RecoilPunchSide * oldang:Right()
     pos = pos + self.RecoilPunchUp   * -oldang:Up()
 
