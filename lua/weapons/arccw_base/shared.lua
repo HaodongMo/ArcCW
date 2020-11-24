@@ -660,6 +660,7 @@ AddCSLuaFile("cl_lhik.lua")
 AddCSLuaFile("cl_laser.lua")
 AddCSLuaFile("cl_blur.lua")
 AddCSLuaFile("cl_presets.lua")
+AddCSLuaFile("cl_light.lua")
 
 if CLIENT then
     include("cl_viewmodel.lua")
@@ -671,6 +672,7 @@ if CLIENT then
     include("cl_laser.lua")
     include("cl_blur.lua")
     include("cl_presets.lua")
+    include("cl_light.lua")
 end
 
 function SWEP:SetupDataTables()

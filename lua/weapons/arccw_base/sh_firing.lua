@@ -331,12 +331,12 @@ function SWEP:PrimaryAttack()
 end
 
 function SWEP:TryBustDoor(ent, dmg)
-	ArcCW.TryBustDoor(ent, dmg)
+    ArcCW.TryBustDoor(ent, dmg)
 end
 
 function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride)
     local fsound = self.ShootSound
-	local suppressed = self:GetBuff_Override("Silencer")
+    local suppressed = self:GetBuff_Override("Silencer")
 
     if suppressed then
         fsound = self.ShootSoundSilenced
@@ -606,9 +606,9 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject()
-	local eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
+    local eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
 
-	if eff == "NONE" then return end
+    if eff == "NONE" then return end
 
     local owner = self:GetOwner()
 
@@ -623,13 +623,13 @@ function SWEP:DoShellEject()
     if !att then return end
 
     local pos, ang = att.Pos, att.Ang
-	
-	if pos and ang and self.ShellEjectPosCorrection then
-		local up = ang:Up()
-		local right = ang:Right()
-		local forward = ang:Forward()
-		pos = pos + up * self.ShellEjectPosCorrection.z + right * self.ShellEjectPosCorrection.x + forward * self.ShellEjectPosCorrection.y
-	end
+
+    if pos and ang and self.ShellEjectPosCorrection then
+        local up = ang:Up()
+        local right = ang:Right()
+        local forward = ang:Forward()
+        pos = pos + up * self.ShellEjectPosCorrection.z + right * self.ShellEjectPosCorrection.x + forward * self.ShellEjectPosCorrection.y
+    end
 
     local ed = EffectData()
     ed:SetOrigin(pos)

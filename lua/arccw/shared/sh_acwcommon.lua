@@ -16,6 +16,15 @@ ArcCW.STATE_BIPOD     = 5
 ArcCW.SCROLL_NONE = 0
 ArcCW.SCROLL_ZOOM = 1
 
+ArcCW.FLASH_ATT_CONSTANT = 0
+ArcCW.FLASH_ATT_LINEAR = 1
+ArcCW.FLASH_ATT_QUADRATIC = 0
+
+ArcCW.VolumetricLightModel = "models/effects/vol_light256x384.mdl"
+ArcCW.VolumetricLightX = 256
+ArcCW.VolumetricLightY = 256
+ArcCW.VolumetricLightZ = 384
+
 COND_WEAPON_HAS_LOS = 41
 COND_WEAPON_SIGHT_OCCLUDED = 45
 

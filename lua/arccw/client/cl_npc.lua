@@ -1,5 +1,5 @@
 hook.Add("PopulateMenuBar", "ArcCW_NPCWeaponMenu", function (menubar)
-    local menu = menubar:AddOrGetMenu("ArcCW Weapons")
+    local menu = menubar:AddOrGetMenu("ArcCW NPC Weapons")
 
     menu:AddCVar("None", "gmod_npcweapon", "none")
     menu:AddSpacer()

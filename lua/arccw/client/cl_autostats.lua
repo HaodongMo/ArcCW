@@ -39,6 +39,7 @@ ArcCW.AutoStats = {
     ["Mult_MoveSpeed"]        = { "autostat.speedmult",   "mult", false },
     ["Mult_SightedSpeedMult"] = { "autostat.sightspeed",  "mult", false },
     ["Mult_SightedMoveSpeed"] = { "autostat.sightspeed",  "mult", false },
+    ["Mult_ShootSpeedMult"]   = { "autostat.shootspeed",  "mult", false },
     ["Mult_ReloadTime"]       = { "autostat.reloadtime",  "mult", true },
     ["Add_BarrelLength"]      = { "autostat.barrellength","add",  false },
     ["Mult_DrawTime"]         = { "autostat.drawtime",    "mult", true },

@@ -912,6 +912,17 @@ function SWEP:CreateCustomizeHUD()
                         end
                     end
 
+                    if blocked and atttbl.HideIfBlocked then
+                    -- if blocked then
+                        attbtn:Remove()
+                        return
+                    end
+
+                    if !owned and atttbl.HideIfUnavailable then
+                        attbtn:Remove()
+                        return
+                    end
+
                     if spaa.AttName == "" and !span.AttSlot.Installed then
                         installed = true
 

@@ -4,6 +4,7 @@ local rem_ent = SafeRemoveEntity
 
 ArcCW.CSModels       = {} -- [entid] = { Weapon = NULL, WModels = {}, VModels = {} }
 ArcCW.CSModelPile    = {} -- { {Model = NULL, Weapon = NULL} }
+ArcCW.FlashlightPile = {} -- { {Weapon = NULL, ProjectedTexture = NULL}}
 ArcCW.ReferenceModel = NULL
 
 local function ArcCW_CollectGarbage()
@@ -48,3 +49,31 @@ hook.Add("PostCleanupMap", "ArcCW_CleanGarbage", function()
 end)
 
 timer.Create("ArcCW CSModel Garbage Collector", 5, 0, ArcCW_CollectGarbage)
+
+hook.Add("PostDrawEffects", "ArcCW_CleanFlashlights", function()
+    local newflashlightpile = {}
+
+    for _, k in pairs(ArcCW.FlashlightPile) do
+        if IsValid(k.Weapon) and k.Weapon == LocalPlayer():GetActiveWeapon() then
+            tbl_ins(newflashlightpile, k)
+
+            continue
+        end
+
+        if k.ProjectedTexture and k.ProjectedTexture:IsValid() then
+            k.ProjectedTexture:Remove()
+        end
+    end
+
+    ArcCW.FlashlightPile = newflashlightpile
+
+    local wpn = LocalPlayer():GetActiveWeapon()
+
+    if !wpn then return end
+    if !IsValid(wpn) then return end
+    if !wpn.ArcCW then return end
+
+    if GetViewEntity() == LocalPlayer() then return end
+
+    wpn:KillFlashlightsVM()
+end)

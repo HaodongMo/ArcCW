@@ -15,6 +15,8 @@ att.Ignore = true
 att.InvAtt = nil -- use this other attachment in inventory
 att.Free = false -- attachment is always available, and doesn't need to be picked up or unlocked
 att.Hidden = false
+att.HideIfBlocked = false -- if the attachment cannot be attached due to flag reasons, do not show up
+att.HideIfUnavailable = false -- if the attachment is not owned, do not show up even if "Hide Unowned Attachments" is off
 
 att.AddPrefix = ""
 att.AddSuffix = ""
@@ -167,6 +169,19 @@ att.Laser = false
 att.LaserStrength = 1
 att.LaserBone = "laser"
 att.LaserColor = Color(255, 0, 0)
+
+att.Flashlight = false
+att.FlashlightFOV = 50
+att.FlashlightHFOV = nil -- horizontal FOV
+att.FlashlightVFOV = nil -- vertical FOV
+-- basically, use HFOV + VFOV if you want it to be non square
+att.FlashlightFarZ = 512 -- how far it goes
+att.FlashlightNearZ = 4 -- how far away it starts
+att.FlashlightAttenuationType = ArcCW.FLASH_ATT_LINEAR -- LINEAR, CONSTANT, QUADRATIC are available
+att.FlashlightColor = Color(255, 255, 255)
+att.FlashlightTexture = ""
+att.FlashlightBrightness = 1
+att.FlashlightBone = "laser"
 
 att.Holosight = false
 att.HolosightReticle = nil
@@ -438,6 +453,7 @@ att.Override_CaseEffectAttachment = nil
 
 att.Mult_SpeedMult = 1
 att.Mult_SightedSpeedMult = 1
+att.Mult_ShootSpeedMult = 1
 
 att.Override_HoldtypeHolstered = nil
 att.Override_HoldtypeActive = nil
