@@ -106,7 +106,7 @@ end
 function SWEP:DrawHUD()
 
     -- info panel
-    if true then
+    if false then
         local mr = math.Round
 
         --local awesome
@@ -134,11 +134,11 @@ function SWEP:DrawHUD()
         surface.SetTextPos(ScrW()/2, 26*12)
         surface.DrawText(awesome[2])
 
-        
+
         surface.SetFont("ArcCW_8")
         surface.SetTextPos(ScrW()/2, 26*4)
         surface.DrawText("RELOADING")
-        
+
         surface.SetTextPos(ScrW()/2, 26*6)
         surface.DrawText("RELOADING TIMER")
 
