@@ -47,13 +47,13 @@ function SWEP:CreateFlashlightsVM()
             l:SetConstantAttenuation(0)
             l:SetQuadraticAttenuation(0)
 
-            if atten == ArcCW.FLASH_ATT_CONSTANT then
-                l:SetConstantAttenuation(100)
-            elseif atten == ArcCW.FLASH_ATT_QUADRATIC then
-                l:SetQuadraticAttenuation(100)
-            else
-                l:SetLinearAttenuation(100)
-            end
+                if atten == ArcCW.FLASH_ATT_CONSTANT then
+                    l:SetConstantAttenuation(100)
+                elseif atten == ArcCW.FLASH_ATT_QUADRATIC then
+                    l:SetQuadraticAttenuation(100)
+                else
+                    l:SetLinearAttenuation(100)
+                end
 
             l:SetColor(atttbl.FlashlightColor or Color(255, 255, 255))
             l:SetTexture(atttbl.FlashlightTexture)
@@ -190,24 +190,28 @@ function SWEP:DrawFlashlightsWM()
 
         local model = k.WElement.Model
 
-        if !model then continue end
+        local pos, ang, dir
 
-        local att = model:LookupAttachment(bone or "laser")
-
-        att = att == 0 and model:LookupAttachment("muzzle") or att
-
-        local pos, ang, dir, dir_2
-
-        if att == 0 then
-            pos = model:GetPos()
-            ang = owner:EyeAngles()
+        if !model then
+            pos = self:GetOwner():EyePos()
+            ang = self:GetOwner():EyeAngles()
             dir = ang:Forward()
-            dir_2 = ang:Up()
         else
-            local attdata  = model:GetAttachment(att)
-            pos, ang = attdata.Pos, attdata.Ang
-            dir = -ang:Right()
-            dir_2 = ang:Up()
+            local att = model:LookupAttachment(bone or "laser")
+
+            att = att == 0 and model:LookupAttachment("muzzle") or att
+
+            if att == 0 then
+                pos = model:GetPos()
+                ang = owner:EyeAngles()
+                dir = ang:Forward()
+                dir_2 = ang:Up()
+            else
+                local attdata  = model:GetAttachment(att)
+                pos, ang = attdata.Pos, attdata.Ang
+                dir = -ang:Right()
+                dir_2 = ang:Up()
+            end
         end
 
         local maxs = Vector(2, 2, 2)
@@ -272,7 +276,7 @@ function SWEP:DrawFlashlightsWM()
             dl.b = col.b
             dl.brightness = Lerp(delta, atttbl.FlashlightBrightness or 2, 0)
             -- print(z / maxz)
-            dl.Decay = 1000 / 0.1
+            dl.Decay = 1000 / 1
             dl.dietime = CurTime() + 0.1
             dl.size = xfov * 5
         end
@@ -285,24 +289,25 @@ function SWEP:DrawFlashlightsVM()
     end
 
     for i, k in pairs(self.Flashlights) do
-        local model = self.Attachments[k.att].VElement.Model
-
-        if !model then continue end
-
-        local att = model:LookupAttachment(k.bone or "laser")
-
-        att = att == 0 and model:LookupAttachment("muzzle") or att
+        local model = (self.Attachments[k.att].VElement or {}).Model
 
         local pos, ang
 
-        if att == 0 then
-            pos = model:GetPos()
-            ang = owner:EyeAngles()
-            dir = ang:Forward()
+        if !model then
+            pos = self:GetOwner():EyePos()
+            ang = self:GetOwner():EyeAngles()
         else
-            local attdata  = model:GetAttachment(att)
-            pos, ang = attdata.Pos, attdata.Ang
-            dir      = -ang:Right()
+            local att = model:LookupAttachment(k.bone or "laser")
+
+            att = att == 0 and model:LookupAttachment("muzzle") or att
+
+            if att == 0 then
+                pos = model:GetPos()
+                ang = owner:EyeAngles()
+            else
+                local attdata  = model:GetAttachment(att)
+                pos, ang = attdata.Pos, attdata.Ang
+            end
         end
 
         ang:RotateAroundAxis(ang:Up(), 90)
