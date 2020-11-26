@@ -44,11 +44,11 @@ function SWEP:Reload()
 
     if self:HasBottomlessClip() then return end
 
-	-- with the lite 3D HUD, you may want to check your ammo without reloading
-	local Lite3DHUD = self.Owner:GetInfo("arccw_hud_3dfun") == "1" and self.Owner:GetInfo("arccw_hud_3dfun_lite") == "1"
-	if self.Owner:KeyDown(IN_WALK) and Lite3DHUD then
-		return
-	end
+    -- with the lite 3D HUD, you may want to check your ammo without reloading
+    local Lite3DHUD = self.Owner:GetInfo("arccw_hud_3dfun") == "1" and self.Owner:GetInfo("arccw_hud_3dfun_lite") == "1"
+    if self.Owner:KeyDown(IN_WALK) and Lite3DHUD then
+        return
+    end
 
     -- Don't accidently reload when changing firemode
     if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
