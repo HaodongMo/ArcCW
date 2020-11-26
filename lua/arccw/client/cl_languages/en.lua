@@ -216,3 +216,6 @@ L["arccw.cvar.ammo_replace"]              = "Replace HL2 Ammo Entities"
 -- 2020-11-25
 L["arccw.cvar.hud_3dfun_lite"]                 = "Minimal 3D2D counter"
 L["arccw.cvar.hud_3dfun_lite.desc"]            = "Counter will only show up when pressing the Reload key."
+L["arccw.cvar.hud_3dfun_right"]                = "3D2D Offset Right"
+L["arccw.cvar.hud_3dfun_forward"]              = "3D2D Offset Forward"
+L["arccw.cvar.hud_3dfun_up"]                   = "3D2D Offset Up"
