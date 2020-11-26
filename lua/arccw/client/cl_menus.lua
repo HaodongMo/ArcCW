@@ -128,6 +128,10 @@ local HudPanel = {
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
     { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
     { type = "b", text = "#arccw.cvar.attinv_simpleproscons", var = "arccw_attinv_simpleproscons" },
+
+    { type = "f", text = "#arccw.cvar.hud_3dfun_right", var = "arccw_hud_3dfun_right", min = -5, max = 5 },
+    { type = "f", text = "#arccw.cvar.hud_3dfun_up", var = "arccw_hud_3dfun_up", min = -5, max = 5 },
+    { type = "f", text = "#arccw.cvar.hud_3dfun_forward", var = "arccw_hud_3dfun_forward", min = -5, max = 5 },
 }
 
 local CrosshairPanel = {
@@ -522,7 +526,6 @@ function ArcCW_Options_Mults(panel)
         CVars      = { "" },
         Options    = MultPresets
     })
-    
     ArcCW.GeneratePanelElements(panel, MultsPanel)
 end
 

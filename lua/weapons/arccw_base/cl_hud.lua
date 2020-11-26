@@ -267,7 +267,7 @@ function SWEP:DrawHUD()
             if alpha > 0 then
 
                 local EyeAng = EyeAngles()
-                angpos.Pos = angpos.Pos - EyeAng:Up() * 5 - EyeAng:Right() * 4
+                angpos.Pos = angpos.Pos - EyeAng:Up() * GetConVar("arccw_hud_3dfun_up"):GetFloat() - EyeAng:Right() * GetConVar("arccw_hud_3dfun_right"):GetFloat() - EyeAng:Forward() * GetConVar("arccw_hud_3dfun_forward"):GetFloat()
 
                 cam.Start3D()
                     local toscreen = angpos.Pos:ToScreen()
