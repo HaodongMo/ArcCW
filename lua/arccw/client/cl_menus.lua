@@ -110,7 +110,7 @@ local HudPanel = {
     { type = "b", text = "#arccw.cvar.hud_3dfun", var = "arccw_hud_3dfun" },
     { type = "c", text = "#arccw.cvar.hud_3dfun.desc" },
     { type = "b", text = "#arccw.cvar.hud_3dfun_lite", var = "arccw_hud_3dfun_lite" },
-	{ type = "c", text = "#arccw.cvar.hud_3dfun_lite.desc" },
+    { type = "c", text = "#arccw.cvar.hud_3dfun_lite.desc" },
     { type = "b", text = "#arccw.cvar.hud_minimal", var = "arccw_hud_minimal" },
     { type = "c", text = "#arccw.cvar.hud_minimal.desc" },
     { type = "b", text = "#arccw.cvar.hud_forceshow", var = "arccw_hud_forceshow" },
@@ -123,7 +123,7 @@ local HudPanel = {
     { type = "c", text = "#arccw.cvar.hudpos_size.desc" },
     { type = "t", text = "#arccw.cvar.font", var = "arccw_font"  },
     { type = "c", text = "#arccw.cvar.font_info" },
-    
+
     { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
     { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
@@ -522,7 +522,7 @@ function ArcCW_Options_Mults(panel)
         CVars      = { "" },
         Options    = MultPresets
     })
-	
+    
     ArcCW.GeneratePanelElements(panel, MultsPanel)
 end
 

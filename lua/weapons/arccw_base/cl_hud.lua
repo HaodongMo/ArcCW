@@ -117,38 +117,38 @@ function SWEP:DrawHUD()
         --end
 
         surface.SetFont("ArcCW_26")
-        surface.SetTextPos(ScrW()/2, 26*4)
+        surface.SetTextPos(ScrW() / 2, 26 * 4)
         surface.SetTextColor(255, 255, 255, 255)
         surface.DrawText(tostring(self:GetReloading()))
 
 
-        surface.SetTextPos(ScrW()/2, 26*6)
+        surface.SetTextPos(ScrW() / 2, 26 * 6)
         surface.DrawText(mr(self:GetReloadingREAL(),2))
 
-        surface.SetTextPos(ScrW()/2, 26*8)
+        surface.SetTextPos(ScrW() / 2, 26 * 8)
         surface.DrawText(mr(CurTime(),2))
 
-        surface.SetTextPos(ScrW()/2, 26*10)
+        surface.SetTextPos(ScrW() / 2, 26 * 10)
         surface.DrawText(awesome[1])
 
-        surface.SetTextPos(ScrW()/2, 26*12)
+        surface.SetTextPos(ScrW() / 2, 26 * 12)
         surface.DrawText(awesome[2])
 
 
         surface.SetFont("ArcCW_8")
-        surface.SetTextPos(ScrW()/2, 26*4)
+        surface.SetTextPos(ScrW() / 2, 26 * 4)
         surface.DrawText("RELOADING")
 
-        surface.SetTextPos(ScrW()/2, 26*6)
+        surface.SetTextPos(ScrW() / 2, 26 * 6)
         surface.DrawText("RELOADING TIMER")
 
-        surface.SetTextPos(ScrW()/2, 26*8)
+        surface.SetTextPos(ScrW() / 2, 26 * 8)
         surface.DrawText("CURRENT TIME")
 
-        surface.SetTextPos(ScrW()/2, 26*10)
+        surface.SetTextPos(ScrW() / 2, 26 * 10)
         surface.DrawText("RELOAD: FULL")
 
-        surface.SetTextPos(ScrW()/2, 26*12)
+        surface.SetTextPos(ScrW() / 2, 26 * 12)
         surface.DrawText("RELOAD: MAGIN")
     end
 
@@ -230,20 +230,20 @@ function SWEP:DrawHUD()
 
             -- Detect changes to stuff drawn in HUD
             local curInfo = {
-				ammo = data.ammo,
-				clip = data.clip,
-				plus = data.plus,
-				firemode = data.mode,
+                ammo = data.ammo,
+                clip = data.clip,
+                plus = data.plus,
+                firemode = data.mode,
                 heat = data.heat_level,
-				self:GetInUBGL(),
-				self:GetInBipod(),
-				self:CanBipod(),
-			}
-			if GetConVar("arccw_hud_3dfun_lite"):GetBool() then
-				curInfo.clip = nil
-				curInfo.plus = nil
-				curInfo.heat = nil
-			end
+                self:GetInUBGL(),
+                self:GetInBipod(),
+                self:CanBipod(),
+            }
+            if GetConVar("arccw_hud_3dfun_lite"):GetBool() then
+                curInfo.clip = nil
+                curInfo.plus = nil
+                curInfo.heat = nil
+            end
             for i, v in pairs(curInfo) do
                 if v != lastinfo[i] then
                     lastinfotime = visible and (curTime - 0.5) or curTime
@@ -266,8 +266,8 @@ function SWEP:DrawHUD()
 
             if alpha > 0 then
 
-				local EyeAng = EyeAngles()
-				angpos.Pos = angpos.Pos - EyeAng:Up() * 5 - EyeAng:Right() * 4
+                local EyeAng = EyeAngles()
+                angpos.Pos = angpos.Pos - EyeAng:Up() * 5 - EyeAng:Right() * 4
 
                 cam.Start3D()
                     local toscreen = angpos.Pos:ToScreen()
@@ -372,12 +372,12 @@ function SWEP:DrawHUD()
                     surface.SetMaterial( awesomematerial )
                     surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
                 end
-                
+
                 if self:CanBipod() or self:GetInBipod() then
                     local size = ScreenScaleMulti(32)
                     local awesomematerial = Material( "hud/bipod.png", "smooth" )
                     local whatsthecolor =   self:GetInBipod() and     Color(255, 255, 255, alpha) or
-                                            self:CanBipod() and   Color(255, 255, 255, alpha/2) or
+                                            self:CanBipod() and   Color(255, 255, 255, alpha / 2) or
                                                                     Color(255, 255, 255, 0)
                     local bar = {
                         w = size,
@@ -425,18 +425,18 @@ function SWEP:DrawHUD()
                 local c = data.bars[i]
 
                 if c == "-" then
-                        surface.SetDrawColor(col2)
+                    surface.SetDrawColor(col2)
                     surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
                 elseif c == "#" then
-                        --surface.SetDrawColor(col2)
+                    --surface.SetDrawColor(col2)
                     --surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
                 elseif c == "!" then
-                        surface.SetDrawColor(col3)
+                    surface.SetDrawColor(col3)
                     surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
-                        surface.SetDrawColor(col2)
+                    surface.SetDrawColor(col2)
                     surface.DrawOutlinedRect(bar.x, bar.y, bar.w, bar.h)
                 else
-                        surface.SetDrawColor(col2)
+                    surface.SetDrawColor(col2)
                     surface.DrawOutlinedRect(bar.x, bar.y, bar.w, bar.h)
                 end
 
@@ -464,38 +464,38 @@ function SWEP:DrawHUD()
             }
 
             MyDrawText(wmode)
-			
-			if self:GetBuff_Override("UBGL") then
-				local size = ScreenScaleMulti(32)
-				local awesomematerial = Material( "hud/ubgl.png", "smooth" )
-				local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, 255) or
+
+            if self:GetBuff_Override("UBGL") then
+                local size = ScreenScaleMulti(32)
+                local awesomematerial = Material( "hud/ubgl.png", "smooth" )
+                local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, 255) or
                                                        Color(255, 255, 255, 0)
-				local bar = {
-					w = size,
-					h = size,
-					x = apan_bg.x - size - ScreenScaleMulti(8),
-					y = apan_bg.y + apan_bg.h - size,
-				}
-				surface.SetDrawColor( whatsthecolor )
-				surface.SetMaterial( awesomematerial )
-				surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
-			end
-			
-			if self:CanBipod() or self:GetInBipod() then
-				local size = ScreenScaleMulti(32)
-				local awesomematerial = Material( "hud/bipod.png", "smooth" )
-				local whatsthecolor =   self:GetInBipod() and   Color(255, 255, 255, 255) or
+                local bar2 = {
+                    w = size,
+                    h = size,
+                    x = apan_bg.x - size - ScreenScaleMulti(8),
+                    y = apan_bg.y + apan_bg.h - size,
+                }
+                surface.SetDrawColor( whatsthecolor )
+                surface.SetMaterial( awesomematerial )
+                surface.DrawTexturedRect( bar2.x, bar2.y, bar2.w, bar2.h )
+            end
+
+            if self:CanBipod() or self:GetInBipod() then
+                local size = ScreenScaleMulti(32)
+                local awesomematerial = Material( "hud/bipod.png", "smooth" )
+                local whatsthecolor =   self:GetInBipod() and   Color(255, 255, 255, 255) or
                                         self:CanBipod() and     Color(255, 255, 255, 127) or
                                                                 Color(255, 255, 255, 0)
-				local bar = {
-					w = size,
-					h = size,
-					x = apan_bg.x - size - ScreenScaleMulti(8) - (self:GetInUBGL() and ScreenScaleMulti(32) or 0),
-					y = apan_bg.y + apan_bg.h - size,
-				}
-				surface.SetDrawColor( whatsthecolor )
-				surface.SetMaterial( awesomematerial )
-				surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
+                local bar2 = {
+                    w = size,
+                    h = size,
+                    x = apan_bg.x - size - ScreenScaleMulti(8) - (self:GetInUBGL() and ScreenScaleMulti(32) or 0),
+                    y = apan_bg.y + apan_bg.h - size,
+                }
+                surface.SetDrawColor( whatsthecolor )
+                surface.SetMaterial( awesomematerial )
+                surface.DrawTexturedRect( bar2.x, bar2.y, bar2.w, bar2.h )
 
                 local txt = string.upper(ArcCW:GetBind("+use"))
 
@@ -509,7 +509,7 @@ function SWEP:DrawHUD()
                 }
 
                 MyDrawText(bip)
-			end
+            end
 
             surface.SetFont("ArcCW_26")
             local wammo = {
@@ -609,7 +609,7 @@ function SWEP:DrawHUD()
             local bar = {
                 w = (ScreenScaleMulti(128) - ((segcount + 1) * bargap)) / segcount,
                 h = ScreenScaleMulti(3),
-                x = (ScrW()/2) - ScreenScaleMulti(62),
+                x = (ScrW() / 2) - ScreenScaleMulti(62),
                 y = ScrH() - ScreenScaleMulti(24)
             }
 
@@ -617,18 +617,18 @@ function SWEP:DrawHUD()
                 local c = data.bars[i]
 
                 if c == "-" then
-                        surface.SetDrawColor(col2)
+                    surface.SetDrawColor(col2)
                     surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
                 elseif c == "#" then
-                        --surface.SetDrawColor(col2)
+                    --surface.SetDrawColor(col2)
                     --surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
                 elseif c == "!" then
-                        surface.SetDrawColor(col3)
+                    surface.SetDrawColor(col3)
                     surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
-                        surface.SetDrawColor(col2)
+                    surface.SetDrawColor(col2)
                     surface.DrawOutlinedRect(bar.x, bar.y, bar.w, bar.h)
                 else
-                        surface.SetDrawColor(col2)
+                    surface.SetDrawColor(col2)
                     surface.DrawOutlinedRect(bar.x, bar.y, bar.w, bar.h)
                 end
 
@@ -637,7 +637,7 @@ function SWEP:DrawHUD()
 
             surface.SetFont("ArcCW_12")
             local wmode = {
-                x = (ScrW()/2) - (surface.GetTextSize(data.mode)/2),
+                x = (ScrW() / 2) - (surface.GetTextSize(data.mode) / 2),
                 y = bar.y - ScreenScaleMulti(16),
                 font = "ArcCW_12",
                 text = data.mode,
@@ -647,63 +647,63 @@ function SWEP:DrawHUD()
             MyDrawText(wmode)
 
             if self:GetBuff_Override("UBGL") then
-				local size = ScreenScaleMulti(32)
-				local awesomematerial = Material( "hud/ubgl.png", "smooth" )
-				local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, 255) or
+                local size = ScreenScaleMulti(32)
+                local awesomematerial = Material( "hud/ubgl.png", "smooth" )
+                local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, 255) or
                                                        Color(255, 255, 255, 0)
-				local bar = {
-					w = size,
-					h = size,
-					x = ScrW()/2 + ScreenScaleMulti(32),
-					y = ScrH() - ScreenScaleMulti(52),
-				}
-				surface.SetDrawColor( whatsthecolor )
-				surface.SetMaterial( awesomematerial )
-				surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
-			end
-			
-			if self:CanBipod() or self:GetInBipod() then
-				local size = ScreenScaleMulti(32)
-				local awesomematerial = Material( "hud/bipod.png", "smooth" )
-				local whatsthecolor =   self:GetInBipod() and   Color(255, 255, 255, 255) or
+                local bar2 = {
+                    w = size,
+                    h = size,
+                    x = ScrW() / 2 + ScreenScaleMulti(32),
+                    y = ScrH() - ScreenScaleMulti(52),
+                }
+                surface.SetDrawColor( whatsthecolor )
+                surface.SetMaterial( awesomematerial )
+                surface.DrawTexturedRect( bar2.x, bar2.y, bar2.w, bar2.h )
+            end
+
+            if self:CanBipod() or self:GetInBipod() then
+                local size = ScreenScaleMulti(32)
+                local awesomematerial = Material( "hud/bipod.png", "smooth" )
+                local whatsthecolor =   self:GetInBipod() and   Color(255, 255, 255, 255) or
                                         self:CanBipod() and     Color(255, 255, 255, 127) or
                                                                 Color(255, 255, 255, 0)
-				local bar = {
-					w = size,
-					h = size,
-					x = ScrW()/2 - ScreenScaleMulti(64),
-					y = ScrH() - ScreenScaleMulti(52),
-				}
-				surface.SetDrawColor( whatsthecolor )
-				surface.SetMaterial( awesomematerial )
-				surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
+                local bar2 = {
+                    w = size,
+                    h = size,
+                    x = ScrW() / 2 - ScreenScaleMulti(64),
+                    y = ScrH() - ScreenScaleMulti(52),
+                }
+                surface.SetDrawColor( whatsthecolor )
+                surface.SetMaterial( awesomematerial )
+                surface.DrawTexturedRect( bar2.x, bar2.y, bar2.w, bar2.h )
 
                 local txt = string.upper(ArcCW:GetBind("+use"))
 
                 local bip = {
                     shadow = true,
-					x = ScrW()/2 - ScreenScaleMulti(64),
-					y = ScrH() - ScreenScaleMulti(52),
+                    x = ScrW() / 2 - ScreenScaleMulti(64),
+                    y = ScrH() - ScreenScaleMulti(52),
                     font = "ArcCW_12",
                     text = txt,
                     col = whatsthecolor,
                 }
 
                 MyDrawText(bip)
-			end
+            end
 
-            if data.heat_enabled then                
+            if data.heat_enabled then
                 surface.SetDrawColor(col2)
                 local perc = data.heat_level / data.heat_maxlevel
 
-                surface.DrawOutlinedRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124), ScreenScaleMulti(3))
-                surface.DrawRect(ScrW()/2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124) * perc, ScreenScaleMulti(3))
+                surface.DrawOutlinedRect(ScrW() / 2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124), ScreenScaleMulti(3))
+                surface.DrawRect(ScrW() / 2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124) * perc, ScreenScaleMulti(3))
 
                 surface.SetFont("ArcCW_8")
                 local bip = {
                     shadow = false,
-					x = (ScrW()/2) - (surface.GetTextSize(data.heat_name)/2),
-					y = bar.y + ScreenScaleMulti(8),
+                    x = (ScrW() / 2) - (surface.GetTextSize(data.heat_name) / 2),
+                    y = bar.y + ScreenScaleMulti(8),
                     font = "ArcCW_8",
                     text = data.heat_name,
                     col = col2,
@@ -775,17 +775,17 @@ end
 
 function SWEP:CustomAmmoDisplay()
     local data = self:GetHUDData()
-	self.AmmoDisplay = self.AmmoDisplay or {} 
+    self.AmmoDisplay = self.AmmoDisplay or {}
  
-	self.AmmoDisplay.Draw = true -- draw the display?
+    self.AmmoDisplay.Draw = true -- draw the display?
  
-	if self.Primary.ClipSize > 0 or self:GetInUBGL() then
-		self.AmmoDisplay.PrimaryClip = data.clip -- amount in clip
-		self.AmmoDisplay.PrimaryAmmo = tonumber(data.ammo) -- amount in reserve
-	end
-	--[[if self.Secondary.ClipSize > 0 then
-		self.AmmoDisplay.SecondaryAmmo = self:Clip2() + self:Ammo2() -- amount of secondary ammo
-	end]]
+    if self.Primary.ClipSize > 0 or self:GetInUBGL() then
+        self.AmmoDisplay.PrimaryClip = data.clip -- amount in clip
+        self.AmmoDisplay.PrimaryAmmo = tonumber(data.ammo) -- amount in reserve
+    end
+    --[[if self.Secondary.ClipSize > 0 then
+        self.AmmoDisplay.SecondaryAmmo = self:Clip2() + self:Ammo2() -- amount of secondary ammo
+    end]]
  
-	return self.AmmoDisplay -- return the table
+    return self.AmmoDisplay -- return the table
 end
