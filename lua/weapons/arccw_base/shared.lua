@@ -539,6 +539,7 @@ SWEP.Animations = {
     --             v = 75, -- volume
     --             t = 1, -- time at which to play relative to Animations.Time
     --             c = CHAN_ITEM, -- channel to play the sound
+	--             w = false, -- world, use sound.Play instead of EmitSound
 
     --             -- Can also play an effect at the same time
     --             e = "", -- effect name

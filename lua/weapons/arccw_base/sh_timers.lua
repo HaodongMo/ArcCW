@@ -115,7 +115,7 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
             end
 
             if !game.SinglePlayer() and v.s then
-                self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO)
+                self:MyEmitSound(v.s, vol, pitch, 1, v.c or CHAN_AUTO, v.w or false)
             end
 
             if v.bg then
