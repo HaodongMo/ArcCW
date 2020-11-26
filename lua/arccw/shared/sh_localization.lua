@@ -1,3 +1,7 @@
+if SERVER and game.SinglePlayer() then
+    util.AddNetworkString("arccw_sp_reloadlangs")
+end
+
 ArcCW.LangTable = {}
 -- Converts raw string to a lang phrase. not case sensitive.
 ArcCW.StringToLang = {
@@ -189,4 +193,14 @@ ArcCW.LoadLanguages()
 
 concommand.Add("arccw_reloadlangs", function(ply)
     ArcCW.LoadLanguages()
+    if SERVER and game.SinglePlayer() then
+        net.Start("arccw_sp_reloadlangs")
+        net.Broadcast()
+    end
 end, nil, "Reloads all language files.")
+
+if game.SinglePlayer() then
+    net.Receive("arccw_sp_reloadlangs", function()
+        ArcCW.LoadLanguages()
+    end)
+end
