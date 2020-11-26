@@ -183,7 +183,7 @@ function ArcCW.LoadLanguages()
             net.WriteBool(true)
             net.WriteTable(tbl)
         net.Broadcast()
-    elseif CLIENT and !game.SinglePlayer() then
+    elseif CLIENT then
         ArcCW.LoadClientLanguage()
     end
 
