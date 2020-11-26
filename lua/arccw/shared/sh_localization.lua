@@ -128,7 +128,7 @@ end
 if CLIENT then
     function ArcCW.LoadClientLanguage(files)
         local lang = ArcCW.GetLanguage()
-        files = files or file.Find("arccw/client/cl_languages/*", "lcl")
+        files = files or file.Find("arccw/client/cl_languages/*", "LUA")
         for _, v in pairs(files) do
             local exp = string.Explode("_", string.lower(string.Replace(v, ".lua", "")))
             if exp[#exp] ~= lang then continue end
@@ -140,6 +140,10 @@ if CLIENT then
             print("Loaded ArcCW cl_language file " .. v .. " with " .. table.Count(L) .. " strings.")
             L = nil
         end
+    end
+elseif SERVER then
+    for _, v in pairs(file.Find("arccw/client/cl_languages/*", "LUA")) do
+        AddCSLuaFile("arccw/client/cl_languages/" .. v)
     end
 end
 
@@ -175,15 +179,7 @@ function ArcCW.LoadLanguages()
         L = nil
     end
 
-    if SERVER and game.SinglePlayer() then
-        -- WORKAROUND: file.Find does not behave normally on these files for some reason
-        -- ... so we have to send them over in the netmessage
-        local tbl = file.Find("arccw/client/cl_languages/*", "LUA")
-        net.Start("arccw_sp_reloadlangs")
-            net.WriteBool(true)
-            net.WriteTable(tbl)
-        net.Broadcast()
-    elseif CLIENT then
+    if CLIENT then
         ArcCW.LoadClientLanguage()
     end
 
@@ -194,15 +190,3 @@ ArcCW.LoadLanguages()
 concommand.Add("arccw_reloadlangs", function(ply)
     ArcCW.LoadLanguages()
 end, nil, "Reloads all language files.")
-
-if game.SinglePlayer() then
-    net.Receive("arccw_sp_reloadlangs", function()
-        local bool = net.ReadBool()
-        if !bool then
-            ArcCW.LoadLanguages()
-        end
-        ArcCW.LoadClientLanguage(bool and net.ReadTable() or nil)
-        -- Titles won't change, but reloading is kinda slow and annoying
-        -- RunConsoleCommand("spawnmenu_reload")
-    end)
-end
