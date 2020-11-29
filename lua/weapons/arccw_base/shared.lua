@@ -298,6 +298,9 @@ SWEP.BashAng = Angle(-16.524, 70, -11.046)
 SWEP.ActivePos = Vector(0, 0, 0)
 SWEP.ActiveAng = Angle(0, 0, 0)
 
+SWEP.ReloadPos = nil
+SWEP.ReloadAng = nil
+
 SWEP.CrouchPos = nil
 SWEP.CrouchAng = nil
 

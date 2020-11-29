@@ -705,7 +705,7 @@ function SWEP:DoRecoil()
 
         rmul = rmul * b
         recs = recs * b
-        recv = recv / b
+        recv = recv * b
     end
 
     local recoiltbl = self:GetBuff_Override("Override_ShotRecoilTable") or self.ShotRecoilTable
@@ -728,7 +728,7 @@ function SWEP:DoRecoil()
 
         self.RecoilAmount     = self.RecoilAmount + (self.Recoil * rmul)
         self.RecoilAmountSide = self.RecoilAmountSide + (self.RecoilSide * irec * recs * rmul)
-        self.RecoilPunchBack  = math.Clamp(self.Recoil * recv * math.Rand(2, 3), 0, 2)
+        self.RecoilPunchBack  = math.Clamp(self.Recoil * recv * math.Rand(2, 3), 0, 2 * recv)
 
         if self.MaxRecoilBlowback > 0 then
             self.RecoilPunchBack = math.Clamp(self.RecoilPunchBack, 0, self.MaxRecoilBlowback)

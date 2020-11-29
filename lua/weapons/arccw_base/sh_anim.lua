@@ -86,7 +86,13 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     if isnumber(anim.ShellEjectAt) then
         self:SetTimer(anim.ShellEjectAt * mult, function()
-            self:DoShellEject()
+			local num = 1
+			if self.RevolverReload then
+				num = self.Primary.ClipSize - self:Clip1()
+			end
+			for i=1,num do
+				self:DoShellEject()
+			end
         end)
     end
 

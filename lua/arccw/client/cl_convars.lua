@@ -58,14 +58,15 @@ ArcCW.ClientConVars = {
 
     ["arccw_2d3d"]                    = { def =  1 },
 
-    ["arccw_hud_3dfun"]               = { def =  0, desc = "Holographic HUD that displays attached to the weapon.", usri = true },
-    ["arccw_hud_3dfun_lite"]          = { def =  0, desc = "Holographic HUD only shows while pressing RELOAD.", usri = true },
+    ["arccw_hud_3dfun"]               = { def =  0, usri = true },
+    ["arccw_hud_3dfun_lite"]          = { def =  0, usri = true },
+    ["arccw_hud_3dfun_ammotype"]      = { def =  0 },
     ["arccw_hud_forceshow"]           = { def =  0 },
     ["arccw_hud_minimal"]             = { def =  1, desc = "Backup HUD if we cannot draw the ammo HUD." },
     ["arccw_hud_embracetradition"]    = { def =  0, desc = "Use the classic customization HUD." },
     ["arccw_hud_deadzone_x"]          = { def =  0 },
     ["arccw_hud_deadzone_y"]          = { def =  0 },
-    ["arccw_hud_3dfun_right"]         = { def =  1 },
+    ["arccw_hud_3dfun_right"]         = { def =  2 },
     ["arccw_hud_3dfun_up"]            = { def =  1 },
     ["arccw_hud_3dfun_forward"]       = { def =  0 },
     ["arccw_hud_size"]                = { def =  1 },

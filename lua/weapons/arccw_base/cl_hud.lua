@@ -62,6 +62,7 @@ function SWEP:GetHUDData()
         ammo = math.Round(vreserve or self:Ammo1()),
         bars = self:GetFiremodeBars(),
         mode = self:GetFiremodeName(),
+		ammotype = self.Primary.Ammo,
         heat_enabled        = self:HeatEnabled(),
         heat_name           = "HEAT",
         heat_level          = self:GetHeat(),
@@ -233,6 +234,7 @@ function SWEP:DrawHUD()
                 ammo = data.ammo,
                 clip = data.clip,
                 plus = data.plus,
+				ammotype = data.ammotype,
                 firemode = data.mode,
                 heat = data.heat_level,
                 self:GetInUBGL(),
@@ -276,6 +278,20 @@ function SWEP:DrawHUD()
                 apan_bg.x = toscreen.x - apan_bg.w - ScreenScaleMulti(8)
                 apan_bg.y = toscreen.y - apan_bg.h * 0.5
 
+				if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() then
+					local wammotype = {
+						x = apan_bg.x + apan_bg.w - airgap,
+						y = apan_bg.y - ScreenScaleMulti(8),
+						text = tostring(data.ammotype),
+						font = "ArcCW_8",
+						col = col2,
+						align = 1,
+						shadow = true,
+						alpha = alpha,
+					}
+					MyDrawText(wammotype)
+				end
+
                 local wammo = {
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = apan_bg.y,
@@ -309,7 +325,6 @@ function SWEP:DrawHUD()
 
                     MyDrawText(wplus)
                 end
-
 
                 local wreserve = {
                     x = wammo.x - wammo.w - ScreenScaleMulti(4),

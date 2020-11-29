@@ -57,6 +57,11 @@ function SWEP:GetViewModelPosition(pos, ang)
     target.down = 1
     target.sway = 2
     target.bob  = 2
+	
+	if self:GetReloading() then
+		if self.ReloadPos then target.pos = self.ReloadPos end
+		if self.ReloadAng then target.ang = self.ReloadAng end
+	end
 
     local vm_right   = GetConVar("arccw_vm_right"):GetFloat()
     local vm_up      = GetConVar("arccw_vm_up"):GetFloat()
@@ -327,7 +332,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos = target.pos + coolswaypos
     end
 
-    speed = 1 / self:GetSightTime() * speed * FT
+    speed = 1 / self:GetSightTime() * speed * FT * .5
 
     actual.pos   = LerpVector(speed, actual.pos, target.pos)
     actual.ang   = LerpAngle(speed, actual.ang, target.ang)
