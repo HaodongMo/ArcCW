@@ -282,7 +282,7 @@ function SWEP:DrawHUD()
                     local wammotype = {
                         x = apan_bg.x + apan_bg.w - airgap,
                         y = apan_bg.y - ScreenScaleMulti(8),
-                        text = language.GetPhrase(data.ammotype),
+                        text = language.GetPhrase(data.ammotype.."_ammo"),
                         font = "ArcCW_8",
                         col = col2,
                         align = 1,
