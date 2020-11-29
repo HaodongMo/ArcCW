@@ -307,6 +307,7 @@ SWEP.CrouchAng = nil
 SWEP.HolsterPos = Vector(0.532, -6, 0)
 SWEP.HolsterAng = Angle(-4.633, 36.881, 0)
 
+-- When using custom sprint animations, set this to the same as ActivePos and ActiveAng
 SWEP.SprintPos = nil
 SWEP.SprintAng = nil
 
@@ -438,6 +439,7 @@ SWEP.Attachments = {}
 --     CorrectiveAng = Vector(1, 1, 1), -- okay, I know I said sights were pain-free.
 --     CorrectivePos = Vector(0, 0, 0), -- that won't always be the case. Use these to fix it. Issues mainly crop up in case of sights parented to bones that are not a root bone.
 --     InstalledEles = {"toprail"}, -- activate these AttachmentElements if something is installed
+--     DefaultEles = {""} -- activeate these AttachmentElements *unless* something is installed
 --     Hidden = false, -- attachment cannot be seen in customize menu
 --     Integral = false, -- attachment is assumed never to change
 --     RandomChance = 1, -- multiplies chance this slot will get a random attachment
