@@ -1,9 +1,9 @@
 AddCSLuaFile()
 
-ENT.Base                     = "arccw_ammo"
+ENT.Base                      = "arccw_ammo"
 
 ENT.PrintName                 = "Rifle Grenade"
-ENT.Category                 = "ArcCW - Ammo"
+ENT.Category                  = "ArcCW - Ammo"
 
 ENT.Spawnable                 = true
 ENT.Model                     = "models/Items/AR2_Grenade.mdl"

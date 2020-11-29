@@ -1,14 +1,14 @@
-ENT.Type                 = "anim"
-ENT.Base                 = "base_entity"
+ENT.Type                  = "anim"
+ENT.Base                  = "base_entity"
 ENT.PrintName             = "Base Dropped Attachment"
-ENT.Author                 = ""
-ENT.Information         = ""
+ENT.Author                = ""
+ENT.Information           = ""
 
 ENT.Spawnable             = false
 
 ENT.RenderGroup = RENDERGROUP_TRANSLUCENT
 
-ENT.Category            = "ArcCW - Attachments"
+ENT.Category              = "ArcCW - Attachments"
 
 AddCSLuaFile()
 

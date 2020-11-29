@@ -1,8 +1,8 @@
-ENT.Type                 = "anim"
-ENT.Base                 = "base_entity"
+ENT.Type                  = "anim"
+ENT.Base                  = "base_entity"
 ENT.PrintName             = "HE Round"
-ENT.Author                 = ""
-ENT.Information         = ""
+ENT.Author                = ""
+ENT.Information           = ""
 
 ENT.Spawnable             = false
 
