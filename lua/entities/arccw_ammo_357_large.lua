@@ -1,13 +1,13 @@
 AddCSLuaFile()
 
-ENT.Base 					= "arccw_ammo"
+ENT.Base                     = "arccw_ammo"
 ENT.RenderGroup             = RENDERGROUP_TRANSLUCENT
 
-ENT.PrintName 				= "Magnum Ammo (Large)"
-ENT.Category 				= "ArcCW - Ammo"
+ENT.PrintName                 = "Magnum Ammo (Large)"
+ENT.Category                 = "ArcCW - Ammo"
 
-ENT.Spawnable 				= true
-ENT.Model 					= "models/items/arccw/magnum_ammo.mdl"
+ENT.Spawnable                 = true
+ENT.Model                     = "models/items/arccw/magnum_ammo.mdl"
 
 ENT.AmmoType = "357"
 ENT.AmmoCount = 60

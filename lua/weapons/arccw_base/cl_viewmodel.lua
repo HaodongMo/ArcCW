@@ -29,8 +29,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     local owner = self:GetOwner()
 
     if !IsValid(owner) or !owner:Alive() then return end
-	
-	local proceduralRecoilMult = 1
+    
+    local proceduralRecoilMult = 1
 
     local SP = game.SinglePlayer()
     -- local FT = m_min(FrameTime(), RealFrameTime())
@@ -57,11 +57,11 @@ function SWEP:GetViewModelPosition(pos, ang)
     target.down = 1
     target.sway = 2
     target.bob  = 2
-	
-	if self:GetReloading() then
-		if self.ReloadPos then target.pos = self.ReloadPos end
-		if self.ReloadAng then target.ang = self.ReloadAng end
-	end
+    
+    if self:GetReloading() then
+        if self.ReloadPos then target.pos = self.ReloadPos end
+        if self.ReloadAng then target.ang = self.ReloadAng end
+    end
 
     local vm_right   = GetConVar("arccw_vm_right"):GetFloat()
     local vm_up      = GetConVar("arccw_vm_up"):GetFloat()
@@ -134,8 +134,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         target.ang.p = m_clamp(target.ang.p, -80, 80)
     elseif sighted then
-		proceduralRecoilMult = proceduralRecoilMult * .7
-	
+        proceduralRecoilMult = proceduralRecoilMult * .7
+    
         local irons = self:GetActiveSights()
 
         target.pos   = irons.Pos
@@ -280,7 +280,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     swayymult = GetConVar("arccw_vm_swayymult"):GetFloat()
     swayzmult = GetConVar("arccw_vm_swayzmult"):GetFloat()
     swaywiggle = GetConVar("arccw_vm_swaywigglemult"):GetFloat()
-    swayspeed 	= GetConVar("arccw_vm_swayspeedmult"):GetFloat()
+    swayspeed     = GetConVar("arccw_vm_swayspeedmult"):GetFloat()
     swayrotate = GetConVar("arccw_vm_swayrotatemult"):GetFloat()
 
     if coolsway then
