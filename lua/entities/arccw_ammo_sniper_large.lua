@@ -1,12 +1,12 @@
 AddCSLuaFile()
 
-ENT.Base 					= "arccw_ammo"
+ENT.Base                      = "arccw_ammo"
 
-ENT.PrintName 				= "Sniper Ammo (Large)"
-ENT.Category 				= "ArcCW - Ammo"
+ENT.PrintName                 = "Sniper Ammo (Large)"
+ENT.Category                  = "ArcCW - Ammo"
 
-ENT.Spawnable 				= true
-ENT.Model 					= "models/items/arccw/sniper_ammo.mdl"
+ENT.Spawnable                 = true
+ENT.Model                     = "models/items/arccw/sniper_ammo.mdl"
 ENT.Scale = 1.5
 
 ENT.AmmoType = "SniperPenetratedRound"

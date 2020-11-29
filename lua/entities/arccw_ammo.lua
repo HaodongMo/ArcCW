@@ -1,15 +1,15 @@
 AddCSLuaFile()
 
-ENT.Type 					= "anim"
-ENT.Base 					= "base_entity"
-ENT.RenderGroup             = RENDERGROUP_TRANSLUCENT
+ENT.Type                     = "anim"
+ENT.Base                     = "base_entity"
+ENT.RenderGroup              = RENDERGROUP_TRANSLUCENT
 
-ENT.PrintName 				= "Base Ammo"
-ENT.Category 				= "ArcCW - Ammo"
+ENT.PrintName                = "Base Ammo"
+ENT.Category                 = "ArcCW - Ammo"
 ENT.ArcCW_Ammo = true
 
-ENT.Spawnable 				= false
-ENT.Model 					= "models/items/sniper_round_box.mdl"
+ENT.Spawnable                = false
+ENT.Model                    = "models/items/sniper_round_box.mdl"
 ENT.MaxHealth = 40
 ENT.Scale = 1
 

@@ -1,12 +1,12 @@
 AddCSLuaFile()
 
-ENT.Base 					= "arccw_ammo"
+ENT.Base                      = "arccw_ammo"
 
-ENT.PrintName 				= "Shotgun Ammo (Large)"
-ENT.Category 				= "ArcCW - Ammo"
+ENT.PrintName                 = "Shotgun Ammo (Large)"
+ENT.Category                  = "ArcCW - Ammo"
 
-ENT.Spawnable 				= true
-ENT.Model 					= "models/items/arccw/shotgun_ammo.mdl"
+ENT.Spawnable                 = true
+ENT.Model                     = "models/items/arccw/shotgun_ammo.mdl"
 ENT.Scale = 1.5
 
 ENT.AmmoType = "buckshot"

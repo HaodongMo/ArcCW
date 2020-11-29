@@ -28,7 +28,7 @@ hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
     local attTbl = ArcCW.TTT_AttInfo[raw.eidx]
     if attTbl and table.Count(attTbl) > 0 and (mode == 2 or (mode == 1 and raw.detective_search)) then
         local finalTbl = {
-            img	= "arccw/ttticons/arccw_dropattinfo.png",
+            img    = "arccw/ttticons/arccw_dropattinfo.png",
             p = 10.5, -- Right after the murder weapon
             text = ArcCW.GetTranslation(mode == 1 and "ttt.bodyatt.founddet" or "ttt.bodyatt.found")
         }

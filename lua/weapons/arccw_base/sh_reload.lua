@@ -137,6 +137,7 @@ function SWEP:Reload()
 
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
 
+        local reloadtime
         if self.Animations[anim].MinProgress then
             reloadtime = self.Animations[anim].MinProgress * mult
         else

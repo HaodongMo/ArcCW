@@ -219,3 +219,5 @@ L["arccw.cvar.hud_3dfun_lite.desc"]            = "Counter will only show up when
 L["arccw.cvar.hud_3dfun_right"]                = "3D2D Offset Right"
 L["arccw.cvar.hud_3dfun_forward"]              = "3D2D Offset Forward"
 L["arccw.cvar.hud_3dfun_up"]                   = "3D2D Offset Up"
+L["arccw.cvar.hud_3dfun_ammotype"]             = "3D2D Ammo Type"
+L["arccw.cvar.hud_3dfun_ammotype.desc"]        = "3D2D counter will also show weapon's current ammo type."
