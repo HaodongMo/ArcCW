@@ -461,7 +461,12 @@ function SWEP:GetActiveElements(recache)
     local eles = {}
 
     for _, i in pairs(self.Attachments) do
-        if !i.Installed then continue end
+        if !i.Installed then
+            if i.DefaultEles then
+                table.Add(eles, i.DefaultEles)
+            end
+            continue
+        end
 
         if i.InstalledEles then
             table.Add(eles, i.InstalledEles)
