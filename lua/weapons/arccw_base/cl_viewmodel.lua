@@ -29,7 +29,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local owner = self:GetOwner()
 
     if !IsValid(owner) or !owner:Alive() then return end
-    
+
     local proceduralRecoilMult = 1
 
     local SP = game.SinglePlayer()
@@ -57,7 +57,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     target.down = 1
     target.sway = 2
     target.bob  = 2
-    
+
     if self:GetReloading() then
         if self.ReloadPos then target.pos = self.ReloadPos end
         if self.ReloadAng then target.ang = self.ReloadAng end
@@ -135,7 +135,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.ang.p = m_clamp(target.ang.p, -80, 80)
     elseif sighted then
         proceduralRecoilMult = proceduralRecoilMult * .7
-    
+
         local irons = self:GetActiveSights()
 
         target.pos   = irons.Pos
@@ -332,7 +332,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos = target.pos + coolswaypos
     end
 
-    speed = 1 / self:GetSightTime() * speed * FT * .5
+    -- For some reason, in multiplayer the sighting speed is twice as fast
+    speed = 1 / self:GetSightTime() * speed * FT * (SP and 1 or 0.5)
 
     actual.pos   = LerpVector(speed, actual.pos, target.pos)
     actual.ang   = LerpAngle(speed, actual.ang, target.ang)
