@@ -366,12 +366,12 @@ function SWEP:SetupModel(wm)
             end
 
             if wm then
-                if ((ele.AttPosMods or {})[i] or {}).wmang then
-                    repang = ele.AttPosMods.wmang
+                if ((ele.AttPosMods or {})[i] or {}).wang then
+                    repang = ele.AttPosMods.wang
                 end
             else
-                if ((ele.AttPosMods or {})[i] or {}).vmang then
-                    repang = ele.AttPosMods.vmang
+                if ((ele.AttPosMods or {})[i] or {}).vang then
+                    repang = ele.AttPosMods.vang
                 end
             end
         end
