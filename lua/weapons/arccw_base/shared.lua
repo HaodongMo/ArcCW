@@ -304,6 +304,7 @@ SWEP.CrouchAng = nil
 SWEP.HolsterPos = Vector(0.532, -6, 0)
 SWEP.HolsterAng = Angle(-4.633, 36.881, 0)
 
+-- When using custom sprint animations, set this to the same as ActivePos and ActiveAng
 SWEP.SprintPos = nil
 SWEP.SprintAng = nil
 
