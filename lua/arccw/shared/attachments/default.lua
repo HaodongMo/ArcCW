@@ -336,9 +336,9 @@ att.Hook_GetDistantShootSound = function(wep, sound) end
 -- number volume
 -- number pitch
 att.Hook_AddShootSound = function(wep, data) end
---	att.Hook_AddShootSound = function(wep, data)
+--    att.Hook_AddShootSound = function(wep, data)
 --      wep:MyEmitSound("weapons/pistol/pistol_fire2.wav", data.volume, data.pitch, 1, CHAN_WEAPON - 1)
---	end
+--    end
 
 -- allows you to modify the weapon's rate of fire
 att.Hook_ModifyRPM = function(wep, delay) end

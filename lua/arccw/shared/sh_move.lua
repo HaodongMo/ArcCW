@@ -79,3 +79,15 @@ function ArcCW.CreateMove(cmd)
 end
 
 hook.Add("CreateMove", "ArcCW_CreateMove", ArcCW.CreateMove)
+
+function ArcCW.StartCommand(ply, ucmd)
+    -- Sprint will not interrupt a runaway burst
+    local wep = ply:GetActiveWeapon()
+    if ply:Alive() and IsValid(wep) and wep.ArcCW and wep:GetBurstCount() > 0
+            and ucmd:KeyDown(IN_SPEED) and wep:GetCurrentFiremode().RunawayBurst
+            and !(wep:GetBuff_Override("Override_ShootWhileSprint") or wep.ShootWhileSprint) then
+        ucmd:SetButtons(ucmd:GetButtons() - IN_SPEED)
+    end
+end
+
+hook.Add("StartCommand", "ArcCW_StartCommand", ArcCW.StartCommand)

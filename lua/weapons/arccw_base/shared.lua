@@ -20,9 +20,9 @@ SWEP.WorldModel = ""
 
 --[[
 SWEP.WorldModelOffset = {
-	pos		=	Vector(0, 0, 0),
-	ang		=	Angle(0, 0, 0),
-	bone	=	"ValveBiped.Bip01_R_Hand",
+    pos        =    Vector(0, 0, 0),
+    ang        =    Angle(0, 0, 0),
+    bone    =    "ValveBiped.Bip01_R_Hand",
     scale   =   1
 }]]
 
@@ -298,6 +298,9 @@ SWEP.BashAng = Angle(-16.524, 70, -11.046)
 SWEP.ActivePos = Vector(0, 0, 0)
 SWEP.ActiveAng = Angle(0, 0, 0)
 
+SWEP.ReloadPos = nil
+SWEP.ReloadAng = nil
+
 SWEP.CrouchPos = nil
 SWEP.CrouchAng = nil
 
@@ -480,10 +483,10 @@ SWEP.Attachments = {}
 -- you can append suffixes for different states
 -- append list:
 
--- _iron, _sights, or _sight	for sighted variation
--- _sprint						for sprinting variation
--- _bipod						for bipod variation
--- _empty						for empty variation
+-- _iron, _sights, or _sight    for sighted variation
+-- _sprint                        for sprinting variation
+-- _bipod                        for bipod variation
+-- _empty                        for empty variation
 
 -- this does not apply to reload animations.
 

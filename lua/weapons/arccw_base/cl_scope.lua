@@ -84,37 +84,37 @@ function SWEP:DoOurViewPunch()
 
     if lensqr(vpa) > 0.001 or lensqr(vpv) > 0.001 then
         -- {
-        -- 	player->m_Local.m_vecPunchAngle += player->m_Local.m_vecPunchAngleVel * gpGlobals->frametime;
-        -- 	float damping = 1 - (PUNCH_DAMPING * gpGlobals->frametime);
+        --     player->m_Local.m_vecPunchAngle += player->m_Local.m_vecPunchAngleVel * gpGlobals->frametime;
+        --     float damping = 1 - (PUNCH_DAMPING * gpGlobals->frametime);
 
         vpa = vpa + (vpv * RealFrameTime())
         local damping = 1 - (PUNCH_DAMPING * RealFrameTime())
 
-        -- 	if ( damping < 0 )
-        -- 	{
-        -- 		damping = 0;
-        -- 	}
+        --     if ( damping < 0 )
+        --     {
+        --         damping = 0;
+        --     }
 
         if damping < 0 then damping = 0 end
 
-        -- 	player->m_Local.m_vecPunchAngleVel *= damping;
+        --     player->m_Local.m_vecPunchAngleVel *= damping;
 
         vpv = vpv * damping
 
-        -- 	// torsional spring
-        -- 	// UNDONE: Per-axis spring constant?
-        -- 	float springForceMagnitude = PUNCH_SPRING_CONSTANT * gpGlobals->frametime;
+        --     // torsional spring
+        --     // UNDONE: Per-axis spring constant?
+        --     float springForceMagnitude = PUNCH_SPRING_CONSTANT * gpGlobals->frametime;
         local springforcemagnitude = PUNCH_SPRING_CONSTANT * RealFrameTime()
-        -- 	springForceMagnitude = clamp(springForceMagnitude, 0.f, 2.f );
+        --     springForceMagnitude = clamp(springForceMagnitude, 0.f, 2.f );
         springforcemagnitude = math.Clamp(springforcemagnitude, 0, 2)
-        -- 	player->m_Local.m_vecPunchAngleVel -= player->m_Local.m_vecPunchAngle * springForceMagnitude;
+        --     player->m_Local.m_vecPunchAngleVel -= player->m_Local.m_vecPunchAngle * springForceMagnitude;
         vpv = vpv - (vpa * springforcemagnitude)
 
-        -- 	// don't wrap around
-        -- 	player->m_Local.m_vecPunchAngle.Init( 
-        -- 		clamp(player->m_Local.m_vecPunchAngle->x, -89.f, 89.f ), 
-        -- 		clamp(player->m_Local.m_vecPunchAngle->y, -179.f, 179.f ),
-        -- 		clamp(player->m_Local.m_vecPunchAngle->z, -89.f, 89.f ) );
+        --     // don't wrap around
+        --     player->m_Local.m_vecPunchAngle.Init( 
+        --         clamp(player->m_Local.m_vecPunchAngle->x, -89.f, 89.f ), 
+        --         clamp(player->m_Local.m_vecPunchAngle->y, -179.f, 179.f ),
+        --         clamp(player->m_Local.m_vecPunchAngle->z, -89.f, 89.f ) );
         -- }
 
         vpa[1] = math.Clamp(vpa[1], -89.9, 89.9)
