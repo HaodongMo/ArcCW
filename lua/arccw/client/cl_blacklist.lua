@@ -10,6 +10,8 @@ local blacklistWindow = nil
 local blacklistTbl    = {}
 local filter          = ""
 local onlyblacklisted = false
+local internalName    = false
+local dragMode = nil
 
 local color_arccwbred = Color(150, 50, 50, 255)
 local color_arccwlred = Color(125, 25, 25, 150)
@@ -69,6 +71,7 @@ local function CreateAttButton(parent, attName, attTbl)
         end
 
         local txt = attTbl.PrintName
+        if internalName then txt = attName end
         srf.SetTextColor(Bfg_col)
         srf.SetTextPos(ScreenScaleMulti(20), ScreenScaleMulti(2))
         srf.SetFont("ArcCW_12")
@@ -76,15 +79,28 @@ local function CreateAttButton(parent, attName, attTbl)
 
         local listed   = (blacklistTbl[attName] and !attTbl.Blacklisted)
         local unlisted = (attTbl.Blacklisted and !blacklistTbl[attName])
-        local saved = (listed or unlisted) and " [!saved]" or ""
+        local saved = (listed or unlisted) and " [not saved]" or ""
         srf.SetTextColor(Bfg_col)
         srf.SetTextPos(spaa:GetWide() - ScreenScaleMulti(36), ScreenScaleMulti(4))
         srf.SetFont("ArcCW_8")
         srf.DrawText(saved)
     end
 
+    -- In addition to clicking on a button, you can drag over all of them!
     attBtn.OnMousePressed = function(spaa, kc)
         blacklistTbl[attName] = !blacklistTbl[attName] and !attTbl.Blacklisted or !blacklistTbl[attName]
+        dragMode = blacklistTbl[attName]
+        hook.Add("Think", "ArcCW_Blacklist", function()
+            if !input.IsMouseDown(MOUSE_LEFT) then
+                dragMode = nil
+                hook.Remove("Think", "ArcCW_Blacklist")
+            end
+        end)
+    end
+    attBtn.OnCursorEntered = function(spaa, kc)
+        if dragMode != nil and input.IsMouseDown(MOUSE_LEFT) then
+            blacklistTbl[attName] = dragMode
+        end
     end
 
     return attBtn
@@ -175,7 +191,33 @@ function ArcCW.MakeBlacklistWindow()
         srf.DrawRect(0, 0, w, h)
 
         spaa:SetTextColor(Bfg_col)
-        spaa:SetText(onlyblacklisted and "ALL" or "BLACKLISTED")
+        spaa:SetText(onlyblacklisted and "BLACKLISTED" or "ALL")
+    end
+
+    local NameButton = vgui.Create("DButton", FilterPanel)
+    NameButton:SetFont("ArcCW_8")
+    NameButton:SetText("")
+    NameButton:SetSize(ScreenScaleMulti(24), ScreenScaleMulti(12))
+    NameButton:Dock(RIGHT)
+    NameButton:DockMargin(ScreenScaleMulti(1), 0, 0, 0)
+    NameButton:SetContentAlignment(5)
+
+    NameButton.OnMousePressed = function(spaa, kc)
+        internalName = !internalName
+        attList:GenerateButtonsToList()
+    end
+
+    NameButton.Paint = function(spaa, w, h)
+        local hovered = spaa:IsHovered()
+
+        local Bfg_col = hovered and color_black or color_white
+        local Bbg_col = hovered and color_white or color_arccwdtbl
+
+        srf.SetDrawColor(Bbg_col)
+        srf.DrawRect(0, 0, w, h)
+
+        spaa:SetTextColor(Bfg_col)
+        spaa:SetText(internalName and "ID" or "NAME")
     end
 
     local FilterEntry = vgui.Create("DTextEntry", FilterPanel)
@@ -229,7 +271,7 @@ function ArcCW.MakeBlacklistWindow()
 
             if onlyblacklisted and !(attTbl.Blacklisted or blacklistTbl[attName]) then continue end
 
-            if filter != "" and !string.find((attTbl.PrintName):lower(), filter) then continue end
+            if filter != "" and !(string.find((attTbl.PrintName):lower(), filter) or string.find((attName):lower(), filter)) then continue end
 
             --if attTbl.Slot == "charm" then continue end why the fuck would you do this
 
