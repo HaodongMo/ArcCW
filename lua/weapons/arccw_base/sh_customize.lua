@@ -4,6 +4,9 @@ local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end
 
+local temp = 127
+local SolidBlack = Color(temp, temp, temp)
+
 local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
     local tw, th = surface.GetTextSize(txt)
 
@@ -33,16 +36,7 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
                 end
             end
         end
-        -- print(span.TextRot)
-        -- print(span.TextRotState)
         surface.SetTextPos(tx - span.TextRot, ty)
-        -- if span.StartTextRot < CurTime() - 1 then
-        --     if span.TextRot >= (tw - (w - 2 * h)) then
-        --         span.TextRotState = 2
-        --     else
-        --         span.TextRot = span.TextRot + (FrameTime() * ScreenScale(8))
-        --     end
-        -- end
         surface.DrawText(txt)
         render.SetScissorRect(0, 0, 0, 0, false)
     else
@@ -349,7 +343,7 @@ function SWEP:CreateCustomizeHUD()
         surface.SetDrawColor(Bfg_col)
         surface.DrawRect(0, (h - linesize) / 2, w, linesize)
 
-        surface.SetTextColor(0, 0, 0)
+        surface.SetTextColor(SolidBlack)
         surface.SetTextPos(smallgap, 0)
         surface.SetFont("ArcCW_12_Glow")
         surface.DrawText(translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or self.PrintName)
@@ -562,7 +556,7 @@ function SWEP:CreateCustomizeHUD()
 
                     surface.SetFont("ArcCW_16_Glow")
                     surface.SetTextPos((smallgap + (w - tw)) / 2, c)
-                    surface.SetTextColor(Color(0, 0, 0))
+                    surface.SetTextColor(SolidBlack)
                     surface.DrawText(i)
 
                     surface.SetFont("ArcCW_16")
@@ -1119,7 +1113,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetDrawColor(Bfg_col)
                 surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
 
-                surface.SetTextColor(0, 0, 0)
+                surface.SetTextColor(SolidBlack)
                 surface.SetTextPos(smallgap, 0)
                 surface.SetFont("ArcCW_12_Glow")
                 surface.DrawText(txt)
@@ -1162,7 +1156,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.SetDrawColor(Bfg_col)
                 surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
 
-                surface.SetTextColor(0, 0, 0)
+                surface.SetTextColor(SolidBlack)
                 surface.SetTextPos(smallgap, 0)
                 surface.SetFont("ArcCW_12_Glow")
                 surface.DrawText(txt)
@@ -1202,7 +1196,7 @@ function SWEP:CreateCustomizeHUD()
                 surface.DrawRect(0, 0, w, h)
                 surface.DrawRect(w - (1.5 * h), 0, 1.5 * h, h)
 
-                surface.SetTextColor(0, 0, 0)
+                surface.SetTextColor(SolidBlack)
                 surface.SetTextPos(smallgap, 0)
                 surface.SetFont("ArcCW_12_Glow")
                 -- surface.DrawText(txt)
@@ -1251,7 +1245,7 @@ function SWEP:CreateCustomizeHUD()
 
         surface.SetFont("ArcCW_20_Glow")
         surface.SetTextPos((w - tw) / 2, th / 2)
-        surface.SetTextColor(Color(0, 0, 0))
+        surface.SetTextColor(SolidBlack)
         surface.DrawText(txt)
 
         surface.SetFont("ArcCW_20")
