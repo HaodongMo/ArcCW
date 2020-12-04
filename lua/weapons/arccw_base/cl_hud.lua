@@ -795,7 +795,8 @@ function SWEP:CustomAmmoDisplay()
     self.AmmoDisplay.Draw = true -- draw the display?
  
     if self.Primary.ClipSize > 0 or self:GetInUBGL() then
-        self.AmmoDisplay.PrimaryClip = data.clip -- amount in clip
+        local plus = data.plus or 0
+        self.AmmoDisplay.PrimaryClip = data.clip + plus -- amount in clip
         self.AmmoDisplay.PrimaryAmmo = tonumber(data.ammo) -- amount in reserve
     end
     --[[if self.Secondary.ClipSize > 0 then
