@@ -239,14 +239,14 @@ function SWEP:Holster(wep)
         if CLIENT then
             self:ProceduralHolster()
         end
+        time = time * self:GetBuff_Mult("Mult_DrawTime")
     end
-
-    time = time * self:GetBuff_Mult("Mult_DrawTime")
 
     if !skip then time = 0 end
 
     if !self.FullyHolstered then
 
+        self:SetReloading(CurTime() + time * 1.1)
         self:SetTimer(time, function()
             self:SetReqEnd(true)
             self:KillTimers()
