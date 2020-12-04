@@ -348,7 +348,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
 
     local firstsound = self.FirstShootSound
 
-    if self:GetBurstCount() == 0 and firstsound then
+    if self:GetBurstCount() == 1 and firstsound then
         fsound = firstsound
 
         local firstsil = self.FirstShootSoundSilenced

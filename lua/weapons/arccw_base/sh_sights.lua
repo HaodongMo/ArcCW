@@ -432,6 +432,7 @@ function SWEP:TranslateFOV(fov)
         end
     end
 
+    self.CurrentFOV = self.CurrentFOV + (self.RecoilAmount * -0.1 * self:GetSightDelta())
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
     return self.CurrentFOV
 end
