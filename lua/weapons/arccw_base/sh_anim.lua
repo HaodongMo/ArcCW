@@ -109,6 +109,18 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     local time = anim.Time
 
+    -- stoled from getanimkeytime
+    if !anim.Time then
+        local tseq = anim.Source
+        if istable(tseq) then
+            tseq["BaseClass"] = nil -- god I hate Lua inheritance
+            tseq = tseq[1]
+        end
+        if !tseq then return end
+        tseq = vm:LookupSequence(tseq)
+        time = vm:SequenceDuration(tseq) or 1
+    end
+
     if absolute then
         time = 1
     end
