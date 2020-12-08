@@ -3,7 +3,6 @@ function SWEP:CanPrimaryAttack()
 
     -- Inoperable
     if self:GetReloading() then return end
-    if self:GetNeedCycle() then return end
 
     -- If we are an NPC, do our own little methods
     if owner:IsNPC() then self:NPC_Shoot() return end
@@ -34,6 +33,9 @@ function SWEP:CanPrimaryAttack()
 
     -- Maximum burst shots
     if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
+
+    -- We need to cycle
+    if self:GetNeedCycle() then return end
 
     -- Safety's on, turn it off.
     if self:GetCurrentFiremode().Mode == 0 then
