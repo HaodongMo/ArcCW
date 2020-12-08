@@ -1,6 +1,9 @@
 function SWEP:CanPrimaryAttack()
     local owner = self:GetOwner()
 
+    -- Inoperable
+    if self:GetReloading() then return end
+
     -- If we are an NPC, do our own little methods
     if owner:IsNPC() then self:NPC_Shoot() return end
 
@@ -33,9 +36,6 @@ function SWEP:CanPrimaryAttack()
 
     -- We need to cycle
     if self:GetNeedCycle() then return end
-
-    -- Inoperable
-    if self:GetReloading() then return end
 
     -- Safety's on, turn it off.
     if self:GetCurrentFiremode().Mode == 0 then
