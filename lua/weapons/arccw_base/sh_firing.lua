@@ -274,8 +274,6 @@ function SWEP:PrimaryAttack()
             self:DoPrimaryFire(true, projectiledata)
         end
     else
-        bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
-
         if !bullet then return end
 
         for n = 1, bullet.Num do
@@ -284,6 +282,7 @@ function SWEP:PrimaryAttack()
             if !self:GetBuff_Override("Override_NoRandSpread") then
                 bullet.Dir = dir + VectorRand() * spread
             end
+		    bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
 
             self:DoPrimaryFire(false, bullet)
         end
@@ -320,8 +319,7 @@ function SWEP:PrimaryAttack()
     end
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == self:GetBurstLength() then
-        local postburst = (self:GetCurrentFiremode().PostBurstDelay or 0) / self:GetBuff_Mult("Mult_RPM") or 0
-
+        local postburst = (self:GetCurrentFiremode().PostBurstDelay or 0)
         self:SetNextPrimaryFire(CurTime() + postburst)
     end
 
@@ -511,7 +509,6 @@ end
 
 function SWEP:GetFiringDelay()
     local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
-
     delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
 
     return delay
@@ -603,8 +600,9 @@ function SWEP:GetDispersion()
 
     if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
 
-    local t = hook.Run("ArcCW_ModDispersion", self, {dispersion = hip})
-    hip = t and t.dispersion or hip
+    --local t = hook.Run("ArcCW_ModDispersion", self, {dispersion = hip})
+    --hip = t and t.dispersion or hip
+    hip = self:GetBuff_Hook("Hook_ModDispersion", hip) or hip
 
     return hip
 end
