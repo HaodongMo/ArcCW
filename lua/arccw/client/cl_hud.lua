@@ -98,6 +98,7 @@ local function generatefonts()
             size = ScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
+			extended = true,
         } )
 
         surface.CreateFont( "ArcCW_" .. tostring(i) .. "_Glow", {
@@ -106,6 +107,7 @@ local function generatefonts()
             weight = 0,
             antialias = true,
             blursize = 8,
+			extended = true,
         } )
 
     end
@@ -117,6 +119,7 @@ local function generatefonts()
             size = i,
             weight = 0,
             antialias = true,
+			extended = true,
         } )
 
     end
@@ -163,6 +166,7 @@ end)
 --     size = ScreenScale(12),
 --     weight = 0,
 --     antialias = true,
+--     extended = true,
 -- } )
 
 -- surface.CreateFont( "ArcCW_12_Glow", {
@@ -171,6 +175,7 @@ end)
 --     weight = 0,
 --     antialias = true,
 --     blursize = 8,
+--     extended = true,
 -- } )
 
 -- surface.CreateFont( "ArcCW_16", {
@@ -178,6 +183,7 @@ end)
 --     size = ScreenScale(16),
 --     weight = 0,
 --     antialias = true,
+--     extended = true,
 -- } )
 
 -- surface.CreateFont( "ArcCW_16_Glow", {
@@ -186,6 +192,7 @@ end)
 --     weight = 0,
 --     antialias = true,
 --     blursize = 8,
+--     extended = true,
 -- } )
 
 -- surface.CreateFont( "ArcCW_26", {
@@ -193,6 +200,7 @@ end)
 --     size = ScreenScale(26),
 --     weight = 0,
 --     antialias = true,
+--     extended = true,
 -- } )
 
 -- surface.CreateFont( "ArcCW_26_Glow", {
@@ -201,4 +209,5 @@ end)
 --     weight = 0,
 --     antialias = true,
 --     blursize = 8,
+--     extended = true,
 -- } )
