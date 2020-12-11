@@ -433,7 +433,8 @@ function SWEP:TranslateFOV(fov)
     end
 
     -- something about this doesn't work in multiplayer
-    if game.SinglePlayer() then self.CurrentFOV = self.CurrentFOV + (self.RecoilAmount * -0.1 * self:GetSightDelta()) end
+    -- if game.SinglePlayer() then self.CurrentFOV = self.CurrentFOV + (self.RecoilAmount * -0.1 * self:GetSightDelta()) end
+    -- it also fucking sucks
 
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
     return self.CurrentFOV

@@ -130,9 +130,7 @@ function SWEP:NPC_Shoot()
     self.Primary.Automatic = true
 
 
-    local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
-
-    delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
+    local delay = self:GetFiringDelay()
 
     if (self:GetBuff_Override("Override_ManualAction") or self.ManualAction) then
         delay = (self.Animations.cycle.Time or 1) * self:GetBuff_Mult("Mult_CycleSpeed") or delay
@@ -325,9 +323,7 @@ function SWEP:GetNPCBurstSettings()
     local mode = self:GetCurrentFiremode()
     mode = mode.Mode
 
-    local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
-
-    delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
+    local delay = self:GetFiringDelay()
 
     self:SetNextPrimaryFire(CurTime() + delay)
 
