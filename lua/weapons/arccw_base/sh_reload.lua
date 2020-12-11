@@ -141,7 +141,7 @@ function SWEP:Reload()
         if self.Animations[anim].MinProgress then
             reloadtime = self.Animations[anim].MinProgress * mult
         else
-            reloadtime = self:GetAnimKeyTime(anim) * mult * 0.9
+            reloadtime = self:GetAnimKeyTime(anim) * mult * 0.98
         end
 
         self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim) * mult)
@@ -380,7 +380,7 @@ function SWEP:ReloadInsert(empty)
 
         local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
 
-        self:SetReloading(CurTime() + time + 1)
+        self:SetReloading(CurTime() + time * 1.02)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(time * mult,
