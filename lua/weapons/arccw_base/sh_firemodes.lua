@@ -83,22 +83,22 @@ function SWEP:GetCurrentFiremode()
 end
 
 function SWEP:GetFiremodeName()
-    if self:GetBuff_Hook("Hook_FiremodeName") then return self:GetBuff_Hook("Hook_FiremodeName") end
+    if self:GetBuff_Hook("Hook_FiremodeName") then return ArcCW.TryTranslation(self:GetBuff_Hook("Hook_FiremodeName")) end
 
     if self:GetInUBGL() then
-        return self:GetBuff_Override("UBGL_PrintName") or "UBGL"
+        return self:GetBuff_Override("UBGL_PrintName") and ArcCW.TryTranslation(self:GetBuff_Override("UBGL_PrintName")) or ArcCW.GetTranslation("fcg.ubgl")
     end
 
     local fm = self:GetCurrentFiremode()
 
-    if fm.PrintName then return fm.PrintName end
+    if fm.PrintName then return ArcCW.TryTranslation(fm.PrintName) end
 
     local mode = fm.Mode
 
-    if mode == 0 then return "SAFE" end
-    if mode == 1 then return "SEMI" end
-    if mode >= 2 then return "AUTO" end
-    if mode < 0 then return tostring(-mode) .. "BST" end
+    if mode == 0 then return ArcCW.GetTranslation("fcg.safe") end
+    if mode == 1 then return ArcCW.GetTranslation("fcg.semi") end
+    if mode >= 2 then return ArcCW.GetTranslation("fcg.auto") end
+    if mode < 0 then return string.format(ArcCW.GetTranslation("fcg.burst"), tostring(-mode)) end
 end
 
 function SWEP:GetFiremodeBars()
