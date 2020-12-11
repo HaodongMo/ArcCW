@@ -743,7 +743,7 @@ function SWEP:DrawHUD()
             x = airgap + CopeX(),
             y = ScrH() - ScreenScaleMulti(26) - ScreenScaleMulti(16) - airgap - CopeY(),
             font = "ArcCW_26",
-            text = "HP: " .. tostring(math.Round(vhp)),
+            text =  (ArcCW.GetTranslation("hud.hp") or "HP: ") .. tostring(math.Round(vhp)),
             col = colhp,
             shadow = true
         }

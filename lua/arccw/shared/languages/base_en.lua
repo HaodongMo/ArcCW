@@ -219,6 +219,14 @@ L["incompatible.never"] = "Never warn me again"
 L["incompatible.never.hover"] = "Are you absolutely sure you understand the consequences?"
 L["incompatible.never.confirm"] = "You have chosen to never show incompatiblity warnings again. If you encounter errors or broken behaviour, it is your own responsibility."
 
+-- 2020-12-11
+L["hud.hp"] = "HP: " -- Used in default HUD
+L["fcg.safe"] = "SAFE"
+L["fcg.semi"] = "SEMI"
+L["fcg.auto"] = "AUTO"
+L["fcg.burst"] = "%dBST"
+L["fcg.ubgl"] = "UBGL"
+
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
 -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]
