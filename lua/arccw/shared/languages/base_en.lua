@@ -227,6 +227,28 @@ L["fcg.auto"] = "AUTO"
 L["fcg.burst"] = "%dBST"
 L["fcg.ubgl"] = "UBGL"
 
+-- 2020-12-12
+L["stat.precision.moa"] = " MOA"
+L["stat.0m"] = "0m"
+L["stat.m"] = "m"
+L["stat.ma"] = "ms"
+L["stat.db"] = "dB"
+L["stat.in"] = "in"
+L["stat.mm"] = "mm"
+L["stat.lbfps"] = " lb-fps"
+L["stat.dmg"] = "DMG"
+L["stat.rpm"] = "RPM"
+L["label.cancel"] = "Cancel"
+L["label.save"] = "Save"
+L["save_preset.help"] = "No presets found! Go make some!"
+L["label.blacklist_title"] = "ArcCW Blacklist"
+L["label.blacklist_help"] = "Attachments checked here will stop showing up at all."
+L["label.blacklist_filter"] = "FILTER"
+L["label.blacklist_blacklisted"] = "BLACKLISTED"
+L["label.blacklist_all"] = "ALL"
+L["label.blacklist_name"] = "NAME"
+L["label.blacklist_not_saved"] = " [not saved]"
+
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
 -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]
