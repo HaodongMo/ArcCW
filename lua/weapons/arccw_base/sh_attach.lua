@@ -62,10 +62,15 @@ function SWEP:GetIsShotgun()
 end
 
 -- ONE FUNCTION TO RULE THEM ALL
-function SWEP:GetBuff(buff)
+function SWEP:GetBuff(buff, defaultnil)
     local stable = self:GetTable()
 
-    local result = stable[buff] or 1
+    local result = stable[buff]
+    if !result and defaultnil then
+        result = nil
+    elseif !result then
+        result = 1
+    end
 
     if self:GetBuff_Override("Override_" .. buff) == false then
         result = false
