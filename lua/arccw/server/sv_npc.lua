@@ -47,7 +47,7 @@ function ArcCW:GetRandomWeapon(wpn, nades)
 
         local weight = (k.NPCWeight or 100)
 
-        if wpn and k.TTTWeaponType then -- TTT weapon type(s) take priority over NPC weapon types
+        if wpn and engine.ActiveGamemode() == "terrortown" and k.TTTWeaponType then -- TTT weapon type(s) take priority over NPC weapon types
             if isstring(k.TTTWeaponType) then
                 if k.TTTWeaponType != wpn then continue end
             elseif istable(k.TTTWeaponType) then
@@ -66,9 +66,11 @@ function ArcCW:GetRandomWeapon(wpn, nades)
             weight = 10
         end
 
-        wgt = wgt + weight
-
-        table.insert(tbl, {k.ClassName, wgt})
+        if weight > 0 then
+            -- Don't insert 0 weight, otherwise they still spawn
+            wgt = wgt + weight
+            table.insert(tbl, {k.ClassName, wgt})
+        end
     end
 
     local r = math.random(0, wgt)
