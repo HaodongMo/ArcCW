@@ -127,8 +127,6 @@ function SWEP:GetViewModelPosition(pos, ang)
         local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
         local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
 
-        print(hpos, spos, hang, sang)
-
         target.pos:Set(holstered and (hpos or spos) or (spos or hpos))
 
         target.pos = target.pos + Vector(vm_right, vm_forward, vm_up)
