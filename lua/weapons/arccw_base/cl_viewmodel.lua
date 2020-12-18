@@ -110,8 +110,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         mx = 2 * mx / ScrW()
         my = 2 * my / ScrH()
 
-        target.pos:Set(self.CustomizePos)
-        target.ang:Set(self.CustomizeAng)
+        target.pos:Set(self:GetBuff("CustomizePos"))
+        target.ang:Set(self:GetBuff("CustomizeAng"))
 
         target.pos = target.pos + Vector(mx, 0, my)
         target.ang = target.ang + Angle(0, my * 2, mx * 2)
@@ -124,11 +124,16 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.sway = GetConVar("arccw_vm_sway_sprint"):GetInt()
         target.bob  = GetConVar("arccw_vm_bob_sprint"):GetInt()
 
-        target.pos:Set(holstered and (self.HolsterPos or self.SprintPos) or (self.SprintPos or self.HolsterPos))
+        local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
+        local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
+
+        print(hpos, spos, hang, sang)
+
+        target.pos:Set(holstered and (hpos or spos) or (spos or hpos))
 
         target.pos = target.pos + Vector(vm_right, vm_forward, vm_up)
 
-        target.ang:Set(holstered and (self.HolsterAng or self.SprintAng) or (self.SprintAng or self.HolsterAng))
+        target.ang:Set(holstered and (hang or sang) or (sang or hang))
 
         if ang.p < -15 then target.ang.p = target.ang.p + ang.p + 15 end
 
