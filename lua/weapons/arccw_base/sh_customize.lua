@@ -1271,16 +1271,16 @@ function SWEP:CreateCustomizeHUD()
         function() return translate("trivia.country") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country or "Unknown") end,
         function() return translate("trivia.manufacturer") .. ": " .. ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer or "Unknown") end,
         function() return translate("trivia.clipsize") .. ": " .. self:GetCapacity() end,
-        function() return translate("trivia.precision") .. ": " .. self:GetBuff("AccuracyMOA") .. (ArcCW.GetTranslation("stat.precision.moa")) end,
-        function() return translate("trivia.noise") .. ": " .. (self:GetBuff("ShootVol")) .. (ArcCW.GetTranslation("stat.db")) end,
-        function() return translate("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. (ArcCW.GetTranslation("stat.lbfps")) end,
-        function() return translate("trivia.penetration") .. ": " .. math.Round(self:GetBuff("Penetration"), 1) .. (ArcCW.GetTranslation("stat.mm")) end,
+        function() return translate("trivia.precision") .. ": " .. self:GetBuff("AccuracyMOA") .. ArcCW.GetTranslation("stat.precision.moa") end,
+        function() return translate("trivia.noise") .. ": " .. (self:GetBuff("ShootVol")) .. ArcCW.GetTranslation("stat.db") end,
+        function() return translate("trivia.recoil") .. ": " .. math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1) .. ArcCW.GetTranslation("stat.lbfps") end,
+        function() return translate("trivia.penetration") .. ": " .. math.Round(self:GetBuff("Penetration"), 1) .. ArcCW.GetTranslation("stat.mm") end,
     }
 
     if !self.ManualAction and !self:GetBuff_Override("Override_ManualAction") then
         table.insert(trivia, function()
             local rpm = math.Round(60 / self:GetFiringDelay())
-            return translate("trivia.firerate") .. ": " .. rpm .. (ArcCW.GetTranslation("stat.rpm"))
+            return translate("trivia.firerate") .. ": " .. rpm .. ArcCW.GetTranslation("stat.rpm")
         end)
     end
 
@@ -1419,35 +1419,35 @@ function SWEP:CreateCustomizeHUD()
             surface.SetTextColor(fg_col)
             surface.SetFont("ArcCW_6")
             surface.SetTextPos(gx + startx, gy + starty - ScreenScaleMulti(7) - 1)
-            surface.DrawText(tostring(dmgmax) .. (ArcCW.GetTranslation("stat.dmg")))
+            surface.DrawText(tostring(dmgmax) .. ArcCW.GetTranslation("stat.dmg"))
 
             -- end dmg
             surface.SetTextColor(fg_col)
             surface.SetFont("ArcCW_6")
 
-            local dtw = surface.GetTextSize(tostring(dmgmin) .. (ArcCW.GetTranslation("stat.dmg")))
+            local dtw = surface.GetTextSize(tostring(dmgmin) .. ArcCW.GetTranslation("stat.dmg"))
             surface.SetTextPos(gx + gw - dtw, gy + endy - ScreenScaleMulti(7) - 1)
-            surface.DrawText(tostring(dmgmin) .. (ArcCW.GetTranslation("stat.dmg")))
+            surface.DrawText(tostring(dmgmin) .. ArcCW.GetTranslation("stat.dmg"))
 
             -- start range
             surface.SetTextColor(fg_col)
             surface.SetFont("ArcCW_6")
             surface.SetTextPos(sidegap, smallgap + gh)
-            surface.DrawText((ArcCW.GetTranslation("stat.0m")))
+            surface.DrawText(ArcCW.GetTranslation("stat.0m"))
 
             -- mid range
             surface.SetTextColor(fg_col)
             surface.SetFont("ArcCW_6")
-            local mtw = surface.GetTextSize(tostring(maxgr) .. (ArcCW.GetTranslation("stat.m")))
+            local mtw = surface.GetTextSize(tostring(maxgr) .. ArcCW.GetTranslation("stat.m"))
             surface.SetTextPos(gx + endx - (mtw / 2), smallgap + gh)
-            surface.DrawText(tostring(maxgr) .. (ArcCW.GetTranslation("stat.m")))
+            surface.DrawText(tostring(maxgr) .. ArcCW.GetTranslation("stat.m"))
 
             -- end range
             surface.SetTextColor(fg_col)
             surface.SetFont("ArcCW_6")
-            local rtw = surface.GetTextSize(tostring(grsw) .. (ArcCW.GetTranslation("stat.m")))
+            local rtw = surface.GetTextSize(tostring(grsw) .. ArcCW.GetTranslation("stat.m"))
             surface.SetTextPos(w - sidegap - rtw, smallgap + gh)
-            surface.DrawText(tostring(grsw) .. (ArcCW.GetTranslation("stat.m")))
+            surface.DrawText(tostring(grsw) .. ArcCW.GetTranslation("stat.m"))
 
             local mousex, mousey = span:CursorPos()
 
@@ -1479,8 +1479,8 @@ function SWEP:CreateCustomizeHUD()
                 local alignleft = true
 
                 surface.SetFont("ArcCW_6")
-                local twmr = surface.GetTextSize(tostring(mouser) .. (ArcCW.GetTranslation("stat.m")))
-                local twmb = surface.GetTextSize(tostring(shdmg) .. (ArcCW.GetTranslation("stat.dmg")))
+                local twmr = surface.GetTextSize(tostring(mouser) .. ArcCW.GetTranslation("stat.m"))
+                local twmb = surface.GetTextSize(tostring(shdmg) .. ArcCW.GetTranslation("stat.dmg"))
 
                 if mousex < math.max(twmr, twmb) + ScreenScaleMulti(2) then
                     alignleft = false
@@ -1493,7 +1493,7 @@ function SWEP:CreateCustomizeHUD()
                 else
                     surface.SetTextPos(mousex + ScreenScaleMulti(2), shy)
                 end
-                surface.DrawText(tostring(mouser) .. (ArcCW.GetTranslation("stat.m")))
+                surface.DrawText(tostring(mouser) .. ArcCW.GetTranslation("stat.m"))
 
                 surface.SetTextColor(fg_col)
                 surface.SetFont("ArcCW_6")
@@ -1502,7 +1502,7 @@ function SWEP:CreateCustomizeHUD()
                 else
                     surface.SetTextPos(mousex + ScreenScaleMulti(2), ScreenScaleMulti(2) + gy)
                 end
-                surface.DrawText(tostring(shdmg) .. (ArcCW.GetTranslation("stat.dmg")))
+                surface.DrawText(tostring(shdmg) .. ArcCW.GetTranslation("stat.dmg"))
             end
         end
     end
@@ -1512,8 +1512,8 @@ function SWEP:CreateCustomizeHUD()
         if ArcCW.ConVar_BuffMults["Mult_" .. name] then
             orig = orig * GetConVar(ArcCW.ConVar_BuffMults["Mult_" .. name]):GetFloat()
         end
-        return math.Round((unit == "%" and 100 or unit == (ArcCW.GetTranslation("stat.ma")) and 1000 or 1) * orig, round) .. (unit or ""),
-               math.Round((unit == "%" and 100 or unit == (ArcCW.GetTranslation("stat.ma")) and 1000 or 1) * self[name] * self:GetBuff_Mult("Mult_" .. name), round) .. (unit or "")
+        return math.Round((unit == "%" and 100 or unit == ArcCW.GetTranslation("stat.ma") and 1000 or 1) * orig, round) .. (unit or ""),
+               math.Round((unit == "%" and 100 or unit == ArcCW.GetTranslation("stat.ma") and 1000 or 1) * self[name] * self:GetBuff_Mult("Mult_" .. name), round) .. (unit or "")
     end
 
     local function defaultBetterFunc(name, inverse)
@@ -1571,8 +1571,8 @@ function SWEP:CreateCustomizeHUD()
             {translate("stat.firerate"), translate("stat.firerate.tooltip"),
                 function()
 
-                local orig = math.Round(60 / self.Delay) .. (ArcCW.GetTranslation("stat.rpm"))
-                local cur = math.Round(60 / self:GetFiringDelay()) .. (ArcCW.GetTranslation("stat.rpm"))
+                local orig = math.Round(60 / self.Delay) .. ArcCW.GetTranslation("stat.rpm")
+                local cur = math.Round(60 / self:GetFiringDelay()) .. ArcCW.GetTranslation("stat.rpm")
 
                 if self.ManualAction then
                     orig = translate("stat.firerate.manual")
@@ -1614,15 +1614,15 @@ function SWEP:CreateCustomizeHUD()
                 end,
             },
             {translate("stat.precision"), translate("stat.precision.tooltip"),
-                function() return defaultStatFunc("AccuracyMOA", (ArcCW.GetTranslation("stat.precision.moa")), 3) end,
+                function() return defaultStatFunc("AccuracyMOA", ArcCW.GetTranslation("stat.precision.moa"), 3) end,
                 function() return defaultBetterFunc("AccuracyMOA", true) end,
             },
             {translate("stat.hipdisp"), translate("stat.hipdisp.tooltip"),
-                function() return defaultStatFunc("HipDispersion", (ArcCW.GetTranslation("stat.precision.moa"))) end,
+                function() return defaultStatFunc("HipDispersion", ArcCW.GetTranslation("stat.precision.moa")) end,
                 function() return defaultBetterFunc("HipDispersion", true) end,
             },
             {translate("stat.movedisp"), translate("stat.movedisp.tooltip"),
-                function() return defaultStatFunc("MoveDispersion", (ArcCW.GetTranslation("stat.precision.moa"))) end,
+                function() return defaultStatFunc("MoveDispersion", ArcCW.GetTranslation("stat.precision.moa")) end,
                 function() return defaultBetterFunc("MoveDispersion", true) end,
             },
             {translate("stat.recoil"), translate("stat.recoil.tooltip"),
@@ -1634,7 +1634,7 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("RecoilSide", true) end,
             },
             {translate("stat.sighttime"), translate("stat.sighttime.tooltip"),
-                function() return defaultStatFunc("SightTime", (ArcCW.GetTranslation("stat.ma"))) end,
+                function() return defaultStatFunc("SightTime", ArcCW.GetTranslation("stat.ma")) end,
                 function() return defaultBetterFunc("SightTime", true) end,
             },
             {translate("stat.speedmult"), translate("stat.speedmult.tooltip"),
@@ -1664,18 +1664,18 @@ function SWEP:CreateCustomizeHUD()
                 function() return defaultBetterFunc("MeleeDamage") end,
             },
             {translate("stat.meleetime"), translate("stat.meleetime.tooltip"),
-                function() return defaultStatFunc("MeleeTime", (ArcCW.GetTranslation("stat.ma")), 2) end,
+                function() return defaultStatFunc("MeleeTime", ArcCW.GetTranslation("stat.ma"), 2) end,
                 function() return defaultBetterFunc("MeleeTime", true) end,
             },
             {translate("stat.shootvol"), translate("stat.shootvol.tooltip"),
-                function() return defaultStatFunc("ShootVol",(ArcCW.GetTranslation("stat.db"))) end,
+                function() return defaultStatFunc("ShootVol",ArcCW.GetTranslation("stat.db")) end,
                 function() return defaultBetterFunc("ShootVol", true) end,
             },
             {translate("stat.barrellen"), translate("stat.barrellen.tooltip"),
                 function()
                     local orig = self.BarrelLength
                     local cur = orig + self:GetBuff_Add("Add_BarrelLength")
-                    return orig .. (ArcCW.GetTranslation("stat.in")), cur .. (ArcCW.GetTranslation("stat.in"))
+                    return orig .. ArcCW.GetTranslation("stat.in"), cur .. ArcCW.GetTranslation("stat.in")
                 end,
                 function()
                     local add = self:GetBuff_Add("Add_BarrelLength")
@@ -1683,7 +1683,7 @@ function SWEP:CreateCustomizeHUD()
                 end,
             },
             {translate("stat.pen"), translate("stat.pen.tooltip"),
-                function() return defaultStatFunc("Penetration",(ArcCW.GetTranslation("stat.mm"))) end,
+                function() return defaultStatFunc("Penetration",ArcCW.GetTranslation("stat.mm")) end,
                 function() return defaultBetterFunc("Penetration") end,
             },
         }

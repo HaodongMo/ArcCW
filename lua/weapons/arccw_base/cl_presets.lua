@@ -165,7 +165,7 @@ function SWEP:CreatePresetSave()
         surface.SetDrawColor(Bbg_col)
         surface.DrawRect(0, 0, w, h)
 
-        local txt = (ArcCW.GetTranslation("label.save"))
+        local txt = ArcCW.GetTranslation("label.save")
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))
@@ -196,7 +196,7 @@ function SWEP:CreatePresetSave()
         surface.SetDrawColor(Bbg_col)
         surface.DrawRect(0, 0, w, h)
 
-        local txt = (ArcCW.GetTranslation("label.cancel"))
+        local txt = ArcCW.GetTranslation("label.cancel")
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))
@@ -244,7 +244,7 @@ function SWEP:CreatePresetMenu()
         surface.SetDrawColor(Bbg_col)
         surface.DrawRect(0, 0, w, h)
 
-        local txt = (ArcCW.GetTranslation("label.cancel"))
+        local txt = ArcCW.GetTranslation("label.cancel")
 
         surface.SetTextColor(Bfg_col)
         surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))
@@ -354,7 +354,7 @@ function SWEP:CreatePresetMenu()
         label.Paint = function(spaa, w, h)
             local Bfg_col = Color(255, 255, 255, 255)
 
-            local txt = (ArcCW.GetTranslation("save_preset.help"))
+            local txt = ArcCW.GetTranslation("save_preset.help")
 
             surface.SetTextColor(Bfg_col)
             surface.SetTextPos(ScreenScaleMulti(2), ScreenScaleMulti(1))

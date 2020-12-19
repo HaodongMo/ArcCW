@@ -79,7 +79,7 @@ local function CreateAttButton(parent, attName, attTbl)
 
         local listed   = (blacklistTbl[attName] and !attTbl.Blacklisted)
         local unlisted = (attTbl.Blacklisted and !blacklistTbl[attName])
-        local saved = (listed or unlisted) and (ArcCW.GetTranslation("label.blacklist_not_saved")) or ""
+        local saved = (listed or unlisted) and ArcCW.GetTranslation("label.blacklist_not_saved") or ""
         srf.SetTextColor(Bfg_col)
         srf.SetTextPos(spaa:GetWide() - ScreenScaleMulti(36), ScreenScaleMulti(4))
         srf.SetFont("ArcCW_8")
@@ -128,7 +128,7 @@ function ArcCW.MakeBlacklistWindow()
     title:SetSize(ScreenScaleMulti(256), ScreenScaleMulti(26))
     title:Dock(TOP)
     title:SetFont("ArcCW_24")
-    title:SetText((ArcCW.GetTranslation("label.blacklist_title")))
+    title:SetText(ArcCW.GetTranslation("label.blacklist_title"))
     title:DockMargin(ScreenScaleMulti(16), 0, ScreenScaleMulti(16), ScreenScaleMulti(8))
 
     local desc = vgui.Create("DLabel", blacklistWindow)
@@ -136,7 +136,7 @@ function ArcCW.MakeBlacklistWindow()
     desc:Dock(TOP)
     desc:DockMargin(ScreenScaleMulti(4), 0, ScreenScaleMulti(4), ScreenScaleMulti(4))
     desc:SetFont("ArcCW_12")
-    desc:SetText((ArcCW.GetTranslation("label.blacklist_help")))
+    desc:SetText(ArcCW.GetTranslation("label.blacklist_help"))
     desc:SetContentAlignment(5)
 
     local attList = vgui.Create("DScrollPanel", blacklistWindow)
@@ -165,7 +165,7 @@ function ArcCW.MakeBlacklistWindow()
     FilterLabel:SetWidth(ScreenScaleMulti(36))
     FilterLabel:DockMargin(ScreenScaleMulti(2), ScreenScaleMulti(2), ScreenScaleMulti(2), ScreenScaleMulti(2))
     FilterLabel:SetFont("ArcCW_12")
-    FilterLabel:SetText((ArcCW.GetTranslation("label.blacklist_filter")))
+    FilterLabel:SetText(ArcCW.GetTranslation("label.blacklist_filter"))
 
     local FilterButton = vgui.Create("DButton", FilterPanel)
     FilterButton:SetFont("ArcCW_8")
@@ -191,7 +191,7 @@ function ArcCW.MakeBlacklistWindow()
         srf.DrawRect(0, 0, w, h)
 
         spaa:SetTextColor(Bfg_col)
-        spaa:SetText(onlyblacklisted and (ArcCW.GetTranslation("label.blacklist_blacklisted")) or (ArcCW.GetTranslation("label.blacklist_all")))
+        spaa:SetText(onlyblacklisted and ArcCW.GetTranslation("label.blacklist_blacklisted") or ArcCW.GetTranslation("label.blacklist_all"))
     end
 
     local NameButton = vgui.Create("DButton", FilterPanel)
@@ -217,7 +217,7 @@ function ArcCW.MakeBlacklistWindow()
         srf.DrawRect(0, 0, w, h)
 
         spaa:SetTextColor(Bfg_col)
-        spaa:SetText(internalName and "ID" or (ArcCW.GetTranslation("label.blacklist_name")))
+        spaa:SetText(internalName and "ID" or ArcCW.GetTranslation("label.blacklist_name"))
     end
 
     local FilterEntry = vgui.Create("DTextEntry", FilterPanel)
@@ -256,7 +256,7 @@ function ArcCW.MakeBlacklistWindow()
         srf.SetTextColor(Bfg_col)
         srf.SetTextPos(ScreenScaleMulti(4), ScreenScaleMulti(4))
         srf.SetFont("ArcCW_12")
-        srf.DrawText((ArcCW.GetTranslation("label.save")))
+        srf.DrawText(ArcCW.GetTranslation("label.save"))
     end
 
     -- Perhaps unoptimized, but it's client
