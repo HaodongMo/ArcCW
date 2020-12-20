@@ -12,6 +12,7 @@ function SWEP:Deploy()
     self:SetReloading(false)
     self:SetState(0)
     self:SetInUBGL(false)
+    self:SetMagUpIn(0)
 
     self.LHIKAnimation = nil
 
@@ -221,6 +222,7 @@ function SWEP:Holster(wep)
 
     self.Sighted = false
     self.Sprinted = false
+    self:SetMagUpIn(0)
 
     if CLIENT and LocalPlayer() == self:GetOwner() then
         self:ToggleCustomizeHUD(false)
