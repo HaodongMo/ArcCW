@@ -128,7 +128,7 @@ function SWEP:Reload()
         -- Yes, this will cause an issue in mag-fed manual action weapons where
         -- despite an empty casing being in the chamber, you can load +1 and 
         -- cycle an empty shell afterwards.
-        -- No, I am !in the correct mental state to fix this. - 8Z
+        -- No, I am npt in the correct mental state to fix this. - 8Z
         if self:Clip1() == 0 then
             self:SetNeedCycle(false)
         end
@@ -137,24 +137,13 @@ function SWEP:Reload()
 
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
 
-        local reloadtime
-        if self.Animations[anim].MinProgress then
-            reloadtime = self.Animations[anim].MinProgress * mult
-        else
-            reloadtime = self:GetAnimKeyTime(anim) * mult * 0.98
-        end
+        local reloadtime = self:GetAnimKeyTime(anim, true) * mult
+        local reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
 
-        self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim) * mult)
-
-        self:SetReloading(CurTime() + reloadtime)
-        self:SetTimer(reloadtime,
-        function()
-            self:RestoreAmmo()
-            self:SetLastLoad(self:Clip1())
-            self:SetNthReload(self:GetNthReload() + 1)
-        end)
-        self.CheckpointAnimation = anim
-        self.CheckpointTime = 0
+        self:SetNextPrimaryFire(CurTime() + reloadtime2)
+        self:SetReloading(CurTime() + reloadtime2)
+        
+        self:SetMagUpIn(CurTime() + reloadtime)
 
         if self.RevolverReload then
             self.LastClip1 = load
@@ -177,6 +166,13 @@ function SWEP:Reload()
     end
 
     self:GetBuff_Hook("Hook_PostReload")
+end
+
+function SWEP:WhenTheMagUpIn()
+    -- yeah my function names are COOL and QUIRKY and you can't say a DAMN thing about it.
+    self:RestoreAmmo()
+    self:SetLastLoad(self:Clip1())
+    self:SetNthReload(self:GetNthReload() + 1)
 end
 
 function SWEP:Unload()
@@ -221,9 +217,9 @@ function SWEP:RestoreAmmo(count)
 
     -- if load <= self:Clip1() then return end
 
-    if SERVER then
+    --if SERVER then
         self:GetOwner():SetAmmo(reserve, self.Primary.Ammo, true)
-    end
+    --end
     self:SetClip1(load)
 end
 
@@ -346,7 +342,9 @@ function SWEP:ReloadInsert(empty)
         local ret = "sgreload_finish"
 
         if empty then
-            ret = "sgreload_finish_empty"
+            if self.Animations.sgreload_finish_empty then
+                ret = "sgreload_finish_empty"
+            end
             if self:GetNeedCycle() then
                 self:SetNeedCycle(false)
             end
@@ -380,7 +378,7 @@ function SWEP:ReloadInsert(empty)
 
         local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
 
-        self:SetReloading(CurTime() + time * 1.02)
+        self:SetReloading(CurTime() + time)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(time * mult,

@@ -99,6 +99,11 @@ function SWEP:GetHUDData()
         data.plus = nil
     end
 
+    local ubglammo = self:GetBuff_Override("UBGL_Ammo")
+    if ubglammo then
+        data.ubgl = self:Clip2() + self:GetOwner():GetAmmoCount(ubglammo)
+    end
+
     data = self:GetBuff_Hook("Hook_GetHUDData", data) or data
 
     return data
@@ -135,6 +140,9 @@ function SWEP:DrawHUD()
         surface.SetTextPos(ScrW() / 2, 26 * 12)
         surface.DrawText(awesome[2])
 
+        surface.SetTextPos(ScrW() / 2, 26 * 14)
+        surface.DrawText(mr(self:GetMagUpIn(),2))
+
 
         surface.SetFont("ArcCW_8")
         surface.SetTextPos(ScrW() / 2, 26 * 4)
@@ -151,6 +159,9 @@ function SWEP:DrawHUD()
 
         surface.SetTextPos(ScrW() / 2, 26 * 12)
         surface.DrawText("RELOAD: MAGIN")
+
+        surface.SetTextPos(ScrW() / 2, 26 * 14)
+        surface.DrawText("RELOAD: MAG UP IN")
     end
 
     if self:GetState() != ArcCW.STATE_CUSTOMIZE then
@@ -765,8 +776,8 @@ function SWEP:DrawHUD()
 
     end
 
-    vhp = math.Approach(vhp, self:GetOwner():Health(), RealFrameTime() * 100)
-    varmor = math.Approach(varmor, self:GetOwner():Armor(), RealFrameTime() * 100)
+    vhp = math.Approach(vhp, self:GetOwner():Health(), FrameTime() * 100)
+    varmor = math.Approach(varmor, self:GetOwner():Armor(), FrameTime() * 100)
 
     local clipdiff = math.abs(vclip - self:Clip1())
     local reservediff = math.abs(vreserve - self:Ammo1())
@@ -775,8 +786,8 @@ function SWEP:DrawHUD()
         vclip = self:Clip1()
     end
 
-    vclip = math.Approach(vclip, self:Clip1(), RealFrameTime() * 30 * clipdiff)
-    vreserve = math.Approach(vreserve, self:Ammo1(), RealFrameTime() * 30 * reservediff)
+    vclip = math.Approach(vclip, self:Clip1(), FrameTime() * 30 * clipdiff)
+    vreserve = math.Approach(vreserve, self:Ammo1(), FrameTime() * 30 * reservediff)
 
     if lastwpn != self then
         vclip = self:Clip1()
@@ -794,14 +805,16 @@ function SWEP:CustomAmmoDisplay()
  
     self.AmmoDisplay.Draw = true -- draw the display?
  
-    if self.Primary.ClipSize > 0 or self:GetInUBGL() then
+    if self.Primary.ClipSize > 0 then
         local plus = data.plus or 0
         self.AmmoDisplay.PrimaryClip = data.clip + plus -- amount in clip
         self.AmmoDisplay.PrimaryAmmo = tonumber(data.ammo) -- amount in reserve
     end
-    --[[if self.Secondary.ClipSize > 0 then
-        self.AmmoDisplay.SecondaryAmmo = self:Clip2() + self:Ammo2() -- amount of secondary ammo
-    end]]
+    if true then
+        local ubglammo = self:GetBuff_Override("UBGL_Ammo")
+        if !ubglammo then return end
+        self.AmmoDisplay.SecondaryAmmo = self:Clip2() + self:GetOwner():GetAmmoCount(ubglammo) -- amount of secondary ammo
+    end
  
     return self.AmmoDisplay -- return the table
 end

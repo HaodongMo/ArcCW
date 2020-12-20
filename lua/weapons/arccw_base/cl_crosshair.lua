@@ -81,9 +81,9 @@ function SWEP:DoDrawCrosshair(x, y)
     local st = self:GetSightTime() / 4
 
     if self:ShouldDrawCrosshair() then
-        delta = math.Approach(delta, 1, RealFrameTime() * 1 / st)
+        delta = math.Approach(delta, 1, FrameTime() * 1 / st)
     else
-        delta = math.Approach(delta, 0, RealFrameTime() * 1 / st)
+        delta = math.Approach(delta, 0, FrameTime() * 1 / st)
     end
 
     if GetConVar("arccw_crosshair_equip"):GetBool() and (self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity) then
@@ -113,7 +113,7 @@ function SWEP:DoDrawCrosshair(x, y)
 
     local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
 
-    size = math.Approach(size, gap, RealFrameTime() * 32 * gap)
+    size = math.Approach(size, gap, FrameTime() * 32 * gap)
 
     if cw != self then
         delta = 0

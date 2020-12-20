@@ -695,19 +695,14 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 1, "NeedCycle")
     self:NetworkVar("Bool", 2, "InBipod")
     self:NetworkVar("Bool", 3, "InUBGL")
-    --self:NetworkVar("Bool", 4, "Reloading")
-    self:NetworkVar("Bool", 5, "InCustomize")
-    self:NetworkVar("Bool", 6, "GrenadePrimed")
-    self:NetworkVar("Bool", 7, "ReqEnd")
+    self:NetworkVar("Bool", 4, "InCustomize")
+    self:NetworkVar("Bool", 5, "GrenadePrimed")
+    self:NetworkVar("Bool", 6, "ReqEnd")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
     self:NetworkVar("Float", 2, "ReloadingREAL")
-
-    self:SetReloadingREAL(CurTime())
-
-    --self:NetworkVar("Int", 2, "BurstCount")
-    --self:NetworkVar("Int", 0, "NWState")
+    self:NetworkVar("Float", 3, "MagUpIn")
 end
 
 

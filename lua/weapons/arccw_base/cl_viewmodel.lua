@@ -33,9 +33,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     local proceduralRecoilMult = 1
 
     local SP = game.SinglePlayer()
-    -- local FT = m_min(FrameTime(), RealFrameTime())
+    -- local FT = m_min(FrameTime(), FrameTime())
     local CT = CurTime()
-    local FT = RealFrameTime()
+    local FT = FrameTime()
 
     local FT5, FT10 = FT * 5, FT * 10
 
@@ -66,6 +66,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local vm_right   = GetConVar("arccw_vm_right"):GetFloat()
     local vm_up      = GetConVar("arccw_vm_up"):GetFloat()
     local vm_forward = GetConVar("arccw_vm_forward"):GetFloat()
+    local vm_fov     = GetConVar("arccw_vm_fov"):GetFloat()
 
     if owner:Crouching() or owner:KeyDown(IN_DUCK) then
         target.down = 0
@@ -381,6 +382,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     if coolsway then lasteyeangles = LerpAngle(m_min(FT * 100 * accelmult, 1), lasteyeangles, eyeangles) end
 
+    self.ViewModelFOV = weapons.GetStored(self:GetClass()).ViewModelFOV + vm_fov * self:GetSightDelta()
+
     return pos, ang
 end
 
@@ -467,7 +470,7 @@ function SWEP:PreDrawViewModel(vm)
         if self:GetState() == ArcCW.STATE_CUSTOMIZE then self:BlurNotWeapon() end
 
         if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
-            local fps    = 1 / m_min(FrameTime(), RealFrameTime())
+            local fps    = 1 / m_min(FrameTime(), FrameTime())
             local lowfps = fps <= 45
 
             GetConVar("arccw_cheapscopes"):SetBool(lowfps and true or false)

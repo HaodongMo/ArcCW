@@ -40,9 +40,8 @@ function SWEP:CanPrimaryAttack()
     -- Safety's on, turn it off.
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
-        --self:SetNextPrimaryFire(CurTime() + 0.5)
-        --self.Primary.Automatic = false
-
+        self:SetNextPrimaryFire(CurTime())
+        self.Primary.Automatic = false
         return
     end
 
@@ -300,7 +299,7 @@ function SWEP:PrimaryAttack()
 
     self:DoEffects()
 
-    if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) end
+    self:TakePrimaryAmmo(aps)
 
     self:SetBurstCount(self:GetBurstCount() + 1)
 

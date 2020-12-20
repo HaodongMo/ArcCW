@@ -62,9 +62,6 @@ function SWEP:DoHeat()
     --diss = diss * self:GetBuff_Mult("Mult_HeatDissipation")
     local diss = self:GetBuff("HeatDissipation") or 2
     local ft = FrameTime()
-    if CLIENT then
-        ft = math.min(ft, RealFrameTime())
-    end
     self.Heat = self:GetHeat() - (ft * diss)
 
     self.Heat = math.Clamp(self.Heat, 0, self:GetMaxHeat())

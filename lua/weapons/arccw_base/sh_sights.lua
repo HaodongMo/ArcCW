@@ -70,6 +70,7 @@ function SWEP:EnterSights()
     local asight = self:GetActiveSights()
     if !asight then return end
     if self:GetState() != ArcCW.STATE_IDLE then return end
+    if self:GetCurrentFiremode().Mode == 0 then return end
     if !self.ReloadInSights and (self:GetReloading() or self:GetOwner():KeyDown(IN_RELOAD)) then return end
     if self:GetBuff_Hook("Hook_ShouldNotSight") then return end
 
@@ -81,12 +82,9 @@ function SWEP:EnterSights()
 
     self:SetShouldHoldType()
 
-    -- self.SwayScale = 0.1
-    -- self.BobScale = 0.1
+    self:MyEmitSound(asight.SwitchToSound or "", 75, math.Rand(95, 105), 0.5, CHAN_AUTO)
 
-    self:MyEmitSound(asight.SwitchToSound or "", 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
-
-    self.LastEnterSightTime = UnPredictedCurTime()
+    self.LastEnterSightTime = CurTime()
 
     local anim = self:SelectAnimation("enter_sight")
     if anim then
@@ -99,14 +97,9 @@ function SWEP:ExitSights()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
     if self.LockSightsInReload and self:GetReloading() then return end
 
-    --print("yeah yeah beebis")
-
     self:SetState(ArcCW.STATE_IDLE)
     self.Sighted = false
     self.Sprinted = false
-
-    -- self.SwayScale = 1
-    -- self.BobScale = 1.5
 
     self:SetShouldHoldType()
 
@@ -116,9 +109,9 @@ function SWEP:ExitSights()
 
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
-    self:MyEmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_VOICE2)
+    self:MyEmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_AUTO)
 
-    self.LastExitSightTime = UnPredictedCurTime()
+    self.LastExitSightTime = CurTime()
 
     local anim = self:SelectAnimation("exit_sight")
     if anim then

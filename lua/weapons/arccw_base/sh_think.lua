@@ -34,9 +34,7 @@ function SWEP:Think()
         local anim = self:SelectAnimation("cycle")
         anim = self:GetBuff_Hook("Hook_SelectCycleAnimation", anim) or anim
         local mult = self:GetBuff_Mult("Mult_CycleTime")
-        if IsFirstTimePredicted() then
-            self:PlayAnimation(anim, mult, true, 0, true)
-        end
+        self:PlayAnimation(anim, mult, true, 0, true)
         self:SetNeedCycle(false)
     end
 
@@ -65,7 +63,7 @@ function SWEP:Think()
         self:DoTriggerDelay()
     end
 
-    if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 and IsFirstTimePredicted() then
+    if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 then
         if self:GetBurstCount() > 0 then
             self:PrimaryAttack()
         end
@@ -93,7 +91,7 @@ function SWEP:Think()
         end
     end
 
-    if game.SinglePlayer() or IsFirstTimePredicted() then
+    if IsFirstTimePredicted() then
         if self:InSprint() and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT) then
             self:EnterSprint()
         elseif !self:InSprint() and (self.Sprinted or self:GetState() == ArcCW.STATE_SPRINT) then
@@ -152,8 +150,7 @@ function SWEP:Think()
         self:ExitSights()
     else
 
-        if game.SinglePlayer() or IsFirstTimePredicted() then
-            -- everything here has to be predicted for the first time
+        if IsFirstTimePredicted() then
             if owner:GetInfoNum("arccw_toggleads", 0) == 0 then
                 if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
                     self:EnterSights()
@@ -175,7 +172,7 @@ function SWEP:Think()
 
     end
 
-    if (CLIENT or game.SinglePlayer()) and (IsFirstTimePredicted() or game.SinglePlayer()) then
+    if CLIENT and IsFirstTimePredicted() then
         self:ProcessRecoil()
     end
 
@@ -256,12 +253,17 @@ function SWEP:Think()
         self:DoOurViewPunch()
     end
 
-    if SERVER and self.Throwing and self:Clip1() == 0 and self:Ammo1() > 0 then
+    if self.Throwing and self:Clip1() == 0 and self:Ammo1() > 0 then
         self:SetClip1(1)
         owner:SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
     end
 
     -- self:RefreshBGs()
+
+    if self:GetMagUpIn() != 0 and CurTime() > self:GetMagUpIn() then
+        self:WhenTheMagUpIn()
+        self:SetMagUpIn( 0 )
+    end
 
     self:GetBuff_Hook("Hook_Think")
 
@@ -274,10 +276,6 @@ end
 function SWEP:ProcessRecoil()
     local owner = self:GetOwner()
     local ft = FrameTime()
-    if CLIENT then
-       ft = math.max(FrameTime(), RealFrameTime())
-    end
-
     local newang = owner:EyeAngles()
     local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
     local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)

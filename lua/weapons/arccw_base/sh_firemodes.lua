@@ -70,6 +70,9 @@ function SWEP:ChangeFiremode(pred)
     elseif self.Animations.changefiremode then
         self:PlayAnimation("changefiremode")
     end
+    if self:GetCurrentFiremode().Mode == 0 then 
+        self:ExitSights()
+    end
 end
 
 function SWEP:GetCurrentFiremode()

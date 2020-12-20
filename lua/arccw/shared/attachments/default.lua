@@ -216,10 +216,14 @@ att.Override_Firemodes = {}
 
 -- all hooks, mults, and adds will work on fire modes
 
--- Use SWEP:GetBurstCount() instead of SWEP.BurstCount
--- Use SWEP:Get/SetNextPrimaryFire()
-
+-- Allows you to directly edit the burst count
 att.Hook_GetBurstCount = function(wep, burstcount) end
+
+-- Allows you to directly edit whether the weapon is reloading/inoperable
+att.Hook_GetReloading = function(wep, reloading) end
+
+-- Directly modify dispersion
+att.Hook_ModDispersion = function(wep, dispersion) end
 
 -- Allows you to change the weapon's name
 -- string name
