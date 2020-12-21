@@ -57,7 +57,12 @@ function SWEP:SetupShields()
             shield:SetPos( apos )
             shield:SetAngles( self:GetOwner():GetAngles() + ang + (atttbl.ShieldCorrectAng or Angle(0, 0, 0)) )
             shield:SetCollisionGroup( COLLISION_GROUP_WORLD )
-            shield:SetColor( Color(0, 0, 0, 0) )
+            if GetConVar("developer"):GetBool() then
+                shield:SetColor( Color(0, 0, 0, 255) )
+            else
+                shield:SetColor( Color(0, 0, 0, 0) )
+                shield:SetRenderMode(RENDERMODE_NONE)
+            end
             table.insert(self.Shields, shield)
             shield:Spawn()
             shield:Activate()
@@ -65,8 +70,6 @@ function SWEP:SetupShields()
             local phys = shield:GetPhysicsObject()
 
             phys:SetMass(1000)
-
-            shield:SetRenderMode(RENDERMODE_NONE)
         end
     end
 
@@ -98,7 +101,12 @@ function SWEP:SetupShields()
         shield:SetPos( apos )
         shield:SetAngles( self:GetOwner():GetAngles() + ang )
         shield:SetCollisionGroup( COLLISION_GROUP_WORLD )
-        shield:SetColor( Color(0, 0, 0, 0) )
+        if GetConVar("developer"):GetBool() then
+            shield:SetColor( Color(0, 0, 0, 255) )
+        else
+            shield:SetColor( Color(0, 0, 0, 0) )
+            shield:SetRenderMode(RENDERMODE_NONE)
+        end
         table.insert(self.Shields, shield)
         shield:Spawn()
         shield:Activate()
@@ -106,8 +114,6 @@ function SWEP:SetupShields()
         local phys = shield:GetPhysicsObject()
 
         phys:SetMass(1000)
-
-        shield:SetRenderMode(RENDERMODE_NONE)
     end
 end
 
