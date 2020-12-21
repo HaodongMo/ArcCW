@@ -38,7 +38,6 @@ ArcCW.StringToLang = {
     ["hand grenade"] = "class.grenade", -- Preferred
     ["grenade"] = "class.grenade",
     ["melee weapon"] = "class.melee", -- Preferred
-    ["melee"] = "class.melee",
 
     -- Attachment Slot
     ["optic"] = "attslot.optic",
