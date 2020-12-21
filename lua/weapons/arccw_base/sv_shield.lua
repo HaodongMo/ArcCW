@@ -70,7 +70,7 @@ function SWEP:SetupShields()
         end
     end
 
-    for i, k in pairs(self.ShieldProps) do
+    for i, k in pairs(self.ShieldProps or {}) do
         if !k then continue end
         if !k.Model then continue end
 

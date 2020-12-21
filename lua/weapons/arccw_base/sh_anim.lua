@@ -78,7 +78,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             if isnumber(v.t) then
                 if st < 0 then continue end
                 if self:GetOwner():IsPlayer() then
-                    self:SetTimer(st, function() if IsFirstTimePredicted() then self:OurViewPunch(v.p or Vector(0, 0, 0)) end end, id)
+                    self:SetTimer(st, function() if !game.SinglePlayer() and !IsFirstTimePredicted() then return end self:OurViewPunch(v.p or Vector(0, 0, 0)) end, id)
                 end
             end
         end

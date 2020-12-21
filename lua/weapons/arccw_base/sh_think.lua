@@ -91,7 +91,7 @@ function SWEP:Think()
         end
     end
 
-    if IsFirstTimePredicted() then
+    if game.SinglePlayer() or IsFirstTimePredicted() then
         if self:InSprint() and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT) then
             self:EnterSprint()
         elseif !self:InSprint() and (self.Sprinted or self:GetState() == ArcCW.STATE_SPRINT) then
@@ -150,7 +150,8 @@ function SWEP:Think()
         self:ExitSights()
     else
 
-        if IsFirstTimePredicted() then
+        if game.SinglePlayer() or IsFirstTimePredicted() then
+            -- everything here has to be predicted for the first time
             if owner:GetInfoNum("arccw_toggleads", 0) == 0 then
                 if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
                     self:EnterSights()
@@ -172,7 +173,7 @@ function SWEP:Think()
 
     end
 
-    if CLIENT and IsFirstTimePredicted() then
+    if (CLIENT or game.SinglePlayer()) and (IsFirstTimePredicted() or game.SinglePlayer()) then
         self:ProcessRecoil()
     end
 
