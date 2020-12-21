@@ -272,6 +272,17 @@ SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 
 SWEP.GuaranteeLaser = false -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
 
+SWEP.ShieldProps = nil
+-- {
+--     {
+--         Model = "",
+--         Pos = Vector(0, 0, 0),
+--         Ang = Angle(0, 0, 0),
+--         Bone = "", -- leave blank for valvebiped right hand
+--         Resistance = 5, -- one unit of this object counts for how much penetration amount
+--     }
+-- }
+
 SWEP.CanBash = true
 SWEP.PrimaryBash = false -- primary attack triggers melee attack
 

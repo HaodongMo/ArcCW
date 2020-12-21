@@ -61,6 +61,7 @@ att.ModelScale = Vector(1, 1, 1)
 att.ModelOffset = Vector(0, 0, 0)
 att.OffsetAng = Angle(0, 0, 0)
 att.ModelIsShield = false
+att.ShieldResistance = nil -- amount of penetration to get through one unit of shield
 att.ShieldBone = "ValveBiped.Bip01_R_Hand"
 att.DrawFunc = function(self, element, wm) end
 
