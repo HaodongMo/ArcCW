@@ -57,6 +57,7 @@ function SWEP:SetupShields()
             shield:SetPos( apos )
             shield:SetAngles( self:GetOwner():GetAngles() + ang + (atttbl.ShieldCorrectAng or Angle(0, 0, 0)) )
             shield:SetCollisionGroup( COLLISION_GROUP_WORLD )
+            shield.Weapon = self
             if GetConVar("developer"):GetBool() then
                 shield:SetColor( Color(0, 0, 0, 255) )
             else
@@ -66,6 +67,8 @@ function SWEP:SetupShields()
             table.insert(self.Shields, shield)
             shield:Spawn()
             shield:Activate()
+
+            table.insert(ArcCW.ShieldPropPile, {Weapon = self, Model = shield})
 
             local phys = shield:GetPhysicsObject()
 
@@ -101,6 +104,7 @@ function SWEP:SetupShields()
         shield:SetPos( apos )
         shield:SetAngles( self:GetOwner():GetAngles() + ang )
         shield:SetCollisionGroup( COLLISION_GROUP_WORLD )
+        shield.Weapon = self
         if GetConVar("developer"):GetBool() then
             shield:SetColor( Color(0, 0, 0, 255) )
         else
@@ -110,6 +114,8 @@ function SWEP:SetupShields()
         table.insert(self.Shields, shield)
         shield:Spawn()
         shield:Activate()
+
+        table.insert(ArcCW.ShieldPropPile, {Weapon = self, Model = shield})
 
         local phys = shield:GetPhysicsObject()
 

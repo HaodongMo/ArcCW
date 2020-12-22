@@ -87,10 +87,14 @@ function SWEP:MeleeAttack(melee2)
 
     self:GetOwner():LagCompensation(true)
 
+    local filter = {self:GetOwner()}
+
+    table.Add(filter, self.Shields)
+
     local tr = util.TraceLine({
         start = self:GetOwner():GetShootPos(),
         endpos = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * reach,
-        filter = self:GetOwner(),
+        filter = filter,
         mask = MASK_SHOT_HULL
     })
 
@@ -98,7 +102,7 @@ function SWEP:MeleeAttack(melee2)
         tr = util.TraceHull({
             start = self:GetOwner():GetShootPos(),
             endpos = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * reach,
-            filter = self:GetOwner(),
+            filter = filter,
             mins = Vector(-16, -16, -8),
             maxs = Vector(16, 16, 8),
             mask = MASK_SHOT_HULL

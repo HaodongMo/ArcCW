@@ -739,7 +739,7 @@ function SWEP:GetReloading()
     end
 
     self:GetBuff_Hook("Hook_GetReloading", decide)
-    
+
     return decide
 end
 
@@ -792,10 +792,14 @@ function SWEP:BarrelHitWall()
 
         local mask = MASK_SOLID
 
+        local filter = {self:GetOwner()}
+
+        table.Add(filter, self.Shields)
+
         local tr = util.TraceLine({
             start = src,
             endpos = src + (dir:Forward() * (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength"))),
-            filter = {self:GetOwner()},
+            filter = filter,
             mask = mask
         })
 
