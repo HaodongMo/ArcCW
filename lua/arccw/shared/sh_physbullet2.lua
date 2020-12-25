@@ -229,7 +229,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(255,200,100), true)
             end
 
-            if CLIENT then
+            if CLIENT and !game.SinglePlayer() then
                 -- do an impact effect and forget about it
                 if bullet.PhysBulletImpact then
                     attacker:FireBullets({
@@ -244,71 +244,76 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 bullet.Dead = true
                 return
             else
-                local delta = bullet.Travelled / (bullet.Range / ArcCW.HUToM)
-                delta = math.Clamp(delta, 0, 1)
-                local dmg = Lerp(delta, bullet.DamageMax, bullet.DamageMin)
-                -- deal some damage
-                attacker:FireBullets({
-                    Src = oldpos,
-                    Dir = dir,
-                    Distance = spd + 16,
-                    Tracer = 0,
-                    Damage = 0,
-                    IgnoreEntity = bullet.Attacker,
-                    Callback = function(catt, ctr, cdmg)
-                        local hit   = {}
-                        hit.att     = catt
-                        hit.tr      = ctr
-                        hit.dmg     = cdmg
-                        hit.range   = bullet.Travelled
-                        hit.damage  = dmg
-                        hit.dmgtype = bullet.DamageType
-                        hit.penleft = bullet.Penleft
+                if IsValid(bullet.Weapon) then
+                    bullet.Weapon:GetBuff_Hook("Hook_PhysBulletHit", {bullet = bullet, tr = tr})
+                end
+                if bullet.PhysBulletImpact then
+                    local delta = bullet.Travelled / (bullet.Range / ArcCW.HUToM)
+                    delta = math.Clamp(delta, 0, 1)
+                    local dmg = Lerp(delta, bullet.DamageMax, bullet.DamageMin)
+                    -- deal some damage
+                    attacker:FireBullets({
+                        Src = oldpos,
+                        Dir = dir,
+                        Distance = spd + 16,
+                        Tracer = 0,
+                        Damage = 0,
+                        IgnoreEntity = bullet.Attacker,
+                        Callback = function(catt, ctr, cdmg)
+                            local hit   = {}
+                            hit.att     = catt
+                            hit.tr      = ctr
+                            hit.dmg     = cdmg
+                            hit.range   = bullet.Travelled
+                            hit.damage  = dmg
+                            hit.dmgtype = bullet.DamageType
+                            hit.penleft = bullet.Penleft
 
-                        if IsValid(bullet.Weapon) then
-                            hit = bullet.Weapon:GetBuff_Hook("Hook_BulletHit", hit)
+                            if IsValid(bullet.Weapon) then
+                                hit = bullet.Weapon:GetBuff_Hook("Hook_BulletHit", hit)
 
-                            if !hit then return end
-                        end
-
-                        if bullet.Damaged[ctr.Entity:EntIndex()] then
-                            cdmg:SetDamage(0)
-                        else
-                            cdmg:SetDamage(dmg)
-                            cdmg:SetDamageType(bullet.DamageType)
-                        end
-
-                        if bullet.DamageType == DMG_BURN and delta < 1 then
-                            cdmg:SetDamageType(DMG_BULLET)
-
-                            if bullet.Num > 1 then
-                                cdmg:SetDamageType(DMG_BUCKSHOT)
+                                if !hit then return end
                             end
 
-                            if vFireInstalled then
-                                CreateVFire(ctr.Entity, ctr.HitPos, ctr.HitNormal, dmg * 0.02)
+                            if bullet.Damaged[ctr.Entity:EntIndex()] then
+                                cdmg:SetDamage(0)
                             else
-                                ctr.Entity:Ignite(1, 0)
+                                cdmg:SetDamage(dmg)
+                                cdmg:SetDamageType(bullet.DamageType)
                             end
+
+                            if bullet.DamageType == DMG_BURN and delta < 1 then
+                                cdmg:SetDamageType(DMG_BULLET)
+
+                                if bullet.Num > 1 then
+                                    cdmg:SetDamageType(DMG_BUCKSHOT)
+                                end
+
+                                if vFireInstalled then
+                                    CreateVFire(ctr.Entity, ctr.HitPos, ctr.HitNormal, dmg * 0.02)
+                                else
+                                    ctr.Entity:Ignite(1, 0)
+                                end
+                            end
+
+                            ArcCW.TryBustDoor(ctr.Entity, cdmg)
+
+                            if bullet.ImpactEffect then
+                                local ed = EffectData()
+                                ed:SetOrigin(ctr.HitPos)
+                                ed:SetNormal(ctr.HitNormal)
+
+                                util.Effect(bullet.ImpactEffect, ed)
+                            end
+
+                            if bullet.ImpactDecal then
+                                util.Decal(bullet.ImpactDecal, ctr.StartPos, ctr.HitPos - (ctr.HitNormal * 16), bullet.Attacker)
+                            end
+
+                            ArcCW:DoPenetration(ctr, dmg, bullet, bullet.Penleft, true, bullet.Damaged)
                         end
-
-                        ArcCW.TryBustDoor(ctr.Entity, cdmg)
-
-                        if bullet.ImpactEffect then
-                            local ed = EffectData()
-                            ed:SetOrigin(ctr.HitPos)
-                            ed:SetNormal(ctr.HitNormal)
-
-                            util.Effect(bullet.ImpactEffect, ed)
-                        end
-
-                        if bullet.ImpactDecal then
-                            util.Decal(bullet.ImpactDecal, ctr.StartPos, ctr.HitPos - (ctr.HitNormal * 16), bullet.Attacker)
-                        end
-
-                        ArcCW:DoPenetration(ctr, dmg, bullet, bullet.Penleft, true, bullet.Damaged)
-                    end
-                })
+                    })
+                end
                 bullet.Damaged[eid] = true
                 bullet.Dead = true
             end

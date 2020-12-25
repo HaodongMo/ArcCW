@@ -306,6 +306,10 @@ att.Hook_PreBash = function(wep) end
 -- data = {tr = tr, dmg = dmg}
 att.Hook_PostBash = function(wep, data) end
 
+-- Called just before a physbullet will call FireBullets
+-- data.bullet - physbullet info; data.tr - trace info
+att.Hook_PhysBulletHit = function(wep, data) end
+
 -- data has entries:
 -- number range, the distance the bullet had to travel
 -- number damage, the calculated damage the bullet will do
