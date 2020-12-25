@@ -33,6 +33,7 @@ function ArcCW:SendBullet(bullet, attacker)
 end
 
 function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
+    local pbi = wep:GetBuff_Override("Override_PhysBulletImpact")
     local bullet = {
         DamageMax = wep:GetDamage(0),
         DamageMin = wep:GetDamage(wep:GetBuff("Range")),
@@ -42,7 +43,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Penetration = wep:GetBuff("Penetration"),
         ImpactEffect = wep:GetBuff_Override("Override_ImpactEffect") or wep.ImpactEffect,
         ImpactDecal = wep:GetBuff_Override("Override_ImpactDecal") or wep.ImpactDecal,
-        PhysBulletImpact = wep:GetBuff_Override("Override_PhysBulletImpact") or true,
+        PhysBulletImpact = pbi == nil and true or pbi,
         Gravity = wep:GetBuff("PhysBulletGravity"),
         Num = wep:GetBuff_Override("Override_Num") or wep.Num,
         Pos = pos,
@@ -60,8 +61,6 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Dead = false,
         Profile = prof or wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
     }
-
-    -- print(bullet.DamageMax)
 
     if wep:GetOwner() and wep:GetOwner():IsNPC() then
         bullet.DamageMax = bullet.DamageMax * GetConVar("arccw_mult_npcdamage"):GetFloat()
@@ -232,7 +231,6 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(255,200,100), true)
             end
 
-            print(bullet.PhysBulletImpact)
 
             if CLIENT then
                 -- do an impact effect and forget about it
