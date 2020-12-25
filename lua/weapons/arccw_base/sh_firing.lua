@@ -157,12 +157,17 @@ function SWEP:PrimaryAttack()
             util.Effect(bullet.TracerName or "tracer", fx)
         end
 
+        local randfactor = self:GetBuff("DamageRand")
+        if randfactor > 0 then
+            mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
+        end
+
         local hit   = {}
         hit.att     = att
         hit.tr      = tr
         hit.dmg     = dmg
         hit.range   = dist
-        hit.damage  = self:GetDamage(dist, true)
+        hit.damage  = self:GetDamage(dist, true) * mul
         hit.dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType
         hit.penleft = pen
 
@@ -775,11 +780,6 @@ function SWEP:GetDamage(range, pellet)
     mul = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num != nbr) and (num / nbr)) or 1
 
     if !pellet then mul = mul * nbr end
-
-    local randfactor = self:GetBuff("DamageRand")
-    if randfactor > 0 then
-        mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
-    end
 
     local dmgmax = self:GetBuff("Damage") * mul
     local dmgmin = self:GetBuff("DamageMin") * mul
