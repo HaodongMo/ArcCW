@@ -158,7 +158,7 @@ function SWEP:PrimaryAttack()
         end
 
         local randfactor = self:GetBuff("DamageRand")
-		local mul = 1
+        local mul = 1
         if randfactor > 0 then
             mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
         end
