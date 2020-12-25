@@ -478,16 +478,16 @@ function SWEP:CreateCustomizeHUD()
     end
     attmenu:Hide()
 
-    local sbar3 = attmenu:GetVBar()
-    sbar3.Paint = function() end
+    local sbar4 = attmenu:GetVBar()
+    sbar4.Paint = function() end
 
-    sbar3.btnUp.Paint = function(span, w, h)
+    sbar4.btnUp.Paint = function(span, w, h)
     end
 
-    sbar3.btnDown.Paint = function(span, w, h)
+    sbar4.btnDown.Paint = function(span, w, h)
     end
 
-    sbar3.btnGrip.Paint = function(span, w, h)
+    sbar4.btnGrip.Paint = function(span, w, h)
         surface.SetDrawColor(fg_col)
         surface.DrawRect(0, 0, w, h)
     end
@@ -529,19 +529,17 @@ function SWEP:CreateCustomizeHUD()
             surface.DrawRect((w - ScreenScaleMulti(1)) / 2, 0, ScreenScaleMulti(1), h)
         end
 
-        if attslider:GetDragging() then
-            if activeslot then
-                local delta = attslider:GetSlideX()
-                if lastslidepos != delta and lastsoundtime <= CurTime() then
+        if attslider:GetDragging() and activeslot then
+            local delta = attslider:GetSlideX()
+            if lastslidepos != delta and lastsoundtime <= CurTime() then
 
-                    EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
+                EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
 
-                    lastsoundtime = CurTime() + 0.05
-                end
-
-                self.Attachments[activeslot].SlidePos = delta
-                lastslidepos = delta
+                lastsoundtime = CurTime() + 0.05
             end
+
+            self.Attachments[activeslot].SlidePos = delta
+            lastslidepos = delta
         end
 
         attslider:SetSlideX((self.Attachments[activeslot] or {}).SlidePos or 0.5)
@@ -566,16 +564,16 @@ function SWEP:CreateCustomizeHUD()
     end
     atttrivia:Hide()
 
-    local sbar4 = atttrivia:GetVBar()
-    sbar4.Paint = function() end
+    local sbar5 = atttrivia:GetVBar()
+    sbar5.Paint = function() end
 
-    sbar4.btnUp.Paint = function(span, w, h)
+    sbar5.btnUp.Paint = function(span, w, h)
     end
 
-    sbar4.btnDown.Paint = function(span, w, h)
+    sbar5.btnDown.Paint = function(span, w, h)
     end
 
-    sbar4.btnGrip.Paint = function(span, w, h)
+    sbar5.btnGrip.Paint = function(span, w, h)
         surface.SetDrawColor(fg_col)
         surface.DrawRect(0, 0, w, h)
     end

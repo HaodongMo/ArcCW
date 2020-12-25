@@ -287,7 +287,7 @@ function SWEP:PrimaryAttack()
             if !self:GetBuff_Override("Override_NoRandSpread") then
                 bullet.Dir = dir + VectorRand() * spread
             end
-		    bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
+            bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
 
             self:DoPrimaryFire(false, bullet)
         end
