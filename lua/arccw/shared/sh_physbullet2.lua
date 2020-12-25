@@ -41,6 +41,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Penetration = wep:GetBuff("Penetration"),
         ImpactEffect = wep:GetBuff_Override("Override_ImpactEffect") or wep.ImpactEffect,
         ImpactDecal = wep:GetBuff_Override("Override_ImpactDecal") or wep.ImpactDecal,
+        PhysBulletImpact = wep:GetBuff_Override("Override_PhysBulletImpact") or true,
         Gravity = wep:GetBuff("PhysBulletGravity"),
         Num = wep:GetBuff_Override("Override_Num") or wep.Num,
         Pos = pos,
@@ -230,21 +231,22 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
             if CLIENT then
                 -- do an impact effect and forget about it
-                attacker:FireBullets({
-                    Src = oldpos,
-                    Dir = dir,
-                    Distance = spd + 16,
-                    Tracer = 0,
-                    Damage = 0,
-                    IgnoreEntity = bullet.Attacker
-                })
+                if bullet.PhysBulletImpact then
+                    attacker:FireBullets({
+                        Src = oldpos,
+                        Dir = dir,
+                        Distance = spd + 16,
+                        Tracer = 0,
+                        Damage = 0,
+                        IgnoreEntity = bullet.Attacker
+                    })
+                end
                 bullet.Dead = true
                 return
             else
                 local delta = bullet.Travelled / (bullet.Range / ArcCW.HUToM)
                 delta = math.Clamp(delta, 0, 1)
                 local dmg = Lerp(delta, bullet.DamageMax, bullet.DamageMin)
-
                 -- deal some damage
                 attacker:FireBullets({
                     Src = oldpos,
@@ -311,7 +313,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 bullet.Dead = true
             end
         else
-            -- bullet did !impact anything
+            -- bullet did not impact anything
             bullet.Pos = tr.HitPos
             bullet.Vel = newvel
             bullet.Travelled = bullet.Travelled + spd
