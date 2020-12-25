@@ -20,6 +20,7 @@ function ArcCW:SendBullet(bullet, attacker)
     net.WriteFloat(bullet.Drag)
     net.WriteFloat(bullet.Gravity)
     net.WriteUInt((bullet.Profile - 1) or 1, 3)
+    net.WriteBool(bullet.PhysBulletImpact)
 
     if attacker and attacker:IsValid() and attacker:IsPlayer() and !game.SinglePlayer() then
         net.SendOmit(attacker)
@@ -98,6 +99,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
     local drag = net.ReadFloat()
     local grav = net.ReadFloat()
     local profile = net.ReadUInt(3) + 1
+    local impact = net.ReadBool()
     local ent = nil
 
     if game.SinglePlayer() then
@@ -116,7 +118,8 @@ net.Receive("arccw_sendbullet", function(len, ply)
         Drag = drag,
         Attacker = ent,
         Gravity = grav,
-        Profile = profile
+        Profile = profile,
+        PhysBulletImpact = impact,
     }
 
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then
@@ -229,9 +232,11 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(255,200,100), true)
             end
 
-            if CLIENT and !game.SinglePlayer() then
+            print(bullet.PhysBulletImpact)
+
+            if CLIENT then
                 -- do an impact effect and forget about it
-                if bullet.PhysBulletImpact then
+                if !game.SinglePlayer() and bullet.PhysBulletImpact then
                     attacker:FireBullets({
                         Src = oldpos,
                         Dir = dir,
@@ -243,7 +248,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 end
                 bullet.Dead = true
                 return
-            else
+            elseif SERVER then
                 if IsValid(bullet.Weapon) then
                     bullet.Weapon:GetBuff_Hook("Hook_PhysBulletHit", {bullet = bullet, tr = tr})
                 end
