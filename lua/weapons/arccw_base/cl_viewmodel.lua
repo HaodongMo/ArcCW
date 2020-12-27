@@ -382,7 +382,11 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     if coolsway then lasteyeangles = LerpAngle(m_min(FT * 100 * accelmult, 1), lasteyeangles, eyeangles) end
 
-    self.ViewModelFOV = weapons.GetStored(self:GetClass()).ViewModelFOV + vm_fov * self:GetSightDelta()
+    local origfov = weapons.GetStored(self:GetClass()).ViewModelFOV
+    if !origfov then
+        origfov = weapons.Get(self:GetClass()).ViewModelFOV -- yikes
+    end
+    self.ViewModelFOV = origfov + vm_fov * self:GetSightDelta()
 
     return pos, ang
 end
