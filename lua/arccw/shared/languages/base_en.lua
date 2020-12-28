@@ -228,10 +228,9 @@ L["fcg.burst"] = "%dBST"
 L["fcg.ubgl"] = "UBGL"
 
 -- 2020-12-12
-L["stat.precision.moa"] = " MOA"
-L["stat.0m"] = "0m"
+L["stat.moa"] = " MOA"
 L["stat.m"] = "m"
-L["stat.ma"] = "ms"
+L["stat.ms"] = "ms"
 L["stat.db"] = "dB"
 L["stat.in"] = "in"
 L["stat.mm"] = "mm"
