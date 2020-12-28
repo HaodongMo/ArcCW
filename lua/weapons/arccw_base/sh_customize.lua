@@ -133,6 +133,79 @@ local function multlinetext(text, maxw, font)
     return content
 end
 
+-- Same snippet of code in Paint() moved to its own function so the button won't be added if it's not valid to begin with
+function SWEP:ValidateAttachment(attname, attslot, i)
+    if !self:IsValid() or !self.Attachments then return false end
+    local atttbl = ArcCW.AttachmentTable[attname]
+
+    local showqty = true
+    local installed = false
+    local blocked = atttbl and !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
+    local owned = self:PlayerOwnsAtt(attname)
+
+    if !atttbl or atttbl.Free then
+        showqty = false
+    end
+
+    if GetConVar("arccw_attinv_free"):GetBool() then
+        showqty = false
+    end
+
+    if !owned then
+        showqty = false
+    end
+
+    if GetConVar("arccw_attinv_lockmode"):GetBool() then
+        showqty = false
+    end
+
+    -- orighas checks if the original slot accepts this attachment.
+    -- If the original slot is ok but the mergeslot that has the same attachment is not, we're still okay
+    local orighas = ArcCW:SlotAcceptsAtt(self.Attachments[i], self, attname) and self:CheckFlags(self.Attachments[i].ExcludeFlags, self.Attachments[i].RequireFlags)
+
+    if attslot.Installed == attname then
+        installed = true
+    end
+
+    for _, slot in pairs(attslot.MergeSlots or {}) do
+        if !slot then continue end
+        if !self.Attachments[slot] then continue end
+        if !blocked and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, attname) and
+                !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
+                !orighas then
+            blocked = true
+            if self.Attachments[slot].HideIfBlocked then
+                return false
+            end
+        end
+        if self.Attachments[slot].Installed == attname then
+            installed = true
+            break
+        end
+    end
+
+    if blocked and atttbl and atttbl.HideIfBlocked then
+        return false
+    end
+
+    if !owned and atttbl and atttbl.HideIfUnavailable then
+        return false
+    end
+
+    if attname == "" and !attslot.Installed then
+        installed = true
+
+        for _, slot in pairs(attslot.MergeSlots or {}) do
+            if self.Attachments[slot].Installed then
+                installed = false
+                break
+            end
+        end
+    end
+
+    return true, installed, blocked, showqty
+end
+
 function SWEP:OpenCustomizeHUD()
     if IsValid(ArcCW.InvHUD) then
         ArcCW.InvHUD:Show()
@@ -405,16 +478,16 @@ function SWEP:CreateCustomizeHUD()
     end
     attmenu:Hide()
 
-    local sbar3 = attmenu:GetVBar()
-    sbar3.Paint = function() end
+    local sbar4 = attmenu:GetVBar()
+    sbar4.Paint = function() end
 
-    sbar3.btnUp.Paint = function(span, w, h)
+    sbar4.btnUp.Paint = function(span, w, h)
     end
 
-    sbar3.btnDown.Paint = function(span, w, h)
+    sbar4.btnDown.Paint = function(span, w, h)
     end
 
-    sbar3.btnGrip.Paint = function(span, w, h)
+    sbar4.btnGrip.Paint = function(span, w, h)
         surface.SetDrawColor(fg_col)
         surface.DrawRect(0, 0, w, h)
     end
@@ -456,19 +529,17 @@ function SWEP:CreateCustomizeHUD()
             surface.DrawRect((w - ScreenScaleMulti(1)) / 2, 0, ScreenScaleMulti(1), h)
         end
 
-        if attslider:GetDragging() then
-            if activeslot then
-                local delta = attslider:GetSlideX()
-                if lastslidepos != delta and lastsoundtime <= CurTime() then
+        if attslider:GetDragging() and activeslot then
+            local delta = attslider:GetSlideX()
+            if lastslidepos != delta and lastsoundtime <= CurTime() then
 
-                    EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
+                EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
 
-                    lastsoundtime = CurTime() + 0.05
-                end
-
-                self.Attachments[activeslot].SlidePos = delta
-                lastslidepos = delta
+                lastsoundtime = CurTime() + 0.05
             end
+
+            self.Attachments[activeslot].SlidePos = delta
+            lastslidepos = delta
         end
 
         attslider:SetSlideX((self.Attachments[activeslot] or {}).SlidePos or 0.5)
@@ -493,16 +564,16 @@ function SWEP:CreateCustomizeHUD()
     end
     atttrivia:Hide()
 
-    local sbar4 = atttrivia:GetVBar()
-    sbar4.Paint = function() end
+    local sbar5 = atttrivia:GetVBar()
+    sbar5.Paint = function() end
 
-    sbar4.btnUp.Paint = function(span, w, h)
+    sbar5.btnUp.Paint = function(span, w, h)
     end
 
-    sbar4.btnDown.Paint = function(span, w, h)
+    sbar5.btnDown.Paint = function(span, w, h)
     end
 
-    sbar4.btnGrip.Paint = function(span, w, h)
+    sbar5.btnGrip.Paint = function(span, w, h)
         surface.SetDrawColor(fg_col)
         surface.DrawRect(0, 0, w, h)
     end
@@ -798,6 +869,10 @@ function SWEP:CreateCustomizeHUD()
 
                 if !owned and GetConVar("arccw_attinv_hideunowned"):GetBool() then continue end
 
+                local valid, installed, blocked, showqty = self:ValidateAttachment(att, k, i)
+
+                if !valid then continue end
+
                 local attbtn = attmenu:Add("DButton")
                 attbtn:SetSize(barsize + ScreenScaleMulti(12), ScreenScaleMulti(14))
                 attbtn:SetText("")
@@ -811,12 +886,16 @@ function SWEP:CreateCustomizeHUD()
                 attbtn.OnMousePressed = function(spaa, kc2)
 
                     owned = self:PlayerOwnsAtt(spaa.AttName)
+                    local orighas = ArcCW:SlotAcceptsAtt(self.Attachments[i], self, spaa.AttName) and self:CheckFlags(self.Attachments[i].ExcludeFlags, self.Attachments[i].RequireFlags)
 
                     local atttbl = ArcCW.AttachmentTable[spaa.AttName]
                     if atttbl then
                         if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
                         for _, slot in pairs(k.MergeSlots or {}) do
-                            if slot and self.Attachments[slot] and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, spaa.AttName) and !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) then
+                            if slot and self.Attachments[slot] and
+                                    ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, spaa.AttName) and
+                                    !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
+                                    !orighas then
                                 return
                             end
                         end
@@ -859,7 +938,12 @@ function SWEP:CreateCustomizeHUD()
                     local Bbg_col = Color(0, 0, 0, 100)
                     local atttbl = ArcCW.AttachmentTable[spaa.AttName]
                     local qty = ArcCW:PlayerGetAtts(self:GetOwner(), spaa.AttName)
-                    local showqty = true
+
+                    valid, installed, blocked, showqty = self:ValidateAttachment(att, k, i)
+                    if !valid then
+                        attbtn:Remove()
+                        return
+                    end
 
                     owned = self:PlayerOwnsAtt(spaa.AttName)
 
@@ -869,63 +953,6 @@ function SWEP:CreateCustomizeHUD()
                             Icon = k.DefaultAttIcon or defaultatticon,
                             Free = true
                         }
-                    end
-
-                    if atttbl.Free then
-                        showqty = false
-                    end
-
-                    if GetConVar("arccw_attinv_free"):GetBool() then
-                        showqty = false
-                    end
-
-                    if !owned then
-                        showqty = false
-                    end
-
-                    if GetConVar("arccw_attinv_lockmode"):GetBool() then
-                        showqty = false
-                    end
-
-                    local installed = false
-                    local blocked = !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
-
-                    if span.AttSlot.Installed == spaa.AttName then
-                        installed = true
-                    end
-
-                    for _, slot in pairs(k.MergeSlots or {}) do
-                        if !slot then continue end
-                        if !self.Attachments[slot] then continue end
-                        if !blocked and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, spaa.AttName) and !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) then
-                            blocked = true
-                        end
-                        if self.Attachments[slot].Installed == spaa.AttName then
-                            installed = true
-                            break
-                        end
-                    end
-
-                    if blocked and atttbl.HideIfBlocked then
-                    -- if blocked then
-                        attbtn:Remove()
-                        return
-                    end
-
-                    if !owned and atttbl.HideIfUnavailable then
-                        attbtn:Remove()
-                        return
-                    end
-
-                    if spaa.AttName == "" and !span.AttSlot.Installed then
-                        installed = true
-
-                        for _, slot in pairs(span.AttSlot.MergeSlots or {}) do
-                            if self.Attachments[slot].Installed then
-                                installed = false
-                                break
-                            end
-                        end
                     end
 
                     if spaa:IsHovered() or installed then

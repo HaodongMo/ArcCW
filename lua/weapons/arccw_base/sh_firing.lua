@@ -40,9 +40,8 @@ function SWEP:CanPrimaryAttack()
     -- Safety's on, turn it off.
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
-        --self:SetNextPrimaryFire(CurTime() + 0.5)
-        --self.Primary.Automatic = false
-
+        self:SetNextPrimaryFire(CurTime())
+        self.Primary.Automatic = false
         return
     end
 
@@ -158,12 +157,18 @@ function SWEP:PrimaryAttack()
             util.Effect(bullet.TracerName or "tracer", fx)
         end
 
+        local randfactor = self:GetBuff("DamageRand")
+        local mul = 1
+        if randfactor > 0 then
+            mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
+        end
+
         local hit   = {}
         hit.att     = att
         hit.tr      = tr
         hit.dmg     = dmg
         hit.range   = dist
-        hit.damage  = self:GetDamage(dist, true)
+        hit.damage  = self:GetDamage(dist, true) * mul
         hit.dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType
         hit.penleft = pen
 
@@ -282,7 +287,7 @@ function SWEP:PrimaryAttack()
             if !self:GetBuff_Override("Override_NoRandSpread") then
                 bullet.Dir = dir + VectorRand() * spread
             end
-		    bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
+            bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
 
             self:DoPrimaryFire(false, bullet)
         end
@@ -300,7 +305,7 @@ function SWEP:PrimaryAttack()
 
     self:DoEffects()
 
-    if IsFirstTimePredicted() then self:TakePrimaryAmmo(aps) end
+    self:TakePrimaryAmmo(aps)
 
     self:SetBurstCount(self:GetBurstCount() + 1)
 
@@ -776,11 +781,6 @@ function SWEP:GetDamage(range, pellet)
     mul = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num != nbr) and (num / nbr)) or 1
 
     if !pellet then mul = mul * nbr end
-
-    local randfactor = self:GetBuff("DamageRand")
-    if randfactor > 0 then
-        mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
-    end
 
     local dmgmax = self:GetBuff("Damage") * mul
     local dmgmin = self:GetBuff("DamageMin") * mul

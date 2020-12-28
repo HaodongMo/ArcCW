@@ -84,6 +84,7 @@ ArcCW.ClientConVars = {
     ["arccw_vm_right"]                = { def =  0 },
     ["arccw_vm_up"]                   = { def =  0 },
     ["arccw_vm_forward"]              = { def =  0 },
+    ["arccw_vm_fov"]                  = { def =  0 },
     ["arccw_vm_sway_sprint"]          = { def =  3 },
     ["arccw_vm_bob_sprint"]           = { def =  3 },
     ["arccw_vm_coolsway"]             = { def =  1 },

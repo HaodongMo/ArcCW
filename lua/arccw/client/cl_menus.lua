@@ -82,6 +82,7 @@ local ViewmodelPanel = {
     { type = "f", text = "#arccw.cvar.vm_bob_sprint", var = "arccw_vm_bob_sprint", min = 0, max = 5 },
     { type = "h", text = "" },
     { type = "c", text = "#arccw.cvar.vm_offsetwarn" },
+    { type = "f", text = "#arccw.cvar.vm_fov", var = "arccw_vm_fov", min = -15, max = 15 },
     { type = "f", text = "#arccw.cvar.vm_right", var = "arccw_vm_right", min = -5, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_forward", var = "arccw_vm_forward", min = -5, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_up", var = "arccw_vm_up", min = -5, max = 5 },

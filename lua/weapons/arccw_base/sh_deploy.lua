@@ -12,6 +12,7 @@ function SWEP:Deploy()
     self:SetReloading(false)
     self:SetState(0)
     self:SetInUBGL(false)
+    self:SetMagUpIn(0)
 
     self.LHIKAnimation = nil
 
@@ -207,8 +208,8 @@ function SWEP:Holster(wep)
 
     local skip = GetConVar("arccw_holstering"):GetBool()
 
-    if CLIENT then
-        if LocalPlayer() != self:GetOwner() then return end
+    if CLIENT and LocalPlayer() != self:GetOwner() then
+        return
     end
 
     if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
@@ -221,6 +222,7 @@ function SWEP:Holster(wep)
 
     self.Sighted = false
     self.Sprinted = false
+    self:SetMagUpIn(0)
 
     if CLIENT and LocalPlayer() == self:GetOwner() then
         self:ToggleCustomizeHUD(false)
@@ -271,7 +273,7 @@ function SWEP:Holster(wep)
 
                         local ammo = self:GetBuff_Override("UBGL_Ammo") or "smg1_grenade"
 
-                        if SERVER and IsValid(self:GetOwner()) then
+                        if IsValid(self:GetOwner()) then
                             self:GetOwner():GiveAmmo(clip, ammo, true)
                         end
 

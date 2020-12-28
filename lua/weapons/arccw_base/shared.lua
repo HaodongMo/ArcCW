@@ -272,6 +272,17 @@ SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 
 SWEP.GuaranteeLaser = false -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
 
+SWEP.ShieldProps = nil
+-- {
+--     {
+--         Model = "",
+--         Pos = Vector(0, 0, 0),
+--         Ang = Angle(0, 0, 0),
+--         Bone = "", -- leave blank for valvebiped right hand
+--         Resistance = 5, -- one unit of this object counts for how much penetration amount
+--     }
+-- }
+
 SWEP.CanBash = true
 SWEP.PrimaryBash = false -- primary attack triggers melee attack
 
@@ -454,6 +465,7 @@ SWEP.Attachments = {}
 --     ExcludeFlags = {}, -- if the weapon has this flag, hide this slot
 --     RequireFlags = {}, -- if the weapon does not have all these flags, hide this slot
 --     GivesFlags = {} -- give these slots if something is installed here
+--     HideIfBlocked = false, -- If flag requirements are not met, do not show the attachment at all
 -- }
 
 -- ready: deploy first time
@@ -694,19 +706,14 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 1, "NeedCycle")
     self:NetworkVar("Bool", 2, "InBipod")
     self:NetworkVar("Bool", 3, "InUBGL")
-    --self:NetworkVar("Bool", 4, "Reloading")
-    self:NetworkVar("Bool", 5, "InCustomize")
-    self:NetworkVar("Bool", 6, "GrenadePrimed")
-    self:NetworkVar("Bool", 7, "ReqEnd")
+    self:NetworkVar("Bool", 4, "InCustomize")
+    self:NetworkVar("Bool", 5, "GrenadePrimed")
+    self:NetworkVar("Bool", 6, "ReqEnd")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
     self:NetworkVar("Float", 2, "ReloadingREAL")
-
-    self:SetReloadingREAL(CurTime())
-
-    --self:NetworkVar("Int", 2, "BurstCount")
-    --self:NetworkVar("Int", 0, "NWState")
+    self:NetworkVar("Float", 3, "MagUpIn")
 end
 
 
@@ -732,7 +739,7 @@ function SWEP:GetReloading()
     end
 
     self:GetBuff_Hook("Hook_GetReloading", decide)
-    
+
     return decide
 end
 
@@ -785,10 +792,14 @@ function SWEP:BarrelHitWall()
 
         local mask = MASK_SOLID
 
+        local filter = {self:GetOwner()}
+
+        table.Add(filter, self.Shields)
+
         local tr = util.TraceLine({
             start = src,
             endpos = src + (dir:Forward() * (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength"))),
-            filter = {self:GetOwner()},
+            filter = filter,
             mask = mask
         })
 

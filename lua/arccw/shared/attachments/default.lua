@@ -61,6 +61,7 @@ att.ModelScale = Vector(1, 1, 1)
 att.ModelOffset = Vector(0, 0, 0)
 att.OffsetAng = Angle(0, 0, 0)
 att.ModelIsShield = false
+att.ShieldResistance = nil -- amount of penetration to get through one unit of shield
 att.ShieldBone = "ValveBiped.Bip01_R_Hand"
 att.DrawFunc = function(self, element, wm) end
 
@@ -216,10 +217,14 @@ att.Override_Firemodes = {}
 
 -- all hooks, mults, and adds will work on fire modes
 
--- Use SWEP:GetBurstCount() instead of SWEP.BurstCount
--- Use SWEP:Get/SetNextPrimaryFire()
-
+-- Allows you to directly edit the burst count
 att.Hook_GetBurstCount = function(wep, burstcount) end
+
+-- Allows you to directly edit whether the weapon is reloading/inoperable
+att.Hook_GetReloading = function(wep, reloading) end
+
+-- Directly modify dispersion
+att.Hook_ModDispersion = function(wep, dispersion) end
 
 -- Allows you to change the weapon's name
 -- string name
@@ -300,6 +305,10 @@ att.Hook_PreBash = function(wep) end
 
 -- data = {tr = tr, dmg = dmg}
 att.Hook_PostBash = function(wep, data) end
+
+-- Called just before a physbullet will call FireBullets
+-- data.bullet - physbullet info; data.tr - trace info
+att.Hook_PhysBulletHit = function(wep, data) end
 
 -- data has entries:
 -- number range, the distance the bullet had to travel

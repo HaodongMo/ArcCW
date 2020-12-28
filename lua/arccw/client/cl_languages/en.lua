@@ -99,6 +99,7 @@ L["arccw.cvar.vm_coolview"]               = "Custom Camera Movement"
 L["arccw.cvar.vm_right"]                  = "Viewmodel Right"
 L["arccw.cvar.vm_forward"]                = "Viewmodel Forward"
 L["arccw.cvar.vm_up"]                     = "Viewmodel Up"
+L["arccw.cvar.vm_fov"]                    = "Viewmodel FOV"
 L["arccw.cvar.vm_offsetwarn"]             = "Warning! Viewmodel offset settings may cause clipping or other undesired effects!"
 L["arccw.cvar.vm_sway_sprint"]            = "Sprint Bob" -- This is intentionally flipped
 L["arccw.cvar.vm_bob_sprint"]             = "Sprint Sway" -- Ditto

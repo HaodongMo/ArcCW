@@ -87,8 +87,8 @@ function SWEP:DoOurViewPunch()
         --     player->m_Local.m_vecPunchAngle += player->m_Local.m_vecPunchAngleVel * gpGlobals->frametime;
         --     float damping = 1 - (PUNCH_DAMPING * gpGlobals->frametime);
 
-        vpa = vpa + (vpv * RealFrameTime())
-        local damping = 1 - (PUNCH_DAMPING * RealFrameTime())
+        vpa = vpa + (vpv * FrameTime())
+        local damping = 1 - (PUNCH_DAMPING * FrameTime())
 
         --     if ( damping < 0 )
         --     {
@@ -104,7 +104,7 @@ function SWEP:DoOurViewPunch()
         --     // torsional spring
         --     // UNDONE: Per-axis spring constant?
         --     float springForceMagnitude = PUNCH_SPRING_CONSTANT * gpGlobals->frametime;
-        local springforcemagnitude = PUNCH_SPRING_CONSTANT * RealFrameTime()
+        local springforcemagnitude = PUNCH_SPRING_CONSTANT * FrameTime()
         --     springForceMagnitude = clamp(springForceMagnitude, 0.f, 2.f );
         springforcemagnitude = math.Clamp(springforcemagnitude, 0, 2)
         --     player->m_Local.m_vecPunchAngleVel -= player->m_Local.m_vecPunchAngle * springForceMagnitude;
@@ -144,7 +144,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
     if ply:ShouldDrawLocalPlayer() then return end
     local vm = ply:GetViewModel()
     if !IsValid(vm) then return end
-    local ftv = RealFrameTime()
+    local ftv = FrameTime()
     local viewbobintensity = self.ProceduralViewBobIntensity or 0.3
 
     if viewbobintensity == 0 then return end
