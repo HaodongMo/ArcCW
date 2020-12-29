@@ -564,7 +564,7 @@ function SWEP:SetupModel(wm)
             hspelement.Slot = i
             hspelement.WMBone = k.WMBone
 
-            hspelement.ModelOffset = atttbl.ModelOffset
+            hspelement.ModelOffset = atttbl.HolosightModelOffset or atttbl.ModelOffset
             hspelement.OffsetAng = element.OffsetAng
 
             if !wm then
