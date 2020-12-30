@@ -56,7 +56,7 @@ function SWEP:GetIsShotgun()
     --     if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
     -- end
 
-    if self:GetBuff_Override("Override_IsShotgun") == nil then
+    if self:GetBuff_Override("Override_IsShotgun") ~= nil then
         return self:GetBuff_Override("Override_IsShotgun")
     else
         return self.IsShotgun
