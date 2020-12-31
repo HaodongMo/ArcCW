@@ -366,6 +366,6 @@ function SWEP:DoTriggerDelay()
         local anim = self:SelectAnimation("trigger")
         self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
         self.LastTriggerTime = CurTime()
-        self.LastTriggerDuration = self:GetAnimKeyTime(anim, true)
+        self.LastTriggerDuration = self:GetAnimKeyTime(anim, true) * self:GetBuff_Mult("Mult_TriggerDelayTime")
     end
 end
