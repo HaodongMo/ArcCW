@@ -133,6 +133,7 @@ function SWEP:SetupModel(wm)
     local og = weapons.Get(self:GetClass())
 
     self.PrintName = self.OldPrintName or og.PrintName
+    local prefix, suffix = "", ""
 
     self:GetActiveElements(true)
 
@@ -316,10 +317,12 @@ function SWEP:SetupModel(wm)
 
         if atttbl.AddPrefix then
             self.PrintName = atttbl.AddPrefix .. self.PrintName
+            prefix = atttbl.AddPrefix .. prefix
         end
 
         if atttbl.AddSuffix then
             self.PrintName = self.PrintName .. atttbl.AddSuffix
+            suffix = suffix .. atttbl.AddSuffix
         end
 
         if CLIENT and !GetConVar("arccw_att_showothers"):GetBool() and LocalPlayer() != self:GetOwner() then
@@ -645,7 +648,7 @@ function SWEP:SetupModel(wm)
 
     end
 
-    self.PrintName = self:GetBuff_Hook("Hook_NameChange", self.PrintName) or self.PrintName
+    self.PrintName = prefix .. (self:GetBuff_Hook("Hook_NameChange", self.PrintName) or self.PrintName) .. suffix
     self.Trivia_Class = self:GetBuff_Hook("Hook_ClassChange", self.Trivia_Class) or self.Trivia_Class
     self.Trivia_Desc = self:GetBuff_Hook("Hook_DescChange", self.Trivia_Desc) or self.Trivia_Desc
 
