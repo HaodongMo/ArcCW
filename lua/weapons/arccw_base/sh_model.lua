@@ -316,12 +316,12 @@ function SWEP:SetupModel(wm)
         end
 
         if atttbl.AddPrefix then
-            self.PrintName = atttbl.AddPrefix .. self.PrintName
+            -- self.PrintName = atttbl.AddPrefix .. self.PrintName
             prefix = atttbl.AddPrefix .. prefix
         end
 
         if atttbl.AddSuffix then
-            self.PrintName = self.PrintName .. atttbl.AddSuffix
+            -- self.PrintName = self.PrintName .. atttbl.AddSuffix
             suffix = suffix .. atttbl.AddSuffix
         end
 
