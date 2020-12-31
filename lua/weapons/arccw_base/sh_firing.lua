@@ -600,7 +600,7 @@ function SWEP:GetDispersion()
 
         hip = hip + (speed * self:GetBuff("MoveDispersion"))
     else
-        hip = hip + math.max(self:GetBuff("JumpDispersion"), self:GetBuff("MoveDispersion") * 2)
+        hip = hip + self:GetBuff("JumpDispersion")
     end
 
     if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
