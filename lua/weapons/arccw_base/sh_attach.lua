@@ -158,20 +158,18 @@ function SWEP:GetBuff_Hook(buff, data)
     for i, e in pairs(self:GetActiveElements()) do
         local ele = self.AttachmentElements[e]
 
-        if ele then
-            if ele[buff] then
-                local ret = ele[buff](self, data)
+        if ele and ele[buff] then
+            local ret = ele[buff](self, data)
 
-                table.insert(self.AttCache_Hooks[buff], ele[buff])
+            table.insert(self.AttCache_Hooks[buff], ele[buff])
 
-                hasany = true
+            hasany = true
 
-                if ret != nil then
+            if ret != nil then
 
-                    if ret == false then return end
+                if ret == false then return end
 
-                    data = ret
-                end
+                data = ret
             end
         end
     end
@@ -270,14 +268,12 @@ function SWEP:GetBuff_Override(buff)
         for i, e in pairs(self:GetActiveElements()) do
             local ele = self.AttachmentElements[e]
 
-            if ele then
-                if ele[buff] != nil then
-                    local pri = ele[buff .. "_Priority"] or 1
-                    if level == 0 or (pri > level) then
-                        current = ele[buff]
-                        level = pri
-                        winningslot = i
-                    end
+            if ele and ele[buff] != nil then
+                local pri = ele[buff .. "_Priority"] or 1
+                if level == 0 or (pri > level) then
+                    current = ele[buff]
+                    level = pri
+                    winningslot = i
                 end
             end
         end

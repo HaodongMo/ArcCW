@@ -40,8 +40,8 @@ function SWEP:ChangeFiremode(pred)
     if !fmt[fmi] then fmi = 1 end
 
     self:SetFireMode(fmi)
-
-    self:RecalcAllBuffs()
+    -- Delay recalc by a tick so client can catch up
+    timer.Simple(0, function() self:RecalcAllBuffs() end)
 
     if SERVER then
         if pred then

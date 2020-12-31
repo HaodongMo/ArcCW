@@ -47,7 +47,7 @@ function SWEP:CanPrimaryAttack()
 
     -- If we have a trigger delay, make sure its progress is done
     local td = self:GetBuff_Override("Override_TriggerDelay")
-    if ((td != nil and td) or (td == nil and self.TriggerDelay)) and self:GetTriggerDelta() < 1 then
+    if ((td == false) or (td == nil and self.TriggerDelay)) and self:GetTriggerDelta() < 1 then
         return
     end
 
