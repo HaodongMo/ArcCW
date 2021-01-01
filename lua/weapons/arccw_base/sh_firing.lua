@@ -434,7 +434,7 @@ function SWEP:DoPrimaryFire(isent, data)
     end
 
     if isent then
-        self:FireRocket(data.ent, data.vel, data.ang)
+        self:FireRocket(data.ent, data.vel, data.ang, self.PhysBulletDontInheritPlayerVelocity)
     else
         if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 

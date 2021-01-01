@@ -53,6 +53,7 @@ SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity
 SWEP.PhysBulletMuzzleVelocity = nil -- override phys bullet muzzle velocity
 SWEP.PhysBulletDrag = 1
 SWEP.PhysBulletGravity = 1
+SWEP.PhysBulletDontInheritPlayerVelocity = true
 
 SWEP.AlwaysPhysBullet = false
 SWEP.NeverPhysBullet = false
