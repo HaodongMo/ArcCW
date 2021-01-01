@@ -236,7 +236,7 @@ function SWEP:Holster(wep)
     local anim = self:SelectAnimation("holster")
     if anim then
         self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-        time = self:GetAnimKeyTime(anim)
+        time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
     else
         if CLIENT then
             self:ProceduralHolster()
