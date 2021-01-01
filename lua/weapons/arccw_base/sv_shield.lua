@@ -23,6 +23,11 @@ function SWEP:SetupShields()
                 if ((ele.AttPosMods or {})[i] or {}).slide then
                     slidemod = ele.AttPosMods[i].slide
                 end
+
+                -- Refer to sh_model Line 837
+                if ((ele.AttPosMods or {})[i] or {}).SlideAmount then
+                    slidemod = ele.AttPosMods[i].SlideAmount
+                end
             end
 
             local bonename = atttbl.ShieldBone or "ValveBiped.Bip01_R_Hand"
