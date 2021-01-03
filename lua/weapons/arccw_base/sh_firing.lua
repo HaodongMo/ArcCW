@@ -218,9 +218,9 @@ function SWEP:PrimaryAttack()
         if decal then util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), self:GetOwner()) end
     end
 
-    local shootent = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
-    local shpatt   = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
-    local shpattov = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun
+    local shootent = self:GetBuff("ShootEntity") --self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
+    local shpatt   = self:GetBuff("ShotgunSpreadPattern") --self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
+    local shpattov = self:GetBuff("ShotgunSpreadPatternOverrun") --self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun
 
     local extraspread = AngleRand() * self:GetDispersion() / 360 / 60
 
