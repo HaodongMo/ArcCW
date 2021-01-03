@@ -276,8 +276,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     local coolsway = GetConVar("arccw_vm_coolsway"):GetBool()
 
-    lookxmult = GetConVar("arccw_vm_lookxmult"):GetFloat()
-    lookymult = GetConVar("arccw_vm_lookymult"):GetFloat()
+    lookxmult = GetConVar("arccw_vm_look_xmult"):GetFloat()
+    lookymult = GetConVar("arccw_vm_look_ymult"):GetFloat()
 
     swayxmult = GetConVar("arccw_vm_sway_xmult"):GetFloat()
     swayymult = GetConVar("arccw_vm_sway_ymult"):GetFloat()
