@@ -833,6 +833,12 @@ function SWEP:DrawCustomModel(wm,origin,angle)
                     if ((ele.AttPosMods or {})[k.Slot] or {}).slide then
                         slidemod = ele.AttPosMods[k.Slot].slide
                     end
+
+                    -- Why the fuck is it called 'slide'. Call it fucking SlideAmount like it is
+                    -- in the fucking attachment slot you fucking cockfuck shitdick
+                    if ((ele.AttPosMods or {})[k.Slot] or {}).SlideAmount then
+                        slidemod = ele.AttPosMods[k.Slot].SlideAmount
+                    end
                 end
 
                 if wm and !self.MirrorVMWM then

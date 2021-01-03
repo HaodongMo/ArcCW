@@ -28,10 +28,10 @@
 local BulletPanel = {
     { type = "h", text = "#arccw.adminonly" },
     { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable", sv = true },
-    { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 100, sv = true },
-    { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 32000, sv = true },
+    { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 3000, sv = true },
     { type = "f", text = "#arccw.cvar.bullet_drag", var = "arccw_bullet_drag", min = 0, max = 10, sv = true },
-    { type = "f", text = "#arccw.cvar.bullet_lifetime", var = "arccw_bullet_lifetime", min = 1, max = 60, sv = true},
+    { type = "f", text = "#arccw.cvar.bullet_lifetime", var = "arccw_bullet_lifetime", min = 1, max = 20, sv = true},
 }
 
 local ClientPanel = {
@@ -160,7 +160,8 @@ local CrosshairPanel = {
 local ServerPanel = {
     { type = "h", text = "#arccw.adminonly" },
     { type = "b", text = "#arccw.cvar.enable_penetration", var = "arccw_enable_penetration", sv = true },
-    { type = "b", text = "#arccw.cvar.enable_customization", var = "arccw_enable_customization", sv = true },
+    { type = "i", text = "#arccw.cvar.enable_customization", var = "arccw_enable_customization", min = -1, max = 1, sv = true },
+    { type = "c", text = "#arccw.cvar.enable_customization.desc" },
     { type = "b", text = "#arccw.cvar.truenames", var = "arccw_truenames", sv = true },
     { type = "b", text = "#arccw.cvar.equipmentammo", var = "arccw_equipmentammo", sv = true },
     { type = "c", text = "#arccw.cvar.equipmentammo.desc" },
@@ -221,6 +222,8 @@ local DevPanel = {
     { type = "h", text = "#arccw.cvar.dev_reloadatts.desc" },
     { type = "p", text = "#arccw.cvar.dev_reloadlangs", func = function() RunConsoleCommand("arccw_reloadlangs") end },
     { type = "h", text = "#arccw.cvar.dev_reloadlangs.desc" },
+    { type = "p", text = "#arccw.cvar.dev_spawnmenureload", func = function() RunConsoleCommand("spawnmenu_reload") end },
+    { type = "h", text = "#arccw.cvar.dev_spawnmenureload.desc" },
 }
 
 local MultsPanel = {

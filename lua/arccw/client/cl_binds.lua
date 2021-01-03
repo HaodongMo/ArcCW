@@ -101,7 +101,8 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
         end
 
         block = true
-    elseif bind == "inv" and !ply:KeyDown(IN_USE) then
+    elseif bind == "inv" and !ply:KeyDown(IN_USE) and GetConVar("arccw_enable_customization"):GetInt() >= 0 then
+
         local state = wep:GetState() != ArcCW.STATE_CUSTOMIZE
 
         SendNet("arccw_togglecustomize", state)
