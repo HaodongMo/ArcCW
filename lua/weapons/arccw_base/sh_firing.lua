@@ -68,7 +68,7 @@ function SWEP:PrimaryAttack()
     if !self:CanPrimaryAttack() then return end
 
     local clip = self:Clip1()
-    local aps = self:GetBuff_Override("Override_AmmoPerShot") or self.AmmoPerShot
+    local aps = self:GetBuff("AmmoPerShot")
 
     if self:HasBottomlessClip() then
         clip = self:Ammo1()
