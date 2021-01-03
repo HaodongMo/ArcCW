@@ -13,6 +13,7 @@
     m - color mixer                   text r g b a 
     p - press or button               text func
     t - textbox                       text string
+    o - combo box                     text var choices (key - cvar, value - text)
     (you can add custom types in ArcCW.GeneratePanelElements's AddControl table)
 
     Generate elements via ArcCW.GeneratePanelElements:
@@ -295,7 +296,8 @@ function ArcCW.GeneratePanelElements(panel, table)
         ["f"] = function(p, d) return p:NumSlider(d.text, d.var, d.min, d.max, 2) end,
         ["m"] = function(p, d) return p:AddControl("color", { Label = d.text, Red = d.r, Green = d.g, Blue = d.b, Alpha = d.a }) end, -- change this someday
         ["p"] = function(p, d) local b = p:Button(d.text) b.DoClick = d.func return b end,
-        ["t"] = function(p, d) return p:TextEntry(d.text, d.var) end
+        ["t"] = function(p, d) return p:TextEntry(d.text, d.var) end,
+        ["o"] = function(p, d) local cb = p:ComboBox(d.text, d.var) for k, v in pairs(d.choices) do cb:AddChoice(v, k) end return cb end
     }
 
     local concommands = {
