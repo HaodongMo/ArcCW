@@ -36,7 +36,7 @@ function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
 
     rocket:Spawn()
     rocket:Activate()
-    if !rocket.NoPhys then
+    if !rocket.NoPhys and rocket:GetPhysicsObject():IsValid() then
         rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
         rocket:GetPhysicsObject():SetVelocityInstantaneous(RealVelocity)
     end

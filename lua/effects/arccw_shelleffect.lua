@@ -52,7 +52,7 @@ function EFFECT:Init(data)
     if ent then
         self.Model = ent:GetBuff_Override("Override_ShellModel") or ent.ShellModel
         self.Material = ent:GetBuff_Override("Override_ShellMaterial") or ent.ShellMaterial
-        self.Scale = ent:GetBuff_Override("Override_ShellScale") or ent.ShellScale or 1
+        self.Scale = ent:GetBuff("ShellScale") or 1--ent:GetBuff_Override("Override_ShellScale") or ent.ShellScale or 1
         self.PhysScale = ent:GetBuff_Override("Override_ShellPhysScale") or ent.ShellPhysScale or 1
         self.Pitch = ent:GetBuff_Override("Override_ShellPitch") or ent.ShellPitch or 100
         self.Sounds = ent:GetBuff_Override("Override_ShellSounds") or ent.ShellSounds
