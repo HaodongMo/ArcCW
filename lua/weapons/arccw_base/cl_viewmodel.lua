@@ -10,10 +10,10 @@ local srf      = surface
 
 SWEP.ActualVMData = false
 
-local coolxang, coolyang, coolyangcomp, coolxangcomp = 0, 0, 0, 0
 local eyeangles, lasteyeangles, coolswayang = Angle(), Angle(), Angle()
-local swayxmult, swayymult, swayzmult = -0.1, 0.1, -0.3
-local coolswaypos, vector_noup = Vector(), Vector(1, 1, 0)
+local swayangx_lerp, swayangy_lerp, swayangz_lerp = 0, 0, 0
+local swayxmult, swayymult, swayzmult = 1, 1, 1
+local coolswaypos = Vector()
 
 local function ApprVecAng(from, to, dlt)
     local ret = (isangle(from) and isangle(to)) and Angle() or Vector()
@@ -35,6 +35,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local SP = game.SinglePlayer()
     -- local FT = m_min(FrameTime(), FrameTime())
     local CT = CurTime()
+	local UCT = UnPredictedCurTime()
     local FT = FrameTime()
 
     local FT5, FT10 = FT * 5, FT * 10
@@ -278,61 +279,41 @@ function SWEP:GetViewModelPosition(pos, ang)
     lookxmult = GetConVar("arccw_vm_lookxmult"):GetFloat()
     lookymult = GetConVar("arccw_vm_lookymult"):GetFloat()
 
-    accelmult = GetConVar("arccw_vm_accelmult"):GetFloat()
-
-    swayxmult = GetConVar("arccw_vm_swayxmult"):GetFloat()
-    swayymult = GetConVar("arccw_vm_swayymult"):GetFloat()
-    swayzmult = GetConVar("arccw_vm_swayzmult"):GetFloat()
-    swaywiggle = GetConVar("arccw_vm_swaywigglemult"):GetFloat()
-    swayspeed     = GetConVar("arccw_vm_swayspeedmult"):GetFloat()
-    swayrotate = GetConVar("arccw_vm_swayrotatemult"):GetFloat()
+    swayxmult = GetConVar("arccw_vm_sway_xmult"):GetFloat()
+    swayymult = GetConVar("arccw_vm_sway_ymult"):GetFloat()
+    swayzmult = GetConVar("arccw_vm_sway_zmult"):GetFloat()
+    swayspeed = GetConVar("arccw_vm_sway_speedmult"):GetFloat()
+    swayrotate = GetConVar("arccw_vm_sway_rotatemult"):GetFloat()
 
     if coolsway then
         eyeangles = owner:EyeAngles()
+		local sightmult = ((self:GetState() == ArcCW.STATE_SIGHTS and 0.5) or 1)
+		local sprintmult = ((self:GetState() == ArcCW.STATE_SPRINT and 4) or 1)
+		local strafing = owner:KeyDown(IN_MOVELEFT) or owner:KeyDown(IN_MOVERIGHT)
 
-        local sprintmult, sprintnull = (self:InSprint() and 2) or 1, 1
-        local airnull = (owner:OnGround() and 1) or 0.1
+		local velmult = math.Clamp(owner:GetVelocity():Length() / 170, 0.1,2) * sightmult * swayspeed
+		local pi = math.Clamp(math.pi * math.Round(velmult), 1, 6)
+		local movmt = (UCT * pi) / 0.5
+		local movmtcomp = ((UCT * pi) - 0.25) / 0.5
 
-        local swaymodifier = (target.sway / ((self:InSprint() and target.bob) or 2))
-        local vel = m_min((owner:GetVelocity() * vector_noup):Length() * swaymodifier, 600)
+		local xangdiff = m_angdif(eyeangles.x, lasteyeangles.x) * lookxmult
+        local yangdiff = m_angdif(eyeangles.y, lasteyeangles.y) * lookymult
+		local rollamount = (strafing and owner:GetVelocity():Angle().y) or eyeangles.y
+		local rollangdiff = math.Clamp(m_angdif(eyeangles.y, rollamount ) / 180 * pi, -7, 7)
 
-        if self:GetState() != ArcCW.STATE_SIGHTS then vel = mth.max(vel, 10) end
+        coolswaypos.x = (0.25 * velmult) * m_cos(movmtcomp) * sprintmult * swayxmult
+        coolswaypos.y = -math.abs((1 * velmult) * m_cos(movmtcomp)) * swayymult
+        coolswaypos.z = -math.abs((0.25 * velmult) * m_cos(movmtcomp)) * swayzmult
 
-        local movespeed = self.SpeedMult * self:GetBuff_Mult("Mult_SpeedMult") * self:GetBuff_Mult("Mult_MoveSpeed")
-        movespeed = m_clamp(movespeed, 0.01, 1)
+		swayangx_lerp = f_lerp(0.25, swayangx_lerp, xangdiff * sightmult)
+		swayangy_lerp = f_lerp(0.25, swayangy_lerp, yangdiff * sightmult)
+		swayangz_lerp = f_lerp(0.025, swayangz_lerp, rollangdiff)
 
-        vel = vel / movespeed
+        coolswayang.x = math.abs((0.5 * velmult) * m_sin(movmt)) + swayangx_lerp * swayxmult * swayrotate
+        coolswayang.y = (0.25 * velmult) * m_cos(movmt) - swayangy_lerp + swayangz_lerp * swayymult * swayrotate
+        coolswayang.z = math.min((2.5 * velmult) * m_cos(movmt), 0) + swayangy_lerp - swayangz_lerp * swayzmult * swayrotate
 
-        vel = vel * self.BobMult or 1
-
-        local velmult  = m_min(vel / 600 * (actual.bob / 2), 3) * swaywiggle
-        local swaymult = actual.sway / 2 * swayrotate
-
-        local xangdiff = m_angdif(eyeangles.x, lasteyeangles.x)
-        local yangdiff = m_angdif(eyeangles.y, lasteyeangles.y) * 0.3
-
-        coolyang = f_lerp(FT10, coolyang, yangdiff)
-        coolxang = f_lerp(FT10, coolxang, xangdiff)
-
-        coolyangcomp = f_lerp(10 * FT, coolyangcomp, -coolyang * 5)
-        coolxangcomp = f_lerp(50 * FT, coolxangcomp, (self:GetState() == ArcCW.STATE_SIGHTS and 0) or -xangdiff)
-
-        local xang = coolxang * swaymult
-        local yang = coolyang * swaymult
-
-        local ctpower = CT * 5 * swayspeed
-        local ctsin = m_sin(ctpower * sprintmult)
-
-        local mag = 0.01
-        coolswaypos.x = ctsin * swayxmult * (vel * mag) * sprintnull
-        coolswaypos.y = ctsin * swayymult * (vel * mag) * sprintnull
-        coolswaypos.z = m_sin(ctpower * 2 * sprintmult) * swayzmult * velmult * (vel * mag) * sprintnull * airnull
-
-        coolswayang.x = ((m_cos(ctpower * 0.5) * velmult) + coolxangcomp + xang * lookxmult) * sprintnull
-        coolswayang.y = ((m_cos(ctpower * 0.6) * velmult) + yang * lookymult) * sprintnull
-        coolswayang.z = (m_sin(ctpower) * velmult) + (yang * 4 + xang * 2 + coolyangcomp) * sprintmult
-
-        target.ang = target.ang - coolswayang
+        target.ang = target.ang + coolswayang
         target.pos = target.pos + coolswaypos
     end
 
@@ -380,7 +361,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     self.ActualVMData = actual
 
-    if coolsway then lasteyeangles = LerpAngle(m_min(FT * 100 * accelmult, 1), lasteyeangles, eyeangles) end
+    if coolsway then lasteyeangles = LerpAngle(m_min(FT * 100, 1), lasteyeangles, eyeangles) end
 
     local origfov = weapons.GetStored(self:GetClass()).ViewModelFOV
     if !origfov then
