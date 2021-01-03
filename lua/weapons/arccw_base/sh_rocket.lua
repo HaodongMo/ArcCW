@@ -52,5 +52,7 @@ function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
 
     rocket.ArcCWProjectile = true
 
+    self:GetBuff_Hook("Hook_PostFireRocket", rocket)
+
     return rocket
 end
