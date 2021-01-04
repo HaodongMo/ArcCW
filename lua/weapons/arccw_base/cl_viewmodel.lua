@@ -309,9 +309,9 @@ function SWEP:GetViewModelPosition(pos, ang)
 		swayangy_lerp = f_lerp(0.25, swayangy_lerp, yangdiff * sightmult)
 		swayangz_lerp = f_lerp(0.025, swayangz_lerp, rollangdiff)
 
-        coolswayang.x = math.abs((0.5 * velmult) * m_sin(movmt)) + swayangx_lerp * swayxmult * swayrotate
-        coolswayang.y = (0.25 * velmult) * m_cos(movmt) - swayangy_lerp + swayangz_lerp * swayymult * swayrotate
-        coolswayang.z = math.min((2.5 * velmult) * m_cos(movmt), 0) + swayangy_lerp - swayangz_lerp * swayzmult * swayrotate
+        coolswayang.x = (math.abs((0.5 * velmult) * m_sin(movmt)) + swayangx_lerp * swayxmult)
+        coolswayang.y = ((0.25 * velmult) * m_cos(movmt) - swayangy_lerp + swayangz_lerp * swayymult)
+        coolswayang.z = (math.min((2.5 * velmult) * m_cos(movmt), 0) + swayangy_lerp - swayangz_lerp * swayzmult) * swayrotate
 
         target.ang = target.ang + coolswayang
         target.pos = target.pos + coolswaypos
