@@ -146,7 +146,7 @@ function SWEP:SetupModel(wm)
             if wep and !wep.ArcCW then v.RenderOverride = nil return end
             self:RefreshBGs()
 
-            for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
+            for i, k in pairs(self:GetBuff_Override("Override_CaseBGs", self.CaseBGs) or {}) do
                 if !isnumber(i) then continue end
                 local bone = vm:LookupBone(k)
 
@@ -159,7 +159,7 @@ function SWEP:SetupModel(wm)
                 end
             end
 
-            for i, k in pairs(self:GetBuff_Override("Override_BulletBGs") or self.BulletBGs or {}) do
+            for i, k in pairs(self:GetBuff_Override("Override_BulletBGs", self.BulletBGs) or {}) do
                 if !isnumber(i) then continue end
                 local bone = vm:LookupBone(k)
 
@@ -172,7 +172,7 @@ function SWEP:SetupModel(wm)
                 end
             end
 
-            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBGs") or self.StripperClipBGs or {}) do
+            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBGs", self.StripperClipBGs) or {}) do
                 if !isnumber(i) then continue end
                 local bone = vm:LookupBone(k)
 

@@ -302,11 +302,8 @@ end
 function SWEP:GetVisualLoadAmount()
     if self:Clip1() > lastframeloadclip1 then
         local clip = self:GetCapacity()
-        local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+        local chamber = math.Clamp(self:Clip1() - self:GetCapacity(), 0, self:GetChamberSize())
         self.LastLoadClip1 = math.Clamp(clip + chamber, 0, self:Ammo1() + self:Clip1()) - lastframeloadclip1
-        if self:GetNeedCycle() == false and lastframeloadclip1 != 0 then
-            self.LastLoadClip1 = self.LastLoadClip1 + 1
-        end
     end
     lastframeloadclip1 = self:Clip1()
 
