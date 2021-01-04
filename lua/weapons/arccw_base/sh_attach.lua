@@ -195,7 +195,7 @@ function SWEP:GetBuff_Hook(buff, data)
     return data
 end
 
-function SWEP:GetBuff_Override(buff)
+function SWEP:GetBuff_Override(buff, default)
     local level = 0
     local current = nil
     local winningslot = nil
@@ -223,7 +223,11 @@ function SWEP:GetBuff_Override(buff)
 
         end
 
-        return current, winningslot
+        if current == nil then
+            return default
+        else
+            return current, winningslot
+        end
     end
 
     for i, k in pairs(self.Attachments) do
