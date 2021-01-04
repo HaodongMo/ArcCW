@@ -21,6 +21,12 @@ function SWEP:GetReloadTime()
     return { full, magin }
 end
 
+function SWEP:SetClipInfo(load)
+    load = self:GetBuff_Hook("Hook_SetClipInfo", load) or load
+    self.LastLoadClip1 = load - self:Clip1()
+    self.LastClip1 = load
+end
+
 function SWEP:Reload()
     if self:GetOwner():IsNPC() then
         return
@@ -45,8 +51,8 @@ function SWEP:Reload()
     if self:HasBottomlessClip() then return end
 
     -- with the lite 3D HUD, you may want to check your ammo without reloading
-    local Lite3DHUD = self.Owner:GetInfo("arccw_hud_3dfun") == "1" and self.Owner:GetInfo("arccw_hud_3dfun_lite") == "1"
-    if self.Owner:KeyDown(IN_WALK) and Lite3DHUD then
+    local Lite3DHUD = self:GetOwner():GetInfo("arccw_hud_3dfun") == "1" and self:GetOwner():GetInfo("arccw_hud_3dfun_lite") == "1"
+    if self:GetOwner():KeyDown(IN_WALK) and Lite3DHUD then
         return
     end
 
@@ -70,27 +76,13 @@ function SWEP:Reload()
     local load = math.Clamp(clip + chamber, 0, reserve)
 
     if load <= self:Clip1() then return end
-    self.LastLoadClip1 = load - self:Clip1()
 
     self:SetReqEnd(false)
     self:SetBurstCount(0)
 
-    local shouldshotgunreload = self.ShotgunReload
-
-    if self:GetBuff_Override("Override_ShotgunReload") then
-        shouldshotgunreload = true
-    end
-
-    if self:GetBuff_Override("Override_ShotgunReload") == false then
-        shouldshotgunreload = false
-    end
-
-    if self.HybridReload or self:GetBuff_Override("Override_HybridReload") then
-        if self:Clip1() == 0 then
-            shouldshotgunreload = false
-        else
-            shouldshotgunreload = true
-        end
+    local shouldshotgunreload = self:GetBuff_Override("Override_ShotgunReload", self.ShotgunReload)
+    if self:GetBuff_Override("Override_HybridReload", self.HybridReload) then
+        shouldshotgunreload = self:Clip1() != 0
     end
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
@@ -128,7 +120,7 @@ function SWEP:Reload()
         -- Yes, this will cause an issue in mag-fed manual action weapons where
         -- despite an empty casing being in the chamber, you can load +1 and 
         -- cycle an empty shell afterwards.
-        -- No, I am npt in the correct mental state to fix this. - 8Z
+        -- No, I am not in the correct mental state to fix this. - 8Z
         if self:Clip1() == 0 then
             self:SetNeedCycle(false)
         end
@@ -142,14 +134,12 @@ function SWEP:Reload()
 
         self:SetNextPrimaryFire(CurTime() + reloadtime2)
         self:SetReloading(CurTime() + reloadtime2)
-        
-        self:SetMagUpIn(CurTime() + reloadtime)
 
-        if self.RevolverReload then
-            self.LastClip1 = load
-        end
+        self:SetMagUpIn(CurTime() + reloadtime)
     end
 
+    self:SetClipInfo(load)
+    self:CallOnClient("SetClipInfo", tostring(load))
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -224,7 +214,6 @@ function SWEP:RestoreAmmo(count)
 end
 
 -- local lastframeclip1 = 0
-local lastframeloadclip1 = 0
 
 SWEP.LastClipOutTime = 0
 
@@ -300,13 +289,6 @@ function SWEP:GetVisualClip()
 end
 
 function SWEP:GetVisualLoadAmount()
-    if self:Clip1() > lastframeloadclip1 then
-        local clip = self:GetCapacity()
-        local chamber = math.Clamp(self:Clip1() - self:GetCapacity(), 0, self:GetChamberSize())
-        self.LastLoadClip1 = math.Clamp(clip + chamber, 0, self:Ammo1() + self:Clip1()) - lastframeloadclip1
-    end
-    lastframeloadclip1 = self:Clip1()
-
     return self.LastLoadClip1 or self:Clip1()
 end
 
@@ -373,7 +355,7 @@ function SWEP:ReloadInsert(empty)
 
         self:RestoreAmmo(insertcount)
 
-        local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
+        local time = (self.Animations[insertanim] or {}).MinProgress or self:GetAnimKeyTime(insertanim)
 
         self:SetReloading(CurTime() + time)
 

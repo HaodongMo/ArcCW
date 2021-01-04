@@ -185,7 +185,7 @@ function SWEP:Think()
             vm:ManipulateBoneScale(i, vec1)
         end
 
-        for i, k in pairs(self:GetBuff_Override("Override_CaseBones") or self.CaseBones or {}) do
+        for i, k in pairs(self:GetBuff_Override("Override_CaseBones", self.CaseBones) or {}) do
             if !isnumber(i) then continue end
             local bone = vm:LookupBone(k)
 
@@ -198,7 +198,7 @@ function SWEP:Think()
             end
         end
 
-        for i, k in pairs(self:GetBuff_Override("Override_BulletBones") or self.BulletBones or {}) do
+        for i, k in pairs(self:GetBuff_Override("Override_BulletBones", self.BulletBones) or {}) do
             if !isnumber(i) then continue end
             local bone = vm:LookupBone(k)
 
@@ -211,7 +211,7 @@ function SWEP:Think()
             end
         end
 
-        for i, k in pairs(self:GetBuff_Override("Override_StripperClipBones") or self.StripperClipBones or {}) do
+        for i, k in pairs(self:GetBuff_Override("Override_StripperClipBones", self.StripperClipBones) or {}) do
             if !isnumber(i) then continue end
             local bone = vm:LookupBone(k)
 
