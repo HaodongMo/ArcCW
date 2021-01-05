@@ -150,6 +150,10 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
                 alreadypenned[ptr.Entity:EntIndex()] = true
 
                 ArcCW:DoPenetration(btr, damage, bullet, penleft, false, alreadypenned)
+
+                if GetConVar("developer"):GetBool() then
+                    debugoverlay.Line(endpos, endpos + dir * (btr.HitPos - endpos):Length(), 10, Color(150, 150, 150), true)
+                end
             end
 
             attacker:FireBullets(abullet)
