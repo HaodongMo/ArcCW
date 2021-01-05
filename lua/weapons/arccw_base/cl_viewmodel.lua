@@ -291,8 +291,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 		local sprintmult = ((self:GetState() == ArcCW.STATE_SPRINT and 4) or 1)
 		local strafing = owner:KeyDown(IN_MOVELEFT) or owner:KeyDown(IN_MOVERIGHT)
 
-		local velmult = math.Clamp(owner:GetVelocity():Length() / 170, 0.1,2) * swayspeed
-		local pi = math.Clamp(math.pi * math.Round(velmult, 1), 1, 6)
+		local velmult = math.Clamp(owner:GetVelocity():Length() / 170, 0.1,2)
+		local pi = math.Clamp(math.pi * math.Round(velmult) * swayspeed, 1, 6)
 		local movmt = (UCT * pi) / 0.5
 		local movmtcomp = ((UCT * pi) - 0.25) / 0.5
 
