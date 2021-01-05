@@ -201,7 +201,7 @@ function SWEP:PrimaryAttack()
 
         if SERVER then self:TryBustDoor(trent, dmg) end
 
-        self:DoPenetration(tr, hit.penleft, { trent })
+        self:DoPenetration(tr, hit.penleft, { [trent:EntIndex()] = true })
 
         effect = self:GetBuff_Override("Override_ImpactEffect") or effect
 
@@ -509,7 +509,7 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
         Travelled = (tr.HitPos - tr.StartPos):Length()
     }
 
-    ArcCW:DoPenetration(tr, bullet.Damage, bullet, penleft, false, {})
+    ArcCW:DoPenetration(tr, bullet.Damage, bullet, penleft, false, alreadypenned)
 end
 
 function SWEP:GetFiringDelay()
