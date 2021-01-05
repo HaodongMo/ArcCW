@@ -14,6 +14,7 @@
     p - press or button               text func
     t - textbox                       text string
     o - combo box                     text var choices (key - cvar, value - text)
+    d - binder                        text var
     (you can add custom types in ArcCW.GeneratePanelElements's AddControl table)
 
     Generate elements via ArcCW.GeneratePanelElements:
@@ -39,9 +40,6 @@ local ClientPanel = {
     { type = "b", text = "#arccw.cvar.automaticreload", var = "arccw_automaticreload" },
     { type = "c", text = "#arccw.cvar.automaticreload.desc" },
     { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
-    { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
-    { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
-    { type = "b", text = "#arccw.cvar.altsafety", var = "arccw_altsafety" },
     { type = "b", text = "#arccw.cvar.autosave", var = "arccw_autosave" },
     { type = "c", text = "#arccw.cvar.autosave.desc" },
     { type = "b", text = "#arccw.cvar.embracetradition", var = "arccw_hud_embracetradition" },
@@ -154,6 +152,22 @@ local CrosshairPanel = {
     { type = "m", text = "#arccw.cvar.crosshair_outline_clr", r = "arccw_crosshair_outline_r", g = "arccw_crosshair_outline_g", b = "arccw_crosshair_outline_b", a = "arccw_crosshair_outline_a" },
     { type = "m", text = "#arccw.cvar.scope_clr", r = "arccw_scope_r", g = "arccw_scope_g", b = "arccw_scope_b" },
 }
+
+local BindsPanel = {
+    { type = "h", text = "#arccw.bindhelp" },
+    { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
+    { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
+    { type = "b", text = "#arccw.cvar.altsafety", var = "arccw_altsafety" },
+    { type = "b", text = "#arccw.cvar.altbindsonly", var = "arccw_altbindsonly" },
+    { type = "c", text = "#arccw.cvar.altbindsonly.desc" },
+    { type = "d", text = "#arccw.bind.firemode", var = "arccw_firemode" },
+    { type = "d", text = "#arccw.bind.zoom_in", var = "arccw_zoom_in" },
+    { type = "d", text = "#arccw.bind.zoom_out", var = "arccw_zoom_out" },
+    { type = "d", text = "#arccw.bind.toggle_inv", var = "arccw_toggle_inv" },
+    { type = "d", text = "#arccw.bind.switch_scope", var = "arccw_switch_scope" },
+    { type = "d", text = "#arccw.bind.toggle_ubgl", var = "arccw_toggle_ubgl" },
+}
+
 
 local ServerPanel = {
     { type = "h", text = "#arccw.adminonly" },
@@ -300,7 +314,25 @@ function ArcCW.GeneratePanelElements(panel, table)
         ["m"] = function(p, d) return p:AddControl("color", { Label = d.text, Red = d.r, Green = d.g, Blue = d.b, Alpha = d.a }) end, -- change this someday
         ["p"] = function(p, d) local b = p:Button(d.text) b.DoClick = d.func return b end,
         ["t"] = function(p, d) return p:TextEntry(d.text, d.var) end,
-        ["o"] = function(p, d) local cb = p:ComboBox(d.text, d.var) for k, v in pairs(d.choices) do cb:AddChoice(v, k) end return cb end
+        ["o"] = function(p, d) local cb = p:ComboBox(d.text, d.var) for k, v in pairs(d.choices) do cb:AddChoice(v, k) end return cb end,
+        ["d"] = function(p, d)
+                local s = vgui.Create("DSizeToContents", p) s:SetSizeX(false) s:Dock(TOP) s:InvalidateLayout()
+                local l = vgui.Create("DLabel", s) l:SetText(d.text) l:SetTextColor(Color(0, 0, 0)) l:Dock(TOP) l:SetContentAlignment(5)
+                local bd = vgui.Create("DBinder", s)
+                if input.LookupBinding(d.var) then bd:SetValue(input.GetKeyCode(input.LookupBinding(d.var))) end
+                bd.OnChange = function(b, k)
+                    if k and input.GetKeyName(k) then
+                        local str = input.LookupKeyBinding(k)
+                        if str then
+                            str = string.Replace(str, d.var .. "; ", "")
+                            str = string.Replace(str, d.var, "")
+                            chat.AddText(Color(255, 255, 255), language.GetPhrase("arccw.bind.msg"), Color(255, 128, 0), "bind " .. input.GetKeyName(k) .. " \"" .. str .. "; " .. d.var .. "\"")
+                        else
+                            chat.AddText(Color(255, 255, 255), language.GetPhrase("arccw.bind.msg"), Color(255, 128, 0), "bind " .. input.GetKeyName(k) .. " " .. d.var .. "")
+                        end
+                    end
+                end
+                bd:Dock(TOP) p:AddItem(s) return s end
     }
 
     local concommands = {
@@ -543,6 +575,10 @@ function ArcCW_Options_NPC(panel)
     ArcCW.GeneratePanelElements(panel, NPCsPanel)
 end
 
+function ArcCW_Options_Binds(panel)
+    ArcCW.GeneratePanelElements(panel, BindsPanel)
+end
+
 ArcCW.ClientMenus = {
     ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client },
     ["ArcCW_Options_Bullet"]    = { text = "#arccw.menus.bullet", func = ArcCW_Options_Bullet },
@@ -556,6 +592,7 @@ ArcCW.ClientMenus = {
     ["ArcCW_Options_Mults"]     = { text = "#arccw.menus.mults",  func = ArcCW_Options_Mults },
     ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",   func = ArcCW_Options_Dev },
     ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",   func = ArcCW_Options_NPC },
+    ["ArcCW_Options_Binds"]    = { text = "#arccw.menus.binds", func = ArcCW_Options_Binds },
 }
 
 hook.Add("PopulateToolMenu", "ArcCW_Options", function()

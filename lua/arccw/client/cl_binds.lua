@@ -38,8 +38,11 @@ end
 
 local function ArcCW_TranslateBindToEffect(bind)
     local alt = GetConVar("arccw_altbindsonly"):GetBool()
-
-    return alt and ArcCW.BindToEffect_Unique[bind] or ArcCW.BindToEffect[bind] or bind
+    if alt then
+        return ArcCW.BindToEffect_Unique[bind], true
+    else
+        return ArcCW.BindToEffect_Unique[bind] or ArcCW.BindToEffect[bind] or bind, ArcCW.BindToEffect_Unique[bind] != nil
+    end
 end
 
 local function SendNet(string, bool)
@@ -69,10 +72,11 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
 
     local block = false
 
-    bind = ArcCW_TranslateBindToEffect(bind)
+    local alt
+    bind, alt = ArcCW_TranslateBindToEffect(bind)
 
-    if bind == "firemode" and !GetConVar("arccw_altfcgkey"):GetBool() then
-        if wep:GetBuff_Override("UBGL") and !GetConVar("arccw_altubglkey"):GetBool() then
+    if bind == "firemode" and (alt or !GetConVar("arccw_altfcgkey"):GetBool()) then
+        if wep:GetBuff_Override("UBGL") and !alt and !GetConVar("arccw_altubglkey"):GetBool() then
             if lastpressZ >= CurTime() - 0.25 then
                 DoUbgl(wep)
 
@@ -137,6 +141,11 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
 end
 
 hook.Add("PlayerBindPress", "ArcCW_PlayerBindPress", ArcCW_PlayerBindPress)
+
+-- Actually register the damned things so they can be bound
+for k, v in pairs(ArcCW.BindToEffect_Unique) do
+    concommand.Add(k, function() end, nil, v, 0)
+end
 
 -- ArcCW.CaptureKeys = {
 --     KEY_G
