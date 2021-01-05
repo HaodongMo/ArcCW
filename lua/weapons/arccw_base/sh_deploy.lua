@@ -29,6 +29,7 @@ function SWEP:Deploy()
 
     -- Don't play anim if in vehicle. This can be caused by HL2 level changes
     if !self:GetOwner():InVehicle() then
+        timer.Simple(0, function()
             local prd = false
 
             local r_anim = self:SelectAnimation("ready")
@@ -52,6 +53,7 @@ function SWEP:Deploy()
             if prd then
                 self:ProceduralDraw()
             end
+        end )
     end
 
     if (self.AutoReload or self:GetBuff_Override("Override_AutoReload")) and (self:GetBuff_Override("Override_AutoReload") != false) then

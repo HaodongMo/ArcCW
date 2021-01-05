@@ -287,12 +287,12 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     if coolsway then
         eyeangles = owner:EyeAngles()
-		local sightmult = ((self:GetState() == ArcCW.STATE_SIGHTS and 0.5) or 1)
+		local sightmult = ((self:GetState() == ArcCW.STATE_SIGHTS and 0.1) or 1)
 		local sprintmult = ((self:GetState() == ArcCW.STATE_SPRINT and 4) or 1)
 		local strafing = owner:KeyDown(IN_MOVELEFT) or owner:KeyDown(IN_MOVERIGHT)
 
-		local velmult = math.Clamp(owner:GetVelocity():Length() / 170, 0.1,2) * sightmult * swayspeed
-		local pi = math.Clamp(math.pi * math.Round(velmult), 1, 6)
+		local velmult = math.Clamp(owner:GetVelocity():Length() / 170, 0.1,2) * swayspeed
+		local pi = math.Clamp(math.pi * math.Round(velmult, 1), 1, 6)
 		local movmt = (UCT * pi) / 0.5
 		local movmtcomp = ((UCT * pi) - 0.25) / 0.5
 
@@ -301,9 +301,9 @@ function SWEP:GetViewModelPosition(pos, ang)
 		local rollamount = (strafing and owner:GetVelocity():Angle().y) or eyeangles.y
 		local rollangdiff = math.Clamp(m_angdif(eyeangles.y, rollamount ) / 180 * pi, -7, 7)
 
-        coolswaypos.x = (0.25 * velmult) * m_cos(movmtcomp) * sprintmult * swayxmult
-        coolswaypos.y = -math.abs((1 * velmult) * m_cos(movmtcomp)) * swayymult
-        coolswaypos.z = -math.abs((0.25 * velmult) * m_cos(movmtcomp)) * swayzmult
+        coolswaypos.x = (0.25 * velmult) * m_cos(movmtcomp) * sprintmult * swayxmult * sightmult
+        coolswaypos.y = -math.abs((1 * velmult) * m_cos(movmtcomp)) * swayymult * sightmult
+        coolswaypos.z = -math.abs((0.25 * velmult) * m_cos(movmtcomp)) * swayzmult * sightmult
 
 		swayangx_lerp = f_lerp(0.25, swayangx_lerp, xangdiff * sightmult)
 		swayangy_lerp = f_lerp(0.25, swayangy_lerp, yangdiff * sightmult)
