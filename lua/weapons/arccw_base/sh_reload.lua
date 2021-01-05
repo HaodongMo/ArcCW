@@ -353,6 +353,11 @@ function SWEP:ReloadInsert(empty)
             insertanim = ret.anim
         end
 
+        local load = self:GetCapacity() + math.min(self:Clip1(), self:GetChamberSize())
+        if load - self:Clip1() > self:Ammo1() then load = self:Clip1() + self:Ammo1() end
+        self:SetClipInfo(load)
+        self:CallOnClient("SetClipInfo", tostring(load))
+
         self:RestoreAmmo(insertcount)
 
         local time = (self.Animations[insertanim] or {}).MinProgress or self:GetAnimKeyTime(insertanim)
