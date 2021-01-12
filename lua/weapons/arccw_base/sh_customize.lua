@@ -1417,7 +1417,8 @@ function SWEP:CreateCustomizeHUD()
 
             grsh = math.ceil((grsh / 25) + 1) * 25
 
-            local maxgr = (self:GetBuff("Range"))
+            local mingr = self.RangeMin * self:GetBuff_Mult("Mult_Range") * self:GetBuff_Mult("Mult_RangeMin")
+            local maxgr = self.Range * self:GetBuff_Mult("Mult_Range")
 
             if dmgmax < dmgmin then
                 maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
@@ -1432,20 +1433,21 @@ function SWEP:CreateCustomizeHUD()
 
             local starty = gh - (dmgmax * convh)
             local endy = gh - (dmgmin * convh)
-            local startx = 0
+            local startx = mingr * convw
             local endx = maxgr * convw
 
             surface.SetDrawColor(bg_col)
             surface.DrawRect(gx, gy, gw, gh)
 
             surface.SetDrawColor(fg_col)
+            surface.DrawLine(0, gy + starty, gx + startx, gy + starty)
             surface.DrawLine(gx + startx, gy + starty, gx + endx, gy + endy)
             surface.DrawLine(gx + endx, gy + endy, gx + gw, gy + endy)
 
             -- start dmg
             surface.SetTextColor(fg_col)
             surface.SetFont("ArcCW_6")
-            surface.SetTextPos(gx + startx, gy + starty - ScreenScaleMulti(7) - 1)
+            surface.SetTextPos(0, gy + starty - ScreenScaleMulti(7) - 1)
             surface.DrawText(tostring(dmgmax) .. "DMG")
 
             -- end dmg

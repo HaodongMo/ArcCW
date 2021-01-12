@@ -786,11 +786,17 @@ function SWEP:GetDamage(range, pellet)
     local dmgmin = self:GetBuff("DamageMin") * mul
     local delta = 1
 
+    local mran = self.RangeMin
     local sran = self.Range
     local bran = self:GetBuff_Mult("Mult_Range")
+    local vran = self:GetBuff_Mult("Mult_RangeMin")
 
-    delta = (dmgmax < dmgmin and (range / (sran / bran))) or (range / (sran * bran))
-    delta = math.Clamp(delta, 0, 1)
+    if range < mran * bran * vran then
+        return dmgmax
+    else
+        delta = (dmgmax < dmgmin and (range / (sran / bran))) or (range / (sran * bran))
+        delta = math.Clamp(delta, 0, 1)
+    end
 
     local lerped = Lerp(delta, dmgmax, dmgmin)
 
