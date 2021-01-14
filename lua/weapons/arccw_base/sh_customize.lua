@@ -1478,7 +1478,7 @@ function SWEP:CreateCustomizeHUD()
 
             local grsh = math.max(dmgmax, dmgmin)
 
-            grsh = math.ceil((grsh / 25) + 1) * 25
+            grsh = math.ceil((grsh / 12) + 1) * 12
 
             local mingr = self.RangeMin * self:GetBuff_Mult("Mult_Range") * self:GetBuff_Mult("Mult_RangeMin")
             local maxgr = self.Range * self:GetBuff_Mult("Mult_Range")
@@ -1489,7 +1489,7 @@ function SWEP:CreateCustomizeHUD()
 
             maxgr = math.Round(maxgr)
 
-            local grsw = math.ceil((maxgr / 50) + 1) * 50
+            local grsw = math.ceil((maxgr / 12) + 1) * 12
 
             local convw = gw / grsw
             local convh = gh / grsh
@@ -1503,9 +1503,17 @@ function SWEP:CreateCustomizeHUD()
             surface.DrawRect(gx, gy, gw, gh)
 
             surface.SetDrawColor(fg_col)
+
+            -- start
             surface.DrawLine(0, gy + starty, gx + startx, gy + starty)
+            -- before mid
             surface.DrawLine(gx + startx, gy + starty, gx + endx, gy + endy)
+            if mingr != 0 then
+                surface.DrawLine(gx + startx, gy+ScreenScaleMulti(2) + starty, gx + startx, gy-ScreenScaleMulti(2) + starty)
+            end
+            -- long and into the void
             surface.DrawLine(gx + endx, gy + endy, gx + gw, gy + endy)
+            surface.DrawLine(gx + endx, gy+ScreenScaleMulti(2) + endy, gx + endx, gy-ScreenScaleMulti(2) + endy)
 
             -- start dmg
             surface.SetTextColor(fg_col)
@@ -1526,6 +1534,15 @@ function SWEP:CreateCustomizeHUD()
             surface.SetFont("ArcCW_6")
             surface.SetTextPos(sidegap, smallgap + gh)
             surface.DrawText("0m")
+
+            -- before mid range
+            if mingr != 0 then
+                surface.SetTextColor(fg_col)
+                surface.SetFont("ArcCW_6")
+                local btw = surface.GetTextSize(tostring(mingr) .. "m")
+                surface.SetTextPos(gx + startx - (btw / 2), smallgap + gh)
+                surface.DrawText(tostring(mingr) .. "m")
+            end
 
             -- mid range
             surface.SetTextColor(fg_col)
