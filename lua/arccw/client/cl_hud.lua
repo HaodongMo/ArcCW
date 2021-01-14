@@ -98,7 +98,7 @@ local function generatefonts()
             size = ScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
-            extended = true, -- Required for non-unicode fonts
+            extended = true, -- Required for non-latin fonts
         } )
 
         surface.CreateFont( "ArcCW_" .. tostring(i) .. "_Glow", {
@@ -119,6 +119,7 @@ local function generatefonts()
             size = i,
             weight = 0,
             antialias = true,
+            extended = true,
         } )
 
     end
