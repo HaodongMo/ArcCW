@@ -166,6 +166,8 @@ att.MagReducer = false
 att.OverrideClipSize = nil
 att.Add_ClipSize = 0
 
+att.Override_FuseTime = nil
+
 att.Laser = false
 att.LaserStrength = 1
 att.LaserBone = "laser"
