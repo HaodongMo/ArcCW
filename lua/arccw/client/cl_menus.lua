@@ -96,7 +96,7 @@ local ViewmodelPanel = {
     { type = "f", text = "#arccw.cvar.vm_sway_rotatemult", var = "arccw_vm_sway_rotatemult", min = -3, max = 3 },
     { type = "h", text = "" },
     { type = "c", text = "#arccw.cvar.vm_viewwarn" },
-    { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -10, max = 10 },
+    { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -5, max = 5 },
 }
 
 local HudPanel = {
