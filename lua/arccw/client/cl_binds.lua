@@ -9,6 +9,7 @@ ArcCW.KEY_TOGGLEINV_ALT   = "arccw_toggle_inv"
 ArcCW.KEY_SWITCHSCOPE     = "+use"
 ArcCW.KEY_SWITCHSCOPE_ALT = "arccw_switch_scope"
 ArcCW.KEY_TOGGLEUBGL      = "arccw_toggle_ubgl"
+ArcCW.KEY_TOGGLEATT       = "arccw_toggle_att"
 
 ArcCW.BindToEffect = {
     [ArcCW.KEY_FIREMODE]    = "firemode",
@@ -24,7 +25,8 @@ ArcCW.BindToEffect_Unique = {
     [ArcCW.KEY_FIREMODE_ALT]    = "firemode",
     [ArcCW.KEY_ZOOMIN_ALT]      = "zoomin",
     [ArcCW.KEY_ZOOMOUT_ALT]     = "zoomout",
-    [ArcCW.KEY_TOGGLEINV_ALT]   = "inv"
+    [ArcCW.KEY_TOGGLEINV_ALT]   = "inv",
+    [ArcCW.KEY_TOGGLEATT]       = "toggleatt"
 }
 
 local lastpressZ = 0
@@ -60,6 +62,22 @@ local function DoUbgl(wep)
         SendNet("arccw_ubgl", true)
 
         wep:SelectUBGL()
+    end
+end
+
+local function ToggleAtts(wep)
+    for k, v in pairs(wep.Attachments) do
+        local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
+        if atttbl and atttbl.ToggleStats then
+            wep.Attachments[k].ToggleNum = (wep.Attachments[k].ToggleNum or 1) + 1
+            if wep.Attachments[k].ToggleNum > #atttbl.ToggleStats then
+                wep.Attachments[k].ToggleNum = 1
+            end
+        end
+        wep:SendDetail_ToggleNum(k)
+        wep:AdjustAtts()
+        wep:CreateFlashlightsVM() -- FIXME: ewwwwwwww
+        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
     end
 end
 
@@ -116,6 +134,8 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
         block = true
     elseif bind == "ubgl" then
         DoUbgl(wep)
+    elseif bind == "toggleatt" then
+        ToggleAtts(wep)
     end
 
     if wep:GetState() == ArcCW.STATE_SIGHTS then
