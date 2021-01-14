@@ -143,9 +143,11 @@ if CLIENT then
 
     -- Gets around Listen server spawn issues
     hook.Add( "InitPostEntity", "Ready", function()
-        net.Start("arccw_blacklist")
-            net.WriteBool(true)
-        net.SendToServer()
+        if !game.SinglePlayer() then
+            net.Start("arccw_blacklist")
+                net.WriteBool(true)
+            net.SendToServer()
+        end
     end )
 
     concommand.Add("arccw_reloadatts", function()
