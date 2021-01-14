@@ -1,16 +1,12 @@
 hook.Add("OnEntityCreated", "ArcCW_DefaultClip", function(ent)
     if !ent.ArcCW then return end
-    if ent.Primary.DefaultClip <= 0 then return end
 
-    if ent.ForceDefaultClip then
+    if GetConVar("arccw_mult_startunloaded"):GetBool() then
+        ent.Primary.DefaultClip = 0
+    elseif ent.ForceDefaultClip then
         ent.Primary.DefaultClip = ent.ForceDefaultClip
-    elseif GetConVar("arccw_mult_defaultclip"):GetInt() < 0 then
-        ent.Primary.DefaultClip = ent.Primary.ClipSize * 3
-        if ent.Primary.ClipSize >= 100 then
-            ent.Primary.DefaultClip = ent.Primary.ClipSize * 2
-        end
-    else
-        ent.Primary.DefaultClip = ent.Primary.ClipSize * GetConVar("arccw_mult_defaultclip"):GetInt()
+    elseif ent.Primary.DefaultClip <= 0 then
+        ent.Primary.DefaultClip = ent.Primary.ClipSize
     end
 end)
 

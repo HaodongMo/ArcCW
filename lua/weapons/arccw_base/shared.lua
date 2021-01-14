@@ -81,6 +81,10 @@ SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 50
 SWEP.ReducedClipSize = 10
 
+-- But if you insist...
+SWEP.ForceDefaultClip = nil
+SWEP.ForceDefaultAmmo = nil
+
 SWEP.AmmoPerShot = 1
 SWEP.InfiniteAmmo = false -- weapon can reload for free
 SWEP.BottomlessClip = false -- weapon never has to reload
@@ -590,13 +594,13 @@ SWEP.Animations = {
 -- don't change any of this stuff
 
 SWEP.Primary.Automatic = true
-SWEP.Primary.DefaultClip = 1
+SWEP.Primary.DefaultClip = -1
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawCrosshair = true
-SWEP.m_WeaponDeploySpeed = 8008135
+SWEP.m_WeaponDeploySpeed = 90 -- 8008135 boobies is funny but it'll bitch in console :(
         -- We don't do that here
 
 SWEP.ArcCW = true

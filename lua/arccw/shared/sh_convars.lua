@@ -29,7 +29,8 @@ CreateConVar("arccw_mult_range", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplie
 CreateConVar("arccw_mult_recoil", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for recoil of all ArcCW weapons.")
 CreateConVar("arccw_mult_movedisp", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for moving inaccuracy of ArcCW weapons.")
 CreateConVar("arccw_mult_penetration", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for ArcCW penetration amount.")
-CreateConVar("arccw_mult_defaultclip", -1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for default clip size. Set to -1 for default.")
+CreateConVar("arccw_mult_startunloaded", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "All weapons spawn unloaded.")
+CreateConVar("arccw_mult_defaultammo", 3, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for default ammo supply.")
 CreateConVar("arccw_mult_attchance", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for random attachment chance on NPCs and in TTT.")
 CreateConVar("arccw_mult_heat", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much heat increases per shot on certain weapons.", 0)
 CreateConVar("arccw_mult_sway", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much sway exists when in sights.", 0)
@@ -38,7 +39,6 @@ CreateConVar("arccw_reloadatts_mapcleanup", 0, 0, "Whether to reload ArcCW attac
 CreateConVar("arccw_reloadatts_registerentities", 1, 0, "Register attachment entities. This may increase time to reload attachments.")
 
 CreateConVar("arccw_override_crosshair_off", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Set to true to force everyone's crosshairs off.", 0, 1)
-CreateConVar("arccw_override_deploychambered", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Draw the weapon with a round in chamber.", 0, 1)
 CreateConVar("arccw_override_nearwall", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable barrel length and near-walling.", 0, 1)
 
 CreateConVar("arccw_ammo_detonationmode", 2, FCVAR_ARCHIVE + FCVAR_REPLICATED, "The type of ammo detonation to use. -1 = don't explode, 0 = simple explosion, 1 = fragmentation, 2 = full", -1, 2)
