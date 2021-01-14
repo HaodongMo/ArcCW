@@ -555,6 +555,53 @@ function SWEP:CreateCustomizeHUD()
 
     attslidebox:Hide()
 
+    local atttogglebtn = vgui.Create("DButton", ArcCW.InvHUD)
+    atttogglebtn:SetSize(barsize * 0.25, ScreenScaleMulti(15))
+    atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(64) - (1 * airgap))
+    atttogglebtn:SetText("")
+    atttogglebtn.OnMousePressed = function(spaa, kc)
+        if !self.Attachments[activeslot] then return end
+        local catttbl = ArcCW.AttachmentTable[self.Attachments[activeslot].Installed]
+        if !catttbl or !catttbl.ToggleStats then return end
+
+        self.Attachments[activeslot].ToggleNum = (self.Attachments[activeslot].ToggleNum or 1) + 1
+        if self.Attachments[activeslot].ToggleNum > #catttbl.ToggleStats then
+            self.Attachments[activeslot].ToggleNum = 1
+        end
+        self:SendDetail_ToggleNum(activeslot)
+        self:AdjustAtts()
+        self:CreateFlashlightsVM() -- FIXME: ewwwwwwww
+
+        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
+    end
+    atttogglebtn.Paint = function(spaa, w, h)
+        if !self:IsValid() then return end
+        if !self.Attachments then return end
+        local Bfg_col = Color(255, 255, 255, 255)
+        local Bbg_col = Color(0, 0, 0, 100)
+
+        if spaa:IsHovered() then
+            Bbg_col = Color(255, 255, 255, 100)
+            Bfg_col = Color(0, 0, 0, 255)
+        end
+
+        surface.SetDrawColor(Bbg_col)
+        surface.DrawRect(0, 0, w, h)
+
+        local txt = (translate("ui.toggle"))
+        local catttbl = activeslot and ArcCW.AttachmentTable[self.Attachments[activeslot].Installed]
+        if catttbl and catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum].PrintName then
+            txt = ArcCW.TryTranslation(catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum].PrintName)
+        end
+
+        surface.SetTextColor(Bfg_col)
+        surface.SetTextPos(smallgap, ScreenScaleMulti(1))
+        surface.SetFont("ArcCW_12")
+        surface.DrawText(txt)
+    end
+
+    atttogglebtn:Hide()
+
     local atttrivia = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     atttrivia:SetSize(barsize, scrh - ScreenScaleMulti(116))
     atttrivia:SetPos(scrw - barsize - airgap, 2 * airgap)
@@ -782,6 +829,8 @@ function SWEP:CreateCustomizeHUD()
             attmenu:Hide()
             self.InAttMenu = false
             atttrivia:Hide()
+            attslidebox:Hide()
+            atttogglebtn:Hide()
         end
     end
 
@@ -815,6 +864,17 @@ function SWEP:CreateCustomizeHUD()
                 attslidebox:Show()
             else
                 attslidebox:Hide()
+            end
+
+            if self.Attachments[span.AttIndex].Installed and catttbl and catttbl.ToggleStats then
+                if attslidebox:IsVisible() then
+                    atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(40) - (1 * airgap))
+                else
+                    atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(64) - (1 * airgap))
+                end
+                atttogglebtn:Show()
+            else
+                atttogglebtn:Hide()
             end
 
             attmenu:Clear()
@@ -1039,6 +1099,7 @@ function SWEP:CreateCustomizeHUD()
                     self.InAttMenu = false
                     atttrivia:Hide()
                     attslidebox:Hide()
+                    atttogglebtn:Hide()
                 else
                     activeslot = span.AttIndex
                     triviabox:Hide()
@@ -1812,6 +1873,7 @@ function SWEP:CreateCustomizeHUD()
                 self.InAttMenu = false
                 atttrivia:Hide()
                 attslidebox:Hide()
+                atttogglebtn:Hide()
             end
         end
 

@@ -17,6 +17,7 @@ SWEP.UseHands = true
 
 SWEP.ViewModel = "" -- I mean, you probably have to edit these too
 SWEP.WorldModel = ""
+SWEP.MirrorWorldModel = nil -- must have the same bones as the viewmodel. Use with MirrorWMVM
 
 --[[
 SWEP.WorldModelOffset = {

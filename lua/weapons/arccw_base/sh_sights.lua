@@ -169,11 +169,12 @@ function SWEP:SetupActiveSights()
 
         local atttbl = ArcCW.AttachmentTable[k.Installed]
 
-        if !atttbl.AdditionalSights then continue end
+        local addsights = self:GetBuff_Stat("AdditionalSights", i)
+        if !addsights then continue end
 
         if !k.KeepBaseIrons and !atttbl.KeepBaseIrons then kbi = false end
 
-        for _, s in pairs(atttbl.AdditionalSights) do
+        for _, s in pairs(addsights) do
             local stab = table.Copy(s)
 
             stab.Slot = i

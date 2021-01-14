@@ -212,6 +212,10 @@ net.Receive("arccw_networkatts", function(len, ply)
         if wpn.Attachments[i].SlideAmount then
             wpn.Attachments[i].SlidePos = net.ReadFloat()
         end
+
+        if ArcCW.AttachmentTable[att].ToggleStats then
+            wpn.Attachments[i].ToggleNum = net.ReadUInt(8)
+        end
     end
 
     wpn.CertainAboutAtts = true
@@ -293,6 +297,22 @@ net.Receive("arccw_slidepos", function(len, ply)
 
     wpn.Attachments[slot].SlidePos = pos
 end)
+
+
+net.Receive("arccw_togglenum", function(len, ply)
+    local wpn = ply:GetActiveWeapon()
+
+    local slot = net.ReadUInt(8)
+    local num = net.ReadUInt(8)
+
+    if !wpn.ArcCW then return end
+
+    if !wpn.Attachments[slot] then return end
+
+    wpn.Attachments[slot].ToggleNum = num
+    wpn:AdjustAtts()
+end)
+
 
 net.Receive("arccw_asktoattach", function(len, ply)
     local wpn = ply:GetActiveWeapon()
