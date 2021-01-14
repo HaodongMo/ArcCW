@@ -45,7 +45,9 @@ function SWEP:Think()
     if self:GetGrenadePrimed() and self.GrenadePrimeTime > 0 then
         local heldtime = (CurTime() - self.GrenadePrimeTime)
 
-        if self.FuseTime and (heldtime >= self.FuseTime) then
+        local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+
+        if ft and (heldtime >= ft) then
             self:Throw()
         end
     end
