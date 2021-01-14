@@ -1417,7 +1417,6 @@ function SWEP:CreateCustomizeHUD()
 
             local grsh = math.max(dmgmax, dmgmin)
 
-            grsh = math.ceil((grsh / 25) + 1) * 25
             grsh = math.ceil((grsh / 12) + 1) * 12
 
             local mingr = self.RangeMin * self:GetBuff_Mult("Mult_Range") * self:GetBuff_Mult("Mult_RangeMin")
