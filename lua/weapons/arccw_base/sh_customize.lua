@@ -1356,8 +1356,10 @@ function SWEP:CreateCustomizeHUD()
         trivia[13] = nil
     end
 
-    if self.FuseTime then
-        table.insert(trivia, function() return translate("trivia.fusetime") .. ": " .. self.FuseTime end)
+    local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+
+    if ft then
+        table.insert(trivia, function() return translate("trivia.fusetime") .. ": " .. tostring(ft) end)
     end
 
     for _, i in pairs(trivia) do
