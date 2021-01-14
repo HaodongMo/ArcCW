@@ -104,6 +104,8 @@ function SWEP:PrimaryAttack()
 
     local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
 
+    dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
+
     dir = dir + VectorRand() * self:GetDispersion() / 360 / 60
 
     local delay = self:GetFiringDelay()
@@ -786,7 +788,7 @@ function SWEP:GetDamage(range, pellet)
     local dmgmin = self:GetBuff("DamageMin") * mul
     local delta = 1
 
-    local mran = self.RangeMin
+    local mran = self.RangeMin or 0
     local sran = self.Range
     local bran = self:GetBuff_Mult("Mult_Range")
     local vran = self:GetBuff_Mult("Mult_RangeMin")
