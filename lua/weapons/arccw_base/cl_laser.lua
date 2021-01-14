@@ -17,13 +17,13 @@ function SWEP:DoLaser(world)
 
     if !self:GetNWBool("laserenabled", true) then return end
 
-    for _, k in pairs(self.Attachments) do
+    for slot, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
         local attach = ArcCW.AttachmentTable[k.Installed]
 
-        if attach.Laser then
-            local color = attach.LaserColor or attach.ColorOptionsTable[k.ColorOptionIndex or 1]
+        if self:GetBuff_Stat("Laser", slot) then
+            local color = self:GetBuff_Stat("LaserColor", slot) or attach.ColorOptionsTable[k.ColorOptionIndex or 1]
 
             if toworld then
                 if !k.WElement then continue end

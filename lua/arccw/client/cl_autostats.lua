@@ -76,6 +76,47 @@ function ArcCW:GetProsCons(att)
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
     local dmgboth = false
 
+    -- Process togglable stats
+    if att.ToggleStats then
+        for num, toggletbl in pairs(att.ToggleStats) do
+            if toggletbl.NoAutoStats then continue end
+            for i, k in pairs(toggletbl) do
+                if !ArcCW.AutoStats[i] then continue end
+                if i == "Mult_DamageMin" and dmgboth then continue end
+                local stat = ArcCW.AutoStats[i]
+
+                local prefix = "[" .. (toggletbl.AutoStatName or toggletbl.PrintName or i) .. "] "
+                local txt = ""
+                local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
+
+                if i == "Mult_Damage" and toggletbl["Mult_DamageMin"] and k == toggletbl["Mult_DamageMin"] then
+                    dmgboth = true
+                    str = ArcCW.GetTranslation("autostat.damageboth") or stat[1]
+                end
+
+                local tcon, tpro = st and cons or pros, st and pros or cons
+
+                if stat[2] == "mult" and k != 1 then
+                    local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
+
+                    txt = simple and getsimpleamt(k) or sign .. tostr(math.Round(percent * 100, 2)) .. "% "
+
+                    tbl_ins(k > 1 and tcon or tpro, prefix .. txt .. str)
+                elseif stat[2] == "add" and k != 0 then
+                    local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
+
+                    txt = simple and "+ " or sign .. tostr(state) .. " "
+
+                    tbl_ins(k > 1 and tpro or tcon, prefix .. txt .. str)
+                elseif stat[2] == "override" and k == true then
+                    tbl_ins(st and cons or pros, 1, prefix .. str)
+                end
+            end
+        end
+    end
+
+    dmgboth = false
+
     for i, stat in pairs(ArcCW.AutoStats) do
         if !att[i] then continue end
         if i == "Mult_DamageMin" and dmgboth then continue end

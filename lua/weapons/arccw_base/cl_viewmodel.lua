@@ -35,7 +35,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local SP = game.SinglePlayer()
     -- local FT = m_min(FrameTime(), FrameTime())
     local CT = CurTime()
-	local UCT = UnPredictedCurTime()
+    local UCT = UnPredictedCurTime()
     local FT = FrameTime()
 
     local FT5, FT10 = FT * 5, FT * 10
@@ -287,27 +287,27 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     if coolsway then
         eyeangles = owner:EyeAngles()
-		local sightmult = ((self:GetState() == ArcCW.STATE_SIGHTS and 0.1) or 1)
-		local sprintmult = ((self:GetState() == ArcCW.STATE_SPRINT and 4) or 1)
-		local strafing = owner:KeyDown(IN_MOVELEFT) or owner:KeyDown(IN_MOVERIGHT)
+        local sightmult = ((self:GetState() == ArcCW.STATE_SIGHTS and 0.1) or 1)
+        local sprintmult = ((self:GetState() == ArcCW.STATE_SPRINT and 4) or 1)
+        local strafing = owner:KeyDown(IN_MOVELEFT) or owner:KeyDown(IN_MOVERIGHT)
 
-		local velmult = math.Clamp(owner:GetVelocity():Length() / 170, 0.1,2)
-		local pi = math.Clamp(math.pi * math.Round(velmult) * swayspeed, 1, 6)
-		local movmt = (UCT * pi) / 0.5
-		local movmtcomp = ((UCT * pi) - 0.25) / 0.5
+        local velmult = math.Clamp(owner:GetVelocity():Length() / 170, 0.1,2)
+        local pi = math.Clamp(math.pi * math.Round(velmult) * swayspeed, 1, 6)
+        local movmt = (UCT * pi) / 0.5
+        local movmtcomp = ((UCT * pi) - 0.25) / 0.5
 
-		local xangdiff = m_angdif(eyeangles.x, lasteyeangles.x) * lookxmult
+        local xangdiff = m_angdif(eyeangles.x, lasteyeangles.x) * lookxmult
         local yangdiff = m_angdif(eyeangles.y, lasteyeangles.y) * lookymult
-		local rollamount = (strafing and owner:GetVelocity():Angle().y) or eyeangles.y
-		local rollangdiff = math.Clamp(m_angdif(eyeangles.y, rollamount ) / 180 * pi, -7, 7)
+        local rollamount = (strafing and owner:GetVelocity():Angle().y) or eyeangles.y
+        local rollangdiff = math.Clamp(m_angdif(eyeangles.y, rollamount ) / 180 * pi, -7, 7)
 
         coolswaypos.x = (0.25 * velmult) * m_cos(movmtcomp) * sprintmult * swayxmult * sightmult
         coolswaypos.y = -math.abs((1 * velmult) * m_cos(movmtcomp)) * swayymult * sightmult
         coolswaypos.z = -math.abs((0.25 * velmult) * m_cos(movmtcomp)) * swayzmult * sightmult
 
-		swayangx_lerp = f_lerp(0.25, swayangx_lerp, xangdiff * sightmult)
-		swayangy_lerp = f_lerp(0.25, swayangy_lerp, yangdiff * sightmult)
-		swayangz_lerp = f_lerp(0.025, swayangz_lerp, rollangdiff)
+        swayangx_lerp = f_lerp(0.25, swayangx_lerp, xangdiff * sightmult)
+        swayangy_lerp = f_lerp(0.25, swayangy_lerp, yangdiff * sightmult)
+        swayangz_lerp = f_lerp(0.025, swayangz_lerp, rollangdiff)
 
         coolswayang.x = (math.abs((0.5 * velmult) * m_sin(movmt)) + swayangx_lerp * swayxmult)
         coolswayang.y = ((0.25 * velmult) * m_cos(movmt) - swayangy_lerp + swayangz_lerp * swayymult)

@@ -56,7 +56,7 @@ function SWEP:GetIsShotgun()
     --     if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
     -- end
 
-    if self:GetBuff_Override("Override_IsShotgun") ~= nil then
+    if self:GetBuff_Override("Override_IsShotgun") != nil then
         return self:GetBuff_Override("Override_IsShotgun")
     else
         return self.IsShotgun
@@ -88,6 +88,20 @@ function SWEP:GetBuff(buff, defaultnil)
     end
 
     return result
+end
+
+function SWEP:GetBuff_Stat(buff, slot)
+    local slottbl = self.Attachments[slot]
+    if !slottbl then return end
+    local atttbl = ArcCW.AttachmentTable[slottbl.Installed]
+    if !atttbl then return end
+    local num = slottbl.ToggleNum or 1
+
+    if atttbl.ToggleStats and atttbl.ToggleStats[num] and atttbl.ToggleStats[num][buff] then
+        return atttbl.ToggleStats[num][buff]
+    else
+        return atttbl[buff]
+    end
 end
 
 function SWEP:GetBuff_Hook(buff, data)
@@ -133,6 +147,12 @@ function SWEP:GetBuff_Hook(buff, data)
 
             if ret == false then return end
 
+            data = ret
+        elseif atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and isfunction(atttbl.ToggleStats[k.ToggleNum][buff]) then
+           local ret = atttbl.ToggleStats[k.ToggleNum][buff](self, data)
+            table.insert(self.AttCache_Hooks[buff], atttbl.ToggleStats[k.ToggleNum][buff])
+            if ret == nil then continue end
+            if ret == false then return end
             data = ret
         end
     end
@@ -245,6 +265,15 @@ function SWEP:GetBuff_Override(buff, default)
                 winningslot = i
             end
         end
+
+        if atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and atttbl.ToggleStats[k.ToggleNum][buff] then
+            local pri = atttbl.ToggleStats[k.ToggleNum][buff .. "_Priority"] or 1
+            if level == 0 or (pri > level) then
+                current = atttbl.ToggleStats[k.ToggleNum][buff]
+                level = pri
+                winningslot = i
+            end
+        end
     end
 
     if !ArcCW.BuffStack then
@@ -350,6 +379,10 @@ function SWEP:GetBuff_Mult(buff)
         if atttbl[buff] then
             mult = mult * atttbl[buff]
         end
+
+        if atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and atttbl.ToggleStats[k.ToggleNum][buff] then
+            mult = mult * atttbl.ToggleStats[k.ToggleNum][buff]
+        end
     end
 
     local cfm = self:GetCurrentFiremode()
@@ -365,10 +398,8 @@ function SWEP:GetBuff_Mult(buff)
     for i, e in pairs(self:GetActiveElements()) do
         local ele = self.AttachmentElements[e]
 
-        if ele then
-            if ele[buff] then
-                mult = mult * ele[buff]
-            end
+        if ele and ele[buff] then
+            mult = mult * ele[buff]
         end
     end
 
@@ -423,6 +454,10 @@ function SWEP:GetBuff_Add(buff)
         if atttbl[buff] then
             add = add + atttbl[buff]
         end
+
+        if atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and atttbl.ToggleStats[k.ToggleNum][buff] then
+            add = add + atttbl.ToggleStats[k.ToggleNum][buff]
+        end
     end
 
     local cfm = self:GetCurrentFiremode()
@@ -434,10 +469,8 @@ function SWEP:GetBuff_Add(buff)
     for i, e in pairs(self:GetActiveElements()) do
         local ele = self.AttachmentElements[e]
 
-        if ele then
-            if ele[buff] then
-                add = add + ele[buff]
-            end
+        if ele and ele[buff] then
+            add = add + ele[buff]
         end
     end
 
@@ -653,6 +686,10 @@ function SWEP:NetworkWeapon(sendto)
             net.WriteFloat(i.SlidePos or 0.5)
         end
 
+        if atttbl.ToggleStats then
+            net.WriteUInt(i.ToggleNum, 8) -- look if you want more than 255 fucking toggle options you're insane and stupid just don't ok
+        end
+
         -- if atttbl.ColorOptionsTable then
         --     net.WriteUInt(i.ColorOptionIndex or 1, 8) -- look if you want more than 256 fucking color options you're insane and stupid and just don't ok
         -- end
@@ -682,9 +719,21 @@ function SWEP:SendDetail_SlidePos(slot, hmm)
     net.SendToServer()
 end
 
+function SWEP:SendDetail_ToggleNum(slot, hmm)
+    if !self.Attachments then return end
+    if !self.Attachments[slot].ToggleNum then return end
+
+    net.Start("arccw_togglenum")
+    net.WriteUInt(slot, 8)
+    net.WriteUInt(self.Attachments[slot].ToggleNum or 1, 4)
+    net.SendToServer()
+end
+
+
 function SWEP:SendAllDetails()
     for i, k in pairs(self.Attachments) do
         self:SendDetail_SlidePos(i, true)
+        self:SendDetail_ToggleNum(i, true)
     end
 end
 
@@ -974,6 +1023,10 @@ function SWEP:Attach(slot, attname, silent)
 
     if atttbl.AdditionalSights then
         self.SightMagnifications = {}
+    end
+
+    if atttbl.ToggleStats then
+        attslot.ToggleNum = 1
     end
 
     if CLIENT then
