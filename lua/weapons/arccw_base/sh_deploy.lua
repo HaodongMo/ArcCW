@@ -54,8 +54,10 @@ function SWEP:Deploy()
         end
     end
 
-    if self.UnReady and SERVER then
-        self:InitialDefaultClip()
+    if self.UnReady then
+        if SERVER then
+            self:InitialDefaultClip()
+        end
         self.UnReady = false
     end
 
