@@ -78,8 +78,8 @@ function ArcCW:GetProsCons(att, toggle)
 
     -- Process togglable stats
     if att.ToggleStats then
-        local toggletbl = att.ToggleStats[toggle]
-        if !toggletbl.NoAutoStats then
+        local toggletbl = att.ToggleStats[toggle or 1]
+        if toggletbl and !toggletbl.NoAutoStats then
 
             if toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage then
                 dmgboth = true

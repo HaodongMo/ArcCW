@@ -6,7 +6,7 @@ SWEP.CheapFlashlights = {} -- tracks cheap flashlight models + lights
 function SWEP:GetHasFlashlights()
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
-        if self:GetBuff_Stat("Flashlight", i) then return true end
+        if self:GetBuff_Stat("Flashlight", i) != nil then return true end
     end
 
     return false
