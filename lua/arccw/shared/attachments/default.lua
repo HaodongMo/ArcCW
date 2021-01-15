@@ -21,6 +21,46 @@ att.HideIfUnavailable = false -- if the attachment is not owned, do not show up 
 att.AddPrefix = ""
 att.AddSuffix = ""
 
+att.ToggleStats = {
+    -- {
+    --     PrintName = "Red",
+    --     AutoStatName = "On",
+    --     Laser = true,
+    --     LaserColor = Color(255, 0, 0),
+    --     Mult_HipDispersion = 0.75,
+    --     AdditionalSights = {
+    --         {
+    --             Pos = Vector(-2, 10, -4), -- relative to where att.Model is placed
+    --             Ang = Angle(0, 0, -45),
+    --             GlobalPos = false,
+    --             GlobalAng = true,
+    --             Magnification = 1
+    --         }
+    --     },
+    -- },
+    -- {
+    --     PrintName = "Blue",
+    --     NoAutoStats = true,
+    --     Laser = true,
+    --     LaserColor = Color(0, 0, 255),
+    --     Mult_HipDispersion = 0.75,
+    --     AdditionalSights = {
+    --         {
+    --             Pos = Vector(-2, 10, -4), -- relative to where att.Model is placed
+    --             Ang = Angle(0, 0, -45),
+    --             GlobalPos = false,
+    --             GlobalAng = true,
+    --             Magnification = 1
+    --         }
+    --     },
+    -- },
+    -- {
+    --     PrintName = "Off",
+    --     Laser = false,
+    --     Mult_HipDispersion = 1,
+    -- }
+}
+
 att.KeepBaseIrons = false
 
 att.GivesFlags = {}

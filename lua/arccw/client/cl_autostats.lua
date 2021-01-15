@@ -60,7 +60,7 @@ local function getsimpleamt(stat)
     end
 end
 
-function ArcCW:GetProsCons(att)
+function ArcCW:GetProsCons(att, toggle)
     local pros = {}
     local cons = {}
 
@@ -78,8 +78,13 @@ function ArcCW:GetProsCons(att)
 
     -- Process togglable stats
     if att.ToggleStats then
-        for num, toggletbl in pairs(att.ToggleStats) do
-            if toggletbl.NoAutoStats then continue end
+        local toggletbl = att.ToggleStats[toggle]
+        if !toggletbl.NoAutoStats then
+
+            if toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage then
+                dmgboth = true
+            end
+
             for i, k in pairs(toggletbl) do
                 if !ArcCW.AutoStats[i] then continue end
                 if i == "Mult_DamageMin" and dmgboth then continue end
@@ -89,8 +94,7 @@ function ArcCW:GetProsCons(att)
                 local txt = ""
                 local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
 
-                if i == "Mult_Damage" and toggletbl["Mult_DamageMin"] and k == toggletbl["Mult_DamageMin"] then
-                    dmgboth = true
+                if i == "Mult_Damage" and dmgboth then
                     str = ArcCW.GetTranslation("autostat.damageboth") or stat[1]
                 end
 
@@ -117,6 +121,10 @@ function ArcCW:GetProsCons(att)
 
     dmgboth = false
 
+    if att.Mult_DamageMin and att.Mult_Damage and att.Mult_DamageMin == att.Mult_Damage then
+        dmgboth = true
+    end
+
     for i, stat in pairs(ArcCW.AutoStats) do
         if !att[i] then continue end
         if i == "Mult_DamageMin" and dmgboth then continue end
@@ -124,10 +132,7 @@ function ArcCW:GetProsCons(att)
         local k, txt  = att[i], ""
         local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
 
-        -- Special case: If both damage and min damage are the same value, we combine them
-        -- This assumes Mult_Damage will always come before Mult_DamageMin so pls no break
-        if i == "Mult_Damage" and att["Mult_DamageMin"] and k == att["Mult_DamageMin"] then
-            dmgboth = true
+        if i == "Mult_Damage" and dmgboth then
             str = ArcCW.GetTranslation("autostat.damageboth") or stat[1]
         end
 

@@ -4,8 +4,9 @@ local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end
 
-local temp = 127
+local temp = 0
 local SolidBlack = Color(temp, temp, temp)
+-- don't fucking mess with the shadow, makes the menu hurt your goddamn eyes
 
 local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
     local tw, th = surface.GetTextSize(txt)
@@ -570,9 +571,11 @@ function SWEP:CreateCustomizeHUD()
         end
         self:SendDetail_ToggleNum(activeslot)
         self:AdjustAtts()
-        self:CreateFlashlightsVM() -- FIXME: ewwwwwwww
+        if self:GetHasFlashlights() then
+            self:CreateFlashlightsVM()
+        end
 
-        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
+        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, 100)
     end
     atttogglebtn.Paint = function(spaa, w, h)
         if !self:IsValid() then return end
@@ -627,7 +630,7 @@ function SWEP:CreateCustomizeHUD()
 
     local last_atttrivia = nil
 
-    local function atttrivia_do(att)
+    local function atttrivia_do(att, slot)
 
         if !att then
             last_atttrivia = att
@@ -725,7 +728,7 @@ function SWEP:CreateCustomizeHUD()
 
         local neutrals = atttbl.Desc_Neutrals or {}
 
-        local pros, cons = ArcCW:GetProsCons(atttbl)
+        local pros, cons = ArcCW:GetProsCons(atttbl, self.Attachments[slot].ToggleNum)
 
         if (pros and #pros or 0) > 0 then
 
@@ -1026,7 +1029,7 @@ function SWEP:CreateCustomizeHUD()
                     end
 
                     if spaa:IsHovered() then
-                        atttrivia_do(spaa.AttName)
+                        atttrivia_do(spaa.AttName, i)
                     end
 
                     if !owned and GetConVar("arccw_attinv_darkunowned"):GetBool() then
@@ -1114,7 +1117,7 @@ function SWEP:CreateCustomizeHUD()
                     span.TextRotState = 0
 
                     if self.Attachments[span.AttIndex].Installed then
-                        atttrivia_do(self.Attachments[span.AttIndex].Installed)
+                        atttrivia_do(self.Attachments[span.AttIndex].Installed, span.AttIndex)
                     end
 
                     attcatb_regen(span)
