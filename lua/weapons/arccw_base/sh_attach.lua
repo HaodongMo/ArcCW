@@ -97,7 +97,7 @@ function SWEP:GetBuff_Stat(buff, slot)
     if !atttbl then return end
     local num = slottbl.ToggleNum or 1
 
-    if atttbl.ToggleStats and atttbl.ToggleStats[num] and atttbl.ToggleStats[num][buff] then
+    if atttbl.ToggleStats and atttbl.ToggleStats[num] and (atttbl.ToggleStats[num][buff] != nil) then
         return atttbl.ToggleStats[num][buff]
     else
         return atttbl[buff]
