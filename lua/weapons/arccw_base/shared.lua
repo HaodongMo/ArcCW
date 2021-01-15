@@ -89,6 +89,8 @@ SWEP.AmmoPerShot = 1
 SWEP.InfiniteAmmo = false -- weapon can reload for free
 SWEP.BottomlessClip = false -- weapon never has to reload
 
+SWEP.DoNotEquipmentAmmo = false -- do not automatically give this weapon unique ammo when arccw_equipmentammo is used
+
 SWEP.ShotgunReload = false -- reloads like shotgun instead of magazines
 SWEP.HybridReload = false -- reload normally when empty, reload like shotgun when part full
 

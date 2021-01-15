@@ -36,7 +36,7 @@ hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", function()
             local class = k.ClassName
             local wpntbl = weapons.Get(class)
 
-            if (wpntbl.Throwing or wpntbl.Disposable) and !wpntbl.Singleton then
+            if (wpntbl.Throwing or wpntbl.Disposable) and !wpntbl.Singleton and !wpntbl.DoNotEquipmentAmmo then
                 local ammoid = game.GetAmmoID(class)
 
                 if ammoid == -1 then
