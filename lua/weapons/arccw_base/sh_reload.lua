@@ -127,7 +127,7 @@ function SWEP:Reload()
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
-        self:PlayAnimation(anim, mult, true, 0, true, nil, true)
+        self:PlayAnimation(anim, mult, true, 0, false, nil, true)
 
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
         local reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
