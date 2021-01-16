@@ -406,5 +406,5 @@ function SWEP:GetCapacity()
 end
 
 function SWEP:GetChamberSize()
-    return (self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize) + self:GetBuff_Add("Add_ChamberSize")
+    return self:GetBuff("ChamberSize") --(self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize) + self:GetBuff_Add("Add_ChamberSize")
 end
