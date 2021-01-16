@@ -86,7 +86,7 @@ function SWEP:DoDrawCrosshair(x, y)
         delta = math.Approach(delta, 0, FrameTime() * 1 / st)
     end
 
-    if GetConVar("arccw_crosshair_equip"):GetBool() and (self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity) then
+    if GetConVar("arccw_crosshair_equip"):GetBool() and self:GetBuff("ShootEntity", true) then
         gap = gap * 1.5
         prong = ScreenScale(prong_wid)
         p_w = ScreenScale(prong_wid)
