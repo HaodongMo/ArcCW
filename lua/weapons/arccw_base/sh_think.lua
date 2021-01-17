@@ -189,40 +189,46 @@ function SWEP:Think()
 
         for i, k in pairs(self:GetBuff_Override("Override_CaseBones", self.CaseBones) or {}) do
             if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
+            for _, b in pairs(istable(k) and k or {k}) do
+                local bone = vm:LookupBone(b)
 
-            if !bone then continue end
+                if !bone then continue end
 
-            if self:GetVisualClip() >= i then
-                vm:ManipulateBoneScale(bone, vec1)
-            else
-                vm:ManipulateBoneScale(bone, vec0)
+                if self:GetVisualClip() >= i then
+                    vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
+                end
             end
         end
 
         for i, k in pairs(self:GetBuff_Override("Override_BulletBones", self.BulletBones) or {}) do
             if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
+            for _, b in pairs(istable(k) and k or {k}) do
+                local bone = vm:LookupBone(b)
 
-            if !bone then continue end
+                if !bone then continue end
 
-            if self:GetVisualBullets() >= i then
-                vm:ManipulateBoneScale(bone, vec1)
-            else
-                vm:ManipulateBoneScale(bone, vec0)
+                if self:GetVisualBullets() >= i then
+                    vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
+                end
             end
         end
 
         for i, k in pairs(self:GetBuff_Override("Override_StripperClipBones", self.StripperClipBones) or {}) do
             if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
+            for _, b in pairs(istable(k) and k or {k}) do
+                local bone = vm:LookupBone(b)
 
-            if !bone then continue end
+                if !bone then continue end
 
-            if self:GetVisualLoadAmount() >= i then
-                vm:ManipulateBoneScale(bone, vec1)
-            else
-                vm:ManipulateBoneScale(bone, vec0)
+                if self:GetVisualLoadAmount() >= i then
+                    vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
+                end
             end
         end
     end
