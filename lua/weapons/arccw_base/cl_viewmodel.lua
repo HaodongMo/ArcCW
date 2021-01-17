@@ -72,10 +72,10 @@ function SWEP:GetViewModelPosition(pos, ang)
     if owner:Crouching() or owner:KeyDown(IN_DUCK) then
         target.down = 0
 
-        if self.CrouchPos then
+        if self:GetBuff("CrouchPos", true) then
             target.pos = self.CrouchPos
         end
-        if self.CrouchAng then
+        if self:GetBuff("CrouchAng", true) then
             target.ang = self.CrouchAng
         end
     end
