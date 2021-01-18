@@ -593,7 +593,8 @@ function SWEP:CreateCustomizeHUD()
 
         local txt = (translate("ui.toggle"))
         local catttbl = activeslot and ArcCW.AttachmentTable[self.Attachments[activeslot].Installed]
-        if catttbl and catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum].PrintName then
+        if catttbl and catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum]
+                and catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum].PrintName then
             txt = ArcCW.TryTranslation(catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum].PrintName)
         end
 
