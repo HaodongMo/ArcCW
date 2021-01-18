@@ -106,6 +106,8 @@ ArcCW.ClientConVars = {
     ["arccw_altbindsonly"]            = { def = 0, usri = true },
     ["arccw_altsafety"]               = { def = 0, usri = true },
     ["arccw_automaticreload"]         = { def = 0, usri = true },
+
+    ["arccw_aimassist_cl"]               = { def = 0, usri = true },
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do

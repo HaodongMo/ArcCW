@@ -74,3 +74,9 @@ CreateConVar("arccw_weakensounds", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Reduce 
 CreateConVar("arccw_desync", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Turning this on prevents cheaters from predicting the bullet direction/spread, making the nospread cheat useless.")
 
 CreateConVar("arccw_strafetilt", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "If enabled, the point of fire will tilt when strafing and aiming.", 0, 1)
+
+CreateConVar("arccw_aimassist", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Enable A I M B O T", 0, 1)
+CreateConVar("arccw_aimassist_head", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "My advice for you: aim for the head!", 0, 1)
+CreateConVar("arccw_aimassist_cone", 5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "The angle of the cone within which targets can be seeked.", 1, 360)
+CreateConVar("arccw_aimassist_distance", 1024, FCVAR_ARCHIVE + FCVAR_REPLICATED, "The distance within which aim assist will trigger.", 128)
+CreateConVar("arccw_aimassist_intensity", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How strong the assist is.", 0, 10)

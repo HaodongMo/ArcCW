@@ -48,6 +48,8 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.glare.desc" },
     { type = "b", text = "#arccw.cvar.shake", var = "arccw_shake" },
     { type = "c", text = "#arccw.cvar.shake_info" },
+    { type = "b", text = "#arccw.cvar.aimassist", var = "arccw_aimassist_cl" },
+    { type = "c", text = "#arccw.cvar.aimassist_cl.desc" },
     { type = "b", text = "#arccw.cvar.2d3d", var = "arccw_2d3d" },
     { type = "c", text = "#arccw.cvar.2d3d_info" },
     { type = "t", text = "#arccw.cvar.language", var = "arccw_language"  },
@@ -192,6 +194,12 @@ local ServerPanel = {
     { type = "b", text = "#arccw.cvar.doorbust", var = "arccw_doorbust", sv = true },
     { type = "f", text = "#arccw.cvar.weakensounds", var = "arccw_weakensounds", min = -20, max = 30, sv = true},
     { type = "c", text = "#arccw.cvar.weakensounds.desc" },
+    { type = "b", text = "#arccw.cvar.aimassist", var = "arccw_aimassist", sv = true },
+    { type = "c", text = "#arccw.cvar.aimassist.desc" },
+    { type = "b", text = "#arccw.cvar.aimassist_head", var = "arccw_aimassist_head", sv = true },
+    { type = "f", text = "#arccw.cvar.aimassist_cone", var = "arccw_aimassist_cone", min = 0, max = 360, sv = true},
+    { type = "f", text = "#arccw.cvar.aimassist_distance", var = "arccw_aimassist_distance", min = 128, max = 4096, sv = true},
+    { type = "f", text = "#arccw.cvar.aimassist_intensity", var = "arccw_aimassist_intensity", min = 0, max = 10, sv = true},
 }
 
 local AmmoPanel = {
