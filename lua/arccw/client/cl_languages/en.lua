@@ -254,3 +254,7 @@ L["arccw.bind.msg"]                       = "Type into console: "
 -- 2021-01-14
 L["arccw.cvar.mult_startunloaded"]        = "Start Unloaded"
 L["arccw.cvar.mult_defaultammo"]          = "Default Ammo"
+
+-- 2021-01-18
+L["arccw.cvar.dev_showignored"]           = "Load Ignored Atts"
+L["arccw.cvar.dev_showignored.desc"]      = "Disabled by default.\nLoad attachments that have att.Ignore set to true. These attachments may be broken or unimplemented."

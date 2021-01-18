@@ -683,7 +683,7 @@ function SWEP:NetworkWeapon(sendto)
         end
 
         if atttbl.ToggleStats then
-            net.WriteUInt(i.ToggleNum, 8) -- look if you want more than 255 fucking toggle options you're insane and stupid just don't ok
+            net.WriteUInt(i.ToggleNum or 1, 8) -- look if you want more than 255 fucking toggle options you're insane and stupid just don't ok
         end
 
         -- if atttbl.ColorOptionsTable then
