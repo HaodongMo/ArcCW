@@ -69,15 +69,19 @@ local debounce = 0
 local function ToggleAtts(wep)
     if debounce > CurTime() then return end -- ugly hack for double trigger
     debounce = CurTime() + 0.1
+    local used = false
     for k, v in pairs(wep.Attachments) do
         local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
         if atttbl and atttbl.ToggleStats then
+            used = true
             wep.Attachments[k].ToggleNum = (wep.Attachments[k].ToggleNum or 1) + 1
             if wep.Attachments[k].ToggleNum > #atttbl.ToggleStats then
                 wep.Attachments[k].ToggleNum = 1
             end
         end
         wep:SendDetail_ToggleNum(k)
+    end
+    if used then
         wep:AdjustAtts()
         wep:CreateFlashlightsVM() -- FIXME: ewwwwwwww
         EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
