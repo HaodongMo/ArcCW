@@ -65,7 +65,10 @@ local function DoUbgl(wep)
     end
 end
 
+local debounce = 0
 local function ToggleAtts(wep)
+    if debounce > CurTime() then return end -- ugly hack for double trigger
+    debounce = CurTime() + 0.1
     for k, v in pairs(wep.Attachments) do
         local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
         if atttbl and atttbl.ToggleStats then
