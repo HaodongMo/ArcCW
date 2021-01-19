@@ -5,6 +5,9 @@ function SWEP:GetSightTime()
     return self:GetBuff("SightTime")
 end
 
+SWEP.LastEnterSprintTime = 0
+SWEP.LastExitSprintTime = 0
+
 function SWEP:EnterSprint()
     if engine.ActiveGamemode() == "terrortown" and !(TTT2 and self:GetOwner().isSprinting) then return end
     if self:GetState() == ArcCW.STATE_SPRINT then return end
@@ -24,12 +27,14 @@ function SWEP:EnterSprint()
         self:SetNextPrimaryFire(CurTime())
     end
 
+    self.LastEnterSprintTime = CurTime()
+
     local anim = self:SelectAnimation("enter_sprint")
     if anim and !s then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     elseif !anim and !s then
-        self:SetReloading(CurTime() + self:GetSightTime() * self:GetBuff_Mult("Mult_SightTime"))
+        self:SetReloading(CurTime() + self:GetSightTime())
     end
 end
 
@@ -54,12 +59,14 @@ function SWEP:ExitSprint()
         self:EnterSights()
     end
 
+    self.LastExitSprintTime = CurTime()
+
     local anim = self:SelectAnimation("exit_sprint")
     if anim and !s then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     elseif !anim and !s then
-        self:SetReloading(CurTime() + self:GetSightTime() * self:GetBuff_Mult("Mult_SightTime"))
+        self:SetReloading(CurTime() + self:GetSightTime())
     end
 end
 
@@ -117,6 +124,35 @@ function SWEP:ExitSights()
     if anim then
         self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
     end
+end
+
+function SWEP:GetSprintDelta()
+    local lst = self.LastExitSprintTime
+    local st = self:GetSightTime()
+    local minus = 0
+
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        return 0 -- This ensures sights will always draw
+    end
+
+    if self:GetState() == ArcCW.STATE_IDLE then
+        lst = self.LastEnterSprintTime
+        minus = 1
+
+        if CurTime() - lst >= st then
+            return 0
+        end
+    else
+        if CurTime() - lst >= st then
+            return 1
+        end
+    end
+
+    local delta = minus - math.Clamp((CurTime() - lst) / st, 0, 1)
+
+    delta = math.abs(delta)
+
+    return delta
 end
 
 function SWEP:GetSightDelta()
