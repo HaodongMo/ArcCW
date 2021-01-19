@@ -68,6 +68,22 @@ function SWEP:GetIsShotgun()
     -- return num > 1
 end
 
+function SWEP:GetIsManualAction()
+    local manual = self:GetBuff_Override("Override_ManualAction")
+
+    if manual != false then
+        manual = manual or self.ManualAction
+    end
+
+    local mode = self:GetCurrentFiremode().Mode
+
+    if mode != 0 and mode != 1 then
+        return false
+    end
+
+    return mode
+end
+
 -- ONE FUNCTION TO RULE THEM ALL
 function SWEP:GetBuff(buff, defaultnil)
     local stable = self:GetTable()
@@ -746,7 +762,7 @@ function SWEP:SendDetail_ToggleNum(slot, hmm)
 
     net.Start("arccw_togglenum")
     net.WriteUInt(slot, 8)
-    net.WriteUInt(self.Attachments[slot].ToggleNum or 1, 4)
+    net.WriteUInt(self.Attachments[slot].ToggleNum or 1, 8)
     net.SendToServer()
 end
 

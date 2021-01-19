@@ -100,6 +100,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         sighted  = state == ArcCW.STATE_SIGHTS
     end
 
+    local sprd = self:GetSprintDelta()
+
     if state == ArcCW.STATE_CUSTOMIZE then
         target.pos  = Vector()
         target.ang  = Angle()
@@ -159,6 +161,12 @@ function SWEP:GetViewModelPosition(pos, ang)
             target.ang:Set(irons.Ang)
             target.ang.r = sightroll
         end
+    elseif sprd > 0 then
+        local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
+        local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
+
+        target.pos = LerpVector(sprd, target.pos, spos or hpos)
+        target.ang = LerpAngle(sprd, target.ang, sang or hang)
     end
 
     local deg = self:BarrelHitWall()

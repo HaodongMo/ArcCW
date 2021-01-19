@@ -202,7 +202,7 @@ net.Receive("arccw_networkatts", function(len, ply)
         wpn.Attachments[i] = wpn.Attachments[i] or {}
 
         if attid == 0 then
-            wpn.Attachments[i].Installed = false
+            wpn.Attachments[i].Installed = nil
             continue
         end
 

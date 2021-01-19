@@ -321,11 +321,11 @@ function SWEP:PrimaryAttack()
     self:DoShootSound()
     self:DoPrimaryAnim()
 
-    if (self.ManualAction or self:GetBuff_Override("Override_ManualAction")) and !(self.NoLastCycle and self:Clip1() == 0) then
+    if (self:GetIsManualAction()) and !(self.NoLastCycle and self:Clip1() == 0) then
         local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
-        local firedelay = self.Animations[fireanim].MinProgress or 0
+        local firedelay = self.Animations[fireanim].MinProgress or 0.1
         self:SetNeedCycle(true)
-        self:SetWeaponOpDelay(CurTime() + firedelay / self:GetBuff_Mult("Mult_RPM"))
+        self:SetWeaponOpDelay(CurTime() + firedelay)
     end
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == self:GetBurstLength() then

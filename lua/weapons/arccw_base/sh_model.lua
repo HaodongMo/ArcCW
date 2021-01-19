@@ -746,11 +746,15 @@ function SWEP:DrawCustomModel(wm,origin,angle)
             if self:GetOwner():IsValid() and !custompos then
                 k.Model:SetParent(self:GetOwner())
                 vm = self:GetOwner()
+                k.OffsetAng = self.WorldModelOffset.ang or Angle(0, 0, 0)
+                k.OffsetPos = self.WorldModelOffset.pos or Vector(0, 0, 0)
             else
                 k.Model:SetParent(self)
                 vm = self
                 selfmode = true
                 basewm = true
+                k.OffsetAng = Angle(0, 0, 0)
+                k.OffsetPos = Vector(0, 0, 0)
             end
         elseif k.IsBaseVM and !custompos then
             k.Model:SetParent(self:GetOwner():GetViewModel())
