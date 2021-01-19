@@ -33,13 +33,16 @@ function SWEP:EnterSprint()
     if anim and !s then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
-    elseif !anim and !s then
-        self:SetReloading(CurTime() + self:GetSprintTime())
+    --elseif !anim and !s then -- Not needed because ExitSprint handles it properly
+        --self:SetReloading(CurTime() + self:GetSprintTime())
     end
 end
 
 function SWEP:ExitSprint()
     if self:GetState() == ArcCW.STATE_IDLE then return end
+
+    local delta = self:GetSprintDelta()
+
     self:SetState(ArcCW.STATE_IDLE)
     self.Sighted = false
     self.Sprinted = false
@@ -66,7 +69,7 @@ function SWEP:ExitSprint()
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     elseif !anim and !s then
-        self:SetReloading(CurTime() + self:GetSprintTime())
+        self:SetReloading(CurTime() + self:GetSprintTime() * delta)
     end
 end
 
@@ -133,22 +136,21 @@ end
 function SWEP:GetSprintDelta()
     local lst = self.LastExitSprintTime
     local st = self:GetSprintTime()
-    local minus = 0
+    local minus = 1
 
     if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
         return 0 -- This ensures sights will always draw
     end
 
-    if self:GetState() == ArcCW.STATE_IDLE then
-        lst = math.max(self.LastEnterSprintTime, self.LastEnterSprintTime)
-        minus = 1
-
+    if self:GetState() == ArcCW.STATE_SPRINT then
+        lst = self.LastEnterSprintTime
+        minus = 0
         if CurTime() - lst >= st then
-            return 0
+            return 1
         end
     else
         if CurTime() - lst >= st then
-            return 1
+            return 0
         end
     end
 
