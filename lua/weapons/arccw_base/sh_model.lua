@@ -395,8 +395,8 @@ function SWEP:SetupModel(wm)
         model:DrawShadow(true)
         model:SetPredictable(false)
         model.Weapon = self
-        model:SetSkin(atttbl.ModelSkin or 0)
-        model:SetBodyGroups(atttbl.ModelBodygroups or "")
+        model:SetSkin(self:GetBuff_Stat("ModelSkin", i) or 0)
+        model:SetBodyGroups(self:GetBuff_Stat("ModelBodygroups", i) or "")
         model:SetupBones()
         ScaleModel(model, scale)
         element.Model = model
@@ -405,7 +405,7 @@ function SWEP:SetupModel(wm)
         element.Bone = repbone or k.Bone
         element.NoDraw = atttbl.NoDraw or false
         element.BoneMerge = k.BoneMerge or false
-        element.Bodygroups = atttbl.ModelBodygroups
+        element.Bodygroups = self:GetBuff_Stat("ModelBodygroups", k)
         element.DrawFunc = atttbl.DrawFunc
         element.Slot = i
         element.ModelOffset = atttbl.ModelOffset or Vector(0, 0, 0)

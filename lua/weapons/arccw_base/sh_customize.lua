@@ -565,6 +565,8 @@ function SWEP:CreateCustomizeHUD()
         local catttbl = ArcCW.AttachmentTable[self.Attachments[activeslot].Installed]
         if !catttbl or !catttbl.ToggleStats then return end
 
+        self:ToggleSlot(activeslot)
+        --[[]
         self.Attachments[activeslot].ToggleNum = (self.Attachments[activeslot].ToggleNum or 1) + 1
         if self.Attachments[activeslot].ToggleNum > #catttbl.ToggleStats then
             self.Attachments[activeslot].ToggleNum = 1
@@ -576,6 +578,7 @@ function SWEP:CreateCustomizeHUD()
         end
 
         EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, 100)
+        ]]
     end
     atttogglebtn.Paint = function(spaa, w, h)
         if !self:IsValid() then return end

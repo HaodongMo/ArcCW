@@ -76,16 +76,10 @@ local function ToggleAtts(wep)
         local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
         if atttbl and atttbl.ToggleStats then
             used = true
-            wep.Attachments[k].ToggleNum = (wep.Attachments[k].ToggleNum or 1) + 1
-            if wep.Attachments[k].ToggleNum > #atttbl.ToggleStats then
-                wep.Attachments[k].ToggleNum = 1
-            end
+            wep:ToggleSlot(k, nil, true)
         end
-        wep:SendDetail_ToggleNum(k)
     end
     if used then
-        wep:AdjustAtts()
-        wep:CreateFlashlightsVM() -- FIXME: ewwwwwwww
         EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
     end
 end

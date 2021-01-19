@@ -138,8 +138,7 @@ function SWEP:PrimaryAttack()
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
     bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
-    bullet.Tracer     = 0
-    bullet.TracerNum  = tracernum
+    bullet.Tracer     = game.SinglePlayer() and tracernum or 0
     bullet.TracerName = self:GetBuff_Override("Override_Tracer") or self.Tracer
     bullet.Callback   = function(att, tr, dmg)
         local hitpos, hitnormal = tr.HitPos, tr.HitNormal
@@ -154,7 +153,7 @@ function SWEP:PrimaryAttack()
             debugoverlay.Cross(hitpos, 5, 5, Color(0, 0, 255), true)
         end
 
-        if !(tracernum == 0 or clip % tracernum != 0) and CLIENT then
+        if !game.SinglePlayer() and CLIENT and !(tracernum == 0 or clip % tracernum != 0) then
             local fx = EffectData()
             fx:SetStart(self:GetTracerOrigin())
             fx:SetOrigin(tr.HitPos)

@@ -310,7 +310,11 @@ net.Receive("arccw_togglenum", function(len, ply)
     if !wpn.Attachments[slot] then return end
 
     wpn.Attachments[slot].ToggleNum = num
+
     wpn:AdjustAtts()
+    wpn:NetworkWeapon()
+    wpn:SetupModel(false)
+    wpn:SetupModel(true)
 end)
 
 

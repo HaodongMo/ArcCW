@@ -680,13 +680,11 @@ end
 function SWEP:GetWeaponFlags()
     local flags = {}
 
-    for _, i in pairs(self.Attachments) do
+    for id, i in pairs(self.Attachments) do
         if !i.Installed then continue end
 
-        local atttbl = ArcCW.AttachmentTable[i.Installed]
-
-        if atttbl.GivesFlags then
-            table.Add(flags, atttbl.GivesFlags)
+        if self:GetBuff_Stat("GivesFlags", id) then
+            table.Add(flags, self:GetBuff_Stat("GivesFlags", id))
         end
 
         if i.GivesFlags then
@@ -757,7 +755,7 @@ function SWEP:SendDetail_SlidePos(slot, hmm)
 end
 
 function SWEP:SendDetail_ToggleNum(slot, hmm)
-    if !self.Attachments then return end
+    if !self.Attachments or !self.Attachments[slot] then return end
     if !self.Attachments[slot].ToggleNum then return end
 
     net.Start("arccw_togglenum")
@@ -1223,6 +1221,43 @@ function SWEP:Detach(slot, silent)
     self:RefreshBGs()
 
     self:AdjustAtts()
+end
+
+function SWEP:ToggleSlot(slot, num, silent)
+    local atttbl = ArcCW.AttachmentTable[self.Attachments[slot].Installed]
+    if !atttbl.ToggleStats then return end
+
+    if !num then
+        self.Attachments[slot].ToggleNum = (self.Attachments[slot].ToggleNum or 1) + 1
+        if self.Attachments[slot].ToggleNum > #atttbl.ToggleStats then
+            self.Attachments[slot].ToggleNum = 1
+        end
+    else
+        self.Attachments[slot].ToggleNum = math.Clamp(num, 1, #catttbl.ToggleStats)
+    end
+
+    if CLIENT then
+        self:SendDetail_ToggleNum(slot)
+        self:SetupActiveSights()
+    elseif SERVER then
+        self:NetworkWeapon()
+        self:SetupModel(false)
+        self:SetupModel(true)
+    end
+
+    self:AdjustAtts()
+
+    for s, i in pairs(self.Attachments) do
+        if !self:CheckFlags(i.ExcludeFlags, i.RequireFlags) then
+            self:Detach(s, true)
+        end
+    end
+
+    self:RefreshBGs()
+
+    if !silent and self:GetBuff_Stat("ToggleSound", slot) != false then
+        surface.PlaySound(self:GetBuff_Stat("ToggleSound", slot) or "weapons/arccw/firemode.wav")
+    end
 end
 
 function SWEP:AdjustAtts()
