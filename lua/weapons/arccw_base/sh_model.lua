@@ -748,7 +748,6 @@ function SWEP:DrawCustomModel(wm,origin,angle)
                 vm = self:GetOwner()
                 k.OffsetAng = self.WorldModelOffset.ang or Angle(0, 0, 0)
                 k.OffsetPos = self.WorldModelOffset.pos or Vector(0, 0, 0)
-                k.WMBone = self.WorldModelOffset.bone or element.WMBone
             else
                 k.Model:SetParent(self)
                 vm = self
