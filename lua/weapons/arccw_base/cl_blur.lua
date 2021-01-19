@@ -53,5 +53,5 @@ end
 function SWEP:DoToyTown()
     if !GetConVar("arccw_blur_toytown"):GetBool() then return end
     render.UpdateRefractTexture()
-    DrawToyTown( 3, ScrH() * 0.5 * (1 - self:GetSightDelta()) )
+    DrawToyTown( 3, ScrH() * 0.4 * (1 - self:GetSightDelta()) )
 end
