@@ -78,6 +78,8 @@ ArcCW.ClientConVars = {
     ["arccw_blur"]                    = { def =  0 },
     ["arccw_blur_toytown"]            = { def =  1 },
 
+    ["arccw_adjustsensthreshold"]     = { def =  0 },
+
     ["arccw_glare"]                   = { def =  1 },
     ["arccw_autosave"]                = { def =  1 },
 

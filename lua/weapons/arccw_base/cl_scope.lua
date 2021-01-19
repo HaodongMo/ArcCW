@@ -1,9 +1,15 @@
 function SWEP:AdjustMouseSensitivity()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
 
+    local threshold = GetConVar("arccw_adjustsensthreshold"):GetFloat()
+
     local irons = self:GetActiveSights()
 
-    return 1 / ((irons.Magnification or 1) + (irons.ScopeMagnification or 0))
+    local tmag = ((irons.Magnification or 1) + (irons.ScopeMagnification or 0))
+
+    if tmag < threshold then return end
+
+    return 1 / tmag
 end
 
 function SWEP:Scroll(var)

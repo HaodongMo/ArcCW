@@ -265,3 +265,7 @@ L["arccw.cvar.aimassist_head"]            = "Aim Assist Seeks Head"
 L["arccw.cvar.aimassist_cone"]            = "Aim Assist Cone"
 L["arccw.cvar.aimassist_distance"]        = "Aim Assist Distance"
 L["arccw.cvar.aimassist_intensity"]       = "Aim Assist Intensity"
+
+-- 2021-01-19
+L["arccw.cvar.adjustsensthreshold"]       = "Adjust Sensitivity Threshold"
+L["arccw.cvar.adjustsensthreshold.desc"]  = "If your total magnification is less than this, your sensitivity will not be adjusted while in sights."
