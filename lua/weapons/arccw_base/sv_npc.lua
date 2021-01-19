@@ -330,7 +330,7 @@ function SWEP:GetNPCBurstSettings()
     if !mode then return 1, 1, delay end
 
     if self.ManualAction or self:GetBuff_Override("Override_ManualAction") then
-        return 0, 1, delay + self:GetAnimKeyTime("cycle")
+        return 0, 1, delay + self:GetAnimKeyTime("cycle", true)
     end
 
     if mode < 0 then

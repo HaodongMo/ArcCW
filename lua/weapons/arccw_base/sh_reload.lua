@@ -7,16 +7,8 @@ function SWEP:GetReloadTime()
 
     if !self.Animations[anim] then return {1.337, .69} end
 
-    local full  = 0
-    local magin = 0
-
-    full = self:GetAnimKeyTime(anim) * mult
-
-    if self.Animations[anim].MinProgress then
-        magin = self.Animations[anim].MinProgress * mult
-    else
-        magin = full
-    end
+    local full = self:GetAnimKeyTime(anim) * mult
+    local magin = self:GetAnimKeyTime(anim, true) * mult
 
     return { full, magin }
 end
@@ -360,7 +352,7 @@ function SWEP:ReloadInsert(empty)
 
         self:RestoreAmmo(insertcount)
 
-        local time = (self.Animations[insertanim] or {}).MinProgress or self:GetAnimKeyTime(insertanim)
+        local time = self:GetAnimKeyTime(insertanim, true)
 
         self:SetReloading(CurTime() + time)
 
