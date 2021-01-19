@@ -265,6 +265,7 @@ SWEP.Lasers = nil
 SWEP.ProceduralRegularFire = false
 SWEP.ProceduralIronFire = false
 SWEP.SightTime = 0.33
+SWEP.SprintTime = 0
 
 SWEP.Jamming = false
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation

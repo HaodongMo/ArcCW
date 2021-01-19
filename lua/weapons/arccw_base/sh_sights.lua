@@ -34,7 +34,7 @@ function SWEP:EnterSprint()
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     elseif !anim and !s then
-        self:SetReloading(CurTime() + self:GetSightTime())
+        self:SetReloading(CurTime() + self:GetSprintTime())
     end
 end
 
@@ -66,7 +66,7 @@ function SWEP:ExitSprint()
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     elseif !anim and !s then
-        self:SetReloading(CurTime() + self:GetSightTime())
+        self:SetReloading(CurTime() + self:GetSprintTime())
     end
 end
 
@@ -126,9 +126,13 @@ function SWEP:ExitSights()
     end
 end
 
+function SWEP:GetSprintTime()
+    return self:GetSightTime()
+end
+
 function SWEP:GetSprintDelta()
     local lst = self.LastExitSprintTime
-    local st = self:GetSightTime()
+    local st = self:GetSprintTime()
     local minus = 0
 
     if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
@@ -136,7 +140,7 @@ function SWEP:GetSprintDelta()
     end
 
     if self:GetState() == ArcCW.STATE_IDLE then
-        lst = self.LastEnterSprintTime
+        lst = math.max(self.LastEnterSprintTime, self.LastEnterSprintTime)
         minus = 1
 
         if CurTime() - lst >= st then
