@@ -10,6 +10,7 @@ ArcCW.KEY_SWITCHSCOPE     = "+use"
 ArcCW.KEY_SWITCHSCOPE_ALT = "arccw_switch_scope"
 ArcCW.KEY_TOGGLEUBGL      = "arccw_toggle_ubgl"
 ArcCW.KEY_TOGGLEATT       = "arccw_toggle_att"
+ArcCW.KEY_MELEE           = "arccw_melee"
 
 ArcCW.BindToEffect = {
     [ArcCW.KEY_FIREMODE]    = "firemode",
@@ -26,7 +27,8 @@ ArcCW.BindToEffect_Unique = {
     [ArcCW.KEY_ZOOMIN_ALT]      = "zoomin",
     [ArcCW.KEY_ZOOMOUT_ALT]     = "zoomout",
     [ArcCW.KEY_TOGGLEINV_ALT]   = "inv",
-    [ArcCW.KEY_TOGGLEATT]       = "toggleatt"
+    [ArcCW.KEY_TOGGLEATT]       = "toggleatt",
+    [ArcCW.KEY_MELEE]           = "melee",
 }
 
 local lastpressZ = 0
@@ -162,6 +164,10 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
         elseif bind == "switchscope" then
             wep:SwitchActiveSights()
         end
+    end
+
+    if bind == "melee" and wep:GetState() != ArcCW.STATE_SIGHTS then
+        wep:Bash()
     end
 
     if block then return true end

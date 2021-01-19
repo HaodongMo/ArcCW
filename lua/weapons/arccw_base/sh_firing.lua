@@ -1,6 +1,9 @@
 function SWEP:CanPrimaryAttack()
     local owner = self:GetOwner()
 
+    -- Should we not fire? But first.
+    if self:GetBuff_Hook("Hook_ShouldNotFireFirst") then return end
+
     -- Inoperable
     if self:GetReloading() then return end
 
@@ -37,7 +40,7 @@ function SWEP:CanPrimaryAttack()
     -- We need to cycle
     if self:GetNeedCycle() then return end
 
-    -- Safety's on, turn it off.
+    -- Safety's on, dipshit
     if self:GetCurrentFiremode().Mode == 0 then
         self:ChangeFiremode(false)
         self:SetNextPrimaryFire(CurTime())
