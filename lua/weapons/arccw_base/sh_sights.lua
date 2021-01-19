@@ -62,7 +62,7 @@ function SWEP:ExitSprint()
         self:EnterSights()
     end
 
-    self.LastExitSprintTime = CurTime()
+    self.LastExitSprintTime = CurTime() - self:GetSprintTime() * delta
 
     local anim = self:SelectAnimation("exit_sprint")
     if anim and !s then

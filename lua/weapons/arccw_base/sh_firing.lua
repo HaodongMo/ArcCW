@@ -727,9 +727,11 @@ function SWEP:DoRecoil()
 
     if recoiltbl and recoiltbl[self:GetBurstCount()] then rmul = rmul * recoiltbl[self:GetBurstCount()] end
 
+    --[[]
     rmul = rec and recoil or rmul
     recv = rec and visual or recv
     recs = rec and side or recs
+    ]]
 
     local punch = Angle()
     punch = punch + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.Recoil * recv * rmul)
