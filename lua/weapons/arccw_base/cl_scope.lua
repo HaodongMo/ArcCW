@@ -3,7 +3,7 @@ function SWEP:AdjustMouseSensitivity()
 
     local threshold = GetConVar("arccw_adjustsensthreshold"):GetFloat()
 
-    local irons = self:GetActiveSights()
+    local irons = self:GetActiveSights() or {}
 
     local tmag = ((irons.Magnification or 1) + (irons.ScopeMagnification or 0))
 
