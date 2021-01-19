@@ -11,7 +11,14 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_Range"] = "arccw_mult_range",
     ["Mult_Recoil"] = "arccw_mult_recoil",
     ["Mult_MoveDispersion"] = "arccw_mult_movedisp",
+    ["Mult_AccuracyMOA"] = "arccw_mult_accuracy",
     ["Mult_Penetration"] = "arccw_mult_penetration"
+}
+
+ArcCW.ConVar_BuffAdds = {}
+
+ArcCW.ConVar_BuffOverrides = {
+    ["Override_ShootWhileSprint"] = "arccw_mult_shootwhilesprinting"
 }
 
 SWEP.TickCache_Overrides = {}
@@ -255,6 +262,11 @@ function SWEP:GetBuff_Override(buff, default)
 
         end
 
+        -- Because fuck me I fucking suck at this
+        if buff == "Override_ShootWhileSprint" and GetConVar("arccw_mult_shootwhilesprinting"):GetBool() then
+            current = true
+        end
+
         if current == nil then
             return default
         else
@@ -336,6 +348,11 @@ function SWEP:GetBuff_Override(buff, default)
     end
 
     self.TickCache_Overrides[buff] = {current, winningslot}
+
+    -- Because fuck me I fucking suck at this
+    if buff == "Override_ShootWhileSprint" and GetConVar("arccw_mult_shootwhilesprinting"):GetBool() then
+        current = true
+    end
 
     local data = {
         buff = buff,
@@ -455,6 +472,10 @@ function SWEP:GetBuff_Add(buff)
 
         end
 
+        if ArcCW.ConVar_BuffAdds[buff] then
+            add = add + GetConVar(ArcCW.ConVar_BuffAdds[buff]):GetFloat()
+        end
+
         return add
     end
 
@@ -487,6 +508,10 @@ function SWEP:GetBuff_Add(buff)
     end
 
     self.TickCache_Adds[buff] = add
+
+    if ArcCW.ConVar_BuffAdds[buff] then
+        add = add + GetConVar(ArcCW.ConVar_BuffAdds[buff]):GetFloat()
+    end
 
     local data = {
         buff = buff,
