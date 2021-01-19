@@ -395,7 +395,8 @@ att.Hook_AddShootSound = function(wep, data) end
 att.Hook_ModifyRPM = function(wep, delay) end
 
 -- return a table containing Recoil, RecoilSide, VisualRecoilMult to multiply them
-att.Hook_ModifyRecoil = function(wep) end
+-- Alternatively, edit the values in rec without returning, which supports multiple hooks changing the value
+att.Hook_ModifyRecoil = function(wep, rec) end
 
 -- run in Think()
 att.Hook_Think = function(wep) end

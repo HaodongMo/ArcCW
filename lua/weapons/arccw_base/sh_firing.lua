@@ -691,7 +691,13 @@ function SWEP:DoRecoil()
 
     if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("DoRecoil") end
 
-    local rec    = self:GetBuff_Hook("Hook_ModifyRecoil") or {}
+    local rec = {
+        Recoil = 1,
+        RecoilSide = 1,
+        VisualRecoilMul = 1
+    }
+    rec = self:GetBuff_Hook("Hook_ModifyRecoil", rec) or rec
+
     local recoil = rec.Recoil
     local side   = rec.RecoilSide
     local visual = rec.VisualRecoilMul
