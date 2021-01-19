@@ -721,7 +721,7 @@ function SWEP:SendDetail_ToggleNum(slot, hmm)
 
     net.Start("arccw_togglenum")
     net.WriteUInt(slot, 8)
-    net.WriteUInt(self.Attachments[slot].ToggleNum or 1, 4)
+    net.WriteUInt(self.Attachments[slot].ToggleNum or 1, 8)
     net.SendToServer()
 end
 
