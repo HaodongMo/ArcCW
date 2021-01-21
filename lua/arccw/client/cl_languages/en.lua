@@ -272,3 +272,6 @@ L["arccw.cvar.aimassist_intensity"]       = "Aim Assist Intensity"
 -- 2021-01-19
 L["arccw.cvar.adjustsensthreshold"]       = "Adjust Sensitivity Threshold"
 L["arccw.cvar.adjustsensthreshold.desc"]  = "If your total magnification is less than this, your sensitivity will not be adjusted while in sights."
+
+-- 2021-01-20
+L["arccw.cvar.crosshair_aa"]              = "Aim Assist Indicator"
