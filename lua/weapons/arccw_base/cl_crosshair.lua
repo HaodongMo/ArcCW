@@ -54,6 +54,10 @@ function SWEP:DoDrawCrosshair(x, y)
             clr = Color(50, 255, 50)
         end
     end
+    if GetConVar("arccw_crosshair_aa"):GetBool() and LocalPlayer().ArcCW_AATarget != nil and GetConVar("arccw_aimassist"):GetBool() and GetConVar("arccw_aimassist_cl"):GetBool() then
+            -- whooie
+        clr = Color(255, 0, 0)
+    end
     clr.a = GetConVar("arccw_crosshair_clr_a"):GetInt()
 
     local outlineClr = Color(GetConVar("arccw_crosshair_outline_r"):GetInt(),

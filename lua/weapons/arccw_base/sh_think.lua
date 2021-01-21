@@ -28,7 +28,7 @@ function SWEP:Think()
 
     self:InBipod()
 
-    if self:GetNeedCycle() and !self:GetReloading() and self:GetNextPrimaryFire() < CurTime() and self:GetWeaponOpDelay() < CurTime() and
+    if self:GetNeedCycle() and !self:GetReloading() and self:GetWeaponOpDelay() < CurTime() and -- self:GetNextPrimaryFire() < CurTime() Adding this delays bolting if the RPM is too low, but removing it may reintroduce the double pump bug. Increasing the RPM allows you to shoot twice on many multiplayer servers. Sure would be convenient if everything just worked nicely
             (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
             or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or owner:KeyPressed(IN_ATTACK))) then
         local anim = self:SelectAnimation("cycle")
