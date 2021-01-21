@@ -358,8 +358,10 @@ end
 function SWEP:DoTriggerDelay()
     local shouldHold = self:GetOwner():KeyDown(IN_ATTACK) and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT)
     if self:GetNextPrimaryFire() >= CurTime() and self:GetCurrentFiremode().Mode == 1 then
-        self.LastTriggerTime = 0
+        self.LastTriggerTime = -1 -- Cannot fire again until trigger released
         self.LastTriggerDuration = 0
+    elseif self.LastTriggerTime == -1 and !shouldHold then
+        self.LastTriggerTime = 0 -- Good to fire again
     elseif self.LastTriggerTime > 0 and !shouldHold then
         -- Attack key is released. Stop the animation and clear progress
         local anim = self:SelectAnimation("untrigger")
@@ -372,7 +374,7 @@ function SWEP:DoTriggerDelay()
         self.LastTriggerTime = 0
         self.LastTriggerDuration = 0
         return
-    elseif self.LastTriggerTime <= 0 and shouldHold then
+    elseif self.LastTriggerTime == 0 and shouldHold then
         -- We haven't played the animation yet. Pull it!
         local anim = self:SelectAnimation("trigger")
         self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
