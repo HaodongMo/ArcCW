@@ -330,6 +330,7 @@ function SWEP:PrimaryAttack()
         local firedelay = self.Animations[fireanim].MinProgress or 0
         self:SetNeedCycle(true)
         self:SetWeaponOpDelay(CurTime() + firedelay)
+        self:SetNextPrimaryFire(CurTime() + 0.1)
     end
 
     self:ApplyAttachmentShootDamage()
