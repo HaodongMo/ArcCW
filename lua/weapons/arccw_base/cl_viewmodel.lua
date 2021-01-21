@@ -161,7 +161,7 @@ function SWEP:GetViewModelPosition(pos, ang)
             target.ang:Set(irons.Ang)
             target.ang.r = sightroll
         end
-    elseif sprd > 0 then
+    elseif sprd > 0 and !self:GetBuff("ShootWhileSprint") then
         local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
         local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
 

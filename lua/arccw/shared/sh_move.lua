@@ -27,11 +27,22 @@ function ArcCW.Move(ply, mv, cmd)
         delta = math.Clamp(aftershottime, 0, 1)
     end
 
+    local blocksprint = false
+
     if wpn:GetState() == ArcCW.STATE_SIGHTS or
-        wpn:GetState() == ArcCW.STATE_CUSTOMIZE or
-        shottime > 0 then
-        basespd = math.min(basespd, ply:GetWalkSpeed())
+        wpn:GetState() == ArcCW.STATE_CUSTOMIZE then
+        blocksprint = true
         s = s * math.Clamp(wpn:GetBuff("SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1)
+    elseif shottime > 0 then
+        blocksprint = true
+
+        if wpn:GetBuff("ShootWhileSprint") then
+            blocksprint = false
+        end
+    end
+
+    if blocksprint then
+        basespd = math.min(basespd, ply:GetWalkSpeed())
     end
 
     if wpn:GetInBipod() then
