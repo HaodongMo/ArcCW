@@ -71,7 +71,14 @@ local function IsWHOT(ent)
     if !ent:IsValid() then return false end
     if (ent:IsWorld()) then return false end
     if (ent.Health and (ent:Health() <= 0)) then return false end
-    if ((ent:IsPlayer()) or (ent:IsOnFire())) then return true end
+    if ent:IsOnFire() then return true end
+    if ent:IsPlayer() then
+        if ply.ArcticMedShots_Effects and ply.ArcticMedShots_Effects["coldblooded"] then
+            return false
+        end
+
+        return true
+    end
     if ent:IsNextBot() then return true end
     if (ent:IsNPC()) then
         if ent.ArcCWCLHealth and ent.ArcCWCLHealth <= 0 then return false end
