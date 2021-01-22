@@ -73,7 +73,7 @@ local function IsWHOT(ent)
     if (ent.Health and (ent:Health() <= 0)) then return false end
     if ent:IsOnFire() then return true end
     if ent:IsPlayer() then
-        if ply.ArcticMedShots_Effects and ply.ArcticMedShots_Effects["coldblooded"] then
+        if ent.ArcticMedShots_ActiveEffects and ent.ArcticMedShots_ActiveEffects["coldblooded"] then
             return false
         end
 
