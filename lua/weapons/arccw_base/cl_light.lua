@@ -189,7 +189,7 @@ function SWEP:DrawFlashlightsWM()
         if !k.Installed then continue end
         local atttbl = ArcCW.AttachmentTable[k.Installed]
 
-        if !atttbl.Flashlight then continue end
+        if !self:GetBuff_Stat("Flashlight", i) then continue end
 
         local maxz = atttbl.FlashlightFarZ or 512
         local bone = atttbl.FlashlightBone or "laser"
