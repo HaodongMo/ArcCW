@@ -81,7 +81,7 @@ function SWEP:GetIsManualAction()
         return false
     end
 
-    return mode
+    return manual
 end
 
 -- ONE FUNCTION TO RULE THEM ALL
