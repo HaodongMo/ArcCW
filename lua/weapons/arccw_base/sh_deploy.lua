@@ -93,11 +93,13 @@ function SWEP:ResetCheckpoints()
 end
 
 function SWEP:InitialDefaultClip()
+    if !self.Primary.Ammo then return end
+
     if self:GetOwner() and self:GetOwner():IsPlayer() then
         if self.ForceDefaultAmmo then
             self:GetOwner():GiveAmmo(self.ForceDefaultAmmo, self.Primary.Ammo)
         else
-            self:GetOwner():GiveAmmo(self:GetCapacity()*GetConVar("arccw_mult_defaultammo"):GetInt(), self.Primary.Ammo)
+            self:GetOwner():GiveAmmo(self:GetCapacity() * GetConVar("arccw_mult_defaultammo"):GetInt(), self.Primary.Ammo)
         end
     end
 end
