@@ -32,9 +32,9 @@ net.Receive("arccw_npcgivereturn", function(len, ply)
     end
 end)
 
-function ArcCW:GetRandomWeapon(wpn, nades)
-    local tbl = ArcCW.RandomWeaponCache[wpn]
-    local wgt = 0
+function ArcCW:GetRandomWeapon(wpn)
+    local tbl = ArcCW.RandomWeaponCache[wpn] and ArcCW.RandomWeaponCache[wpn][2]
+    local wgt = ArcCW.RandomWeaponCache[wpn] and ArcCW.RandomWeaponCache[wpn][1] or 0
 
     if !tbl then
         tbl = {}
@@ -42,8 +42,8 @@ function ArcCW:GetRandomWeapon(wpn, nades)
             if !weapons.IsBasedOn(k.ClassName, "arccw_base") then continue end
             if k.PrimaryBash then continue end
             if !k.Spawnable then continue end
-            if !nades and k.NotForNPCs then continue end
-            if nades and k.AutoSpawnable == false then continue end
+            --if !nades and k.NotForNPCs then continue end -- what does nades do???
+            if k.AutoSpawnable == false then continue end
 
             if !ArcCW:WithinYearLimit(k) then
                 continue
@@ -84,7 +84,7 @@ function ArcCW:GetRandomWeapon(wpn, nades)
             end
         end
 
-        ArcCW.RandomWeaponCache[wpn] = tbl
+        ArcCW.RandomWeaponCache[wpn] = {wgt, tbl}
     end
 
     local r = math.random(0, wgt)
@@ -127,6 +127,12 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
         if !ent:IsValid() then return end
         if !ent:IsWeapon() then return end
         if ent:GetOwner():IsValid() then return end
+        if ent.ArcCW then
+            if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
+                ent:NPC_SetupAttachments()
+            end
+            return -- Don't randomize ArcCW weapons a second time
+        end
 
         local class = ent:GetClass()
 
@@ -141,7 +147,7 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
 
             wpnent:Spawn()
 
-            if GetConVar("arccw_ttt_atts") and GetConVar("arccw_ttt_atts"):GetBool() then
+            if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
                 wpnent:NPC_SetupAttachments()
             end
 
