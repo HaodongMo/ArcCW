@@ -63,7 +63,7 @@ function ArcCW:GetRandomWeapon(wpn, nades)
             local og = weapons.Get(wpn)
 
             if og and og.ArcCW then continue end
-            weight = 10
+            weight = 0 -- Don't spawn if there is none of either
         end
 
         if weight > 0 then
