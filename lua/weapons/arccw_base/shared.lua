@@ -724,13 +724,19 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 1, "WeaponOpDelay")
     self:NetworkVar("Float", 2, "ReloadingREAL")
     self:NetworkVar("Float", 3, "MagUpIn")
+    
+end
 
+function SWEP:OnRestore()
     self:SetNthReload(0)
     self:SetNthShot(0)
     self:SetBurstCountUM(0)
     self:SetReloadingREAL(0)
     self:SetWeaponOpDelay(0)
     self:SetMagUpIn(0)
+
+    self:KillTimers()
+    self:Initialize()
 end
 
 
