@@ -157,7 +157,8 @@ SWEP.NotForNPCS = false
 SWEP.NPCWeaponType = nil -- string or table, the NPC weapons for this gun to replace
 -- if nil, this will be based on holdtype
 SWEP.NPCWeight = 100 -- relative likeliness for an NPC to have this weapon
-SWEP.TTTWeaponType = nil -- string or table, like NPCWeaponType but specifically for TTT weapons (takes precdence over NPCWeaponType, uses NPCWeight)
+SWEP.TTTWeaponType = nil -- string or table, like NPCWeaponType but specifically for TTT weapons (takes precdence over NPCWeaponType)
+SWEP.TTTWeight = 100 -- like NPCWeight but for TTT gamemode
 
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.

@@ -50,6 +50,9 @@ function ArcCW:GetRandomWeapon(wpn, nades)
             end
 
             local weight = k.NPCWeight or 0
+            if engine.ActiveGamemode() == "terrortown" and k.TTTWeight then
+                weight = k.TTTWeight
+            end
 
             if wpn and engine.ActiveGamemode() == "terrortown" and k.TTTWeaponType then -- TTT weapon type(s) take priority over NPC weapon types
                 if isstring(k.TTTWeaponType) then
