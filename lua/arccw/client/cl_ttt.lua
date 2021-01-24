@@ -13,8 +13,8 @@ local TTTPanel = {
     { type = "b", text = "#arccw.cvar.ammo_replace", var = "arccw_ammo_replace", sv = true },
     { type = "b", text = "#arccw.cvar.ttt_atts", var = "arccw_ttt_atts", sv = true },
     { type = "o", text = "#arccw.cvar.ttt_customizemode", var = "arccw_ttt_customizemode", sv = true,
-            choices = {[0] = "#arccw.cvar.ttt_customizemode.0", [1] = "#arccw.cvar.ttt_customizemode.1", [2] = "#arccw.cvar.ttt_customizemode.2", [3] = "#arccw.ttt_customizemode.3"}},
-    { type = "o", text = "#arccw.cvar.ttt_bodyattinfo", var = "ttt_bodyattinfo", sv = true,
+            choices = {[0] = "#arccw.cvar.ttt_customizemode.0", [1] = "#arccw.cvar.ttt_customizemode.1", [2] = "#arccw.cvar.ttt_customizemode.2", [3] = "#arccw.cvar.ttt_customizemode.3"}},
+    { type = "o", text = "#arccw.cvar.ttt_bodyattinfo", var = "arccw_ttt_bodyattinfo", sv = true,
             choices = {[0] = "#arccw.combobox.disabled", [1] = "#arccw.cvar.ttt_bodyattinfo.1", [2] = "#arccw.cvar.ttt_bodyattinfo.2"}},
 }
 
