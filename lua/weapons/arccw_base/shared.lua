@@ -711,9 +711,6 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
 
-    self:SetNthReload(0)
-    self:SetNthShot(0)
-
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
     self:NetworkVar("Bool", 2, "InBipod")
@@ -726,6 +723,13 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 1, "WeaponOpDelay")
     self:NetworkVar("Float", 2, "ReloadingREAL")
     self:NetworkVar("Float", 3, "MagUpIn")
+
+    self:SetNthReload(0)
+    self:SetNthShot(0)
+    self:SetBurstCountUM(0)
+    self:SetReloadingREAL(0)
+    self:SetWeaponOpDelay(0)
+    self:SetMagUpIn(0)
 end
 
 
