@@ -16,6 +16,7 @@ local TTTPanel = {
             choices = {[0] = "#arccw.cvar.ttt_customizemode.0", [1] = "#arccw.cvar.ttt_customizemode.1", [2] = "#arccw.cvar.ttt_customizemode.2", [3] = "#arccw.cvar.ttt_customizemode.3"}},
     { type = "o", text = "#arccw.cvar.ttt_bodyattinfo", var = "arccw_ttt_bodyattinfo", sv = true,
             choices = {[0] = "#arccw.combobox.disabled", [1] = "#arccw.cvar.ttt_bodyattinfo.1", [2] = "#arccw.cvar.ttt_bodyattinfo.2"}},
+    { type = "c", text = "#arccw.cvar.ttt_bodyattinfo.help"},
 }
 
 net.Receive("arccw_ttt_bodyattinfo", function()
@@ -190,7 +191,6 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
     dgui:SetName("#arccw.menus.ttt_client")
     dgui:Help("#arccw.ttt_clienthelp")
     dgui:CheckBox("#arccw.cvar.ttt_inforoundstart", "arccw_ttt_inforoundstart")
-    dgui:CheckBox("#arccw.cvar.crosshair", "arccw_crosshair")
     dgui:CheckBox("#arccw.cvar.ttt_rolecrosshair", "arccw_ttt_rolecrosshair")
     panellist:AddItem(dgui)
 
