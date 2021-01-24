@@ -232,6 +232,9 @@ L["ui.toggle"] = "TOGGLE"
 L["ui.whenmode"] = "When %s"
 L["ui.modex"] = "Mode %s"
 
+-- 2021-01-25
+L["attslot.magazine"] = "Magazine"
+
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
 -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]

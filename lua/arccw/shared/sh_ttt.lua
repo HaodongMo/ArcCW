@@ -141,3 +141,9 @@ hook.Add("DoPlayerDeath", "ArcCW_DetectiveSeeAtts", function(ply, attacker, dmgi
         end
     end)
 end)
+
+hook.Add("ArcCW_OnAttLoad", "ArcCW_TTT", function(att)
+    if att.Override_Ammo and ArcCW.Ammo_To_TTTAmmo[att.Override_Ammo] then
+        att.Override_Ammo = ArcCW.Ammo_To_TTTAmmo[att.Override_Ammo]
+    end
+end)

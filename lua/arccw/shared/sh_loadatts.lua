@@ -45,6 +45,8 @@ function ArcCW.LoadAttachmentType(att)
         end
 
         ArcCW.NumAttachments = ArcCW.NumAttachments + 1
+
+        hook.Run("ArcCW_OnAttLoad", att)
     end
 end
 
