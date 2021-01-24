@@ -327,7 +327,11 @@ function ArcCW.GeneratePanelElements(panel, table)
         ["b"] = function(p, d) return p:CheckBox(d.text, d.var) end,
         ["i"] = function(p, d) return p:NumSlider(d.text, d.var, d.min, d.max, 0) end,
         ["f"] = function(p, d) return p:NumSlider(d.text, d.var, d.min, d.max, 2) end,
-        ["m"] = function(p, d) return p:AddControl("color", { Label = d.text, Red = d.r, Green = d.g, Blue = d.b, Alpha = d.a }) end, -- change this someday
+        ["m"] = function(p, d) --return p:AddControl("color", { Label = d.text, Red = d.r, Green = d.g, Blue = d.b, Alpha = d.a })
+            local ctrl = vgui.Create("DColorMixer", p)
+            ctrl:SetLabel( d.text ) ctrl:SetConVarR( d.r ) ctrl:SetConVarG( d.g ) ctrl:SetConVarB( d.b ) ctrl:SetConVarA( d.a )
+            p:AddItem( ctrl ) return ctrl
+        end,
         ["p"] = function(p, d) local b = p:Button(d.text) b.DoClick = d.func return b end,
         ["t"] = function(p, d) return p:TextEntry(d.text, d.var) end,
         ["o"] = function(p, d) local cb = p:ComboBox(d.text, d.var) for k, v in pairs(d.choices) do cb:AddChoice(v, k) end return cb end,
@@ -532,14 +536,16 @@ function ArcCW_Options_Perf(panel)
     ArcCW.GeneratePanelElements(panel, PerformancePanel)
 end
 
-function ArcCW_Options_Viewmodel(panel)
-    panel:AddControl("ComboBox", {
-        MenuButton = "1",
-        Label      = "#Presets",
-        Folder     = "arccw_vm",
-        CVars      = { "" },
-        Options    = ViewmodelPresets
-    })
+function ArcCW_Options_Viewmodel(panel, no_preset)
+    if !no_preset then
+        panel:AddControl("ComboBox", {
+            MenuButton = "1",
+            Label      = "#Presets",
+            Folder     = "arccw_vm",
+            CVars      = { "" },
+            Options    = ViewmodelPresets
+        })
+    end
 
     ArcCW.GeneratePanelElements(panel, ViewmodelPanel)
 end
@@ -552,15 +558,16 @@ function ArcCW_Options_Dev(panel)
     ArcCW.GeneratePanelElements(panel, DevPanel)
 end
 
-function ArcCW_Options_Crosshair(panel)
-    panel:AddControl("ComboBox", {
-        MenuButton = "1",
-        Label      = "#Presets",
-        Folder     = "arccw_crosshair",
-        CVars      = { "" },
-        Options    = CrosshairPresets
-    })
-
+function ArcCW_Options_Crosshair(panel, no_preset)
+    if !no_preset then
+        panel:AddControl("ComboBox", {
+            MenuButton = "1",
+            Label      = "#Presets",
+            Folder     = "arccw_crosshair",
+            CVars      = { "" },
+            Options    = CrosshairPresets
+        })
+    end
     ArcCW.GeneratePanelElements(panel, CrosshairPanel)
 end
 
@@ -572,14 +579,16 @@ function ArcCW_Options_Ammo(panel)
     ArcCW.GeneratePanelElements(panel, AmmoPanel)
 end
 
-function ArcCW_Options_Mults(panel)
-    panel:AddControl("ComboBox", {
-        MenuButton = "1",
-        Label      = "#Presets",
-        Folder     = "arccw_mults",
-        CVars      = { "" },
-        Options    = MultPresets
-    })
+function ArcCW_Options_Mults(panel, no_preset)
+    if !no_preset then
+        panel:AddControl("ComboBox", {
+            MenuButton = "1",
+            Label      = "#Presets",
+            Folder     = "arccw_mults",
+            CVars      = { "" },
+            Options    = MultPresets
+        })
+    end
     ArcCW.GeneratePanelElements(panel, MultsPanel)
 end
 

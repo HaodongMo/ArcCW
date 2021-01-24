@@ -275,3 +275,15 @@ L["arccw.cvar.adjustsensthreshold.desc"]  = "If your total magnification is less
 
 -- 2021-01-20
 L["arccw.cvar.crosshair_aa"]              = "Aim Assist Indicator"
+
+-- 2021-1-25
+L["arccw.menus.ttt_client"]               = "TTT (Client)"
+L["arccw.menus.ttt_server"]               = "TTT (Server)"
+L["arccw.ttt_clienthelp"]                 = "These options are TTT-specific, and can be changed by all players. Other tabs may contain non-TTT-specific configurations."
+L["arccw.ttt_serverhelp"]                 = "These options are TTT-specific, and require admin privileges to change. They are automatically networked in multiplayer games."
+L["arccw.cvar.ttt_customizemode.0"]       = "0 - Unrestricted"
+L["arccw.cvar.ttt_customizemode.1"]       = "1 - Restricted"
+L["arccw.cvar.ttt_customizemode.2"]       = "2 - Pre-game only"
+L["arccw.cvar.ttt_customizemode.3"]       = "3 - Detectives/Traitors only"
+L["arccw.cvar.ttt_bodyattinfo.1"]         = "1 - Detectives can see"
+L["arccw.cvar.ttt_bodyattinfo.2"]         = "2 - Everyone can see"

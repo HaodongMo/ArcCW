@@ -7,6 +7,17 @@ CreateClientConVar("arccw_ttt_rolecrosshair", "1", true, false, "Whether to colo
 
 ArcCW.TTT_AttInfo = ArcCW.TTT_AttInfo or {}
 
+local TTTPanel = {
+    { type = "h", text = "#arccw.ttt_serverhelp" },
+    { type = "b", text = "#arccw.cvar.ttt_replace", var = "arccw_ttt_replace", sv = true },
+    { type = "b", text = "#arccw.cvar.ammo_replace", var = "arccw_ammo_replace", sv = true },
+    { type = "b", text = "#arccw.cvar.ttt_atts", var = "arccw_ttt_atts", sv = true },
+    { type = "o", text = "#arccw.cvar.ttt_customizemode", var = "arccw_ttt_customizemode", sv = true,
+            choices = {[0] = "#arccw.cvar.ttt_customizemode.0", [1] = "#arccw.cvar.ttt_customizemode.1", [2] = "#arccw.cvar.ttt_customizemode.2", [3] = "#arccw.ttt_customizemode.3"}},
+    { type = "o", text = "#arccw.cvar.ttt_bodyattinfo", var = "ttt_bodyattinfo", sv = true,
+            choices = {[0] = "#arccw.combobox.disabled", [1] = "#arccw.cvar.ttt_bodyattinfo.1", [2] = "#arccw.cvar.ttt_bodyattinfo.2"}},
+}
+
 net.Receive("arccw_ttt_bodyattinfo", function()
     local rag = net.ReadEntity()
     rag = rag:EntIndex()
@@ -176,68 +187,27 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
     panellist:SetSpacing(10)
 
     local dgui = vgui.Create("DForm", panellist)
-    dgui:SetName("#arccw.menus.client")
-    dgui:Help("#arccw.clientcfg")
-    dgui:Help("")
+    dgui:SetName("#arccw.menus.ttt_client")
+    dgui:Help("#arccw.ttt_clienthelp")
     dgui:CheckBox("#arccw.cvar.ttt_inforoundstart", "arccw_ttt_inforoundstart")
     dgui:CheckBox("#arccw.cvar.crosshair", "arccw_crosshair")
     dgui:CheckBox("#arccw.cvar.ttt_rolecrosshair", "arccw_ttt_rolecrosshair")
-    dgui:CheckBox("#arccw.cvar.blur", "arccw_blur")
-    dgui:CheckBox("#arccw.cvar.hud_3dfun", "arccw_hud_3dfun")
-    dgui:CheckBox("#arccw.cvar.hud_forceshow", "arccw_hud_forceshow")
-    dgui:CheckBox("#arccw.cvar.hud_showammo", "arccw_hud_showammo")
-    dgui:CheckBox("#arccw.cvar.2d3d", "arccw_2d3d")
-    dgui:CheckBox("#arccw.cvar.cheapscopes", "arccw_cheapscopes")
-    dgui:CheckBox("#arccw.cvar.toggleads", "arccw_toggleads")
-    dgui:CheckBox("#arccw.cvar.altubglkey", "arccw_altubglkey")
-    dgui:CheckBox("#arccw.cvar.altfcgkey", "arccw_altfcgkey")
     panellist:AddItem(dgui)
 
-    if !game.IsDedicated() and LocalPlayer():IsSuperAdmin() then
+
+    if LocalPlayer():IsAdmin() then
         local dgui2 = vgui.Create("DForm", panellist)
-        dgui2:SetName("#arccw.menus.server")
-        dgui2:Help("#arccw.adminonly")
-        dgui2:Help("")
-        dgui2:CheckBox("#arccw.cvar.ttt_replace", "arccw_ttt_replace")
-        dgui2:CheckBox("#arccw.cvar.ttt_replaceammo", "arccw_ammo_replace")
-        dgui2:CheckBox("#arccw.cvar.ttt_atts", "arccw_ttt_atts")
-        dgui2:NumSlider("#arccw.cvar.ttt_customizemode", "arccw_ttt_customizemode", 0, 3, 0)
-        dgui2:Help("#arccw.cvar.ttt_customizemode.desc")
-
-        local cb = dgui2:CheckBox("#arccw.cvar.enable_customization", "arccw_enable_customization")
-        cb:SetTooltip("arccw.cvar.enable_customization.help")
-
-        cb = dgui2:CheckBox("#arccw.cvar.attinv_free", "arccw_attinv_free")
-        cb:SetTooltip("#arccw.cvar.attinv_free.help")
-        cb = dgui2:CheckBox("#arccw.cvar.attinv_lockmode", "arccw_attinv_lockmode")
-        cb:SetTooltip("#arccw.cvar.attinv_lockmode.help")
-
-        local ns = dgui2:NumSlider("#arccw.cvar.ttt_bodyattinfo", "arccw_ttt_bodyattinfo", 0, 2, 0)
-        ns:SetTooltip("#arccw.cvar.ttt_bodyattinfo.help")
-        dgui2:Help("#arccw.cvar.ttt_bodyattinfo.desc")
-
-        ns = dgui2:NumSlider("#arccw.cvar.weakensounds", "arccw_weakensounds", -20, 30, 0)
-        ns:SetTooltip("#arccw.cvar.weakensounds.desc")
-
-        ns = dgui2:NumSlider("#arccw.cvar.attinv_loseondie", "arccw_attinv_loseondie", 0, 2, 0)
-        ns:SetTooltip("#arccw.cvar.attinv_loseondie.help")
-        dgui2:Help("#arccw.cvar.attinv_loseondie.desc")
-
-        ns = dgui2:NumSlider("#arccw.cvar.atts_pickx", "arccw_atts_pickx", 0, 15, 0)
-        ns:SetTooltip("#arccw.cvar.atts_pickx.desc")
-
-        ns = dgui2:NumSlider("#arccw.cvar.ammo_detonationmode", "arccw_ammo_detonationmode", -1, 2, 0)
-        ns:SetTooltip("#arccw.cvar.ammo_detonationmode.help")
-        dgui2:Help("#arccw.cvar.ammo_detonationmode.desc")
-        dgui2:CheckBox("#arccw.cvar.ammo_chaindet", "arccw_ammo_chaindet")
-
-        dgui2:CheckBox("#arccw.cvar.override_crosshair_off", "arccw_override_crosshair_off")
-        dgui2:CheckBox("#arccw.cvar.truenames", "arccw_truenames")
-
-        ns = dgui2:NumSlider("#arccw.cvar.equipmenttime", "arccw_equipmenttime", 60, 600, 0)
-        ns:SetTooltip("#arccw.cvar.equipmenttime.help")
-
+        dgui2:SetName("#arccw.menus.ttt_server")
+        ArcCW.GeneratePanelElements(dgui2, TTTPanel)
         panellist:AddItem(dgui2)
+    end
+
+    for menu, data in SortedPairs(ArcCW.ClientMenus) do
+        local form = vgui.Create("DForm", panellist)
+        form:SetName(data.text)
+        data.func(form, true)
+        form:SetExpanded(false)
+        panellist:AddItem(form)
     end
 
     dtabs:AddSheet("ArcCW", panellist, "icon16/gun.png", false, false, "ArcCW Settings")
