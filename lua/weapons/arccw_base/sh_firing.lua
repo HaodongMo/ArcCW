@@ -610,6 +610,10 @@ function SWEP:GetDispersion()
 
     if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
 
+    if GetConVar("arccw_mult_crouchdisp"):GetFloat() != 1 and owner:OnGround() and owner:Crouching() then
+        hip = hip * GetConVar("arccw_mult_crouchdisp"):GetFloat()
+    end
+
     --local t = hook.Run("ArcCW_ModDispersion", self, {dispersion = hip})
     --hip = t and t.dispersion or hip
     hip = self:GetBuff_Hook("Hook_ModDispersion", hip) or hip
@@ -726,6 +730,10 @@ function SWEP:DoRecoil()
     local recoiltbl = self:GetBuff_Override("Override_ShotRecoilTable") or self.ShotRecoilTable
 
     if recoiltbl and recoiltbl[self:GetBurstCount()] then rmul = rmul * recoiltbl[self:GetBurstCount()] end
+
+    if GetConVar("arccw_mult_crouchrecoil"):GetFloat() != 1 and self:GetOwner():OnGround() and self:GetOwner():Crouching() then
+        rmul = rmul * GetConVar("arccw_mult_crouchrecoil"):GetFloat()
+    end
 
     --[[]
     rmul = rec and recoil or rmul

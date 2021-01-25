@@ -265,10 +265,12 @@ local MultsPanel = {
     { type = "f", text = "#arccw.cvar.mult_movedisp",        var = "arccw_mult_movedisp", min = 0, max = 3, sv = true },
     { type = "f", text = "#arccw.cvar.mult_reloadtime",      var = "arccw_mult_reloadtime", min = 0.2, max = 3, sv = true },
     { type = "f", text = "#arccw.cvar.mult_sighttime",       var = "arccw_mult_sighttime", min = 0.25, max = 3, sv = true },
-    { type = "b", text = "#arccw.cvar.mult_startunloaded",   var = "arccw_mult_startunloaded", sv = true },
     { type = "i", text = "#arccw.cvar.mult_defaultammo",     var = "arccw_mult_defaultammo", min = 0, max = 10, sv = true }, -- Fix default clip first
     { type = "f", text = "#arccw.cvar.mult_attchance",       var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
     { type = "f", text = "#arccw.cvar.mult_heat",            var = "arccw_mult_heat", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_crouchdisp",      var = "arccw_mult_crouchdisp", min = 0, max = 1, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_crouchrecoil",    var = "arccw_mult_crouchrecoil", min = 0, max = 1, sv = true },
+    { type = "b", text = "#arccw.cvar.mult_startunloaded",   var = "arccw_mult_startunloaded", sv = true },
     { type = "b", text = "#arccw.cvar.mult_shootwhilesprinting",   var = "arccw_mult_shootwhilesprinting", sv = true },
 }
 
