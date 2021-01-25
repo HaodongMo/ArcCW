@@ -208,7 +208,7 @@ local ServerPanel = {
 
 local AmmoPanel = {
     { type = "h", text = "#arccw.adminonly" },
-    { type = "o", text = "#arccw.cvar.ammo_detonationmode", var = "ammo_detonationmode", sv = true,
+    { type = "o", text = "#arccw.cvar.ammo_detonationmode", var = "arccw_ammo_detonationmode", sv = true,
             choices = {[-1] = "#arccw.cvar.ammo_detonationmode.-1", [0] = "#arccw.cvar.ammo_detonationmode.0", [1] = "#arccw.cvar.ammo_detonationmode.1", [2] = "#arccw.cvar.ammo_detonationmode.2"}},
     { type = "b", text = "#arccw.cvar.ammo_autopickup", var = "arccw_ammo_autopickup", sv = true },
     { type = "b", text = "#arccw.cvar.ammo_largetrigger", var = "arccw_ammo_largetrigger", sv = true },
