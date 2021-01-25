@@ -381,7 +381,7 @@ function SWEP:DoTriggerDelay()
         self.LastTriggerTime = 0
         self.LastTriggerDuration = 0
         return
-    elseif self.LastTriggerTime == 0 and shouldHold then
+    elseif self:GetNextPrimaryFire() < CurTime() and self.LastTriggerTime == 0 and shouldHold then
         -- We haven't played the animation yet. Pull it!
         local anim = self:SelectAnimation("trigger")
         self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
