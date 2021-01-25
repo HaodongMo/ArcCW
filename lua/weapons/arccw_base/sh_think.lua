@@ -60,8 +60,7 @@ function SWEP:Think()
         end
     end
 
-    local td = self:GetBuff_Override("Override_TriggerDelay")
-    if (td != nil and td) or (td == nil and self.TriggerDelay) then
+    if self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) then
         self:DoTriggerDelay()
     end
 
@@ -352,16 +351,24 @@ end
 SWEP.LastTriggerTime = 0
 SWEP.LastTriggerDuration = 0
 function SWEP:GetTriggerDelta()
+    if self.LastTriggerTime == -1 then return 0 end
     return math.Clamp((CurTime() - self.LastTriggerTime) / self.LastTriggerDuration, 0, 1)
 end
 
 function SWEP:DoTriggerDelay()
     local shouldHold = self:GetOwner():KeyDown(IN_ATTACK) and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT)
-    if self:GetNextPrimaryFire() >= CurTime() and self:GetCurrentFiremode().Mode == 1 then
+
+    if self.LastTriggerTime == -1 then
+        if !shouldHold then
+            self.LastTriggerTime = 0 -- Good to fire again
+            self.LastTriggerDuration = 0
+        end
+        return
+    end
+
+    if self:GetBurstCount() > 0 and self:GetCurrentFiremode().Mode == 1 then
         self.LastTriggerTime = -1 -- Cannot fire again until trigger released
         self.LastTriggerDuration = 0
-    elseif self.LastTriggerTime == -1 and !shouldHold then
-        self.LastTriggerTime = 0 -- Good to fire again
     elseif self.LastTriggerTime > 0 and !shouldHold then
         -- Attack key is released. Stop the animation and clear progress
         local anim = self:SelectAnimation("untrigger")
