@@ -1,4 +1,4 @@
-function SWEP:FireRocket(ent, vel, ang)
+function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
     if CLIENT then return end
 
     local rocket = ents.Create(ent)
@@ -31,12 +31,12 @@ function SWEP:FireRocket(ent, vel, ang)
         rocket.BlastRadius = self.BlastRadius * math.Rand(1 - (self.BlastRadiusRand or 0), 1 + (self.BlastRadiusRand or 0))
     end
 
-    local RealVelocity = self:GetOwner():GetAbsVelocity() + ang:Forward() * vel / ArcCW.HUToM
+    local RealVelocity = (!dontinheritvel and self:GetOwner():GetAbsVelocity() or Vector(0, 0, 0)) + ang:Forward() * vel / ArcCW.HUToM
     rocket.CurVel = RealVelocity -- for non-physical projectiles that move themselves
 
     rocket:Spawn()
     rocket:Activate()
-    if !rocket.NoPhys then
+    if !rocket.NoPhys and rocket:GetPhysicsObject():IsValid() then
         rocket:SetCollisionGroup(rocket.CollisionGroup or COLLISION_GROUP_DEBRIS)
         rocket:GetPhysicsObject():SetVelocityInstantaneous(RealVelocity)
     end
@@ -51,6 +51,8 @@ function SWEP:FireRocket(ent, vel, ang)
     end
 
     rocket.ArcCWProjectile = true
+
+    self:GetBuff_Hook("Hook_PostFireRocket", rocket)
 
     return rocket
 end

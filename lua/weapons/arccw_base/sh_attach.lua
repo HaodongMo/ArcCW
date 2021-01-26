@@ -11,7 +11,14 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_Range"] = "arccw_mult_range",
     ["Mult_Recoil"] = "arccw_mult_recoil",
     ["Mult_MoveDispersion"] = "arccw_mult_movedisp",
+    ["Mult_AccuracyMOA"] = "arccw_mult_accuracy",
     ["Mult_Penetration"] = "arccw_mult_penetration"
+}
+
+ArcCW.ConVar_BuffAdds = {}
+
+ArcCW.ConVar_BuffOverrides = {
+    ["Override_ShootWhileSprint"] = "arccw_mult_shootwhilesprinting"
 }
 
 SWEP.TickCache_Overrides = {}
@@ -56,9 +63,25 @@ function SWEP:GetIsShotgun()
     --     if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
     -- end
 
-    return self:GetBuff_Override("Override_IsShotgun") or self.IsShotgun
+    return self:GetBuff("IsShotgun", true)
 
     -- return num > 1
+end
+
+function SWEP:GetIsManualAction()
+    local manual = self:GetBuff_Override("Override_ManualAction")
+
+    if manual != false then
+        manual = manual or self.ManualAction
+    end
+
+    local mode = self:GetCurrentFiremode().Mode
+
+    if mode != 0 and mode != 1 then
+        return false
+    end
+
+    return manual
 end
 
 -- ONE FUNCTION TO RULE THEM ALL
@@ -84,6 +107,20 @@ function SWEP:GetBuff(buff, defaultnil)
     end
 
     return result
+end
+
+function SWEP:GetBuff_Stat(buff, slot)
+    local slottbl = self.Attachments[slot]
+    if !slottbl then return end
+    local atttbl = ArcCW.AttachmentTable[slottbl.Installed]
+    if !atttbl then return end
+    local num = slottbl.ToggleNum or 1
+
+    if atttbl.ToggleStats and atttbl.ToggleStats[num] and (atttbl.ToggleStats[num][buff] != nil) then
+        return atttbl.ToggleStats[num][buff]
+    else
+        return atttbl[buff]
+    end
 end
 
 function SWEP:GetBuff_Hook(buff, data)
@@ -130,6 +167,12 @@ function SWEP:GetBuff_Hook(buff, data)
             if ret == false then return end
 
             data = ret
+        elseif atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and isfunction(atttbl.ToggleStats[k.ToggleNum][buff]) then
+           local ret = atttbl.ToggleStats[k.ToggleNum][buff](self, data)
+            table.insert(self.AttCache_Hooks[buff], atttbl.ToggleStats[k.ToggleNum][buff])
+            if ret == nil then continue end
+            if ret == false then return end
+            data = ret
         end
     end
 
@@ -154,20 +197,18 @@ function SWEP:GetBuff_Hook(buff, data)
     for i, e in pairs(self:GetActiveElements()) do
         local ele = self.AttachmentElements[e]
 
-        if ele then
-            if ele[buff] then
-                local ret = ele[buff](self, data)
+        if ele and ele[buff] then
+            local ret = ele[buff](self, data)
 
-                table.insert(self.AttCache_Hooks[buff], ele[buff])
+            table.insert(self.AttCache_Hooks[buff], ele[buff])
 
-                hasany = true
+            hasany = true
 
-                if ret != nil then
+            if ret != nil then
 
-                    if ret == false then return end
+                if ret == false then return end
 
-                    data = ret
-                end
+                data = ret
             end
         end
     end
@@ -193,7 +234,7 @@ function SWEP:GetBuff_Hook(buff, data)
     return data
 end
 
-function SWEP:GetBuff_Override(buff)
+function SWEP:GetBuff_Override(buff, default)
     local level = 0
     local current = nil
     local winningslot = nil
@@ -221,7 +262,16 @@ function SWEP:GetBuff_Override(buff)
 
         end
 
-        return current, winningslot
+        -- Because fuck me I fucking suck at this
+        if buff == "Override_ShootWhileSprint" and GetConVar("arccw_mult_shootwhilesprinting"):GetBool() then
+            current = true
+        end
+
+        if current == nil then
+            return default
+        else
+            return current, winningslot
+        end
     end
 
     for i, k in pairs(self.Attachments) do
@@ -235,6 +285,15 @@ function SWEP:GetBuff_Override(buff)
             local pri = atttbl[buff .. "_Priority"] or 1
             if level == 0 or (pri > level) then
                 current = atttbl[buff]
+                level = pri
+                winningslot = i
+            end
+        end
+
+        if atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and atttbl.ToggleStats[k.ToggleNum][buff] then
+            local pri = atttbl.ToggleStats[k.ToggleNum][buff .. "_Priority"] or 1
+            if level == 0 or (pri > level) then
+                current = atttbl.ToggleStats[k.ToggleNum][buff]
                 level = pri
                 winningslot = i
             end
@@ -266,14 +325,12 @@ function SWEP:GetBuff_Override(buff)
         for i, e in pairs(self:GetActiveElements()) do
             local ele = self.AttachmentElements[e]
 
-            if ele then
-                if ele[buff] != nil then
-                    local pri = ele[buff .. "_Priority"] or 1
-                    if level == 0 or (pri > level) then
-                        current = ele[buff]
-                        level = pri
-                        winningslot = i
-                    end
+            if ele and ele[buff] != nil then
+                local pri = ele[buff .. "_Priority"] or 1
+                if level == 0 or (pri > level) then
+                    current = ele[buff]
+                    level = pri
+                    winningslot = i
                 end
             end
         end
@@ -291,6 +348,11 @@ function SWEP:GetBuff_Override(buff)
     end
 
     self.TickCache_Overrides[buff] = {current, winningslot}
+
+    -- Because fuck me I fucking suck at this
+    if buff == "Override_ShootWhileSprint" and GetConVar("arccw_mult_shootwhilesprinting"):GetBool() then
+        current = true
+    end
 
     local data = {
         buff = buff,
@@ -346,6 +408,10 @@ function SWEP:GetBuff_Mult(buff)
         if atttbl[buff] then
             mult = mult * atttbl[buff]
         end
+
+        if atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and atttbl.ToggleStats[k.ToggleNum][buff] then
+            mult = mult * atttbl.ToggleStats[k.ToggleNum][buff]
+        end
     end
 
     local cfm = self:GetCurrentFiremode()
@@ -361,10 +427,8 @@ function SWEP:GetBuff_Mult(buff)
     for i, e in pairs(self:GetActiveElements()) do
         local ele = self.AttachmentElements[e]
 
-        if ele then
-            if ele[buff] then
-                mult = mult * ele[buff]
-            end
+        if ele and ele[buff] then
+            mult = mult * ele[buff]
         end
     end
 
@@ -408,6 +472,10 @@ function SWEP:GetBuff_Add(buff)
 
         end
 
+        if ArcCW.ConVar_BuffAdds[buff] then
+            add = add + GetConVar(ArcCW.ConVar_BuffAdds[buff]):GetFloat()
+        end
+
         return add
     end
 
@@ -418,6 +486,10 @@ function SWEP:GetBuff_Add(buff)
 
         if atttbl[buff] then
             add = add + atttbl[buff]
+        end
+
+        if atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and atttbl.ToggleStats[k.ToggleNum][buff] then
+            add = add + atttbl.ToggleStats[k.ToggleNum][buff]
         end
     end
 
@@ -430,14 +502,16 @@ function SWEP:GetBuff_Add(buff)
     for i, e in pairs(self:GetActiveElements()) do
         local ele = self.AttachmentElements[e]
 
-        if ele then
-            if ele[buff] then
-                add = add + ele[buff]
-            end
+        if ele and ele[buff] then
+            add = add + ele[buff]
         end
     end
 
     self.TickCache_Adds[buff] = add
+
+    if ArcCW.ConVar_BuffAdds[buff] then
+        add = add + GetConVar(ArcCW.ConVar_BuffAdds[buff]):GetFloat()
+    end
 
     local data = {
         buff = buff,
@@ -606,13 +680,11 @@ end
 function SWEP:GetWeaponFlags()
     local flags = {}
 
-    for _, i in pairs(self.Attachments) do
+    for id, i in pairs(self.Attachments) do
         if !i.Installed then continue end
 
-        local atttbl = ArcCW.AttachmentTable[i.Installed]
-
-        if atttbl.GivesFlags then
-            table.Add(flags, atttbl.GivesFlags)
+        if self:GetBuff_Stat("GivesFlags", id) then
+            table.Add(flags, self:GetBuff_Stat("GivesFlags", id))
         end
 
         if i.GivesFlags then
@@ -649,6 +721,10 @@ function SWEP:NetworkWeapon(sendto)
             net.WriteFloat(i.SlidePos or 0.5)
         end
 
+        if atttbl.ToggleStats then
+            net.WriteUInt(i.ToggleNum or 1, 8) -- look if you want more than 255 fucking toggle options you're insane and stupid just don't ok
+        end
+
         -- if atttbl.ColorOptionsTable then
         --     net.WriteUInt(i.ColorOptionIndex or 1, 8) -- look if you want more than 256 fucking color options you're insane and stupid and just don't ok
         -- end
@@ -678,9 +754,21 @@ function SWEP:SendDetail_SlidePos(slot, hmm)
     net.SendToServer()
 end
 
+function SWEP:SendDetail_ToggleNum(slot, hmm)
+    if !self.Attachments or !self.Attachments[slot] then return end
+    if !self.Attachments[slot].ToggleNum then return end
+
+    net.Start("arccw_togglenum")
+    net.WriteUInt(slot, 8)
+    net.WriteUInt(self.Attachments[slot].ToggleNum or 1, 8)
+    net.SendToServer()
+end
+
+
 function SWEP:SendAllDetails()
     for i, k in pairs(self.Attachments) do
         self:SendDetail_SlidePos(i, true)
+        self:SendDetail_ToggleNum(i, true)
     end
 end
 
@@ -972,6 +1060,10 @@ function SWEP:Attach(slot, attname, silent)
         self.SightMagnifications = {}
     end
 
+    if atttbl.ToggleStats then
+        attslot.ToggleNum = 1
+    end
+
     if CLIENT then
         -- we are asking to attach something
 
@@ -1129,6 +1221,43 @@ function SWEP:Detach(slot, silent)
     self:RefreshBGs()
 
     self:AdjustAtts()
+end
+
+function SWEP:ToggleSlot(slot, num, silent)
+    local atttbl = ArcCW.AttachmentTable[self.Attachments[slot].Installed]
+    if !atttbl.ToggleStats then return end
+
+    if !num then
+        self.Attachments[slot].ToggleNum = (self.Attachments[slot].ToggleNum or 1) + 1
+        if self.Attachments[slot].ToggleNum > #atttbl.ToggleStats then
+            self.Attachments[slot].ToggleNum = 1
+        end
+    else
+        self.Attachments[slot].ToggleNum = math.Clamp(num, 1, #catttbl.ToggleStats)
+    end
+
+    if CLIENT then
+        self:SendDetail_ToggleNum(slot)
+        self:SetupActiveSights()
+    elseif SERVER then
+        self:NetworkWeapon()
+        self:SetupModel(false)
+        self:SetupModel(true)
+    end
+
+    self:AdjustAtts()
+
+    for s, i in pairs(self.Attachments) do
+        if !self:CheckFlags(i.ExcludeFlags, i.RequireFlags) then
+            self:Detach(s, true)
+        end
+    end
+
+    self:RefreshBGs()
+
+    if !silent and self:GetBuff_Stat("ToggleSound", slot) != false then
+        surface.PlaySound(self:GetBuff_Stat("ToggleSound", slot) or "weapons/arccw/firemode.wav")
+    end
 end
 
 function SWEP:AdjustAtts()

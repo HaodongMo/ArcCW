@@ -137,12 +137,11 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             abullet.Force    = 0
             abullet.Distance = 33000
             abullet.Tracer   = 0
+            --abullet.IgnoreEntity = ptr.Entity
             abullet.Callback = function(att, btr, dmg)
                 local dist = bullet.Travelled * ArcCW.HUToM
                 bullet.Travelled = bullet.Travelled + (btr.HitPos - endpos):Length()
-                -- This is the part causing double damage during penetration
-                -- Workaround: Don't do damage on the first entity (normal damage is applied by original bullet)
-                if alreadypenned[ptr.Entity:EntIndex()] or table.Count(alreadypenned) == 0 then
+                if alreadypenned[ptr.Entity:EntIndex()] then
                     dmg:SetDamage(0)
                 else
                     dmg:SetDamageType(bullet.DamageType)
@@ -151,6 +150,10 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
                 alreadypenned[ptr.Entity:EntIndex()] = true
 
                 ArcCW:DoPenetration(btr, damage, bullet, penleft, false, alreadypenned)
+
+                if GetConVar("developer"):GetBool() then
+                    debugoverlay.Line(endpos, endpos + dir * (btr.HitPos - endpos):Length(), 10, Color(150, 150, 150), true)
+                end
             end
 
             attacker:FireBullets(abullet)

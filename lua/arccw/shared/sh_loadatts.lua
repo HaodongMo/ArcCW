@@ -10,7 +10,7 @@ local shortname = ""
 local genAttCvar = GetConVar("arccw_reloadatts_registerentities")
 
 function ArcCW.LoadAttachmentType(att)
-    if !att.Ignore then
+    if !att.Ignore or GetConVar("arccw_reloadatts_showignored"):GetBool() then
         ArcCW.AttachmentTable[shortname] = att
         ArcCW.AttachmentIDTable[ArcCW.NumAttachments] = shortname
 
@@ -24,7 +24,7 @@ function ArcCW.LoadAttachmentType(att)
 
         att.ID = ArcCW.NumAttachments
 
-        if genAttCvar:GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free and !att.Ignore then
+        if genAttCvar:GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free then
             local attent = {}
             attent.Base = "arccw_att_base"
             attent.Icon = att.Icon
@@ -45,6 +45,8 @@ function ArcCW.LoadAttachmentType(att)
         end
 
         ArcCW.NumAttachments = ArcCW.NumAttachments + 1
+
+        hook.Run("ArcCW_OnAttLoad", att)
     end
 end
 
@@ -143,9 +145,11 @@ if CLIENT then
 
     -- Gets around Listen server spawn issues
     hook.Add( "InitPostEntity", "Ready", function()
-        net.Start("arccw_blacklist")
-            net.WriteBool(true)
-        net.SendToServer()
+        if !game.SinglePlayer() then
+            net.Start("arccw_blacklist")
+                net.WriteBool(true)
+            net.SendToServer()
+        end
     end )
 
     concommand.Add("arccw_reloadatts", function()

@@ -33,6 +33,7 @@ ArcCW.ClientConVars = {
     ["arccw_crosshair_dot"]           = { def =  1 },
     ["arccw_crosshair_shotgun"]       = { def =  1 },
     ["arccw_crosshair_equip"]         = { def =  1 },
+    ["arccw_crosshair_aa"]            = { def =  1 },
 
     ["arccw_attinv_simpleproscons"]   = { def =  0 },
     ["arccw_attinv_onlyinspect"]      = { def =  0 },
@@ -78,6 +79,8 @@ ArcCW.ClientConVars = {
     ["arccw_blur"]                    = { def =  0 },
     ["arccw_blur_toytown"]            = { def =  1 },
 
+    ["arccw_adjustsensthreshold"]     = { def =  0 },
+
     ["arccw_glare"]                   = { def =  1 },
     ["arccw_autosave"]                = { def =  1 },
 
@@ -90,16 +93,14 @@ ArcCW.ClientConVars = {
     ["arccw_vm_coolsway"]             = { def =  1 },
     ["arccw_vm_coolview"]             = { def =  1 },
     ["arccw_vm_coolview_mult"]        = { def =  1 },
-    ["arccw_vm_accelmult"]            = { def =  1 },
-    ["arccw_vm_lookxmult"]            = { def =  1 },
-    ["arccw_vm_lookymult"]            = { def =  2 },
-    ["arccw_vm_swayxmult"]            = { def =  -0.1 },
-    ["arccw_vm_swayymult"]            = { def =  0.1 },
-    ["arccw_vm_swayzmult"]            = { def =  -0.3 },
+    ["arccw_vm_look_xmult"]            = { def =  1 },
+    ["arccw_vm_look_ymult"]            = { def =  1 },
+    ["arccw_vm_sway_xmult"]            = { def =  1 },
+    ["arccw_vm_sway_ymult"]            = { def =  1 },
+    ["arccw_vm_sway_zmult"]            = { def =  1 },
 
-    ["arccw_vm_swaywigglemult"]       = { def =  1 },
-    ["arccw_vm_swayspeedmult"]        = { def =  1 },
-    ["arccw_vm_swayrotatemult"]       = { def =  1 },
+    ["arccw_vm_sway_speedmult"]        = { def =  1 },
+    ["arccw_vm_sway_rotatemult"]       = { def =  1 },
 
     ["arccw_toggleads"]               = { def = 0, usri = true },
     ["arccw_altubglkey"]              = { def = 0, usri = true },
@@ -108,6 +109,8 @@ ArcCW.ClientConVars = {
     ["arccw_altbindsonly"]            = { def = 0, usri = true },
     ["arccw_altsafety"]               = { def = 0, usri = true },
     ["arccw_automaticreload"]         = { def = 0, usri = true },
+
+    ["arccw_aimassist_cl"]               = { def = 0, usri = true },
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do

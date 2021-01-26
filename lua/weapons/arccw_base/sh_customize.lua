@@ -4,8 +4,9 @@ local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end
 
-local temp = 127
+local temp = 0
 local SolidBlack = Color(temp, temp, temp)
+-- don't fucking mess with the shadow, makes the menu hurt your goddamn eyes
 
 local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
     local tw, th = surface.GetTextSize(txt)
@@ -555,6 +556,59 @@ function SWEP:CreateCustomizeHUD()
 
     attslidebox:Hide()
 
+    local atttogglebtn = vgui.Create("DButton", ArcCW.InvHUD)
+    atttogglebtn:SetSize(barsize * 0.25, ScreenScaleMulti(15))
+    atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(64) - (1 * airgap))
+    atttogglebtn:SetText("")
+    atttogglebtn.OnMousePressed = function(spaa, kc)
+        if !self.Attachments[activeslot] then return end
+        local catttbl = ArcCW.AttachmentTable[self.Attachments[activeslot].Installed]
+        if !catttbl or !catttbl.ToggleStats then return end
+
+        self:ToggleSlot(activeslot)
+        --[[]
+        self.Attachments[activeslot].ToggleNum = (self.Attachments[activeslot].ToggleNum or 1) + 1
+        if self.Attachments[activeslot].ToggleNum > #catttbl.ToggleStats then
+            self.Attachments[activeslot].ToggleNum = 1
+        end
+        self:SendDetail_ToggleNum(activeslot)
+        self:AdjustAtts()
+        if self:GetHasFlashlights() then
+            self:CreateFlashlightsVM()
+        end
+
+        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, 100)
+        ]]
+    end
+    atttogglebtn.Paint = function(spaa, w, h)
+        if !self:IsValid() then return end
+        if !self.Attachments then return end
+        local Bfg_col = Color(255, 255, 255, 255)
+        local Bbg_col = Color(0, 0, 0, 100)
+
+        if spaa:IsHovered() then
+            Bbg_col = Color(255, 255, 255, 100)
+            Bfg_col = Color(0, 0, 0, 255)
+        end
+
+        surface.SetDrawColor(Bbg_col)
+        surface.DrawRect(0, 0, w, h)
+
+        local txt = (translate("ui.toggle"))
+        local catttbl = activeslot and ArcCW.AttachmentTable[self.Attachments[activeslot].Installed]
+        if catttbl and catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum]
+                and catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum].PrintName then
+            txt = ArcCW.TryTranslation(catttbl.ToggleStats[self.Attachments[activeslot].ToggleNum].PrintName)
+        end
+
+        surface.SetTextColor(Bfg_col)
+        surface.SetTextPos(smallgap, ScreenScaleMulti(1))
+        surface.SetFont("ArcCW_12")
+        surface.DrawText(txt)
+    end
+
+    atttogglebtn:Hide()
+
     local atttrivia = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     atttrivia:SetSize(barsize, scrh - ScreenScaleMulti(116))
     atttrivia:SetPos(scrw - barsize - airgap, 2 * airgap)
@@ -580,7 +634,7 @@ function SWEP:CreateCustomizeHUD()
 
     local last_atttrivia = nil
 
-    local function atttrivia_do(att)
+    local function atttrivia_do(att, slot)
 
         if !att then
             last_atttrivia = att
@@ -678,7 +732,7 @@ function SWEP:CreateCustomizeHUD()
 
         local neutrals = atttbl.Desc_Neutrals or {}
 
-        local pros, cons = ArcCW:GetProsCons(atttbl)
+        local pros, cons = ArcCW:GetProsCons(atttbl, self.Attachments[slot].ToggleNum)
 
         if (pros and #pros or 0) > 0 then
 
@@ -782,6 +836,8 @@ function SWEP:CreateCustomizeHUD()
             attmenu:Hide()
             self.InAttMenu = false
             atttrivia:Hide()
+            attslidebox:Hide()
+            atttogglebtn:Hide()
         end
     end
 
@@ -815,6 +871,17 @@ function SWEP:CreateCustomizeHUD()
                 attslidebox:Show()
             else
                 attslidebox:Hide()
+            end
+
+            if self.Attachments[span.AttIndex].Installed and catttbl and catttbl.ToggleStats then
+                if attslidebox:IsVisible() then
+                    atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(40) - (1 * airgap))
+                else
+                    atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(64) - (1 * airgap))
+                end
+                atttogglebtn:Show()
+            else
+                atttogglebtn:Hide()
             end
 
             attmenu:Clear()
@@ -917,7 +984,7 @@ function SWEP:CreateCustomizeHUD()
                             -- Drop attachment
                             if GetConVar("arccw_attinv_free"):GetBool() then return end
                             if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
-                            if !GetConVar("arccw_enable_customization"):GetBool() then return end
+                            if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
                             if !GetConVar("arccw_enable_dropping"):GetBool() then return end
 
                             net.Start("arccw_asktodrop")
@@ -966,7 +1033,7 @@ function SWEP:CreateCustomizeHUD()
                     end
 
                     if spaa:IsHovered() then
-                        atttrivia_do(spaa.AttName)
+                        atttrivia_do(spaa.AttName, i)
                     end
 
                     if !owned and GetConVar("arccw_attinv_darkunowned"):GetBool() then
@@ -1039,6 +1106,7 @@ function SWEP:CreateCustomizeHUD()
                     self.InAttMenu = false
                     atttrivia:Hide()
                     attslidebox:Hide()
+                    atttogglebtn:Hide()
                 else
                     activeslot = span.AttIndex
                     triviabox:Hide()
@@ -1053,7 +1121,7 @@ function SWEP:CreateCustomizeHUD()
                     span.TextRotState = 0
 
                     if self.Attachments[span.AttIndex].Installed then
-                        atttrivia_do(self.Attachments[span.AttIndex].Installed)
+                        atttrivia_do(self.Attachments[span.AttIndex].Installed, span.AttIndex)
                     end
 
                     attcatb_regen(span)
@@ -1356,8 +1424,10 @@ function SWEP:CreateCustomizeHUD()
         trivia[13] = nil
     end
 
-    if self.FuseTime then
-        table.insert(trivia, function() return translate("trivia.fusetime") .. ": " .. self.FuseTime end)
+    local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+
+    if ft then
+        table.insert(trivia, function() return translate("trivia.fusetime") .. ": " .. tostring(ft) end)
     end
 
     for _, i in pairs(trivia) do
@@ -1415,9 +1485,10 @@ function SWEP:CreateCustomizeHUD()
 
             local grsh = math.max(dmgmax, dmgmin)
 
-            grsh = math.ceil((grsh / 25) + 1) * 25
+            grsh = math.ceil((grsh / 12) + 1) * 12
 
-            local maxgr = (self:GetBuff("Range"))
+            local mingr = self.RangeMin * self:GetBuff_Mult("Mult_Range") * self:GetBuff_Mult("Mult_RangeMin")
+            local maxgr = self.Range * self:GetBuff_Mult("Mult_Range")
 
             if dmgmax < dmgmin then
                 maxgr = (self.Range / self:GetBuff_Mult("Mult_Range"))
@@ -1425,27 +1496,36 @@ function SWEP:CreateCustomizeHUD()
 
             maxgr = math.Round(maxgr)
 
-            local grsw = math.ceil((maxgr / 50) + 1) * 50
+            local grsw = math.ceil((maxgr / 12) + 1) * 12
 
             local convw = gw / grsw
             local convh = gh / grsh
 
             local starty = gh - (dmgmax * convh)
             local endy = gh - (dmgmin * convh)
-            local startx = 0
+            local startx = mingr * convw
             local endx = maxgr * convw
 
             surface.SetDrawColor(bg_col)
             surface.DrawRect(gx, gy, gw, gh)
 
             surface.SetDrawColor(fg_col)
+
+            -- start
+            surface.DrawLine(0, gy + starty, gx + startx, gy + starty)
+            -- before mid
             surface.DrawLine(gx + startx, gy + starty, gx + endx, gy + endy)
+            if mingr != 0 then
+                surface.DrawLine(gx + startx, gy+ScreenScaleMulti(2) + starty, gx + startx, gy-ScreenScaleMulti(2) + starty)
+            end
+            -- long and into the void
             surface.DrawLine(gx + endx, gy + endy, gx + gw, gy + endy)
+            surface.DrawLine(gx + endx, gy+ScreenScaleMulti(2) + endy, gx + endx, gy-ScreenScaleMulti(2) + endy)
 
             -- start dmg
             surface.SetTextColor(fg_col)
             surface.SetFont("ArcCW_6")
-            surface.SetTextPos(gx + startx, gy + starty - ScreenScaleMulti(7) - 1)
+            surface.SetTextPos(0, gy + starty - ScreenScaleMulti(7) - 1)
             surface.DrawText(tostring(dmgmax) .. ArcCW.GetTranslation("stat.dmg"))
 
             -- end dmg
@@ -1461,6 +1541,15 @@ function SWEP:CreateCustomizeHUD()
             surface.SetFont("ArcCW_6")
             surface.SetTextPos(sidegap, smallgap + gh)
             surface.DrawText(0 .. translate("stat.m"))
+
+            -- before mid range
+            if mingr != 0 then
+                surface.SetTextColor(fg_col)
+                surface.SetFont("ArcCW_6")
+                local btw = surface.GetTextSize(tostring(mingr) .. "m")
+                surface.SetTextPos(gx + startx - (btw / 2), smallgap + gh)
+                surface.DrawText(tostring(mingr) .. "m")
+            end
 
             -- mid range
             surface.SetTextColor(fg_col)
@@ -1791,6 +1880,7 @@ function SWEP:CreateCustomizeHUD()
                 self.InAttMenu = false
                 atttrivia:Hide()
                 attslidebox:Hide()
+                atttogglebtn:Hide()
             end
         end
 

@@ -13,6 +13,8 @@
     m - color mixer                   text r g b a 
     p - press or button               text func
     t - textbox                       text string
+    o - combo box                     text var choices (key - cvar, value - text)
+    d - binder                        text var
     (you can add custom types in ArcCW.GeneratePanelElements's AddControl table)
 
     Generate elements via ArcCW.GeneratePanelElements:
@@ -27,20 +29,19 @@
 local BulletPanel = {
     { type = "h", text = "#arccw.adminonly" },
     { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable", sv = true },
-    { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 100, sv = true },
-    { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 32000, sv = true },
+    { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 3000, sv = true },
     { type = "f", text = "#arccw.cvar.bullet_drag", var = "arccw_bullet_drag", min = 0, max = 10, sv = true },
-    { type = "f", text = "#arccw.cvar.bullet_lifetime", var = "arccw_bullet_lifetime", min = 1, max = 60, sv = true},
+    { type = "f", text = "#arccw.cvar.bullet_lifetime", var = "arccw_bullet_lifetime", min = 1, max = 20, sv = true},
 }
 
 local ClientPanel = {
     { type = "h", text = "#arccw.clientcfg" },
     { type = "b", text = "#arccw.cvar.automaticreload", var = "arccw_automaticreload" },
     { type = "c", text = "#arccw.cvar.automaticreload.desc" },
+    { type = "f", text = "#arccw.cvar.adjustsensthreshold", var = "arccw_adjustsensthreshold", min = 0, max = 50, sv = true },
+    { type = "c", text = "#arccw.cvar.adjustsensthreshold.desc" },
     { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
-    { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
-    { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
-    { type = "b", text = "#arccw.cvar.altsafety", var = "arccw_altsafety" },
     { type = "b", text = "#arccw.cvar.autosave", var = "arccw_autosave" },
     { type = "c", text = "#arccw.cvar.autosave.desc" },
     { type = "b", text = "#arccw.cvar.embracetradition", var = "arccw_hud_embracetradition" },
@@ -49,6 +50,8 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.glare.desc" },
     { type = "b", text = "#arccw.cvar.shake", var = "arccw_shake" },
     { type = "c", text = "#arccw.cvar.shake_info" },
+    { type = "b", text = "#arccw.cvar.aimassist", var = "arccw_aimassist_cl" },
+    { type = "c", text = "#arccw.cvar.aimassist_cl.desc" },
     { type = "b", text = "#arccw.cvar.2d3d", var = "arccw_2d3d" },
     { type = "c", text = "#arccw.cvar.2d3d_info" },
     { type = "t", text = "#arccw.cvar.language", var = "arccw_language"  },
@@ -88,18 +91,16 @@ local ViewmodelPanel = {
     { type = "f", text = "#arccw.cvar.vm_up", var = "arccw_vm_up", min = -5, max = 5 },
     { type = "c", text = "" },
     { type = "c", text = "#arccw.cvar.vm_swaywarn" },
-    { type = "f", text = "#arccw.cvar.vm_lookxmult", var = "arccw_vm_lookxmult", min = -10, max = 10 },
-    { type = "f", text = "#arccw.cvar.vm_lookymult", var = "arccw_vm_lookymult", min = -10, max = 10 },
-    { type = "f", text = "#arccw.cvar.vm_accelmult", var = "arccw_vm_accelmult", min = 0.3, max = 3 },
-    { type = "f", text = "#arccw.cvar.vm_swayxmult", var = "arccw_vm_swayxmult", min = -1, max = 1 },
-    { type = "f", text = "#arccw.cvar.vm_swayymult", var = "arccw_vm_swayymult", min = -2, max = 2 },
-    { type = "f", text = "#arccw.cvar.vm_swayzmult", var = "arccw_vm_swayzmult", min = -2, max = 2 },
-    { type = "f", text = "#arccw.cvar.vm_swaywigglemult", var = "arccw_vm_swaywigglemult", min = -3, max = 3 },
-    { type = "f", text = "#arccw.cvar.vm_swayspeedmult", var = "arccw_vm_swayspeedmult", min = 0, max = 3 },
-    { type = "f", text = "#arccw.cvar.vm_swayrotatemult", var = "arccw_vm_swayrotatemult", min = -3, max = 3 },
+    { type = "f", text = "#arccw.cvar.vm_look_xmult", var = "arccw_vm_look_xmult", min = -10, max = 10 },
+    { type = "f", text = "#arccw.cvar.vm_look_ymult", var = "arccw_vm_look_ymult", min = -10, max = 10 },
+    { type = "f", text = "#arccw.cvar.vm_sway_xmult", var = "arccw_vm_sway_xmult", min = -5, max = 5 },
+    { type = "f", text = "#arccw.cvar.vm_sway_ymult", var = "arccw_vm_sway_ymult", min = -5, max = 5 },
+    { type = "f", text = "#arccw.cvar.vm_sway_zmult", var = "arccw_vm_sway_zmult", min = -5, max = 5 },
+    { type = "f", text = "#arccw.cvar.vm_sway_speedmult", var = "arccw_vm_sway_speedmult", min = 0, max = 2 },
+    { type = "f", text = "#arccw.cvar.vm_sway_rotatemult", var = "arccw_vm_sway_rotatemult", min = -3, max = 3 },
     { type = "h", text = "" },
     { type = "c", text = "#arccw.cvar.vm_viewwarn" },
-    { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -10, max = 10 },
+    { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -5, max = 5 },
 }
 
 local HudPanel = {
@@ -150,16 +151,36 @@ local CrosshairPanel = {
     { type = "b", text = "#arccw.cvar.crosshair_clump", var = "arccw_crosshair_clump" },
     { type = "b", text = "#arccw.cvar.crosshair_clump_outline", var = "arccw_crosshair_clump_outline" },
     { type = "b", text = "#arccw.cvar.crosshair_clump_always", var = "arccw_crosshair_clump_always" },
+    { type = "b", text = "#arccw.cvar.crosshair_aa", var = "arccw_crosshair_aa" },
     { type = "m", text = "#arccw.cvar.crosshair_clr", r = "arccw_crosshair_clr_r", g = "arccw_crosshair_clr_g", b = "arccw_crosshair_clr_b", a = "arccw_crosshair_clr_a" },
     { type = "f", text = "#arccw.cvar.crosshair_outline", var = "arccw_crosshair_outline", min = 0, max = 4 },
     { type = "m", text = "#arccw.cvar.crosshair_outline_clr", r = "arccw_crosshair_outline_r", g = "arccw_crosshair_outline_g", b = "arccw_crosshair_outline_b", a = "arccw_crosshair_outline_a" },
     { type = "m", text = "#arccw.cvar.scope_clr", r = "arccw_scope_r", g = "arccw_scope_g", b = "arccw_scope_b" },
 }
 
+local BindsPanel = {
+    { type = "h", text = "#arccw.bindhelp" },
+    { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
+    { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
+    { type = "b", text = "#arccw.cvar.altsafety", var = "arccw_altsafety" },
+    { type = "b", text = "#arccw.cvar.altbindsonly", var = "arccw_altbindsonly" },
+    { type = "c", text = "#arccw.cvar.altbindsonly.desc" },
+    { type = "d", text = "#arccw.bind.firemode", var = "arccw_firemode" },
+    { type = "d", text = "#arccw.bind.zoom_in", var = "arccw_zoom_in" },
+    { type = "d", text = "#arccw.bind.zoom_out", var = "arccw_zoom_out" },
+    { type = "d", text = "#arccw.bind.toggle_inv", var = "arccw_toggle_inv" },
+    { type = "d", text = "#arccw.bind.switch_scope", var = "arccw_switch_scope" },
+    { type = "d", text = "#arccw.bind.toggle_ubgl", var = "arccw_toggle_ubgl" },
+    { type = "d", text = "#arccw.bind.melee", var = "arccw_melee" },
+}
+
+
 local ServerPanel = {
     { type = "h", text = "#arccw.adminonly" },
     { type = "b", text = "#arccw.cvar.enable_penetration", var = "arccw_enable_penetration", sv = true },
-    { type = "b", text = "#arccw.cvar.enable_customization", var = "arccw_enable_customization", sv = true },
+    { type = "o", text = "#arccw.cvar.enable_customization", var = "arccw_enable_customization", sv = true,
+            choices = {[-1] = "#arccw.cvar.enable_customization.-1", [0] = "#arccw.cvar.enable_customization.0", [1] = "#arccw.cvar.enable_customization.1"}},
+    { type = "c", text = "#arccw.cvar.enable_customization.desc" },
     { type = "b", text = "#arccw.cvar.truenames", var = "arccw_truenames", sv = true },
     { type = "b", text = "#arccw.cvar.equipmentammo", var = "arccw_equipmentammo", sv = true },
     { type = "c", text = "#arccw.cvar.equipmentammo.desc" },
@@ -169,20 +190,26 @@ local ServerPanel = {
     { type = "b", text = "#arccw.cvar.throwinertia", var = "arccw_throwinertia", sv = true },
     { type = "b", text = "#arccw.cvar.limityear_enable", var = "arccw_limityear_enable", sv = true },
     { type = "i", text = "#arccw.cvar.limityear", var = "arccw_limityear", min = 1800, max = 2100, sv = true },
+    { type = "c", text = "#arccw.cvar.limityear.desc"},
     { type = "b", text = "#arccw.cvar.desync", var = "arccw_desync", sv = true },
     { type = "c", text = "#arccw.cvar.desync.desc" },
     { type = "b", text = "#arccw.cvar.override_crosshair_off", var = "arccw_override_crosshair_off", sv = true },
-    { type = "b", text = "#arccw.cvar.override_deploychambered", var = "arccw_override_deploychambered", sv = true },
     { type = "b", text = "#arccw.cvar.override_barrellength", var = "arccw_override_nearwall", sv = true },
     { type = "b", text = "#arccw.cvar.doorbust", var = "arccw_doorbust", sv = true },
     { type = "f", text = "#arccw.cvar.weakensounds", var = "arccw_weakensounds", min = -20, max = 30, sv = true},
     { type = "c", text = "#arccw.cvar.weakensounds.desc" },
+    { type = "b", text = "#arccw.cvar.aimassist", var = "arccw_aimassist", sv = true },
+    { type = "c", text = "#arccw.cvar.aimassist.desc" },
+    { type = "b", text = "#arccw.cvar.aimassist_head", var = "arccw_aimassist_head", sv = true },
+    { type = "f", text = "#arccw.cvar.aimassist_cone", var = "arccw_aimassist_cone", min = 0, max = 360, sv = true},
+    { type = "f", text = "#arccw.cvar.aimassist_distance", var = "arccw_aimassist_distance", min = 128, max = 4096, sv = true},
+    { type = "f", text = "#arccw.cvar.aimassist_intensity", var = "arccw_aimassist_intensity", min = 0, max = 10, sv = true},
 }
 
 local AmmoPanel = {
     { type = "h", text = "#arccw.adminonly" },
-    { type = "i", text = "#arccw.cvar.ammo_detonationmode", var = "arccw_ammo_detonationmode", min = -1, max = 2, sv = true },
-    { type = "c", text = "#arccw.cvar.ammo_detonationmode.desc", sv = true },
+    { type = "o", text = "#arccw.cvar.ammo_detonationmode", var = "arccw_ammo_detonationmode", sv = true,
+            choices = {[-1] = "#arccw.cvar.ammo_detonationmode.-1", [0] = "#arccw.cvar.ammo_detonationmode.0", [1] = "#arccw.cvar.ammo_detonationmode.1", [2] = "#arccw.cvar.ammo_detonationmode.2"}},
     { type = "b", text = "#arccw.cvar.ammo_autopickup", var = "arccw_ammo_autopickup", sv = true },
     { type = "b", text = "#arccw.cvar.ammo_largetrigger", var = "arccw_ammo_largetrigger", sv = true },
     { type = "f", text = "#arccw.cvar.ammo_rareskin", var = "arccw_ammo_rareskin", min = 0, max = 1, sv = true },
@@ -198,8 +225,8 @@ local AttsPanel = {
     { type = "h", text = "#arccw.attdesc2" },
     { type = "b", text = "#arccw.cvar.attinv_free", var = "arccw_attinv_free", sv = true },
     { type = "b", text = "#arccw.cvar.attinv_lockmode", var = "arccw_attinv_lockmode", sv = true },
-    { type = "i", text = "#arccw.cvar.attinv_loseondie", var = "arccw_attinv_loseondie", min = 0, max = 2, sv = true },
-    { type = "c", text = "#arccw.cvar.attinv_loseondie.desc" },
+    { type = "o", text = "#arccw.cvar.attinv_loseondie", var = "arccw_attinv_loseondie", sv = true,
+            choices = {[0] = "#arccw.combobox.disabled", [1] = "#arccw.cvar.attinv_loseondie.1", [2] = "#arccw.cvar.attinv_loseondie.2"}},
     { type = "i", text = "#arccw.cvar.atts_pickx", var = "arccw_atts_pickx", min = 0, max = 10, sv = true },
     { type = "c", text = "#arccw.cvar.atts_pickx.desc", sv = true },
     { type = "b", text = "#arccw.cvar.enable_dropping", var = "arccw_enable_dropping", sv = true },
@@ -216,10 +243,14 @@ local DevPanel = {
     { type = "c", text = "#arccw.cvar.dev_reloadonadmincleanup.desc" },
     { type = "b", text = "#arccw.cvar.dev_registerentities", var = "arccw_reloadatts_registerentities", sv = true },
     { type = "c", text = "#arccw.cvar.dev_registerentities.desc" },
+    { type = "b", text = "#arccw.cvar.dev_showignored", var = "arccw_reloadatts_showignored", sv = true },
+    { type = "c", text = "#arccw.cvar.dev_showignored.desc" },
     { type = "p", text = "#arccw.cvar.dev_reloadatts", func = function() RunConsoleCommand("arccw_reloadatts") end },
     { type = "h", text = "#arccw.cvar.dev_reloadatts.desc" },
     { type = "p", text = "#arccw.cvar.dev_reloadlangs", func = function() RunConsoleCommand("arccw_reloadlangs") end },
     { type = "h", text = "#arccw.cvar.dev_reloadlangs.desc" },
+    { type = "p", text = "#arccw.cvar.dev_spawnmenureload", func = function() RunConsoleCommand("spawnmenu_reload") end },
+    { type = "h", text = "#arccw.cvar.dev_spawnmenureload.desc" },
 }
 
 local MultsPanel = {
@@ -230,12 +261,17 @@ local MultsPanel = {
     { type = "f", text = "#arccw.cvar.mult_recoil",          var = "arccw_mult_recoil", min = 0, max = 5, sv = true },
     { type = "f", text = "#arccw.cvar.mult_penetration",     var = "arccw_mult_penetration", min = 0, max = 5, sv = true },
     { type = "f", text = "#arccw.cvar.mult_hipfire",         var = "arccw_mult_hipfire", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_accuracy",        var = "arccw_mult_accuracy", min = 0, max = 3, sv = true },
     { type = "f", text = "#arccw.cvar.mult_movedisp",        var = "arccw_mult_movedisp", min = 0, max = 3, sv = true },
     { type = "f", text = "#arccw.cvar.mult_reloadtime",      var = "arccw_mult_reloadtime", min = 0.2, max = 3, sv = true },
     { type = "f", text = "#arccw.cvar.mult_sighttime",       var = "arccw_mult_sighttime", min = 0.25, max = 3, sv = true },
-    { type = "i", text = "#arccw.cvar.mult_defaultclip",     var = "arccw_mult_defaultclip", min = -1, max = 1, sv = true }, -- Fix default clip first
+    { type = "i", text = "#arccw.cvar.mult_defaultammo",     var = "arccw_mult_defaultammo", min = 0, max = 10, sv = true }, -- Fix default clip first
     { type = "f", text = "#arccw.cvar.mult_attchance",       var = "arccw_mult_attchance", min = 0, max = 10, sv = true },
     { type = "f", text = "#arccw.cvar.mult_heat",            var = "arccw_mult_heat", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_crouchdisp",      var = "arccw_mult_crouchdisp", min = 0, max = 1, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_crouchrecoil",    var = "arccw_mult_crouchrecoil", min = 0, max = 1, sv = true },
+    { type = "b", text = "#arccw.cvar.mult_startunloaded",   var = "arccw_mult_startunloaded", sv = true },
+    { type = "b", text = "#arccw.cvar.mult_shootwhilesprinting",   var = "arccw_mult_shootwhilesprinting", sv = true },
 }
 
 local MultPresets = {
@@ -293,9 +329,32 @@ function ArcCW.GeneratePanelElements(panel, table)
         ["b"] = function(p, d) return p:CheckBox(d.text, d.var) end,
         ["i"] = function(p, d) return p:NumSlider(d.text, d.var, d.min, d.max, 0) end,
         ["f"] = function(p, d) return p:NumSlider(d.text, d.var, d.min, d.max, 2) end,
-        ["m"] = function(p, d) return p:AddControl("color", { Label = d.text, Red = d.r, Green = d.g, Blue = d.b, Alpha = d.a }) end, -- change this someday
+        ["m"] = function(p, d) --return p:AddControl("color", { Label = d.text, Red = d.r, Green = d.g, Blue = d.b, Alpha = d.a })
+            local ctrl = vgui.Create("DColorMixer", p)
+            ctrl:SetLabel( d.text ) ctrl:SetConVarR( d.r ) ctrl:SetConVarG( d.g ) ctrl:SetConVarB( d.b ) ctrl:SetConVarA( d.a )
+            p:AddItem( ctrl ) return ctrl
+        end,
         ["p"] = function(p, d) local b = p:Button(d.text) b.DoClick = d.func return b end,
-        ["t"] = function(p, d) return p:TextEntry(d.text, d.var) end
+        ["t"] = function(p, d) return p:TextEntry(d.text, d.var) end,
+        ["o"] = function(p, d) local cb = p:ComboBox(d.text, d.var) for k, v in pairs(d.choices) do cb:AddChoice(v, k) end return cb end,
+        ["d"] = function(p, d)
+                local s = vgui.Create("DSizeToContents", p) s:SetSizeX(false) s:Dock(TOP) s:InvalidateLayout()
+                local l = vgui.Create("DLabel", s) l:SetText(d.text) l:SetTextColor(Color(0, 0, 0)) l:Dock(TOP) l:SetContentAlignment(5)
+                local bd = vgui.Create("DBinder", s)
+                if input.LookupBinding(d.var) then bd:SetValue(input.GetKeyCode(input.LookupBinding(d.var))) end
+                bd.OnChange = function(b, k)
+                    if k and input.GetKeyName(k) then
+                        local str = input.LookupKeyBinding(k)
+                        if str then
+                            str = string.Replace(str, d.var .. "; ", "")
+                            str = string.Replace(str, d.var, "")
+                            chat.AddText(Color(255, 255, 255), language.GetPhrase("arccw.bind.msg"), Color(255, 128, 0), "bind " .. input.GetKeyName(k) .. " \"" .. str .. "; " .. d.var .. "\"")
+                        else
+                            chat.AddText(Color(255, 255, 255), language.GetPhrase("arccw.bind.msg"), Color(255, 128, 0), "bind " .. input.GetKeyName(k) .. " " .. d.var .. "")
+                        end
+                    end
+                end
+                bd:Dock(TOP) p:AddItem(s) return s end
     }
 
     local concommands = {
@@ -456,15 +515,13 @@ local ViewmodelPresets = {
         arccw_vm_right                = "0",
         arccw_vm_forward              = "0",
         arccw_vm_up                   = "0",
-        arccw_vm_lookxmult            = "1",
-        arccw_vm_lookymult            = "2",
-        arccw_vm_accelmult            = "1",
-        arccw_vm_swayxmult            = "-0.1",
-        arccw_vm_swayymult            = "0.1",
-        arccw_vm_swayzmult            = "-0.3",
-        arccw_vm_swaywigglemult       = "1",
-        arccw_vm_swayspeedmult        = "1",
-        arccw_vm_swayrotatemult       = "1",
+        arccw_vm_look_xmult            = "1",
+        arccw_vm_look_ymult            = "1",
+        arccw_vm_sway_xmult            = "1",
+        arccw_vm_sway_ymult            = "1",
+        arccw_vm_sway_zmult            = "1",
+        arccw_vm_sway_speedmult        = "1",
+        arccw_vm_sway_rotatemult       = "1",
         arccw_vm_coolview_mult        = "1",
     }
 }
@@ -481,14 +538,16 @@ function ArcCW_Options_Perf(panel)
     ArcCW.GeneratePanelElements(panel, PerformancePanel)
 end
 
-function ArcCW_Options_Viewmodel(panel)
-    panel:AddControl("ComboBox", {
-        MenuButton = "1",
-        Label      = "#Presets",
-        Folder     = "arccw_vm",
-        CVars      = { "" },
-        Options    = ViewmodelPresets
-    })
+function ArcCW_Options_Viewmodel(panel, no_preset)
+    if !no_preset then
+        panel:AddControl("ComboBox", {
+            MenuButton = "1",
+            Label      = "#Presets",
+            Folder     = "arccw_vm",
+            CVars      = { "" },
+            Options    = ViewmodelPresets
+        })
+    end
 
     ArcCW.GeneratePanelElements(panel, ViewmodelPanel)
 end
@@ -501,15 +560,16 @@ function ArcCW_Options_Dev(panel)
     ArcCW.GeneratePanelElements(panel, DevPanel)
 end
 
-function ArcCW_Options_Crosshair(panel)
-    panel:AddControl("ComboBox", {
-        MenuButton = "1",
-        Label      = "#Presets",
-        Folder     = "arccw_crosshair",
-        CVars      = { "" },
-        Options    = CrosshairPresets
-    })
-
+function ArcCW_Options_Crosshair(panel, no_preset)
+    if !no_preset then
+        panel:AddControl("ComboBox", {
+            MenuButton = "1",
+            Label      = "#Presets",
+            Folder     = "arccw_crosshair",
+            CVars      = { "" },
+            Options    = CrosshairPresets
+        })
+    end
     ArcCW.GeneratePanelElements(panel, CrosshairPanel)
 end
 
@@ -521,14 +581,16 @@ function ArcCW_Options_Ammo(panel)
     ArcCW.GeneratePanelElements(panel, AmmoPanel)
 end
 
-function ArcCW_Options_Mults(panel)
-    panel:AddControl("ComboBox", {
-        MenuButton = "1",
-        Label      = "#Presets",
-        Folder     = "arccw_mults",
-        CVars      = { "" },
-        Options    = MultPresets
-    })
+function ArcCW_Options_Mults(panel, no_preset)
+    if !no_preset then
+        panel:AddControl("ComboBox", {
+            MenuButton = "1",
+            Label      = "#Presets",
+            Folder     = "arccw_mults",
+            CVars      = { "" },
+            Options    = MultPresets
+        })
+    end
     ArcCW.GeneratePanelElements(panel, MultsPanel)
 end
 
@@ -538,6 +600,10 @@ end
 
 function ArcCW_Options_NPC(panel)
     ArcCW.GeneratePanelElements(panel, NPCsPanel)
+end
+
+function ArcCW_Options_Binds(panel)
+    ArcCW.GeneratePanelElements(panel, BindsPanel)
 end
 
 ArcCW.ClientMenus = {
@@ -553,6 +619,7 @@ ArcCW.ClientMenus = {
     ["ArcCW_Options_Mults"]     = { text = "#arccw.menus.mults",  func = ArcCW_Options_Mults },
     ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",   func = ArcCW_Options_Dev },
     ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",   func = ArcCW_Options_NPC },
+    ["ArcCW_Options_Binds"]    = { text = "#arccw.menus.binds", func = ArcCW_Options_Binds },
 }
 
 hook.Add("PopulateToolMenu", "ArcCW_Options", function()

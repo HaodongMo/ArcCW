@@ -28,9 +28,9 @@ function SWEP:Think()
 
     self:InBipod()
 
-    if self:GetNeedCycle() and !self:GetReloading() and self:GetWeaponOpDelay() < CurTime() and
+    if self:GetNeedCycle() and !self:GetReloading() and self:GetWeaponOpDelay() < CurTime() and self:GetNextPrimaryFire() < CurTime() and -- Adding this delays bolting if the RPM is too low, but removing it may reintroduce the double pump bug. Increasing the RPM allows you to shoot twice on many multiplayer servers. Sure would be convenient if everything just worked nicely
             (!GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or !owner:KeyDown(IN_ATTACK))
-            or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 and owner:KeyDown(IN_ATTACK) or owner:KeyPressed(IN_ATTACK))) then
+            or GetConVar("arccw_clicktocycle"):GetBool() and (self:GetCurrentFiremode().Mode == 2 or owner:KeyPressed(IN_ATTACK))) then
         local anim = self:SelectAnimation("cycle")
         anim = self:GetBuff_Hook("Hook_SelectCycleAnimation", anim) or anim
         local mult = self:GetBuff_Mult("Mult_CycleTime")
@@ -45,7 +45,9 @@ function SWEP:Think()
     if self:GetGrenadePrimed() and self.GrenadePrimeTime > 0 then
         local heldtime = (CurTime() - self.GrenadePrimeTime)
 
-        if self.FuseTime and (heldtime >= self.FuseTime) then
+        local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+
+        if ft and (heldtime >= ft) then
             self:Throw()
         end
     end
@@ -58,8 +60,7 @@ function SWEP:Think()
         end
     end
 
-    local td = self:GetBuff_Override("Override_TriggerDelay")
-    if (td != nil and td) or (td == nil and self.TriggerDelay) then
+    if self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) then
         self:DoTriggerDelay()
     end
 
@@ -185,42 +186,48 @@ function SWEP:Think()
             vm:ManipulateBoneScale(i, vec1)
         end
 
-        for i, k in pairs(self:GetBuff_Override("Override_CaseBones") or self.CaseBones or {}) do
+        for i, k in pairs(self:GetBuff_Override("Override_CaseBones", self.CaseBones) or {}) do
             if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
+            for _, b in pairs(istable(k) and k or {k}) do
+                local bone = vm:LookupBone(b)
 
-            if !bone then continue end
+                if !bone then continue end
 
-            if self:GetVisualClip() >= i then
-                vm:ManipulateBoneScale(bone, vec1)
-            else
-                vm:ManipulateBoneScale(bone, vec0)
+                if self:GetVisualClip() >= i then
+                    vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
+                end
             end
         end
 
-        for i, k in pairs(self:GetBuff_Override("Override_BulletBones") or self.BulletBones or {}) do
+        for i, k in pairs(self:GetBuff_Override("Override_BulletBones", self.BulletBones) or {}) do
             if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
+            for _, b in pairs(istable(k) and k or {k}) do
+                local bone = vm:LookupBone(b)
 
-            if !bone then continue end
+                if !bone then continue end
 
-            if self:GetVisualBullets() >= i then
-                vm:ManipulateBoneScale(bone, vec1)
-            else
-                vm:ManipulateBoneScale(bone, vec0)
+                if self:GetVisualBullets() >= i then
+                    vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
+                end
             end
         end
 
-        for i, k in pairs(self:GetBuff_Override("Override_StripperClipBones") or self.StripperClipBones or {}) do
+        for i, k in pairs(self:GetBuff_Override("Override_StripperClipBones", self.StripperClipBones) or {}) do
             if !isnumber(i) then continue end
-            local bone = vm:LookupBone(k)
+            for _, b in pairs(istable(k) and k or {k}) do
+                local bone = vm:LookupBone(b)
 
-            if !bone then continue end
+                if !bone then continue end
 
-            if self:GetVisualLoadAmount() >= i then
-                vm:ManipulateBoneScale(bone, vec1)
-            else
-                vm:ManipulateBoneScale(bone, vec0)
+                if self:GetVisualLoadAmount() >= i then
+                    vm:ManipulateBoneScale(bone, vec1)
+                else
+                    vm:ManipulateBoneScale(bone, vec0)
+                end
             end
         end
     end
@@ -344,12 +351,25 @@ end
 SWEP.LastTriggerTime = 0
 SWEP.LastTriggerDuration = 0
 function SWEP:GetTriggerDelta()
+    if self.LastTriggerTime == -1 then return 0 end
     return math.Clamp((CurTime() - self.LastTriggerTime) / self.LastTriggerDuration, 0, 1)
 end
 
 function SWEP:DoTriggerDelay()
     local shouldHold = self:GetOwner():KeyDown(IN_ATTACK) and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT)
-    if self.LastTriggerTime > 0 and !shouldHold then
+
+    if self.LastTriggerTime == -1 then
+        if !shouldHold then
+            self.LastTriggerTime = 0 -- Good to fire again
+            self.LastTriggerDuration = 0
+        end
+        return
+    end
+
+    if self:GetBurstCount() > 0 and self:GetCurrentFiremode().Mode == 1 then
+        self.LastTriggerTime = -1 -- Cannot fire again until trigger released
+        self.LastTriggerDuration = 0
+    elseif self.LastTriggerTime > 0 and !shouldHold then
         -- Attack key is released. Stop the animation and clear progress
         local anim = self:SelectAnimation("untrigger")
         if anim then
@@ -361,11 +381,11 @@ function SWEP:DoTriggerDelay()
         self.LastTriggerTime = 0
         self.LastTriggerDuration = 0
         return
-    elseif self.LastTriggerTime <= 0 and shouldHold then
+    elseif self:GetNextPrimaryFire() < CurTime() and self.LastTriggerTime == 0 and shouldHold then
         -- We haven't played the animation yet. Pull it!
         local anim = self:SelectAnimation("trigger")
         self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
         self.LastTriggerTime = CurTime()
-        self.LastTriggerDuration = self:GetAnimKeyTime(anim, true)
+        self.LastTriggerDuration = self:GetAnimKeyTime(anim, true) * self:GetBuff_Mult("Mult_TriggerDelayTime")
     end
 end

@@ -60,7 +60,7 @@ local function getsimpleamt(stat)
     end
 end
 
-function ArcCW:GetProsCons(att)
+function ArcCW:GetProsCons(att, toggle)
     local pros = {}
     local cons = {}
 
@@ -76,6 +76,55 @@ function ArcCW:GetProsCons(att)
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
     local dmgboth = false
 
+    -- Process togglable stats
+    if att.ToggleStats then
+        local toggletbl = att.ToggleStats[toggle or 1]
+        if toggletbl and !toggletbl.NoAutoStats then
+
+            if toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage then
+                dmgboth = true
+            end
+
+            for i, k in pairs(toggletbl) do
+                if !ArcCW.AutoStats[i] then continue end
+                if i == "Mult_DamageMin" and dmgboth then continue end
+                local stat = ArcCW.AutoStats[i]
+
+                local prefix = "[" .. (toggletbl.AutoStatName or toggletbl.PrintName or i) .. "] "
+                local txt = ""
+                local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
+
+                if i == "Mult_Damage" and dmgboth then
+                    str = ArcCW.GetTranslation("autostat.damageboth") or stat[1]
+                end
+
+                local tcon, tpro = st and cons or pros, st and pros or cons
+
+                if stat[2] == "mult" and k != 1 then
+                    local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
+
+                    txt = simple and getsimpleamt(k) or sign .. tostr(math.Round(percent * 100, 2)) .. "% "
+
+                    tbl_ins(k > 1 and tcon or tpro, prefix .. txt .. str)
+                elseif stat[2] == "add" and k != 0 then
+                    local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
+
+                    txt = simple and "+ " or sign .. tostr(state) .. " "
+
+                    tbl_ins(k > 1 and tpro or tcon, prefix .. txt .. str)
+                elseif stat[2] == "override" and k == true then
+                    tbl_ins(st and cons or pros, 1, prefix .. str)
+                end
+            end
+        end
+    end
+
+    dmgboth = false
+
+    if att.Mult_DamageMin and att.Mult_Damage and att.Mult_DamageMin == att.Mult_Damage then
+        dmgboth = true
+    end
+
     for i, stat in pairs(ArcCW.AutoStats) do
         if !att[i] then continue end
         if i == "Mult_DamageMin" and dmgboth then continue end
@@ -83,10 +132,7 @@ function ArcCW:GetProsCons(att)
         local k, txt  = att[i], ""
         local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
 
-        -- Special case: If both damage and min damage are the same value, we combine them
-        -- This assumes Mult_Damage will always come before Mult_DamageMin so pls no break
-        if i == "Mult_Damage" and att["Mult_DamageMin"] and k == att["Mult_DamageMin"] then
-            dmgboth = true
+        if i == "Mult_Damage" and dmgboth then
             str = ArcCW.GetTranslation("autostat.damageboth") or stat[1]
         end
 

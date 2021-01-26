@@ -7,18 +7,16 @@ function SWEP:GetReloadTime()
 
     if !self.Animations[anim] then return {1.337, .69} end
 
-    local full  = 0
-    local magin = 0
-
-    full = self:GetAnimKeyTime(anim) * mult
-
-    if self.Animations[anim].MinProgress then
-        magin = self.Animations[anim].MinProgress * mult
-    else
-        magin = full
-    end
+    local full = self:GetAnimKeyTime(anim) * mult
+    local magin = self:GetAnimKeyTime(anim, true) * mult
 
     return { full, magin }
+end
+
+function SWEP:SetClipInfo(load)
+    load = self:GetBuff_Hook("Hook_SetClipInfo", load) or load
+    self.LastLoadClip1 = load - self:Clip1()
+    self.LastClip1 = load
 end
 
 function SWEP:Reload()
@@ -45,8 +43,8 @@ function SWEP:Reload()
     if self:HasBottomlessClip() then return end
 
     -- with the lite 3D HUD, you may want to check your ammo without reloading
-    local Lite3DHUD = self.Owner:GetInfo("arccw_hud_3dfun") == "1" and self.Owner:GetInfo("arccw_hud_3dfun_lite") == "1"
-    if self.Owner:KeyDown(IN_WALK) and Lite3DHUD then
+    local Lite3DHUD = self:GetOwner():GetInfo("arccw_hud_3dfun") == "1"
+    if self:GetOwner():KeyDown(IN_WALK) and Lite3DHUD then
         return
     end
 
@@ -70,27 +68,13 @@ function SWEP:Reload()
     local load = math.Clamp(clip + chamber, 0, reserve)
 
     if load <= self:Clip1() then return end
-    self.LastLoadClip1 = load - self:Clip1()
 
     self:SetReqEnd(false)
     self:SetBurstCount(0)
 
-    local shouldshotgunreload = self.ShotgunReload
-
-    if self:GetBuff_Override("Override_ShotgunReload") then
-        shouldshotgunreload = true
-    end
-
-    if self:GetBuff_Override("Override_ShotgunReload") == false then
-        shouldshotgunreload = false
-    end
-
-    if self.HybridReload or self:GetBuff_Override("Override_HybridReload") then
-        if self:Clip1() == 0 then
-            shouldshotgunreload = false
-        else
-            shouldshotgunreload = true
-        end
+    local shouldshotgunreload = self:GetBuff_Override("Override_ShotgunReload", self.ShotgunReload)
+    if self:GetBuff_Override("Override_HybridReload", self.HybridReload) then
+        shouldshotgunreload = self:Clip1() != 0
     end
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
@@ -128,28 +112,26 @@ function SWEP:Reload()
         -- Yes, this will cause an issue in mag-fed manual action weapons where
         -- despite an empty casing being in the chamber, you can load +1 and 
         -- cycle an empty shell afterwards.
-        -- No, I am npt in the correct mental state to fix this. - 8Z
+        -- No, I am not in the correct mental state to fix this. - 8Z
         if self:Clip1() == 0 then
             self:SetNeedCycle(false)
         end
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
-        self:PlayAnimation(anim, mult, true, 0, true, nil, true)
+        self:PlayAnimation(anim, mult, true, 0, false, nil, true)
 
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
         local reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
 
         self:SetNextPrimaryFire(CurTime() + reloadtime2)
         self:SetReloading(CurTime() + reloadtime2)
-        
-        self:SetMagUpIn(CurTime() + reloadtime)
 
-        if self.RevolverReload then
-            self.LastClip1 = load
-        end
+        self:SetMagUpIn(CurTime() + reloadtime)
     end
 
+    self:SetClipInfo(load)
+    self:CallOnClient("SetClipInfo", tostring(load))
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -224,7 +206,6 @@ function SWEP:RestoreAmmo(count)
 end
 
 -- local lastframeclip1 = 0
-local lastframeloadclip1 = 0
 
 SWEP.LastClipOutTime = 0
 
@@ -300,16 +281,6 @@ function SWEP:GetVisualClip()
 end
 
 function SWEP:GetVisualLoadAmount()
-    if self:Clip1() > lastframeloadclip1 then
-        local clip = self:GetCapacity()
-        local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
-        self.LastLoadClip1 = math.Clamp(clip + chamber, 0, self:Ammo1() + self:Clip1()) - lastframeloadclip1
-        if self:GetNeedCycle() == false and lastframeloadclip1 != 0 then
-            self.LastLoadClip1 = self.LastLoadClip1 + 1
-        end
-    end
-    lastframeloadclip1 = self:Clip1()
-
     return self.LastLoadClip1 or self:Clip1()
 end
 
@@ -374,9 +345,14 @@ function SWEP:ReloadInsert(empty)
             insertanim = ret.anim
         end
 
+        local load = self:GetCapacity() + math.min(self:Clip1(), self:GetChamberSize())
+        if load - self:Clip1() > self:Ammo1() then load = self:Clip1() + self:Ammo1() end
+        self:SetClipInfo(load)
+        self:CallOnClient("SetClipInfo", tostring(load))
+
         self:RestoreAmmo(insertcount)
 
-        local time = self.Animations[insertanim].MinProgress or self:GetAnimKeyTime(insertanim)
+        local time = self:GetAnimKeyTime(insertanim, true)
 
         self:SetReloading(CurTime() + time)
 
@@ -406,9 +382,7 @@ function SWEP:GetCapacity()
         clip = self.ExtendedClipSize
     end
 
-    clip = self:GetBuff_Override("Override_ClipSize") or clip
-
-    clip = clip + self:GetBuff_Add("Add_ClipSize")
+    clip = self:GetBuff("ClipSize", true) or clip
 
     local ret = self:GetBuff_Hook("Hook_GetCapacity", clip)
 
@@ -422,5 +396,5 @@ function SWEP:GetCapacity()
 end
 
 function SWEP:GetChamberSize()
-    return (self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize) + self:GetBuff_Add("Add_ChamberSize")
+    return self:GetBuff("ChamberSize") --(self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize) + self:GetBuff_Add("Add_ChamberSize")
 end

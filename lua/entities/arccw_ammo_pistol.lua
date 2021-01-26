@@ -11,7 +11,7 @@ ENT.Model                     = "models/items/arccw/pistol_ammo.mdl"
 ENT.AmmoType = "pistol"
 ENT.AmmoCount = 40
 if engine.ActiveGamemode() == "terrortown" then
-    ENT.AmmoCount = 20
+    ENT.AmmoCount = 30
 end
 
 ENT.DetonationDamage = 10

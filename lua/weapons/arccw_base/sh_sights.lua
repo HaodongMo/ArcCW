@@ -5,6 +5,9 @@ function SWEP:GetSightTime()
     return self:GetBuff("SightTime")
 end
 
+SWEP.LastEnterSprintTime = 0
+SWEP.LastExitSprintTime = 0
+
 function SWEP:EnterSprint()
     if engine.ActiveGamemode() == "terrortown" and !(TTT2 and self:GetOwner().isSprinting) then return end
     if self:GetState() == ArcCW.STATE_SPRINT then return end
@@ -24,17 +27,22 @@ function SWEP:EnterSprint()
         self:SetNextPrimaryFire(CurTime())
     end
 
+    self.LastEnterSprintTime = CurTime()
+
     local anim = self:SelectAnimation("enter_sprint")
     if anim and !s then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
-    elseif !anim and !s then
-        self:SetReloading(CurTime() + self:GetSightTime() * self:GetBuff_Mult("Mult_SightTime"))
+    --elseif !anim and !s then -- Not needed because ExitSprint handles it properly
+        --self:SetReloading(CurTime() + self:GetSprintTime())
     end
 end
 
 function SWEP:ExitSprint()
     if self:GetState() == ArcCW.STATE_IDLE then return end
+
+    local delta = self:GetSprintDelta()
+
     self:SetState(ArcCW.STATE_IDLE)
     self.Sighted = false
     self.Sprinted = false
@@ -54,12 +62,14 @@ function SWEP:ExitSprint()
         self:EnterSights()
     end
 
+    self.LastExitSprintTime = CurTime() - self:GetSprintTime() * delta
+
     local anim = self:SelectAnimation("exit_sprint")
     if anim and !s then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     elseif !anim and !s then
-        self:SetReloading(CurTime() + self:GetSightTime() * self:GetBuff_Mult("Mult_SightTime"))
+        self:SetReloading(CurTime() + self:GetSprintTime() * delta)
     end
 end
 
@@ -119,6 +129,38 @@ function SWEP:ExitSights()
     end
 end
 
+function SWEP:GetSprintTime()
+    return self:GetSightTime()
+end
+
+function SWEP:GetSprintDelta()
+    local lst = self.LastExitSprintTime
+    local st = self:GetSprintTime()
+    local minus = 1
+
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        return 0 -- This ensures sights will always draw
+    end
+
+    if self:GetState() == ArcCW.STATE_SPRINT then
+        lst = self.LastEnterSprintTime
+        minus = 0
+        if CurTime() - lst >= st then
+            return 1
+        end
+    else
+        if CurTime() - lst >= st then
+            return 0
+        end
+    end
+
+    local delta = minus - math.Clamp((CurTime() - lst) / st, 0, 1)
+
+    delta = math.abs(delta)
+
+    return delta
+end
+
 function SWEP:GetSightDelta()
     local lst = self.LastExitSightTime
     local st = self:GetSightTime()
@@ -169,11 +211,12 @@ function SWEP:SetupActiveSights()
 
         local atttbl = ArcCW.AttachmentTable[k.Installed]
 
-        if !atttbl.AdditionalSights then continue end
+        local addsights = self:GetBuff_Stat("AdditionalSights", i)
+        if !addsights then continue end
 
         if !k.KeepBaseIrons and !atttbl.KeepBaseIrons then kbi = false end
 
-        for _, s in pairs(atttbl.AdditionalSights) do
+        for _, s in pairs(addsights) do
             local stab = table.Copy(s)
 
             stab.Slot = i
@@ -247,6 +290,11 @@ function SWEP:SetupActiveSights()
 
                     if ((ele.AttPosMods or {})[i] or {}).slide then
                         slidemod = ele.AttPosMods[i].slide
+                    end
+                    
+                    -- Refer to sh_model Line 837
+                    if ((ele.AttPosMods or {})[k.Slot] or {}).SlideAmount then
+                        slidemod = ele.AttPosMods[i].SlideAmount
                     end
                 end
 

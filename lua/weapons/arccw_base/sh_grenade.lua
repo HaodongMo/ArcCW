@@ -49,8 +49,10 @@ function SWEP:Throw()
 
         if !rocket then return end
 
-        if self.FuseTime then
-            rocket.FuseTime = self.FuseTime - heldtime
+        local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+
+        if ft then
+            rocket.FuseTime = ft - heldtime
         end
 
         local phys = rocket:GetPhysicsObject()

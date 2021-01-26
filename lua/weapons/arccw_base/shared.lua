@@ -17,6 +17,7 @@ SWEP.UseHands = true
 
 SWEP.ViewModel = "" -- I mean, you probably have to edit these too
 SWEP.WorldModel = ""
+SWEP.MirrorWorldModel = nil -- must have the same bones as the viewmodel. Use with MirrorWMVM
 
 --[[
 SWEP.WorldModelOffset = {
@@ -44,6 +45,7 @@ SWEP.WorldModelOffset = nil
 SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = 0 -- damage will vary randomly each shot by this fraction
+SWEP.RangeMin = 0 -- how far bullets will retain their maximum damage for
 SWEP.Range = 200 -- in METRES
 SWEP.Penetration = 4
 SWEP.DamageType = DMG_BULLET
@@ -53,6 +55,7 @@ SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity
 SWEP.PhysBulletMuzzleVelocity = nil -- override phys bullet muzzle velocity
 SWEP.PhysBulletDrag = 1
 SWEP.PhysBulletGravity = 1
+SWEP.PhysBulletDontInheritPlayerVelocity = true
 
 SWEP.AlwaysPhysBullet = false
 SWEP.NeverPhysBullet = false
@@ -78,9 +81,15 @@ SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
 SWEP.ExtendedClipSize = 50
 SWEP.ReducedClipSize = 10
 
+-- But if you insist...
+SWEP.ForceDefaultClip = nil
+SWEP.ForceDefaultAmmo = nil
+
 SWEP.AmmoPerShot = 1
 SWEP.InfiniteAmmo = false -- weapon can reload for free
 SWEP.BottomlessClip = false -- weapon never has to reload
+
+SWEP.DoNotEquipmentAmmo = false -- do not automatically give this weapon unique ammo when arccw_equipmentammo is used
 
 SWEP.ShotgunReload = false -- reloads like shotgun instead of magazines
 SWEP.HybridReload = false -- reload normally when empty, reload like shotgun when part full
@@ -148,7 +157,8 @@ SWEP.NotForNPCS = false
 SWEP.NPCWeaponType = nil -- string or table, the NPC weapons for this gun to replace
 -- if nil, this will be based on holdtype
 SWEP.NPCWeight = 100 -- relative likeliness for an NPC to have this weapon
-SWEP.TTTWeaponType = nil -- string or table, like NPCWeaponType but specifically for TTT weapons (takes precdence over NPCWeaponType, uses NPCWeight)
+SWEP.TTTWeaponType = nil -- string or table, like NPCWeaponType but specifically for TTT weapons (takes precdence over NPCWeaponType)
+SWEP.TTTWeight = 100 -- like NPCWeight but for TTT gamemode
 
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
@@ -172,10 +182,12 @@ SWEP.ShootPitchVariation = 0.05
 
 SWEP.FirstShootSound = nil
 SWEP.ShootSound = ""
+SWEP.ShootSoundLooping = nil
 SWEP.FirstShootSoundSilenced = nil
 SWEP.ShootDrySound = nil -- Add an attachment hook for Hook_GetShootDrySound please!
 SWEP.DistantShootSound = nil
 SWEP.ShootSoundSilenced = "weapons/arccw/m4a1/m4a1-1.wav"
+SWEP.ShootSoundSilencedLooping = nil
 SWEP.FiremodeSound = "weapons/arccw/firemode.wav"
 SWEP.MeleeSwingSound = "weapons/arccw/m249/m249_draw.wav"
 SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
@@ -202,7 +214,7 @@ SWEP.ShellPhysScale = 1
 SWEP.ShellPitch = 100
 SWEP.ShellSounds = ArcCW.ShellSoundsTable
 SWEP.ShellRotate = 0
-SWEP.ShellTime = 1 -- add shell life time
+SWEP.ShellTime = 6 -- add shell life time
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
@@ -254,6 +266,7 @@ SWEP.Lasers = nil
 SWEP.ProceduralRegularFire = false
 SWEP.ProceduralIronFire = false
 SWEP.SightTime = 0.33
+SWEP.SprintTime = 0
 
 SWEP.Jamming = false
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
@@ -585,13 +598,13 @@ SWEP.Animations = {
 -- don't change any of this stuff
 
 SWEP.Primary.Automatic = true
-SWEP.Primary.DefaultClip = 1
+SWEP.Primary.DefaultClip = -1
 SWEP.Secondary.ClipSize = -1
 SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawCrosshair = true
-SWEP.m_WeaponDeploySpeed = 8008135
+SWEP.m_WeaponDeploySpeed = 90 -- 8008135 boobies is funny but it'll bitch in console :(
         -- We don't do that here
 
 SWEP.ArcCW = true
@@ -699,9 +712,6 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
 
-    self:SetNthReload(0)
-    self:SetNthShot(0)
-
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
     self:NetworkVar("Bool", 2, "InBipod")
@@ -714,6 +724,19 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 1, "WeaponOpDelay")
     self:NetworkVar("Float", 2, "ReloadingREAL")
     self:NetworkVar("Float", 3, "MagUpIn")
+    
+end
+
+function SWEP:OnRestore()
+    self:SetNthReload(0)
+    self:SetNthShot(0)
+    self:SetBurstCountUM(0)
+    self:SetReloadingREAL(0)
+    self:SetWeaponOpDelay(0)
+    self:SetMagUpIn(0)
+
+    self:KillTimers()
+    self:Initialize()
 end
 
 

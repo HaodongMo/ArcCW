@@ -40,8 +40,8 @@ function SWEP:ChangeFiremode(pred)
     if !fmt[fmi] then fmi = 1 end
 
     self:SetFireMode(fmi)
-
-    self:RecalcAllBuffs()
+    -- Delay recalc by a tick so client can catch up
+    timer.Simple(0, function() self:RecalcAllBuffs() end)
 
     if SERVER then
         if pred then
@@ -70,7 +70,7 @@ function SWEP:ChangeFiremode(pred)
     elseif self.Animations.changefiremode then
         self:PlayAnimation("changefiremode")
     end
-    if self:GetCurrentFiremode().Mode == 0 then
+    if self:GetCurrentFiremode().Mode == 0 or self:GetBuff_Hook("Hook_ShouldNotSight") then
         self:ExitSights()
     end
 end

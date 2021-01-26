@@ -28,30 +28,37 @@ function SWEP:Deploy()
     end]]
 
     -- Don't play anim if in vehicle. This can be caused by HL2 level changes
+
     if !self:GetOwner():InVehicle() then
-            local prd = false
+        local prd = false
 
-            local r_anim = self:SelectAnimation("ready")
-            local d_anim = self:SelectAnimation("draw")
+        local r_anim = self:SelectAnimation("ready")
+        local d_anim = self:SelectAnimation("draw")
 
-            if self.Animations[r_anim] and self.UnReady then
-                self:PlayAnimation(r_anim, 1, true, 0, true)
-                self.UnReady = false
+        if self.Animations[r_anim] and self.UnReady then
+            self:PlayAnimation(r_anim, 1, true, 0, true)
 
-                self:SetReloading(CurTime() + self:GetAnimKeyTime(r_anim))
+            self:SetReloading(CurTime() + self:GetAnimKeyTime(r_anim))
 
-                prd = self.Animations[r_anim].ProcDraw
-            else
-                self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
+            prd = self.Animations[r_anim].ProcDraw
+        else
+            self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
 
-                self:SetReloading(CurTime() + (self:GetAnimKeyTime(d_anim) * self:GetBuff_Mult("Mult_DrawTime")))
+            self:SetReloading(CurTime() + (self:GetAnimKeyTime(d_anim) * self:GetBuff_Mult("Mult_DrawTime")))
 
-                prd = self.Animations[d_anim].ProcDraw
-            end
+            prd = self.Animations[d_anim].ProcDraw
+        end
 
-            if prd then
-                self:ProceduralDraw()
-            end
+        if prd then
+            self:ProceduralDraw()
+        end
+    end
+
+    if self.UnReady then
+        if SERVER then
+            self:InitialDefaultClip()
+        end
+        self.UnReady = false
     end
 
     if (self.AutoReload or self:GetBuff_Override("Override_AutoReload")) and (self:GetBuff_Override("Override_AutoReload") != false) then
@@ -85,6 +92,18 @@ function SWEP:ResetCheckpoints()
     end
 end
 
+function SWEP:InitialDefaultClip()
+    if !self.Primary.Ammo then return end
+
+    if self:GetOwner() and self:GetOwner():IsPlayer() then
+        if self.ForceDefaultAmmo then
+            self:GetOwner():GiveAmmo(self.ForceDefaultAmmo, self.Primary.Ammo)
+        elseif engine.ActiveGamemode() != "terrortown" then
+            self:GetOwner():GiveAmmo(self:GetCapacity() * GetConVar("arccw_mult_defaultammo"):GetInt(), self.Primary.Ammo)
+        end
+    end
+end
+
 function SWEP:Initialize()
     if (!IsValid(self:GetOwner()) or self:GetOwner():IsNPC()) and self:IsValid() and self.NPC_Initialize and SERVER then
         self:NPC_Initialize()
@@ -93,15 +112,6 @@ function SWEP:Initialize()
     if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
         self:CallOnClient("Initialize")
     end
-
-    -- Remove me shall I interfere
-    --[[if CLIENT then
-        if ArcCW.LastWeapon != self then
-            self:LoadPreset("autosave")
-        end
-
-        ArcCW.LastWeapon = self
-    end]]
 
     if CLIENT then
         local class = self:GetClass()
@@ -153,10 +163,6 @@ function SWEP:Initialize()
         end
     end
 
-    --if GetConVar("arccw_override_deploychambered"):GetBool() and self.ChamberSize > 0 then 
-    --    self.UnReady = false
-    --end
-
     if GetConVar("arccw_equipmentsingleton"):GetBool() and self.Throwing then
         self.Singleton = true
         self.Primary.ClipSize = -1
@@ -170,15 +176,6 @@ function SWEP:Initialize()
     self:SetNWBool("laserenabled", true) -- J
 
     self.Attachments["BaseClass"] = nil
-
-    if GetConVar("arccw_mult_defaultclip"):GetInt() < 0 then
-        self.Primary.DefaultClip = self.Primary.ClipSize * 3
-        if self.Primary.ClipSize >= 100 then
-            self.Primary.DefaultClip = self.Primary.ClipSize * 2
-        end
-    else
-        self.Primary.DefaultClip = self.Primary.ClipSize * GetConVar("arccw_mult_defaultclip"):GetInt()
-    end
 
     self:SetHoldType(self.HoldtypeActive)
 
@@ -236,7 +233,7 @@ function SWEP:Holster(wep)
     local anim = self:SelectAnimation("holster")
     if anim then
         self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-        time = self:GetAnimKeyTime(anim)
+        time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
     else
         if CLIENT then
             self:ProceduralHolster()

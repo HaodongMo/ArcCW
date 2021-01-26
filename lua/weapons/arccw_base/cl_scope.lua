@@ -1,9 +1,15 @@
 function SWEP:AdjustMouseSensitivity()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
 
-    local irons = self:GetActiveSights()
+    local threshold = GetConVar("arccw_adjustsensthreshold"):GetFloat()
 
-    return 1 / ((irons.Magnification or 1) + (irons.ScopeMagnification or 0))
+    local irons = self:GetActiveSights() or {}
+
+    local tmag = ((irons.Magnification or 1) + (irons.ScopeMagnification or 0))
+
+    if tmag < threshold then return end
+
+    return 1 / tmag
 end
 
 function SWEP:Scroll(var)
@@ -159,7 +165,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
 
     local angpos = vm:GetAttachment(self.ProceduralViewBobAttachment or self.MuzzleEffectAttachment or 1)
 
-    if angpos then
+    if angpos and self:GetReloading() then
         mzang_fixed = vm:WorldToLocalAngles(angpos.Ang)
         mzang_fixed:Normalize()
     else return
@@ -167,7 +173,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
 
     self.ProceduralViewOffset:Normalize()
 
-    if mzang_fixed_last and self:GetReloading() then
+    if mzang_fixed_last then
         local delta = mzang_fixed - mzang_fixed_last
         delta:Normalize()
         mzang_velocity = mzang_velocity + delta * 2

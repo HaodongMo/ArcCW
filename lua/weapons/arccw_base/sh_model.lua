@@ -133,6 +133,7 @@ function SWEP:SetupModel(wm)
     local og = weapons.Get(self:GetClass())
 
     self.PrintName = self.OldPrintName or og.PrintName
+    local prefix, suffix = "", ""
 
     self:GetActiveElements(true)
 
@@ -145,7 +146,7 @@ function SWEP:SetupModel(wm)
             if wep and !wep.ArcCW then v.RenderOverride = nil return end
             self:RefreshBGs()
 
-            for i, k in pairs(self:GetBuff_Override("Override_CaseBGs") or self.CaseBGs or {}) do
+            for i, k in pairs(self:GetBuff_Override("Override_CaseBGs", self.CaseBGs) or {}) do
                 if !isnumber(i) then continue end
                 local bone = vm:LookupBone(k)
 
@@ -158,7 +159,7 @@ function SWEP:SetupModel(wm)
                 end
             end
 
-            for i, k in pairs(self:GetBuff_Override("Override_BulletBGs") or self.BulletBGs or {}) do
+            for i, k in pairs(self:GetBuff_Override("Override_BulletBGs", self.BulletBGs) or {}) do
                 if !isnumber(i) then continue end
                 local bone = vm:LookupBone(k)
 
@@ -171,7 +172,7 @@ function SWEP:SetupModel(wm)
                 end
             end
 
-            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBGs") or self.StripperClipBGs or {}) do
+            for i, k in pairs(self:GetBuff_Override("Override_StripperClipBGs", self.StripperClipBGs) or {}) do
                 if !isnumber(i) then continue end
                 local bone = vm:LookupBone(k)
 
@@ -250,7 +251,7 @@ function SWEP:SetupModel(wm)
     if wm and CLIENT then
         local sm = self.WorldModel
         if self.MirrorVMWM then
-            sm = self.ViewModel
+            sm = self.MirrorWorldModel or self.ViewModel
         end
         local vs = (self.WorldModelOffset or {}).scale or 1
         vscale = Vector(vs, vs, vs)
@@ -315,11 +316,13 @@ function SWEP:SetupModel(wm)
         end
 
         if atttbl.AddPrefix then
-            self.PrintName = atttbl.AddPrefix .. self.PrintName
+            -- self.PrintName = atttbl.AddPrefix .. self.PrintName
+            prefix = atttbl.AddPrefix .. prefix
         end
 
         if atttbl.AddSuffix then
-            self.PrintName = self.PrintName .. atttbl.AddSuffix
+            -- self.PrintName = self.PrintName .. atttbl.AddSuffix
+            suffix = suffix .. atttbl.AddSuffix
         end
 
         if CLIENT and !GetConVar("arccw_att_showothers"):GetBool() and LocalPlayer() != self:GetOwner() then
@@ -392,8 +395,8 @@ function SWEP:SetupModel(wm)
         model:DrawShadow(true)
         model:SetPredictable(false)
         model.Weapon = self
-        model:SetSkin(atttbl.ModelSkin or 0)
-        model:SetBodyGroups(atttbl.ModelBodygroups or "")
+        model:SetSkin(self:GetBuff_Stat("ModelSkin", i) or 0)
+        model:SetBodyGroups(self:GetBuff_Stat("ModelBodygroups", i) or "")
         model:SetupBones()
         ScaleModel(model, scale)
         element.Model = model
@@ -402,7 +405,7 @@ function SWEP:SetupModel(wm)
         element.Bone = repbone or k.Bone
         element.NoDraw = atttbl.NoDraw or false
         element.BoneMerge = k.BoneMerge or false
-        element.Bodygroups = atttbl.ModelBodygroups
+        element.Bodygroups = self:GetBuff_Stat("ModelBodygroups", k)
         element.DrawFunc = atttbl.DrawFunc
         element.Slot = i
         element.ModelOffset = atttbl.ModelOffset or Vector(0, 0, 0)
@@ -564,7 +567,7 @@ function SWEP:SetupModel(wm)
             hspelement.Slot = i
             hspelement.WMBone = k.WMBone
 
-            hspelement.ModelOffset = atttbl.ModelOffset
+            hspelement.ModelOffset = atttbl.HolosightModelOffset or atttbl.ModelOffset
             hspelement.OffsetAng = element.OffsetAng
 
             if !wm then
@@ -645,7 +648,7 @@ function SWEP:SetupModel(wm)
 
     end
 
-    self.PrintName = self:GetBuff_Hook("Hook_NameChange", self.PrintName) or self.PrintName
+    self.PrintName = prefix .. (self:GetBuff_Hook("Hook_NameChange", self.PrintName) or self.PrintName) .. suffix
     self.Trivia_Class = self:GetBuff_Hook("Hook_ClassChange", self.Trivia_Class) or self.Trivia_Class
     self.Trivia_Desc = self:GetBuff_Hook("Hook_DescChange", self.Trivia_Desc) or self.Trivia_Desc
 
@@ -741,13 +744,21 @@ function SWEP:DrawCustomModel(wm,origin,angle)
 
         if k.IsBaseWM then
             if self:GetOwner():IsValid() and !custompos then
+                local wmo = self.WorldModelOffset
+                if !wmo then
+                    wmo = {pos = Vector(0, 0, 0), ang = Angle(0, 0, 0)}
+                end
                 k.Model:SetParent(self:GetOwner())
                 vm = self:GetOwner()
+                k.OffsetAng = wmo.ang
+                k.OffsetPos = wmo.pos
             else
                 k.Model:SetParent(self)
                 vm = self
                 selfmode = true
                 basewm = true
+                k.OffsetAng = Angle(0, 0, 0)
+                k.OffsetPos = Vector(0, 0, 0)
             end
         elseif k.IsBaseVM and !custompos then
             k.Model:SetParent(self:GetOwner():GetViewModel())
@@ -829,6 +840,12 @@ function SWEP:DrawCustomModel(wm,origin,angle)
 
                     if ((ele.AttPosMods or {})[k.Slot] or {}).slide then
                         slidemod = ele.AttPosMods[k.Slot].slide
+                    end
+
+                    -- Why the fuck is it called 'slide'. Call it fucking SlideAmount like it is
+                    -- in the fucking attachment slot you fucking cockfuck shitdick
+                    if ((ele.AttPosMods or {})[k.Slot] or {}).SlideAmount then
+                        slidemod = ele.AttPosMods[k.Slot].SlideAmount
                     end
                 end
 

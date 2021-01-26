@@ -9,7 +9,7 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach)
 
     -- Followed by convar
-    if ret == nil and !GetConVar("arccw_enable_customization"):GetBool() then return false end
+    if ret == nil and GetConVar("arccw_enable_customization"):GetInt() < 0 then return false end
 
     if ret == nil and engine.ActiveGamemode() == "terrortown" then
         local mode = GetConVar("arccw_ttt_customizemode"):GetInt()
@@ -202,7 +202,7 @@ net.Receive("arccw_networkatts", function(len, ply)
         wpn.Attachments[i] = wpn.Attachments[i] or {}
 
         if attid == 0 then
-            wpn.Attachments[i].Installed = false
+            wpn.Attachments[i].Installed = nil
             continue
         end
 
@@ -211,6 +211,10 @@ net.Receive("arccw_networkatts", function(len, ply)
 
         if wpn.Attachments[i].SlideAmount then
             wpn.Attachments[i].SlidePos = net.ReadFloat()
+        end
+
+        if ArcCW.AttachmentTable[att].ToggleStats then
+            wpn.Attachments[i].ToggleNum = net.ReadUInt(8)
         end
     end
 
@@ -294,6 +298,26 @@ net.Receive("arccw_slidepos", function(len, ply)
     wpn.Attachments[slot].SlidePos = pos
 end)
 
+
+net.Receive("arccw_togglenum", function(len, ply)
+    local wpn = ply:GetActiveWeapon()
+
+    local slot = net.ReadUInt(8)
+    local num = net.ReadUInt(8)
+
+    if !wpn.ArcCW then return end
+
+    if !wpn.Attachments[slot] then return end
+
+    wpn.Attachments[slot].ToggleNum = num
+
+    wpn:AdjustAtts()
+    wpn:NetworkWeapon()
+    wpn:SetupModel(false)
+    wpn:SetupModel(true)
+end)
+
+
 net.Receive("arccw_asktoattach", function(len, ply)
     local wpn = ply:GetActiveWeapon()
 
@@ -327,7 +351,7 @@ net.Receive("arccw_asktodrop", function(len, ply)
 
     if GetConVar("arccw_attinv_free"):GetBool() then return end
     if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
-    if !GetConVar("arccw_enable_customization"):GetBool() then return end
+    if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
     if !GetConVar("arccw_enable_dropping"):GetBool() then return end
 
     if !att then return end

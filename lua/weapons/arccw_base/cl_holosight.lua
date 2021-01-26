@@ -71,7 +71,14 @@ local function IsWHOT(ent)
     if !ent:IsValid() then return false end
     if (ent:IsWorld()) then return false end
     if (ent.Health and (ent:Health() <= 0)) then return false end
-    if ((ent:IsPlayer()) or (ent:IsOnFire())) then return true end
+    if ent:IsOnFire() then return true end
+    if ent:IsPlayer() then
+        if ent.ArcticMedShots_ActiveEffects and ent.ArcticMedShots_ActiveEffects["coldblooded"] then
+            return false
+        end
+
+        return true
+    end
     if ent:IsNextBot() then return true end
     if (ent:IsNPC()) then
         if ent.ArcCWCLHealth and ent.ArcCWCLHealth <= 0 then return false end
@@ -614,6 +621,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     pos = pos + (dir * d)
 
+    --pos = pos + Vector(ArcCW.StrafeTilt(self), 0, 0)
+
     -- local corner1, corner2, corner3, corner4
 
     -- corner2 = pos + (ang:Right() * (-0.5 * size)) + (ang:Forward() * (0.5 * size))
@@ -650,7 +659,9 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             -- local sx = -(sw - ScrW()) / 2
             -- local sy = -(sh - ScrH()) / 2
 
-            local cpos = self.Owner:EyePos() + ((EyeAngles() + (self:GetOwner():GetViewPunchAngles() * 0.5)):Forward() * 2048)
+            local cpos = self:GetOwner():EyePos() + ((EyeAngles() + (self:GetOwner():GetViewPunchAngles() * 0.5)):Forward() * 2048)
+
+            cpos:Rotate(Angle(0, -ArcCW.StrafeTilt(self), 0))
 
             local ts = cpos:ToScreen()
 

@@ -18,7 +18,7 @@ ArcCW.SCROLL_ZOOM = 1
 
 ArcCW.FLASH_ATT_CONSTANT = 0
 ArcCW.FLASH_ATT_LINEAR = 1
-ArcCW.FLASH_ATT_QUADRATIC = 0
+ArcCW.FLASH_ATT_QUADRATIC = 2
 
 ArcCW.VolumetricLightModel = "models/effects/vol_light256x384.mdl"
 ArcCW.VolumetricLightX = 256

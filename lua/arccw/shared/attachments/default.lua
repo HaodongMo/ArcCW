@@ -21,6 +21,46 @@ att.HideIfUnavailable = false -- if the attachment is not owned, do not show up 
 att.AddPrefix = ""
 att.AddSuffix = ""
 
+att.ToggleStats = {
+    -- {
+    --     PrintName = "Red",
+    --     AutoStatName = "On",
+    --     Laser = true,
+    --     LaserColor = Color(255, 0, 0),
+    --     Mult_HipDispersion = 0.75,
+    --     AdditionalSights = {
+    --         {
+    --             Pos = Vector(-2, 10, -4), -- relative to where att.Model is placed
+    --             Ang = Angle(0, 0, -45),
+    --             GlobalPos = false,
+    --             GlobalAng = true,
+    --             Magnification = 1
+    --         }
+    --     },
+    -- },
+    -- {
+    --     PrintName = "Blue",
+    --     NoAutoStats = true,
+    --     Laser = true,
+    --     LaserColor = Color(0, 0, 255),
+    --     Mult_HipDispersion = 0.75,
+    --     AdditionalSights = {
+    --         {
+    --             Pos = Vector(-2, 10, -4), -- relative to where att.Model is placed
+    --             Ang = Angle(0, 0, -45),
+    --             GlobalPos = false,
+    --             GlobalAng = true,
+    --             Magnification = 1
+    --         }
+    --     },
+    -- },
+    -- {
+    --     PrintName = "Off",
+    --     Laser = false,
+    --     Mult_HipDispersion = 1,
+    -- }
+}
+
 att.KeepBaseIrons = false
 
 att.GivesFlags = {}
@@ -166,6 +206,8 @@ att.MagReducer = false
 att.OverrideClipSize = nil
 att.Add_ClipSize = 0
 
+att.Override_FuseTime = nil
+
 att.Laser = false
 att.LaserStrength = 1
 att.LaserBone = "laser"
@@ -256,6 +298,9 @@ att.Hook_PostFireBullets = function(wep) end
 
 -- return true to prevent fire
 att.Hook_ShouldNotFire = function(wep) end
+
+-- return true to prevent fire, bashing, anything involving the fire button
+att.Hook_ShouldNotFireFirst = function(wep) end
 
 -- return true to prevent ads
 att.Hook_ShouldNotSight = function(wep) end
@@ -353,7 +398,8 @@ att.Hook_AddShootSound = function(wep, data) end
 att.Hook_ModifyRPM = function(wep, delay) end
 
 -- return a table containing Recoil, RecoilSide, VisualRecoilMult to multiply them
-att.Hook_ModifyRecoil = function(wep) end
+-- Alternatively, edit the values in rec without returning, which supports multiple hooks changing the value
+att.Hook_ModifyRecoil = function(wep, rec) end
 
 -- run in Think()
 att.Hook_Think = function(wep) end

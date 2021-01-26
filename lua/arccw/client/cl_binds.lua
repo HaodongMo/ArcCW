@@ -9,6 +9,8 @@ ArcCW.KEY_TOGGLEINV_ALT   = "arccw_toggle_inv"
 ArcCW.KEY_SWITCHSCOPE     = "+use"
 ArcCW.KEY_SWITCHSCOPE_ALT = "arccw_switch_scope"
 ArcCW.KEY_TOGGLEUBGL      = "arccw_toggle_ubgl"
+ArcCW.KEY_TOGGLEATT       = "arccw_toggle_att"
+ArcCW.KEY_MELEE           = "arccw_melee"
 
 ArcCW.BindToEffect = {
     [ArcCW.KEY_FIREMODE]    = "firemode",
@@ -24,7 +26,9 @@ ArcCW.BindToEffect_Unique = {
     [ArcCW.KEY_FIREMODE_ALT]    = "firemode",
     [ArcCW.KEY_ZOOMIN_ALT]      = "zoomin",
     [ArcCW.KEY_ZOOMOUT_ALT]     = "zoomout",
-    [ArcCW.KEY_TOGGLEINV_ALT]   = "inv"
+    [ArcCW.KEY_TOGGLEINV_ALT]   = "inv",
+    [ArcCW.KEY_TOGGLEATT]       = "toggleatt",
+    [ArcCW.KEY_MELEE]           = "melee",
 }
 
 local lastpressZ = 0
@@ -38,8 +42,11 @@ end
 
 local function ArcCW_TranslateBindToEffect(bind)
     local alt = GetConVar("arccw_altbindsonly"):GetBool()
-
-    return alt and ArcCW.BindToEffect_Unique[bind] or ArcCW.BindToEffect[bind] or bind
+    if alt then
+        return ArcCW.BindToEffect_Unique[bind], true
+    else
+        return ArcCW.BindToEffect_Unique[bind] or ArcCW.BindToEffect[bind] or bind, ArcCW.BindToEffect_Unique[bind] != nil
+    end
 end
 
 local function SendNet(string, bool)
@@ -60,6 +67,23 @@ local function DoUbgl(wep)
     end
 end
 
+local debounce = 0
+local function ToggleAtts(wep)
+    if debounce > CurTime() then return end -- ugly hack for double trigger
+    debounce = CurTime() + 0.1
+    local used = false
+    for k, v in pairs(wep.Attachments) do
+        local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
+        if atttbl and atttbl.ToggleStats then
+            used = true
+            wep:ToggleSlot(k, nil, true)
+        end
+    end
+    if used then
+        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
+    end
+end
+
 local function ArcCW_PlayerBindPress(ply, bind, pressed)
     if !(ply:IsValid() and pressed) then return end
 
@@ -69,10 +93,11 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
 
     local block = false
 
-    bind = ArcCW_TranslateBindToEffect(bind)
+    local alt
+    bind, alt = ArcCW_TranslateBindToEffect(bind)
 
-    if bind == "firemode" and !GetConVar("arccw_altfcgkey"):GetBool() then
-        if wep:GetBuff_Override("UBGL") and !GetConVar("arccw_altubglkey"):GetBool() then
+    if bind == "firemode" and (alt or !GetConVar("arccw_altfcgkey"):GetBool()) then
+        if wep:GetBuff_Override("UBGL") and !alt and !GetConVar("arccw_altubglkey"):GetBool() then
             if lastpressZ >= CurTime() - 0.25 then
                 DoUbgl(wep)
 
@@ -101,7 +126,8 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
         end
 
         block = true
-    elseif bind == "inv" and !ply:KeyDown(IN_USE) then
+    elseif bind == "inv" and !ply:KeyDown(IN_USE) and GetConVar("arccw_enable_customization"):GetInt() >= 0 then
+
         local state = wep:GetState() != ArcCW.STATE_CUSTOMIZE
 
         SendNet("arccw_togglecustomize", state)
@@ -111,6 +137,8 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
         block = true
     elseif bind == "ubgl" then
         DoUbgl(wep)
+    elseif bind == "toggleatt" then
+        ToggleAtts(wep)
     end
 
     if wep:GetState() == ArcCW.STATE_SIGHTS then
@@ -132,10 +160,19 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
         end
     end
 
+    if bind == "melee" and wep:GetState() != ArcCW.STATE_SIGHTS then
+        wep:Bash()
+    end
+
     if block then return true end
 end
 
 hook.Add("PlayerBindPress", "ArcCW_PlayerBindPress", ArcCW_PlayerBindPress)
+
+-- Actually register the damned things so they can be bound
+for k, v in pairs(ArcCW.BindToEffect_Unique) do
+    concommand.Add(k, function(ply) ArcCW_PlayerBindPress(ply, k, true) end, nil, v, 0)
+end
 
 -- ArcCW.CaptureKeys = {
 --     KEY_G

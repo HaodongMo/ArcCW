@@ -100,7 +100,7 @@ L["stat.recoil"] = "Recoil"
 L["stat.recoil.tooltip"] = "The amount of kick produced each shot."
 L["stat.recoilside"] = "Side Recoil"
 L["stat.recoilside.tooltip"] = "The amount of horizontal kick produced each shot."
-L["stat.sighttime"] = "Handling"
+L["stat.sighttime"] = "Handling Time"
 L["stat.sighttime.tooltip"] = "How long does it take to transition from or to sprinting and sights with this weapon."
 L["stat.speedmult"] = "Move Speed"
 L["stat.speedmult.tooltip"] = "The speed at which you move with the gun, in percentage of original speed."
@@ -247,6 +247,13 @@ L["label.blacklist_blacklisted"] = "BLACKLISTED"
 L["label.blacklist_all"] = "ALL"
 L["label.blacklist_name"] = "NAME"
 L["label.blacklist_not_saved"] = " [not saved]"
+-- 2021-01-14
+L["ui.toggle"] = "TOGGLE"
+L["ui.whenmode"] = "When %s"
+L["ui.modex"] = "Mode %s"
+
+-- 2021-01-25
+L["attslot.magazine"] = "Magazine"
 
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]

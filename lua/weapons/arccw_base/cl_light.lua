@@ -3,6 +3,15 @@ SWEP.Flashlights = {} -- tracks projectedlights
 SWEP.CheapFlashlights = {} -- tracks cheap flashlight models + lights
 -- {{att = int, dlight = DynamicLight, vlight = ClientsideModel}}
 
+function SWEP:GetHasFlashlights()
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        if self:GetBuff_Stat("Flashlight", i) != nil then return true end
+    end
+
+    return false
+end
+
 function SWEP:CreateFlashlightsVM()
     self:KillFlashlights()
     self.Flashlights = {}
@@ -11,15 +20,13 @@ function SWEP:CreateFlashlightsVM()
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
-        local atttbl = ArcCW.AttachmentTable[k.Installed]
-
-        if atttbl.Flashlight then
+        if self:GetBuff_Stat("Flashlight", i) then
             local newlight = {
                 att = i,
                 light = ProjectedTexture(),
-                bone = atttbl.FlashlightBone or "laser",
-                col = atttbl.FlashlightColor or Color(255, 255, 255),
-                br = atttbl.FlashlightBrightness or 2
+                bone = self:GetBuff_Stat("FlashlightBone", i) or "laser",
+                col = self:GetBuff_Stat("FlashlightColor", i) or Color(255, 255, 255),
+                br = self:GetBuff_Stat("FlashlightBrightness", i) or 2
             }
             total_lights = total_lights + 1
 
@@ -28,20 +35,20 @@ function SWEP:CreateFlashlightsVM()
 
             table.insert(self.Flashlights, newlight)
 
-            l:SetFOV(atttbl.FlashlightFOV or 50)
+            l:SetFOV(self:GetBuff_Stat("FlashlightFOV", i) or 50)
 
-            if atttbl.FlashlightHFOV then
-                l:SetHorizontalFOV(atttbl.FlashlightHFOV)
+            if self:GetBuff_Stat("FlashlightHFOV", i) then
+                l:SetHorizontalFOV(self:GetBuff_Stat("FlashlightHFOV", i))
             end
 
-            if atttbl.FlashlightVFOV then
-                l:SetVerticalFOV(atttbl.FlashlightVFOV)
+            if self:GetBuff_Stat("FlashlightVFOV", i) then
+                l:SetVerticalFOV(self:GetBuff_Stat("FlashlightVFOV", i))
             end
 
-            l:SetFarZ(atttbl.FlashlightFarZ or 512)
-            l:SetNearZ(atttbl.FlashlightNearZ or 4)
+            l:SetFarZ(self:GetBuff_Stat("FlashlightFarZ", i) or 512)
+            l:SetNearZ(self:GetBuff_Stat("FlashlightNearZ", i) or 4)
 
-            local atten = atttbl.FlashlightAttenuationType or ArcCW.FLASH_ATT_LINEAR
+            local atten = self:GetBuff_Stat("FlashlightAttenuationType", i) or ArcCW.FLASH_ATT_LINEAR
 
             l:SetLinearAttenuation(0)
             l:SetConstantAttenuation(0)
@@ -55,9 +62,9 @@ function SWEP:CreateFlashlightsVM()
                     l:SetLinearAttenuation(100)
                 end
 
-            l:SetColor(atttbl.FlashlightColor or Color(255, 255, 255))
-            l:SetTexture(atttbl.FlashlightTexture)
-            l:SetBrightness(atttbl.FlashlightBrightness)
+            l:SetColor(self:GetBuff_Stat("FlashlightColor", i) or Color(255, 255, 255))
+            l:SetTexture(self:GetBuff_Stat("FlashlightTexture", i))
+            l:SetBrightness(self:GetBuff_Stat("FlashlightBrightness", i))
             l:SetEnableShadows(true)
             l:Update()
 
@@ -182,7 +189,7 @@ function SWEP:DrawFlashlightsWM()
         if !k.Installed then continue end
         local atttbl = ArcCW.AttachmentTable[k.Installed]
 
-        if !atttbl.Flashlight then continue end
+        if !self:GetBuff_Stat("Flashlight", i) then continue end
 
         local maxz = atttbl.FlashlightFarZ or 512
         local bone = atttbl.FlashlightBone or "laser"
