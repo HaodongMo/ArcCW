@@ -737,6 +737,8 @@ function SWEP:OnRestore()
 
     self:KillTimers()
     self:Initialize()
+
+    self.UnReady = false
 end
 
 
