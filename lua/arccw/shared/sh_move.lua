@@ -17,7 +17,7 @@ function ArcCW.Move(ply, mv, cmd)
     local shootmove = wpn:GetBuff("ShootSpeedMult")
 
     local delta = 0 -- how close should we be to the shoot speed mult
-    local shottime = wpn:GetNextSecondaryFire() - CurTime()
+    local shottime = wpn:GetNextPrimaryFireSlowdown() - CurTime()
 
     if shottime > 0 then -- apply full shoot move speed
         delta = 1
