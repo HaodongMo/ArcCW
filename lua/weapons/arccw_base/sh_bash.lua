@@ -1,3 +1,41 @@
+function SWEP:CanBackstab(melee2, ent)
+    if !self:GetBuff_Override("Override_Backstab", self.Backstab) then return false end
+    local reach = 32 + self:GetBuff_Add("Add_MeleeRange") + (melee2 and self.Melee2Range or self.MeleeRange)
+
+    if (!IsValid(ent)) then
+        local tr = util.TraceLine({
+            start = self:GetOwner():GetShootPos(),
+            endpos = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * reach,
+            filter = {self:GetOwner()},
+            mask = MASK_SHOT_HULL
+        })
+        if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot() then
+            ent = tr.Entity
+        end
+    end
+
+    if (!IsValid(ent)) then
+        local tr = util.TraceHull({
+            start = self:GetOwner():GetShootPos(),
+            endpos = self:GetOwner():GetShootPos() + self:GetOwner():GetAimVector() * reach,
+            filter = {self:GetOwner()},
+            mins = Vector(-16, -16, -8),
+            maxs = Vector(16, 16, 8),
+            mask = MASK_SHOT_HULL
+        })
+        if tr.Entity:IsPlayer() or tr.Entity:IsNPC() or tr.Entity:IsNextBot() then
+            ent = tr.Entity
+        end
+    end
+
+    if IsValid(ent) then
+        local angle = math.NormalizeAngle(self:GetOwner():GetAngles().y - ent:GetAngles().y)
+        return angle <= 90 and angle >= -90
+    end
+
+    return false
+end
+
 function SWEP:Bash(melee2)
     melee2 = melee2 or false
     if self:GetState() == ArcCW.STATE_SIGHTS then return end
@@ -15,11 +53,12 @@ function SWEP:Bash(melee2)
     end
 
     local bashanim = "bash"
+    local canbackstab = self:CanBackstab(melee2)
 
     if melee2 then
-        bashanim = self:SelectAnimation("bash2") or bashanim
+        bashanim = canbackstab and self:SelectAnimation("bash2_backstab") or self:SelectAnimation("bash2") or bashanim
     else
-        bashanim = self:SelectAnimation("bash") or bashanim
+        bashanim = canbackstab and self:SelectAnimation("bash_backstab") or self:SelectAnimation("bash") or bashanim
     end
 
     bashanim = self:GetBuff_Hook("Hook_SelectBashAnim", bashanim) or bashanim
@@ -76,11 +115,11 @@ end
 
 function SWEP:MeleeAttack(melee2)
     local reach = 32 + self:GetBuff_Add("Add_MeleeRange") + self.MeleeRange
-    local dmg = self:GetBuff_Override("Override_MeleeDamage") or self.MeleeDamage or 20
+    local dmg = self:GetBuff_Override("Override_MeleeDamage", self.MeleeDamage) or 20
 
     if melee2 then
         reach = 32 + self:GetBuff_Add("Add_MeleeRange") + self.Melee2Range
-        dmg = self:GetBuff_Override("Override_MeleeDamage") or self.Melee2Damage or 20
+        dmg = self:GetBuff_Override("Override_MeleeDamage", self.Melee2Damage) or 20
     end
 
     dmg = dmg * self:GetBuff_Mult("Mult_MeleeDamage")
@@ -107,6 +146,26 @@ function SWEP:MeleeAttack(melee2)
             maxs = Vector(16, 16, 8),
             mask = MASK_SHOT_HULL
         })
+    end
+
+    -- Backstab damage if applicable
+    local backstab = tr.Hit and self:CanBackstab(melee2, tr.Entity)
+    if backstab then
+        if melee2 then
+            local bs_dmg = self:GetBuff_Override("Override_Melee2DamageBackstab", self.Melee2DamageBackstab)
+            if bs_dmg then
+                dmg = bs_dmg * self:GetBuff_Mult("Mult_MeleeDamage")
+            else
+                dmg = dmg * self:GetBuff("BackstabMultiplier") * self:GetBuff_Mult("Mult_MeleeDamage")
+            end
+        else
+            local bs_dmg = self:GetBuff_Override("Override_MeleeDamageBackstab", self.MeleeDamageBackstab)
+            if bs_dmg then
+                dmg = bs_dmg * self:GetBuff_Mult("Mult_MeleeDamage")
+            else
+                dmg = dmg * self:GetBuff("BackstabMultiplier") * self:GetBuff_Mult("Mult_MeleeDamage")
+            end
+        end
     end
 
     -- We need the second part for single player because SWEP:Think is ran shared in SP

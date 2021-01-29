@@ -1,6 +1,7 @@
 SWEP.Base = "arccw_base"
 
 SWEP.MeleeDamage = 25
+SWEP.MeleeDamageBackstab = nil -- If not exists, use multiplier on standard damage
 SWEP.MeleeRange = 16
 SWEP.MeleeDamageType = DMG_CLUB
 SWEP.MeleeTime = 0.5
@@ -9,10 +10,14 @@ SWEP.MeleeAttackTime = 0.2
 
 SWEP.Melee2 = false
 SWEP.Melee2Damage = 25
+SWEP.Melee2DamageBackstab = nil -- If not exists, use multiplier on standard damage
 SWEP.Melee2Range = 16
 SWEP.Melee2Time = 0.5
 SWEP.Melee2Gesture = nil
 SWEP.Melee2AttackTime = 0.2
+
+SWEP.Backstab = false
+SWEP.BackstabMultiplier = 2
 
 SWEP.NotForNPCs = true
 
@@ -39,6 +44,10 @@ SWEP.Animations = {
     -- },
     -- ["bash"] = {
     --     Source = {"stab", "midslash1", "midslash2", "stab_miss"},
+    --     Time = 0.5,
+    -- },
+    -- ["bash_backstab"] = {
+    --     Source = {"stab_backstab"},
     --     Time = 0.5,
     -- },
 }
