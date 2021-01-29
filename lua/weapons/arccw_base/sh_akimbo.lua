@@ -463,8 +463,8 @@ end
 
 function SWEP:RestoreAkimboAmmo(count)
     if self:GetOwner():IsNPC() then return end
-    local chamber = math.Clamp(self:Clip2(), 0, self:GetChamberSize())
-    local clip = self:GetCapacity()
+    local chamber = math.Clamp(self:Clip2(), 0, self:GetBuff_Override("Akimbo_ChamberSize") or 1)
+    local clip = self:GetBuff_Override("Akimbo_Capacity") --self:GetCapacity()
 
     if self:HasInfiniteAmmo() then
         self:SetClip2(clip + chamber)
