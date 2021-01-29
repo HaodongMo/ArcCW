@@ -608,7 +608,7 @@ function SWEP:GetActiveElements(recache)
     return eles2
 end
 
-function SWEP:GetMuzzleDevice(wm)
+function SWEP:GetMuzzleDevice(wm, akimbo)
     local model = self.WM
     local muzz = self.WMModel or self
 
@@ -633,14 +633,21 @@ function SWEP:GetMuzzleDevice(wm)
         else
             muzz = (self.Attachments[slot].VMuzzleDeviceElement or {}).Model or muzz
         end
+    elseif akimbo then
+        local _, slot = self:GetBuff_Override("Akimbo")
+        if wm then
+            muzz = (self.Attachments[slot].WMuzzleDeviceElement or {}).Model or muzz
+        else
+            muzz = (self.Attachments[slot].VMuzzleDeviceElement or {}).Model or muzz
+        end
     end
 
     return muzz
 end
 
-function SWEP:GetTracerOrigin()
+function SWEP:GetTracerOrigin(akimbo)
     local wm = self:GetOwner():ShouldDrawLocalPlayer()
-    local muzz = self:GetMuzzleDevice(wm)
+    local muzz = self:GetMuzzleDevice(wm, akimbo)
 
     if muzz then
         local posang = muzz:GetAttachment(1)
@@ -1294,12 +1301,19 @@ function SWEP:AdjustAtts()
         if GetConVar("arccw_atts_ubglautoload"):GetBool() then
             self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
         end
+    elseif self:GetBuff_Override("Akimbo_Capacity") then
+        self.Secondary.ClipSize = self:GetBuff_Override("Akimbo_Capacity")
+        if GetConVar("arccw_atts_ubglautoload"):GetBool() then
+            self:SetClip2(self:GetBuff_Override("Akimbo_Capacity"))
+        end
     else
         self.Secondary.ClipSize = -1
     end
 
     if self:GetBuff_Override("UBGL_Ammo") then
         self.Secondary.Ammo = self:GetBuff_Override("UBGL_Ammo")
+    elseif self:GetBuff_Override("Akimbo_Ammo") then
+        self.Secondary.Ammo = self:GetBuff_Override("Akimbo_Ammo")
     else
         self.Secondary.Ammo = "none"
     end

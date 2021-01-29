@@ -77,6 +77,16 @@ function SWEP:Think()
         end
     end
 
+    -- Akimbo stuff
+    if self:GetBuff_Override("Akimbo") then
+        if owner:KeyDown(IN_ATTACK2) then
+            self:AkimboAttack()
+        elseif self:GetBurstCount(true) == self:GetBurstLength(true) then
+            self:SetBurstCount(0, true)
+            self.Primary.Automatic = false
+        end
+    end
+
     if owner:KeyReleased(IN_ATTACK) then
         if !self:GetCurrentFiremode().RunawayBurst then
             self:SetBurstCount(0)
@@ -154,14 +164,14 @@ function SWEP:Think()
         if game.SinglePlayer() or IsFirstTimePredicted() then
             -- everything here has to be predicted for the first time
             if owner:GetInfoNum("arccw_toggleads", 0) == 0 then
-                if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
+                if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) and !self:GetBuff_Override("Akimbo") then
                     self:EnterSights()
                 elseif !owner:KeyDown(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
                     self:ExitSights()
                 end
             else
                 if owner:KeyDown(IN_ATTACK2) and !LastAttack2 then
-                    if self:GetState() != ArcCW.STATE_SIGHTS then
+                    if self:GetState() != ArcCW.STATE_SIGHTS and !self:GetBuff_Override("Akimbo") then
                         self:EnterSights()
                     else
                         self:ExitSights()
@@ -270,7 +280,12 @@ function SWEP:Think()
 
     if self:GetMagUpIn() != 0 and CurTime() > self:GetMagUpIn() then
         self:WhenTheMagUpIn()
-        self:SetMagUpIn( 0 )
+        self:SetMagUpIn(0)
+    end
+
+    if self:GetMagUpIn2() != 0 and CurTime() > self:GetMagUpIn2() then
+        self:WhenTheMagUpIn(true)
+        self:SetMagUpIn2(0)
     end
 
     self:GetBuff_Hook("Hook_Think")

@@ -30,6 +30,10 @@ function SWEP:Reload()
         return
     end
 
+    if self:GetBuff_Override("Akimbo") and self:GetNextSecondaryFire() <= CurTime() then
+        self:AkimboReload()
+    end
+
     if self:GetNextPrimaryFire() >= CurTime() then return end
     --if self:GetNextSecondaryFire() > CurTime() then return end
         -- don't succumb to
@@ -150,19 +154,30 @@ function SWEP:Reload()
     self:GetBuff_Hook("Hook_PostReload")
 end
 
-function SWEP:WhenTheMagUpIn()
+function SWEP:WhenTheMagUpIn(akimbo)
     -- yeah my function names are COOL and QUIRKY and you can't say a DAMN thing about it.
-    self:RestoreAmmo()
-    self:SetLastLoad(self:Clip1())
-    self:SetNthReload(self:GetNthReload() + 1)
+    if akimbo then
+        self:RestoreAkimboAmmo()
+    else
+        self:RestoreAmmo()
+        self:SetLastLoad(self:Clip1())
+        self:SetNthReload(self:GetNthReload() + 1)
+    end
 end
 
-function SWEP:Unload()
+function SWEP:Unload(akimbo)
     if !self:GetOwner():IsPlayer() then return end
-    if SERVER then
-        self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo or "", true)
+    if akimbo then
+        if SERVER then
+            self:GetOwner():GiveAmmo(self:Clip2(), self.Secondary.Ammo or "", true)
+        end
+        self:SetClip2(0)
+    else
+        if SERVER then
+            self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo or "", true)
+        end
+        self:SetClip1(0)
     end
-    self:SetClip1(0)
 end
 
 function SWEP:HasBottomlessClip()

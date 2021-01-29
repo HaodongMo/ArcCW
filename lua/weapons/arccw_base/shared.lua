@@ -660,6 +660,7 @@ include("sh_bipod.lua")
 include("sh_grenade.lua")
 include("sh_ttt.lua")
 include("sh_util.lua")
+include("sh_akimbo.lua")
 AddCSLuaFile("sh_model.lua")
 AddCSLuaFile("sh_timers.lua")
 AddCSLuaFile("sh_think.lua")
@@ -679,6 +680,7 @@ AddCSLuaFile("sh_bipod.lua")
 AddCSLuaFile("sh_grenade.lua")
 AddCSLuaFile("sh_ttt.lua")
 AddCSLuaFile("sh_util.lua")
+AddCSLuaFile("sh_akimbo.lua")
 
 AddCSLuaFile("cl_viewmodel.lua")
 AddCSLuaFile("cl_scope.lua")
@@ -711,6 +713,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 3, "LastLoad")
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
+    self:NetworkVar("Int", 6, "BurstCountUM2") -- akimbo trolololol
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
@@ -725,16 +728,20 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 2, "ReloadingREAL")
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
-    
+    self:NetworkVar("Float", 5, "ReloadingREAL2") -- akimbo trolololol
+    self:NetworkVar("Float", 6, "MagUpIn2") -- electric boogaloo
 end
 
 function SWEP:OnRestore()
     self:SetNthReload(0)
     self:SetNthShot(0)
     self:SetBurstCountUM(0)
+    self:SetBurstCountUM2(0)
     self:SetReloadingREAL(0)
+    self:SetReloadingREAL2(0)
     self:SetWeaponOpDelay(0)
     self:SetMagUpIn(0)
+    self:SetMagUpIn2(0)
 
     self:KillTimers()
     self:Initialize()
@@ -743,38 +750,68 @@ function SWEP:OnRestore()
 end
 
 
-function SWEP:SetReloading( v )
-    if isbool(v) then
-        if v then
-            self:SetReloadingREAL(math.huge)
-        else
-            self:SetReloadingREAL(0)
+function SWEP:SetReloading(v, akimbo)
+    if akimbo then
+        if isbool(v) then
+            if v then
+                self:SetReloadingREAL2(math.huge)
+            else
+                self:SetReloadingREAL2(0)
+            end
+        elseif isnumber(v) and v > self:GetReloadingREAL2() then
+            self:SetReloadingREAL2(v)
         end
-    elseif isnumber(v) and v > self:GetReloadingREAL() then
-        self:SetReloadingREAL( v )
+    else
+        if isbool(v) then
+            if v then
+                self:SetReloadingREAL(math.huge)
+            else
+                self:SetReloadingREAL(0)
+            end
+        elseif isnumber(v) and v > self:GetReloadingREAL() then
+            self:SetReloadingREAL(v)
+        end
     end
 end
 
-function SWEP:GetReloading()
+function SWEP:GetReloading(akimbo)
     local decide
 
-    if self:GetReloadingREAL() > CurTime() then
-        decide = true
-    else
-        decide = false
-    end
+    if akimbo then
+        if self:GetReloadingREAL2() > CurTime() then
+            decide = true
+        else
+            decide = false
+        end
 
-    self:GetBuff_Hook("Hook_GetReloading", decide)
+        decide = self:GetBuff_Hook("Hook_GetReloading", decide) or decide
+    else
+        if self:GetReloadingREAL() > CurTime() then
+            decide = true
+        else
+            decide = false
+        end
+
+        decide = self:GetBuff_Hook("Hook_GetReloading", decide) or decide
+    end
 
     return decide
 end
 
-function SWEP:SetBurstCount(b)
-    self:SetBurstCountUM(b)
+function SWEP:SetBurstCount(b, akimbo)
+    if akimbo then
+        self:SetBurstCountUM2(b)
+    else
+        self:SetBurstCountUM(b)
+    end
 end
 
-function SWEP:GetBurstCount()
-    return self:GetBuff_Hook("Hook_GetBurstCount", self:GetBurstCountUM()) or self:GetBurstCountUM() or 0
+function SWEP:GetBurstCount(akimbo)
+    if akimbo then
+        return self:GetBuff_Hook("Hook_GetBurstCountAkimbo", self:GetBurstCountUM2()) or self:GetBurstCountUM2() or 0
+    else
+        return self:GetBuff_Hook("Hook_GetBurstCount", self:GetBurstCountUM()) or self:GetBurstCountUM() or 0
+    end
 end
 
 function SWEP:SetState(v)

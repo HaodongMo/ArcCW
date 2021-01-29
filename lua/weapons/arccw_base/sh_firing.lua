@@ -664,7 +664,7 @@ function SWEP:DoShellEject()
     util.Effect(eff, ed)
 end
 
-function SWEP:DoEffects()
+function SWEP:DoEffects(akimbo)
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     local ed = EffectData()
@@ -678,6 +678,7 @@ function SWEP:DoEffects()
 
     if self:GetBuff_Hook("Hook_PreDoEffects", efov) == true then return end
 
+    self.EffectLastAkimbo = akimbo
     util.Effect("arccw_muzzleeffect", ed)
 end
 
