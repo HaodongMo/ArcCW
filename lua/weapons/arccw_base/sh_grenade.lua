@@ -41,11 +41,11 @@ function SWEP:Throw()
     windup = math.Clamp(windup, 0, 1)
 
     local mv = self:GetBuff("MuzzleVelocity") * ArcCW.HUToM
+    local force = Lerp(windup, mv * 0.25, mv)
+
     if self.GrenadePrimeAlt and self:GetBuff("MuzzleVelocityAlt", true) then
         mv = self:GetBuff("MuzzleVelocityAlt") * ArcCW.HUToM
     end
-
-    local force = Lerp(windup, mv * 0.25, mv)
 
     self:SetTimer(0.25, function()
 
