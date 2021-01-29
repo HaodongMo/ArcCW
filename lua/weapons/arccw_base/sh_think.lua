@@ -38,7 +38,7 @@ function SWEP:Think()
         self:SetNeedCycle(false)
     end
 
-    if self:GetGrenadePrimed() and !owner:KeyDown(IN_ATTACK) then
+    if self:GetGrenadePrimed() and !owner:KeyDown(IN_ATTACK) and (!game.SinglePlayer() or SERVER) then
         self:Throw()
     end
 
@@ -47,7 +47,7 @@ function SWEP:Think()
 
         local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
 
-        if ft and (heldtime >= ft) then
+        if ft and (heldtime >= ft) and (!game.SinglePlayer() or SERVER) then
             self:Throw()
         end
     end
