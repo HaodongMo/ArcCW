@@ -373,9 +373,12 @@ function SWEP:AkimboAttack()
     if self:GetBuff_Override("Akimbo_ShootSound") then
         local volume = self:GetBuff_Override("Akimbo_ShootVol") or 100
         local pitch = self:GetBuff_Override("Akimbo_ShootPitch") or 100
-        self:MyEmitSound(self:GetBuff_Override("Akimbo_ShootSound"), volume, pitch, 1, CHAN_WEAPON)
-    end
+        self:MyEmitSound(self:GetBuff_Override("Akimbo_ShootSound"), volume, pitch, 1, CHAN_WEAPON + 2)
 
+        if self:GetBuff_Override("Akimbo_DistantShootSound") then
+            self:MyEmitSound(self:GetBuff_Override("Akimbo_DistantShootSound"), 130, pitch, 1, CHAN_WEAPON - 2)
+        end
+    end
     if self:GetBuff_Override("Akimbo_BurstLength") and self:GetBurstCount(true) == self:GetBuff_Override("Akimbo_BurstLength") then
         local postburst = (self:GetCurrentFiremode().PostBurstDelay or 0)
         self:SetNextSecondaryFire(CurTime() + postburst)
