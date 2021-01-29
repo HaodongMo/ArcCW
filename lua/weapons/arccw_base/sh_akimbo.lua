@@ -5,7 +5,7 @@ function SWEP:CanAkimboAttack()
     if self:GetBuff_Hook("Hook_ShouldNotFireAkimboFirst") then return end
 
     -- Inoperable
-    if self:GetReloading() then return end
+    if self:GetReloading(true) then return end
 
     -- If we are an NPC, do our own little methods
     if owner:IsNPC() then return end
