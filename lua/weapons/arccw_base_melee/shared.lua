@@ -1,5 +1,7 @@
 SWEP.Base = "arccw_base"
 
+SWEP.Primary.Ammo = "" -- Prevent base "pistol" ammo type from showing up on the HUD of melee weapons
+
 SWEP.MeleeDamage = 25
 SWEP.MeleeDamageBackstab = nil -- If not exists, use multiplier on standard damage
 SWEP.MeleeRange = 16
