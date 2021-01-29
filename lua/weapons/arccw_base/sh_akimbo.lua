@@ -420,9 +420,9 @@ function SWEP:AkimboReload()
 
     reserve = reserve + self:Clip2()
 
-    local clip = self:GetCapacity()
+    local clip = self:GetBuff_Override("Akimbo_Capacity")
 
-    local chamber = math.Clamp(self:Clip2(), 0, self:GetChamberSize())
+    local chamber = math.Clamp(self:Clip2(), 0, self:GetBuff_Override("Akimbo_ChamberSize") or 1)
 
     local load = math.Clamp(clip + chamber, 0, reserve)
 
