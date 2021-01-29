@@ -22,6 +22,7 @@ function SWEP:PreThrow()
     self:SetGrenadePrimed(true)
 
     self.GrenadePrimeTime = CurTime()
+    self.GrenadePrimeAlt = self:GetOwner():KeyDown(IN_ATTACK2)
 
     self:GetBuff_Hook("Hook_PreThrow")
 end
@@ -40,6 +41,9 @@ function SWEP:Throw()
     windup = math.Clamp(windup, 0, 1)
 
     local mv = self:GetBuff("MuzzleVelocity") * ArcCW.HUToM
+    if self.GrenadePrimeAlt and self:GetBuff("MuzzleVelocityAlt", true) then
+        mv = self:GetBuff("MuzzleVelocityAlt") * ArcCW.HUToM
+    end
 
     local force = Lerp(windup, mv * 0.25, mv)
 
@@ -78,6 +82,7 @@ function SWEP:Throw()
     end)
 
     self:SetNextPrimaryFire(CurTime() + 1)
+    self.GrenadePrimeAlt = nil
 
     self:GetBuff_Hook("Hook_PostThrow")
 end
