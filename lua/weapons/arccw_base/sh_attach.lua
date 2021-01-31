@@ -1424,17 +1424,106 @@ function SWEP:SendAttHP()
     net.Send(self:GetOwner())
 end
 
--- example = {
---     [1] = {
---         PrintName = "Optic",
---         SubSlots = {
---             [1] = {
---                 PrintName = "Optic",
---                 Installed = "Bruhzogg"
---             }
---         } 
---     }
--- }
+-- local node = {b = {}, i = "" t = 0}
+-- b: branches
+-- i: installed
+-- t: toggle
+-- s: slide
+-- h: hp
 
-function SWEP:AssembleSubSlots()
+-- recursive function
+-- gets a tree of all the attachments installed in subslots subordinate to a particular slot
+function SWEP:GetSubSlotTree(i)
+    if !self.Attachments[i] then return nil end
+    if !self.Attachments[i].Installed then return nil end
+    if !self.Attachments[i].Installed.SubSlots then return
+        {
+        b = {},
+        i = self.Attachments[i].Installed,
+        t = self.Attachments[i].ToggleNum,
+        s = self.Attachments[i].SlidePos,
+        h = self.Attachments[i].Health}
+    end
+
+    local ss = {}
+    for j, k in pairs(self.Attachments[i].Installed.SubSlots) do
+        ss[j] = self:GetSubSlotTree(k)
+    end
+
+    return {b = ss, i = self.Attachments[i].Installed}
+end
+
+function SWEP:RebuildSubSlots()
+    -- this function rebuilds the subslots while preserving installed attachment data
+    local subslottrees = {}
+
+    local baseatts = table.Count(weapons.Get(self:GetClass()).Attachments)
+
+    for i = 1, baseatts do
+        subslottrees[baseatts] = self:GetSubSlotTree(i)
+    end
+
+    -- TODO:
+    -- remove all sub slots
+    -- add the sub slots back
+    -- add the sub slot data back
+
+    -- also actually call this function
+end
+
+function SWEP:AddSubSlot(i, attid)
+    local baseatts = table.Count(weapons.Get(self:GetClass()).Attachments)
+    local att = ArcCW.AttachmentIDTable[attid]
+    if att.SubSlots then
+        self.Attachments[i].SubAtts = {}
+        local og_slot = self.Attachments[i]
+        for ind, slot in pairs(att.SubSlots) do
+            self.SubSlotCount = self.SubSlotCount + 1
+            local index = baseatts + self.SubSlotCount
+            self.Attachments[index] = slot
+            self.Attachments[index].Bone = og_slot.Bone
+            self.Attachments[index].WMBone = og_slot.Bone
+            self.Attachments[i].SubAtts[ind] = index
+
+            if slot.MergeSlots then
+                self.Attachments[index].MergeSlots = {}
+                for _, k2 in pairs(slot.MergeSlots) do
+                    table.insert(self.Attachments[index].MergeSlots, k2 + index)
+                end
+            end
+
+            if slot.Offset then
+                self.Attachments[index].Offset = {
+                    vpos = Vector(0, 0, 0),
+                    vang = Angle(0, 0, 0),
+                    wpos = Vector(0, 0, 0),
+                    wang = Angle(0, 0, 0)
+                }
+
+                if slot.Offset.vang then
+                    self.Attachments[index].Offset.vang = slot.Offset.vang + (og_slot.Offset.vang or Angle(0, 0, 0))
+                end
+
+                if slot.Offset.wang then
+                    self.Attachments[index].Offset.wang = slot.Offset.wang + (og_slot.Offset.wang or Angle(0, 0, 0))
+                end
+
+                if slot.Offset.vpos then
+                    self.Attachments[index].Offset.vpos = LocalToWorld(slot.Offset.vpos, self.Attachments[index].Offset.vang, og_slot.Offset.vpos, og_slot.Offset.vang or Angle(0, 0, 0))
+                end
+
+                if slot.Offset.wpos then
+                    self.Attachments[index].Offset.wpos = LocalToWorld(slot.Offset.wpos, self.Attachments[index].Offset.wang, og_slot.Offset.wpos, og_slot.Offset.wang or Angle(0, 0, 0))
+                end
+            end
+
+            for entry, value in pairs(og_slot) do
+                if entry != "Installed" then
+                    if self.Attachments[index][entry] != nil then
+                        self.Attachments[index][entry] = value
+                    end
+                end
+            end
+        end
+    end
 end

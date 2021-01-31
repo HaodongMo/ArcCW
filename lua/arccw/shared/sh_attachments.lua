@@ -192,9 +192,11 @@ end
 net.Receive("arccw_networkatts", function(len, ply)
     local wpn = net.ReadEntity()
     if !IsValid(wpn) then return end
+    if !wpn.ArcCW then return end
 
     local attnum = net.ReadUInt(8)
     wpn.Attachments = wpn.Attachments or {}
+    wpn.SubSlotCount = 0
 
     for i = 1, attnum do
         local attid = net.ReadUInt(ArcCW.GetBitNecessity())
@@ -216,6 +218,8 @@ net.Receive("arccw_networkatts", function(len, ply)
         if ArcCW.AttachmentTable[att].ToggleStats then
             wpn.Attachments[i].ToggleNum = net.ReadUInt(8)
         end
+
+        wpn:AddSubSlot(i, attid)
     end
 
     wpn.CertainAboutAtts = true
