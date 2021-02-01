@@ -620,7 +620,7 @@ function SWEP:GetDispersion()
     return hip
 end
 
-function SWEP:DoShellEject()
+function SWEP:DoShellEject(atti)
     local eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
 
     if eff == "NONE" then return end
@@ -633,7 +633,7 @@ function SWEP:DoShellEject()
 
     if !owner:IsNPC() then owner:GetViewModel() end
 
-    local att = vm:GetAttachment(self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
+    local att = vm:GetAttachment(atti or self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
 
     if !att then return end
 
@@ -649,7 +649,7 @@ function SWEP:DoShellEject()
     local ed = EffectData()
     ed:SetOrigin(pos)
     ed:SetAngles(ang)
-    ed:SetAttachment(self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
+    ed:SetAttachment(atti or self:GetBuff_Override("Override_CaseEffectAttachment") or self.CaseEffectAttachment or 2)
     ed:SetScale(1)
     ed:SetEntity(self)
     ed:SetNormal(ang:Forward())
@@ -664,13 +664,13 @@ function SWEP:DoShellEject()
     util.Effect(eff, ed)
 end
 
-function SWEP:DoEffects()
+function SWEP:DoEffects(att)
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     local ed = EffectData()
     ed:SetScale(1)
     ed:SetEntity(self)
-    ed:SetAttachment(self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1)
+    ed:SetAttachment(att or self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1)
 
     local efov = {}
     efov.eff = "arccw_muzzleeffect"
