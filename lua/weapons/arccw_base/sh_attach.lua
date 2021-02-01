@@ -1057,7 +1057,7 @@ function SWEP:Attach(slot, attname, silent, noadjust)
             if k.Installed == attname then amt = amt + 1 end
         end
 
-        if amt > max then return end
+        if amt >= max then return end
     end
 
     if attslot.SlideAmount then
@@ -1198,7 +1198,7 @@ function SWEP:Detach(slot, silent, noadjust)
 
     if self.Attachments[slot].SubAtts then
         for i, k in pairs(self.Attachments[slot].SubAtts) do
-            self:Detach(i, true, true)
+            self:Detach(k, true, true)
         end
     end
 
@@ -1550,6 +1550,9 @@ function SWEP:AddSubSlot(i, attname)
             self.Attachments[index] = slot
             self.Attachments[index].Bone = og_slot.Bone
             self.Attachments[index].WMBone = og_slot.Bone
+            self.Attachments[index].ExtraSightDist = self.Attachments[index].ExtraSightDist or og_slot.ExtraSightDist
+            self.Attachments[index].CorrectivePos = og_slot.CorrectivePos
+            self.Attachments[index].CorrectiveAng = og_slot.CorrectiveAng
             og_slot.SubAtts[ind] = index
 
             if slot.MergeSlots then
@@ -1585,16 +1588,6 @@ function SWEP:AddSubSlot(i, attname)
             end
 
             self.Attachments[index].SubAtts = {}
-
-            local class_slot = weapons.Get(self:GetClass()).Attachments[i]
-
-            for entry, value in pairs(class_slot) do
-                if entry != "Installed" then
-                    if self.Attachments[index][entry] == nil then
-                        self.Attachments[index][entry] = value
-                    end
-                end
-            end
         end
     end
 end

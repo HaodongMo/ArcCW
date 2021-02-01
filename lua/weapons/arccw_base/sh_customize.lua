@@ -1060,10 +1060,12 @@ function SWEP:CreateCustomizeHUD()
                         local amt = 0
 
                         for i2, k2 in pairs(self.Attachments) do
-                            if k2.Installed == attname then amt = amt + 1 end
+                            if k2.Installed == spaa.AttName then
+                                amt = amt + 1
+                            end
                         end
 
-                        if amt > max then
+                        if amt >= max and self.Attachments[i].Installed != spaa.AttName then
                             if spaa:IsHovered() then
                                 Bbg_col = Color(125, 25, 25, 150)
                                 Bfg_col = Color(150, 50, 50, 255)

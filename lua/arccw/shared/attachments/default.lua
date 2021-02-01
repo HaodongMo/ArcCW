@@ -76,7 +76,7 @@ att.SubSlots = {
         DefaultAttIcon = Material(""),
         MergeSlots = {}, -- mergeslots are relative to att.SubSlots, so this entry would be [1], then [2], etc
         -- bone/wmbone is inherited
-        ExtraSightDist = 0, -- inherited if not specified
+        ExtraSightDist = 0,
         Offset = { -- inherits from base slot
             vpos = Vector(0, 0, 0),
             vang = Angle(0, 0, 0),
@@ -91,7 +91,7 @@ att.SubSlots = {
         },
     }
     -- CorrectiveAng/Pos is inherited from base slot
-    -- If something is not specified, it is the same as SWEP.Attachments slots
+    -- everything else is the same as normal slots
 }
 
 att.Max = nil -- the maximum number of this attachment that can be attached.
