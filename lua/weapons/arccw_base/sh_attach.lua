@@ -1048,6 +1048,18 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
     if !self:PlayerOwnsAtt(attname) then return end
 
+    local max = atttbl.Max
+
+    if max then
+        local amt = 0
+
+        for i, k in pairs(self.Attachments) do
+            if k.Installed == attname then amt = amt + 1 end
+        end
+
+        if amt > max then return end
+    end
+
     if attslot.SlideAmount then
         attslot.SlidePos = 0.5
     end
@@ -1574,7 +1586,9 @@ function SWEP:AddSubSlot(i, attname)
 
             self.Attachments[index].SubAtts = {}
 
-            for entry, value in pairs(og_slot) do
+            local class_slot = weapons.Get(self:GetClass()).Attachments[i]
+
+            for entry, value in pairs(class_slot) do
                 if entry != "Installed" then
                     if self.Attachments[index][entry] == nil then
                         self.Attachments[index][entry] = value

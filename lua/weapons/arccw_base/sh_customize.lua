@@ -1054,6 +1054,26 @@ function SWEP:CreateCustomizeHUD()
                         end
                     end
 
+                    local max = atttbl.Max
+
+                    if max then
+                        local amt = 0
+
+                        for i2, k2 in pairs(self.Attachments) do
+                            if k2.Installed == attname then amt = amt + 1 end
+                        end
+
+                        if amt > max then
+                            if spaa:IsHovered() then
+                                Bbg_col = Color(125, 25, 25, 150)
+                                Bfg_col = Color(150, 50, 50, 255)
+                            else
+                                Bbg_col = Color(75, 0, 0, 150)
+                                Bfg_col = Color(150, 50, 50, 255)
+                            end
+                        end
+                    end
+
                     surface.SetDrawColor(Bbg_col)
                     surface.DrawRect(0, 0, w, h)
                     surface.DrawRect(0, 0, h * 1.5, h)

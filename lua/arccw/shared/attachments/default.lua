@@ -68,29 +68,33 @@ att.RequireFlags = {}
 att.ExcludeFlags = {}
 
 att.SubSlots = {
-    PrintName = "Optic",
-    Slot = {"optic", "optic_lp"}, -- OR
-    Slot = "optic",
-    DefaultAttName = "Iron Sights",
-    DefaultAttIcon = Material(""),
-    MergeSlots = {}, -- mergeslots are relative to att.SubSlots, so this entry would be [1], then [2], etc
-    -- bone/wmbone is inherited
-    ExtraSightDist = 0, -- inherited if not specified
-    Offset = { -- inherits from base slot
-        vpos = Vector(0, 0, 0),
-        vang = Angle(0, 0, 0),
-        wpos = Vector(0, 0, 0),
-        wang = Angle(0, 0, 0)
-    },
-    SlideAmount = {
-        vmin = Vector(0, 0, 0),
-        vmax = Vector(0, 0, 0),
-        wmin = Vector(0, 0, 0),
-        wmax = Vector(0, 0, 0),
-    },
+    {
+        PrintName = "Optic",
+        Slot = {"optic", "optic_lp"}, -- OR
+        Slot = "optic",
+        DefaultAttName = "Iron Sights",
+        DefaultAttIcon = Material(""),
+        MergeSlots = {}, -- mergeslots are relative to att.SubSlots, so this entry would be [1], then [2], etc
+        -- bone/wmbone is inherited
+        ExtraSightDist = 0, -- inherited if not specified
+        Offset = { -- inherits from base slot
+            vpos = Vector(0, 0, 0),
+            vang = Angle(0, 0, 0),
+            wpos = Vector(0, 0, 0),
+            wang = Angle(0, 0, 0)
+        },
+        SlideAmount = {
+            vmin = Vector(0, 0, 0),
+            vmax = Vector(0, 0, 0),
+            wmin = Vector(0, 0, 0),
+            wmax = Vector(0, 0, 0),
+        },
+    }
     -- CorrectiveAng/Pos is inherited from base slot
     -- If something is not specified, it is the same as SWEP.Attachments slots
 }
+
+att.Max = nil -- the maximum number of this attachment that can be attached.
 
 att.Model = ""
 att.HideModel = false
