@@ -864,6 +864,7 @@ function SWEP:CreateCustomizeHUD()
             attcatb.AttSlot = k
 
             local function attcatb_regen(span)
+                if !IsValid(span) then return end
                 local catt = self.Attachments[span.AttIndex].Installed
                 local catttbl
                 if catt then

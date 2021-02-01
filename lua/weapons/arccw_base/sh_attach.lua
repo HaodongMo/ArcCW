@@ -1144,7 +1144,7 @@ end
 function SWEP:DetachAllMergeSlots(slot, silent)
     local slots = {slot}
 
-    table.Add(slots, self.Attachments[slot].MergeSlots or {})
+    table.Add(slots, (self.Attachments[slot] or {}).MergeSlots or {})
 
     for _, i in pairs(slots) do
         self:Detach(i, silent)
@@ -1570,7 +1570,7 @@ function SWEP:AddSubSlot(i, attname)
 
             for entry, value in pairs(og_slot) do
                 if entry != "Installed" then
-                    if self.Attachments[index][entry] != nil then
+                    if self.Attachments[index][entry] == nil then
                         self.Attachments[index][entry] = value
                     end
                 end
