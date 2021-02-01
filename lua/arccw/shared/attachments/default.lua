@@ -67,7 +67,6 @@ att.GivesFlags = {}
 att.RequireFlags = {}
 att.ExcludeFlags = {}
 
--- Not Yet Implemented
 att.SubSlots = {
     PrintName = "Optic",
     Slot = {"optic", "optic_lp"}, -- OR

@@ -1015,7 +1015,7 @@ function SWEP:GetPickX()
     return GetConVar("arccw_atts_pickx"):GetInt()
 end
 
-function SWEP:Attach(slot, attname, silent)
+function SWEP:Attach(slot, attname, silent, noadjust)
     silent = silent or false
     local attslot = self.Attachments[slot]
     if !attslot then return end
@@ -1128,12 +1128,14 @@ function SWEP:Attach(slot, attname, silent)
         end
     end
 
-    self:AdjustAtts()
-
     for s, i in pairs(self.Attachments) do
         if !self:CheckFlags(i.ExcludeFlags, i.RequireFlags) then
-            self:Detach(s, true)
+            self:Detach(s, true, true)
         end
+    end
+
+    if !noadjust then
+        self:AdjustAtts()
     end
 
     self:RefreshBGs()
@@ -1149,7 +1151,7 @@ function SWEP:DetachAllMergeSlots(slot, silent)
     end
 end
 
-function SWEP:Detach(slot, silent)
+function SWEP:Detach(slot, silent, noadjust)
     if !slot then return end
     if !self.Attachments[slot] then return end
 
@@ -1181,6 +1183,12 @@ function SWEP:Detach(slot, silent)
     end
 
     self.Attachments[slot].Installed = nil
+
+    if self.Attachments[slot].SubAtts then
+        for i, k in pairs(self.Attachments[slot].SubAtts) do
+            self:Detach(i, true, true)
+        end
+    end
 
     if self:GetAttachmentHP(slot) >= self:GetAttachmentMaxHP(slot) then
         ArcCW:PlayerGiveAtt(self:GetOwner(), previnstall)
@@ -1220,7 +1228,9 @@ function SWEP:Detach(slot, silent)
 
     self:RefreshBGs()
 
-    self:AdjustAtts()
+    if !noadjust then
+        self:AdjustAtts()
+    end
 end
 
 function SWEP:ToggleSlot(slot, num, silent)
@@ -1303,6 +1313,8 @@ function SWEP:AdjustAtts()
     else
         self.Secondary.Ammo = "none"
     end
+
+    self:RebuildSubSlots()
 
     local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
 
@@ -1436,7 +1448,7 @@ end
 function SWEP:GetSubSlotTree(i)
     if !self.Attachments[i] then return nil end
     if !self.Attachments[i].Installed then return nil end
-    if !self.Attachments[i].Installed.SubSlots then return
+    if !self.Attachments[i].SubAtts then return
         {
         b = {},
         i = self.Attachments[i].Installed,
@@ -1446,11 +1458,26 @@ function SWEP:GetSubSlotTree(i)
     end
 
     local ss = {}
-    for j, k in pairs(self.Attachments[i].Installed.SubSlots) do
+    for j, k in pairs(self.Attachments[i].SubAtts) do
         ss[j] = self:GetSubSlotTree(k)
     end
 
     return {b = ss, i = self.Attachments[i].Installed}
+end
+
+function SWEP:SubSlotTreeReinstall(slot, subslottree)
+    for i, k in pairs(self.Attachments[slot].SubAtts or {}) do
+        -- i = index
+        -- k = slot
+        self.Attachments[k].Installed = subslottree[i].i
+        self.Attachments[k].ToggleNum = subslottree[i].t
+        self.Attachments[k].SlidePos = subslottree[i].s
+        self.Attachments[k].Health = subslottree[i].h
+
+        if subslottree.b[i] then
+            self:SubSlotTreeReinstall(i, subslottree.b[i])
+        end
+    end
 end
 
 function SWEP:RebuildSubSlots()
@@ -1463,12 +1490,29 @@ function SWEP:RebuildSubSlots()
         subslottrees[baseatts] = self:GetSubSlotTree(i)
     end
 
-    -- TODO:
     -- remove all sub slots
+    for i, k in pairs(self.Attachments) do
+        if !isnumber(i) then continue end
+        if i > baseatts then
+            self.Attachments[i] = nil
+        end
+        self.Attachments[i].SubAtts = nil
+    end
     -- add the sub slots back
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        local att = ArcCW.AttachmentTable[k.Installed]
+        if !att then continue end
+
+        if att.SubSlot then
+            self:AddSubSlot(i, k.Installed)
+        end
+    end
     -- add the sub slot data back
 
-    -- also actually call this function
+    for i, k in pairs(subslottrees) do
+        self:SubSlotTreeReinstall(i, k)
+    end
 end
 
 function SWEP:AddSubSlot(i, attid)
