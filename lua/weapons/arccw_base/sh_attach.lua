@@ -1486,6 +1486,8 @@ function SWEP:RebuildSubSlots()
 
     local baseatts = table.Count(weapons.Get(self:GetClass()).Attachments)
 
+    self.Attachments.BaseClass = nil
+
     for i = 1, baseatts do
         subslottrees[baseatts] = self:GetSubSlotTree(i)
     end
@@ -1493,18 +1495,23 @@ function SWEP:RebuildSubSlots()
     -- remove all sub slots
     for i, k in pairs(self.Attachments) do
         if !isnumber(i) then continue end
+        if !istable(k) then continue end
         if i > baseatts then
             self.Attachments[i] = nil
+        else
+            self.Attachments[i].SubAtts = nil
         end
-        self.Attachments[i].SubAtts = nil
     end
+
+    self.SubSlotCount = 0
     -- add the sub slots back
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
         local att = ArcCW.AttachmentTable[k.Installed]
         if !att then continue end
+        if !istable(k) then continue end
 
-        if att.SubSlot then
+        if att.SubSlots then
             self:AddSubSlot(i, k.Installed)
         end
     end
@@ -1515,9 +1522,9 @@ function SWEP:RebuildSubSlots()
     end
 end
 
-function SWEP:AddSubSlot(i, attid)
+function SWEP:AddSubSlot(i, attname)
     local baseatts = table.Count(weapons.Get(self:GetClass()).Attachments)
-    local att = ArcCW.AttachmentIDTable[attid]
+    local att = ArcCW.AttachmentTable[attname]
     if att.SubSlots then
         self.Attachments[i].SubAtts = {}
         local og_slot = self.Attachments[i]
@@ -1527,7 +1534,7 @@ function SWEP:AddSubSlot(i, attid)
             self.Attachments[index] = slot
             self.Attachments[index].Bone = og_slot.Bone
             self.Attachments[index].WMBone = og_slot.Bone
-            self.Attachments[i].SubAtts[ind] = index
+            og_slot.SubAtts[ind] = index
 
             if slot.MergeSlots then
                 self.Attachments[index].MergeSlots = {}
