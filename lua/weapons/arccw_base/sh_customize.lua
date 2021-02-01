@@ -399,6 +399,49 @@ function SWEP:CreateCustomizeHUD()
         surface.DrawRect(0, 0, w, h)
     end
 
+    local wpninfo = attcats:Add("DLabel")
+    wpninfo:SetSize(barsize, buttonsize)
+    wpninfo:SetText("")
+    wpninfo:Dock( TOP )
+    wpninfo:DockMargin( 0, 0, 0, smallgap )
+
+    wpninfo.Paint = function(span, w, h)
+        if !IsValid(self) then return end
+        local Bfg_col = fg_col
+        local Bbg_col = bg_col
+
+        surface.SetDrawColor(Bbg_col)
+        surface.DrawRect(0, 0, w, h)
+        surface.DrawRect(0, 0, w, h / 2)
+
+        surface.SetDrawColor(Bfg_col)
+        surface.DrawRect(0, (h - linesize) / 2, w, linesize)
+
+        surface.SetTextColor(SolidBlack)
+        surface.SetTextPos(smallgap, 0)
+        surface.SetFont("ArcCW_12_Glow")
+        surface.DrawText(translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or self.PrintName)
+
+        surface.SetTextColor(Bfg_col)
+        surface.SetTextPos(smallgap, 0)
+        surface.SetFont("ArcCW_12")
+        surface.DrawText(translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or self.PrintName)
+
+        surface.SetTextColor(Bfg_col)
+        surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
+        surface.SetFont("ArcCW_12")
+
+        local pick = self:GetPickX()
+
+        if pick <= 0 then
+            surface.DrawText(ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class))
+        else
+            local txt = self:CountAttachments() .. "/" .. pick .. " Attachments"
+
+            surface.DrawText(txt)
+        end
+    end
+
     local statbox = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     statbox:SetText("")
     statbox:SetSize(barsize, scrh - ScreenScaleMulti(64) - (3 * airgap))
@@ -798,527 +841,476 @@ function SWEP:CreateCustomizeHUD()
         end
     end
 
-    local function rebuild_attcatb()
-        attcats:Clear()
+    for i, k in pairs(self.Attachments) do
+        if !k.PrintName then continue end
+        if i == "BaseClass" then continue end
+        if k.Hidden or k.Blacklisted then continue end
+        if k.Integral then continue end
 
-        local wpninfo = attcats:Add("DLabel")
-        wpninfo:SetSize(barsize, buttonsize)
-        wpninfo:SetText("")
-        wpninfo:Dock( TOP )
-        wpninfo:DockMargin( 0, 0, 0, smallgap )
+        local attcatb = attcats:Add("DButton")
+        if GetConVar("arccw_hud_embracetradition"):GetBool() then
+            attcatb:SetSize(barsize, buttonsize )
+        else
+            attcatb:SetSize(barsize, buttonsize / 2)
+        end
+        attcatb:SetText("")
+        attcatb:Dock( TOP )
+        attcatb:DockMargin( 0, 0, 0, smallgap )
 
-        wpninfo.Paint = function(span, w, h)
-            if !IsValid(self) then return end
-            local Bfg_col = fg_col
-            local Bbg_col = bg_col
+        attcatb.AttIndex = i
+        attcatb.AttSlot = k
 
-            surface.SetDrawColor(Bbg_col)
-            surface.DrawRect(0, 0, w, h)
-            surface.DrawRect(0, 0, w, h / 2)
+        local function attcatb_regen(span)
+            local catt = self.Attachments[span.AttIndex].Installed
+            local catttbl
+            if catt then
+                catttbl = ArcCW.AttachmentTable[catt]
+            end
 
-            surface.SetDrawColor(Bfg_col)
-            surface.DrawRect(0, (h - linesize) / 2, w, linesize)
-
-            surface.SetTextColor(SolidBlack)
-            surface.SetTextPos(smallgap, 0)
-            surface.SetFont("ArcCW_12_Glow")
-            surface.DrawText(translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or self.PrintName)
-
-            surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(smallgap, 0)
-            surface.SetFont("ArcCW_12")
-            surface.DrawText(translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or self.PrintName)
-
-            surface.SetTextColor(Bfg_col)
-            surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
-            surface.SetFont("ArcCW_12")
-
-            local pick = self:GetPickX()
-
-            if pick <= 0 then
-                surface.DrawText(ArcCW.TryTranslation(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class))
+            if self.Attachments[span.AttIndex].Installed and self.Attachments[span.AttIndex].SlideAmount and !catttbl.MountPositionOverride then
+                attslidebox:Show()
             else
-                local txt = self:CountAttachments() .. "/" .. pick .. " Attachments"
+                attslidebox:Hide()
+            end
 
-                surface.DrawText(txt)
+            if self.Attachments[span.AttIndex].Installed and catttbl and catttbl.ToggleStats then
+                if attslidebox:IsVisible() then
+                    atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(40) - (1 * airgap))
+                else
+                    atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(64) - (1 * airgap))
+                end
+                atttogglebtn:Show()
+            else
+                atttogglebtn:Hide()
+            end
+
+            attmenu:Clear()
+
+            local atts = {}
+            local slots = {i}
+            local attCheck = {}
+
+            table.Add(slots, k.MergeSlots or {})
+
+            for _, y in pairs(slots) do
+                for _, bruh in pairs(ArcCW:GetAttsForSlot((self.Attachments[y] or {}).Slot, self)) do
+                    if attCheck[bruh] then continue end
+                    table.insert(atts, {
+                        att = bruh,
+                        slot = y
+                    })
+                    attCheck[bruh] = true
+                end
+            end
+
+            atts[0] = ""
+
+            table.sort(atts, function(a, b)
+                a = a.att or ""
+                b = b.att or ""
+                local atttbl_a = ArcCW.AttachmentTable[a]
+                local atttbl_b = ArcCW.AttachmentTable[b]
+
+                local order_a = 0
+                local order_b = 0
+
+                order_a = atttbl_a.SortOrder or order_a
+                order_b = atttbl_b.SortOrder or order_b
+
+                if order_a == order_b then
+                    return (translate("name." .. a) or atttbl_a.PrintName or "") > (translate("name." .. b) or atttbl_b.PrintName or "")
+                end
+
+                return order_a > order_b
+            end)
+
+            local ca = 0
+
+            for _, att in pairs(atts) do
+                local aslot = att
+                if istable(att) then
+                    aslot = aslot.slot
+                    att = att.att
+                end
+                local owned = self:PlayerOwnsAtt(att)
+
+                if !owned and GetConVar("arccw_attinv_hideunowned"):GetBool() then continue end
+
+                local valid, installed, blocked, showqty = self:ValidateAttachment(att, k, i)
+
+                if !valid then continue end
+
+                local attbtn = attmenu:Add("DButton")
+                attbtn:SetSize(barsize + ScreenScaleMulti(12), ScreenScaleMulti(14))
+                attbtn:SetText("")
+                attbtn:Dock( TOP )
+                attbtn:DockMargin( 0, 0, 0, smallgap )
+
+                ca = ca + 1
+
+                attbtn.AttName = att
+
+                attbtn.OnMousePressed = function(spaa, kc2)
+
+                    owned = self:PlayerOwnsAtt(spaa.AttName)
+                    local orighas = ArcCW:SlotAcceptsAtt(self.Attachments[i], self, spaa.AttName) and self:CheckFlags(self.Attachments[i].ExcludeFlags, self.Attachments[i].RequireFlags)
+
+                    local atttbl = ArcCW.AttachmentTable[spaa.AttName]
+                    if atttbl then
+                        if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
+                        for _, slot in pairs(k.MergeSlots or {}) do
+                            if slot and self.Attachments[slot] and
+                                    ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, spaa.AttName) and
+                                    !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
+                                    !orighas then
+                                return
+                            end
+                        end
+                    end
+
+                    if kc2 == MOUSE_LEFT and owned then
+
+                        if spaa.AttName == "" then
+                            self:DetachAllMergeSlots(span.AttIndex)
+                        else
+                            self:DetachAllMergeSlots(span.AttIndex, true)
+                            self:Attach(aslot, spaa.AttName)
+                        end
+                    elseif kc2 == MOUSE_RIGHT and spaa.AttName != "" then
+                        if span.AttSlot.Installed == spaa.AttName then
+                            -- Unequip
+                            self:DetachAllMergeSlots(span.AttIndex)
+                        elseif owned then
+                            -- Drop attachment
+                            if GetConVar("arccw_attinv_free"):GetBool() then return end
+                            if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+                            if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
+                            if !GetConVar("arccw_enable_dropping"):GetBool() then return end
+
+                            net.Start("arccw_asktodrop")
+                                net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)
+                            net.SendToServer()
+
+                            ArcCW:PlayerTakeAtt(self:GetOwner(), spaa.AttName)
+                        end
+                    end
+
+                    attcatb_regen(span)
+                end
+
+                attbtn.Paint = function(spaa, w, h)
+                    if !self:IsValid() then return end
+                    if !self.Attachments then return end
+                    local Bfg_col = Color(255, 255, 255, 255)
+                    local Bbg_col = Color(0, 0, 0, 100)
+                    local atttbl = ArcCW.AttachmentTable[spaa.AttName]
+                    local qty = ArcCW:PlayerGetAtts(self:GetOwner(), spaa.AttName)
+
+                    valid, installed, blocked, showqty = self:ValidateAttachment(att, k, i)
+                    if !valid then
+                        attbtn:Remove()
+                        return
+                    end
+
+                    owned = self:PlayerOwnsAtt(spaa.AttName)
+
+                    if !atttbl then
+                        atttbl = {
+                            PrintName = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt"),
+                            Icon = k.DefaultAttIcon or defaultatticon,
+                            Free = true
+                        }
+                    end
+
+                    if spaa:IsHovered() or installed then
+                        Bbg_col = Color(255, 255, 255, 100)
+                        Bfg_col = Color(0, 0, 0, 255)
+                    end
+
+                    if spaa:IsHovered() and installed then
+                        Bbg_col = Color(255, 255, 255, 200)
+                        Bfg_col = Color(0, 0, 0, 255)
+                    end
+
+                    if spaa:IsHovered() then
+                        atttrivia_do(spaa.AttName, i)
+                    end
+
+                    if !owned and GetConVar("arccw_attinv_darkunowned"):GetBool() then
+                        if spaa:IsHovered() then
+                            Bbg_col = Color(50, 50, 50, 150)
+                            Bfg_col = Color(150, 150, 150, 255)
+                        else
+                            Bbg_col = Color(20, 20, 20, 150)
+                            Bfg_col = Color(150, 150, 150, 255)
+                        end
+                    elseif !owned or blocked then
+                        if spaa:IsHovered() then
+                            Bbg_col = Color(125, 25, 25, 150)
+                            Bfg_col = Color(150, 50, 50, 255)
+                        else
+                            Bbg_col = Color(75, 0, 0, 150)
+                            Bfg_col = Color(150, 50, 50, 255)
+                        end
+                    end
+
+                    surface.SetDrawColor(Bbg_col)
+                    surface.DrawRect(0, 0, w, h)
+                    surface.DrawRect(0, 0, h * 1.5, h)
+
+                    surface.SetDrawColor(Bfg_col)
+                    surface.DrawRect((h * 1.5) - (linesize / 2), 0, linesize, h)
+
+                    local txt = translate("name." .. spaa.AttName) or atttbl.PrintName or "???"
+
+                    if showqty then
+                        txt = txt .. " (" .. tostring(qty) .. ")"
+                    end
+
+                    surface.SetTextColor(Bfg_col)
+                    surface.SetTextPos((h * 1.5) + smallgap, ScreenScaleMulti(1))
+                    surface.SetFont("ArcCW_12")
+
+                    DrawTextRot(spaa, txt, h * 1.5, 0, (h * 1.5) + smallgap, ScreenScaleMulti(1), w - (h * 1.5))
+
+                    -- surface.DrawText(txt)
+
+                    surface.SetDrawColor(Bfg_col)
+                    surface.SetMaterial(atttbl.Icon or k.DefaultAttIcon or defaultatticon)
+                    surface.DrawTexturedRect(h / 4, 0, h, h)
+
+                    if blocked then
+                        surface.SetDrawColor(color_white)
+                        surface.SetMaterial(blockedatticon)
+                        surface.DrawTexturedRect(h / 4 - h * 0.1, - h * 0.1, h * 1.2, h * 1.2)
+                    end
+                end
+            end
+
+            local specsize = ca * (ScreenScaleMulti(14) + smallgap)
+
+            attmenu:SetSize(barsize + ScreenScaleMulti(12), math.min(specsize, attmenuh))
+        end
+
+        attcatb.OnMousePressed = function(span, kc)
+            if !self:CheckFlags(span.AttSlot.ExcludeFlags, span.AttSlot.RequireFlags) then
+                return
+            end
+
+            if kc == MOUSE_LEFT then
+                if activeslot == span.AttIndex then
+                    activeslot = nil
+                    triviabox:Show()
+                    statbox:Hide()
+                    attmenu:Hide()
+                    self.InAttMenu = false
+                    atttrivia:Hide()
+                    attslidebox:Hide()
+                    atttogglebtn:Hide()
+                else
+                    activeslot = span.AttIndex
+                    triviabox:Hide()
+                    statbox:Hide()
+                    attmenu:Show()
+                    attslider:SetSlideX(self.Attachments[span.AttIndex].SlidePos)
+                    lastslidepos = self.Attachments[span.AttIndex].SlidePos
+                    self.InAttMenu = true
+
+                    span.TextRot = 0
+                    span.StartTextRot = CurTime()
+                    span.TextRotState = 0
+
+                    if self.Attachments[span.AttIndex].Installed then
+                        atttrivia_do(self.Attachments[span.AttIndex].Installed, span.AttIndex)
+                    end
+
+                    attcatb_regen(span)
+                end
+            elseif kc == MOUSE_RIGHT then
+                self:DetachAllMergeSlots(span.AttIndex)
+                attcatb_regen(span)
+                if statbox:IsVisible() then
+                    regenStatList()
+                end
             end
         end
 
-        for i, k in pairs(self.Attachments) do
-            if !k.PrintName then continue end
-            if i == "BaseClass" then continue end
-            if k.Hidden or k.Blacklisted then continue end
-            if k.Integral then continue end
+        attcatb.Paint = function(span, w, h)
 
-            local attcatb = attcats:Add("DButton")
+            -- Might error when player dies
+            if !self or !self.Attachments then return end
+
+            local Bfg_col = Color(255, 255, 255, 255)
+            local Bbg_col = Color(0, 0, 0, 100)
+
+            if span:IsHovered() or activeslot == span.AttIndex then
+                Bbg_col = Color(255, 255, 255, 100)
+                Bfg_col = Color(0, 0, 0, 255)
+            end
+
+            if span:IsHovered() and activeslot == span.AttIndex then
+                Bbg_col = Color(255, 255, 255, 200)
+                Bfg_col = Color(0, 0, 0, 255)
+            end
+
+            if self.CheckFlags and !self:CheckFlags(span.AttSlot.ExcludeFlags, span.AttSlot.RequireFlags) then
+                Bbg_col = Color(75, 0, 0, 150)
+                Bfg_col = Color(150, 50, 50, 255)
+            end
+
+            local txt =  ArcCW.TryTranslation(k.PrintName)
+
+            local att_txt = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt")
+            local att_icon = k.DefaultAttIcon or defaultatticon
+
+            local installed = k.Installed
+
+            if !installed then
+                (k.MergeSlots or {})["BaseClass"] = nil
+                for _, slot in pairs(k.MergeSlots or {}) do
+                    if self.Attachments[slot] and self.Attachments[slot].Installed then
+                        installed = self.Attachments[slot].Installed
+                        break
+                    elseif !self.Attachments[slot] then
+                        print("ERROR! No attachment " .. tostring(slot))
+                    end
+                end
+            end
+
+            if installed then
+                local atttbl = ArcCW.AttachmentTable[installed]
+
+                if atttbl.Health then
+                    local perc = (self:GetAttachmentHP(i) / self:GetAttachmentMaxHP(i)) * 100
+                    perc = math.Round(perc)
+                    txt = txt .. " (" .. tostring(perc) .. "%)"
+                end
+                if !GetConVar("arccw_hud_embracetradition"):GetBool() then
+                    att_txt = translate("name." .. installed) or atttbl.PrintName
+
+                    if atttbl.Icon then
+                        att_icon = atttbl.Icon
+                    end
+                end
+            end
+
             if GetConVar("arccw_hud_embracetradition"):GetBool() then
-                attcatb:SetSize(barsize, buttonsize )
-            else
-                attcatb:SetSize(barsize, buttonsize / 2)
-            end
-            attcatb:SetText("")
-            attcatb:Dock( TOP )
-            attcatb:DockMargin( 0, 0, 0, smallgap )
-
-            attcatb.AttIndex = i
-            attcatb.AttSlot = k
-
-            local function attcatb_regen(span)
-                if !IsValid(span) then return end
-                local catt = self.Attachments[span.AttIndex].Installed
-                local catttbl
-                if catt then
-                    catttbl = ArcCW.AttachmentTable[catt]
-                end
-
-                if self.Attachments[span.AttIndex].Installed and self.Attachments[span.AttIndex].SlideAmount and !catttbl.MountPositionOverride then
-                    attslidebox:Show()
-                else
-                    attslidebox:Hide()
-                end
-
-                if self.Attachments[span.AttIndex].Installed and catttbl and catttbl.ToggleStats then
-                    if attslidebox:IsVisible() then
-                        atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(40) - (1 * airgap))
-                    else
-                        atttogglebtn:SetPos(scrw - barsize - airgap + barsize * 0.75, scrh - ScreenScaleMulti(64) - (1 * airgap))
-                    end
-                    atttogglebtn:Show()
-                else
-                    atttogglebtn:Hide()
-                end
-
-                attmenu:Clear()
-
-                local atts = {}
-                local slots = {i}
-                local attCheck = {}
-
-                table.Add(slots, k.MergeSlots or {})
-
-                for _, y in pairs(slots) do
-                    for _, bruh in pairs(ArcCW:GetAttsForSlot((self.Attachments[y] or {}).Slot, self)) do
-                        if attCheck[bruh] then continue end
-                        table.insert(atts, {
-                            att = bruh,
-                            slot = y
-                        })
-                        attCheck[bruh] = true
-                    end
-                end
-
-                atts[0] = ""
-
-                table.sort(atts, function(a, b)
-                    a = a.att or ""
-                    b = b.att or ""
-                    local atttbl_a = ArcCW.AttachmentTable[a]
-                    local atttbl_b = ArcCW.AttachmentTable[b]
-
-                    local order_a = 0
-                    local order_b = 0
-
-                    order_a = atttbl_a.SortOrder or order_a
-                    order_b = atttbl_b.SortOrder or order_b
-
-                    if order_a == order_b then
-                        return (translate("name." .. a) or atttbl_a.PrintName or "") > (translate("name." .. b) or atttbl_b.PrintName or "")
-                    end
-
-                    return order_a > order_b
-                end)
-
-                local ca = 0
-
-                for _, att in pairs(atts) do
-                    local aslot = att
-                    if istable(att) then
-                        aslot = aslot.slot
-                        att = att.att
-                    end
-                    local owned = self:PlayerOwnsAtt(att)
-
-                    if !owned and GetConVar("arccw_attinv_hideunowned"):GetBool() then continue end
-
-                    local valid, installed, blocked, showqty = self:ValidateAttachment(att, k, i)
-
-                    if !valid then continue end
-
-                    local attbtn = attmenu:Add("DButton")
-                    attbtn:SetSize(barsize + ScreenScaleMulti(12), ScreenScaleMulti(14))
-                    attbtn:SetText("")
-                    attbtn:Dock( TOP )
-                    attbtn:DockMargin( 0, 0, 0, smallgap )
-
-                    ca = ca + 1
-
-                    attbtn.AttName = att
-
-                    attbtn.OnMousePressed = function(spaa, kc2)
-
-                        owned = self:PlayerOwnsAtt(spaa.AttName)
-                        local orighas = ArcCW:SlotAcceptsAtt(self.Attachments[i], self, spaa.AttName) and self:CheckFlags(self.Attachments[i].ExcludeFlags, self.Attachments[i].RequireFlags)
-
-                        local atttbl = ArcCW.AttachmentTable[spaa.AttName]
-                        if atttbl then
-                            if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
-                            for _, slot in pairs(k.MergeSlots or {}) do
-                                if slot and self.Attachments[slot] and
-                                        ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, spaa.AttName) and
-                                        !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
-                                        !orighas then
-                                    return
-                                end
-                            end
-                        end
-
-                        if kc2 == MOUSE_LEFT and owned then
-
-                            if spaa.AttName == "" then
-                                self:DetachAllMergeSlots(span.AttIndex)
-                            else
-                                self:DetachAllMergeSlots(span.AttIndex, true)
-                                self:Attach(aslot, spaa.AttName)
-                                rebuild_attcatb()
-                            end
-                        elseif kc2 == MOUSE_RIGHT and spaa.AttName != "" then
-                            if span.AttSlot.Installed == spaa.AttName then
-                                -- Unequip
-                                self:DetachAllMergeSlots(span.AttIndex)
-                            elseif owned then
-                                -- Drop attachment
-                                if GetConVar("arccw_attinv_free"):GetBool() then return end
-                                if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
-                                if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
-                                if !GetConVar("arccw_enable_dropping"):GetBool() then return end
-
-                                net.Start("arccw_asktodrop")
-                                    net.WriteUInt(ArcCW.AttachmentTable[spaa.AttName].ID, 24)
-                                net.SendToServer()
-
-                                ArcCW:PlayerTakeAtt(self:GetOwner(), spaa.AttName)
-                            end
-                        end
-
-                        attcatb_regen(span)
-                    end
-
-                    attbtn.Paint = function(spaa, w, h)
-                        if !self:IsValid() then return end
-                        if !self.Attachments then return end
-                        local Bfg_col = Color(255, 255, 255, 255)
-                        local Bbg_col = Color(0, 0, 0, 100)
-                        local atttbl = ArcCW.AttachmentTable[spaa.AttName]
-                        local qty = ArcCW:PlayerGetAtts(self:GetOwner(), spaa.AttName)
-
-                        valid, installed, blocked, showqty = self:ValidateAttachment(att, k, i)
-                        if !valid then
-                            attbtn:Remove()
-                            return
-                        end
-
-                        owned = self:PlayerOwnsAtt(spaa.AttName)
-
-                        if !atttbl then
-                            atttbl = {
-                                PrintName = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt"),
-                                Icon = k.DefaultAttIcon or defaultatticon,
-                                Free = true
-                            }
-                        end
-
-                        if spaa:IsHovered() or installed then
-                            Bbg_col = Color(255, 255, 255, 100)
-                            Bfg_col = Color(0, 0, 0, 255)
-                        end
-
-                        if spaa:IsHovered() and installed then
-                            Bbg_col = Color(255, 255, 255, 200)
-                            Bfg_col = Color(0, 0, 0, 255)
-                        end
-
-                        if spaa:IsHovered() then
-                            atttrivia_do(spaa.AttName, i)
-                        end
-
-                        if !owned and GetConVar("arccw_attinv_darkunowned"):GetBool() then
-                            if spaa:IsHovered() then
-                                Bbg_col = Color(50, 50, 50, 150)
-                                Bfg_col = Color(150, 150, 150, 255)
-                            else
-                                Bbg_col = Color(20, 20, 20, 150)
-                                Bfg_col = Color(150, 150, 150, 255)
-                            end
-                        elseif !owned or blocked then
-                            if spaa:IsHovered() then
-                                Bbg_col = Color(125, 25, 25, 150)
-                                Bfg_col = Color(150, 50, 50, 255)
-                            else
-                                Bbg_col = Color(75, 0, 0, 150)
-                                Bfg_col = Color(150, 50, 50, 255)
-                            end
-                        end
-
-                        surface.SetDrawColor(Bbg_col)
-                        surface.DrawRect(0, 0, w, h)
-                        surface.DrawRect(0, 0, h * 1.5, h)
-
-                        surface.SetDrawColor(Bfg_col)
-                        surface.DrawRect((h * 1.5) - (linesize / 2), 0, linesize, h)
-
-                        local txt = translate("name." .. spaa.AttName) or atttbl.PrintName or "???"
-
-                        if showqty then
-                            txt = txt .. " (" .. tostring(qty) .. ")"
-                        end
-
-                        surface.SetTextColor(Bfg_col)
-                        surface.SetTextPos((h * 1.5) + smallgap, ScreenScaleMulti(1))
-                        surface.SetFont("ArcCW_12")
-
-                        DrawTextRot(spaa, txt, h * 1.5, 0, (h * 1.5) + smallgap, ScreenScaleMulti(1), w - (h * 1.5))
-
-                        -- surface.DrawText(txt)
-
-                        surface.SetDrawColor(Bfg_col)
-                        surface.SetMaterial(atttbl.Icon or k.DefaultAttIcon or defaultatticon)
-                        surface.DrawTexturedRect(h / 4, 0, h, h)
-
-                        if blocked then
-                            surface.SetDrawColor(color_white)
-                            surface.SetMaterial(blockedatticon)
-                            surface.DrawTexturedRect(h / 4 - h * 0.1, - h * 0.1, h * 1.2, h * 1.2)
-                        end
-                    end
-                end
-
-                local specsize = ca * (ScreenScaleMulti(14) + smallgap)
-
-                attmenu:SetSize(barsize + ScreenScaleMulti(12), math.min(specsize, attmenuh))
-            end
-
-            attcatb.OnMousePressed = function(span, kc)
-                if !self:CheckFlags(span.AttSlot.ExcludeFlags, span.AttSlot.RequireFlags) then
-                    return
-                end
-
-                if kc == MOUSE_LEFT then
-                    if activeslot == span.AttIndex then
-                        activeslot = nil
-                        triviabox:Show()
-                        statbox:Hide()
-                        attmenu:Hide()
-                        self.InAttMenu = false
-                        atttrivia:Hide()
-                        attslidebox:Hide()
-                        atttogglebtn:Hide()
-                    else
-                        activeslot = span.AttIndex
-                        triviabox:Hide()
-                        statbox:Hide()
-                        attmenu:Show()
-                        attslider:SetSlideX(self.Attachments[span.AttIndex].SlidePos)
-                        lastslidepos = self.Attachments[span.AttIndex].SlidePos
-                        self.InAttMenu = true
-
-                        span.TextRot = 0
-                        span.StartTextRot = CurTime()
-                        span.TextRotState = 0
-
-                        if self.Attachments[span.AttIndex].Installed then
-                            atttrivia_do(self.Attachments[span.AttIndex].Installed, span.AttIndex)
-                        end
-
-                        attcatb_regen(span)
-                    end
-                elseif kc == MOUSE_RIGHT then
-                    self:DetachAllMergeSlots(span.AttIndex)
-                    attcatb_regen(span)
-                    if statbox:IsVisible() then
-                        regenStatList()
-                    end
-                end
-            end
-
-            attcatb.Paint = function(span, w, h)
-
-                -- Might error when player dies
-                if !self or !self.Attachments then return end
-
-                local Bfg_col = Color(255, 255, 255, 255)
-                local Bbg_col = Color(0, 0, 0, 100)
-
-                if span:IsHovered() or activeslot == span.AttIndex then
-                    Bbg_col = Color(255, 255, 255, 100)
-                    Bfg_col = Color(0, 0, 0, 255)
-                end
-
-                if span:IsHovered() and activeslot == span.AttIndex then
-                    Bbg_col = Color(255, 255, 255, 200)
-                    Bfg_col = Color(0, 0, 0, 255)
-                end
-
-                if self.CheckFlags and !self:CheckFlags(span.AttSlot.ExcludeFlags, span.AttSlot.RequireFlags) then
-                    Bbg_col = Color(75, 0, 0, 150)
-                    Bfg_col = Color(150, 50, 50, 255)
-                end
-
-                local txt =  ArcCW.TryTranslation(k.PrintName)
-
-                local att_txt = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt")
-                local att_icon = k.DefaultAttIcon or defaultatticon
-
-                local installed = k.Installed
-
-                if !installed then
-                    (k.MergeSlots or {})["BaseClass"] = nil
-                    for _, slot in pairs(k.MergeSlots or {}) do
-                        if self.Attachments[slot] and self.Attachments[slot].Installed then
-                            installed = self.Attachments[slot].Installed
-                            break
-                        elseif !self.Attachments[slot] then
-                            print("ERROR! No attachment " .. tostring(slot))
-                        end
-                    end
-                end
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+                surface.DrawRect(0, 0, w, h / 2)
+                surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
+
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+                surface.DrawRect(0, 0, w, h / 2)
+                surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
+
+                surface.SetTextColor(SolidBlack)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12_Glow")
+                surface.DrawText(txt)
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12")
+                surface.DrawText(txt)
 
                 if installed then
                     local atttbl = ArcCW.AttachmentTable[installed]
+
+                    att_txt = translate("name." .. installed) or atttbl.PrintName
+
+                    if atttbl.Icon then
+                        att_icon = atttbl.Icon
+                    end
+                end
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
+                surface.SetFont("ArcCW_12")
+                DrawTextRot(span, att_txt, 0, h / 2, smallgap * 2, (h - linesize) / 2 + smallgap, w - 1.5 * h)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(w - (1.5 * h), 0, linesize, h)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.SetMaterial(att_icon)
+                surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
+            ----------------------------------------------------------------------
+            elseif activeslot == span.AttIndex then
+                span:SetSize(barsize, buttonsize)
+
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+                surface.DrawRect(0, 0, w, h / 2)
+                surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
+
+                surface.SetTextColor(SolidBlack)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12_Glow")
+                surface.DrawText(txt)
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12")
+                surface.DrawText(txt)
+
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
+                surface.SetFont("ArcCW_12")
+
+                DrawTextRot(span, att_txt, 0, h / 2, smallgap * 2, (h - linesize) / 2 + smallgap, w - 1.5 * h)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(w - (1.5 * h), 0, linesize, h)
+
+                surface.SetDrawColor(Bfg_col)
+                surface.SetMaterial(att_icon)
+                surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
+            else
+                if installed then
+                    local atttbl = ArcCW.AttachmentTable[installed]
+                    txt = att_txt
 
                     if atttbl.Health then
                         local perc = (self:GetAttachmentHP(i) / self:GetAttachmentMaxHP(i)) * 100
                         perc = math.Round(perc)
                         txt = txt .. " (" .. tostring(perc) .. "%)"
                     end
-                    if !GetConVar("arccw_hud_embracetradition"):GetBool() then
-                        att_txt = translate("name." .. installed) or atttbl.PrintName
-
-                        if atttbl.Icon then
-                            att_icon = atttbl.Icon
-                        end
-                    end
                 end
 
-                if GetConVar("arccw_hud_embracetradition"):GetBool() then
-                    surface.SetDrawColor(Bbg_col)
-                    surface.DrawRect(0, 0, w, h)
-                    surface.DrawRect(0, 0, w, h / 2)
-                    surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
+                span:SetSize(barsize, buttonsize / 2)
 
-                    surface.SetDrawColor(Bbg_col)
-                    surface.DrawRect(0, 0, w, h)
-                    surface.DrawRect(0, 0, w, h / 2)
-                    surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
+                surface.SetDrawColor(Bbg_col)
+                surface.DrawRect(0, 0, w, h)
+                surface.DrawRect(w - (1.5 * h), 0, 1.5 * h, h)
 
-                    surface.SetDrawColor(Bfg_col)
-                    surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
+                surface.SetTextColor(SolidBlack)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12_Glow")
+                -- surface.DrawText(txt)
+                DrawTextRot(span, txt, 0, 0, smallgap, 0, w - 1.5 * h)
 
-                    surface.SetTextColor(SolidBlack)
-                    surface.SetTextPos(smallgap, 0)
-                    surface.SetFont("ArcCW_12_Glow")
-                    surface.DrawText(txt)
+                surface.SetTextColor(Bfg_col)
+                surface.SetTextPos(smallgap, 0)
+                surface.SetFont("ArcCW_12")
+                DrawTextRot(span, txt, 0, 0, smallgap, 0, w - 1.5 * h, true)
 
-                    surface.SetTextColor(Bfg_col)
-                    surface.SetTextPos(smallgap, 0)
-                    surface.SetFont("ArcCW_12")
-                    surface.DrawText(txt)
+                surface.SetDrawColor(Bfg_col)
+                surface.DrawRect(w - (1.5 * h), 0, linesize, h)
 
-                    if installed then
-                        local atttbl = ArcCW.AttachmentTable[installed]
-
-                        att_txt = translate("name." .. installed) or atttbl.PrintName
-
-                        if atttbl.Icon then
-                            att_icon = atttbl.Icon
-                        end
-                    end
-
-                    surface.SetTextColor(Bfg_col)
-                    surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
-                    surface.SetFont("ArcCW_12")
-                    DrawTextRot(span, att_txt, 0, h / 2, smallgap * 2, (h - linesize) / 2 + smallgap, w - 1.5 * h)
-
-                    surface.SetDrawColor(Bfg_col)
-                    surface.DrawRect(w - (1.5 * h), 0, linesize, h)
-
-                    surface.SetDrawColor(Bfg_col)
-                    surface.SetMaterial(att_icon)
-                    surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
-                ----------------------------------------------------------------------
-                elseif activeslot == span.AttIndex then
-                    span:SetSize(barsize, buttonsize)
-
-                    surface.SetDrawColor(Bbg_col)
-                    surface.DrawRect(0, 0, w, h)
-                    surface.DrawRect(0, 0, w, h / 2)
-                    surface.DrawRect(w - (1.5 * h), h / 2, 1.5 * h, h / 2)
-
-                    surface.SetDrawColor(Bfg_col)
-                    surface.DrawRect(0, (h - linesize) / 2, w - (1.5 * h), linesize)
-
-                    surface.SetTextColor(SolidBlack)
-                    surface.SetTextPos(smallgap, 0)
-                    surface.SetFont("ArcCW_12_Glow")
-                    surface.DrawText(txt)
-
-                    surface.SetTextColor(Bfg_col)
-                    surface.SetTextPos(smallgap, 0)
-                    surface.SetFont("ArcCW_12")
-                    surface.DrawText(txt)
-
-                    surface.SetTextColor(Bfg_col)
-                    surface.SetTextPos(smallgap * 2, (h - linesize) / 2 + smallgap)
-                    surface.SetFont("ArcCW_12")
-
-                    DrawTextRot(span, att_txt, 0, h / 2, smallgap * 2, (h - linesize) / 2 + smallgap, w - 1.5 * h)
-
-                    surface.SetDrawColor(Bfg_col)
-                    surface.DrawRect(w - (1.5 * h), 0, linesize, h)
-
-                    surface.SetDrawColor(Bfg_col)
-                    surface.SetMaterial(att_icon)
-                    surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
-                else
-                    if installed then
-                        local atttbl = ArcCW.AttachmentTable[installed]
-                        txt = att_txt
-
-                        if atttbl.Health then
-                            local perc = (self:GetAttachmentHP(i) / self:GetAttachmentMaxHP(i)) * 100
-                            perc = math.Round(perc)
-                            txt = txt .. " (" .. tostring(perc) .. "%)"
-                        end
-                    end
-
-                    span:SetSize(barsize, buttonsize / 2)
-
-                    surface.SetDrawColor(Bbg_col)
-                    surface.DrawRect(0, 0, w, h)
-                    surface.DrawRect(w - (1.5 * h), 0, 1.5 * h, h)
-
-                    surface.SetTextColor(SolidBlack)
-                    surface.SetTextPos(smallgap, 0)
-                    surface.SetFont("ArcCW_12_Glow")
-                    -- surface.DrawText(txt)
-                    DrawTextRot(span, txt, 0, 0, smallgap, 0, w - 1.5 * h)
-
-                    surface.SetTextColor(Bfg_col)
-                    surface.SetTextPos(smallgap, 0)
-                    surface.SetFont("ArcCW_12")
-                    DrawTextRot(span, txt, 0, 0, smallgap, 0, w - 1.5 * h, true)
-
-                    surface.SetDrawColor(Bfg_col)
-                    surface.DrawRect(w - (1.5 * h), 0, linesize, h)
-
-                    surface.SetDrawColor(Bfg_col)
-                    surface.SetMaterial(att_icon)
-                    surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
-                end
+                surface.SetDrawColor(Bfg_col)
+                surface.SetMaterial(att_icon)
+                surface.DrawTexturedRect(w - (1.25 * h), 0, h, h)
             end
         end
     end
-
-    rebuild_attcatb()
 
     local sbar2 = triviabox:GetVBar()
     sbar2.Paint = function() end

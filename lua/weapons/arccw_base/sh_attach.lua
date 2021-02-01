@@ -1459,7 +1459,11 @@ function SWEP:GetSubSlotTree(i)
 
     local ss = {}
     for j, k in pairs(self.Attachments[i].SubAtts) do
-        ss[j] = self:GetSubSlotTree(k)
+        if k == i then continue end
+        local sst = self:GetSubSlotTree(k)
+        if sst then
+            ss[j] = sst
+        end
     end
 
     return {b = ss, i = self.Attachments[i].Installed}
@@ -1567,6 +1571,8 @@ function SWEP:AddSubSlot(i, attname)
                     self.Attachments[index].Offset.wpos = LocalToWorld(slot.Offset.wpos, self.Attachments[index].Offset.wang, og_slot.Offset.wpos, og_slot.Offset.wang or Angle(0, 0, 0))
                 end
             end
+
+            self.Attachments[index].SubAtts = {}
 
             for entry, value in pairs(og_slot) do
                 if entry != "Installed" then
