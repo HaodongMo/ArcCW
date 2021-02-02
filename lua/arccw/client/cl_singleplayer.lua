@@ -61,7 +61,7 @@ concommand.Add("arccw_listvmbones", function()
     if !vm then return end
 
     for i = 0, (vm:GetBoneCount() - 1) do
-        print(vm:GetBoneName(i))
+        print(i .. " - " .. vm:GetBoneName(i))
     end
 end)
 
