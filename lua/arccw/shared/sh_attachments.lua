@@ -204,6 +204,7 @@ net.Receive("arccw_networkatts", function(len, ply)
         wpn.Attachments[i] = wpn.Attachments[i] or {}
 
         if attid == 0 then
+            if !istable(wpn.Attachments[i]) then continue end
             wpn.Attachments[i].Installed = nil
             continue
         end
@@ -219,7 +220,7 @@ net.Receive("arccw_networkatts", function(len, ply)
             wpn.Attachments[i].ToggleNum = net.ReadUInt(8)
         end
 
-        wpn:AddSubSlot(i, attid)
+        wpn:AddSubSlot(i, att)
     end
 
     wpn.CertainAboutAtts = true

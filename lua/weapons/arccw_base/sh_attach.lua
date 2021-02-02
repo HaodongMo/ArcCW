@@ -1015,7 +1015,7 @@ function SWEP:GetPickX()
     return GetConVar("arccw_atts_pickx"):GetInt()
 end
 
-function SWEP:Attach(slot, attname, silent)
+function SWEP:Attach(slot, attname, silent, noadjust)
     silent = silent or false
     local attslot = self.Attachments[slot]
     if !attslot then return end
@@ -1047,6 +1047,18 @@ function SWEP:Attach(slot, attname, silent)
     if !ArcCW:SlotAcceptsAtt(attslot.Slot, self, attname) then return end
     if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
     if !self:PlayerOwnsAtt(attname) then return end
+
+    local max = atttbl.Max
+
+    if max then
+        local amt = 0
+
+        for i, k in pairs(self.Attachments) do
+            if k.Installed == attname then amt = amt + 1 end
+        end
+
+        if amt >= max then return end
+    end
 
     if attslot.SlideAmount then
         attslot.SlidePos = 0.5
@@ -1128,12 +1140,14 @@ function SWEP:Attach(slot, attname, silent)
         end
     end
 
-    self:AdjustAtts()
-
     for s, i in pairs(self.Attachments) do
         if !self:CheckFlags(i.ExcludeFlags, i.RequireFlags) then
-            self:Detach(s, true)
+            self:Detach(s, true, true)
         end
+    end
+
+    if !noadjust then
+        self:AdjustAtts()
     end
 
     self:RefreshBGs()
@@ -1142,14 +1156,14 @@ end
 function SWEP:DetachAllMergeSlots(slot, silent)
     local slots = {slot}
 
-    table.Add(slots, self.Attachments[slot].MergeSlots or {})
+    table.Add(slots, (self.Attachments[slot] or {}).MergeSlots or {})
 
     for _, i in pairs(slots) do
         self:Detach(i, silent)
     end
 end
 
-function SWEP:Detach(slot, silent)
+function SWEP:Detach(slot, silent, noadjust)
     if !slot then return end
     if !self.Attachments[slot] then return end
 
@@ -1181,6 +1195,12 @@ function SWEP:Detach(slot, silent)
     end
 
     self.Attachments[slot].Installed = nil
+
+    if self.Attachments[slot].SubAtts then
+        for i, k in pairs(self.Attachments[slot].SubAtts) do
+            self:Detach(k, true, true)
+        end
+    end
 
     if self:GetAttachmentHP(slot) >= self:GetAttachmentMaxHP(slot) then
         ArcCW:PlayerGiveAtt(self:GetOwner(), previnstall)
@@ -1220,7 +1240,9 @@ function SWEP:Detach(slot, silent)
 
     self:RefreshBGs()
 
-    self:AdjustAtts()
+    if !noadjust then
+        self:AdjustAtts()
+    end
 end
 
 function SWEP:ToggleSlot(slot, num, silent)
@@ -1303,6 +1325,8 @@ function SWEP:AdjustAtts()
     else
         self.Secondary.Ammo = "none"
     end
+
+    self:RebuildSubSlots()
 
     local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
 
@@ -1436,7 +1460,7 @@ end
 function SWEP:GetSubSlotTree(i)
     if !self.Attachments[i] then return nil end
     if !self.Attachments[i].Installed then return nil end
-    if !self.Attachments[i].Installed.SubSlots then return
+    if !self.Attachments[i].SubAtts then return
         {
         b = {},
         i = self.Attachments[i].Installed,
@@ -1446,11 +1470,30 @@ function SWEP:GetSubSlotTree(i)
     end
 
     local ss = {}
-    for j, k in pairs(self.Attachments[i].Installed.SubSlots) do
-        ss[j] = self:GetSubSlotTree(k)
+    for j, k in pairs(self.Attachments[i].SubAtts) do
+        if k == i then continue end
+        local sst = self:GetSubSlotTree(k)
+        if sst then
+            ss[j] = sst
+        end
     end
 
     return {b = ss, i = self.Attachments[i].Installed}
+end
+
+function SWEP:SubSlotTreeReinstall(slot, subslottree)
+    for i, k in pairs(self.Attachments[slot].SubAtts or {}) do
+        -- i = index
+        -- k = slot
+        self.Attachments[k].Installed = subslottree[i].i
+        self.Attachments[k].ToggleNum = subslottree[i].t
+        self.Attachments[k].SlidePos = subslottree[i].s
+        self.Attachments[k].Health = subslottree[i].h
+
+        if subslottree.b[i] then
+            self:SubSlotTreeReinstall(i, subslottree.b[i])
+        end
+    end
 end
 
 function SWEP:RebuildSubSlots()
@@ -1459,21 +1502,45 @@ function SWEP:RebuildSubSlots()
 
     local baseatts = table.Count(weapons.Get(self:GetClass()).Attachments)
 
+    self.Attachments.BaseClass = nil
+
     for i = 1, baseatts do
         subslottrees[baseatts] = self:GetSubSlotTree(i)
     end
 
-    -- TODO:
     -- remove all sub slots
+    for i, k in pairs(self.Attachments) do
+        if !isnumber(i) then continue end
+        if !istable(k) then continue end
+        if i > baseatts then
+            self.Attachments[i] = nil
+        else
+            self.Attachments[i].SubAtts = nil
+        end
+    end
+
+    self.SubSlotCount = 0
     -- add the sub slots back
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        local att = ArcCW.AttachmentTable[k.Installed]
+        if !att then continue end
+        if !istable(k) then continue end
+
+        if att.SubSlots then
+            self:AddSubSlot(i, k.Installed)
+        end
+    end
     -- add the sub slot data back
 
-    -- also actually call this function
+    for i, k in pairs(subslottrees) do
+        self:SubSlotTreeReinstall(i, k)
+    end
 end
 
-function SWEP:AddSubSlot(i, attid)
+function SWEP:AddSubSlot(i, attname)
     local baseatts = table.Count(weapons.Get(self:GetClass()).Attachments)
-    local att = ArcCW.AttachmentIDTable[attid]
+    local att = ArcCW.AttachmentTable[attname]
     if att.SubSlots then
         self.Attachments[i].SubAtts = {}
         local og_slot = self.Attachments[i]
@@ -1483,7 +1550,10 @@ function SWEP:AddSubSlot(i, attid)
             self.Attachments[index] = slot
             self.Attachments[index].Bone = og_slot.Bone
             self.Attachments[index].WMBone = og_slot.Bone
-            self.Attachments[i].SubAtts[ind] = index
+            self.Attachments[index].ExtraSightDist = self.Attachments[index].ExtraSightDist or og_slot.ExtraSightDist
+            self.Attachments[index].CorrectivePos = og_slot.CorrectivePos
+            self.Attachments[index].CorrectiveAng = og_slot.CorrectiveAng
+            og_slot.SubAtts[ind] = index
 
             if slot.MergeSlots then
                 self.Attachments[index].MergeSlots = {}
@@ -1517,13 +1587,7 @@ function SWEP:AddSubSlot(i, attid)
                 end
             end
 
-            for entry, value in pairs(og_slot) do
-                if entry != "Installed" then
-                    if self.Attachments[index][entry] != nil then
-                        self.Attachments[index][entry] = value
-                    end
-                end
-            end
+            self.Attachments[index].SubAtts = {}
         end
     end
 end
