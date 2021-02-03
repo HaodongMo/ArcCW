@@ -48,7 +48,15 @@ concommand.Add("arccw_listvmanims", function()
 
     if !vm then return end
 
-    PrintTable(vm:GetSequenceList())
+    local alist = vm:GetSequenceList()
+
+    for i = 0, #alist do
+        MsgC(Color(160, 190, 255), i, " --- ")
+        MsgC(Color(255, 255, 255), "\t", alist[i], "\n     [")
+        MsgC(Color(255, 230, 230), "\t", vm:SequenceDuration(i), "\n")
+    end
+
+    --PrintTable(alist)
 end)
 
 concommand.Add("arccw_listvmbones", function()

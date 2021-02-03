@@ -116,7 +116,5 @@ ArcCW.LHIKBones = {
     "ValveBiped.Bip01_L_Finger12",
     "ValveBiped.Bip01_L_Finger0",
     "ValveBiped.Bip01_L_Finger01",
-    "ValveBiped.Bip01_L_Finger02",
-    "ValveBiped.Bip01_L_Wrist",
-    "ValveBiped.Bip01_L_Ulna"
+    "ValveBiped.Bip01_L_Finger02"
 }
