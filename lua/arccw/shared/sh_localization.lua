@@ -55,6 +55,7 @@ ArcCW.StringToLang = {
     ["charm"] = "attslot.charm",
     ["skin"] = "attslot.skin",
     ["magazine"] = "attslot.magazine",
+    ["slide"] = "attslot.slide",
 
     ["iron sights"] = "attslot.optic.default",
     ["ironsights"] = "attslot.optic.default",
