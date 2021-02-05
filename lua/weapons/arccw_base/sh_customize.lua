@@ -1596,7 +1596,10 @@ function SWEP:CreateCustomizeHUD()
                 local shy
                 local shdmg
 
-                if mouser < maxgr then
+                if mouser < mingr then
+                    shy = starty
+                    shdmg = dmgmax
+                elseif mouser < maxgr then
                     local delta = mouser / maxgr
                     shy = Lerp(delta, starty, endy)
                     shdmg = Lerp(delta, dmgmax, dmgmin)

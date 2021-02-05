@@ -382,6 +382,7 @@ local head = Material("effects/yellowflare")
 local tracer = Material("effects/tracer_middle")
 
 function ArcCW:DrawPhysBullets()
+    render.SetScissorRect(0, 0, ScrW(), ScrH(), true)
     for _, i in pairs(ArcCW.PhysBullets) do
         if i.StartTime >= CurTime() - 0.1 then
             if i.Travelled <= (i.Vel:Length() * 0.01) then continue end
