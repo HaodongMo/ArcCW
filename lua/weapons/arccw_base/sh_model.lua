@@ -74,7 +74,12 @@ function SWEP:AddElement(elementname, wm)
 
         if !model or !IsValid(model) or !IsValid(self) then continue end
 
-        model:SetParent(parent)
+        if i.BoneMerge then
+            model:SetParent(parent)
+            model:AddEffects(EF_BONEMERGE)
+        else
+            model:SetParent(self)
+        end
 
         local element = {}
 
@@ -338,7 +343,18 @@ function SWEP:SetupModel(wm)
 
         if !model or !IsValid(model) then continue end
 
-        model:SetParent(self)
+        if atttbl.BoneMerge then
+            local parent = self:GetOwner():GetViewModel()
+
+            if wm then
+                parent = self:GetOwner()
+            end
+
+            model:SetParent(parent)
+            model:AddEffects(EF_BONEMERGE)
+        else
+            model:SetParent(self)
+        end
 
         local repbone = nil
         local repang = nil
@@ -468,7 +484,18 @@ function SWEP:SetupModel(wm)
         if atttbl.IsMuzzleDevice or atttbl.UBGL then
             local hspmodel = ClientsideModel(atttbl.Model)
 
-            hspmodel:SetParent(self)
+            if k.BoneMerge then
+                local parent = self:GetOwner():GetViewModel()
+
+                if wm then
+                    parent = self:GetOwner()
+                end
+
+                hspmodel:SetParent(parent)
+                hspmodel:AddEffects(EF_BONEMERGE)
+            else
+                hspmodel:SetParent(self)
+            end
 
             local hspelement = {}
             hspmodel:SetNoDraw(true)
@@ -511,7 +538,18 @@ function SWEP:SetupModel(wm)
         if atttbl.HolosightPiece then
             local hspmodel = ClientsideModel(atttbl.HolosightPiece)
 
-            hspmodel:SetParent(self:GetOwner():GetViewModel())
+            if k.BoneMerge then
+                local parent = self:GetOwner():GetViewModel()
+
+                if wm then
+                    parent = self:GetOwner()
+                end
+
+                hspmodel:SetParent(parent)
+                hspmodel:AddEffects(EF_BONEMERGE)
+            else
+                hspmodel:SetParent(self)
+            end
 
             local hspelement = {}
             hspmodel:SetNoDraw(true)
@@ -550,6 +588,9 @@ function SWEP:SetupModel(wm)
 
     if !wm and self.HolosightPiece then
         local hspmodel = ClientsideModel(self.HolosightPiece)
+
+        hspmodel:SetParent(parent)
+        hspmodel:AddEffects(EF_BONEMERGE)
 
         local hspelement = {}
         hspmodel:SetNoDraw(true)
@@ -686,8 +727,6 @@ function SWEP:DrawCustomModel(wm,origin,angle)
         -- end
     end
 
-    vm:SetupBones()
-
     for i, k in pairs(models) do
         if !IsValid(k.Model) then
             self:SetupModel(wm)
@@ -737,31 +776,7 @@ function SWEP:DrawCustomModel(wm,origin,angle)
             end
         end
 
-        -- k.Model:AddEffects(EF_PARENT_ANIMATES)
-
         if k.BoneMerge and !k.NoDraw then
-            -- k.Model:SetupBones()
-            -- local bones = vm:GetBoneCount()
-            -- for b = 1, bones do
-            --     local bone = vm:GetBoneName(b)
-
-            --     if !bone then continue end
-            --     if bone == "__INVALIDBONE__" then continue end -- what the fuck is this bullshit anyway fuck you garry
-
-            --     local att_bone = k.Model:LookupBone(bone)
-
-            --     if !att_bone then continue end
-
-            --     local vmmatrix = vm:GetBoneMatrix(b)
-
-            --     -- local vm_pos, vm_ang = vmmatrix:GetAttachment()
-
-            --     k.Model:SetBoneMatrix(att_bone, vmmatrix)
-            -- end
-
-            k.Model:SetParent(vm)
-            k.Model:AddEffects(EF_BONEMERGE)
-
             k.Model:DrawModel()
             continue
         end
@@ -968,7 +983,7 @@ function SWEP:GetFromReference(boneid)
 
     seq = self.AutosolveSourceSeq or seq
 
-    local id = ArcCW.ReferenceModel:LookupSequence(seq)
+    local id = ArcCW.ReferenceModel:LookupSequence("idle")
 
     ArcCW.ReferenceModel:SetSequence(id)
     ArcCW.ReferenceModel:SetCycle(0)

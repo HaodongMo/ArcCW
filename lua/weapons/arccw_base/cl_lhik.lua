@@ -72,17 +72,20 @@ function SWEP:DoLHIK()
 
     local vm = self:GetOwner():GetViewModel()
 
-    for _, k in pairs(self.Attachments) do
-        if !k.Installed then continue end
-        local atttbl = ArcCW.AttachmentTable[k.Installed]
 
-        if atttbl.LHIKHide then
+    for i, k in pairs(self.Attachments) do
+        if !k.Installed then continue end
+        -- local atttbl = ArcCW.AttachmentTable[k.Installed]
+
+        -- if atttbl.LHIKHide then
+        if self:GetBuff_Stat("LHIKHide", i) then
             justhide = true
         end
 
         if !k.VElement then continue end
 
-        if atttbl.LHIK then
+        -- if atttbl.LHIK then
+        if self:GetBuff_Stat("LHIK", i) then
             lhik_model = k.VElement.Model
         end
     end
@@ -193,8 +196,6 @@ function SWEP:DoLHIK()
         delta = 1
     end
 
-    -- justhide = true
-
     if justhide then
         for _, bone in pairs(ArcCW.LHIKBones) do
             local vmbone = vm:LookupBone(bone)
@@ -277,7 +278,9 @@ function SWEP:DoLHIK()
 
         self.LHIKDelta[lhikbone] = lhik_model:WorldToLocal(lhik_pos)
 
-        vm:SetBoneMatrix(vmbone, newtransform)
+        local matrix = Matrix(newtransform)
+
+        vm:SetBoneMatrix(vmbone, matrix)
 
         -- local vm_pos, vm_ang = vm:GetBonePosition(vmbone)
         -- local lhik_pos, lhik_ang = lhik_model:GetBonePosition(lhikbone)
