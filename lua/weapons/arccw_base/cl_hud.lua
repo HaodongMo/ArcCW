@@ -209,32 +209,32 @@ function SWEP:DrawHUD()
         col2 = col3
     end
 
-    if ArcCW:ShouldDrawHUDElement("CHudAmmo") then
+    local curTime = CurTime()
+    local mode = self:GetFiremodeName()
 
-        local curTime = CurTime()
-        local mode = self:GetFiremodeName()
+    local muzz = self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1
 
-        local muzz = self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1
+    local yuriewantsbabynapnaptimewaawaawaaa = GetConVar("arccw_hud_3dfun"):GetBool()
 
-        local yuriewantsbabynapnaptimewaawaawaaa = GetConVar("arccw_hud_3dfun"):GetBool()
+    local angpos
 
-        local angpos
+    if self:GetOwner():ShouldDrawLocalPlayer() then
+        local bone = "ValveBiped.Bip01_R_Hand"
+        local ind = self:GetOwner():LookupBone(bone)
 
-        if self:GetOwner():ShouldDrawLocalPlayer() then
-            local bone = "ValveBiped.Bip01_R_Hand"
-            local ind = self:GetOwner():LookupBone(bone)
-
-            if ind and ind > -1 then
-                local p, a = self:GetOwner():GetBonePosition(ind)
-                angpos = {Ang = a, Pos = p}
-            end
-        else
-            local vm = self:GetOwner():GetViewModel()
-
-            if vm and vm:IsValid() then
-                angpos = vm:GetAttachment(muzz)
-            end
+        if ind and ind > -1 then
+            local p, a = self:GetOwner():GetBonePosition(ind)
+            angpos = {Ang = a, Pos = p}
         end
+    else
+        local vm = self:GetOwner():GetViewModel()
+
+        if vm and vm:IsValid() then
+            angpos = vm:GetAttachment(muzz)
+        end
+    end
+
+    if ArcCW:ShouldDrawHUDElement("CHudAmmo") then
 
         if yuriewantsbabynapnaptimewaawaawaaa and muzz and angpos then
 
@@ -802,9 +802,9 @@ end
 function SWEP:CustomAmmoDisplay()
     local data = self:GetHUDData()
     self.AmmoDisplay = self.AmmoDisplay or {}
- 
+
     self.AmmoDisplay.Draw = true -- draw the display?
- 
+
     if self.Primary.ClipSize > 0 then
         local plus = data.plus or 0
         self.AmmoDisplay.PrimaryClip = data.clip + plus -- amount in clip
@@ -815,6 +815,6 @@ function SWEP:CustomAmmoDisplay()
         if !ubglammo then return end
         self.AmmoDisplay.SecondaryAmmo = self:Clip2() + self:GetOwner():GetAmmoCount(ubglammo) -- amount of secondary ammo
     end
- 
+
     return self.AmmoDisplay -- return the table
 end
