@@ -72,7 +72,6 @@ function SWEP:DoLHIK()
 
     local vm = self:GetOwner():GetViewModel()
 
-
     for _, k in pairs(self.Attachments) do
         if !k.Installed then continue end
         local atttbl = ArcCW.AttachmentTable[k.Installed]
@@ -193,6 +192,8 @@ function SWEP:DoLHIK()
         -- hasn't started yet
         delta = 1
     end
+
+    -- justhide = true
 
     if justhide then
         for _, bone in pairs(ArcCW.LHIKBones) do

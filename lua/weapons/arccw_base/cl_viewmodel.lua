@@ -483,8 +483,6 @@ function SWEP:PreDrawViewModel(vm)
     end
 
     self:DrawCustomModel(false)
-
-    self:DoLHIK()
 end
 
 function SWEP:PostDrawViewModel()
@@ -497,4 +495,6 @@ function SWEP:PostDrawViewModel()
         self:DoLaser()
         self:DoHolosight()
     end
+
+    self:DoLHIK()
 end

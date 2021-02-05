@@ -249,6 +249,8 @@ function SWEP:SetupActiveSights()
                 stab.Holosight = true
             end
 
+            if !k.Bone then return end
+
             local boneid = vm:LookupBone(k.Bone)
 
             if !boneid then return end

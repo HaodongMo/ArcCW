@@ -1545,11 +1545,12 @@ function SWEP:AddSubSlot(i, attname)
         self.Attachments[i].SubAtts = {}
         local og_slot = self.Attachments[i]
         for ind, slot in pairs(att.SubSlots) do
+            if !istable(slot) then continue end
             self.SubSlotCount = self.SubSlotCount + 1
             local index = baseatts + self.SubSlotCount
             self.Attachments[index] = slot
             self.Attachments[index].Bone = og_slot.Bone
-            self.Attachments[index].WMBone = og_slot.Bone
+            self.Attachments[index].WMBone = og_slot.WMBone
             self.Attachments[index].ExtraSightDist = self.Attachments[index].ExtraSightDist or og_slot.ExtraSightDist
             self.Attachments[index].CorrectivePos = og_slot.CorrectivePos
             self.Attachments[index].CorrectiveAng = og_slot.CorrectiveAng
