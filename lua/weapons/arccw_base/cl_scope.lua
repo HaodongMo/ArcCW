@@ -151,6 +151,23 @@ function SWEP:CoolView(ply, pos, ang, fov)
     local vm = ply:GetViewModel()
     if !IsValid(vm) then return end
     local ftv = FrameTime()
+
+    local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
+
+    if att then
+        local attang = vm:GetAttachment(att).Ang
+
+        attang = vm:WorldToLocalAngles(attang)
+
+        attang = attang - self.Cam_Offset_Ang
+
+        -- attang = vm:LocalToWorldAngles(attang)
+
+        ang:Set(ang + attang)
+
+        return
+    end
+
     local viewbobintensity = self.ProceduralViewBobIntensity or 0.3
 
     if viewbobintensity == 0 then return end

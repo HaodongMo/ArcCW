@@ -11,21 +11,32 @@ SWEP.LHIKAnimation = nil
 SWEP.LHIKAnimationStart = 0
 SWEP.LHIKAnimationTime = 0
 
+SWEP.LHIKCamAng = Angle(0, 0, 0)
+SWEP.LHIKGunAng = Angle(0, 0, 0)
+
 function SWEP:DoLHIKAnimation(key, time)
     local lhik_model
+    local lhik_gunbone
+    local lhik_cambone
 
     local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
 
     key = tranim or key
 
-    for _, k in pairs(self.Attachments) do
+    for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
         if !k.VElement then continue end
 
-        local atttbl = ArcCW.AttachmentTable[k.Installed]
-
-        if atttbl.LHIK then
+        if self:GetBuff_Stat("LHIK", i) then
             lhik_model = k.VElement.Model
+
+            if self:GetBuff_Stat("LHIK_GunBone", i) then
+                lhik_gunbone = self:GetBuff_Stat("LHIK_GunBone", i)
+            end
+
+            if self:GetBuff_Stat("LHIK_CamBone", i) then
+                lhik_cambone = self:GetBuff_Stat("LHIK_CamBone", i)
+            end
         end
     end
 
@@ -45,6 +56,18 @@ function SWEP:DoLHIKAnimation(key, time)
     self.LHIKAnimationTime = time
 
     self.LHIKAnimation_IsIdle = false
+
+    if lhik_gunbone then
+        local bone = lhik_model:LookupBone(lhik_gunbone)
+        local pos = lhik_model:GetBoneMatrix(bone):GetTranslation()
+        self.LHIKGunAng = lhik_model:WorldToLocal(pos)
+    end
+
+    if lhik_cambone then
+        local bone = lhik_model:LookupBone(lhik_cambone)
+        local pos = lhik_model:GetBoneMatrix(bone):GetTranslation()
+        self.LHIKCamAng = lhik_model:WorldToLocal(pos)
+    end
 
     -- lhik_model:SetCycle(0)
     -- lhik_model:SetPlaybackRate(dur / time)
@@ -267,7 +290,7 @@ function SWEP:DoLHIK()
         newtransform:SetTranslation(LerpVector(delta, vm_pos, lhik_pos))
         newtransform:SetAngles(LerpAngle(delta, vm_ang, lhik_ang))
 
-        if self.LHIKDelta[lhikbone] and self.LHIKAnimation and cyc < 1 then
+        if !self:GetBuff_Override("LHIK_GunBone") and self.LHIKDelta[lhikbone] and self.LHIKAnimation and cyc < 1 then
             local deltapos = lhik_model:WorldToLocal(lhik_pos) - self.LHIKDelta[lhikbone]
 
             if !deltapos:IsZero() then

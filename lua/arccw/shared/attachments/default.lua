@@ -145,6 +145,8 @@ att.DroppedModel = nil
 att.LHIKHide = false -- use this to just hide the left hand
 att.LHIK = false -- use this model for left hand IK
 att.LHIK_Animation = false
+att.LHIK_GunBone = ""
+att.LHIK_CamBone = ""
 
 att.ActivateElements = {}
 
