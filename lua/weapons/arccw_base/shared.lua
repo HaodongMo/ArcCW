@@ -345,8 +345,6 @@ SWEP.CustomizeAng = Angle(12.149, 30.547, 0)
 SWEP.InBipodPos = Vector(-4, 2, -4)
 SWEP.InBipodMult = Vector(2, 1, 1)
 
-SWEP.BobMult = 1
-
 SWEP.BarrelLength = 24
 
 SWEP.SightPlusOffset = nil
@@ -412,7 +410,7 @@ SWEP.AttachmentElements = {
     --             vang = Angle(0, 0, 0),
     --             wpos = Vector(0, 0, 0),
     --             wang = Angle(0, 0, 0),
-    --             slide = { -- only if base att has slideable
+    --             SlideAmount = { -- only if base att has slideable
     --                 vmin = Vector(0, 0, 0),
     --                 vmax = Vector(0, 0, 0),
     --                 wmin = Vector(0, 0, 0),

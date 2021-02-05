@@ -29,8 +29,8 @@
 local BulletPanel = {
     { type = "h", text = "#arccw.adminonly" },
     { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable", sv = true },
-    { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 10, sv = true },
-    { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 3000, sv = true },
+    { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 1200, sv = true },
     { type = "f", text = "#arccw.cvar.bullet_drag", var = "arccw_bullet_drag", min = 0, max = 10, sv = true },
     { type = "f", text = "#arccw.cvar.bullet_lifetime", var = "arccw_bullet_lifetime", min = 1, max = 20, sv = true},
 }

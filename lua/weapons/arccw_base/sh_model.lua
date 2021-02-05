@@ -968,7 +968,7 @@ function SWEP:GetFromReference(boneid)
 
     seq = self.AutosolveSourceSeq or seq
 
-    local id = ArcCW.ReferenceModel:LookupSequence("idle")
+    local id = ArcCW.ReferenceModel:LookupSequence(seq)
 
     ArcCW.ReferenceModel:SetSequence(id)
     ArcCW.ReferenceModel:SetCycle(0)
