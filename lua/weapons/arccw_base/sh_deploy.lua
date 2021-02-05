@@ -127,14 +127,15 @@ function SWEP:Initialize()
         if !mat:IsError() then
 
             local tex = mat:GetTexture("$basetexture")
-            local texpath = tex:GetName()
-            killicon.Add(class, texpath, Color(255, 255, 255))
-            self.WepSelectIcon = surface.GetTextureID(texpath)
+            if tex then
+                local texpath = tex:GetName()
+                killicon.Add(class, texpath, Color(255, 255, 255))
+                self.WepSelectIcon = surface.GetTextureID(texpath)
 
-            if self.ShootEntity then
-            killicon.Add(self.ShootEntity, texpath, Color(255, 255, 255))
+                if self.ShootEntity then
+                killicon.Add(self.ShootEntity, texpath, Color(255, 255, 255))
+                end
             end
-
         end
 
         -- Check for incompatibile addons once 
