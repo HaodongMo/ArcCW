@@ -38,6 +38,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     local UCT = UnPredictedCurTime()
     local FT = FrameTime()
 
+    local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
+
     local FT5, FT10 = FT * 5, FT * 10
 
     local oldpos, oldang = Vector(), Angle()
@@ -376,6 +378,23 @@ function SWEP:GetViewModelPosition(pos, ang)
         origfov = weapons.Get(self:GetClass()).ViewModelFOV -- yikes
     end
     self.ViewModelFOV = origfov + vm_fov * self:GetSightDelta()
+
+    if gunbone then
+        local magnitude = Lerp(self:GetSightDelta(), 0.1, 1)
+        local lhik_model = self.Attachments[gbslot].VElement.Model
+        local att = lhik_model:LookupAttachment(gunbone)
+        local attang = lhik_model:GetAttachment(att).Ang
+
+        attang = lhik_model:WorldToLocalAngles(attang)
+
+        attang = attang - self.LHIKGunAng
+
+        attang = attang * magnitude
+
+        -- attang = vm:LocalToWorldAngles(attang)
+
+        ang = ang + attang
+    end
 
     return pos, ang
 end

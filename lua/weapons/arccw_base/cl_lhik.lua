@@ -16,8 +16,8 @@ SWEP.LHIKGunAng = Angle(0, 0, 0)
 
 function SWEP:DoLHIKAnimation(key, time)
     local lhik_model
-    local lhik_gunbone
-    local lhik_cambone
+    local LHIK_GunDriver
+    local LHIK_CamDriver
 
     local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
 
@@ -30,12 +30,12 @@ function SWEP:DoLHIKAnimation(key, time)
         if self:GetBuff_Stat("LHIK", i) then
             lhik_model = k.VElement.Model
 
-            if self:GetBuff_Stat("LHIK_GunBone", i) then
-                lhik_gunbone = self:GetBuff_Stat("LHIK_GunBone", i)
+            if self:GetBuff_Stat("LHIK_GunDriver", i) then
+                LHIK_GunDriver = self:GetBuff_Stat("LHIK_GunDriver", i)
             end
 
-            if self:GetBuff_Stat("LHIK_CamBone", i) then
-                lhik_cambone = self:GetBuff_Stat("LHIK_CamBone", i)
+            if self:GetBuff_Stat("LHIK_CamDriver", i) then
+                LHIK_CamDriver = self:GetBuff_Stat("LHIK_CamDriver", i)
             end
         end
     end
@@ -57,16 +57,20 @@ function SWEP:DoLHIKAnimation(key, time)
 
     self.LHIKAnimation_IsIdle = false
 
-    if lhik_gunbone then
-        local bone = lhik_model:LookupBone(lhik_gunbone)
-        local pos = lhik_model:GetBoneMatrix(bone):GetTranslation()
-        self.LHIKGunAng = lhik_model:WorldToLocal(pos)
+    if LHIK_GunDriver then
+        local att = lhik_model:LookupAttachment(LHIK_GunDriver)
+        local ang = lhik_model:GetAttachment(att).Ang
+        local pos = lhik_model:GetAttachment(att).Pos
+
+        self.LHIKGunAng = lhik_model:WorldToLocalAngles(ang)
+        self.LHIKGunPos = lhik_model:WorldToLocal(pos)
     end
 
-    if lhik_cambone then
-        local bone = lhik_model:LookupBone(lhik_cambone)
-        local pos = lhik_model:GetBoneMatrix(bone):GetTranslation()
-        self.LHIKCamAng = lhik_model:WorldToLocal(pos)
+    if LHIK_CamDriver then
+        local att = lhik_model:LookupAttachment(LHIK_CamDriver)
+        local ang = lhik_model:GetAttachment(att).Ang
+
+        self.LHIKCamAng = lhik_model:WorldToLocalAngles(ang)
     end
 
     -- lhik_model:SetCycle(0)
@@ -290,7 +294,7 @@ function SWEP:DoLHIK()
         newtransform:SetTranslation(LerpVector(delta, vm_pos, lhik_pos))
         newtransform:SetAngles(LerpAngle(delta, vm_ang, lhik_ang))
 
-        if !self:GetBuff_Override("LHIK_GunBone") and self.LHIKDelta[lhikbone] and self.LHIKAnimation and cyc < 1 then
+        if !self:GetBuff_Override("LHIK_GunDriver") and self.LHIKDelta[lhikbone] and self.LHIKAnimation and cyc < 1 then
             local deltapos = lhik_model:WorldToLocal(lhik_pos) - self.LHIKDelta[lhikbone]
 
             if !deltapos:IsZero() then
