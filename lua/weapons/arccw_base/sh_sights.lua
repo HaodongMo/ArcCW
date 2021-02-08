@@ -471,7 +471,7 @@ function SWEP:TranslateFOV(fov)
         if CLIENT and self:ShouldFlatScope() then
             self.ApproachFOV = fov / (irons.Magnification + irons.ScopeMagnification)
         else
-            self.ApproachFOV = fov / irons.Magnification
+            self.ApproachFOV = fov / math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
         end
     end
 

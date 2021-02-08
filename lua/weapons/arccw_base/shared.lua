@@ -100,6 +100,8 @@ SWEP.NoLastCycle = false -- do not cycle on last shot
 SWEP.RevolverReload = false -- cases all eject on reload
 
 SWEP.ReloadInSights = false
+SWEP.ReloadInSights_CloseIn = 0.25
+SWEP.ReloadInSights_FOVMult = 0.875
 SWEP.LockSightsInReload = false
 
 SWEP.CanFireUnderwater = false
