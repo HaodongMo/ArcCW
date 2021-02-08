@@ -267,6 +267,9 @@ att.Override_Firemodes = {}
 -- Allows you to directly edit the burst count
 att.Hook_GetBurstCount = function(wep, burstcount) end
 
+-- Allows you to directly edit how long a burst is
+att.Hook_GetBurstLength = function(wep, length) end
+
 -- Allows you to directly edit whether the weapon is reloading/inoperable
 att.Hook_GetReloading = function(wep, reloading) end
 
