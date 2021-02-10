@@ -387,15 +387,15 @@ function ArcCW:DrawPhysBullets()
             if i.Travelled <= (i.Vel:Length() * 0.01) then continue end
         end
 
-        local size = 0.4
+        local size = 2
 
         size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(128, 2))
 
         size = math.Clamp(size, 0, math.huge)
 
-        local delta = (EyePos():DistToSqr(i.Pos) / math.pow(10000, 2))
+        local delta = (EyePos():DistToSqr(i.Pos) / math.pow(20000, 2))
 
-        size = math.pow(size, Lerp(delta, 1, 2.6))
+        size = math.pow(size, Lerp(delta, 1, 1.5))
 
         local pro = (i.Profile + 1) or 1
 
