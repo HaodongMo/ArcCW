@@ -384,16 +384,21 @@ function SWEP:GetViewModelPosition(pos, ang)
         local lhik_model = self.Attachments[gbslot].VElement.Model
         local att = lhik_model:LookupAttachment(gunbone)
         local attang = lhik_model:GetAttachment(att).Ang
+        local attpos = lhik_model:GetAttachment(att).Pos
 
         attang = lhik_model:WorldToLocalAngles(attang)
+        attpos = lhik_model:WorldToLocal(attpos)
 
         attang = attang - self.LHIKGunAng
+        attpos = attpos - self.LHIKGunPos
 
         attang = attang * magnitude
+        attpos = attpos * magnitude
 
         -- attang = vm:LocalToWorldAngles(attang)
 
         ang = ang + attang
+        pos = pos + attpos
     end
 
     return pos, ang
