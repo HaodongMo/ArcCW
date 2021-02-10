@@ -382,20 +382,21 @@ local head = Material("effects/yellowflare")
 local tracer = Material("effects/tracer_middle")
 
 function ArcCW:DrawPhysBullets()
+    cam.Start3D()
     for _, i in pairs(ArcCW.PhysBullets) do
         if i.StartTime >= CurTime() - 0.1 then
             if i.Travelled <= (i.Vel:Length() * 0.01) then continue end
         end
 
-        local size = 2
+        local size = 1
 
-        size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(128, 2))
+        size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(1024, 2))
 
         size = math.Clamp(size, 0, math.huge)
 
         local delta = (EyePos():DistToSqr(i.Pos) / math.pow(20000, 2))
 
-        size = math.pow(size, Lerp(delta, 1, 1.5))
+        size = math.pow(size, Lerp(delta, 1, 2))
 
         local pro = (i.Profile + 1) or 1
 
@@ -407,11 +408,12 @@ function ArcCW:DrawPhysBullets()
         render.DrawSprite(i.Pos, size, size, col)
 
         render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.01), size * 0.75, 0, 1, col)
+        render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.05), size * 0.75, 0, 1, col)
     end
+    cam.End3D()
 end
 
-hook.Add("PreDrawEffects", "ArcCW_DrawPhysBullets", ArcCW.DrawPhysBullets)
+hook.Add("PostDrawViewModel", "ArcCW_DrawPhysBullets", ArcCW.DrawPhysBullets)
 
 hook.Add("PostCleanupMap", "ArcCW_CleanPhysBullets", function()
     ArcCW.PhysBullets = {}
