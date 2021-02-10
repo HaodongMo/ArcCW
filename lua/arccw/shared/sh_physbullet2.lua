@@ -404,11 +404,15 @@ function ArcCW:DrawPhysBullets()
 
         local col = ArcCW.BulletProfiles[pro] or Color(255, 255, 255)
 
+        cam.Start3D()
+
         render.SetMaterial(head)
         render.DrawSprite(i.Pos, size, size, col)
 
         render.SetMaterial(tracer)
         render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.05), size * 0.75, 0, 1, col)
+
+        cam.End3D()
     end
     -- cam.End3D()
 end
