@@ -369,6 +369,7 @@ function SWEP:FormRTScope()
         cam.Start3D(EyePos(), EyeAngles(), rt.fov, 0, 0, nil, nil, 0, nil)
             self:DoLaser(false)
         cam.End3D()
+        ArcCW:DrawPhysBullets()
     end
 
     ArcCW.Overdraw = false
