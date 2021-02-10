@@ -382,7 +382,7 @@ local head = Material("effects/yellowflare")
 local tracer = Material("effects/tracer_middle")
 
 function ArcCW:DrawPhysBullets()
-    cam.Start3D()
+    -- cam.Start3D()
     for _, i in pairs(ArcCW.PhysBullets) do
         if i.StartTime >= CurTime() - 0.1 then
             if i.Travelled <= (i.Vel:Length() * 0.01) then continue end
@@ -410,7 +410,7 @@ function ArcCW:DrawPhysBullets()
         render.SetMaterial(tracer)
         render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.05), size * 0.75, 0, 1, col)
     end
-    cam.End3D()
+    -- cam.End3D()
 end
 
 hook.Add("PostDrawViewModel", "ArcCW_DrawPhysBullets", ArcCW.DrawPhysBullets)
