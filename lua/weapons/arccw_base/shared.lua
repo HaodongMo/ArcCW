@@ -216,7 +216,7 @@ SWEP.ShellPhysScale = 1
 SWEP.ShellPitch = 100
 SWEP.ShellSounds = ArcCW.ShellSoundsTable
 SWEP.ShellRotate = 0
-SWEP.ShellTime = 6 -- add shell life time
+SWEP.ShellTime = 0.5
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
