@@ -72,8 +72,13 @@ function SWEP:Reload()
     self:SetReqEnd(false)
     self:SetBurstCount(0)
 
-    local shouldshotgunreload = self:GetBuff_Override("Override_ShotgunReload", self.ShotgunReload)
-    if self:GetBuff_Override("Override_HybridReload", self.HybridReload) then
+    local shouldshotgunreload = self:GetBuff_Override("Override_ShotgunReload")
+    local shouldhybridreload = self:GetBuff_Override("Override_HybridReload")
+
+    if shouldshotgunreload == nil then shouldshotgunreload = self.ShotgunReload end
+    if shouldhybridreload == nil then shouldhybridreload = self.HybridReload end
+
+    if shouldhybridreload then
         shouldshotgunreload = self:Clip1() != 0
     end
 
