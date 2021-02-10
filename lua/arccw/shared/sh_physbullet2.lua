@@ -390,7 +390,7 @@ function ArcCW:DrawPhysBullets()
 
         local size = 1
 
-        size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(1024, 2))
+        size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(256, 2))
 
         size = math.Clamp(size, 0, math.huge)
 
@@ -410,7 +410,7 @@ function ArcCW:DrawPhysBullets()
         render.DrawSprite(i.Pos, size, size, col)
 
         render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.05), size * 0.75, 0, 1, col)
+        render.DrawBeam(i.Pos, i.Pos - (i.Vel:GetNormalized() * 256), size * 0.75, 0, 1, col)
 
         -- cam.End3D()
     end
