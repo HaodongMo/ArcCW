@@ -288,24 +288,28 @@ function SWEP:ProcessRecoil()
     local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
     local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
 
-    local ra = Angle(0, 0, 0)
+    if r + rs > 0 then
 
-    ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.5)
-    ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
+        local ra = Angle(0, 0, 0)
 
-    newang = newang - ra
+        ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.5)
+        ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
 
-    self.RecoilAmount = r - (ft * r * 20)
-    self.RecoilAmountSide = rs - (ft * rs * 20)
+        newang = newang - ra
 
-    self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 0.1)
-    self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 0.1)
+        self.RecoilAmount = r - (ft * r * 20)
+        self.RecoilAmountSide = rs - (ft * rs * 20)
 
-    -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
-    -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
+        self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 0.1)
+        self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 0.1)
 
-    if newang.r == 0 or CLIENT then
-        owner:SetEyeAngles(newang)
+        -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
+        -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
+
+        if newang.r == 0 or CLIENT then
+            owner:SetEyeAngles(newang)
+        end
+
     end
 
     local rpb = self.RecoilPunchBack

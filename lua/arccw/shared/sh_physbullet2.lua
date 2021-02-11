@@ -231,6 +231,9 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(255,200,100), true)
             end
 
+            if attacker:IsPlayer() then
+                attacker:LagCompensation(true)
+            end
 
             if CLIENT then
                 -- do an impact effect and forget about it
@@ -315,10 +318,14 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
                             ArcCW:DoPenetration(ctr, dmg, bullet, bullet.Penleft, true, bullet.Damaged)
                         end
-                    })
+                    }, true)
                 end
                 bullet.Damaged[eid] = true
                 bullet.Dead = true
+            end
+
+            if attacker:IsPlayer() then
+                attacker:LagCompensation(false)
             end
         else
             -- bullet did not impact anything
