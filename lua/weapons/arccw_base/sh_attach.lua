@@ -777,7 +777,10 @@ function SWEP:CountAttachments()
 
     for _, i in pairs(self.Attachments) do
         if i.Installed and !i.FreeSlot then
-            total = total + 1
+            local ins = ArcCW.AttachmentTable[i.Installed]
+            if ins and !ins.IgnorePickX then
+                total = total + 1
+            end
         end
     end
 
@@ -1176,6 +1179,10 @@ function SWEP:Detach(slot, silent, noadjust)
         return
     end
 
+    if self.Attachments[slot].Installed == self.Attachments[slot].EmptyFallback then
+        return
+    end
+
     local previnstall = self.Attachments[slot].Installed
 
     local atttbl = ArcCW.AttachmentTable[previnstall]
@@ -1194,7 +1201,11 @@ function SWEP:Detach(slot, silent, noadjust)
         self:DeselectUBGL()
     end
 
-    self.Attachments[slot].Installed = nil
+    if self.Attachments[slot].EmptyFallback then -- is this a good name
+        self.Attachments[slot].Installed = self.Attachments[slot].EmptyFallback
+    else
+        self.Attachments[slot].Installed = nil
+    end
 
     if self.Attachments[slot].SubAtts then
         for i, k in pairs(self.Attachments[slot].SubAtts) do

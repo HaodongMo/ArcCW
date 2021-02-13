@@ -629,6 +629,7 @@ function SWEP:DrawHUD()
         end
 
     elseif GetConVar("arccw_hud_minimal"):GetBool() then
+        if !GetConVar("cl_drawhud"):GetBool() then return false end
 
             local segcount = string.len( self:GetFiremodeBars() or "-----" )
 

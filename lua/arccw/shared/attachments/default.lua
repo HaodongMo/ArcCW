@@ -14,6 +14,7 @@ att.AdminOnly = false -- see above
 att.Ignore = true
 att.InvAtt = nil -- use this other attachment in inventory
 att.Free = false -- attachment is always available, and doesn't need to be picked up or unlocked
+att.IgnorePickX = false -- will not increment the Pick X counter
 att.Hidden = false
 att.HideIfBlocked = false -- if the attachment cannot be attached due to flag reasons, do not show up
 att.HideIfUnavailable = false -- if the attachment is not owned, do not show up even if "Hide Unowned Attachments" is off

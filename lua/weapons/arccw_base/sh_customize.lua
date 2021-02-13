@@ -1014,7 +1014,9 @@ function SWEP:CreateCustomizeHUD()
 
                     owned = self:PlayerOwnsAtt(spaa.AttName)
 
-                    if !atttbl then
+                    if !atttbl and ArcCW.AttachmentTable[k.EmptyFallback] then
+                        atttbl = ArcCW.AttachmentTable[k.EmptyFallback]
+                    elseif !atttbl then
                         atttbl = {
                             PrintName = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt"),
                             Icon = k.DefaultAttIcon or defaultatticon,
