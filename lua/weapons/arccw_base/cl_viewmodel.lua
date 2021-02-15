@@ -100,8 +100,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         local irons = self:GetActiveSights()
 
-        target.pos = irons.Pos
-        target.ang = irons.Ang
+        target.pos = irons.Pos or target.pos
+        target.ang = irons.Ang or target.ang
 
         target.pos = target.pos + ((BEA):Right()   * self.InBipodPos.x * self.InBipodMult.x)
         target.pos = target.pos + ((BEA):Forward() * self.InBipodPos.y * self.InBipodMult.y)
