@@ -505,16 +505,16 @@ function SWEP:PreDrawViewModel(vm)
 
         local asight = self:GetActiveSights()
 
+        if self:GetSightDelta() < 1 and asight.Holosight then
+            ArcCW:DrawPhysBullets()
+        end
+
         if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
             self:FormCheapScope()
         end
 
         if self:GetSightDelta() < 1 and asight.ScopeTexture then
             self:FormCheapScope()
-        end
-
-        if self:GetSightDelta() < 1 and asight.Holosight then
-            ArcCW:DrawPhysBullets()
         end
     end
 
