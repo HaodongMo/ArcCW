@@ -66,7 +66,12 @@ function ArcCW.CreateMove(cmd)
 
     if !wpn.ArcCW then return end
 
-    if wpn:GetInBipod() and wpn.BipodAngle then
+    if wpn:GetInBipod() then
+        if !wpn.BipodAngle then
+            wpn.BipodPos = wpn:GetOwner():EyePos()
+            wpn.BipodAngle = wpn:GetOwner():EyeAngles()
+        end
+
         local bipang = wpn.BipodAngle
         local ang = cmd:GetViewAngles()
 

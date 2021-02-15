@@ -91,11 +91,22 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     if self:InBipod() then
+        if !self.BipodAngle then
+            self.BipodPos = self:GetOwner():EyePos()
+            self.BipodAngle = self:GetOwner():EyeAngles()
+        end
+
         local BEA = self.BipodAngle - owner:EyeAngles()
+
+        local irons = self:GetActiveSights()
+
+        target.pos = irons.Pos
+        target.ang = irons.Ang
 
         target.pos = target.pos + ((BEA):Right()   * self.InBipodPos.x * self.InBipodMult.x)
         target.pos = target.pos + ((BEA):Forward() * self.InBipodPos.y * self.InBipodMult.y)
         target.pos = target.pos + ((BEA):Up()      * self.InBipodPos.z * self.InBipodMult.z)
+
         target.sway = 0.2
     end
 
