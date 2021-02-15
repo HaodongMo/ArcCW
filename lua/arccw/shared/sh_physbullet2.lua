@@ -424,7 +424,7 @@ function ArcCW:DrawPhysBullets()
     cam.End3D()
 end
 
-hook.Add("PostDrawPlayerHands", "ArcCW_DrawPhysBullets", ArcCW.DrawPhysBullets)
+hook.Add("PreDrawEffects", "ArcCW_DrawPhysBullets", ArcCW.DrawPhysBullets)
 
 hook.Add("PostCleanupMap", "ArcCW_CleanPhysBullets", function()
     ArcCW.PhysBullets = {}

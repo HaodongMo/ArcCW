@@ -512,6 +512,10 @@ function SWEP:PreDrawViewModel(vm)
         if self:GetSightDelta() < 1 and asight.ScopeTexture then
             self:FormCheapScope()
         end
+
+        if self:GetSightDelta() < 1 then
+            ArcCW:DrawPhysBullets()
+        end
     end
 
     self:DrawCustomModel(false)
