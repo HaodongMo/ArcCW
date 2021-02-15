@@ -417,7 +417,7 @@ function ArcCW:DrawPhysBullets()
         render.DrawSprite(i.Pos, size, size, col)
 
         render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - (i.Vel:GetNormalized() * 256), size * 3, 0, 1, col)
+        render.DrawBeam(i.Pos, i.Pos - (i.Vel:GetNormalized() * 256), size * 0.75, 0, 1, col)
 
         -- cam.End3D()
     end
