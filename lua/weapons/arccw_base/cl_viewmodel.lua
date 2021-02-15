@@ -513,7 +513,7 @@ function SWEP:PreDrawViewModel(vm)
             self:FormCheapScope()
         end
 
-        if self:GetSightDelta() < 1 then
+        if self:GetSightDelta() < 1 and asight.Holosight then
             ArcCW:DrawPhysBullets()
         end
     end

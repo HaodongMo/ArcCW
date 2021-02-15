@@ -2,7 +2,7 @@ ArcCW.PhysBullets = {
 }
 
 ArcCW.BulletProfiles = {
-    [1] = Color(255, 255, 255),
+    [1] = Color(255, 180, 100),
     [2] = Color(255, 0, 0),
     [3] = Color(0, 255, 0),
     [4] = Color(0, 0, 255),
@@ -385,8 +385,8 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
     end
 end
 
-local head = Material("effects/yellowflare")
-local tracer = Material("effects/tracer_middle")
+local head = Material("effects/whiteflare")
+local tracer = Material("effects/smoke_trail")
 
 function ArcCW:DrawPhysBullets()
     cam.Start3D()
@@ -409,7 +409,7 @@ function ArcCW:DrawPhysBullets()
 
         if pro == 8 then continue end
 
-        local col = ArcCW.BulletProfiles[pro] or Color(255, 255, 255)
+        local col = ArcCW.BulletProfiles[pro] or ArcCW.BulletProfiles[1]
 
         -- cam.Start3D()
 
@@ -417,7 +417,7 @@ function ArcCW:DrawPhysBullets()
         render.DrawSprite(i.Pos, size, size, col)
 
         render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - (i.Vel:GetNormalized() * 256), size * 0.75, 0, 1, col)
+        render.DrawBeam(i.Pos, i.Pos - (i.Vel:GetNormalized() * 256), size * 3, 0, 1, col)
 
         -- cam.End3D()
     end
