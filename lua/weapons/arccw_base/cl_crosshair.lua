@@ -77,9 +77,18 @@ function SWEP:DoDrawCrosshair(x, y)
 
     cw = cw or self
 
-    cam.Start3D()
-    local sp = (pos + (ang:Forward() * 3200)):ToScreen()
-    cam.End3D()
+    local sp
+    if self:GetOwner():ShouldDrawLocalPlayer() then
+        local tr = util.GetPlayerTrace( self:GetOwner() )
+        local trace = util.TraceLine( tr )
+		
+        local coords = trace.HitPos:ToScreen()
+        sp = { visible = true, x = coords.x, y = coords.y }
+    else
+        cam.Start3D()
+        sp = (pos + (ang:Forward() * 3200)):ToScreen()
+        cam.End3D()
+    end
 
     x, y = sp.x, sp.y
 
