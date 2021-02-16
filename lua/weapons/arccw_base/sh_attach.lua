@@ -550,7 +550,7 @@ function SWEP:GetActiveElements(recache)
             continue
         end
 
-        if i.InstalledEles then
+        if i.InstalledEles and i.Installed != i.EmptyFallback then
             table.Add(eles, i.InstalledEles)
         end
 
