@@ -696,7 +696,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         -- render.SetScissorRect( sx2, sy2, sx2 + sw2, sy2 + sh2, false )
     end
 
-    cam.Start3D()
+    -- cam.Start3D()
 
     -- render.SetColorMaterialIgnoreZ()
     -- render.DrawScreenQuad()
@@ -742,7 +742,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     cam.IgnoreZ( false )
 
-    cam.End3D()
+    -- cam.End3D()
 
     if hsp then
 

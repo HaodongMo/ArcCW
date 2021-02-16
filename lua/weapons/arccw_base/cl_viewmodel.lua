@@ -529,7 +529,7 @@ function SWEP:PreDrawViewModel(vm)
         end
     end
 
-    cam.IgnoreZ(true)
+    -- cam.IgnoreZ(true)
 
     self:DrawCustomModel(false)
 
