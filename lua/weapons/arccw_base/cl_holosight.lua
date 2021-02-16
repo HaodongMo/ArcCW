@@ -329,8 +329,6 @@ function SWEP:FormCheapScope()
     render.DrawTextureToScreen(rtmat_spare)
 
     render.UpdateFullScreenDepthTexture()
-	
-	cam.IgnoreZ(true)
 end
 
 function SWEP:FormRTScope()
