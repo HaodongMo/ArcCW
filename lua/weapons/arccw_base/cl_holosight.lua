@@ -606,7 +606,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     pdiff = Lerp(delta, pdiff, 0)
 
-    local d = (8 + pdiff)
+    local d = (32 + pdiff)
 
     d = hs.HolosightConstDist or d
 

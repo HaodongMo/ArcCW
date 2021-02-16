@@ -509,7 +509,7 @@ function SWEP:PreDrawViewModel(vm)
             local fps    = 1 / m_min(FrameTime(), FrameTime())
             local lowfps = fps <= 45
 
-            GetConVar("arccw_cheapscopes"):SetBool(lowfps and true or false)
+            GetConVar("arccw_cheapscopes"):SetBool(lowfps)
 
             GetConVar("arccw_cheapscopesautoconfig"):SetBool(false)
         end
@@ -528,8 +528,6 @@ function SWEP:PreDrawViewModel(vm)
             self:FormCheapScope()
         end
     end
-
-    -- cam.IgnoreZ(true)
 
     self:DrawCustomModel(false)
 
