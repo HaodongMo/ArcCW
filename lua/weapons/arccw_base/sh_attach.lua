@@ -51,8 +51,10 @@ end
 function SWEP:GetIsShotgun()
     if self.TickCache_IsShotgun then return self.TickCache_IsShotgun end
 
-    local num = self.Num
+    local shotgun = self:GetBuff("IsShotgun", true)
+    if shotgun != nil then return shotgun end
 
+    local num = self.Num
     if num > 1 then return true end
 
     -- for _, i in pairs(self.Attachments) do
@@ -63,9 +65,10 @@ function SWEP:GetIsShotgun()
     --     if (atttbl.Override_Num or 1) > num then num = (atttbl.Override_Num or 1) end
     -- end
 
-    return self:GetBuff("IsShotgun", true)
+    --return self:GetBuff("IsShotgun", true)
 
     -- return num > 1
+    return self.IsShotgun
 end
 
 function SWEP:GetIsManualAction()
