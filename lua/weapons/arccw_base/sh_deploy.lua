@@ -94,6 +94,7 @@ end
 
 function SWEP:InitialDefaultClip()
     if !self.Primary.Ammo then return end
+    if engine.ActiveGamemode() == "darkrp" then return end -- DarkRP is god's second biggest mistake after gmod
 
     if self:GetOwner() and self:GetOwner():IsPlayer() then
         if self.ForceDefaultAmmo then
@@ -131,12 +132,11 @@ function SWEP:Initialize()
                 local texpath = tex:GetName()
                 killicon.Add(class, texpath, Color(255, 255, 255))
                 self.WepSelectIcon = surface.GetTextureID(texpath)
-            end
 
-            if self.ShootEntity then
-            killicon.Add(self.ShootEntity, texpath, Color(255, 255, 255))
+                if self.ShootEntity then
+                killicon.Add(self.ShootEntity, texpath, Color(255, 255, 255))
+                end
             end
-
         end
 
         -- Check for incompatibile addons once 

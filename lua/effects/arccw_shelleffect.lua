@@ -56,7 +56,7 @@ function EFFECT:Init(data)
         self.PhysScale = ent:GetBuff_Override("Override_ShellPhysScale") or ent.ShellPhysScale or 1
         self.Pitch = ent:GetBuff_Override("Override_ShellPitch") or ent.ShellPitch or 100
         self.Sounds = ent:GetBuff_Override("Override_ShellSounds") or ent.ShellSounds
-        self.ShellTime = st <= 0 and ent.ShellTime or st
+        self.ShellTime = (ent.ShellTime or 0) + st
     end
 
     self:SetPos(origin)
@@ -132,8 +132,11 @@ function EFFECT:Think()
     if (self.SpawnTime + self.ShellTime) <= CurTime() then
         self:SetRenderFX( kRenderFxFadeFast )
         if (self.SpawnTime + self.ShellTime + 1) <= CurTime() then
-            self:Remove()
-            return
+            self:GetPhysicsObject():EnableMotion(false)
+            if (self.SpawnTime + self.ShellTime + 1.5) <= CurTime() then
+                self:Remove()
+                return
+            end
         end
     end
     return true

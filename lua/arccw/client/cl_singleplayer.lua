@@ -48,7 +48,15 @@ concommand.Add("arccw_listvmanims", function()
 
     if !vm then return end
 
-    PrintTable(vm:GetSequenceList())
+    local alist = vm:GetSequenceList()
+
+    for i = 0, #alist do
+        MsgC(Color(160, 190, 255), i, " --- ")
+        MsgC(Color(255, 255, 255), "\t", alist[i], "\n     [")
+        MsgC(Color(255, 230, 230), "\t", vm:SequenceDuration(i), "\n")
+    end
+
+    --PrintTable(alist)
 end)
 
 concommand.Add("arccw_listvmbones", function()
@@ -61,8 +69,28 @@ concommand.Add("arccw_listvmbones", function()
     if !vm then return end
 
     for i = 0, (vm:GetBoneCount() - 1) do
-        print(vm:GetBoneName(i))
+        print(i .. " - " .. vm:GetBoneName(i))
     end
+end)
+
+concommand.Add("arccw_listvmatts", function()
+    local wep = LocalPlayer():GetActiveWeapon()
+
+    if !wep then return end
+
+    local vm = LocalPlayer():GetViewModel()
+
+    if !vm then return end
+
+    local alist = vm:GetAttachments()
+
+    for i = 1, #alist do
+        MsgC(Color(160, 190, 255), i, " --- ")
+        MsgC(Color(255, 255, 255), "\tindex : ", alist[i].id, "\n     [")
+        MsgC(Color(255, 190, 190), "\tname: ", alist[i].name, "\n")
+    end
+
+    --PrintTable(alist)
 end)
 
 net.Receive("arccw_sp_loadautosave", function(len, ply)

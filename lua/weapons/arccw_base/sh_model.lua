@@ -922,7 +922,7 @@ function SWEP:DrawCustomModel(wm,origin,angle)
         k.Model:SetPos(apos)
         k.Model:SetAngles(aang)
         k.Model:SetRenderOrigin(apos)
-        k.Model:SetRenderAngles(apos)
+        k.Model:SetRenderAngles(aang)
 
         if k.Bodygroups then
             k.Model:SetBodyGroups(k.Bodygroups)

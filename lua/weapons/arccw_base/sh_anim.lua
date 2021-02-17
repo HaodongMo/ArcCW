@@ -1,4 +1,4 @@
-
+SWEP.Cam_Offset_Ang = Angle(0, 0, 0)
 
 function SWEP:SelectAnimation(anim)
     if self:GetState() == ArcCW.STATE_SIGHTS and self.Animations[anim .. "_iron"] then
@@ -90,7 +90,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             if self.RevolverReload then
                 num = self.Primary.ClipSize - self:Clip1()
             end
-            for i=1,num do
+            for i = 1,num do
                 self:DoShellEject()
             end
         end)
@@ -271,6 +271,16 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
             self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, 0, true )
         end
+    end
+
+    local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
+
+    if att then
+        local ang = vm:GetAttachment(att).Ang
+
+        ang = vm:WorldToLocalAngles(ang)
+
+        self.Cam_Offset_Ang = Angle(ang)
     end
 
     self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)

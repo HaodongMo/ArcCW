@@ -1014,7 +1014,9 @@ function SWEP:CreateCustomizeHUD()
 
                     owned = self:PlayerOwnsAtt(spaa.AttName)
 
-                    if !atttbl then
+                    if !atttbl and ArcCW.AttachmentTable[k.EmptyFallback] then
+                        atttbl = ArcCW.AttachmentTable[k.EmptyFallback]
+                    elseif !atttbl then
                         atttbl = {
                             PrintName = k.DefaultAttName and ArcCW.TryTranslation(k.DefaultAttName) or translate("attslot.noatt"),
                             Icon = k.DefaultAttIcon or defaultatticon,
@@ -1051,6 +1053,28 @@ function SWEP:CreateCustomizeHUD()
                         else
                             Bbg_col = Color(75, 0, 0, 150)
                             Bfg_col = Color(150, 50, 50, 255)
+                        end
+                    end
+
+                    local max = atttbl.Max
+
+                    if max then
+                        local amt = 0
+
+                        for i2, k2 in pairs(self.Attachments) do
+                            if k2.Installed == spaa.AttName then
+                                amt = amt + 1
+                            end
+                        end
+
+                        if amt >= max and self.Attachments[i].Installed != spaa.AttName then
+                            if spaa:IsHovered() then
+                                Bbg_col = Color(125, 25, 25, 150)
+                                Bfg_col = Color(150, 50, 50, 255)
+                            else
+                                Bbg_col = Color(75, 0, 0, 150)
+                                Bfg_col = Color(150, 50, 50, 255)
+                            end
                         end
                     end
 
@@ -1574,7 +1598,10 @@ function SWEP:CreateCustomizeHUD()
                 local shy
                 local shdmg
 
-                if mouser < maxgr then
+                if mouser < mingr then
+                    shy = starty
+                    shdmg = dmgmax
+                elseif mouser < maxgr then
                     local delta = mouser / maxgr
                     shy = Lerp(delta, starty, endy)
                     shdmg = Lerp(delta, dmgmax, dmgmin)

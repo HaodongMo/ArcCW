@@ -11,21 +11,32 @@ SWEP.LHIKAnimation = nil
 SWEP.LHIKAnimationStart = 0
 SWEP.LHIKAnimationTime = 0
 
+SWEP.LHIKCamAng = Angle(0, 0, 0)
+SWEP.LHIKGunAng = Angle(0, 0, 0)
+
 function SWEP:DoLHIKAnimation(key, time)
     local lhik_model
+    local LHIK_GunDriver
+    local LHIK_CamDriver
 
     local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
 
     key = tranim or key
 
-    for _, k in pairs(self.Attachments) do
+    for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
         if !k.VElement then continue end
 
-        local atttbl = ArcCW.AttachmentTable[k.Installed]
-
-        if atttbl.LHIK then
+        if self:GetBuff_Stat("LHIK", i) then
             lhik_model = k.VElement.Model
+
+            if self:GetBuff_Stat("LHIK_GunDriver", i) then
+                LHIK_GunDriver = self:GetBuff_Stat("LHIK_GunDriver", i)
+            end
+
+            if self:GetBuff_Stat("LHIK_CamDriver", i) then
+                LHIK_CamDriver = self:GetBuff_Stat("LHIK_CamDriver", i)
+            end
         end
     end
 
@@ -45,6 +56,22 @@ function SWEP:DoLHIKAnimation(key, time)
     self.LHIKAnimationTime = time
 
     self.LHIKAnimation_IsIdle = false
+
+    if LHIK_GunDriver then
+        local att = lhik_model:LookupAttachment(LHIK_GunDriver)
+        local ang = lhik_model:GetAttachment(att).Ang
+        local pos = lhik_model:GetAttachment(att).Pos
+
+        self.LHIKGunAng = lhik_model:WorldToLocalAngles(ang)
+        self.LHIKGunPos = lhik_model:WorldToLocal(pos)
+    end
+
+    if LHIK_CamDriver then
+        local att = lhik_model:LookupAttachment(LHIK_CamDriver)
+        local ang = lhik_model:GetAttachment(att).Ang
+
+        self.LHIKCamAng = lhik_model:WorldToLocalAngles(ang)
+    end
 
     -- lhik_model:SetCycle(0)
     -- lhik_model:SetPlaybackRate(dur / time)
@@ -73,17 +100,19 @@ function SWEP:DoLHIK()
     local vm = self:GetOwner():GetViewModel()
 
 
-    for _, k in pairs(self.Attachments) do
+    for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
-        local atttbl = ArcCW.AttachmentTable[k.Installed]
+        -- local atttbl = ArcCW.AttachmentTable[k.Installed]
 
-        if atttbl.LHIKHide then
+        -- if atttbl.LHIKHide then
+        if self:GetBuff_Stat("LHIKHide", i) then
             justhide = true
         end
 
         if !k.VElement then continue end
 
-        if atttbl.LHIK then
+        -- if atttbl.LHIK then
+        if self:GetBuff_Stat("LHIK", i) then
             lhik_model = k.VElement.Model
         end
     end
@@ -265,7 +294,7 @@ function SWEP:DoLHIK()
         newtransform:SetTranslation(LerpVector(delta, vm_pos, lhik_pos))
         newtransform:SetAngles(LerpAngle(delta, vm_ang, lhik_ang))
 
-        if self.LHIKDelta[lhikbone] and self.LHIKAnimation and cyc < 1 then
+        if !self:GetBuff_Override("LHIK_GunDriver") and self.LHIKDelta[lhikbone] and self.LHIKAnimation and cyc < 1 then
             local deltapos = lhik_model:WorldToLocal(lhik_pos) - self.LHIKDelta[lhikbone]
 
             if !deltapos:IsZero() then
@@ -276,7 +305,9 @@ function SWEP:DoLHIK()
 
         self.LHIKDelta[lhikbone] = lhik_model:WorldToLocal(lhik_pos)
 
-        vm:SetBoneMatrix(vmbone, newtransform)
+        local matrix = Matrix(newtransform)
+
+        vm:SetBoneMatrix(vmbone, matrix)
 
         -- local vm_pos, vm_ang = vm:GetBonePosition(vmbone)
         -- local lhik_pos, lhik_ang = lhik_model:GetBonePosition(lhikbone)

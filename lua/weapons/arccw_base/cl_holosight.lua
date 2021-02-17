@@ -364,7 +364,7 @@ function SWEP:FormRTScope()
 
     render.ClearRenderTarget(rt, Color(0, 0, 0))
 
-    if self:GetSightDelta() < 1 then
+    if self:GetState() == ArcCW.STATE_SIGHTS then
         render.RenderView(rt)
         cam.Start3D(EyePos(), EyeAngles(), rt.fov, 0, 0, nil, nil, 0, nil)
             self:DoLaser(false)
@@ -414,7 +414,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         hs = asight.HolosightData
     end
 
-    if delta == 1 then return end
+    if self:GetState() != ArcCW.STATE_SIGHTS then return end
 
     if !hs then return end
 
@@ -606,7 +606,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     pdiff = Lerp(delta, pdiff, 0)
 
-    local d = (8 + pdiff)
+    local d = (32 + pdiff)
 
     d = hs.HolosightConstDist or d
 
@@ -696,7 +696,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         -- render.SetScissorRect( sx2, sy2, sx2 + sw2, sy2 + sh2, false )
     end
 
-    cam.Start3D()
+    -- cam.Start3D()
 
     -- render.SetColorMaterialIgnoreZ()
     -- render.DrawScreenQuad()
@@ -742,7 +742,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     cam.IgnoreZ( false )
 
-    cam.End3D()
+    -- cam.End3D()
 
     if hsp then
 

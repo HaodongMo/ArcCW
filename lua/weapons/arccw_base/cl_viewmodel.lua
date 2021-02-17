@@ -37,6 +37,16 @@ function SWEP:GetViewModelPosition(pos, ang)
     local CT = CurTime()
     local UCT = UnPredictedCurTime()
     local FT = FrameTime()
+	
+	if !SP then
+		local TargetTick = (1/FT)/66.66
+		if TargetTick < 1 then
+			local oldft = FT
+			FT = FT*TargetTick
+		end
+	end
+
+    local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
 
     local FT5, FT10 = FT * 5, FT * 10
 
@@ -81,11 +91,22 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     if self:InBipod() then
+        if !self.BipodAngle then
+            self.BipodPos = self:GetOwner():EyePos()
+            self.BipodAngle = self:GetOwner():EyeAngles()
+        end
+
         local BEA = self.BipodAngle - owner:EyeAngles()
+
+        local irons = self:GetActiveSights()
+
+        target.pos = irons.Pos or target.pos
+        target.ang = irons.Ang or target.ang
 
         target.pos = target.pos + ((BEA):Right()   * self.InBipodPos.x * self.InBipodMult.x)
         target.pos = target.pos + ((BEA):Forward() * self.InBipodPos.y * self.InBipodMult.y)
         target.pos = target.pos + ((BEA):Up()      * self.InBipodPos.z * self.InBipodMult.z)
+
         target.sway = 0.2
     end
 
@@ -377,6 +398,28 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
     self.ViewModelFOV = origfov + vm_fov * self:GetSightDelta()
 
+    if gunbone then
+        local magnitude = Lerp(self:GetSightDelta(), 0.1, 1)
+        local lhik_model = self.Attachments[gbslot].VElement.Model
+        local att = lhik_model:LookupAttachment(gunbone)
+        local attang = lhik_model:GetAttachment(att).Ang
+        local attpos = lhik_model:GetAttachment(att).Pos
+
+        attang = lhik_model:WorldToLocalAngles(attang)
+        attpos = lhik_model:WorldToLocal(attpos)
+
+        attang = attang - self.LHIKGunAng
+        attpos = attpos - self.LHIKGunPos
+
+        attang = attang * magnitude
+        attpos = attpos * magnitude
+
+        -- attang = vm:LocalToWorldAngles(attang)
+
+        ang = ang + attang
+        pos = pos + attpos
+    end
+
     return pos, ang
 end
 
@@ -466,12 +509,16 @@ function SWEP:PreDrawViewModel(vm)
             local fps    = 1 / m_min(FrameTime(), FrameTime())
             local lowfps = fps <= 45
 
-            GetConVar("arccw_cheapscopes"):SetBool(lowfps and true or false)
+            GetConVar("arccw_cheapscopes"):SetBool(lowfps)
 
             GetConVar("arccw_cheapscopesautoconfig"):SetBool(false)
         end
 
         local asight = self:GetActiveSights()
+
+        if self:GetSightDelta() < 1 and asight.Holosight then
+            ArcCW:DrawPhysBullets()
+        end
 
         if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
             self:FormCheapScope()

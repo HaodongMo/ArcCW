@@ -2,7 +2,7 @@ ArcCW.PhysBullets = {
 }
 
 ArcCW.BulletProfiles = {
-    [1] = Color(255, 255, 255),
+    [1] = Color(255, 180, 100),
     [2] = Color(255, 0, 0),
     [3] = Color(0, 255, 0),
     [4] = Color(0, 0, 255),
@@ -231,6 +231,9 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(255,200,100), true)
             end
 
+            if attacker:IsPlayer() then
+                attacker:LagCompensation(true)
+            end
 
             if CLIENT then
                 -- do an impact effect and forget about it
@@ -315,10 +318,14 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
                             ArcCW:DoPenetration(ctr, dmg, bullet, bullet.Penleft, true, bullet.Damaged)
                         end
-                    })
+                    }, true)
                 end
                 bullet.Damaged[eid] = true
                 bullet.Dead = true
+            end
+
+            if attacker:IsPlayer() then
+                attacker:LagCompensation(false)
             end
         else
             -- bullet did not impact anything
@@ -378,37 +385,43 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
     end
 end
 
-local head = Material("effects/yellowflare")
-local tracer = Material("effects/tracer_middle")
+local head = Material("effects/whiteflare")
+local tracer = Material("effects/smoke_trail")
 
 function ArcCW:DrawPhysBullets()
+    cam.Start3D()
     for _, i in pairs(ArcCW.PhysBullets) do
         if i.StartTime >= CurTime() - 0.1 then
             if i.Travelled <= (i.Vel:Length() * 0.01) then continue end
         end
 
-        local size = 0.4
+        local size = 1
 
-        size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(128, 2))
+        size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(256, 2))
 
         size = math.Clamp(size, 0, math.huge)
 
-        local delta = (EyePos():DistToSqr(i.Pos) / math.pow(10000, 2))
+        local delta = (EyePos():DistToSqr(i.Pos) / math.pow(20000, 2))
 
-        size = math.pow(size, Lerp(delta, 1, 2.6))
+        size = math.pow(size, Lerp(delta, 1, 2))
 
         local pro = (i.Profile + 1) or 1
 
         if pro == 8 then continue end
 
-        local col = ArcCW.BulletProfiles[pro] or Color(255, 255, 255)
+        local col = ArcCW.BulletProfiles[pro] or ArcCW.BulletProfiles[1]
+
+        -- cam.Start3D()
 
         render.SetMaterial(head)
         render.DrawSprite(i.Pos, size, size, col)
 
         render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - (i.Vel * 0.01), size * 0.75, 0, 1, col)
+        render.DrawBeam(i.Pos, i.Pos - (i.Vel:GetNormalized() * 256), size * 0.75, 0, 1, col)
+
+        -- cam.End3D()
     end
+    cam.End3D()
 end
 
 hook.Add("PreDrawEffects", "ArcCW_DrawPhysBullets", ArcCW.DrawPhysBullets)

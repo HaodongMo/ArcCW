@@ -1,5 +1,7 @@
 
 function SWEP:SelectUBGL()
+    if !self:GetBuff_Override("UBGL") then return end
+
     self:SetInUBGL(true)
 
     if !IsFirstTimePredicted() then return end

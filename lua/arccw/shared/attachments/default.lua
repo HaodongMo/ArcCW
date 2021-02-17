@@ -14,9 +14,12 @@ att.AdminOnly = false -- see above
 att.Ignore = true
 att.InvAtt = nil -- use this other attachment in inventory
 att.Free = false -- attachment is always available, and doesn't need to be picked up or unlocked
+att.IgnorePickX = false -- will not increment the Pick X counter
 att.Hidden = false
 att.HideIfBlocked = false -- if the attachment cannot be attached due to flag reasons, do not show up
 att.HideIfUnavailable = false -- if the attachment is not owned, do not show up even if "Hide Unowned Attachments" is off
+
+att.NotForNPCs = false
 
 att.AddPrefix = ""
 att.AddSuffix = ""
@@ -67,31 +70,34 @@ att.GivesFlags = {}
 att.RequireFlags = {}
 att.ExcludeFlags = {}
 
--- Not Yet Implemented
 att.SubSlots = {
-    PrintName = "Optic",
-    Slot = {"optic", "optic_lp"}, -- OR
-    Slot = "optic",
-    DefaultAttName = "Iron Sights",
-    DefaultAttIcon = Material(""),
-    MergeSlots = {}, -- mergeslots are relative to att.SubSlots, so this entry would be [1], then [2], etc
-    -- bone/wmbone is inherited
-    ExtraSightDist = 0, -- inherited if not specified
-    Offset = { -- inherits from base slot
-        vpos = Vector(0, 0, 0),
-        vang = Angle(0, 0, 0),
-        wpos = Vector(0, 0, 0),
-        wang = Angle(0, 0, 0)
-    },
-    SlideAmount = {
-        vmin = Vector(0, 0, 0),
-        vmax = Vector(0, 0, 0),
-        wmin = Vector(0, 0, 0),
-        wmax = Vector(0, 0, 0),
-    },
+    {
+        PrintName = "Optic",
+        Slot = {"optic", "optic_lp"}, -- OR
+        Slot = "optic",
+        DefaultAttName = "Iron Sights",
+        DefaultAttIcon = Material(""),
+        MergeSlots = {}, -- mergeslots are relative to att.SubSlots, so this entry would be [1], then [2], etc
+        -- bone/wmbone is inherited
+        ExtraSightDist = 0,
+        Offset = { -- inherits from base slot
+            vpos = Vector(0, 0, 0),
+            vang = Angle(0, 0, 0),
+            wpos = Vector(0, 0, 0),
+            wang = Angle(0, 0, 0)
+        },
+        SlideAmount = {
+            vmin = Vector(0, 0, 0),
+            vmax = Vector(0, 0, 0),
+            wmin = Vector(0, 0, 0),
+            wmax = Vector(0, 0, 0),
+        },
+    }
     -- CorrectiveAng/Pos is inherited from base slot
-    -- If something is not specified, it is the same as SWEP.Attachments slots
+    -- everything else is the same as normal slots
 }
+
+att.Max = nil -- the maximum number of this attachment that can be attached.
 
 att.Model = ""
 att.HideModel = false
@@ -142,6 +148,8 @@ att.DroppedModel = nil
 att.LHIKHide = false -- use this to just hide the left hand
 att.LHIK = false -- use this model for left hand IK
 att.LHIK_Animation = false
+att.LHIK_GunDriver = ""
+att.LHIK_CamDriver = ""
 
 att.ActivateElements = {}
 
@@ -261,6 +269,9 @@ att.Override_Firemodes = {}
 
 -- Allows you to directly edit the burst count
 att.Hook_GetBurstCount = function(wep, burstcount) end
+
+-- Allows you to directly edit how long a burst is
+att.Hook_GetBurstLength = function(wep, length) end
 
 -- Allows you to directly edit whether the weapon is reloading/inoperable
 att.Hook_GetReloading = function(wep, reloading) end

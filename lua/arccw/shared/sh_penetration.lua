@@ -98,7 +98,9 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         end
 
         if physical then
-            alreadypenned[ptr.Entity:EntIndex()] = true
+            if !ptr.HitWorld then
+                alreadypenned[ptr.Entity:EntIndex()] = true
+            end
 
             local newbullet = {}
             newbullet.DamageMin = bullet.DamageMin or 1
@@ -118,6 +120,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             newbullet.Profile = bullet.Profile or 1
             newbullet.Gravity = bullet.Gravity or 1
             newbullet.StartTime = bullet.StartTime or CurTime()
+            newbullet.PhysBulletImpact = bullet.PhysBulletImpact or true
 
             if bit.band( util.PointContents( endpos ), CONTENTS_WATER ) == CONTENTS_WATER then
                 newbullet.Underwater = true

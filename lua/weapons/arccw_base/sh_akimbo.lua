@@ -357,7 +357,7 @@ function SWEP:AkimboAttack()
 
     if shouldsupp then SuppressHostEvents(owner) end
 
-    self:DoEffects(true)
+    self:DoEffects(nil, true)
 
     self:TakeSecondaryAmmo(aps)
 

@@ -12,7 +12,7 @@ function SWEP:InBipod()
     return bip
 end
 
-SWEP.BipodAngle = Angle(0, 0, 0)
+SWEP.BipodAngle = nil
 SWEP.CachedCanBipod = true
 SWEP.CachedCanBipodTime = 0
 
@@ -110,6 +110,9 @@ function SWEP:ExitBipod()
     if CLIENT and self:GetBuff_Override("LHIK") then
         self:DoLHIKAnimation("exit", 0.5)
     end
+
+    self.BipodPos = nil
+    self.BipodAngle = nil
 
     self:SetNextSecondaryFire(CurTime() + 0.075)
 

@@ -100,6 +100,8 @@ SWEP.NoLastCycle = false -- do not cycle on last shot
 SWEP.RevolverReload = false -- cases all eject on reload
 
 SWEP.ReloadInSights = false
+SWEP.ReloadInSights_CloseIn = 0.25
+SWEP.ReloadInSights_FOVMult = 0.875
 SWEP.LockSightsInReload = false
 
 SWEP.CanFireUnderwater = false
@@ -214,11 +216,12 @@ SWEP.ShellPhysScale = 1
 SWEP.ShellPitch = 100
 SWEP.ShellSounds = ArcCW.ShellSoundsTable
 SWEP.ShellRotate = 0
-SWEP.ShellTime = 6 -- add shell life time
+SWEP.ShellTime = 0.5
 
 SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.ProceduralViewBobAttachment = nil -- attachment on which coolview is affected by, default is muzzleeffect
+SWEP.CamAttachment = nil -- if set, this attachment will control camera movement
 
 SWEP.SpeedMult = 0.9
 SWEP.SightedSpeedMult = 0.75
@@ -342,10 +345,8 @@ SWEP.BarrelOffsetHip = Vector(3, 0, -3)
 SWEP.CustomizePos = Vector(9.824, 0, -4.897)
 SWEP.CustomizeAng = Angle(12.149, 30.547, 0)
 
-SWEP.InBipodPos = Vector(-4, 2, -4)
+SWEP.InBipodPos = Vector(-4, 0, -4)
 SWEP.InBipodMult = Vector(2, 1, 1)
-
-SWEP.BobMult = 1
 
 SWEP.BarrelLength = 24
 
@@ -412,7 +413,7 @@ SWEP.AttachmentElements = {
     --             vang = Angle(0, 0, 0),
     --             wpos = Vector(0, 0, 0),
     --             wang = Angle(0, 0, 0),
-    --             slide = { -- only if base att has slideable
+    --             SlideAmount = { -- only if base att has slideable
     --                 vmin = Vector(0, 0, 0),
     --                 vmax = Vector(0, 0, 0),
     --                 wmin = Vector(0, 0, 0),
@@ -633,6 +634,7 @@ SWEP.LHIKStartTime = 0
 end
 
 SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
+SWEP.RegularClipSize = 0
 
 if SERVER then
 
