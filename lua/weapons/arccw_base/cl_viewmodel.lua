@@ -79,7 +79,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local vm_forward = GetConVar("arccw_vm_forward"):GetFloat()
     local vm_fov     = GetConVar("arccw_vm_fov"):GetFloat()
 
-    if owner:Crouching() or owner:KeyDown(IN_DUCK) then
+    if (owner:Crouching() or owner:KeyDown(IN_DUCK)) and (owner:OnGround() and !self:InBipod()) then
         target.down = 0
 
         if self:GetBuff("CrouchPos", true) then
