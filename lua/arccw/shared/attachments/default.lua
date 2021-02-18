@@ -70,6 +70,7 @@ att.GivesFlags = {}
 att.RequireFlags = {}
 att.ExcludeFlags = {}
 
+-- Do not use right now
 att.SubSlots = {
     {
         PrintName = "Optic",
