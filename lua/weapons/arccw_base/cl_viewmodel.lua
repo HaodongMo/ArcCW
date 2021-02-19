@@ -529,6 +529,8 @@ function SWEP:PreDrawViewModel(vm)
         end
     end
 
+    cam.IgnoreZ(true)
+
     self:DrawCustomModel(false)
 
     self:DoLHIK()

@@ -704,39 +704,43 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     -- render.DrawQuad( corner1, corner2, corner3, corner4, hsc or hs.HolosightColor )
     cam.IgnoreZ( true )
 
-    if hs.HolosightBlackbox then
-        render.SetStencilPassOperation(STENCIL_ZERO)
-        render.SetStencilCompareFunction(STENCIL_EQUAL)
+    render.SetStencilReferenceValue(ref)
 
-        render.SetStencilReferenceValue(ref)
+    -- render.SetMaterial(hs.HolosightReticle or defaultdot)
+    -- render.DrawSprite( pos, size * hsx, size * hsy, hsc or Color(255, 255, 255) )
+    -- if !hs.HolosightNoFlare then
+    --     render.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
+    --     local hss = 0.75
+    --     if hs.HolosightFlare then
+    --         hss = 1
+    --     end
+    --     render.DrawSprite( pos, size * hss * hsx, size * hss * hsy, Color(255, 255, 255, 255) )
+    -- end
 
-        render.SetMaterial(hs.HolosightReticle or defaultdot)
-        render.DrawSprite(pos, size * hsx, size * hsy, hsc or Color(255, 255, 255))
+    local a = pos:ToScreen()
+    local x = a.x
+    local y = a.y
 
-        if !hs.HolosightNoFlare then
-            render.SetMaterial(hs.HolosightFlare or hs.HolosightReticle)
-            render.DrawSprite(pos, size * 0.5 * hsx, size * 0.5 * hsy, Color(255, 255, 255))
+    cam.Start2D()
+
+    local hss = size * 32
+
+    surface.SetMaterial(hs.HolosightReticle or defaultdot)
+    surface.SetDrawColor(hsc or Color(255, 255, 255))
+    surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
+
+    if !hs.HolosightNoFlare then
+        surface.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
+        surface.SetDrawColor(Color(255, 255, 255))
+
+        if !hs.HolosightFlare then
+            hss = hss * 0.75
         end
 
-        render.SetStencilPassOperation(STENCIL_REPLACE)
-        render.SetStencilCompareFunction(STENCIL_EQUAL)
-
-        render.SetMaterial(black)
-        render.DrawScreenQuad()
-    else
-        render.SetStencilReferenceValue(ref)
-
-        render.SetMaterial(hs.HolosightReticle or defaultdot)
-        render.DrawSprite( pos, size * hsx, size * hsy, hsc or Color(255, 255, 255) )
-        if !hs.HolosightNoFlare then
-            render.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
-            local hss = 0.75
-            if hs.HolosightFlare then
-                hss = 1
-            end
-            render.DrawSprite( pos, size * hss * hsx, size * hss * hsy, Color(255, 255, 255, 255) )
-        end
+        surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
     end
+
+    cam.End2D()
 
     render.SetStencilEnable( false )
 
