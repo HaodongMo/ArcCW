@@ -5,7 +5,7 @@ function SWEP:GetReloadTime()
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
     local anim = self:SelectReloadAnimation()
 
-    if !self.Animations[anim] then return {1.337, .69} end
+    if !self.Animations[anim] then return false end
 
     local full = self:GetAnimKeyTime(anim) * mult
     local magin = self:GetAnimKeyTime(anim, true) * mult
@@ -105,7 +105,7 @@ function SWEP:Reload()
         self:SetClip1(self:Clip1() + insertcount)
 
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
-        self:SetReloading(CurTime() + (self:GetAnimKeyTime(anim) * mult) + 1)
+        self:SetReloading(CurTime() + (self:GetAnimKeyTime(anim) * mult))
 
         self:SetTimer(self:GetAnimKeyTime(anim) * mult,
         function()
@@ -329,8 +329,8 @@ function SWEP:ReloadInsert(empty)
         ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
         self:PlayAnimation(ret, mult, true, 0, true, nil, true)
-            self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret) * mult))
-            self:SetTimer(self:GetAnimKeyTime(ret) * mult,
+            self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret, true) * mult))
+            self:SetTimer(self:GetAnimKeyTime(ret, true) * mult,
             function()
                 self:SetNthReload(self:GetNthReload() + 1)
                 if self:GetOwner():KeyDown(IN_ATTACK2) then
@@ -359,7 +359,7 @@ function SWEP:ReloadInsert(empty)
 
         local time = self:GetAnimKeyTime(insertanim, true)
 
-        self:SetReloading(CurTime() + time)
+        self:SetReloading(CurTime() + time * mult)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(time * mult,

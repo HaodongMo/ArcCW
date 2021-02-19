@@ -605,7 +605,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawCrosshair = true
-SWEP.m_WeaponDeploySpeed = 90 -- 8008135 boobies is funny but it'll bitch in console :(
+SWEP.m_WeaponDeploySpeed = 80.08135 -- 8008135 boobies is funny but it'll bitch in console :(
         -- We don't do that here
 
 SWEP.ArcCW = true

@@ -100,7 +100,7 @@ function SWEP:GetHUDData()
     end
 
     local ubglammo = self:GetBuff_Override("UBGL_Ammo")
-    if ubglammo then
+    if ubglammo and !self:GetInUBGL() then
         data.ubgl = self:Clip2() + self:GetOwner():GetAmmoCount(ubglammo)
     end
 
@@ -112,56 +112,81 @@ end
 function SWEP:DrawHUD()
 
     -- info panel
-    if false then
-        local mr = math.Round
+    --[[if true then
+        surface.SetDrawColor(255, 255, 255)
+        surface.DrawLine(0, 0, ScrW(), ScrH())
+        surface.DrawLine(0, ScrH(), ScrW(), 0)
+    end]]
 
-        --local awesome
-        --if  !(self.ShotgunReload or self.HybridReload or self:GetBuff_Override("Override_ShotgunReload") or self:GetBuff_Override("Override_HybridReload")) then
-            local awesome = self:GetReloadTime()
-        --else
-            --awesome = { 0, 0 }
-        --end
+    if GetConVar("arccw_dev_debug"):GetBool() then
+        local mr = math.Round
+        local s = ScreenScaleMulti(1)
+        local awesome = self:GetReloadTime()
 
         surface.SetFont("ArcCW_26")
-        surface.SetTextPos(ScrW() / 2, 26 * 4)
         surface.SetTextColor(255, 255, 255, 255)
-        surface.DrawText(tostring(self:GetReloading()))
+        if awesome then
+            surface.SetTextPos(ScrW() / 2, 26 * s*2)
+            surface.DrawText(awesome[1])
 
+            surface.SetTextPos(ScrW() / 2, 26 * s*3)
+            surface.DrawText(awesome[2])
 
-        surface.SetTextPos(ScrW() / 2, 26 * 6)
-        surface.DrawText(mr(self:GetReloadingREAL(),2))
+            surface.SetTextPos(ScrW() / 2, 26 * s*4)
+            if self:GetMagUpIn()-CurTime() > 0 then
+                surface.SetTextColor(255, 127, 127, 255)
+                surface.DrawText( mr( math.max( self:GetMagUpIn() - CurTime(), 0 ), 2) )
+            else
+                surface.DrawText( "X" )
+            end
+        else
+            surface.SetFont("ArcCW_20")
+            surface.SetTextPos(ScrW() / 2, 26 * s*3)
+            surface.DrawText("NO RELOAD ANIMATION")
+            
+            surface.SetFont("ArcCW_12")
+            surface.SetTextPos(ScrW() / 2, 26 * s*3.66)
+            surface.DrawText("not a mag fed one, at least...")
+        end
+        surface.SetFont("ArcCW_26")
+        surface.SetTextColor(255, 255, 255, 255)
 
-        surface.SetTextPos(ScrW() / 2, 26 * 8)
-        surface.DrawText(mr(CurTime(),2))
+        if self:GetReloadingREAL()-CurTime() > 0 then
+            surface.SetTextColor(255, 127, 127, 255)
+        end
+        surface.SetTextPos(ScrW() / 2, 26 * s*5)
+        surface.DrawText( mr( math.max( self:GetReloadingREAL() - CurTime(), 0 ), 2 ) )
+        surface.SetTextColor(255, 255, 255, 255)
 
-        surface.SetTextPos(ScrW() / 2, 26 * 10)
-        surface.DrawText(awesome[1])
-
-        surface.SetTextPos(ScrW() / 2, 26 * 12)
-        surface.DrawText(awesome[2])
-
-        surface.SetTextPos(ScrW() / 2, 26 * 14)
-        surface.DrawText(mr(self:GetMagUpIn(),2))
-
+        if self:GetWeaponOpDelay()-CurTime() > 0 then
+            surface.SetTextColor(255, 127, 127, 255)
+        end
+        surface.SetTextPos(ScrW() / 2, 26 * s*6)
+        surface.DrawText( mr( math.max( self:GetWeaponOpDelay() - CurTime(), 0 ), 2 ) )
+        surface.SetTextColor(255, 255, 255, 255)
+        
 
         surface.SetFont("ArcCW_8")
-        surface.SetTextPos(ScrW() / 2, 26 * 4)
-        surface.DrawText("RELOADING")
 
-        surface.SetTextPos(ScrW() / 2, 26 * 6)
-        surface.DrawText("RELOADING TIMER")
+        if awesome then
+            surface.SetTextPos(ScrW() / 2, 26 * s*2)
+            surface.DrawText("RELOAD")
 
-        surface.SetTextPos(ScrW() / 2, 26 * 8)
-        surface.DrawText("CURRENT TIME")
+            surface.SetTextPos(ScrW() / 2 - s*36, s*26 * 2.33)
+            surface.DrawText("FULL")
 
-        surface.SetTextPos(ScrW() / 2, 26 * 10)
-        surface.DrawText("RELOAD: FULL")
+            surface.SetTextPos(ScrW() / 2 - s*36, s*26 * 3.33)
+            surface.DrawText("MAGIN")
 
-        surface.SetTextPos(ScrW() / 2, 26 * 12)
-        surface.DrawText("RELOAD: MAGIN")
+            surface.SetTextPos(ScrW() / 2 - s*36, s*26 * 4.33)
+            surface.DrawText("MAG LOAD")
+        end
 
-        surface.SetTextPos(ScrW() / 2, 26 * 14)
-        surface.DrawText("RELOAD: MAG UP IN")
+        surface.SetTextPos(ScrW() / 2, 26 * s*5)
+        surface.DrawText("RELOAD DELAY")   
+
+        surface.SetTextPos(ScrW() / 2, 26 * s*6)
+        surface.DrawText("WEAPON OPERATION DELAY")   
     end
 
     if self:GetState() != ArcCW.STATE_CUSTOMIZE then

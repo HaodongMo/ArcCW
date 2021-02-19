@@ -115,9 +115,17 @@ function ArcCW.GetBitNecessity()
     return ArcCW.AttachmentBits
 end
 
-ArcCW_LoadAtts()
-
 if CLIENT then
+    concommand.Add("arccw_reloadatts", function()
+        if !LocalPlayer():IsSuperAdmin() then return end
+
+        net.Start("arccw_reloadatts")
+        net.SendToServer()
+    end)
+
+    net.Receive("arccw_reloadatts", function(len, ply)
+        ArcCW_LoadAtts()
+    end)
 
     spawnmenu.AddCreationTab( "#spawnmenu.category.entities", function()
 
@@ -151,20 +159,7 @@ if CLIENT then
             net.SendToServer()
         end
     end )
-
-    concommand.Add("arccw_reloadatts", function()
-        if !LocalPlayer():IsSuperAdmin() then return end
-
-        net.Start("arccw_reloadatts")
-        net.SendToServer()
-    end)
-
-    net.Receive("arccw_reloadatts", function(len, ply)
-        ArcCW_LoadAtts()
-    end)
-
 elseif SERVER then
-
     net.Receive("arccw_reloadatts", function(len, ply)
         if !ply:IsSuperAdmin() then return end
 
@@ -212,3 +207,5 @@ end
 hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()
     if GetConVar("arccw_reloadatts_mapcleanup"):GetBool() then ArcCW_LoadAtts() end
 end)
+
+ArcCW_LoadAtts()

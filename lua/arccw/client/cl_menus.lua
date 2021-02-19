@@ -245,6 +245,8 @@ local DevPanel = {
     { type = "c", text = "#arccw.cvar.dev_registerentities.desc" },
     { type = "b", text = "#arccw.cvar.dev_showignored", var = "arccw_reloadatts_showignored", sv = true },
     { type = "c", text = "#arccw.cvar.dev_showignored.desc" },
+    { type = "b", text = "#arccw.cvar.dev_debug", var = "arccw_dev_debug", sv = true },
+    { type = "c", text = "#arccw.cvar.dev_debug.desc" },
     { type = "p", text = "#arccw.cvar.dev_reloadatts", func = function() RunConsoleCommand("arccw_reloadatts") end },
     { type = "h", text = "#arccw.cvar.dev_reloadatts.desc" },
     { type = "p", text = "#arccw.cvar.dev_reloadlangs", func = function() RunConsoleCommand("arccw_reloadlangs") end },

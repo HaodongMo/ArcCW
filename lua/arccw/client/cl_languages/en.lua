@@ -288,4 +288,8 @@ L["arccw.cvar.ttt_customizemode.3"]       = "3 - Detectives/Traitors only"
 L["arccw.cvar.ttt_bodyattinfo.1"]         = "1 - Detectives can see"
 L["arccw.cvar.ttt_bodyattinfo.2"]         = "2 - Everyone can see"
 L["arccw.cvar.mult_crouchdisp"]           = "Crouched Dispersion"
-L["arccw.cvar.mult_crouchrecoil"]         = "Crocuhed Recoil"
+L["arccw.cvar.mult_crouchrecoil"]         = "Crouched Recoil"
+
+-- 2021-2-19
+L["arccw.cvar.dev_debug"]           = "Debug Menu"
+L["arccw.cvar.dev_debug.desc"]         = "Disabled by default.\nDraws a debug menu over your screen where you can view certain elements blah blah?"
