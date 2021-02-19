@@ -723,7 +723,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     cam.Start2D()
 
-    local hss = size * 32
+    local hss = size * 16 * ScreenScale(1)
 
     surface.SetMaterial(hs.HolosightReticle or defaultdot)
     surface.SetDrawColor(hsc or Color(255, 255, 255))
