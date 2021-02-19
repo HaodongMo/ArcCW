@@ -606,7 +606,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     pdiff = Lerp(delta, pdiff, 0)
 
-    local d = (32 + pdiff)
+    local d = (8 + pdiff)
 
     d = hs.HolosightConstDist or d
 
@@ -722,6 +722,13 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     local y = a.y
 
     cam.Start2D()
+
+    if hs.HolosightBlackbox then
+        render.SetStencilPassOperation(STENCIL_KEEP)
+
+        surface.SetDrawColor(0, 0, 0, 255 * delta)
+        surface.DrawRect(0, 0, ScrW(), ScrH())
+    end
 
     render.SetStencilPassOperation(STENCIL_DECR)
     render.SetStencilCompareFunction(STENCIL_EQUAL)
