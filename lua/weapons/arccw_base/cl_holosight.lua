@@ -733,13 +733,15 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     render.SetStencilPassOperation(STENCIL_DECR)
     render.SetStencilCompareFunction(STENCIL_EQUAL)
 
-    local hss = size * 16 * ScreenScale(1)
+    local hss = size * 32 * math.min(ScrW(), ScrH()) / 800
 
     surface.SetMaterial(hs.HolosightReticle or defaultdot)
     surface.SetDrawColor(hsc or Color(255, 255, 255))
     surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
 
     if !hs.HolosightNoFlare then
+        render.SetStencilPassOperation(STENCIL_KEEP)
+        render.SetStencilReferenceValue(ref - 1)
         surface.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
         surface.SetDrawColor(Color(255, 255, 255))
 
@@ -749,7 +751,9 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             hss2 = hss2 * 0.75
         end
 
-        surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
+        surface.DrawTexturedRect(x - (hss2 / 2), y - (hss2 / 2), hss2, hss2)
+
+        render.SetStencilReferenceValue(ref)
     end
 
     if hs.HolosightBlackbox then
