@@ -40,8 +40,17 @@ function SWEP:ChangeFiremode(pred)
     if !fmt[fmi] then fmi = 1 end
 
     self:SetFireMode(fmi)
-    -- Delay recalc by a tick so client can catch up
-    timer.Simple(0, function() self:RecalcAllBuffs() end)
+    --timer.Simple(0, function() self:RecalcAllBuffs() end)
+    -- Absolutely, totally, completely ENSURE client has changed the value before attempting recalculation
+    -- Waiting one tick will not work on dedicated servers
+    local id = "ArcCW_RecalcWait_" .. self:EntIndex()
+    timer.Create(id, 0.01, 0, function()
+        if !IsValid(self) then timer.Remove(id) return end
+        if self:GetFireMode() == fmi then
+            self:RecalcAllBuffs()
+            timer.Remove(id)
+        end
+    end)
 
     if SERVER then
         if pred then
