@@ -388,7 +388,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     -- if asight and asight.Holosight then ang = ang - self:GetOurViewPunchAngles() end
 
-    ang = ang + self:GetOurViewPunchAngles() * Lerp(self:GetSightDelta(), 1, -4)
+    ang = ang + self:GetOurViewPunchAngles() * Lerp(self:GetSightDelta(), 1, -1)
 
     self.ActualVMData = actual
 
