@@ -431,17 +431,25 @@ function SWEP:SwitchActiveSights()
         self.ActiveSight = 1
     end
 
+    local asight = self:GetActiveSights()
+
+    local tbl = self:GetBuff_Hook("Hook_SwitchActiveSights", {active = self.ActiveSight, asight = asight})
+
+    self.ActiveSight = tbl.active or self.ActiveSight
+
+    if self.ActiveSight > table.Count(self.SightTable) then
+        self.ActiveSight = 1
+    end
+
+    local asight2 = self:GetActiveSights()
+
+    if asight2.SwitchToSound then
+        self:MyEmitSound(asight2.SwitchToSound, 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
+    end
+
     if self:GetNextPrimaryFire() <= (CurTime() + self:GetSightTime()) then
         self:SetNextPrimaryFire(CurTime() + self:GetSightTime())
     end
-
-    local asight = self:GetActiveSights()
-
-    if asight.SwitchToSound then
-        self:MyEmitSound(asight.SwitchToSound, 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
-    end
-
-    self:GetBuff_Hook("Hook_SwitchActiveSights", {active = self.ActiveSight, asight = asight})
 
     self.LastEnterSightTime = CurTime()
 end

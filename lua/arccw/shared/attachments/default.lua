@@ -269,6 +269,7 @@ att.Override_Firemodes = {}
 -- all hooks, mults, and adds will work on fire modes
 
 -- called when the active sight is changed
+-- return to change activesight
 -- {active = int activesight, asight = table}
 att.Hook_SwitchActiveSights = function(wep, data) end
 
