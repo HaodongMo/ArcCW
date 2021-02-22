@@ -441,6 +441,8 @@ function SWEP:SwitchActiveSights()
         self:MyEmitSound(asight.SwitchToSound, 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
     end
 
+    self:GetBuff_Hook("Hook_SwitchActiveSights", {active = self.ActiveSight, asight = asight})
+
     self.LastEnterSightTime = CurTime()
 end
 

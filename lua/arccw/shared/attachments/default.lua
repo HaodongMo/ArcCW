@@ -268,6 +268,10 @@ att.Override_Firemodes = {}
 
 -- all hooks, mults, and adds will work on fire modes
 
+-- called when the active sight is changed
+-- {active = int activesight, asight = table}
+att.Hook_SwitchActiveSights = function(wep, data) end
+
 -- Allows you to directly edit the burst count
 att.Hook_GetBurstCount = function(wep, burstcount) end
 
