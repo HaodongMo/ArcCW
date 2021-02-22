@@ -293,7 +293,7 @@ function SWEP:SetupActiveSights()
                     if ((ele.AttPosMods or {})[i] or {}).slide then
                         slidemod = ele.AttPosMods[i].slide
                     end
-                    
+
                     -- Refer to sh_model Line 837
                     if ((ele.AttPosMods or {})[k.Slot] or {}).SlideAmount then
                         slidemod = ele.AttPosMods[i].SlideAmount
@@ -476,7 +476,7 @@ function SWEP:TranslateFOV(fov)
     self.CurrentFOV = self.CurrentFOV or fov
 
     local div = 1
-    local app_vm = self.ViewModelFOV
+    local app_vm = self.ViewModelFOV + 10
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         fov = 75
