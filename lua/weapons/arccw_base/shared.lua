@@ -727,7 +727,6 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 2, "ReloadingREAL")
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
-    
 end
 
 function SWEP:OnRestore()

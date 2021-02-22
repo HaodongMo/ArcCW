@@ -41,7 +41,7 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.automaticreload.desc" },
     { type = "f", text = "#arccw.cvar.adjustsensthreshold", var = "arccw_adjustsensthreshold", min = 0, max = 50, sv = true },
     { type = "c", text = "#arccw.cvar.adjustsensthreshold.desc" },
-    { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
+    -- { type = "b", text = "#arccw.cvar.toggleads", var = "arccw_toggleads" },
     { type = "b", text = "#arccw.cvar.autosave", var = "arccw_autosave" },
     { type = "c", text = "#arccw.cvar.autosave.desc" },
     { type = "b", text = "#arccw.cvar.embracetradition", var = "arccw_hud_embracetradition" },
