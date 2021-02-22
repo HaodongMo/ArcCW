@@ -65,8 +65,6 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
         penleft = penleft * d
 
-        bullet.Vel = bullet.Vel * d
-
         skip = true
     end
 
