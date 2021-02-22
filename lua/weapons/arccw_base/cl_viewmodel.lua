@@ -44,7 +44,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 			local oldft = FT
 			FT = FT*TargetTick
 		end
-	end
+    end
 
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
 
@@ -58,7 +58,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     oldpos:Set(pos)
     oldang:Set(ang)
 
-    ang = ang - (owner:GetViewPunchAngles() * 0.5)
+    ang = ang - self:GetOurViewPunchAngles()
 
     actual = self.ActualVMData or { pos = Vector(), ang = Angle(), down = 1, sway = 1, bob = 1 }
 
@@ -386,7 +386,9 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     pos = pos - Vector(0, 0, actual.down)
 
-    if asight and asight.Holosight then ang = ang - (owner:GetViewPunchAngles() * 0.5) end
+    -- if asight and asight.Holosight then ang = ang - self:GetOurViewPunchAngles() end
+
+    ang = ang + self:GetOurViewPunchAngles()
 
     self.ActualVMData = actual
 

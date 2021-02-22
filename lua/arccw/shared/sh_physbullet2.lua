@@ -373,7 +373,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         end
     end
 
-    local MaxDimensions = 16384 * 8
+    local MaxDimensions = 16384 * 4
     local WorldDimensions = 16384
 
     if bullet.StartTime <= (CurTime() - GetConVar("arccw_bullet_lifetime"):GetFloat()) then
