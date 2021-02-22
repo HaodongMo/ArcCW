@@ -545,6 +545,8 @@ function SWEP:PostDrawViewModel()
 
     cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 0.1, 15000)
 
+    cam.IgnoreZ(true)
+
     if ArcCW.Overdraw then
         ArcCW.Overdraw = false
     else
