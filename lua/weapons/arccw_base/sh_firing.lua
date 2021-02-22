@@ -697,6 +697,8 @@ function SWEP:DoRecoil()
 
     if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("DoRecoil") end
 
+    -- math.randomseed(self:GetBurstLength() + (self.Recoil * 409) + (self.RecoilSide * 519))
+
     local rec = {
         Recoil = 1,
         RecoilSide = 1,
@@ -712,8 +714,13 @@ function SWEP:DoRecoil()
     local recv = (visual or 1) * self:GetBuff_Mult("Mult_VisualRecoilMult")
     local recs = (side or 1)   * self:GetBuff_Mult("Mult_RecoilSide")
 
+    -- local rrange = math.Rand(-recs, recs) * self.RecoilSide
+
+    -- local irec = math.Rand(rrange - 1, rrange + 1)
+    -- local recu = math.Rand(0.5, 1)
+
     local irec = math.Rand(-1, 1)
-    local recu = math.Rand(0.75, 1.25)
+    local recu = 1
 
     if self:InBipod() then
         local biprec = self.BipodRecoil
@@ -741,8 +748,9 @@ function SWEP:DoRecoil()
     ]]
 
     local punch = Angle()
-    punch = punch + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.Recoil * recv * rmul)
-    punch = punch + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilSide * irec * recv * rmul)
+    punch = punch + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * math.max(self.Recoil, 0.25) * recu * recv * rmul)
+    punch = punch + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec  * recv * rmul)
+    punch = punch + Angle(0, 0, 1) * math.Rand(-1, 1) * math.max(self.Recoil, 0.25) * recv * rmul * 0.25
     punch = punch * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
 
     if CLIENT then self:OurViewPunch(punch) end
@@ -750,7 +758,7 @@ function SWEP:DoRecoil()
     if CLIENT or single then
         recv = recv * self.VisualRecoilMult
 
-        self.RecoilAmount     = self.RecoilAmount + (self.Recoil * rmul)
+        self.RecoilAmount     = self.RecoilAmount + (self.Recoil * rmul * recu)
         self.RecoilAmountSide = self.RecoilAmountSide + (self.RecoilSide * irec * recs * rmul)
         self.RecoilPunchBack  = math.Clamp(self.RecoilAmount * recv * 5, 1, 5)
 
@@ -759,8 +767,10 @@ function SWEP:DoRecoil()
         end
 
         self.RecoilPunchSide = self.RecoilSide * 0.1 * irec * recv * rmul
-        self.RecoilPunchUp   = self.RecoilRise * 0.1
+        self.RecoilPunchUp   = self.RecoilRise * 0.1 * recu
     end
+
+    -- math.randomseed(CurTime() + (self:EntIndex() * 3))
 end
 
 function SWEP:GetBurstLength()

@@ -634,7 +634,7 @@ SWEP.LHIKStartTime = 0
 end
 
 SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
-SWEP.RegularClipSize = 0
+-- SWEP.RegularClipSize = 0
 
 if SERVER then
 

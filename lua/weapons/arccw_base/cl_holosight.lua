@@ -348,7 +348,7 @@ function SWEP:FormRTScope()
     local rt = {
         w = rtsize,
         h = rtsize,
-        angles = LocalPlayer():EyeAngles() + (self:GetOurViewPunchAngles()),
+        angles = LocalPlayer():EyeAngles() + (self:GetOurViewPunchAngles() * 0.5),
         origin = LocalPlayer():EyePos(),
         drawviewmodel = false,
         fov = self:GetOwner():GetFOV() / mag / 1.2,
@@ -486,7 +486,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
         render.SetStencilReferenceValue(ref)
 
-        local spos = EyePos() + ((EyeAngles() + (Angle(0.1, 0, 0) * delta) + (self:GetOurViewPunchAngles() * 0.25)):Forward() * 2048)
+        local spos = EyePos() + ((EyeAngles() + (Angle(0.1, 0, 0) * delta) + (self:GetOurViewPunchAngles() * 0.5)):Forward() * 2048)
 
         cam.IgnoreZ(true)
 
@@ -588,15 +588,13 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     ang:RotateAroundAxis(ang:Forward(), -90)
 
-    ang = ang + (self:GetOurViewPunchAngles() * 0.25)
-
     local dir = ang:Up()
 
     local pdiff = (pos - EyePos()):Length()
 
     pos = LerpVector(delta, EyePos(), pos)
 
-    local eyeangs = self:GetOwner():EyeAngles() - (self:GetOurViewPunchAngles() * 0.25)
+    local eyeangs = self:GetOwner():EyeAngles() + (self:GetOurViewPunchAngles() * 0.5)
 
     -- local vm = hsm or hsp
 
@@ -659,7 +657,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             -- local sx = -(sw - ScrW()) / 2
             -- local sy = -(sh - ScrH()) / 2
 
-            local cpos = self:GetOwner():EyePos() + ((EyeAngles() + (self:GetOurViewPunchAngles())):Forward() * 2048)
+            local cpos = self:GetOwner():EyePos() + ((EyeAngles() + (self:GetOurViewPunchAngles() * 0.5)):Forward() * 2048)
 
             cpos:Rotate(Angle(0, -ArcCW.StrafeTilt(self), 0))
 
