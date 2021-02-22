@@ -529,7 +529,8 @@ function SWEP:PreDrawViewModel(vm)
         end
     end
 
-    cam.IgnoreZ(true)
+    cam.Start3D(EyePos(), EyeAngles(), self.ViewModelFOV)
+    -- cam.IgnoreZ(true)
 
     self:DrawCustomModel(false)
 
@@ -546,4 +547,6 @@ function SWEP:PostDrawViewModel()
         self:DoLaser()
         self:DoHolosight()
     end
+
+    cam.End3D()
 end

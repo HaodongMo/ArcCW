@@ -467,13 +467,14 @@ function SWEP:TranslateFOV(fov)
     self.ApproachFOV = self.ApproachFOV or fov
     self.CurrentFOV = self.CurrentFOV or fov
 
-    if self:GetState() != ArcCW.STATE_SIGHTS then
-        self.ApproachFOV = fov
-    else
+    local div = 1
+
+    if self:GetState() == ArcCW.STATE_SIGHTS then
+        fov = 90
         if CLIENT and self:ShouldFlatScope() then
-            self.ApproachFOV = fov / (irons.Magnification + irons.ScopeMagnification)
+            div = (irons.Magnification + irons.ScopeMagnification)
         else
-            self.ApproachFOV = fov / math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
+            div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
         end
     end
 
@@ -481,8 +482,13 @@ function SWEP:TranslateFOV(fov)
     -- if game.SinglePlayer() then self.CurrentFOV = self.CurrentFOV + (self.RecoilAmount * -0.1 * self:GetSightDelta()) end
     -- it also fucking sucks
 
+    self.ApproachFOV = fov / div
+
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
+
     return self.CurrentFOV
+
+    -- return 90
 end
 
 function SWEP:SetShouldHoldType()
