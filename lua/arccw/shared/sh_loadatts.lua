@@ -75,6 +75,16 @@ local function ArcCW_SendBlacklist(ply)
     end
 end
 
+local function ArcCW_LoadAtt(v)
+    att = {}
+    shortname = string.sub(v, 1, -5)
+
+    include("arccw/shared/attachments/" .. v)
+    AddCSLuaFile("arccw/shared/attachments/" .. v)
+
+    ArcCW.LoadAttachmentType(att)
+end
+
 local function ArcCW_LoadAtts()
     ArcCW.AttachmentTable = {}
     ArcCW.AttachmentIDTable = {}
@@ -83,13 +93,9 @@ local function ArcCW_LoadAtts()
     ArcCW.AttachmentBits = nil
 
     for k, v in pairs(file.Find("arccw/shared/attachments/*", "LUA")) do
-        att = {}
-        shortname = string.sub(v, 1, -5)
-
-        include("arccw/shared/attachments/" .. v)
-        AddCSLuaFile("arccw/shared/attachments/" .. v)
-
-        ArcCW.LoadAttachmentType(att)
+        if !pcall(function() ArcCW_LoadAtt(v) end) then
+            print("!!!! Attachment " .. v .. " has errors!")
+        end
     end
 
     print("Loaded " .. tostring(ArcCW.NumAttachments) .. " ArcCW attachments.")
