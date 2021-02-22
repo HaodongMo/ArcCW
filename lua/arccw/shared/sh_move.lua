@@ -97,6 +97,12 @@ function ArcCW.CreateMove(cmd)
 
         cmd:SetViewAngles(ang)
     end
+
+    local ang2 = cmd:GetViewAngles()
+
+    ang2 = ang2 - wpn.ViewPunchAngle
+
+    cmd:SetViewAngles(ang2)
 end
 
 hook.Add("CreateMove", "ArcCW_CreateMove", ArcCW.CreateMove)

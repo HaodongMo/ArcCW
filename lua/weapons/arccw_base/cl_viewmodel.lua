@@ -543,7 +543,7 @@ function SWEP:PostDrawViewModel()
 
     cam.End3D()
 
-    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 0.1, 15000)
+    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 0.2, 15000)
 
     cam.IgnoreZ(true)
 
