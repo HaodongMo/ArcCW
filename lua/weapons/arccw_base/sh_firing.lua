@@ -750,7 +750,7 @@ function SWEP:DoRecoil()
     local punch = Angle()
     punch = punch + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * math.max(self.Recoil, 0.25) * recu * recv * rmul)
     punch = punch + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec  * recv * rmul)
-    punch = punch + Angle(0, 0, 1) * math.Rand(-1, 1) * math.max(self.Recoil, 0.25) * recv * rmul * 0.25
+    punch = punch + Angle(0, 0, 90) * math.Rand(-1, 1) * math.Clamp(self.Recoil, 0.25, 1) * recv * rmul * 0.01
     punch = punch * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
 
     if CLIENT then self:OurViewPunch(punch) end

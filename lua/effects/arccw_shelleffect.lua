@@ -91,7 +91,9 @@ function EFFECT:Init(data)
     phys:SetMaterial("gmod_silent")
 
     phys:SetVelocity((dir * mag * math.Rand(1, 2)) + plyvel)
-    phys:AddAngleVelocity(VectorRand() * 400)
+
+    phys:AddAngleVelocity(VectorRand() * 100)
+    phys:AddAngleVelocity(ang:Up() * 2500 * math.Rand(0.75, 1.25))
 
     self.HitPitch = self.Pitch + math.Rand(-5,5)
 
