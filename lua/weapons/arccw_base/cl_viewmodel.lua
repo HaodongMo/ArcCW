@@ -529,7 +529,7 @@ function SWEP:PreDrawViewModel(vm)
         end
     end
 
-    cam.Start3D(EyePos(), EyeAngles(), self.ViewModelFOV, nil, nil, nil, nil, 0.1, 1000)
+    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 0.1, 1000)
     cam.IgnoreZ(true)
 
     self:DrawCustomModel(false)

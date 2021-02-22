@@ -468,9 +468,11 @@ function SWEP:TranslateFOV(fov)
     self.CurrentFOV = self.CurrentFOV or fov
 
     local div = 1
+    local app_vm = self.ViewModelFOV
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         fov = 75
+        app_vm = 60
         if CLIENT and self:ShouldFlatScope() then
             div = (irons.Magnification + irons.ScopeMagnification)
         else
@@ -485,6 +487,10 @@ function SWEP:TranslateFOV(fov)
     self.ApproachFOV = fov / div
 
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
+
+    self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
+
+    self.CurrentViewModelFOV = math.Approach(self.CurrentViewModelFOV, app_vm, FrameTime() * (self.CurrentViewModelFOV - app_vm))
 
     return self.CurrentFOV
 
