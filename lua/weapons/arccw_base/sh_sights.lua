@@ -480,7 +480,7 @@ function SWEP:TranslateFOV(fov)
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         fov = 75
-        app_vm = 60
+        app_vm = 45
         if CLIENT and self:ShouldFlatScope() then
             div = (irons.Magnification + irons.ScopeMagnification)
         else
