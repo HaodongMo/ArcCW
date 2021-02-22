@@ -40,6 +40,14 @@ ArcCW.ShotgunShellSoundsTable = {
     "weapons/fx/tink/shotgun_shell3.wav"
 }
 
+ArcCW.RicochetSounds = {
+    "weapons/fx/rics/ric1.wav",
+    "weapons/fx/rics/ric2.wav",
+    "weapons/fx/rics/ric3.wav",
+    "weapons/fx/rics/ric4.wav",
+    "weapons/fx/rics/ric5.wav"
+ }
+
 ArcCW.ReloadTimeTable = {
     [ACT_HL2MP_GESTURE_RELOAD_AR2]      = 2,
     [ACT_HL2MP_GESTURE_RELOAD_SMG1]     = 2,

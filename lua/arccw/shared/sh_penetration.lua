@@ -2,6 +2,17 @@ local mth      = math
 local m_rand   = mth.Rand
 local m_lerp   = Lerp
 
+function ArcCW:GetRicochetChance(penleft, tr)
+   local degree = tr.HitNormal:Dot((tr.StartPos - tr.HitPos):GetNormalized())
+
+   local ricmult = ArcCW.PenTable[tr.MatType] or 1
+
+   -- 0 at 1
+   -- 100 at 0
+
+   return math.Clamp(Lerp(degree, penleft + (45 * ricmult), 0), 0, 100)
+end
+
 function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenned)
     if CLIENT then return end
 
@@ -10,6 +21,8 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
     if penleft <= 0 then return end
 
     alreadypenned = alreadypenned or {}
+
+    local skip = false
 
     local trent = tr.Entity
     local hitpos, startpos = tr.HitPos, tr.StartPos
@@ -37,7 +50,27 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
     local ptrent = ptr.Entity
 
-    while penleft > 0 and (!ptr.StartSolid or ptr.AllSolid) and ptr.Fraction < 1 and ptrent == curr_ent do
+    if ArcCW:GetRicochetChance(penleft, tr) > math.random(0, 100) then
+        local degree = tr.HitNormal:Dot((tr.StartPos - tr.HitPos):GetNormalized())
+        if degree == 0 or degree == 1 then return end
+        sound.Play(ArcCW.RicochetSounds[math.random(#ArcCW.RicochetSounds)], tr.HitPos)
+        if (tr.Normal:Length() == 0) then return end
+        -- ACT3_ShootPBullet(tr.HitPos, ((2 * degree * tr.HitNormal) + tr.Normal) * (vel * math.Rand(0.25, 0.75)), owner, inflictor, bulletid, false, 1, penleft, dist)
+        -- return
+
+        dir = (2 * degree * tr.HitNormal) + tr.Normal
+        dir = dir:GetNormalized()
+
+        local d = math.Rand(0.5, 0.9)
+
+        penleft = penleft * d
+
+        bullet.Vel = bullet.Vel * d
+
+        skip = true
+    end
+
+    while !skip and penleft > 0 and (!ptr.StartSolid or ptr.AllSolid) and ptr.Fraction < 1 and ptrent == curr_ent do
         penleft = penleft - (pentracelen * penmult)
 
         td.start  = endpos

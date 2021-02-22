@@ -741,7 +741,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         render.SetStencilPassOperation(STENCIL_KEEP)
         render.SetStencilReferenceValue(ref - 1)
         surface.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
-        surface.SetDrawColor(Color(255, 255, 255))
+        surface.SetDrawColor(Color(255, 255, 255, 150))
 
         local hss2 = hss
 
