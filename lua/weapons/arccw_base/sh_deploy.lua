@@ -232,15 +232,17 @@ function SWEP:Holster(wep)
     end
 
     local time = 0.25
-    local anim = self:SelectAnimation("holster")
-    if anim then
-        self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-        time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
-    else
-        if CLIENT then
-            self:ProceduralHolster()
+    if skip then
+        local anim = self:SelectAnimation("holster")
+        if anim then
+            self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
+            time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
+        else
+            if CLIENT then
+                self:ProceduralHolster()
+            end
+            time = time * self:GetBuff_Mult("Mult_DrawTime")
         end
-        time = time * self:GetBuff_Mult("Mult_DrawTime")
     end
 
     if !skip then time = 0 end
