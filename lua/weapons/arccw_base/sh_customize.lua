@@ -953,12 +953,17 @@ function SWEP:CreateCustomizeHUD()
                 attbtn.OnMousePressed = function(spaa, kc2)
 
                     owned = self:PlayerOwnsAtt(spaa.AttName)
+                    local installed = false
                     local orighas = ArcCW:SlotAcceptsAtt(self.Attachments[i], self, spaa.AttName) and self:CheckFlags(self.Attachments[i].ExcludeFlags, self.Attachments[i].RequireFlags)
 
                     local atttbl = ArcCW.AttachmentTable[spaa.AttName]
                     if atttbl then
                         if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
                         for _, slot in pairs(k.MergeSlots or {}) do
+                            if self.Attachments[slot].Installed then
+                                installed = true
+                            end
+
                             if slot and self.Attachments[slot] and
                                     ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, spaa.AttName) and
                                     !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
@@ -979,6 +984,8 @@ function SWEP:CreateCustomizeHUD()
                     elseif kc2 == MOUSE_RIGHT and spaa.AttName != "" then
                         if span.AttSlot.Installed == spaa.AttName then
                             -- Unequip
+                            self:DetachAllMergeSlots(span.AttIndex)
+                        elseif installed then
                             self:DetachAllMergeSlots(span.AttIndex)
                         elseif owned then
                             -- Drop attachment
