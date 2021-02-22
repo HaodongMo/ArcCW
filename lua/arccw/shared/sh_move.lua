@@ -100,7 +100,7 @@ function ArcCW.CreateMove(cmd)
 
     local ang2 = cmd:GetViewAngles()
 
-    ang2 = ang2 - wpn.ViewPunchAngle
+    ang2 = ang2 - (wpn.ViewPunchAngle * FrameTime() * 60)
 
     cmd:SetViewAngles(ang2)
 end
