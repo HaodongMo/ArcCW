@@ -136,7 +136,9 @@ function SWEP:Reload()
     end
 
     self:SetClipInfo(load)
-    self:CallOnClient("SetClipInfo", tostring(load))
+    if game.SinglePlayer() then
+        self:CallOnClient("SetClipInfo", tostring(load))
+    end
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -353,7 +355,9 @@ function SWEP:ReloadInsert(empty)
         local load = self:GetCapacity() + math.min(self:Clip1(), self:GetChamberSize())
         if load - self:Clip1() > self:Ammo1() then load = self:Clip1() + self:Ammo1() end
         self:SetClipInfo(load)
-        self:CallOnClient("SetClipInfo", tostring(load))
+        if game.SinglePlayer() then
+            self:CallOnClient("SetClipInfo", tostring(load))
+        end
 
         self:RestoreAmmo(insertcount)
 
