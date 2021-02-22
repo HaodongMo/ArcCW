@@ -529,7 +529,7 @@ function SWEP:PreDrawViewModel(vm)
         end
     end
 
-    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 0.1, 15000)
+    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 1.5, 15000)
     cam.IgnoreZ(true)
 
     self:DrawCustomModel(false)
@@ -540,6 +540,10 @@ end
 function SWEP:PostDrawViewModel()
     if ArcCW.VM_OverDraw then return end
     render.SetBlend(1)
+
+    cam.End3D()
+
+    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 0.1, 15000)
 
     if ArcCW.Overdraw then
         ArcCW.Overdraw = false
