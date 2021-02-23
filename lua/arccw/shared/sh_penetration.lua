@@ -59,9 +59,11 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         -- return
 
         dir = (2 * degree * tr.HitNormal) + tr.Normal
-        dir = dir:GetNormalized()
+        ang = dir:Angle()
+        ang = ang + (AngleRand() * (1 - degree) * 15 / 360)
+        dir = ang:Forward()
 
-        local d = math.Rand(0.5, 0.9)
+        local d = math.Rand(0.25, 0.95)
 
         penleft = penleft * d
 
