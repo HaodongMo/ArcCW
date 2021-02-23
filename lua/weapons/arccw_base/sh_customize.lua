@@ -218,6 +218,8 @@ function SWEP:OpenCustomizeHUD()
 
     gui.EnableScreenClicker(true)
 
+    surface.PlaySound("weapons/arccw/extra.wav")
+
 end
 
 function SWEP:CloseCustomizeHUD()
@@ -229,6 +231,8 @@ function SWEP:CloseCustomizeHUD()
         if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then
             vrmod.MenuClose( "ArcCW_Customize" )
         end
+
+        surface.PlaySound("weapons/arccw/extra2.wav")
     end
 end
 
@@ -1138,6 +1142,7 @@ function SWEP:CreateCustomizeHUD()
                     atttrivia:Hide()
                     attslidebox:Hide()
                     atttogglebtn:Hide()
+                    surface.PlaySound("weapons/arccw/close.wav")
                 else
                     activeslot = span.AttIndex
                     triviabox:Hide()
@@ -1146,6 +1151,7 @@ function SWEP:CreateCustomizeHUD()
                     attslider:SetSlideX(self.Attachments[span.AttIndex].SlidePos)
                     lastslidepos = self.Attachments[span.AttIndex].SlidePos
                     self.InAttMenu = true
+                    surface.PlaySound("weapons/arccw/open.wav")
 
                     span.TextRot = 0
                     span.StartTextRot = CurTime()
