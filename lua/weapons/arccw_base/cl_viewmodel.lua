@@ -162,8 +162,6 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         target.ang.p = m_clamp(target.ang.p, -80, 80)
     elseif sighted then
-        proceduralRecoilMult = proceduralRecoilMult * .7
-
         local irons = self:GetActiveSights()
 
         target.pos   = irons.Pos
