@@ -3,7 +3,7 @@ local m_rand   = mth.Rand
 local m_lerp   = Lerp
 
 function ArcCW:GetRicochetChance(penleft, tr)
-    if !GetConVar("arccw_enable_ricochet"):GetBool() then return end
+    if !GetConVar("arccw_enable_ricochet"):GetBool() then return 0 end
     local degree = tr.HitNormal:Dot((tr.StartPos - tr.HitPos):GetNormalized())
 
     local ricmult = ArcCW.PenTable[tr.MatType] or 1
