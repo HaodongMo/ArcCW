@@ -486,18 +486,56 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
         render.SetStencilReferenceValue(ref)
 
-        local spos = EyePos() + ((EyeAngles() + (Angle(0.1, 0, 0) * delta) + (self:GetOurViewPunchAngles() * 0.5)):Forward() * 2048)
-
         cam.IgnoreZ(true)
 
-        render.SetMaterial(hs.HolosightReticle or defaultdot)
-        render.DrawSprite(spos, 3 * (1 - delta), 3 * (1 - delta), hsc or Color(255, 255, 255))
+        local x = ScrW() / 2
+        local y = ScrH() / 2
 
-        render.SetStencilPassOperation(STENCIL_REPLACE)
-        render.SetStencilCompareFunction(STENCIL_NOTEQUAL)
+        cam.Start2D()
 
-        render.SetMaterial(black)
-        render.DrawScreenQuad()
+        if hs.HolosightBlackbox then
+            render.SetStencilPassOperation(STENCIL_KEEP)
+
+            surface.SetDrawColor(0, 0, 0, 255 * delta)
+            surface.DrawRect(0, 0, ScrW(), ScrH())
+        end
+
+        render.SetStencilPassOperation(STENCIL_DECR)
+        render.SetStencilCompareFunction(STENCIL_EQUAL)
+
+        local hss = math.min(ScrW(), ScrH())
+
+        surface.SetMaterial(hs.HolosightReticle or defaultdot)
+        surface.SetDrawColor(hsc or Color(255, 255, 255))
+        surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
+
+        if !hs.HolosightNoFlare then
+            render.SetStencilPassOperation(STENCIL_KEEP)
+            render.SetStencilReferenceValue(ref - 1)
+            surface.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
+            surface.SetDrawColor(Color(255, 255, 255, 150))
+
+            local hss2 = hss
+
+            if !hs.HolosightFlare then
+                hss2 = hss2 * 0.75
+            end
+
+            surface.DrawTexturedRect(x - (hss2 / 2), y - (hss2 / 2), hss2, hss2)
+
+            render.SetStencilReferenceValue(ref)
+        end
+
+        if hs.HolosightBlackbox then
+            -- render.SetColorMaterialIgnoreZ()
+            -- render.DrawScreenQuad()
+
+            surface.SetDrawColor(0, 0, 0)
+            surface.DrawRect(0, 0, ScrW(), ScrH())
+            -- surface.DrawRect(0, (ScrH() - hss) / 2, ScrW(), (ScrH() - hss) / 2)
+        end
+
+        cam.End2D()
 
         render.SetStencilEnable(false)
         cam.IgnoreZ(false)

@@ -3,14 +3,15 @@ local m_rand   = mth.Rand
 local m_lerp   = Lerp
 
 function ArcCW:GetRicochetChance(penleft, tr)
-   local degree = tr.HitNormal:Dot((tr.StartPos - tr.HitPos):GetNormalized())
+    if !GetConVar("arccw_enable_ricochet"):GetBool() then return end
+    local degree = tr.HitNormal:Dot((tr.StartPos - tr.HitPos):GetNormalized())
 
-   local ricmult = ArcCW.PenTable[tr.MatType] or 1
+    local ricmult = ArcCW.PenTable[tr.MatType] or 1
 
-   -- 0 at 1
-   -- 100 at 0
+    -- 0 at 1
+    -- 100 at 0
 
-   return math.Clamp(Lerp(degree, penleft + (45 * ricmult), 0), 0, 100)
+    return math.Clamp(Lerp(degree, penleft + (45 * ricmult), 0), 0, 100)
 end
 
 function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenned)

@@ -489,22 +489,21 @@ function SWEP:ShouldCheapScope()
 end
 
 function SWEP:ShouldFlatScope()
-    if self:GetState() != ArcCW.STATE_SIGHTS then return false end
+    return false
+    -- if self:GetState() != ArcCW.STATE_SIGHTS then return false end
 
-    local irons = self:GetActiveSights()
+    -- local irons = self:GetActiveSights()
 
-    if irons.FlatScope or (irons.MagnifiedOptic and GetConVar("arccw_flatscopes"):GetBool()) then
-        return true
-    end
+    -- if irons.FlatScope or (irons.MagnifiedOptic and GetConVar("arccw_flatscopes"):GetBool()) then
+    --     return true
+    -- end
 end
 
 function SWEP:PreDrawViewModel(vm)
     if ArcCW.VM_OverDraw then return end
     if !vm then return end
 
-    if self:ShouldFlatScope() then
-        render.SetBlend(0)
-    else
+    if !self:ShouldFlatScope() then
         if self:GetState() == ArcCW.STATE_CUSTOMIZE then self:BlurNotWeapon() end
 
         if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then

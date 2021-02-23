@@ -29,6 +29,8 @@
 local BulletPanel = {
     { type = "h", text = "#arccw.adminonly" },
     { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable", sv = true },
+    { type = "b", text = "#arccw.cvar.enable_penetration", var = "arccw_enable_penetration", sv = true },
+    { type = "b", text = "#arccw.cvar.enable_ricochet", var = "arccw_enable_ricochet", sv = true },
     { type = "f", text = "#arccw.cvar.bullet_velocity", var = "arccw_bullet_velocity", min = 0, max = 3, sv = true },
     { type = "f", text = "#arccw.cvar.bullet_gravity", var = "arccw_bullet_gravity", min = 0, max = 1200, sv = true },
     { type = "f", text = "#arccw.cvar.bullet_drag", var = "arccw_bullet_drag", min = 0, max = 10, sv = true },
@@ -63,8 +65,8 @@ local PerformancePanel = {
     { type = "h", text = "#arccw.performance" },
     { type = "b", text = "#arccw.cvar.cheapscopes", var = "arccw_cheapscopes" },
     { type = "c", text = "#arccw.cvar.cheapscopes.desc" },
-    { type = "b", text = "#arccw.cvar.flatscopes", var = "arccw_flatscopes" },
-    { type = "c", text = "#arccw.cvar.flatscopes.desc" },
+    -- { type = "b", text = "#arccw.cvar.flatscopes", var = "arccw_flatscopes" },
+    -- { type = "c", text = "#arccw.cvar.flatscopes.desc" },
     { type = "b", text = "#arccw.cvar.muzzleeffects", var = "arccw_muzzleeffects" },
     { type = "b", text = "#arccw.cvar.fastmuzzles", var = "arccw_fastmuzzles" },
     { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
@@ -177,7 +179,6 @@ local BindsPanel = {
 
 local ServerPanel = {
     { type = "h", text = "#arccw.adminonly" },
-    { type = "b", text = "#arccw.cvar.enable_penetration", var = "arccw_enable_penetration", sv = true },
     { type = "o", text = "#arccw.cvar.enable_customization", var = "arccw_enable_customization", sv = true,
             choices = {[-1] = "#arccw.cvar.enable_customization.-1", [0] = "#arccw.cvar.enable_customization.0", [1] = "#arccw.cvar.enable_customization.1"}},
     { type = "c", text = "#arccw.cvar.enable_customization.desc" },
