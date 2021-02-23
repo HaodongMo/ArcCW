@@ -11,7 +11,7 @@ function ArcCW:GetRicochetChance(penleft, tr)
     -- 0 at 1
     -- 100 at 0
 
-    return math.Clamp(Lerp(degree, penleft + (45 * ricmult), 0), 0, 100)
+    return math.Clamp(Lerp(degree, penleft + (30 * ricmult), 0), 0, 100)
 end
 
 function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenned)
