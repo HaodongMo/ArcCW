@@ -842,6 +842,7 @@ function SWEP:CreateCustomizeHUD()
             atttrivia:Hide()
             attslidebox:Hide()
             atttogglebtn:Hide()
+            surface.PlaySound("weapons/arccw/close.wav")
         end
     end
 

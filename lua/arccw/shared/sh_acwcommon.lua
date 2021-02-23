@@ -41,11 +41,11 @@ ArcCW.ShotgunShellSoundsTable = {
 }
 
 ArcCW.RicochetSounds = {
-    "weapons/fx/rics/ric1.wav",
-    "weapons/fx/rics/ric2.wav",
-    "weapons/fx/rics/ric3.wav",
-    "weapons/fx/rics/ric4.wav",
-    "weapons/fx/rics/ric5.wav"
+    "weapons/arccw/ricochet01.wav",
+    "weapons/arccw/ricochet02.wav",
+    "weapons/arccw/ricochet03.wav",
+    "weapons/arccw/ricochet04.wav",
+    "weapons/arccw/ricochet05.wav"
  }
 
 ArcCW.ReloadTimeTable = {
