@@ -364,7 +364,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     self.SwayScale = (coolsway and 0) or actual.sway
     self.BobScale  = (coolsway and 0) or actual.bob
 
-    pos = pos + self.RecoilPunchBack * -oldang:Forward() * proceduralRecoilMult
+    pos = pos + math.min(self.RecoilPunchBack, 1) * -oldang:Forward()
     pos = pos + self.RecoilPunchSide * oldang:Right()
     pos = pos + self.RecoilPunchUp   * -oldang:Up()
 
@@ -393,12 +393,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     self.ActualVMData = actual
 
     if coolsway then lasteyeangles = LerpAngle(m_min(FT * 100, 1), lasteyeangles, eyeangles) end
-
-    local origfov = weapons.GetStored(self:GetClass()).ViewModelFOV
-    if !origfov then
-        origfov = weapons.Get(self:GetClass()).ViewModelFOV -- yikes
-    end
-    self.ViewModelFOV = origfov + vm_fov * self:GetSightDelta()
 
     if gunbone then
         local magnitude = Lerp(self:GetSightDelta(), 0.1, 1)
@@ -544,7 +538,7 @@ function SWEP:PostDrawViewModel()
 
     cam.End3D()
 
-    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 0.2, 15000)
+    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 0.1, 15000)
 
     cam.IgnoreZ(true)
 
