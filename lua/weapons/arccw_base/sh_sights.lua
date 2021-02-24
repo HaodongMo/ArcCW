@@ -468,7 +468,7 @@ end
 
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
-    if !irons then return end
+    --if !irons then return end
     --if !irons.Magnification then return fov end
     --if irons.Magnification == 1 then return fov end
 
