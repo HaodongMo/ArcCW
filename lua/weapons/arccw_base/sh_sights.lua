@@ -476,7 +476,7 @@ function SWEP:TranslateFOV(fov)
     self.CurrentFOV = self.CurrentFOV or fov
 
     local div = 1
-    local app_vm = self.ViewModelFOV + GetConVar("arccw_vm_fov"):GetFloat() + 10
+    local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         fov = 75
