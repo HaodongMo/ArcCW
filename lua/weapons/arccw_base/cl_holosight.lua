@@ -393,7 +393,6 @@ hook.Add("RenderScene", "ArcCW", function()
     local wpn = LocalPlayer():GetActiveWeapon()
 
     if !wpn.ArcCW then return end
-    if wpn:ShouldFlatScope() then return end
 
     wpn:FormRTScope()
 end)
@@ -456,91 +455,6 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     end
 
     local size = hs.HolosightSize or 1
-
-    if self:ShouldFlatScope() then
-        render.UpdateScreenEffectTexture()
-        local screen = render.GetScreenEffectTexture()
-
-        if asight.NVScope then
-            self:FormNightVision(screen)
-        end
-
-        if asight.Thermal then
-            self:FormThermalImaging(screen)
-        end
-
-        if asight.SpecialScopeFunction then
-            asight.SpecialScopeFunction(screen)
-        end
-
-        render.DrawTextureToScreen(screen)
-
-        render.ClearStencil()
-        render.SetStencilEnable(true)
-        render.SetStencilPassOperation(STENCIL_REPLACE)
-        render.SetStencilCompareFunction(STENCIL_ALWAYS)
-        render.SetStencilFailOperation(STENCIL_KEEP)
-        render.SetStencilZFailOperation(STENCIL_REPLACE)
-        render.SetStencilWriteMask(255)
-        render.SetStencilTestMask(255)
-
-        render.SetStencilReferenceValue(ref)
-
-        cam.IgnoreZ(true)
-
-        local x = ScrW() / 2
-        local y = ScrH() / 2
-
-        cam.Start2D()
-
-        if hs.HolosightBlackbox then
-            render.SetStencilPassOperation(STENCIL_KEEP)
-
-            surface.SetDrawColor(0, 0, 0, 255 * delta)
-            surface.DrawRect(0, 0, ScrW(), ScrH())
-        end
-
-        render.SetStencilPassOperation(STENCIL_DECR)
-        render.SetStencilCompareFunction(STENCIL_EQUAL)
-
-        local hss = math.min(ScrW(), ScrH())
-
-        surface.SetMaterial(hs.HolosightReticle or defaultdot)
-        surface.SetDrawColor(hsc or Color(255, 255, 255))
-        surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
-
-        if !hs.HolosightNoFlare then
-            render.SetStencilPassOperation(STENCIL_KEEP)
-            render.SetStencilReferenceValue(ref - 1)
-            surface.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
-            surface.SetDrawColor(Color(255, 255, 255, 150))
-
-            local hss2 = hss
-
-            if !hs.HolosightFlare then
-                hss2 = hss2 * 0.75
-            end
-
-            surface.DrawTexturedRect(x - (hss2 / 2), y - (hss2 / 2), hss2, hss2)
-
-            render.SetStencilReferenceValue(ref)
-        end
-
-        if hs.HolosightBlackbox then
-            -- render.SetColorMaterialIgnoreZ()
-            -- render.DrawScreenQuad()
-
-            surface.SetDrawColor(0, 0, 0)
-            surface.DrawRect(0, 0, ScrW(), ScrH())
-            -- surface.DrawRect(0, (ScrH() - hss) / 2, ScrW(), (ScrH() - hss) / 2)
-        end
-
-        cam.End2D()
-
-        render.SetStencilEnable(false)
-        cam.IgnoreZ(false)
-        return
-    end
 
     local hsmag = asight.ScopeMagnification or 1
 

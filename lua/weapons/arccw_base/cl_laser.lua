@@ -109,9 +109,6 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     if behav and !world then
         -- local cheap = GetConVar("arccw_cheapscopes"):GetBool()
-        if self:ShouldFlatScope() then
-            cheap = true
-        end
         local punch = self:GetOurViewPunchAngles()
 
         ang = self:GetOwner():EyeAngles() - punch
@@ -156,9 +153,7 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     if hit and !tr.HitSky then
         local mul = 1 * strength
-        -- if !self:ShouldFlatScope() then
-            mul = m_log10((hitpos - EyePos()):Length()) * strength
-        -- end
+        mul = m_log10((hitpos - EyePos()):Length()) * strength
         local rad = m_rand(4, 6) * mul
         local glr = rad * m_rand(0.2, 0.3)
 

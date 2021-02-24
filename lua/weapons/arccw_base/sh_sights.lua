@@ -481,11 +481,7 @@ function SWEP:TranslateFOV(fov)
     if self:GetState() == ArcCW.STATE_SIGHTS then
         fov = 75
         app_vm = irons.ViewModelFOV or 45
-        if CLIENT and self:ShouldFlatScope() then
-            div = (irons.Magnification + irons.ScopeMagnification)
-        else
-            div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
-        end
+        div = math.max(irons.Magnification * (self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime() and self.ReloadInSights_FOVMult or 1), 1)
     end
 
     -- something about this doesn't work in multiplayer
