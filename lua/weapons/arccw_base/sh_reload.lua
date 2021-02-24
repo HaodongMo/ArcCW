@@ -130,6 +130,7 @@ function SWEP:Reload()
         local reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
 
         if !self.Animations[anim].MinProgress then
+            -- needs to be here to fix empty idle related issues
             reloadtime = reloadtime * 0.9
         end
 
