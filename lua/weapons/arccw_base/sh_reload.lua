@@ -129,7 +129,7 @@ function SWEP:Reload()
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
         local reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
 
-        if self.Animations[anim].MinProgress then
+        if !self.Animations[anim].MinProgress then
             reloadtime = reloadtime * 0.9
         end
 
