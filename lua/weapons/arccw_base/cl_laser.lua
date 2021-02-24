@@ -164,9 +164,14 @@ function SWEP:DrawLaser(laser, model, color, world)
 
         SetMat(flaremat)
 
-        cam.IgnoreZ(true)
+        if world then
+            cam.IgnoreZ(true)
+        end
         DrawSprite(laserpos, rad, rad, color)
         DrawSprite(laserpos, glr, glr, color_white)
-        cam.IgnoreZ(false)
+
+        if world then
+            cam.IgnoreZ(false)
+        end
     end
 end
