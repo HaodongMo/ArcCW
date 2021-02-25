@@ -13,6 +13,10 @@ function ArcCW:GetRicochetChance(penleft, tr)
 
     local c = Lerp(degree, math.min(penleft * ricmult * 2, 45), 0)
 
+    -- c = c * GetConVar("arccw_ricochet_mult"):GetFloat()
+
+    -- c = 100
+
     return math.Clamp(c, 0, 100)
 end
 

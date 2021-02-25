@@ -34,9 +34,10 @@ end
 
 function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     local pbi = wep:GetBuff_Override("Override_PhysBulletImpact")
+    local num = wep:GetBuff_Override("Override_Num") or wep.Num
     local bullet = {
-        DamageMax = wep:GetDamage(0),
-        DamageMin = wep:GetDamage(wep:GetBuff("Range")),
+        DamageMax = wep:GetDamage(0) / num,
+        DamageMin = wep:GetDamage(wep:GetBuff("Range")) / num,
         Range = wep:GetBuff("Range"),
         DamageType = wep:GetBuff_Override("Override_DamageType") or wep.DamageType,
         Penleft = wep:GetBuff("Penetration"),
@@ -45,7 +46,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         ImpactDecal = wep:GetBuff_Override("Override_ImpactDecal") or wep.ImpactDecal,
         PhysBulletImpact = pbi == nil and true or pbi,
         Gravity = wep:GetBuff("PhysBulletGravity"),
-        Num = wep:GetBuff_Override("Override_Num") or wep.Num,
+        Num = num,
         Pos = pos,
         Vel = vel,
         Drag = wep:GetBuff("PhysBulletDrag"),
@@ -399,6 +400,8 @@ function ArcCW:DrawPhysBullets()
 
         size = size * math.log(EyePos():DistToSqr(i.Pos) - math.pow(256, 2))
 
+        -- print(size)
+
         size = math.Clamp(size, 0, math.huge)
 
         local delta = (EyePos():DistToSqr(i.Pos) / math.pow(20000, 2))
@@ -417,7 +420,7 @@ function ArcCW:DrawPhysBullets()
         render.DrawSprite(i.Pos, size, size, col)
 
         render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - (i.Vel:GetNormalized() * 256), size * 0.75, 0, 1, col)
+        render.DrawBeam(i.Pos, i.Pos - i.Vel:GetNormalized() * math.min(i.Vel:Length() * 0.02, 512), size * 0.75, 0, 1, col)
 
         -- cam.End3D()
     end
