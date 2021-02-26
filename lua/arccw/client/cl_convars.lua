@@ -67,6 +67,7 @@ ArcCW.ClientConVars = {
     ["arccw_hud_embracetradition"]    = { def =  0, desc = "Use the classic customization HUD." },
     ["arccw_hud_deadzone_x"]          = { def =  0 },
     ["arccw_hud_deadzone_y"]          = { def =  0 },
+    ["arccw_hud_3dfun_decaytime"]     = { def =  3 },
     ["arccw_hud_3dfun_right"]         = { def =  2 },
     ["arccw_hud_3dfun_up"]            = { def =  1 },
     ["arccw_hud_3dfun_forward"]       = { def =  0 },
