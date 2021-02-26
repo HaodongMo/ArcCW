@@ -218,7 +218,7 @@ function SWEP:OpenCustomizeHUD()
 
     gui.EnableScreenClicker(true)
 
-    surface.PlaySound("weapons/arccw/extra.wav")
+    if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/extra.wav") end
 
 end
 
@@ -232,7 +232,7 @@ function SWEP:CloseCustomizeHUD()
             vrmod.MenuClose( "ArcCW_Customize" )
         end
 
-        surface.PlaySound("weapons/arccw/extra2.wav")
+        if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/extra2.wav") end
     end
 end
 
@@ -842,7 +842,7 @@ function SWEP:CreateCustomizeHUD()
             atttrivia:Hide()
             attslidebox:Hide()
             atttogglebtn:Hide()
-            surface.PlaySound("weapons/arccw/close.wav")
+            if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/close.wav") end
         end
     end
 
