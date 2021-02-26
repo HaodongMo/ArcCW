@@ -56,7 +56,7 @@ function ArcCW.TryBustDoor(ent, dmginfo)
     if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
 
     --- TTT may choose for some doors to not be openable by a crowbar, let's respect that
-    if GAMEMODE.crowbar_unlocks and GAMEMODE.crowbar_unlocks[ent] ~= true then return end
+    if GAMEMODE.crowbar_unlocks and GAMEMODE.crowbar_unlocks[ent] != true then return end
 
     -- Magic number: 119.506 is the size of door01_left
     -- The bigger the door is, the harder it is to bust
