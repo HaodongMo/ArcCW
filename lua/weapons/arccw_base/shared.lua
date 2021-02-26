@@ -191,12 +191,12 @@ SWEP.DistantShootSound = nil
 SWEP.ShootSoundSilenced = "weapons/arccw/m4a1/m4a1-1.wav"
 SWEP.ShootSoundSilencedLooping = nil
 SWEP.FiremodeSound = "weapons/arccw/firemode.wav"
-SWEP.MeleeSwingSound = "weapons/arccw/m249/m249_draw.wav"
-SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
-SWEP.MeleeHitSound = "weapons/arccw/knife/knife_hitwall1.wav"
+SWEP.MeleeSwingSound = "weapons/arccw/melee_lift.wav"
+SWEP.MeleeMissSound = "weapons/arccw/melee_miss.wav"
+SWEP.MeleeHitSound = "weapons/arccw/melee_hitworld.wav"
 SWEP.MeleeHitNPCSound = "physics/body/body_medium_break2.wav"
-SWEP.EnterBipodSound = "weapons/arccw/m249/m249_coverdown.wav"
-SWEP.ExitBipodSound = "weapons/arccw/m249/m249_coverup.wav"
+SWEP.EnterBipodSound = "weapons/arccw/bipod_down.wav"
+SWEP.ExitBipodSound = "weapons/arccw/bipod_up.wav"
 SWEP.SelectUBGLSound =  "weapons/arccw/ubgl_select.wav"
 SWEP.ExitUBGLSound = "weapons/arccw/ubgl_exit.wav"
 

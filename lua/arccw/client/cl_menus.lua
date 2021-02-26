@@ -130,6 +130,8 @@ local HudPanel = {
     { type = "t", text = "#arccw.cvar.font", var = "arccw_font"  },
     { type = "c", text = "#arccw.cvar.font_info" },
 
+    { type = "b", text = "#arccw.cvar.attinv_sound", var = "arccw_cust_sounds" },
+    { type = "c", text = "#arccw.cvar.attinv_sound.desc" },
     { type = "b", text = "#arccw.cvar.attinv_hideunowned", var = "arccw_attinv_hideunowned" },
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
     { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
