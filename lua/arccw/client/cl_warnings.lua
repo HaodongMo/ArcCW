@@ -1,6 +1,4 @@
 ArcCW.IncompatibleAddons = {
-    --["2140007767"] = "!incompatible - this is a test line (but what if it is very long?)",
-    --["2131161276"] = "The FitnessGram Pacer Test is a multistage aerobic capacity test that progressively gets more difficult as it continues.",
     -- ["2137567877"] = "Causes viewmodel flickering with LHIK attachments",
     ["847269692"] = "Causes viewmodel flickering, may crash when customization menu opens",
     ["1875551051"] = "Breaks LHIK attachments. VManip has similar features and doesn't conflict.",
@@ -10,6 +8,7 @@ ArcCW.IncompatibleAddons = {
     ["476997621"] = "Causes issues with arms.",
     -- ["1308077613"] = "Will make near-walling look exaggerated; known to conflict with cBobbing.", -- View model bump, should be fixed
     -- ["1429489453"] = "Causes issues with arms." -- bio annihilation extended sninctbur
+    ["1588705429"] = "Causes damage calculation to not work properly.", -- Realistic Bullet Overhaul
 }
 
 local t = ArcCW.GetTranslation
