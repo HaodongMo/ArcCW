@@ -70,7 +70,7 @@ function SWEP:Deploy()
     self.LHIKAnimation = nil
 
     timer.Simple(0, function()
-        self:SetupModel(false)
+        if IsValid(self) then self:SetupModel(false) end
     end)
 
     if SERVER then
