@@ -100,16 +100,6 @@ function SWEP:Think()
         end
     end
 
-    -- That seems a good way to do such things
-    -- local altlaser = owner:GetInfoNum("arccw_altlaserkey", 0) == 1
-    -- local laserdown, laserpress = altlaser and IN_USE or IN_WALK, altlaser and IN_WALK or IN_USE -- Can't find good alt keys
-
-    -- if owner:KeyDown(laserdown) and owner:KeyPressed(laserpress) then
-    --     self:SetNWBool("laserenabled", !self:GetNWBool("laserenabled", true))
-    -- end
-
-    -- Yeah, this would be OP unless we can also turn off the laser stats, too.
-
     if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
         self:Reload()
     end
@@ -149,13 +139,13 @@ function SWEP:Think()
         end
     elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
         self:ExitSights()
-    elseif IsFirstTimePredicted() then
+    else
 
         -- no it really doesn't, past me
         local sighted = self:GetState() == ArcCW.STATE_SIGHTS
         local toggle = self:GetOwner():GetInfoNum("arccw_toggleads", 0) >= 1
 
-        if toggle then
+        if toggle and IsFirstTimePredicted() then
             if owner:KeyPressed(IN_ATTACK2) then
                 if sighted then
                     self:ExitSights()
@@ -163,8 +153,8 @@ function SWEP:Think()
                     self:EnterSights()
                 end
             end
-        else
-            if owner:KeyDown(IN_ATTACK2) and not sighted then
+        elseif !toggle then
+            if owner:KeyDown(IN_ATTACK2) and !sighted then
                 self:EnterSights()
             elseif !owner:KeyDown(IN_ATTACK2) and sighted then
                 self:ExitSights()
