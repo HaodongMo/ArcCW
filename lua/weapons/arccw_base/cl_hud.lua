@@ -349,23 +349,24 @@ function SWEP:DrawHUD()
 
             local EyeAng = EyeAngles()
 
-            if GetConVar("arccw_hud_3dfun"):GetBool() then
-                local angpos
-                if self:GetOwner():ShouldDrawLocalPlayer() then
-                    local bone = "ValveBiped.Bip01_R_Hand"
-                    local ind = self:GetOwner():LookupBone(bone)
+            local angpos
+            if GetConVar("arccw_hud_3dfun"):GetBool() and self:GetOwner():ShouldDrawLocalPlayer() then
+                local bone = "ValveBiped.Bip01_R_Hand"
+                local ind = self:GetOwner():LookupBone(bone)
 
-                    if ind and ind > -1 then
-                        local p, a = self:GetOwner():GetBonePosition(ind)
-                        angpos = {Ang = a, Pos = p}
-                    end
-                else
-                    local vm = self:GetOwner():GetViewModel()
-
-                    if vm and vm:IsValid() then
-                        angpos = vm:GetAttachment(muzz)
-                    end
+                if ind and ind > -1 then
+                    local p, a = self:GetOwner():GetBonePosition(ind)
+                    angpos = {Ang = a, Pos = p}
                 end
+            elseif GetConVar("arccw_hud_3dfun"):GetBool() then
+                local vm = self:GetOwner():GetViewModel()
+
+                if vm and vm:IsValid() then
+                    angpos = vm:GetAttachment(muzz)
+                end
+            end
+
+            if GetConVar("arccw_hud_3dfun"):GetBool() and angpos then
 
                 angpos.Pos = angpos.Pos - EyeAng:Up() * GetConVar("arccw_hud_3dfun_up"):GetFloat() - EyeAng:Right() * GetConVar("arccw_hud_3dfun_right"):GetFloat() - EyeAng:Forward() * GetConVar("arccw_hud_3dfun_forward"):GetFloat()
                 cam.Start3D()
