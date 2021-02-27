@@ -151,15 +151,24 @@ function SWEP:Think()
         self:ExitSights()
     else
 
-        if game.SinglePlayer() or IsFirstTimePredicted() then
-            -- everything here has to be predicted for the first time
-            -- if owner:GetInfoNum("arccw_toggleads", 0) == 0 then
-                if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) then
-                    self:EnterSights()
-                elseif !owner:KeyDown(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+        -- no it really doesn't, past me
+        local sighted = self:GetState() == ArcCW.STATE_SIGHTS
+        local toggle = self:GetOwner():GetInfoNum("arccw_toggleads", 0) >= 1
+
+        if toggle then
+            if owner:KeyPressed(IN_ATTACK2) then
+                if sighted then
                     self:ExitSights()
+                else
+                    self:EnterSights()
                 end
-            -- end
+            end
+        else
+            if owner:KeyDown(IN_ATTACK2) and not sighted then
+                self:EnterSights()
+            elseif !owner:KeyDown(IN_ATTACK2) and sighted then
+                self:ExitSights()
+            end
         end
 
     end

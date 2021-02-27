@@ -105,7 +105,7 @@ ArcCW.ClientConVars = {
     ["arccw_vm_sway_speedmult"]        = { def =  1 },
     ["arccw_vm_sway_rotatemult"]       = { def =  1 },
 
-    -- ["arccw_toggleads"]               = { def = 0, usri = true },
+    ["arccw_toggleads"]               = { def = 0, usri = true }, 
     ["arccw_altubglkey"]              = { def = 0, usri = true },
     ["arccw_altfcgkey"]               = { def = 0, usri = true },
     ["arccw_altlaserkey"]             = { def = 0, usri = true },
