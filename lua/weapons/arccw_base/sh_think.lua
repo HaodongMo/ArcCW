@@ -144,8 +144,10 @@ function SWEP:Think()
         -- no it really doesn't, past me
         local sighted = self:GetState() == ArcCW.STATE_SIGHTS
         local toggle = self:GetOwner():GetInfoNum("arccw_toggleads", 0) >= 1
-
-        if toggle and IsFirstTimePredicted() then
+        local sp_cl = game.SinglePlayer() and CLIENT
+        
+        -- if in singleplayer, client realm should be completely ignored
+        if toggle and !sp_cl then
             if owner:KeyPressed(IN_ATTACK2) then
                 if sighted then
                     self:ExitSights()
