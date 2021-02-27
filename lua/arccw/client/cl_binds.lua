@@ -80,7 +80,7 @@ local function ToggleAtts(wep)
         end
     end
     if used then
-        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
+        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.random(90, 110))
     end
 end
 
