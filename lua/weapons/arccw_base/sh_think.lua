@@ -149,7 +149,7 @@ function SWEP:Think()
         end
     elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
         self:ExitSights()
-    else
+    elseif IsFirstTimePredicted() then
 
         -- no it really doesn't, past me
         local sighted = self:GetState() == ArcCW.STATE_SIGHTS
