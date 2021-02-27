@@ -43,6 +43,8 @@ function SWEP:Bash(melee2)
 
     if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
 
+    self:GetBuff_Hook("Hook_PreBash")
+
     self.Primary.Automatic = true
 
     local mult = self:GetBuff_Mult("Mult_MeleeTime")
@@ -70,8 +72,6 @@ function SWEP:Bash(melee2)
 
         self:MyEmitSound(self.MeleeSwingSound, 75, 100, 1, CHAN_USER_BASE + 1)
     end
-
-    self:GetBuff_Hook("Hook_PreBash")
 
     if CLIENT then
         self:OurViewPunch(-self.BashPrepareAng * 0.05)

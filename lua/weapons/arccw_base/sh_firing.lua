@@ -337,7 +337,7 @@ function SWEP:PrimaryAttack()
 
     self:ApplyAttachmentShootDamage()
 
-    self:AddHeat()
+    self:AddHeat(1)
 
     self:GetBuff_Hook("Hook_PostFireBullets")
 

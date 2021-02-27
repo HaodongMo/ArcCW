@@ -140,11 +140,15 @@ SWEP.Firemode = 1 -- 0: safe, 1: semi, 2: auto, negative: burst
 SWEP.Firemodes = {
     -- {
     --     Mode = 1,
-    --     CustomBars = "----_--_-_", -- custom bar setup
-                                      --  '-' for filled
-                                      --  '_' for hollow
-                                      --  '#' for empty
-                                      --  '!' for red w white outline
+    --     CustomBars = "---_#!",
+--[[ 
+                Custom bar setup
+        Colored variants        Classic
+        'a' Filled              '-' Filled
+        'b' Outline             '_' Outline
+        'd' CLR w Outline       '!' Red w Outline        
+                    '#' Empty
+]]
     --     PrintName = "PUMP",
     --     RunAwayBurst = false,
     --     AutoBurst = false, -- hold fire to continue firing bursts

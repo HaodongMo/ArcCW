@@ -119,8 +119,14 @@ local t_states = {
     [4] = "STATE_CUSTOMIZE",
     [5] = "STATE_BIPOD"
 }
+
 local mr = math.Round
-local bird = Material("hud/really cool bird.png", "smooth")
+local bird = Material("hud/really cool bird.png",   "mips smooth")
+
+local bar_fill = Material("hud/fmbar_filled.png",           "mips smooth")
+local bar_outl = Material("hud/fmbar_outlined.png",         "mips smooth")
+local bar_shad = Material("hud/fmbar_shadow.png",           "mips smooth")
+local bar_shou = Material("hud/fmbar_outlined_shadow.png",  "mips smooth")
 
 function SWEP:DrawHUD()
     -- DEBUG PANEL
@@ -277,7 +283,6 @@ function SWEP:DrawHUD()
         h = ScreenScaleMulti(48),
     }
 
-    local bargap = ScreenScaleMulti(2)
     local data = self:GetHUDData()
 
     if data.heat_locked then
@@ -324,7 +329,7 @@ function SWEP:DrawHUD()
         local correct_x = 0
         if !GetConVar("arccw_hud_3dfun"):GetBool() then
             qss = ScreenScaleMulti(-24)
-            correct_y = -16
+            correct_y = -36
             correct_x = 52
         end
 
@@ -390,7 +395,7 @@ function SWEP:DrawHUD()
 
             local wammo = {
                 x = apan_bg.x + apan_bg.w - airgap,
-                y = apan_bg.y,
+                y = apan_bg.y - ScreenScaleMulti(4),
                 text = tostring(data.clip),
                 font = "ArcCW_26",
                 col = col2,
@@ -424,7 +429,7 @@ function SWEP:DrawHUD()
 
             local wreserve = {
                 x = wammo.x - wammo.w - ScreenScaleMulti(4),
-                y = apan_bg.y + ScreenScaleMulti(26 - 12),
+                y = apan_bg.y + ScreenScaleMulti(10),
                 text = tostring(data.ammo) .. " /",
                 font = "ArcCW_12",
                 col = col2,
@@ -443,7 +448,7 @@ function SWEP:DrawHUD()
 
             local wmode = {
                 x = apan_bg.x + apan_bg.w - airgap,
-                y = wammo.y + wammo.h,
+                y = wammo.y + wammo.h + ScreenScaleMulti(6),
                 font = "ArcCW_12",
                 text = data.mode,
                 col = col2,
@@ -458,7 +463,7 @@ function SWEP:DrawHUD()
             if data.heat_enabled then
                 local wheat = {
                     x = apan_bg.x + apan_bg.w - airgap,
-                    y = wmode.y + ScreenScaleMulti(14) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 1 ),
+                    y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 1 ),
                     font = "ArcCW_12",
                     text = data.heat_name .. " " .. tostring(math.ceil(100 * data.heat_level / data.heat_maxlevel)) .. "%",
                     col = col2,
@@ -515,48 +520,53 @@ function SWEP:DrawHUD()
                 MyDrawText(bip)
                 items = items + 1
             end
-    elseif GetConVar("arccw_hud_minimal"):GetBool() then
-            local segcount = string.len( self:GetFiremodeBars() or "-----" )
 
-            local bar = {
-                w = (ScreenScaleMulti(128) - ((segcount + 1) * bargap)) / segcount,
-                h = ScreenScaleMulti(3),
-                x = (ScrW() / 2) - ScreenScaleMulti(62),
-                y = ScrH() - ScreenScaleMulti(24)
+            local segcount = string.len( self:GetFiremodeBars() or "-----" )
+            local bargap = ScreenScaleMulti(2)
+            local bart = {
+                w = (ScreenScaleMulti(256) - ((segcount + 1) * bargap)) / segcount,
+                h = ScreenScaleMulti(12),
+                x = apan_bg.x + apan_bg.w - ScreenScaleMulti(128+16),
+                y = apan_bg.y + apan_bg.h - ScreenScaleMulti(30)
             }
 
             for i = 1, segcount do
                 local c = data.bars[i]
 
-                if c == "-" then
-                    surface.SetDrawColor(col2)
-                    surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
-                elseif c == "#" then
-                    --surface.SetDrawColor(col2)
-                    --surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
-                elseif c == "!" then
-                    surface.SetDrawColor(col3)
-                    surface.DrawRect(bar.x, bar.y, bar.w, bar.h)
-                    surface.SetDrawColor(col2)
-                    surface.DrawOutlinedRect(bar.x, bar.y, bar.w, bar.h)
-                else
-                    surface.SetDrawColor(col2)
-                    surface.DrawOutlinedRect(bar.x, bar.y, bar.w, bar.h)
+                if c != "#" then
+                    if c != "!" and c != "-" then
+                        surface.SetMaterial(bar_shou)
+                    else
+                        surface.SetMaterial(bar_shad)
+                    end
+                    surface.SetDrawColor(255, 255, 255, 255/5*3)
+                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
                 end
 
-                bar.x = bar.x + bar.w + bargap
+                if c == "-" then
+                    -- good ol filled
+                    surface.SetMaterial(bar_fill)
+                    surface.SetDrawColor(col2)
+                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
+                elseif c == "#" then
+                    -- nothing
+                elseif c == "!" then
+                    surface.SetMaterial(bar_fill)
+                    surface.SetDrawColor(col3)
+                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
+                    surface.SetMaterial(bar_outl)
+                    surface.SetDrawColor(col2)
+                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
+                else
+                    -- good ol outline
+                    surface.SetMaterial(bar_outl)
+                    surface.SetDrawColor(col2)
+                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
+                end
+
+                bart.x = bart.x + bart.w/2 + bargap
             end
-
-            surface.SetFont("ArcCW_12")
-            local wmode = {
-                x = (ScrW() / 2) - (surface.GetTextSize(data.mode) / 2),
-                y = bar.y - ScreenScaleMulti(16),
-                font = "ArcCW_12",
-                text = data.mode,
-                col = col2
-            }
-
-            MyDrawText(wmode)
+    elseif GetConVar("arccw_hud_minimal"):GetBool() then
 
             if self:GetBuff_Override("UBGL") then
                 local size = ScreenScaleMulti(32)
@@ -640,7 +650,7 @@ function SWEP:DrawHUD()
                 y = ScrH() - ScreenScaleMulti(16) - airgap - CopeY(),
                 font = "ArcCW_16",
                 text = "AP " .. tostring(math.Round(varmor)),
-                col = col2,
+                col = Color(255, 255, 255, 255),
                 shadow = true
             }
 

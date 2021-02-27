@@ -5,19 +5,21 @@ function SWEP:GetMaxHeat()
     return self:GetBuff("HeatCapacity")
 end
 
-function SWEP:AddHeat()
+function SWEP:AddHeat(a)
     local single = game.SinglePlayer()
+    a = tonumber(a)
 
     if !(self.Jamming or self:GetBuff_Override("Override_Jamming")) then return end
 
-    if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("AddHeat") end
+    if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("AddHeat", a) end
     -- if !single and !IsFirstTimePredicted() then return end
 
     local max = self:GetBuff("HeatCapacity")
     local mult = 1 * self:GetBuff_Mult("Mult_FixTime")
     local heat = self:GetHeat()
     local anim = self:SelectAnimation("fix")
-    self.Heat = math.Clamp(heat + 1 * GetConVar("arccw_mult_heat"):GetFloat(), 0, max)
+    local amount = a or 1
+    self.Heat = math.Clamp(heat + amount * GetConVar("arccw_mult_heat"):GetFloat(), 0, max)
 
     self.NextHeatDissipateTime = CurTime() + (self:GetBuff("HeatDelayTime"))
     local overheat = self.Heat >= max
