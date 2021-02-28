@@ -53,6 +53,10 @@ function SWEP:DoHolosight()
     end
 end
 
+function SWEP:ShouldFlatScope()
+    return false -- this system was removed, but we need to keep this function
+end
+
 local rtsize = ScrH()
 
 local rtmat = GetRenderTarget("arccw_rtmat", rtsize, rtsize, false)
