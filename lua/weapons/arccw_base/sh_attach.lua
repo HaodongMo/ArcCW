@@ -78,11 +78,15 @@ function SWEP:GetIsManualAction()
         manual = manual or self.ManualAction
     end
 
+    -- A manual action gun CAN have automatic firemode, this is intended behavior!!!
+    -- It's used for slamfiring
+    --[[]
     local mode = self:GetCurrentFiremode().Mode
 
     if mode != 0 and mode != 1 then
         return false
     end
+    ]]
 
     return manual
 end
