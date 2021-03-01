@@ -30,7 +30,9 @@ ArcCW.AmmoEntToArcCW = {
     ["ammo_gaussclip"] = "arccw_ammo_ar2_large"
 }
 
-hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", function()
+-- In listen/dedi servers client won't have replicated convars at Initialize yet
+-- Do this in InitPostEntity instead to prevent client from not generating ammo
+hook.Add("InitPostEntity", "ArcCW_AddGrenadeAmmo", function()
     if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
         for i, k in pairs(weapons.GetList()) do
             local class = k.ClassName
