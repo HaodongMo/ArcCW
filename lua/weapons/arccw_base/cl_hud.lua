@@ -397,6 +397,9 @@ function SWEP:DrawHUD()
                     shadow = true,
                     alpha = alpha,
                 }
+                if !GetConVar("arccw_hud_3dfun"):GetBool() and data.heat_enabled then
+                    wammotype.y = apan_bg.y - ScreenScaleMulti(16 + 4)
+                end
                 MyDrawText(wammotype)
             end
 
@@ -455,7 +458,7 @@ function SWEP:DrawHUD()
 
             local wmode = {
                 x = apan_bg.x + apan_bg.w - airgap,
-                y = wammo.y + wammo.h + ScreenScaleMulti(6),
+                y = wammo.y + wammo.h,
                 font = "ArcCW_12",
                 text = data.mode,
                 col = col2,
@@ -463,15 +466,18 @@ function SWEP:DrawHUD()
                 shadow = true,
                 alpha = alpha,
             }
+            if GetConVar("arccw_hud_fcgbars"):GetBool() then
+                wmode.y = wammo.y + wammo.h + ScreenScaleMulti(6)
+            end
             MyDrawText(wmode)
 
             -- overheat bar 3d
-            local pers = 1 - ( data.heat_level / data.heat_maxlevel )
-            local pers2 = ( data.heat_level / data.heat_maxlevel )
-            local colheat1 = data.heat_locked and Color(255, 0, 0) or Color(255, 128+127*pers, 128+127*pers)
-            local colheat2 = data.heat_locked and Color(255, 0, 0) or Color(255*pers2, 0, 0)
-
             if data.heat_enabled then
+                local pers = 1 - ( data.heat_level / data.heat_maxlevel )
+                local pers2 = ( data.heat_level / data.heat_maxlevel )
+                local colheat1 = data.heat_locked and Color(255, 0, 0) or Color(255, 128+127*pers, 128+127*pers)
+                local colheat2 = data.heat_locked and Color(255, 0, 0) or Color(255*pers2, 0, 0)
+
                 local wheat = {
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 1 ),
@@ -482,6 +488,9 @@ function SWEP:DrawHUD()
                     shadow = true,
                     alpha = alpha,
                 }
+                if GetConVar("arccw_hud_fcgbars"):GetBool() then
+                    wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
+                end
                 MyDrawText(wheat)
 
                 local wheat_shad = wheat
@@ -538,22 +547,24 @@ function SWEP:DrawHUD()
                 items = items + 1
             end
 
-            local segcount = string.len( self:GetFiremodeBars() or "-----" )
-            local bargap = ScreenScaleMulti(2)
-            local bart = {
-                w = (ScreenScaleMulti(100) - ((segcount + 1) * bargap)) / segcount,
-                h = ScreenScaleMulti(8),
-                x = apan_bg.x + apan_bg.w,
-                y = apan_bg.y + apan_bg.h
-            }
+            if GetConVar("arccw_hud_fcgbars"):GetBool() then
+                local segcount = string.len( self:GetFiremodeBars() or "-----" )
+                local bargap = ScreenScaleMulti(2)
+                local bart = {
+                    w = (ScreenScaleMulti(100) - ((segcount + 1) * bargap)) / segcount,
+                    h = ScreenScaleMulti(8),
+                    x = apan_bg.x + apan_bg.w,
+                    y = apan_bg.y + apan_bg.h
+                }
 
-            bart.x = bart.x - bart.w - ScreenScaleMulti(46)
-            bart.y = bart.y - ScreenScaleMulti(28)
+                bart.x = bart.x - bart.w - ScreenScaleMulti(46)
+                bart.y = bart.y - ScreenScaleMulti(28)
 
-            for i = 1, segcount do
-                local c = data.bars[i]
+                for i = 1, segcount do
+                    local c = data.bars[i]
 
-                if c != "#" then
+                    if c == "#" then continue end
+
                     if c != "!" and c != "-" then
                         surface.SetMaterial(bar_shou)
                     else
@@ -561,31 +572,30 @@ function SWEP:DrawHUD()
                     end
                     surface.SetDrawColor(255, 255, 255, 255/5*3)
                     surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
-                end
 
-                if c == "-" then
-                    -- good ol filled
-                    surface.SetMaterial(bar_fill)
-                    surface.SetDrawColor(col2)
-                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
-                elseif c == "#" then
-                    -- nothing
-                elseif c == "!" then
-                    surface.SetMaterial(bar_fill)
-                    surface.SetDrawColor(col3)
-                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
-                    surface.SetMaterial(bar_outl)
-                    surface.SetDrawColor(col2)
-                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
-                else
-                    -- good ol outline
-                    surface.SetMaterial(bar_outl)
-                    surface.SetDrawColor(col2)
-                    surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
-                end
+                    if c == "-" then
+                        -- good ol filled
+                        surface.SetMaterial(bar_fill)
+                        surface.SetDrawColor(col2)
+                        surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
+                    elseif c == "!" then
+                        surface.SetMaterial(bar_fill)
+                        surface.SetDrawColor(col3)
+                        surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
+                        surface.SetMaterial(bar_outl)
+                        surface.SetDrawColor(col2)
+                        surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
+                    else
+                        -- good ol outline
+                        surface.SetMaterial(bar_outl)
+                        surface.SetDrawColor(col2)
+                        surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
+                    end
 
-                bart.x = bart.x + bart.w/2 + bargap
+                    bart.x = bart.x + bart.w / 2 + bargap
+                end
             end
+
     elseif GetConVar("arccw_hud_minimal"):GetBool() then
 
             if self:GetBuff_Override("UBGL") then
