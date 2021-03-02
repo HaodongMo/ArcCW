@@ -701,7 +701,7 @@ function SWEP:DrawHUD()
         end
 
         local hpicon_s = ScreenScaleMulti(16)
-        local hpicon_x = airgap
+        local hpicon_x = airgap + CopeX()
 
         if LocalPlayer():Health() <= 30 then
             colhp = col3

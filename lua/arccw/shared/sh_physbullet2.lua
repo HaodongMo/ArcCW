@@ -276,8 +276,6 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                             hit.dmgtype = bullet.DamageType
                             hit.penleft = bullet.Penleft
 
-                            print(ctr.Entity, bullet.Damaged[ctr.Entity:EntIndex()])
-
                             if IsValid(bullet.Weapon) then
                                 hit = bullet.Weapon:GetBuff_Hook("Hook_BulletHit", hit)
 
