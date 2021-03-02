@@ -104,6 +104,8 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         skip = true
     end
 
+    if !GetConVar("arccw_enable_penetration"):GetBool() then return end
+
     while !skip and penleft > 0 and ArcCW:IsPenetrating(ptr, ptrent) and ptr.Fraction < 1 and ptrent == curr_ent do
         penleft = penleft - (pentracelen * penmult)
 
