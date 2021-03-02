@@ -535,11 +535,14 @@ function SWEP:DrawHUD()
             local segcount = string.len( self:GetFiremodeBars() or "-----" )
             local bargap = ScreenScaleMulti(2)
             local bart = {
-                w = (ScreenScaleMulti(256) - ((segcount + 1) * bargap)) / segcount,
-                h = ScreenScaleMulti(12),
-                x = apan_bg.x + apan_bg.w - ScreenScaleMulti(128+16),
-                y = apan_bg.y + apan_bg.h - ScreenScaleMulti(30)
+                w = (ScreenScaleMulti(100) - ((segcount + 1) * bargap)) / segcount,
+                h = ScreenScaleMulti(8),
+                x = apan_bg.x + apan_bg.w,
+                y = apan_bg.y + apan_bg.h
             }
+
+            bart.x = bart.x - bart.w - ScreenScaleMulti(46)
+            bart.y = bart.y - ScreenScaleMulti(28)
 
             for i = 1, segcount do
                 local c = data.bars[i]
