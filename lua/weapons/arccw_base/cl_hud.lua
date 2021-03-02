@@ -128,6 +128,12 @@ local bar_outl = Material("hud/fmbar_outlined.png",         "mips smooth")
 local bar_shad = Material("hud/fmbar_shadow.png",           "mips smooth")
 local bar_shou = Material("hud/fmbar_outlined_shadow.png",  "mips smooth")
 
+local hp = Material("hud/hp.png", "mips smooth")
+local hp_shad = Material("hud/hp_shadow.png", "mips smooth")
+
+local armor = Material("hud/armor.png", "mips smooth")
+local armor_shad = Material("hud/armor_shadow.png", "mips smooth")
+
 function SWEP:DrawHUD()
     -- DEBUG PANEL
     if GetConVar("arccw_dev_debug"):GetBool() then
@@ -143,7 +149,7 @@ function SWEP:DrawHUD()
         surface.SetFont("ArcCW_26")
         surface.SetTextColor(255, 255, 255, 255)
         surface.SetDrawColor(0, 0, 0, 63)
-        
+
         -- it's for contrast, i promise
         surface.SetMaterial(bird)
         surface.DrawTexturedRect(ecksy - s-400, s-320, s*512, s*512)
@@ -165,7 +171,7 @@ function SWEP:DrawHUD()
             surface.SetFont("ArcCW_20")
             surface.SetTextPos(ecksy, 26 * s*2)
             surface.DrawText("NO RELOAD ANIMATION")
-            
+
             surface.SetFont("ArcCW_12")
             surface.SetTextPos(ecksy, 26 * s*2.66)
             surface.DrawText("not a mag fed one, at least...")
@@ -659,32 +665,59 @@ function SWEP:DrawHUD()
 
         if LocalPlayer():Armor() > 0 then
             gotarmor = true
+            local armor_s = ScreenScaleMulti(10)
             local war = {
-                x = airgap + CopeX(),
+                x = airgap + CopeX() + armor_s + ScreenScaleMulti(6),
                 y = ScrH() - ScreenScaleMulti(16) - airgap - CopeY(),
                 font = "ArcCW_16",
-                text = "AP " .. tostring(math.Round(varmor)),
+                text = tostring(math.Round(varmor)),
                 col = Color(255, 255, 255, 255),
-                shadow = true
+                shadow = true,
+                alpha = alpha
             }
+
+            local armor_x = war.x - armor_s - ScreenScaleMulti(4)
+            local armor_y = war.y + ScreenScaleMulti(4)
+
+            surface.SetMaterial(armor_shad)
+            surface.SetDrawColor(0, 0, 0)
+            surface.DrawTexturedRect(armor_x, armor_y, armor_s, armor_s)
+
+            surface.SetMaterial(armor)
+            surface.SetDrawColor(colhp)
+            surface.DrawTexturedRect(armor_x, armor_y, armor_s, armor_s)
 
             MyDrawText(war)
         end
+
+        local hpicon_s = ScreenScaleMulti(16)
+        local hpicon_x = airgap
 
         if LocalPlayer():Health() <= 30 then
             colhp = col3
         end
 
         local whp = {
-            x = airgap + CopeX(),
+            x = airgap + hpicon_s + CopeX(),
             y = ScrH() - ScreenScaleMulti(26 + (gotarmor and 16 or 0)) - airgap - CopeY(),
             font = "ArcCW_26",
-            text = "HP " .. tostring(math.Round(vhp)),
+            text = tostring(math.Round(vhp)),
             col = colhp,
-            shadow = true
+            shadow = true,
+            alpha = alpha
         }
 
+        local hpicon_y = whp.y + ScreenScaleMulti(8)
+
         MyDrawText(whp)
+
+        surface.SetMaterial(hp_shad)
+        surface.SetDrawColor(0, 0, 0)
+        surface.DrawTexturedRect(hpicon_x, hpicon_y, hpicon_s, hpicon_s)
+
+        surface.SetMaterial(hp)
+        surface.SetDrawColor(colhp)
+        surface.DrawTexturedRect(hpicon_x, hpicon_y, hpicon_s, hpicon_s)
 
     end
 
