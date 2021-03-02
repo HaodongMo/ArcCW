@@ -32,7 +32,7 @@ L["arccw.cvar.hud_showhealth"]            = "Show Health"
 L["arccw.cvar.hud_showhealth.desc"]       = "Draw a custom health & armor counter."
 L["arccw.cvar.hud_showammo"]              = "Show Ammo"
 L["arccw.cvar.hud_showammo.desc"]         = "Custom ammo counter with firemode info and weapon name."
-L["arccw.3d2d"]                           = "\n3D2D HUD"
+L["arccw.3d2d"]                           = "\n3D2D HUD" -- Obsolete
 L["arccw.cvar.hud_3dfun"]                 = "Use 3D2D Ammo HUD"
 L["arccw.cvar.hud_3dfun.desc"]            = "Use a 3D2D ammo counter."
 L["arccw.cvar.hud_3dfun_decay"]           = "HUD Decay Time"
@@ -223,13 +223,13 @@ L["arccw.cvar.ttt_inforoundstart"]        = "Enable round startup info"
 L["arccw.cvar.ammo_replace"]              = "Replace HL2 Ammo Entities"
 
 -- 2020-11-25
-L["arccw.cvar.hud_3dfun_lite"]            = "Minimal 3D2D counter"
-L["arccw.cvar.hud_3dfun_lite.desc"]       = "Counter will only show up when pressing the Reload key."
+L["arccw.cvar.hud_3dfun_lite"]            = "Minimal Mode"
+L["arccw.cvar.hud_3dfun_lite.desc"]       = "HUD will only show up when pressing RELOAD. Hold WALK to not reload when doing so."
 L["arccw.cvar.hud_3dfun_right"]           = "3D2D Offset Right"
 L["arccw.cvar.hud_3dfun_forward"]         = "3D2D Offset Forward"
 L["arccw.cvar.hud_3dfun_up"]              = "3D2D Offset Up"
-L["arccw.cvar.hud_3dfun_ammotype"]        = "3D2D Ammo Type"
-L["arccw.cvar.hud_3dfun_ammotype.desc"]   = "3D2D counter will also show weapon's current ammo type."
+L["arccw.cvar.hud_3dfun_ammotype"]        = "Show Ammo Type"
+L["arccw.cvar.hud_3dfun_ammotype.desc"]   = "Ammo HUD will also show weapon's current ammo type."
 
 -- 2021-01-03
 L["arccw.combobox.disabled"]              = "0 - Disabled"
@@ -300,3 +300,7 @@ L["arccw.cvar.dev_debug.desc"]         = "Disabled by default.\nDraws a debug me
 
 L["arccw.cvar.attinv_sound"]           = "Menu Toggle Sound"
 L["arccw.cvar.attinv_sound.desc"]         = "Sounds for opening and closing the customization menu.\nIf it's really not your thing."
+
+-- 2021-3-2
+L["arccw.ammohud"]                           = "\nAmmo HUD" -- Obsoletes "3D2D HUD" since they're basically the same now"
+L["arccw.cvar.hud_fcgbars"]                  = "Show Firemode Bars"

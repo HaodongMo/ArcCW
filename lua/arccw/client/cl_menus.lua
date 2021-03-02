@@ -10,7 +10,7 @@
     b - checkbox                      text var
     i - integer slider                text var min max
     f - float slider (2 nums after .) text var min max
-    m - color mixer                   text r g b a 
+    m - color mixer                   text r g b a
     p - press or button               text func
     t - textbox                       text string
     o - combo box                     text var choices (key - cvar, value - text)
@@ -132,12 +132,13 @@ local HudPanel = {
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
     { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
     { type = "b", text = "#arccw.cvar.attinv_simpleproscons", var = "arccw_attinv_simpleproscons" },
-    
-    { type = "h", text = "#arccw.3d2d" },
+
+    { type = "h", text = "#arccw.ammohud" },
     { type = "b", text = "#arccw.cvar.hud_3dfun", var = "arccw_hud_3dfun" },
     { type = "c", text = "#arccw.cvar.hud_3dfun.desc" },
     { type = "b", text = "#arccw.cvar.hud_3dfun_lite", var = "arccw_hud_3dfun_lite" },
     { type = "c", text = "#arccw.cvar.hud_3dfun_lite.desc" },
+    { type = "b", text = "#arccw.cvar.hud_fcgbars", var = "arccw_hud_fcgbars" },
     { type = "b", text = "#arccw.cvar.hud_3dfun_ammotype", var = "arccw_hud_3dfun_ammotype" },
     { type = "c", text = "#arccw.cvar.hud_3dfun_ammotype.desc" },
 
