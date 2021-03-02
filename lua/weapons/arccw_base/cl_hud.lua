@@ -460,19 +460,29 @@ function SWEP:DrawHUD()
             MyDrawText(wmode)
 
             -- overheat bar 3d
+            local pers = 1 - ( data.heat_level / data.heat_maxlevel )
+            local pers2 = ( data.heat_level / data.heat_maxlevel )
+            local colheat1 = data.heat_locked and Color(255, 0, 0) or Color(255, 128+127*pers, 128+127*pers)
+            local colheat2 = data.heat_locked and Color(255, 0, 0) or Color(255*pers2, 0, 0)
 
             if data.heat_enabled then
                 local wheat = {
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 1 ),
                     font = "ArcCW_12",
-                    text = data.heat_name .. " " .. tostring(math.ceil(100 * data.heat_level / data.heat_maxlevel)) .. "%",
-                    col = col2,
+                    text = data.heat_name .. " " .. tostring(math.floor(100 * data.heat_level / data.heat_maxlevel)) .. "%",
+                    col = colheat1,
                     align = 1,
                     shadow = true,
                     alpha = alpha,
                 }
                 MyDrawText(wheat)
+
+                local wheat_shad = wheat
+                wheat_shad.font = "ArcCW_12_Glow"
+                wheat_shad.col = colheat2
+                wheat_shad.shadow = false
+                MyDrawText(wheat_shad)
             end
             if self:GetInUBGL() then
                 local size = ScreenScaleMulti(32)
