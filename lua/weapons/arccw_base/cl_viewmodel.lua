@@ -329,6 +329,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local rollangdiff = math.Clamp(m_angdif(eyeangles.y, rollamount ) / 180 * pi, -7, 7)
 
         coolswaypos.x = (0.25 * velmult) * m_cos(movmtcomp) * sprintmult * swayxmult * sightmult
+        -- coolswaypos.y = -math.abs((1 * velmult) * m_cos(movmtcomp)) * swayymult * sightmult
         coolswaypos.y = -math.abs((1 * velmult) * m_cos(movmtcomp)) * swayymult * sightmult
         coolswaypos.z = -math.abs((0.25 * velmult) * m_cos(movmtcomp)) * swayzmult * sightmult
 
@@ -337,7 +338,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         swayangz_lerp = f_lerp(0.025, swayangz_lerp, rollangdiff)
 
         coolswayang.x = (math.abs((0.5 * velmult) * m_sin(movmt)) + swayangx_lerp * swayxmult)
-        coolswayang.y = ((0.25 * velmult) * m_cos(movmt) - swayangy_lerp + swayangz_lerp * swayymult)
+        -- coolswayang.y = ((0.25 * velmult) * m_cos(movmt) - swayangy_lerp + swayangz_lerp * swayymult)
+        coolswayang.y = ((0.25 * velmult) * m_cos(movmt) * swayymult)
         coolswayang.z = (math.min((2.5 * velmult) * m_cos(movmt), 0) + swayangy_lerp - swayangz_lerp * swayzmult) * swayrotate
 
         target.ang = target.ang + coolswayang
