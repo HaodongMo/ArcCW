@@ -396,7 +396,7 @@ function SWEP:GetCapacity()
         clip = self.ExtendedClipSize
     end
 
-    clip = self:GetBuff("ClipSize", true) or clip
+    clip = self:GetBuff("ClipSize", true, self.Primary.ClipSize) or clip
 
     local ret = self:GetBuff_Hook("Hook_GetCapacity", clip)
 
