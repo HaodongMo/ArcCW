@@ -443,7 +443,8 @@ function SWEP:DoPrimaryFire(isent, data)
     if isent then
         self:FireRocket(data.ent, data.vel, data.ang, self.PhysBulletDontInheritPlayerVelocity)
     else
-        if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+        -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+        if !IsFirstTimePredicted() then return end
 
         if shouldphysical then
             local vel = self:GetBuff_Override("Override_PhysBulletMuzzleVelocity") or self.PhysBulletMuzzleVelocity
