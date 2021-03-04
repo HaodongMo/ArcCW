@@ -150,7 +150,7 @@ function SWEP:GetBuff_Hook(buff, data)
             data = ret
         end
 
-        hook.Call(buff, ArcCW, self, data)
+        data = hook.Call(buff, ArcCW, self, data) or data
 
         return data
     else
@@ -236,7 +236,7 @@ function SWEP:GetBuff_Hook(buff, data)
         end
     end
 
-    hook.Call(buff, ArcCW, self, data)
+    data = hook.Call(buff, ArcCW, self, data) or data
 
     return data
 end
