@@ -188,10 +188,8 @@ function SWEP:PrimaryAttack()
         local effect = self.ImpactEffect
         local decal  = self.ImpactDecal
 
-        if dmg:GetDamageType() == DMG_BURN and hit.range <= self.Range then
-            local dmgtype = num == 1 and DMG_BULLET or DMG_BUCKSHOT
-
-            dmg:SetDamageType(dmgtype)
+        if dmg:IsDamageType(DMG_BURN) and hit.range <= self.Range then
+            dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
 
             effect = "arccw_incendiaryround"
             decal  = "FadingScorch"

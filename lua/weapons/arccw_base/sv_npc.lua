@@ -190,12 +190,9 @@ function SWEP:NPC_Shoot()
                 dmg:SetDamageType(ret.dmgtype)
                 dmg:SetDamage(ret.damage)
 
-                if dmg:GetDamageType() == DMG_BURN and ret.range <= self.Range then
-                    if num == 1 then
-                        dmg:SetDamageType(DMG_BULLET)
-                    else
-                        dmg:SetDamageType(DMG_BUCKSHOT)
-                    end
+                if dmg:IsDamageType(DMG_BURN) and hit.range <= self.Range then
+                    dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
+
                     local fx = EffectData()
                     fx:SetOrigin(tr.HitPos)
                     util.Effect("arccw_incendiaryround", fx)
