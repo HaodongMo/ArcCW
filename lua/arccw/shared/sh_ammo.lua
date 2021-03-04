@@ -30,9 +30,7 @@ ArcCW.AmmoEntToArcCW = {
     ["ammo_gaussclip"] = "arccw_ammo_ar2_large"
 }
 
--- In listen/dedi servers client won't have replicated convars at Initialize yet
--- Do this in InitPostEntity instead to prevent client from not generating ammo
-hook.Add("InitPostEntity", "ArcCW_AddGrenadeAmmo", function()
+function ArcCW:AddGrenadeAmmo()
     if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
         for i, k in pairs(weapons.GetList()) do
             local class = k.ClassName
@@ -57,9 +55,13 @@ hook.Add("InitPostEntity", "ArcCW_AddGrenadeAmmo", function()
             end
         end
     end
-end)
+end
+
+-- !FIXME! Somehow this does not work on listen servers! Either the server or the client doesn't get it!
+hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", ArcCW.AddGrenadeAmmo)
 
 if SERVER then
+
     hook.Add( "OnEntityCreated", "ArcCW_AmmoReplacement", function(ent)
         if GetConVar("arccw_ammo_replace"):GetBool() and ArcCW.AmmoEntToArcCW[ent:GetClass()] then
             timer.Simple(0, function()
