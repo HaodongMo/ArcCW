@@ -693,7 +693,7 @@ function SWEP:DrawHUD()
             local armor_y = war.y + ScreenScaleMulti(4)
 
             surface.SetMaterial(armor_shad)
-            surface.SetDrawColor(0, 0, 0, 127)
+            surface.SetDrawColor(0, 0, 0, 255)
             surface.DrawTexturedRect(armor_x, armor_y, armor_s, armor_s)
 
             surface.SetMaterial(armor)
@@ -725,7 +725,7 @@ function SWEP:DrawHUD()
         MyDrawText(whp)
 
         surface.SetMaterial(hp_shad)
-        surface.SetDrawColor(0, 0, 0, 127)
+        surface.SetDrawColor(0, 0, 0, 255)
         surface.DrawTexturedRect(hpicon_x, hpicon_y, hpicon_s, hpicon_s)
 
         surface.SetMaterial(hp)
