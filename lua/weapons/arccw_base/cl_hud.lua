@@ -551,13 +551,13 @@ function SWEP:DrawHUD()
                 local segcount = string.len( self:GetFiremodeBars() or "-----" )
                 local bargap = ScreenScaleMulti(2)
                 local bart = {
-                    w = (ScreenScaleMulti(100) - ((segcount + 1) * bargap)) / segcount,
+                    w = (ScreenScaleMulti(100) + ((segcount + 1) * bargap)) / segcount,
                     h = ScreenScaleMulti(8),
                     x = apan_bg.x + apan_bg.w,
                     y = apan_bg.y + apan_bg.h
                 }
 
-                bart.x = bart.x - bart.w - ScreenScaleMulti(46)
+                bart.x = bart.x - ((bart.w / 2 + bargap) * segcount) - ScreenScaleMulti(4) - (bart.w / 4)
                 bart.y = bart.y - ScreenScaleMulti(28)
 
                 for i = 1, segcount do
@@ -592,7 +592,7 @@ function SWEP:DrawHUD()
                         surface.DrawTexturedRect(bart.x, bart.y, bart.w, bart.h)
                     end
 
-                    bart.x = bart.x + bart.w / 2 + bargap
+                    bart.x = bart.x + (bart.w / 2 + bargap)
                 end
             end
 
