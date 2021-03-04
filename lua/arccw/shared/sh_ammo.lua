@@ -57,7 +57,6 @@ function ArcCW:AddGrenadeAmmo()
     end
 end
 
--- !FIXME! Somehow this does not work on listen servers! Either the server or the client doesn't get it!
 hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", ArcCW.AddGrenadeAmmo)
 
 if SERVER then
