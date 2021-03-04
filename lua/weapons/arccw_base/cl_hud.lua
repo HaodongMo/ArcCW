@@ -382,9 +382,12 @@ function SWEP:DrawHUD()
                 apan_bg.x = toscreen.x - apan_bg.w - ScreenScaleMulti(8)
                 apan_bg.y = toscreen.y - apan_bg.h * 0.5
             else
-                apan_bg.x = ScrW() - CopeX() - ScreenScaleMulti(128+8)
+                apan_bg.x = ScrW() - CopeX() - ScreenScaleMulti(128 + 8)
                 apan_bg.y = ScrH() - CopeY() - ScreenScaleMulti(48)
             end
+
+            apan_bg.x = math.Clamp(apan_bg.x, ScreenScaleMulti(8), ScrW() - CopeX() - ScreenScaleMulti(128 + 8))
+            apan_bg.y = math.Clamp(apan_bg.y, ScreenScaleMulti(8), ScrH() - CopeY() - ScreenScaleMulti(48))
 
             if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() then
                 local wammotype = {
