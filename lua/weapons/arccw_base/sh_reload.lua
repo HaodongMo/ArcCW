@@ -380,6 +380,11 @@ end
 
 function SWEP:GetCapacity()
     local clip = self.RegularClipSize or self.Primary.ClipSize
+
+    if !self.RegularClipSize then
+        self.RegularClipSize = self.Primary.ClipSize
+    end
+
     local level = 1
 
     if self:GetBuff_Override("MagExtender") then
@@ -396,7 +401,7 @@ function SWEP:GetCapacity()
         clip = self.ExtendedClipSize
     end
 
-    clip = self:GetBuff("ClipSize", true, self.Primary.ClipSize) or clip
+    clip = self:GetBuff("ClipSize", true, clip) or clip
 
     local ret = self:GetBuff_Hook("Hook_GetCapacity", clip)
 
