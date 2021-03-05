@@ -476,8 +476,8 @@ function SWEP:DrawHUD()
 
             -- overheat bar 3d
             if data.heat_enabled then
-                local pers = 1 - ( data.heat_level / data.heat_maxlevel )
-                local pers2 = ( data.heat_level / data.heat_maxlevel )
+                local pers = math.Clamp(1 - (data.heat_level / data.heat_maxlevel), 0, 1)
+                local pers2 = math.Clamp(data.heat_level / data.heat_maxlevel, 0, 1)
                 local colheat1 = data.heat_locked and Color(255, 0, 0) or Color(255, 128+127*pers, 128+127*pers)
                 local colheat2 = data.heat_locked and Color(255, 0, 0) or Color(255*pers2, 0, 0)
 
