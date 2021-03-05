@@ -194,6 +194,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             newbullet.Gravity = bullet.Gravity or 1
             newbullet.StartTime = bullet.StartTime or CurTime()
             newbullet.PhysBulletImpact = bullet.PhysBulletImpact or true
+            newbullet.Weapon = bullet.Weapon
 
             if bit.band( util.PointContents( endpos ), CONTENTS_WATER ) == CONTENTS_WATER then
                 newbullet.Underwater = true
