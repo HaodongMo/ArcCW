@@ -205,8 +205,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         local delta = m_clamp((CT - self.ProcDrawTime) / (0.25 * self:GetBuff_Mult("Mult_DrawTime")), 0, 1)
 
-        targetpos  = LerpVector(delta, Vector(0, -30, -30), target.pos)
-        targetang  = LerpAngle(delta, Angle(40, 30, 0), target.ang)
+        targetpos  = LerpVector(delta, Vector(0, 0, -5), target.pos)
+        targetang  = LerpAngle(delta, Angle(-70, 30, 0), target.ang)
         targetdown = target.down
         targetsway = target.sway
         targetbob  = target.bob
@@ -219,8 +219,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         local delta = 1 - m_clamp((CT - self.ProcHolsterTime) / (0.25 * self:GetBuff_Mult("Mult_DrawTime")), 0, 1)
 
-        target.pos = LerpVector(delta, Vector(0, -30, -30), target.pos)
-        target.ang = LerpAngle(delta, Angle(40, 30, 0), target.ang)
+        target.pos = LerpVector(delta, Vector(0, 0, -5), target.pos)
+        target.ang = LerpAngle(delta, Angle(-70, 30, 10), target.ang)
         target.down = target.down
         target.sway = target.sway
         target.bob = target.bob
