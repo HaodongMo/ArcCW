@@ -53,6 +53,7 @@ end
 function EFFECT:Render()
     local d = (CurTime() - self.StartTime) / self.LifeTime
     local d2 = (CurTime() - self.StartTime) / self.LifeTime2
+    local startpos = self.StartPos + (d * 0.1 * (self.EndPos - self.StartPos))
     local endpos = self.StartPos + (d * (self.EndPos - self.StartPos))
     local size = 1
 
@@ -63,7 +64,7 @@ function EFFECT:Render()
     -- render.DrawSprite(endpos, size * 3, size * 3, col)
 
     render.SetMaterial(tracer)
-    render.DrawBeam(endpos, self.StartPos, size, 0, 1, col)
+    render.DrawBeam(endpos, startpos, size, 0, 1, col)
 
     render.SetMaterial(smoke)
     render.DrawBeam(self.EndPos, self.StartPos, size * 0.5 * d2, 0, 1, col2)

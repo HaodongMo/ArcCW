@@ -15,7 +15,7 @@ function ArcCW:GetRicochetChance(penleft, tr)
 
     -- c = c * GetConVar("arccw_ricochet_mult"):GetFloat()
 
-    c = 100
+    -- c = 100
 
     return math.Clamp(c, 0, 100)
 end
