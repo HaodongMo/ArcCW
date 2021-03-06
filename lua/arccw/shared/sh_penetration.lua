@@ -232,6 +232,13 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
                 if GetConVar("developer"):GetBool() then
                     debugoverlay.Line(endpos, endpos + dir * (btr.HitPos - endpos):Length(), 10, Color(150, 150, 150), true)
                 end
+
+                -- if !game.SinglePlayer() and CLIENT then
+                    local fx = EffectData()
+                    fx:SetStart(tr.HitPos)
+                    fx:SetOrigin(btr.HitPos)
+                    util.Effect("arccw_ricochet", fx)
+                -- end
             end
 
             attacker:FireBullets(abullet)

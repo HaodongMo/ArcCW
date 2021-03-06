@@ -142,6 +142,7 @@ function SWEP:PrimaryAttack()
     bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
     bullet.Tracer     = game.SinglePlayer() and tracernum or 0
     bullet.TracerName = self:GetBuff_Override("Override_Tracer") or self.Tracer
+    bullet.Weapon     = self
     bullet.Callback   = function(att, tr, dmg)
         local hitpos, hitnormal = tr.HitPos, tr.HitNormal
         local trent = tr.Entity
@@ -206,7 +207,7 @@ function SWEP:PrimaryAttack()
 
         if SERVER then self:TryBustDoor(trent, dmg) end
 
-        self:DoPenetration(tr, hit.penleft, { [trent:EntIndex()] = true })
+        self:DoPenetration(tr, hit.penleft, bullet, false, { [trent:EntIndex()] = true })
 
         effect = self:GetBuff_Override("Override_ImpactEffect") or effect
 
