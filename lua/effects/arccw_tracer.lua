@@ -33,7 +33,9 @@ function EFFECT:Init(data)
 
     self.StartPos = start
     self.EndPos = hit
-    self.Color = ArcCW.BulletProfiles[profile or 1] or ArcCW.BulletProfiles[1]
+    self.Color = ArcCW.BulletProfiles[(profile + 1) or 1] or ArcCW.BulletProfiles[1]
+
+    -- print(profile)
 end
 
 function EFFECT:Think()
