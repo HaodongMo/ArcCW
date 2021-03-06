@@ -92,7 +92,7 @@ function SWEP:Think()
         end
     end
 
-    if game.SinglePlayer() or IsFirstTimePredicted() then
+    if IsFirstTimePredicted() then
         if self:InSprint() and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT) then
             self:EnterSprint()
         elseif !self:InSprint() and (self.Sprinted or self:GetState() == ArcCW.STATE_SPRINT) then
