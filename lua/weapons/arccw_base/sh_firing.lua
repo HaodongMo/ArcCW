@@ -160,6 +160,7 @@ function SWEP:PrimaryAttack()
             fx:SetStart(self:GetTracerOrigin())
             fx:SetOrigin(tr.HitPos)
             fx:SetScale(5000)
+            fx:SetEntity(self)
             util.Effect(bullet.TracerName or "tracer", fx)
         end
 
