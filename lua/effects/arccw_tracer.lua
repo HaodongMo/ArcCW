@@ -63,7 +63,7 @@ function EFFECT:Render()
     -- render.DrawSprite(endpos, size * 3, size * 3, col)
 
     render.SetMaterial(tracer)
-    render.DrawBeam(endpos, self.StartPos, size * 0.75, 0, 1, col)
+    render.DrawBeam(endpos, self.StartPos, size, 0, 1, col)
 
     render.SetMaterial(smoke)
     render.DrawBeam(self.EndPos, self.StartPos, size * 0.5 * d2, 0, 1, col2)

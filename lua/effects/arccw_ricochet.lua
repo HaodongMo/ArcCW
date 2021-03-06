@@ -1,7 +1,7 @@
 EFFECT.StartPos = Vector(0, 0, 0)
 EFFECT.EndPos = Vector(0, 0, 0)
 EFFECT.StartTime = 0
-EFFECT.LifeTime = 0.1
+EFFECT.LifeTime = 0.2
 EFFECT.DieTime = 0
 EFFECT.Color = Color(255, 255, 255)
 -- EFFECT.Speed = 500
