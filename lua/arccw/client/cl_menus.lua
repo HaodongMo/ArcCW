@@ -181,6 +181,7 @@ local BindsPanel = {
     { type = "d", text = "#arccw.bind.switch_scope", var = "arccw_switch_scope" },
     { type = "d", text = "#arccw.bind.toggle_ubgl", var = "arccw_toggle_ubgl" },
     { type = "d", text = "#arccw.bind.melee", var = "arccw_melee" },
+    { type = "d", text = "#arccw.bind.toggle_att", var = "arccw_toggle_att" },
 }
 
 

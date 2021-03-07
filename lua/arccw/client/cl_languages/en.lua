@@ -304,3 +304,4 @@ L["arccw.cvar.attinv_sound.desc"]         = "Sounds for opening and closing the 
 -- 2021-3-2
 L["arccw.ammohud"]                           = "\nAmmo HUD" -- Obsoletes "3D2D HUD" since they're basically the same now"
 L["arccw.cvar.hud_fcgbars"]                  = "Show Firemode Bars"
+L["arccw.bind.toggle_att"]                   = "Toggle Attachments"
