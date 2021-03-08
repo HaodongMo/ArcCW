@@ -281,7 +281,7 @@ function SWEP:CreateCustomizeHUD()
             span:Remove()
         end
 
-        if self:GetState() != ArcCW.STATE_CUSTOMIZE or self:GetReloading() then
+        if --[[self:GetState() != ArcCW.STATE_CUSTOMIZE or]] self:GetReloading() then
             span:Remove()
         end
     end
