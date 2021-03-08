@@ -51,7 +51,7 @@ end
 
 local function SendNet(string, bool)
     net.Start(string)
-    if bool then net.WriteBool(bool) end
+    if bool ~= nil then net.WriteBool(bool) end
     net.SendToServer()
 end
 
