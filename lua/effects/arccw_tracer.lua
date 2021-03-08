@@ -13,10 +13,10 @@ local smoke = Material("trails/smoke")
 
 function EFFECT:Init(data)
 
-    local start = data:GetStart()
     local hit = data:GetOrigin()
     local wep = data:GetEntity()
     local speed = data:GetScale()
+    local start = wep:GetTracerOrigin()
 
     if speed > 0 then
         self.Speed = speed
@@ -28,8 +28,8 @@ function EFFECT:Init(data)
 
     self.LifeTime = (hit - start):Length() / self.Speed
 
-    self.StartTime = CurTime()
-    self.DieTime = CurTime() + math.max(self.LifeTime, self.LifeTime2)
+    self.StartTime = UnPredictedCurTime()
+    self.DieTime = UnPredictedCurTime() + math.max(self.LifeTime, self.LifeTime2)
 
     self.StartPos = start
     self.EndPos = hit
@@ -39,7 +39,7 @@ function EFFECT:Init(data)
 end
 
 function EFFECT:Think()
-    return self.DieTime > CurTime()
+    return self.DieTime > UnPredictedCurTime()
 end
 
 local function LerpColor(d, col1, col2)
@@ -51,8 +51,8 @@ local function LerpColor(d, col1, col2)
 end
 
 function EFFECT:Render()
-    local d = (CurTime() - self.StartTime) / self.LifeTime
-    local d2 = (CurTime() - self.StartTime) / self.LifeTime2
+    local d = (UnPredictedCurTime() - self.StartTime) / self.LifeTime
+    local d2 = (UnPredictedCurTime() - self.StartTime) / self.LifeTime2
     local startpos = self.StartPos + (d * 0.1 * (self.EndPos - self.StartPos))
     local endpos = self.StartPos + (d * (self.EndPos - self.StartPos))
     local size = 1

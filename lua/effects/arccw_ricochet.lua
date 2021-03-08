@@ -18,15 +18,15 @@ function EFFECT:Init(data)
 
     self.LifeTime = 0.25
 
-    self.StartTime = CurTime()
-    self.DieTime = CurTime() + self.LifeTime
+    self.StartTime = UnPredictedCurTime()
+    self.DieTime = UnPredictedCurTime() + self.LifeTime
 
     self.StartPos = start
     self.EndPos = hit
 end
 
 function EFFECT:Think()
-    return self.DieTime > CurTime()
+    return self.DieTime > UnPredictedCurTime()
 end
 
 local function LerpColor(d, col1, col2)
@@ -38,7 +38,7 @@ local function LerpColor(d, col1, col2)
 end
 
 function EFFECT:Render()
-    local d = (CurTime() - self.StartTime) / self.LifeTime
+    local d = (UnPredictedCurTime() - self.StartTime) / self.LifeTime
     -- local endpos = self.StartPos + (d * (self.EndPos - self.StartPos))
     local endpos = self.EndPos
     local size = 1
