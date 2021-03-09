@@ -16,7 +16,7 @@ function EFFECT:Init(data)
     local hit = data:GetOrigin()
     local wep = data:GetEntity()
     local speed = data:GetScale()
-    local start = wep:GetTracerOrigin()
+    local start = wep:GetTracerOrigin() or data:GetStart()
 
     if speed > 0 then
         self.Speed = speed
