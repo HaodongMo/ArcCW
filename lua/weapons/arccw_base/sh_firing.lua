@@ -207,7 +207,7 @@ function SWEP:PrimaryAttack()
 
         if SERVER then self:TryBustDoor(trent, dmg) end
 
-        self:DoPenetration(tr, hit.penleft, bullet, false, { [trent:EntIndex()] = true })
+        self:DoPenetration(tr, hit.penleft, { [trent:EntIndex()] = true })
 
         effect = self:GetBuff_Override("Override_ImpactEffect") or effect
 
