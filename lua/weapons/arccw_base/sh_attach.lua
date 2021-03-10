@@ -646,10 +646,11 @@ function SWEP:GetMuzzleDevice(wm)
 end
 
 function SWEP:GetTracerOrigin()
-    local wm = self:GetOwner():ShouldDrawLocalPlayer()
+    local ow = self:GetOwner()
+    local wm = !ow:GetViewModel():IsValid() or ow:ShouldDrawLocalPlayer()
     local muzz = self:GetMuzzleDevice(wm)
 
-    if muzz then
+    if muzz and muzz:IsValid() then
         local posang = muzz:GetAttachment(1)
         if !posang then return muzz:GetPos() end
         local pos = posang.Pos

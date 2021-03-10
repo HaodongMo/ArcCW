@@ -48,7 +48,12 @@ function ArcCW:IsPenetrating(ptr, ptrent)
 end
 
 function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenned)
-    if CLIENT then return end
+    local hitpos, startpos = tr.HitPos, tr.StartPos
+    local dir    = (hitpos - startpos):GetNormalized()
+
+    if CLIENT then
+        return
+    end
 
     if tr.HitSky then return end
 
@@ -59,7 +64,6 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
     local skip = false
 
     local trent = tr.Entity
-    local hitpos, startpos = tr.HitPos, tr.StartPos
 
     local penmult     = ArcCW.PenTable[tr.MatType] or 1
     local pentracelen = 2
@@ -244,10 +248,11 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             attacker:FireBullets(abullet)
         end
 
-        -- if tr.HitWorld then
+        --[[
+        local atk = bullet.Attacker
 
-            local supbullet = {}
-            supbullet.Src      = endpos
+        local supbullet = {}
+            supbullet.Src      = hitpos
             supbullet.Dir      = -dir
             supbullet.Damage   = 0
             supbullet.Distance = 8
@@ -255,7 +260,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
             supbullet.Force    = 0
 
             attacker:FireBullets(supbullet, true)
+        ]]
 
-        -- end
     end
 end

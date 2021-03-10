@@ -140,7 +140,7 @@ function SWEP:PrimaryAttack()
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
     bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
-    bullet.Tracer     = game.SinglePlayer() and tracernum or 0
+    bullet.Tracer     = tracernum or 0
     bullet.TracerName = self:GetBuff_Override("Override_Tracer") or self.Tracer
     bullet.Weapon     = self
     bullet.Callback   = function(att, tr, dmg)
@@ -156,14 +156,14 @@ function SWEP:PrimaryAttack()
             debugoverlay.Cross(hitpos, 5, 5, Color(0, 0, 255), true)
         end
 
-        if !game.SinglePlayer() and CLIENT and !(tracernum == 0 or clip % tracernum != 0) then
+        --[[if !game.SinglePlayer() and CLIENT and !(tracernum == 0 or clip % tracernum != 0) then
             local fx = EffectData()
             fx:SetStart(self:GetTracerOrigin())
             fx:SetOrigin(tr.HitPos)
             fx:SetScale(5000)
             fx:SetEntity(self)
             util.Effect(bullet.TracerName or "tracer", fx)
-        end
+        end]]
 
         local randfactor = self:GetBuff("DamageRand")
         local mul = 1
@@ -207,7 +207,7 @@ function SWEP:PrimaryAttack()
 
         if SERVER then self:TryBustDoor(trent, dmg) end
 
-        self:DoPenetration(tr, hit.penleft, bullet, false, { [trent:EntIndex()] = true })
+        self:DoPenetration(tr, hit.penleft, { [trent:EntIndex()] = true })
 
         effect = self:GetBuff_Override("Override_ImpactEffect") or effect
 
