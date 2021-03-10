@@ -53,7 +53,7 @@ function SWEP:Reload()
 
     if self:Ammo1() <= 0 then return end
 
-    self:GetBuff_Hook("Hook_PreReload")
+    if self:GetBuff_Hook("Hook_PreReload") then return end
 
     self.LastClip1 = self:Clip1()
 

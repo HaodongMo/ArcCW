@@ -385,6 +385,7 @@ att.Hook_PhysBulletHit = function(wep, data) end
 -- changes to dmg may be overwritten later, so set damage and dmgtype instead
 att.Hook_BulletHit = function(wep, data) end
 
+-- return true to prevent reloading
 att.Hook_PreReload = function(wep) end
 
 att.Hook_PostReload = function(wep) end
