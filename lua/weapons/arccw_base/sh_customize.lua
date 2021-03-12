@@ -8,6 +8,8 @@ local temp = 0
 local SolidBlack = Color(temp, temp, temp)
 -- don't fucking mess with the shadow, makes the menu hurt your goddamn eyes
 
+CreateConVar("arccw_dev_cust2beta", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, nil, 0, 1)
+
 local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
     local tw, th = surface.GetTextSize(txt)
 
@@ -212,7 +214,7 @@ function SWEP:OpenCustomizeHUD()
         ArcCW.InvHUD:Show()
         -- ArcCW.InvHUD:RequestFocus()
     else
-        self:CreateCustomize2HUD()
+        if GetConVar("arccw_dev_cust2beta"):GetBool() then self:CreateCustomize2HUD() else self:CreateCustomizeHUD() end
         gui.SetMousePos(ScrW() / 2, ScrH() / 2)
     end
 
@@ -222,14 +224,17 @@ function SWEP:OpenCustomizeHUD()
 
 end
 
-function SWEP:CloseCustomizeHUD()
+function SWEP:CloseCustomizeHUD( hide )
     if IsValid(ArcCW.InvHUD) then
         ArcCW.InvHUD:Hide()
         ArcCW.InvHUD:Clear()
-        ArcCW.InvHUD:Remove()
-        gui.EnableScreenClicker(false)
         if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then
             vrmod.MenuClose( "ArcCW_Customize" )
+        end
+
+        if !hide then
+            ArcCW.InvHUD:Remove()
+            gui.EnableScreenClicker(false)
         end
 
         if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/extra2.wav") end

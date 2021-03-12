@@ -42,8 +42,8 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
 end
 
 local translate = ArcCW.GetTranslation
-local defaultatticon = Material("hud/atts/default.png", "mips")
-local blockedatticon = Material("hud/atts/blocked.png", "mips")
+local defaultatticon = Material("hud/atts/default.png", "mips smooth")
+local blockedatticon = Material("hud/atts/blocked.png", "mips smooth")
 
 -- 1: Customize
 -- 2: Presets
@@ -168,6 +168,31 @@ function SWEP:CreateCustomize2HUD()
     end
     closebutton.DoClick = function(self2, clr, btn)
         self:CloseCustomizeHUD()
+    end
+    
+    local hidebutton = vgui.Create("DButton", ArcCW.InvHUD)
+    hidebutton:SetText("")
+    hidebutton:SetPos(scrw - bigbuttonheight*2 - airgap_x, airgap_y)
+    hidebutton:SetSize(bigbuttonheight, bigbuttonheight)
+    hidebutton.Paint = function(self2, w, h)
+        local col = col_fg
+
+        if self2:IsHovered() then
+            col = col_shadow
+        end
+
+        surface.SetTextColor(col_shadow)
+        surface.SetTextPos(ss * 1, ss*-4)
+        surface.SetFont("ArcCW_24_Glow")
+        surface.DrawText("_")
+
+        surface.SetTextColor(col)
+        surface.SetTextPos(ss * 1, ss*-4)
+        surface.SetFont("ArcCW_24")
+        surface.DrawText("_")
+    end
+    hidebutton.DoClick = function(self2, clr, btn)
+        self:CloseCustomizeHUD(true)
     end
 
     -- Menu for attachment slots/presets
