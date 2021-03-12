@@ -38,13 +38,10 @@ function SWEP:GetViewModelPosition(pos, ang)
     local UCT = UnPredictedCurTime()
     local FT = FrameTime()
 	
-	if !SP then
-		local TargetTick = (1/FT)/66.66
-		if TargetTick < 1 then
-			local oldft = FT
-			FT = FT*TargetTick
-		end
-    end
+	local TargetTick = (1/FT)/66.66
+	if TargetTick < 1 then
+		FT = FT*TargetTick
+	end
 
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
 
