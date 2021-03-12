@@ -494,13 +494,20 @@ function SWEP:DrawHUD()
                 if GetConVar("arccw_hud_fcgbars"):GetBool() then
                     wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
                 end
-                MyDrawText(wheat)
 
-                local wheat_shad = wheat
-                wheat_shad.font = "ArcCW_12_Glow"
-                wheat_shad.col = colheat2
-                wheat_shad.shadow = false
+                local wheat_shad = {
+                    x = wheat.x,
+                    y = wheat.y,
+                    font = "ArcCW_12_Glow",
+                    text = wheat.text,
+                    col = colheat2,
+                    align = 1,
+                    shadow = false,
+                    alpha = alpha*pers,
+                }
                 MyDrawText(wheat_shad)
+
+                MyDrawText(wheat)
             end
             if self:GetInUBGL() then
                 local size = ScreenScaleMulti(32)
