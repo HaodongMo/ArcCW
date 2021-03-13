@@ -89,6 +89,9 @@ local translate = ArcCW.GetTranslation
 local defaultatticon = Material("hud/atts/default.png", "mips smooth")
 local blockedatticon = Material("hud/atts/blocked.png", "mips smooth")
 
+local pickx_empty = Material("hud/pickx_empty.png", "mips smooth")
+local pickx_full = Material("hud/pickx_filled.png", "mips smooth")
+
 -- 1: Customize
 -- 2: Presets
 ArcCW.Inv_SelectedMenu = 1
@@ -99,6 +102,8 @@ SWEP.Inv_SelectedSlot = 0
 -- 1: Stats
 -- 2: Trivia
 ArcCW.Inv_SelectedInfo = 1
+
+ArcCW.Inv_Fade = 0
 
 function SWEP:CreateCustomize2HUD()
     local col_fg = Color(255, 255, 255, 255)
@@ -336,6 +341,42 @@ function SWEP:CreateCustomize2HUD()
                 surface.SetFont("ArcCW_14")
                 surface.SetTextPos(ss * 6, ss * 14)
                 DrawTextRot(self2, txt, 0, 0, ss * 6, ss * 14, w - icon_h - ss * 2)
+            end
+        end
+
+        local pickxpanel = vgui.Create("DPanel", ArcCW.InvHUD)
+        pickxpanel:SetSize(menu1_w, bottom_zone - airgap_y)
+        pickxpanel:SetPos(airgap_x, scrh - bottom_zone - airgap_y)
+        pickxpanel.Paint = function(self2, w, h)
+            local pickx_amount = self:GetPickX()
+            local pickedatts = self:CountAttachments()
+
+            if pickx_amount == 0 then return end
+            if pickx_amount > 8 then
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(0, ss * 4)
+                surface.SetFont("ArcCW_16")
+                surface.DrawText("Attachments: " .. tostring(pickedatts) .. "/" .. tostring(pickx_amount))
+                return
+            end
+
+            local x = 0
+            local y = ss * 4
+
+            local s = ss * 20
+
+            x = (w - (s * pickx_amount)) / 2
+
+            for i = 1, pickx_amount do
+                surface.SetDrawColor(col_fg)
+                if i > pickedatts then
+                    surface.SetMaterial(pickx_empty)
+                else
+                    surface.SetMaterial(pickx_full)
+                end
+                surface.DrawTexturedRect(x, y, s, s)
+
+                x = x + s
             end
         end
     end
