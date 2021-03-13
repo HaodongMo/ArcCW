@@ -141,7 +141,7 @@ function SWEP:SetupModel(wm)
         local vm = self:GetOwner():GetViewModel()
 
         vm.RenderOverride = function(v)
-            if !self or !self.ArcCW then v.RenderOverride = nil return end
+            if !IsValid(self) or !self.ArcCW then v.RenderOverride = nil return end
             local wep = LocalPlayer():GetActiveWeapon()
             if wep and !wep.ArcCW then v.RenderOverride = nil return end
             self:RefreshBGs()
