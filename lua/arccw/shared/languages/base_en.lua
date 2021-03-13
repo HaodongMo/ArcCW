@@ -43,6 +43,14 @@ L["trivia.recoil"] = "Effective Recoil Momentum"
 L["trivia.penetration"] = "Penetration"
 L["trivia.firerate"] = "Fire Rate"
 L["trivia.fusetime"] = "Fuse Time"
+L["trivia.description"] = "Description"
+
+-- Units
+L["unit.rpm"] = "RPM"
+L["unit.moa"] = "MOA"
+L["unit.mm"] = "mm"
+L["unit.db"] = "dB"
+L["unit.bce"] = "BC"
 
 -- Class
 L["class.pistol"] = "Pistol"

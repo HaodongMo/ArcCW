@@ -4,6 +4,39 @@ local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end
 
+local function multlinetext(text, maxw, font)
+    local content = {}
+    local tline = ""
+    local x = 0
+    surface.SetFont(font)
+
+    local newlined = string.Split(text, "\n")
+
+    for _, line in pairs(newlined) do
+        local words = string.Split(line, " ")
+
+        for _, word in pairs(words) do
+            local tx = surface.GetTextSize(word)
+
+            if x + tx >= maxw then
+                table.insert(content, tline)
+                tline = ""
+                x = surface.GetTextSize(word)
+            end
+
+            tline = tline .. word .. " "
+
+            x = x + surface.GetTextSize(word .. " ")
+        end
+
+        table.insert(content, tline)
+        tline = ""
+        x = 0
+    end
+
+    return content
+end
+
 local function LerpColor(d, col1, col2)
     local r = Lerp(d, col1.r, col2.r)
     local g = Lerp(d, col1.g, col2.g)
@@ -15,22 +48,25 @@ end
 local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
     local tw, th = surface.GetTextSize(txt)
 
+    span.TextRot = span.TextRot or {}
+
     if tw > maxw then
         local realx, realy = span:LocalToScreen(x, y)
         render.SetScissorRect(realx, realy, realx + maxw, realy + (th * 2), true)
 
+        span.TextRot[txt] = span.TextRot[txt] or 0
+
         if !only then
-            span.TextRot = span.TextRot or 0
             span.StartTextRot = span.StartTextRot or CurTime()
             span.TextRotState = span.TextRotState or 0 -- 0: start, 1: moving, 2: end
             if span.TextRotState == 0 then
-                span.TextRot = 0
+                span.TextRot[txt] = 0
                 if span.StartTextRot < CurTime() - 2 then
                     span.TextRotState = 1
                 end
             elseif span.TextRotState == 1 then
-                span.TextRot = span.TextRot + (FrameTime() * ScreenScaleMulti(16))
-                if span.TextRot >= (tw - maxw) + ScreenScaleMulti(8) then
+                span.TextRot[txt] = span.TextRot[txt] + (FrameTime() * ScreenScaleMulti(16))
+                if span.TextRot[txt] >= (tw - maxw) + ScreenScaleMulti(8) then
                     span.StartTextRot = CurTime()
                     span.TextRotState = 2
                 end
@@ -41,7 +77,7 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
                 end
             end
         end
-        surface.SetTextPos(tx - span.TextRot, ty)
+        surface.SetTextPos(tx - span.TextRot[txt], ty)
         surface.DrawText(txt)
         render.SetScissorRect(0, 0, 0, 0, false)
     else
@@ -55,14 +91,14 @@ local blockedatticon = Material("hud/atts/blocked.png", "mips smooth")
 
 -- 1: Customize
 -- 2: Presets
-SWEP.Inv_SelectedMenu = 1
+ArcCW.Inv_SelectedMenu = 1
 
 -- Selected inventory slot
 SWEP.Inv_SelectedSlot = 0
 
 -- 1: Stats
 -- 2: Trivia
-SWEP.Inv_SelectedInfo = 1
+ArcCW.Inv_SelectedInfo = 1
 
 function SWEP:CreateCustomize2HUD()
     local col_fg = Color(255, 255, 255, 255)
@@ -284,6 +320,8 @@ function SWEP:CreateCustomize2HUD()
                     att_icon = atttbl.Icon
                 end
 
+                local slot_txt = translate(slot.PrintName) or slot.PrintName
+
                 surface.SetDrawColor(col2)
                 local icon_h = h
                 surface.SetMaterial(att_icon)
@@ -292,7 +330,8 @@ function SWEP:CreateCustomize2HUD()
                 surface.SetTextColor(col2)
                 surface.SetFont("ArcCW_10")
                 surface.SetTextPos(ss * 6, ss * 4)
-                surface.DrawText(slot.PrintName)
+                DrawTextRot(self2, slot_txt, 0, 0, ss * 6, ss * 4, w - icon_h - ss * 2)
+                -- surface.DrawText(slot.PrintName)
 
                 surface.SetFont("ArcCW_14")
                 surface.SetTextPos(ss * 6, ss * 14)
@@ -311,7 +350,55 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.InvHUD_Menu3:SetPos(scrw - menu3_w, airgap_y + smallgap)
     ArcCW.InvHUD_Menu3:SetSize(menu3_w, menu3_h)
 
+    function ArcCW.InvHUD_FormStatsTriviaBar()
+        local statsbutton = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
+        statsbutton:SetSize(ss * 48, ss * 16)
+        statsbutton:SetPos(menu3_w - (ss * 48 * 2) - airgap_x - (ss * 4), rss * 48 + ss * 12)
+        statsbutton:SetText("")
+        statsbutton.Text = "Stats"
+        statsbutton.DoClick = function(self2, clr, btn)
+            ArcCW.InvHUD_FormWeaponStats()
+            ArcCW.Inv_SelectedInfo = 1
+        end
+        statsbutton.Paint = function(self2, w, h)
+            local col = col_button
+            local col2 = col_fg
+
+            if self2:IsHovered() then
+                col = col_fg_tr
+                col2 = col_shadow
+            end
+
+            draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+            surface.SetFont("ArcCW_8")
+            local tw, th = surface.GetTextSize(self2.Text)
+
+            surface.SetFont("ArcCW_8_Glow")
+            surface.SetTextColor(col_shadow)
+            surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+            surface.DrawText(self2.Text)
+
+            surface.SetFont("ArcCW_8")
+            surface.SetTextColor(col2)
+            surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+            surface.DrawText(self2.Text)
+        end
+
+        local triviabutton = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
+        triviabutton:SetSize(ss * 48, ss * 16)
+        triviabutton:SetPos(menu3_w - ss * 48 - airgap_x, rss * 48 + ss * 12)
+        triviabutton:SetText("")
+        triviabutton.Text = "Trivia"
+        triviabutton.DoClick = function(self2, clr, btn)
+            ArcCW.InvHUD_FormWeaponTrivia()
+            ArcCW.Inv_SelectedInfo = 2
+        end
+        triviabutton.Paint = statsbutton.Paint
+    end
+
     function ArcCW.InvHUD_FormWeaponName()
+        ArcCW.InvHUD_FormStatsTriviaBar()
         local weapon_title = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
         weapon_title:SetSize(menu3_w, rss * 32)
         weapon_title:SetPos(0, 0)
@@ -355,9 +442,298 @@ function SWEP:CreateCustomize2HUD()
         end
     end
 
+    function ArcCW.InvHUD_FormWeaponTrivia()
+        ArcCW.InvHUD_Menu3:Clear()
+        ArcCW.InvHUD_FormWeaponName()
+
+        local scroll = vgui.Create("DScrollPanel", ArcCW.InvHUD_Menu3)
+        scroll:SetSize(menu3_w - airgap_x, ss * 110)
+        scroll:SetPos(0, rss * 48 + ss * 32)
+
+        local scroll_bar = scroll:GetVBar()
+        scroll_bar.Paint = function() end
+
+        scroll_bar.btnUp.Paint = function(span, w, h)
+        end
+        scroll_bar.btnDown.Paint = function(span, w, h)
+        end
+        scroll_bar.btnGrip.Paint = PaintScrollBar
+
+        local multiline = {}
+        local desc = translate(self:GetBuff_Override("Override_Trivia_Desc")) or translate("desc." .. self:GetClass()) or self.Trivia_Desc
+
+        multiline = multlinetext(desc, scroll:GetWide(), "ArcCW_10")
+
+        local desc_title = vgui.Create("DPanel", scroll)
+        desc_title:SetSize(scroll:GetWide(), rss * 8)
+        desc_title:Dock(TOP)
+        desc_title.Paint = function(self2, w, h)
+            surface.SetFont("ArcCW_8")
+            local txt = translate("trivia.description")
+            local tw_1 = surface.GetTextSize(txt)
+
+            surface.SetFont("ArcCW_8_Glow")
+            surface.SetTextColor(col_shadow)
+            surface.SetTextPos(w - tw_1, 0)
+            surface.DrawText(txt)
+
+            surface.SetFont("ArcCW_8")
+            surface.SetTextColor(col_fg)
+            surface.SetTextPos(w - tw_1, 0)
+            surface.DrawText(txt)
+        end
+
+        for i, text in pairs(multiline) do
+            local desc_line = vgui.Create("DPanel", scroll)
+            desc_line:SetSize(scroll:GetWide(), rss * 10)
+            desc_line:Dock(TOP)
+            desc_line.Paint = function(self2, w, h)
+                surface.SetFont("ArcCW_10")
+                local tw = surface.GetTextSize(text)
+
+                surface.SetFont("ArcCW_10_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw, 0)
+                surface.DrawText(text)
+
+                surface.SetFont("ArcCW_10")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw, 0)
+                surface.DrawText(text)
+            end
+        end
+
+        local info = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
+        info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
+        info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
+        info.Paint = function(self2, w, h)
+            local infos = {}
+
+            local year = self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year
+
+            year = tostring(year)
+
+            if year then
+                if isnumber(year) and year < 0 then
+                    table.insert(infos, {
+                        title = translate("trivia.year"),
+                        value = tostring(-year),
+                        unit = translate("unit.bce"),
+                    })
+                else
+                    table.insert(infos, {
+                        title = translate("trivia.year"),
+                        value = tostring(year),
+                    })
+                end
+            end
+
+            local mech = self:GetBuff_Override("Override_Trivia_Mechanism") or self.Trivia_Mechanism
+
+            if mech then
+                table.insert(infos, {
+                    title = translate("trivia.mechanism"),
+                    value = translate(mech) or mech,
+                })
+            end
+
+            local country = self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country
+
+            if country then
+                table.insert(infos, {
+                    title = translate("trivia.country"),
+                    value = translate(country) or country,
+                })
+            end
+
+            local manufacturer = self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer
+
+            if manufacturer then
+                table.insert(infos, {
+                    title = translate("trivia.manufacturer"),
+                    value = translate(manufacturer) or manufacturer,
+                })
+            end
+
+            local calibre = self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre
+
+            if calibre then
+                table.insert(infos, {
+                    title = translate("trivia.calibre"),
+                    value = translate(calibre) or calibre,
+                })
+            end
+
+            for i, triv in pairs(infos) do
+                triv.unit = triv.unit or ""
+                local i_2 = i - 1
+                surface.SetFont("ArcCW_8")
+                local tw_1 = surface.GetTextSize(triv.title)
+
+                surface.SetFont("ArcCW_8_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
+                surface.DrawText(triv.title)
+
+                surface.SetFont("ArcCW_8")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
+                surface.DrawText(triv.title)
+
+                surface.SetFont("ArcCW_8")
+                local tw_2 = surface.GetTextSize(triv.unit)
+
+                surface.SetFont("ArcCW_8_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 12))
+                surface.DrawText(triv.unit)
+
+                surface.SetFont("ArcCW_8")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 12))
+                surface.DrawText(triv.unit)
+
+                surface.SetFont("ArcCW_16")
+                local tw_3 = surface.GetTextSize(tostring(triv.value))
+
+                surface.SetFont("ArcCW_16_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw_2 - tw_3, (i_2 * (rss * 24)) + (rss * 6))
+                -- surface.DrawText(triv.value)
+                DrawTextRot(self2, triv.value, 0, i_2 * (rss * 24), math.max(w - tw_2 - tw_3, 0), (i_2 * (rss * 24)) + (rss * 6), w)
+
+                -- (span, txt, x, y, tx, ty, maxw, only)
+
+                surface.SetFont("ArcCW_16")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw_2 - tw_3, (i_2 * (rss * 24)) + (rss * 6))
+                -- surface.DrawText(triv.value)
+                DrawTextRot(self2, triv.value, 0, i_2 * (rss * 24), math.max(w - tw_2 - tw_3, 0), (i_2 * (rss * 24)) + (rss * 6), w, true)
+            end
+        end
+    end
+
     function ArcCW.InvHUD_FormWeaponStats()
         ArcCW.InvHUD_Menu3:Clear()
         ArcCW.InvHUD_FormWeaponName()
+
+        local info = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
+        info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
+        info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
+        info.Paint = function(self2, w, h)
+            local infos = {}
+
+            // rpm
+            local rpm = math.Round(60 / self:GetFiringDelay())
+
+            if self:GetIsManualAction() then
+                rpm = math.Round(60 / (self:GetFiringDelay() + self:GetAnimKeyTime("cycle")))
+            end
+
+            if self:GetIsManualAction() then
+                table.insert(infos, {
+                    title = translate("trivia.firerate"),
+                    value = "~" .. tostring(rpm),
+                    unit = translate("unit.rpm"),
+                })
+            elseif !self.PrimaryMelee then
+                table.insert(infos, {
+                    title = translate("trivia.firerate"),
+                    value = rpm,
+                    unit = translate("unit.rpm"),
+                })
+            end
+
+            // precision
+            local precision = self:GetBuff("AccuracyMOA")
+
+            if !self.PrimaryMelee then
+                table.insert(infos, {
+                    title = translate("trivia.precision"),
+                    value = precision,
+                    unit = translate("unit.moa"),
+                })
+            end
+
+            // ammo type
+            if self.Primary.Ammo and self.Primary.Ammo != "" and self.Primary.Ammo != "none" then
+                local ammotype = language.GetPhrase(self.Primary.Ammo .. "_ammo")
+                if ammotype then
+                    table.insert(infos, {
+                        title = translate("trivia.ammo"),
+                        value = ammotype,
+                    })
+                end
+            end
+
+            // penetration
+            local shootent = self:GetBuff("ShootEntity", true)
+
+            if !self.PrimaryMelee then
+                if !shootent then
+                    local pen  = self:GetBuff("Penetration")
+                    table.insert(infos, {
+                        title = translate("trivia.penetration"),
+                        value = pen,
+                        unit = translate("unit.mm"),
+                    })
+                end
+            end
+
+            // noise
+            local noise = self:GetBuff("ShootVol")
+
+            if !self.PrimaryMelee then
+                table.insert(infos, {
+                    title = translate("trivia.noise"),
+                    value = noise,
+                    unit = translate("unit.db"),
+                })
+            end
+
+            for i, triv in pairs(infos) do
+                triv.unit = triv.unit or ""
+                local i_2 = i - 1
+                surface.SetFont("ArcCW_8")
+                local tw_1 = surface.GetTextSize(triv.title)
+
+                surface.SetFont("ArcCW_8_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
+                surface.DrawText(triv.title)
+
+                surface.SetFont("ArcCW_8")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
+                surface.DrawText(triv.title)
+
+                surface.SetFont("ArcCW_8")
+                local tw_2 = surface.GetTextSize(triv.unit)
+
+                surface.SetFont("ArcCW_8_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 12))
+                surface.DrawText(triv.unit)
+
+                surface.SetFont("ArcCW_8")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 12))
+                surface.DrawText(triv.unit)
+
+                surface.SetFont("ArcCW_16")
+                local tw_3 = surface.GetTextSize(tostring(triv.value))
+
+                surface.SetFont("ArcCW_16_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(math.max(w - tw_2 - tw_3, 0), (i_2 * (rss * 24)) + (rss * 6))
+                surface.DrawText(triv.value)
+
+                surface.SetFont("ArcCW_16")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(math.max(w - tw_2 - tw_3, 0), (i_2 * (rss * 24)) + (rss * 6))
+                surface.DrawText(triv.value)
+            end
+        end
 
         local rangegraph = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
         rangegraph:SetSize(ss * 200, ss * 110)
@@ -383,7 +759,7 @@ function SWEP:CreateCustomize2HUD()
             local scale = math.ceil((math.max(dmgmax, dmgmin) + 10) / 25) * 25
             local hscale = math.ceil(math.max(mran, sran) / 100) * 100
 
-            scale = math.max(scale, 100)
+            scale = math.max(scale, 75)
             hscale = math.max(hscale, 100)
 
             draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
@@ -434,12 +810,14 @@ function SWEP:CreateCustomize2HUD()
                 return metres, hu
             end
 
-            local m_1, hu_1 = RangeText(0)
+            if dmgmax != dmgmin then
+                local m_1, hu_1 = RangeText(0)
 
-            surface.SetTextPos(ss * 2, h - rss * 16)
-            surface.DrawText(m_1)
-            surface.SetTextPos(ss * 2, h - rss * 10)
-            surface.DrawText(hu_1)
+                surface.SetTextPos(ss * 2, h - rss * 16)
+                surface.DrawText(m_1)
+                surface.SetTextPos(ss * 2, h - rss * 10)
+                surface.DrawText(hu_1)
+            end
 
             local drawndmg = false
 
@@ -509,6 +887,10 @@ function SWEP:CreateCustomize2HUD()
         end
     end
 
-    ArcCW.InvHUD_FormWeaponStats()
+    if ArcCW.Inv_SelectedInfo == 1 then
+        ArcCW.InvHUD_FormWeaponStats()
+    elseif ArcCW.Inv_SelectedInfo == 2  then
+        ArcCW.InvHUD_FormWeaponTrivia()
+    end
 
 end
