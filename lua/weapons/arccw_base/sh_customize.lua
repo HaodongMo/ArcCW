@@ -279,10 +279,10 @@ function SWEP:CreateCustomizeHUD()
         if !IsValid(self) then
             gui.EnableScreenClicker(false)
             span:Remove()
-        end
-
-        if --[[self:GetState() != ArcCW.STATE_CUSTOMIZE or]] self:GetReloading() then
-            span:Remove()
+        else
+            if --[[self:GetState() != ArcCW.STATE_CUSTOMIZE or]] self:GetReloading() then
+                span:Remove()
+            end
         end
     end
     ArcCW.InvHUD.ActiveWeapon = self
@@ -1182,7 +1182,7 @@ function SWEP:CreateCustomizeHUD()
         attcatb.Paint = function(span, w, h)
 
             -- Might error when player dies
-            if !self or !self.Attachments then return end
+            if !IsValid(self) or !self.Attachments then return end
 
             local Bfg_col = Color(255, 255, 255, 255)
             local Bbg_col = Color(0, 0, 0, 100)
