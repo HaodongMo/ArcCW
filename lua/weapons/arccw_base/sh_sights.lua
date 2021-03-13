@@ -100,6 +100,8 @@ function SWEP:EnterSights()
     if anim then
         self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
     end
+
+    self:GetBuff_Hook("Hook_SightToggle", true)
 end
 
 function SWEP:ExitSights()
@@ -127,6 +129,8 @@ function SWEP:ExitSights()
     if anim then
         self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
     end
+
+    self:GetBuff_Hook("Hook_SightToggle", false)
 end
 
 function SWEP:GetSprintTime()

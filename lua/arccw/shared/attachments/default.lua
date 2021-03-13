@@ -426,6 +426,9 @@ att.Hook_Think = function(wep) end
 -- thinking hook for att
 att.DrawFunc = function(wep, element, wm) end
 
+-- after ADS starts or ends
+att.Hook_SightToggle = function(wep, enter) end
+
 att.Override_Trivia_Class = nil -- "Submachine Gun"
 att.Override_Trivia_Desc = nil -- "Ubiquitous 9mm SMG. Created as a response to the need for a faster-firing and more reliable submachine gun than existing options at the time."
 att.Override_Trivia_Manufacturer = nil -- "Auschen Waffenfabrik"
