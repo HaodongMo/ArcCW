@@ -83,7 +83,8 @@ local sizes_to_make = {
     16,
     20,
     24,
-    26
+    26,
+    32
 }
 
 local unscaled_sizes_to_make = {
