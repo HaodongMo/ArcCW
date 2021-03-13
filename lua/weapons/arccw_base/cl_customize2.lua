@@ -259,6 +259,53 @@ function SWEP:CreateCustomize2HUD()
     end
     scroll_1.btnGrip.Paint = PaintScrollBar
 
+    local customizebutton = vgui.Create("DButton", ArcCW.InvHUD)
+    customizebutton:SetSize(ss * 90, ss * 16)
+    customizebutton:SetPos(airgap_x, airgap_y + ss * 8)
+    customizebutton:SetText("")
+    customizebutton.Text = translate("ui.customize")
+    customizebutton.Val = 1
+    customizebutton.DoClick = function(self2, clr, btn)
+        ArcCW.Inv_SelectedMenu = 1
+        ArcCW.InvHUD_FormAttachments()
+    end
+    customizebutton.Paint = function(self2, w, h)
+        local col = col_button
+        local col2 = col_fg
+
+        if self2:IsHovered() or (ArcCW.Inv_SelectedMenu == self2.Val) then
+            col = col_fg_tr
+            col2 = col_shadow
+        end
+
+        draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+        surface.SetFont("ArcCW_8")
+        local tw, th = surface.GetTextSize(self2.Text)
+
+        surface.SetFont("ArcCW_8_Glow")
+        surface.SetTextColor(col_shadow)
+        surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+        surface.DrawText(self2.Text)
+
+        surface.SetFont("ArcCW_8")
+        surface.SetTextColor(col2)
+        surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+        surface.DrawText(self2.Text)
+    end
+
+    local presetsbutton = vgui.Create("DButton", ArcCW.InvHUD)
+    presetsbutton:SetSize(ss * 72, ss * 16)
+    presetsbutton:SetPos(airgap_x + customizebutton:GetWide() + (ss * 8), airgap_y + ss * 8)
+    presetsbutton:SetText("")
+    presetsbutton.Text = translate("ui.presets")
+    presetsbutton.Val = 2
+    presetsbutton.DoClick = function(self2, clr, btn)
+        ArcCW.Inv_SelectedMenu = 2
+        ArcCW.InvHUD_FormAttachments()
+    end
+    presetsbutton.Paint = customizebutton.Paint
+
     local menu2_x, menu2_y = ArcCW.InvHUD_Menu1:GetPos()
     menu2_x = menu2_x + ArcCW.InvHUD_Menu1:GetWide()
     local menu2_w = bar2_w
@@ -692,7 +739,7 @@ function SWEP:CreateCustomize2HUD()
             end
 
             // precision
-            local precision = self:GetBuff("AccuracyMOA")
+            local precision = math.Round(self:GetBuff("AccuracyMOA"), 1)
 
             if !self.PrimaryBash and !self.Throwing then
                 table.insert(infos, {

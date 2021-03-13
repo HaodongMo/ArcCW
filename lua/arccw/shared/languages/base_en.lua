@@ -257,6 +257,9 @@ L["dmg.slash"] = "Slashing"
 L["dmg.club"] = "Blunt"
 L["dmg.shock"] = "Shock"
 
+L["ui.presets"] = "Presets"
+L["ui.customize"] = "Customize"
+
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
 -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]
