@@ -43,14 +43,6 @@ L["trivia.recoil"] = "Effective Recoil Momentum"
 L["trivia.penetration"] = "Penetration"
 L["trivia.firerate"] = "Fire Rate"
 L["trivia.fusetime"] = "Fuse Time"
-L["trivia.description"] = "Description"
-
--- Units
-L["unit.rpm"] = "RPM"
-L["unit.moa"] = "MOA"
-L["unit.mm"] = "mm"
-L["unit.db"] = "dB"
-L["unit.bce"] = "BC"
 
 -- Class
 L["class.pistol"] = "Pistol"
@@ -242,6 +234,28 @@ L["ui.modex"] = "Mode %s"
 
 -- 2021-01-25
 L["attslot.magazine"] = "Magazine"
+
+-- 2021-03-13
+L["trivia.damage"] = "Damage"
+L["trivia.range"] = "Range"
+L["trivia.attackspersecond"] = "Attacks Per Second"
+L["trivia.description"] = "Description"
+L["trivia.meleedamagetype"] = "Damage Type"
+
+-- Units
+L["unit.rpm"] = "RPM"
+L["unit.moa"] = "MOA"
+L["unit.mm"] = "mm"
+L["unit.db"] = "dB"
+L["unit.bce"] = "BC"
+L["unit.aps"] = "APS"
+
+-- melee damage types
+L["dmg.generic"] = "Unarmed"
+L["dmg.bullet"] = "Piercing"
+L["dmg.slash"] = "Slashing"
+L["dmg.club"] = "Blunt"
+L["dmg.shock"] = "Shock"
 
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]

@@ -425,7 +425,11 @@ function SWEP:CreateCustomize2HUD()
         weapon_cat.Paint = function(self2, w, h)
             local class = translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or self.Trivia_Class
             local cal = translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre) or self.Trivia_Calibre
-            local name = class .. ", " .. cal
+            local name = class
+
+            if !self.PrimaryMelee and !self.Throwing then
+                name = name .. ", " .. cal
+            end
 
             surface.SetFont("ArcCW_16")
             local tw = surface.GetTextSize(name)
@@ -636,7 +640,7 @@ function SWEP:CreateCustomize2HUD()
                     value = "~" .. tostring(rpm),
                     unit = translate("unit.rpm"),
                 })
-            elseif !self.PrimaryMelee then
+            elseif !self.PrimaryBash then
                 table.insert(infos, {
                     title = translate("trivia.firerate"),
                     value = rpm,
@@ -647,7 +651,7 @@ function SWEP:CreateCustomize2HUD()
             // precision
             local precision = self:GetBuff("AccuracyMOA")
 
-            if !self.PrimaryMelee then
+            if !self.PrimaryBash then
                 table.insert(infos, {
                     title = translate("trivia.precision"),
                     value = precision,
@@ -669,7 +673,7 @@ function SWEP:CreateCustomize2HUD()
             // penetration
             local shootent = self:GetBuff("ShootEntity", true)
 
-            if !self.PrimaryMelee then
+            if !self.PrimaryBash then
                 if !shootent then
                     local pen  = self:GetBuff("Penetration")
                     table.insert(infos, {
@@ -683,12 +687,43 @@ function SWEP:CreateCustomize2HUD()
             // noise
             local noise = self:GetBuff("ShootVol")
 
-            if !self.PrimaryMelee then
+            if !self.PrimaryBash then
                 table.insert(infos, {
                     title = translate("trivia.noise"),
                     value = noise,
                     unit = translate("unit.db"),
                 })
+            end
+
+            if self.PrimaryBash then
+                local meleedelay = self.MeleeTime * self:GetBuff_Mult("Mult_MeleeTime")
+                table.insert(infos, {
+                    title = translate("trivia.attackspersecond"),
+                    value = tostring(math.Round(1 / meleedelay)),
+                    unit = translate("unit.aps")
+                })
+
+                local meleerange = self:GetBuff("MeleeRange")
+                table.insert(infos, {
+                    title = translate("trivia.range"),
+                    value = tostring(math.Round(meleerange * ArcCW.HUToM)),
+                    unit = "m"
+                })
+
+                local dmg = self.MeleeDamage * self:GetBuff_Mult("Mult_MeleeDamage")
+                table.insert(infos, {
+                    title = translate("trivia.damage"),
+                    value = dmg,
+                })
+
+                local dmgtype = self:GetBuff_Override("Override_MeleeDamageType") or self.MeleeDamageType
+
+                if ArcCW.MeleeDamageTypes[dmgtype or ""] then
+                    table.insert(infos, {
+                        title = translate("trivia.meleedamagetype"),
+                        value = translate(ArcCW.MeleeDamageTypes[dmgtype]),
+                    })
+                end
             end
 
             for i, triv in pairs(infos) do
@@ -739,6 +774,24 @@ function SWEP:CreateCustomize2HUD()
         rangegraph:SetSize(ss * 200, ss * 110)
         rangegraph:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32)
         rangegraph.Paint = function(self2, w, h)
+            if self.PrimaryBash or
+                self.ShootEntity or
+                self:GetBuff_Override("Override_ShootEntity") or
+                self.NoRangeGraph
+            then
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
+
+                local txt = "No Data"
+
+                surface.SetTextColor(col_fg)
+                surface.SetFont("ArcCW_24")
+                local tw, th = surface.GetTextSize(txt)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(txt)
+
+                return
+            end
+
             local ovr = self:GetBuff_Override("Override_Num")
             local add = self:GetBuff_Add("Add_Num")
 
@@ -783,6 +836,11 @@ function SWEP:CreateCustomize2HUD()
 
             local x_4 = w
             local y_4 = y_3
+
+            if sran == mran then
+                x_2 = w / 2
+                x_3 = w / 2
+            end
 
             local col_vline = LerpColor(0.5, col_fg, Color(0, 0, 0, 0))
 
@@ -842,7 +900,7 @@ function SWEP:CreateCustomize2HUD()
                 drawndmg = true
             end
 
-            if dmgmax != dmgmin then
+            if dmgmax != dmgmin and sran != mran then
                 local dmg = tostring(math.Round(dmgmin))
                 local tw = surface.GetTextSize(dmg)
                 surface.SetTextPos(x_3 - (tw / 2), ss * 1)
