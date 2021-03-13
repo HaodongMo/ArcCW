@@ -264,15 +264,25 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         vm:SetAnimTime(CurTime() - startfrom)
     end
 
+    local function addsequence(...)
+        if game.SinglePlayer() then
+            self:GetOwner():AddVCDSequenceToGestureSlot(...)
+        else
+            if SERVER then
+                ArcCW.SendAnimation(self:GetOwner(), ...)
+            end
+        end
+    end
+
     if anim.TPAnim then
         if anim.TPAnimStartTime then
             local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
             if aseq then
-                self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, anim.TPAnimStartTime, true )
+                addsequence( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, anim.TPAnimStartTime, true )
             end
         else
             local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
-            self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, 0, true )
+            addsequence( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, 0, true )
         end
     end
 
