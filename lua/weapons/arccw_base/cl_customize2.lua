@@ -131,7 +131,7 @@ function SWEP:CreateCustomize2HUD()
     local smallgap = ss * 4
 
     local top_zone = ss * 24
-    local bottom_zone = ss * 64
+    local bottom_zone = ss * 62
 
     local cornerrad = ss * 4
 
@@ -312,12 +312,12 @@ function SWEP:CreateCustomize2HUD()
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
                 local att_icon = defaultatticon
-                local txt = translate("attslot.noatt")
+                local txt = translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
                 local atttbl = ArcCW.AttachmentTable[slot.Installed or ""]
 
                 if atttbl then
                     txt =  translate("name." .. slot.Installed) or atttbl.PrintName
-                    att_icon = atttbl.Icon
+                    att_icon = slot.DefaultAttIcon or atttbl.Icon
                 end
 
                 local slot_txt = translate(slot.PrintName) or slot.PrintName
@@ -356,6 +356,7 @@ function SWEP:CreateCustomize2HUD()
         statsbutton:SetPos(menu3_w - (ss * 48 * 2) - airgap_x - (ss * 4), rss * 48 + ss * 12)
         statsbutton:SetText("")
         statsbutton.Text = "Stats"
+        statsbutton.Val = 1
         statsbutton.DoClick = function(self2, clr, btn)
             ArcCW.InvHUD_FormWeaponStats()
             ArcCW.Inv_SelectedInfo = 1
@@ -364,7 +365,7 @@ function SWEP:CreateCustomize2HUD()
             local col = col_button
             local col2 = col_fg
 
-            if self2:IsHovered() then
+            if self2:IsHovered() or ArcCW.Inv_SelectedInfo == self2.Val then
                 col = col_fg_tr
                 col2 = col_shadow
             end
@@ -390,6 +391,7 @@ function SWEP:CreateCustomize2HUD()
         triviabutton:SetPos(menu3_w - ss * 48 - airgap_x, rss * 48 + ss * 12)
         triviabutton:SetText("")
         triviabutton.Text = "Trivia"
+        triviabutton.Val = 2
         triviabutton.DoClick = function(self2, clr, btn)
             ArcCW.InvHUD_FormWeaponTrivia()
             ArcCW.Inv_SelectedInfo = 2
@@ -640,7 +642,7 @@ function SWEP:CreateCustomize2HUD()
                     value = "~" .. tostring(rpm),
                     unit = translate("unit.rpm"),
                 })
-            elseif !self.PrimaryBash then
+            elseif !self.PrimaryBash and !self.Throwing then
                 table.insert(infos, {
                     title = translate("trivia.firerate"),
                     value = rpm,
@@ -651,7 +653,7 @@ function SWEP:CreateCustomize2HUD()
             // precision
             local precision = self:GetBuff("AccuracyMOA")
 
-            if !self.PrimaryBash then
+            if !self.PrimaryBash and !self.Throwing then
                 table.insert(infos, {
                     title = translate("trivia.precision"),
                     value = precision,
@@ -699,7 +701,7 @@ function SWEP:CreateCustomize2HUD()
                 local meleedelay = self.MeleeTime * self:GetBuff_Mult("Mult_MeleeTime")
                 table.insert(infos, {
                     title = translate("trivia.attackspersecond"),
-                    value = tostring(math.Round(1 / meleedelay)),
+                    value = tostring(math.Round(1 / meleedelay, 1)),
                     unit = translate("unit.aps")
                 })
 
@@ -724,6 +726,16 @@ function SWEP:CreateCustomize2HUD()
                         value = translate(ArcCW.MeleeDamageTypes[dmgtype]),
                     })
                 end
+            end
+
+            if self.Throwing then
+                local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+
+                table.insert(infos, {
+                    title = translate("trivia.fusetime"),
+                    value = tostring(math.Round(ft, 1)),
+                    unit = "s"
+                })
             end
 
             for i, triv in pairs(infos) do

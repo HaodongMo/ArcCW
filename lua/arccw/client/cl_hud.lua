@@ -109,7 +109,7 @@ local function generatefonts()
             size = ScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
-            blursize = 8,
+            blursize = 6,
             extended = true,
         } )
 
