@@ -141,7 +141,7 @@ function SWEP:CreateCustomize2HUD()
     local cornerrad = ss * 4
 
     local bigbuttonheight = ss * 36
-    local smallbuttonheight = ss * 24
+    local smallbuttonheight = rss * 12
 
     local function PaintScrollBar(panel, w, h)
         local s = ss * 2
@@ -307,9 +307,9 @@ function SWEP:CreateCustomize2HUD()
     presetsbutton.Paint = customizebutton.Paint
 
     local menu2_x, menu2_y = ArcCW.InvHUD_Menu1:GetPos()
-    menu2_x = menu2_x + ArcCW.InvHUD_Menu1:GetWide()
+    menu2_x = menu2_x + ArcCW.InvHUD_Menu1:GetWide() + smallgap
     local menu2_w = bar2_w
-    local menu2_h = menu1_h
+    local menu2_h = scrh - top_zone - airgap_y - airgap_y - (ss * 16)
 
     -- Menu for attachments
     ArcCW.InvHUD_Menu2 = vgui.Create("DScrollPanel", ArcCW.InvHUD)
@@ -329,7 +329,97 @@ function SWEP:CreateCustomize2HUD()
     end
     scroll_2.btnGrip.Paint = PaintScrollBar
 
-    function ArcCW.InvHUD_FormAttachmentSelect(slot)
+    function ArcCW.InvHUD_FormAttachmentSelect()
+        ArcCW.InvHUD_Menu2:Clear()
+
+        local slot = self.Attachments[self.Inv_SelectedSlot or 0]
+
+        if !slot then return end
+
+        local atts = {}
+        local slots = {self.Inv_SelectedSlot}
+        local attCheck = {}
+
+        table.Add(slots, slot.MergeSlots or {})
+
+        for _, y in pairs(slots) do
+            for _, bruh in pairs(ArcCW:GetAttsForSlot((self.Attachments[y] or {}).Slot, self)) do
+                if attCheck[bruh] then continue end
+                table.insert(atts, {
+                    att = bruh,
+                    slot = y
+                })
+                attCheck[bruh] = true
+            end
+        end
+
+        atts[0] = ""
+
+        table.sort(atts, function(a, b)
+            a = a.att or ""
+            b = b.att or ""
+            local atttbl_a = ArcCW.AttachmentTable[a]
+            local atttbl_b = ArcCW.AttachmentTable[b]
+
+            local order_a = 0
+            local order_b = 0
+
+            order_a = atttbl_a.SortOrder or order_a
+            order_b = atttbl_b.SortOrder or order_b
+
+            if order_a == order_b then
+                return (translate("name." .. a) or atttbl_a.PrintName or "") > (translate("name." .. b) or atttbl_b.PrintName or "")
+            end
+
+            return order_a > order_b
+        end)
+
+        for _, att in pairs(atts) do
+            if !att then continue end
+            if !istable(att) then continue end
+            -- if !ArcCW.AttachmentTable[att] then continue end
+            local button = vgui.Create("DButton", ArcCW.InvHUD_Menu2)
+            button.att = att.att
+            button.attslot = att.slot
+            button:SetText("")
+            button:SetSize(menu2_w - (2 * ss), smallbuttonheight)
+            button:DockMargin(0, smallgap, 0, 0)
+            button:Dock(TOP)
+            button.Paint = function(self2, w, h)
+                local col = col_button
+                local col2 = col_fg
+
+                if self2:IsHovered() then
+                    col = col_fg_tr
+                    col2 = col_shadow
+
+                --     self2:SetSize(menu2_w - (2 * ss), smallbuttonheight * 2)
+                -- else
+                --     self2:SetSize(menu2_w - (2 * ss), smallbuttonheight)
+                end
+
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+                local atttbl = ArcCW.AttachmentTable[self2.att]
+
+                local txt = atttbl.PrintName or ""
+                txt = translate("name." .. self2.att) or translate(txt) or txt
+
+                local icon_h = h
+
+                surface.SetTextColor(col2)
+                surface.SetTextPos(icon_h + ss * 4, ss * 1)
+                surface.SetFont("ArcCW_10")
+
+                DrawTextRot(self2, txt, icon_h + (ss * 4), 0, ss * 4, ss * 1, w - icon_h - (ss * 4))
+
+                local icon = atttbl.Icon or blockedatticon
+
+                surface.SetDrawColor(col2)
+                surface.SetMaterial(icon)
+                surface.DrawTexturedRect(ss * 2, 0, icon_h, icon_h)
+            end
+        end
     end
 
     -- add attachments
@@ -351,6 +441,7 @@ function SWEP:CreateCustomize2HUD()
             button:Dock(TOP)
             button.DoClick = function(self2, clr, btn)
                 self.Inv_SelectedSlot = self2.attindex
+                ArcCW.InvHUD_FormAttachmentSelect()
             end
             button.Paint = function(self2, w, h)
                 local col = col_button
@@ -363,12 +454,26 @@ function SWEP:CreateCustomize2HUD()
 
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
+                local installed = slot.Installed
+
+                if !installed then
+                    for _, slot2 in pairs(slot.MergeSlots or {}) do
+                        if !isnumber(slot2) then continue end
+                        if self.Attachments[slot2] and self.Attachments[slot2].Installed then
+                            installed = self.Attachments[slot2].Installed
+                            break
+                        elseif !self.Attachments[slot2] then
+                            print("ERROR! No attachment " .. tostring(slot2))
+                        end
+                    end
+                end
+
                 local att_icon = defaultatticon
                 local txt = translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
-                local atttbl = ArcCW.AttachmentTable[slot.Installed or ""]
+                local atttbl = ArcCW.AttachmentTable[installed or ""]
 
                 if atttbl then
-                    txt =  translate("name." .. slot.Installed) or atttbl.PrintName
+                    txt =  translate("name." .. installed) or atttbl.PrintName
                     att_icon = slot.DefaultAttIcon or atttbl.Icon
                 end
 
@@ -517,7 +622,7 @@ function SWEP:CreateCustomize2HUD()
             local cal = translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre) or self.Trivia_Calibre
             local name = class
 
-            if !self.PrimaryMelee and !self.Throwing then
+            if !self.PrimaryMelee and !self.Throwing and cal then
                 name = name .. ", " .. cal
             end
 
@@ -556,7 +661,7 @@ function SWEP:CreateCustomize2HUD()
         local multiline = {}
         local desc = translate(self:GetBuff_Override("Override_Trivia_Desc")) or translate("desc." .. self:GetClass()) or self.Trivia_Desc
 
-        multiline = multlinetext(desc, scroll:GetWide(), "ArcCW_10")
+        multiline = multlinetext(desc, scroll:GetWide() - (ss * 2), "ArcCW_10")
 
         local desc_title = vgui.Create("DPanel", scroll)
         desc_title:SetSize(scroll:GetWide(), rss * 8)
@@ -604,8 +709,6 @@ function SWEP:CreateCustomize2HUD()
             local infos = {}
 
             local year = self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year
-
-            year = tostring(year)
 
             if year then
                 if isnumber(year) and year < 0 then
