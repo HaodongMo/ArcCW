@@ -186,7 +186,7 @@ function SWEP:CreateCustomize2HUD()
     local smallgap = ss * 4
 
     local top_zone = ss * 24
-    local bottom_zone = ss * 62
+    local bottom_zone = ss * 68
 
     local cornerrad = ss * 4
 
@@ -473,7 +473,7 @@ function SWEP:CreateCustomize2HUD()
             if !att then continue end
             if !istable(att) then continue end
 
-            local show = self:ValidateAttachment(att.att, nil, att.slot)
+            local show, _, _ = self:ValidateAttachment(att.att, nil, att.slot)
             -- if !ArcCW.AttachmentTable[att] then continue end
 
             if !show then continue end
@@ -613,9 +613,13 @@ function SWEP:CreateCustomize2HUD()
                     ArcCW.InvHUD_Menu2:Clear()
                     clearrightpanel()
                 else
-                    self.Inv_SelectedSlot = self2.attindex
-                    ArcCW.InvHUD_FormAttachmentSelect()
-                    ArcCW.InvHUD_FormAttachmentStats(self2.attindex, self2.attindex)
+                    local aslot = self.Attachments[i]
+
+                    if self:CheckFlags(aslot.ExcludeFlags, aslot.RequireFlags) then
+                        self.Inv_SelectedSlot = self2.attindex
+                        ArcCW.InvHUD_FormAttachmentSelect()
+                        ArcCW.InvHUD_FormAttachmentStats(self2.attindex, self2.attindex)
+                    end
                 end
             end
             button.DoRightClick = function(self2)
@@ -629,6 +633,13 @@ function SWEP:CreateCustomize2HUD()
                 if self2:IsHovered() or self.Inv_SelectedSlot == self2.attindex then
                     col = col_fg_tr
                     col2 = col_shadow
+                end
+
+                local aslot = self.Attachments[i]
+
+                if !self:CheckFlags(aslot.ExcludeFlags, aslot.RequireFlags) then
+                    col = col_block
+                    col2 = col_block_txt
                 end
 
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
@@ -841,7 +852,7 @@ function SWEP:CreateCustomize2HUD()
 
         local pan_pros = vgui.Create("DPanel", scroll_pros)
         pan_pros:SetPos(0, 0)
-        pan_pros.Paint = function()
+        pan_pros.Paint = function(self2, w, h)
         end
 
         local pan_cons = vgui.Create("DPanel", scroll_pros)
@@ -920,22 +931,50 @@ function SWEP:CreateCustomize2HUD()
 
             local tp = h + (ss * 2)
 
-            surface.SetFont("ArcCW_12_Glow")
+            surface.SetFont("ArcCW_10_Glow")
             surface.SetTextColor(col_shadow)
             surface.SetTextPos(tp, 0)
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
 
-            surface.SetFont("ArcCW_12")
+            surface.SetFont("ArcCW_10")
             surface.SetTextColor(self2.Color)
             surface.SetTextPos(tp, 0)
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
         end
 
+        local function headpaintfunc(self2, w, h)
+            local tp = 0
+
+            surface.SetFont("ArcCW_8_Glow")
+            surface.SetTextColor(col_shadow)
+            surface.SetTextPos(tp, 0)
+            DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
+
+            surface.SetFont("ArcCW_8")
+            surface.SetTextColor(self2.Color)
+            surface.SetTextPos(tp, 0)
+            DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
+        end
+
+        local pan_head = vgui.Create("DPanel", pan_pros)
+        pan_head:SetSize(p_w, rss * 8)
+        pan_head:SetPos(0, 0)
+        pan_head.Paint = headpaintfunc
+        pan_head.Text = translate("ui.positives")
+        pan_head.Color = col_good
+
+        local cons_head = vgui.Create("DPanel", pan_cons)
+        cons_head:SetSize(p_w, rss * 8)
+        cons_head:SetPos(0, 0)
+        cons_head.Paint = headpaintfunc
+        cons_head.Text = translate("ui.negatives")
+        cons_head.Color = col_bad
+
         for i, line in pairs(pros) do
             if !line or line == "" then continue end
             local pan_line = vgui.Create("DPanel", pan_pros)
-            pan_line:SetSize(p_w, rss * 12)
-            pan_line:SetPos(0, rss * 12 * (i - 1))
+            pan_line:SetSize(p_w, rss * 10)
+            pan_line:SetPos(0, rss * 10 * i)
             pan_line.Paint = linepaintfunc
             pan_line.Text = line
             pan_line.Color = col_good
@@ -946,8 +985,8 @@ function SWEP:CreateCustomize2HUD()
         for i, line in pairs(cons) do
             if !line or line == "" then continue end
             local pan_line = vgui.Create("DPanel", pan_cons)
-            pan_line:SetSize(p_w, rss * 12)
-            pan_line:SetPos(0, rss * 12 * (i - 1))
+            pan_line:SetSize(p_w, rss * 10)
+            pan_line:SetPos(0, rss * 10 * i)
             pan_line.Paint = linepaintfunc
             pan_line.Text = line
             pan_line.Color = col_bad
@@ -956,11 +995,18 @@ function SWEP:CreateCustomize2HUD()
         pan_cons:SizeToChildren(true, true)
 
         if #infos > 0 then
+            local infos_head = vgui.Create("DPanel", pan_infos)
+            infos_head:SetSize(p_w, rss * 8)
+            infos_head:SetPos(0, 0)
+            infos_head.Paint = headpaintfunc
+            infos_head.Text = translate("ui.information")
+            infos_head.Color = col_info
+
             for i, line in pairs(infos) do
                 if !line or line == "" then continue end
                 local pan_line = vgui.Create("DPanel", pan_infos)
-                pan_line:SetSize(p_w, rss * 12)
-                pan_line:SetPos(0, rss * 12 * (i - 1))
+                pan_line:SetSize(p_w, rss * 10)
+                pan_line:SetPos(0, rss * 10 * i)
                 pan_line.Paint = linepaintfunc
                 pan_line.Text = line
                 pan_line.Color = col_info

@@ -140,14 +140,19 @@ end
 function SWEP:ValidateAttachment(attname, attslot, i)
     if !self:IsValid() or !self.Attachments then return false end
     local atttbl = ArcCW.AttachmentTable[attname]
+    if !atttbl then return true, nil, nil, nil end
 
     attslot = attslot or self.Attachments[i]
 
     local show = true
     local showqty = true
     local installed = false
-    local blocked = atttbl and !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
+    local blocked = !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
     local owned = self:PlayerOwnsAtt(attname)
+
+    if !ArcCW:SlotAcceptsAtt(attslot.Slot or "", self, attname) then
+        blocked = true
+    end
 
     if !atttbl or atttbl.Free then
         showqty = false
@@ -193,8 +198,8 @@ function SWEP:ValidateAttachment(attname, attslot, i)
             blocked = true
             if self.Attachments[slot].HideIfBlocked then
                 show = false
-                break
             end
+            break
         end
         if self.Attachments[slot].Installed == attname then
             installed = true
