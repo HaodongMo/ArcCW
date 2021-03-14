@@ -155,9 +155,9 @@ function SWEP:CreateCustomize2HUD()
         col_block_txt = Color(10, 10, 10, 255)
     end
 
-    local col_bad = Color(255, 25, 25, 255)
-    local col_good = Color(25, 255, 25, 255)
-    local col_info = Color(25, 25, 255, 255)
+    local col_bad = Color(255, 50, 50, 255)
+    local col_good = Color(100, 255, 100, 255)
+    local col_info = Color(75, 75, 255, 255)
 
     ArcCW.Inv_ShownAtt = nil
 
@@ -493,7 +493,7 @@ function SWEP:CreateCustomize2HUD()
                     self2:DoRightClick()
                 else
                     self:Attach(self2.attslot, self2.att)
-                    ArcCW.InvHUD_FormAttachmentStats(self2.att)
+                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot)
                 end
             end
             button.DoRightClick = function(self2)
@@ -518,7 +518,7 @@ function SWEP:CreateCustomize2HUD()
                 end
 
                 if self2:IsHovered() then
-                    ArcCW.InvHUD_FormAttachmentStats(self2.att)
+                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot)
                 end
 
                 local owned = ArcCW:PlayerGetAtts(self:GetOwner(), att.att) > 0
@@ -615,7 +615,7 @@ function SWEP:CreateCustomize2HUD()
                 else
                     self.Inv_SelectedSlot = self2.attindex
                     ArcCW.InvHUD_FormAttachmentSelect()
-                    ArcCW.InvHUD_FormAttachmentStats(self2.attindex)
+                    ArcCW.InvHUD_FormAttachmentStats(self2.attindex, self2.attindex)
                 end
             end
             button.DoRightClick = function(self2)
@@ -708,7 +708,7 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.InvHUD_Menu3:SetPos(scrw - menu3_w, airgap_y + smallgap)
     ArcCW.InvHUD_Menu3:SetSize(menu3_w, menu3_h)
 
-    function ArcCW.InvHUD_FormAttachmentStats(att)
+    function ArcCW.InvHUD_FormAttachmentStats(att, slot)
         if ArcCW.Inv_ShownAtt == att then return end
         if isnumber(att) then
             local installed = self:GetSlotInstalled(att)
@@ -816,6 +816,157 @@ function SWEP:CreateCustomize2HUD()
                 surface.SetTextPos(w - tw, 0)
                 surface.DrawText(text)
             end
+        end
+
+        local scroll_pros = vgui.Create("DScrollPanel", ArcCW.InvHUD_Menu3)
+        scroll_pros:SetSize(menu3_w, ss * 172)
+        scroll_pros:SetPos(0, menu3_h - (ss * 172))
+
+        local scroll_bar_pros = scroll_pros:GetVBar()
+        scroll_bar_pros.Paint = function() end
+
+        scroll_bar_pros.btnUp.Paint = function(span, w, h)
+        end
+        scroll_bar_pros.btnDown.Paint = function(span, w, h)
+        end
+        scroll_bar_pros.btnGrip.Paint = PaintScrollBar
+
+        local pros, cons, infos = ArcCW:GetProsCons(atttbl, self.Attachments[slot].ToggleNum)
+
+        pros = pros or {}
+        cons = cons or {}
+        infos = infos or {}
+
+        local p_w = menu3_w / 2
+
+        local pan_pros = vgui.Create("DPanel", scroll_pros)
+        pan_pros:SetPos(0, 0)
+        pan_pros.Paint = function()
+        end
+
+        local pan_cons = vgui.Create("DPanel", scroll_pros)
+        pan_cons:SetPos(menu3_w * 1 / 2, 0)
+        pan_cons.Paint = function()
+        end
+
+        local pan_infos
+
+        if #infos > 0 then
+            pan_infos = vgui.Create("DPanel", scroll_pros)
+            pan_infos:SetPos(menu3_w * 1 / 3, 0)
+            pan_cons:SetPos(menu3_w * 2 / 3, 0)
+
+            p_w = menu3_w / 3
+        end
+
+        if #pros > 0 then
+            if #cons > 0 then
+                if #infos > 0 then
+                    // all 3
+                    pan_infos:SetPos(menu3_w * 1 / 3, 0)
+                    pan_cons:SetPos(menu3_w * 2 / 3, 0)
+
+                    p_w = menu3_w / 3
+                else
+                    // pros, cons, no info
+                    pan_cons:SetPos(menu3_w * 1 / 2, 0)
+
+                    p_w = menu3_w / 2
+                end
+            else
+                if #infos > 0 then
+                    // pros + info
+                    pan_infos:SetPos(menu3_w * 1 / 2, 0)
+
+                    p_w = menu3_w / 2
+                else
+                    // just pros
+                    p_w = menu3_w
+                end
+            end
+        else
+            if #cons > 0 then
+                if #infos > 0 then
+                    // just cons and infos
+                    pan_infos:SetPos(menu3_w * 0, 0)
+                    pan_cons:SetPos(menu3_w * 1 / 2, 0)
+
+                    p_w = menu3_w / 2
+                else
+                    // just cons
+                    pan_cons:SetPos(menu3_w * 0, 0)
+
+                    p_w = menu3_w
+                end
+            else
+                if #infos > 0 then
+                    // just infos
+                    pan_infos:SetPos(menu3_w * 0, 0)
+
+                    p_w = menu3_w
+                // else
+                    // nothing
+                end
+            end
+        end
+
+        local function linepaintfunc(self2, w, h)
+            surface.SetDrawColor(self2.Color)
+            surface.SetMaterial(pickx_full)
+
+            local imsize = h * 0.45
+
+            surface.DrawTexturedRect((h - imsize) / 2, ((h - imsize) / 2) + (ss * 2), imsize, imsize)
+
+            local tp = h + (ss * 2)
+
+            surface.SetFont("ArcCW_12_Glow")
+            surface.SetTextColor(col_shadow)
+            surface.SetTextPos(tp, 0)
+            DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
+
+            surface.SetFont("ArcCW_12")
+            surface.SetTextColor(self2.Color)
+            surface.SetTextPos(tp, 0)
+            DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
+        end
+
+        for i, line in pairs(pros) do
+            if !line or line == "" then continue end
+            local pan_line = vgui.Create("DPanel", pan_pros)
+            pan_line:SetSize(p_w, rss * 12)
+            pan_line:SetPos(0, rss * 12 * (i - 1))
+            pan_line.Paint = linepaintfunc
+            pan_line.Text = line
+            pan_line.Color = col_good
+        end
+
+        pan_pros:SizeToChildren(true, true)
+
+        for i, line in pairs(cons) do
+            if !line or line == "" then continue end
+            local pan_line = vgui.Create("DPanel", pan_cons)
+            pan_line:SetSize(p_w, rss * 12)
+            pan_line:SetPos(0, rss * 12 * (i - 1))
+            pan_line.Paint = linepaintfunc
+            pan_line.Text = line
+            pan_line.Color = col_bad
+        end
+
+        pan_cons:SizeToChildren(true, true)
+
+        if #infos > 0 then
+            for i, line in pairs(infos) do
+                if !line or line == "" then continue end
+                local pan_line = vgui.Create("DPanel", pan_infos)
+                pan_line:SetSize(p_w, rss * 12)
+                pan_line:SetPos(0, rss * 12 * (i - 1))
+                pan_line.Paint = linepaintfunc
+                pan_line.Text = line
+                pan_line.Color = col_info
+            end
+
+            pan_infos:SizeToChildren(true, true)
         end
     end
 
