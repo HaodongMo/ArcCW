@@ -988,7 +988,7 @@ function SWEP:CreateCustomizeHUD()
 
                         if spaa.AttName == "" then
                             self:DetachAllMergeSlots(span.AttIndex)
-                        else
+                        elseif span.AttSlot.Installed != spaa.AttName then
                             self:DetachAllMergeSlots(span.AttIndex, true)
                             self:Attach(aslot, spaa.AttName)
                         end
