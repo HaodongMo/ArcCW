@@ -141,6 +141,9 @@ function SWEP:ValidateAttachment(attname, attslot, i)
     if !self:IsValid() or !self.Attachments then return false end
     local atttbl = ArcCW.AttachmentTable[attname]
 
+    attslot = attslot or self.Attachments[i]
+
+    local show = true
     local showqty = true
     local installed = false
     local blocked = atttbl and !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
@@ -154,9 +157,9 @@ function SWEP:ValidateAttachment(attname, attslot, i)
         showqty = false
     end
 
-    if !owned then
-        showqty = false
-    end
+    -- if !owned then
+    --     showqty = false
+    -- end
 
     if GetConVar("arccw_attinv_lockmode"):GetBool() then
         showqty = false
@@ -170,31 +173,6 @@ function SWEP:ValidateAttachment(attname, attslot, i)
         installed = true
     end
 
-    for _, slot in pairs(attslot.MergeSlots or {}) do
-        if !slot then continue end
-        if !self.Attachments[slot] then continue end
-        if !blocked and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, attname) and
-                !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
-                !orighas then
-            blocked = true
-            if self.Attachments[slot].HideIfBlocked then
-                return false
-            end
-        end
-        if self.Attachments[slot].Installed == attname then
-            installed = true
-            break
-        end
-    end
-
-    if blocked and atttbl and atttbl.HideIfBlocked then
-        return false
-    end
-
-    if !owned and atttbl and atttbl.HideIfUnavailable then
-        return false
-    end
-
     if attname == "" and !attslot.Installed then
         installed = true
 
@@ -206,7 +184,37 @@ function SWEP:ValidateAttachment(attname, attslot, i)
         end
     end
 
-    return true, installed, blocked, showqty
+    for _, slot in pairs(attslot.MergeSlots or {}) do
+        if !slot then continue end
+        if !self.Attachments[slot] then continue end
+        if !blocked and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, attname) and
+                !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
+                !orighas then
+            blocked = true
+            if self.Attachments[slot].HideIfBlocked then
+                show = false
+                break
+            end
+        end
+        if self.Attachments[slot].Installed == attname then
+            installed = true
+            break
+        end
+    end
+
+    if blocked and atttbl and atttbl.HideIfBlocked then
+        show = false
+    end
+
+    if !owned and atttbl and atttbl.HideIfUnavailable then
+        show = false
+    end
+
+    if !owned and GetConVar("arccw_attinv_hideunowned"):GetBool() then
+        show = false
+    end
+
+    return show, installed, blocked, showqty
 end
 
 function SWEP:OpenCustomizeHUD()

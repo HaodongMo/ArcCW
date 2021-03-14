@@ -1102,6 +1102,12 @@ function SWEP:Attach(slot, attname, silent, noadjust)
         end
     else
         self:DetachAllMergeSlots(slot)
+
+        for i, k in pairs(self.Attachments) do
+            if table.HasValue(k.MergeSlots or {}, slot) then
+                self:DetachAllMergeSlots(i)
+            end
+        end
     end
 
     attslot.Installed = attname

@@ -37,6 +37,33 @@ local function multlinetext(text, maxw, font)
     return content
 end
 
+function SWEP:ShowInventoryButton()
+    if GetConVar("arccw_attinv_free"):GetBool() then return false end
+    if GetConVar("arccw_attinv_lockmode"):GetBool() then return false end
+    if !GetConVar("arccw_enable_dropping"):GetBool() then return false end
+
+    return true
+end
+
+function SWEP:GetSlotInstalled(i)
+    local slot = self.Attachments[i]
+    local installed = slot.Installed
+
+    if !installed then
+        for _, slot2 in pairs(slot.MergeSlots or {}) do
+            if !isnumber(slot2) then continue end
+            if self.Attachments[slot2] and self.Attachments[slot2].Installed then
+                installed = self.Attachments[slot2].Installed
+                break
+            elseif !self.Attachments[slot2] then
+                print("ERROR! No attachment " .. tostring(slot2))
+            end
+        end
+    end
+
+    return installed
+end
+
 local function LerpColor(d, col1, col2)
     local r = Lerp(d, col1.r, col2.r)
     local g = Lerp(d, col1.g, col2.g)
@@ -92,14 +119,19 @@ local blockedatticon = Material("hud/atts/blocked.png", "mips smooth")
 local pickx_empty = Material("hud/pickx_empty.png", "mips smooth")
 local pickx_full = Material("hud/pickx_filled.png", "mips smooth")
 
+local grad = Material("hud/grad.png", "mips smooth")
+
+local bird = Material("hud/arccw_bird.png", "mips smooth")
+
 -- 1: Customize
 -- 2: Presets
+-- 3: Inventory
 ArcCW.Inv_SelectedMenu = 1
 
 -- Selected inventory slot
 SWEP.Inv_SelectedSlot = 0
 
-SWEP.Inv_Scroll = 0
+SWEP.Inv_Scroll = {}
 
 -- 1: Stats
 -- 2: Trivia
@@ -107,11 +139,27 @@ ArcCW.Inv_SelectedInfo = 1
 
 ArcCW.Inv_Fade = 0
 
+ArcCW.Inv_ShownAtt = nil
+
 function SWEP:CreateCustomize2HUD()
     local col_fg = Color(255, 255, 255, 255)
     local col_fg_tr = Color(255, 255, 255, 125)
     local col_shadow = Color(0, 0, 0, 255)
     local col_button = Color(0, 0, 0, 175)
+
+    local col_block = Color(50, 0, 0, 175)
+    local col_block_txt = Color(175, 10, 10, 255)
+
+    if GetConVar("arccw_attinv_darkunowned"):GetBool() then
+        col_block = Color(0, 0, 0, 100)
+        col_block_txt = Color(10, 10, 10, 255)
+    end
+
+    local col_bad = Color(255, 25, 25, 255)
+    local col_good = Color(25, 255, 25, 255)
+    local col_info = Color(25, 25, 255, 255)
+
+    ArcCW.Inv_ShownAtt = nil
 
     local scrw, scrh = ScrW(), ScrH()
     if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
@@ -150,21 +198,38 @@ function SWEP:CreateCustomize2HUD()
         draw.RoundedBox(ss * 1, (w - s) / 2, 0, s, h, col_fg)
     end
 
+    local function clearrightpanel()
+        if ArcCW.Inv_SelectedInfo == 1 then
+            ArcCW.InvHUD_FormWeaponStats()
+        elseif ArcCW.Inv_SelectedInfo == 2  then
+            ArcCW.InvHUD_FormWeaponTrivia()
+        end
+    end
+
     ArcCW.InvHUD:SetPos(0, 0)
     ArcCW.InvHUD:SetSize(scrw, scrh)
     ArcCW.InvHUD:Center()
+    ArcCW.InvHUD:SetDraggable(false)
     ArcCW.InvHUD:SetText("")
     ArcCW.InvHUD:SetTitle("")
     ArcCW.InvHUD:ShowCloseButton(false)
-    ArcCW.InvHUD.Paint = function(span)
+    ArcCW.InvHUD.Paint = function(self2)
         if !IsValid(self) then
             gui.EnableScreenClicker(false)
-            span:Remove()
+            self2:Remove()
         end
 
         if --[[self:GetState() != ArcCW.STATE_CUSTOMIZE or]] self:GetReloading() then
-            span:Remove()
+            self2:Remove()
         end
+
+        self2.Fade = self2.Fade or 0
+
+        self2.Fade = math.Approach(self2.Fade, 1, FrameTime() / 0.1)
+
+        surface.SetDrawColor(Color(0, 0, 0, 255 * self2.Fade))
+        surface.SetMaterial(grad)
+        surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
     end
     ArcCW.InvHUD.ActiveWeapon = self
     ArcCW.InvHUD.OnRemove = function()
@@ -308,6 +373,20 @@ function SWEP:CreateCustomize2HUD()
     end
     presetsbutton.Paint = customizebutton.Paint
 
+    if self:ShowInventoryButton() then
+        local inventorybutton = vgui.Create("DButton", ArcCW.InvHUD)
+        inventorybutton:SetSize(ss * 72, ss * 16)
+        inventorybutton:SetPos(airgap_x + customizebutton:GetWide() + (ss * 8 * 2) + presetsbutton:GetWide(), airgap_y + ss * 8)
+        inventorybutton:SetText("")
+        inventorybutton.Text = translate("ui.inventory")
+        inventorybutton.Val = 3
+        inventorybutton.DoClick = function(self2, clr, btn)
+            ArcCW.Inv_SelectedMenu = 3
+            ArcCW.InvHUD_FormAttachments()
+        end
+        inventorybutton.Paint = customizebutton.Paint
+    end
+
     local menu2_x, menu2_y = ArcCW.InvHUD_Menu1:GetPos()
     menu2_x = menu2_x + ArcCW.InvHUD_Menu1:GetWide() + smallgap
     local menu2_w = bar2_w
@@ -318,24 +397,21 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.InvHUD_Menu2:SetPos(menu2_x, menu2_y)
     ArcCW.InvHUD_Menu2:SetSize(menu2_w, menu2_h)
 
-    PrintTable(ArcCW.InvHUD_Menu2:GetTable())
-
     -- ArcCW.InvHUD_Menu2.Paint = function(self2, w, h)
     --     draw.RoundedBox(2, 0, 0, w, h, col_fg)
     -- end
 
     local scroll_2 = ArcCW.InvHUD_Menu2:GetVBar()
-    scroll_2:SetScroll(self.Inv_Scroll)
     scroll_2.AlreadySet = false
     scroll_2.Paint = function(self2, w, h)
         if !self2.AlreadySet then
-            self2:SetScroll(self.Inv_Scroll)
+            self2:SetScroll(self.Inv_Scroll[self.Inv_SelectedSlot or 0] or 0)
             self2.AlreadySet = true
         end
 
         local scroll = self2:GetScroll()
 
-        self.Inv_Scroll = scroll
+        self.Inv_Scroll[self.Inv_SelectedSlot or 0] = scroll
     end
 
     scroll_2.btnUp.Paint = function(span, w, h)
@@ -345,6 +421,7 @@ function SWEP:CreateCustomize2HUD()
     scroll_2.btnGrip.Paint = PaintScrollBar
 
     function ArcCW.InvHUD_FormAttachmentSelect()
+        if !IsValid(ArcCW.InvHUD) then return end
         ArcCW.InvHUD_Menu2:Clear()
 
         local slot = self.Attachments[self.Inv_SelectedSlot or 0]
@@ -368,7 +445,10 @@ function SWEP:CreateCustomize2HUD()
             end
         end
 
-        atts[0] = ""
+        atts[0] = {
+            att = "",
+            slot = self.Inv_SelectedSlot
+        }
 
         table.sort(atts, function(a, b)
             a = a.att or ""
@@ -392,7 +472,12 @@ function SWEP:CreateCustomize2HUD()
         for _, att in pairs(atts) do
             if !att then continue end
             if !istable(att) then continue end
+
+            local show = self:ValidateAttachment(att.att, nil, att.slot)
             -- if !ArcCW.AttachmentTable[att] then continue end
+
+            if !show then continue end
+
             local button = vgui.Create("DButton", ArcCW.InvHUD_Menu2)
             button.att = att.att
             button.attslot = att.slot
@@ -403,17 +488,27 @@ function SWEP:CreateCustomize2HUD()
             button.DoClick = function(self2, clr, btn)
                 -- self.Inv_SelectedSlot = self2.attindex
                 -- ArcCW.InvHUD_FormAttachmentSelect()
-                self:DetachAllMergeSlots(self2.attslot, true)
-                self:Attach(self2.attslot, self2.att)
+                -- self:DetachAllMergeSlots(self2.attslot, true)
+                if self2.att == "" then
+                    self2:DoRightClick()
+                else
+                    self:Attach(self2.attslot, self2.att)
+                    ArcCW.InvHUD_FormAttachmentStats(self2.att)
+                end
             end
             button.DoRightClick = function(self2)
                 self:DetachAllMergeSlots(self2.attslot)
+                ArcCW.InvHUD_FormAttachmentSelect()
             end
             button.Paint = function(self2, w, h)
                 local col = col_button
                 local col2 = col_fg
 
-                if self2:IsHovered() then
+                local _, _, blocked, showqty = self:ValidateAttachment(att.att, nil, att.slot)
+
+                local installed = self:GetSlotInstalled(self2.attslot)
+
+                if self2:IsHovered() or self2.att == installed or (self2.att == "" and !installed) then
                     col = col_fg_tr
                     col2 = col_shadow
 
@@ -422,20 +517,68 @@ function SWEP:CreateCustomize2HUD()
                 --     self2:SetSize(menu2_w - (2 * ss), smallbuttonheight)
                 end
 
+                if self2:IsHovered() then
+                    ArcCW.InvHUD_FormAttachmentStats(self2.att)
+                end
+
+                local owned = ArcCW:PlayerGetAtts(self:GetOwner(), att.att) > 0
+
+                if blocked or !owned then
+                    col = col_block
+                    col2 = col_block_txt
+                end
+
+                if !owned then
+                    showqty = false
+                end
+
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
-                local atttbl = ArcCW.AttachmentTable[self2.att]
+                local icon_h = h
+
+                local atttbl = ArcCW.AttachmentTable[self2.att or ""]
+
+                if !self2.att or self2.att == "" then
+                    local attslot = self.Attachments[self2.attslot]
+                    atttbl = {
+                        PrintName = translate(attslot.DefaultAttName) or attslot.DefaultAttName or translate("attslot.noatt"),
+                        Icon = attslot.DefaultAttIcon or defaultatticon
+                    }
+                end
+
+                local buffer = 0
+
+                if showqty then
+                    local amt = ArcCW:PlayerGetAtts(self:GetOwner(), self2.att) or 0
+
+                    amt = math.min(amt, 99)
+
+                    local amttxt = tostring(amt)
+
+                    surface.SetFont("ArcCW_8")
+                    local amt_w = surface.GetTextSize(amttxt)
+
+                    -- surface.SetTextColor(col_shadow)
+                    -- surface.SetFont("ArcCW_8_Glow")
+                    -- surface.SetTextPos(w - amt_w - (ss * 1), h - (rss * 8) - (ss * 1))
+                    -- surface.DrawText(amttxt)
+
+                    surface.SetTextColor(col2)
+                    surface.SetFont("ArcCW_8")
+                    surface.SetTextPos(w - amt_w - (ss * 4), h - (rss * 8) - (ss * 1))
+                    surface.DrawText(amttxt)
+
+                    buffer = amt_w + (ss * 6)
+                end
 
                 local txt = atttbl.PrintName or ""
                 txt = translate("name." .. self2.att) or translate(txt) or txt
-
-                local icon_h = h
 
                 surface.SetTextColor(col2)
                 surface.SetTextPos(icon_h + ss * 4, ss * 1)
                 surface.SetFont("ArcCW_12")
 
-                DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 1, w - icon_h - (ss * 4))
+                DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 1, w - icon_h - (ss * 4) - buffer)
 
                 local icon = atttbl.Icon or blockedatticon
 
@@ -449,6 +592,7 @@ function SWEP:CreateCustomize2HUD()
     -- add attachments
 
     function ArcCW.InvHUD_FormAttachments()
+        if !IsValid(ArcCW.InvHUD) then return end
         ArcCW.InvHUD_Menu1:Clear()
         for i, slot in pairs(self.Attachments) do
             if !istable(slot) then continue end
@@ -467,13 +611,16 @@ function SWEP:CreateCustomize2HUD()
                 if self.Inv_SelectedSlot == self2.attindex then
                     self.Inv_SelectedSlot = nil
                     ArcCW.InvHUD_Menu2:Clear()
+                    clearrightpanel()
                 else
                     self.Inv_SelectedSlot = self2.attindex
                     ArcCW.InvHUD_FormAttachmentSelect()
+                    ArcCW.InvHUD_FormAttachmentStats(self2.attindex)
                 end
             end
             button.DoRightClick = function(self2)
                 self:DetachAllMergeSlots(self2.attindex)
+                ArcCW.InvHUD_FormAttachmentSelect()
             end
             button.Paint = function(self2, w, h)
                 local col = col_button
@@ -486,19 +633,7 @@ function SWEP:CreateCustomize2HUD()
 
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
-                local installed = slot.Installed
-
-                if !installed then
-                    for _, slot2 in pairs(slot.MergeSlots or {}) do
-                        if !isnumber(slot2) then continue end
-                        if self.Attachments[slot2] and self.Attachments[slot2].Installed then
-                            installed = self.Attachments[slot2].Installed
-                            break
-                        elseif !self.Attachments[slot2] then
-                            print("ERROR! No attachment " .. tostring(slot2))
-                        end
-                    end
-                end
+                local installed = self:GetSlotInstalled(i)
 
                 local att_icon = defaultatticon
                 local txt = translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
@@ -514,17 +649,17 @@ function SWEP:CreateCustomize2HUD()
                 surface.SetDrawColor(col2)
                 local icon_h = h
                 surface.SetMaterial(att_icon)
-                surface.DrawTexturedRect(w - icon_h, 0, icon_h, icon_h)
+                surface.DrawTexturedRect(w - icon_h - ss * 2, 0, icon_h, icon_h)
 
                 surface.SetTextColor(col2)
                 surface.SetFont("ArcCW_10")
                 surface.SetTextPos(ss * 6, ss * 4)
-                DrawTextRot(self2, slot_txt, 0, 0, ss * 6, ss * 4, w - icon_h - ss * 2)
+                DrawTextRot(self2, slot_txt, 0, 0, ss * 6, ss * 4, w - icon_h - ss * 4)
                 -- surface.DrawText(slot.PrintName)
 
                 surface.SetFont("ArcCW_14")
                 surface.SetTextPos(ss * 6, ss * 14)
-                DrawTextRot(self2, txt, 0, 0, ss * 6, ss * 14, w - icon_h - ss * 2)
+                DrawTextRot(self2, txt, 0, 0, ss * 6, ss * 14, w - icon_h - ss * 4)
             end
         end
 
@@ -565,11 +700,6 @@ function SWEP:CreateCustomize2HUD()
         end
     end
 
-    ArcCW.InvHUD_FormAttachments()
-    if self.Inv_SelectedSlot then
-        ArcCW.InvHUD_FormAttachmentSelect()
-    end
-
     local menu3_h = scrh - airgap_y - bottom_zone
     local menu3_w = bar3_w
 
@@ -577,6 +707,117 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.InvHUD_Menu3 = vgui.Create("DScrollPanel", ArcCW.InvHUD)
     ArcCW.InvHUD_Menu3:SetPos(scrw - menu3_w, airgap_y + smallgap)
     ArcCW.InvHUD_Menu3:SetSize(menu3_w, menu3_h)
+
+    function ArcCW.InvHUD_FormAttachmentStats(att)
+        if ArcCW.Inv_ShownAtt == att then return end
+        if isnumber(att) then
+            local installed = self:GetSlotInstalled(att)
+
+            att = installed
+        end
+        if !att then
+            clearrightpanel()
+            return
+        end
+        local atttbl = ArcCW.AttachmentTable[att]
+
+        if !atttbl then return end
+
+        ArcCW.InvHUD_Menu3:Clear()
+
+        ArcCW.Inv_ShownAtt = att
+
+        local s = ss * 250
+
+        local bgim = vgui.Create("DLabel", ArcCW.InvHUD_Menu3)
+        bgim:SetText("")
+        bgim:SetPos(menu3_w - s - (ss * 25), 0)
+        bgim:SetSize(s, s)
+        bgim.Paint = function(self2, w, h)
+            local icon = atttbl.Icon or bird
+
+            surface.SetDrawColor(255, 255, 255, 25)
+            surface.SetMaterial(icon)
+            surface.DrawTexturedRect(0, 0, w, h)
+        end
+
+        local attname_panel = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
+        attname_panel:SetSize(menu3_w, rss * 24)
+        attname_panel:SetPos(0, rss * 16)
+        attname_panel.Paint = function(self2, w, h)
+            name = atttbl.PrintName
+
+            surface.SetFont("ArcCW_24")
+            local tw = surface.GetTextSize(name)
+
+            surface.SetTextColor(col_shadow)
+            surface.SetFont("ArcCW_24_Glow")
+            surface.SetTextPos(w - tw - airgap_x, 0)
+            DrawTextRot(self2, name, 0, 0, 0, 0, w - airgap_x)
+
+            surface.SetTextColor(col_fg)
+            surface.SetFont("ArcCW_24")
+            surface.SetTextPos(w - tw - airgap_x, 0)
+            DrawTextRot(self2, name, 0, 0, 0, 0, w - airgap_x, true)
+        end
+
+        local scroll = vgui.Create("DScrollPanel", ArcCW.InvHUD_Menu3)
+        scroll:SetSize(menu3_w - airgap_x, ss * 128)
+        scroll:SetPos(0, rss * 32 + ss * 16)
+
+        local scroll_bar = scroll:GetVBar()
+        scroll_bar.Paint = function() end
+
+        scroll_bar.btnUp.Paint = function(span, w, h)
+        end
+        scroll_bar.btnDown.Paint = function(span, w, h)
+        end
+        scroll_bar.btnGrip.Paint = PaintScrollBar
+
+        local multiline = {}
+        local desc = atttbl.Description
+
+        multiline = multlinetext(desc, scroll:GetWide() - (ss * 2), "ArcCW_10")
+
+        local desc_title = vgui.Create("DPanel", scroll)
+        desc_title:SetSize(scroll:GetWide(), rss * 8)
+        desc_title:Dock(TOP)
+        desc_title.Paint = function(self2, w, h)
+            surface.SetFont("ArcCW_8")
+            local txt = translate("trivia.description")
+            local tw_1 = surface.GetTextSize(txt)
+
+            surface.SetFont("ArcCW_8_Glow")
+            surface.SetTextColor(col_shadow)
+            surface.SetTextPos(w - tw_1, 0)
+            surface.DrawText(txt)
+
+            surface.SetFont("ArcCW_8")
+            surface.SetTextColor(col_fg)
+            surface.SetTextPos(w - tw_1, 0)
+            surface.DrawText(txt)
+        end
+
+        for i, text in pairs(multiline) do
+            local desc_line = vgui.Create("DPanel", scroll)
+            desc_line:SetSize(scroll:GetWide(), rss * 10)
+            desc_line:Dock(TOP)
+            desc_line.Paint = function(self2, w, h)
+                surface.SetFont("ArcCW_10")
+                local tw = surface.GetTextSize(text)
+
+                surface.SetFont("ArcCW_10_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw, 0)
+                surface.DrawText(text)
+
+                surface.SetFont("ArcCW_10")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw, 0)
+                surface.DrawText(text)
+            end
+        end
+    end
 
     function ArcCW.InvHUD_FormStatsTriviaBar()
         local statsbutton = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
@@ -653,8 +894,8 @@ function SWEP:CreateCustomize2HUD()
         weapon_cat:SetSize(menu3_w, rss * 16)
         weapon_cat:SetPos(0, rss * 32)
         weapon_cat.Paint = function(self2, w, h)
-            local class = translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or self.Trivia_Class
-            local cal = translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre) or self.Trivia_Calibre
+            local class = translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class
+            local cal = translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre) or self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre
             local name = class
 
             if !self.PrimaryMelee and !self.Throwing and cal then
@@ -1183,10 +1424,11 @@ function SWEP:CreateCustomize2HUD()
         end
     end
 
-    if ArcCW.Inv_SelectedInfo == 1 then
-        ArcCW.InvHUD_FormWeaponStats()
-    elseif ArcCW.Inv_SelectedInfo == 2  then
-        ArcCW.InvHUD_FormWeaponTrivia()
+    clearrightpanel()
+
+    ArcCW.InvHUD_FormAttachments()
+    if self.Inv_SelectedSlot then
+        ArcCW.InvHUD_FormAttachmentSelect()
     end
 
 end

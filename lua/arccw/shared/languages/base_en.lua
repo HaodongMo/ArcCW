@@ -259,6 +259,7 @@ L["dmg.shock"] = "Shock"
 
 L["ui.presets"] = "Presets"
 L["ui.customize"] = "Customize"
+L["ui.inventory"] = "Inventory"
 
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
