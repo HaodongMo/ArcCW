@@ -141,7 +141,7 @@ function SWEP:CreateCustomize2HUD()
     local cornerrad = ss * 4
 
     local bigbuttonheight = ss * 36
-    local smallbuttonheight = rss * 12
+    local smallbuttonheight = rss * 14
 
     local function PaintScrollBar(panel, w, h)
         local s = ss * 2
@@ -383,7 +383,7 @@ function SWEP:CreateCustomize2HUD()
             button.attslot = att.slot
             button:SetText("")
             button:SetSize(menu2_w - (2 * ss), smallbuttonheight)
-            button:DockMargin(0, smallgap, 0, 0)
+            button:DockMargin(0, 2 * ss, 0, 0)
             button:Dock(TOP)
             button.Paint = function(self2, w, h)
                 local col = col_button
@@ -409,9 +409,9 @@ function SWEP:CreateCustomize2HUD()
 
                 surface.SetTextColor(col2)
                 surface.SetTextPos(icon_h + ss * 4, ss * 1)
-                surface.SetFont("ArcCW_10")
+                surface.SetFont("ArcCW_12")
 
-                DrawTextRot(self2, txt, icon_h + (ss * 4), 0, ss * 4, ss * 1, w - icon_h - (ss * 4))
+                DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 1, w - icon_h - (ss * 4))
 
                 local icon = atttbl.Icon or blockedatticon
 
