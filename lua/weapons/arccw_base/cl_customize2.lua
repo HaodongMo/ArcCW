@@ -99,6 +99,8 @@ ArcCW.Inv_SelectedMenu = 1
 -- Selected inventory slot
 SWEP.Inv_SelectedSlot = 0
 
+SWEP.Inv_Scroll = 0
+
 -- 1: Stats
 -- 2: Trivia
 ArcCW.Inv_SelectedInfo = 1
@@ -316,12 +318,25 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.InvHUD_Menu2:SetPos(menu2_x, menu2_y)
     ArcCW.InvHUD_Menu2:SetSize(menu2_w, menu2_h)
 
+    PrintTable(ArcCW.InvHUD_Menu2:GetTable())
+
     -- ArcCW.InvHUD_Menu2.Paint = function(self2, w, h)
     --     draw.RoundedBox(2, 0, 0, w, h, col_fg)
     -- end
 
     local scroll_2 = ArcCW.InvHUD_Menu2:GetVBar()
-    scroll_2.Paint = function() end
+    scroll_2:SetScroll(self.Inv_Scroll)
+    scroll_2.AlreadySet = false
+    scroll_2.Paint = function(self2, w, h)
+        if !self2.AlreadySet then
+            self2:SetScroll(self.Inv_Scroll)
+            self2.AlreadySet = true
+        end
+
+        local scroll = self2:GetScroll()
+
+        self.Inv_Scroll = scroll
+    end
 
     scroll_2.btnUp.Paint = function(span, w, h)
     end
@@ -385,6 +400,15 @@ function SWEP:CreateCustomize2HUD()
             button:SetSize(menu2_w - (2 * ss), smallbuttonheight)
             button:DockMargin(0, 2 * ss, 0, 0)
             button:Dock(TOP)
+            button.DoClick = function(self2, clr, btn)
+                -- self.Inv_SelectedSlot = self2.attindex
+                -- ArcCW.InvHUD_FormAttachmentSelect()
+                self:DetachAllMergeSlots(self2.attslot, true)
+                self:Attach(self2.attslot, self2.att)
+            end
+            button.DoRightClick = function(self2)
+                self:DetachAllMergeSlots(self2.attslot)
+            end
             button.Paint = function(self2, w, h)
                 local col = col_button
                 local col2 = col_fg
@@ -440,8 +464,16 @@ function SWEP:CreateCustomize2HUD()
             button:DockMargin(0, smallgap, 0, 0)
             button:Dock(TOP)
             button.DoClick = function(self2, clr, btn)
-                self.Inv_SelectedSlot = self2.attindex
-                ArcCW.InvHUD_FormAttachmentSelect()
+                if self.Inv_SelectedSlot == self2.attindex then
+                    self.Inv_SelectedSlot = nil
+                    ArcCW.InvHUD_Menu2:Clear()
+                else
+                    self.Inv_SelectedSlot = self2.attindex
+                    ArcCW.InvHUD_FormAttachmentSelect()
+                end
+            end
+            button.DoRightClick = function(self2)
+                self:DetachAllMergeSlots(self2.attindex)
             end
             button.Paint = function(self2, w, h)
                 local col = col_button
@@ -534,6 +566,9 @@ function SWEP:CreateCustomize2HUD()
     end
 
     ArcCW.InvHUD_FormAttachments()
+    if self.Inv_SelectedSlot then
+        ArcCW.InvHUD_FormAttachmentSelect()
+    end
 
     local menu3_h = scrh - airgap_y - bottom_zone
     local menu3_w = bar3_w
