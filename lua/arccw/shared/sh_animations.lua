@@ -1,12 +1,3 @@
---[[
-
-Author: tochonement
-Email: tochonement@gmail.com
-
-13.03.2021
-
---]]
-
 if SERVER then
     util.AddNetworkString("arccw_animation")
 
