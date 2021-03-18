@@ -140,6 +140,7 @@ ArcCW.Inv_SelectedInfo = 1
 ArcCW.Inv_Fade = 0
 
 ArcCW.Inv_ShownAtt = nil
+ArcCW.Inv_Hidden = false
 
 function SWEP:CreateCustomize2HUD()
     local col_fg = Color(255, 255, 255, 255)
@@ -191,7 +192,7 @@ function SWEP:CreateCustomize2HUD()
     local cornerrad = ss * 4
 
     local bigbuttonheight = ss * 36
-    local smallbuttonheight = rss * 14
+    local smallbuttonheight = rss * 24
 
     local function PaintScrollBar(panel, w, h)
         local s = ss * 2
@@ -216,20 +217,42 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.InvHUD.Paint = function(self2)
         if !IsValid(self) then
             gui.EnableScreenClicker(false)
-            self2:Remove()
+            ArcCW.InvHUD:Remove()
         end
 
-        if --[[self:GetState() != ArcCW.STATE_CUSTOMIZE or]] self:GetReloading() then
-            self2:Remove()
-        end
-
-        self2.Fade = self2.Fade or 0
-
-        self2.Fade = math.Approach(self2.Fade, 1, FrameTime() / 0.1)
-
-        surface.SetDrawColor(Color(0, 0, 0, 255 * self2.Fade))
+        surface.SetDrawColor(Color(0, 0, 0, 255 * ArcCW.Inv_Fade))
         surface.SetMaterial(grad)
         surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+
+        if self:GetReloading() then
+            ArcCW.InvHUD:Remove()
+            return
+        end
+
+        local st = 1/8
+        if self:GetState() == ArcCW.STATE_CUSTOMIZE and !ArcCW.Inv_Hidden then
+            ArcCW.Inv_Fade = math.Approach(ArcCW.Inv_Fade, 1, FrameTime() * 1 / st)
+        else
+            ArcCW.Inv_Fade = math.Approach(ArcCW.Inv_Fade, 0, FrameTime() * 1 / st)
+            -- if (self:GetState() != ArcCW.STATE_CUSTOMIZE or !ArcCW.Inv_Hidden) and ArcCW.Inv_Fade == 0 then ArcCW.InvHUD:Remove() end
+                -- This'll completely screw up on multiplayer games and sometimes even singleplayer
+        end
+        col_fg = Color(255, 255, 255, 255 * ArcCW.Inv_Fade)
+        col_fg_tr = Color(255, 255, 255, 125 * ArcCW.Inv_Fade)
+        col_shadow = Color(0, 0, 0, 255 * ArcCW.Inv_Fade)
+        col_button = Color(0, 0, 0, 175 * ArcCW.Inv_Fade)
+
+        if GetConVar("arccw_attinv_darkunowned"):GetBool() then
+            col_block = Color(0, 0, 0, 100 * ArcCW.Inv_Fade)
+            col_block_txt = Color(10, 10, 10, 255 * ArcCW.Inv_Fade)
+        else
+            col_block = Color(50, 0, 0, 175 * ArcCW.Inv_Fade)
+            col_block_txt = Color(175, 10, 10, 255 * ArcCW.Inv_Fade)
+        end
+
+        --col_bad = Color(255, 50, 50, 255 * ArcCW.Inv_Fade)
+        --col_good = Color(100, 255, 100, 255 * ArcCW.Inv_Fade)
+        --col_info = Color(75, 75, 255, 255 * ArcCW.Inv_Fade)
     end
     ArcCW.InvHUD.ActiveWeapon = self
     ArcCW.InvHUD.OnRemove = function()
@@ -265,26 +288,34 @@ function SWEP:CreateCustomize2HUD()
     local closebutton = vgui.Create("DButton", ArcCW.InvHUD)
     closebutton:SetText("")
     closebutton:SetPos(scrw - smallbuttonheight - airgap_x, smallgap)
-    closebutton:SetSize(smallbuttonheight, bigbuttonheight)
+    closebutton:SetSize(smallbuttonheight*1, bigbuttonheight)
     closebutton.Paint = function(self2, w, h)
         local col = col_fg
 
         if self2:IsHovered() then
             col = col_shadow
         end
+        draw.RoundedBox(ss * 1, 0, 0, w, h, Color(127, 127, 127, 127))
+            -- Comment me! But it'll show when the HUD is alive.
 
         surface.SetTextColor(col_shadow)
-        surface.SetTextPos(ss * 1, 0)
+        surface.SetTextPos(ss * 8, 0)
         surface.SetFont("ArcCW_24_Glow")
         surface.DrawText("x")
 
         surface.SetTextColor(col)
-        surface.SetTextPos(ss * 1, 0)
+        surface.SetTextPos(ss * 8, 0)
         surface.SetFont("ArcCW_24")
         surface.DrawText("x")
     end
     closebutton.DoClick = function(self2, clr, btn)
-        self:CloseCustomizeHUD()
+        net.Start("arccw_togglecustomize")
+        net.WriteBool(false)
+        net.SendToServer()
+
+        if IsValid(self) and self.ToggleCustomizeHUD then
+            self:ToggleCustomizeHUD(false)
+        end
     end
 
     local hidebutton = vgui.Create("DButton", ArcCW.InvHUD)
@@ -295,21 +326,26 @@ function SWEP:CreateCustomize2HUD()
         local col = col_fg
 
         if self2:IsHovered() then
-            col = col_shadow
+            col = Color(col_shadow.r, col_shadow.g, col_shadow.b, col_shadow.a * ArcCW.Inv_Fade)
         end
+        draw.RoundedBox(ss * 1, 0, 0, w, h, Color(127, 127, 127, 127))
+            -- Comment me! But it'll show when the HUD is alive.
 
         surface.SetTextColor(col_shadow)
-        surface.SetTextPos(ss * 1, ss * -4)
+        surface.SetTextPos(ss * 8, ss * -4)
         surface.SetFont("ArcCW_24_Glow")
         surface.DrawText("_")
 
         surface.SetTextColor(col)
-        surface.SetTextPos(ss * 1, ss * -4)
+        surface.SetTextPos(ss * 8, ss * -4)
         surface.SetFont("ArcCW_24")
         surface.DrawText("_")
     end
     hidebutton.DoClick = function(self2, clr, btn)
-        self:CloseCustomizeHUD(true)
+        if IsValid(self) and self.ToggleCustomizeHUD then
+            ArcCW.Inv_Hidden = !ArcCW.Inv_Hidden
+            gui.EnableScreenClicker(false)
+        end
     end
 
     -- Menu for attachment slots/presets
@@ -646,13 +682,13 @@ function SWEP:CreateCustomize2HUD()
 
                 local installed = self:GetSlotInstalled(i)
 
-                local att_icon = defaultatticon
-                local txt = translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
+                local att_icon = slot.DefaultAttIcon or defaultatticon
+                local att_txt = translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
                 local atttbl = ArcCW.AttachmentTable[installed or ""]
 
                 if atttbl then
-                    txt =  translate("name." .. installed) or atttbl.PrintName
-                    att_icon = slot.DefaultAttIcon or atttbl.Icon
+                    att_txt = translate("name." .. installed) or atttbl.PrintName
+                    att_icon = atttbl and atttbl.Icon
                 end
 
                 local slot_txt = translate(slot.PrintName) or slot.PrintName
@@ -670,7 +706,7 @@ function SWEP:CreateCustomize2HUD()
 
                 surface.SetFont("ArcCW_14")
                 surface.SetTextPos(ss * 6, ss * 14)
-                DrawTextRot(self2, txt, 0, 0, ss * 6, ss * 14, w - icon_h - ss * 4)
+                DrawTextRot(self2, att_txt, 0, 0, ss * 6, ss * 14, w - icon_h - ss * 4)
             end
         end
 
@@ -747,7 +783,7 @@ function SWEP:CreateCustomize2HUD()
         bgim.Paint = function(self2, w, h)
             local icon = atttbl.Icon or bird
 
-            surface.SetDrawColor(255, 255, 255, 25)
+            surface.SetDrawColor(255, 255, 255, 25 * ArcCW.Inv_Fade)
             surface.SetMaterial(icon)
             surface.DrawTexturedRect(0, 0, w, h)
         end
@@ -922,7 +958,7 @@ function SWEP:CreateCustomize2HUD()
         end
 
         local function linepaintfunc(self2, w, h)
-            surface.SetDrawColor(self2.Color)
+            surface.SetDrawColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
             surface.SetMaterial(pickx_full)
 
             local imsize = h * 0.45
@@ -937,7 +973,7 @@ function SWEP:CreateCustomize2HUD()
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
 
             surface.SetFont("ArcCW_10")
-            surface.SetTextColor(self2.Color)
+            surface.SetTextColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
             surface.SetTextPos(tp, 0)
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
         end
@@ -951,7 +987,7 @@ function SWEP:CreateCustomize2HUD()
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
 
             surface.SetFont("ArcCW_8")
-            surface.SetTextColor(self2.Color)
+            surface.SetTextColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
             surface.SetTextPos(tp, 0)
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
         end

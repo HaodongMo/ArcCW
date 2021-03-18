@@ -140,29 +140,26 @@ function ScreenScale(a)
     return ScreenScale_Cache[a]
 end
 
-generatefonts()
-
 language.Add("SniperPenetratedRound_ammo", "Sniper Ammo")
 
-local lastScrH = ScrH()
-local lastScrW = ScrW()
-
-hook.Add("HUDPaint", "ArcCW_FontRegen", function()
-    if (lastScrH != ScrH()) or (lastScrW != ScrW()) then
+generatefonts()
+function ArcCW_Regen(full)
+    if full then
         generatefonts()
         ScreenScale_Cache = {}
     end
-
-    lastScrH = ScrH()
-    lastScrW = ScrW()
-end)
-
-cvars.AddChangeCallback("arccw_hud_size", function()
-    generatefonts()
-end)
-cvars.AddChangeCallback("arccw_font", function()
-    generatefonts()
-end)
+    if IsValid(ArcCW.InvHUD) then
+        ArcCW.InvHUD:Clear()
+        ArcCW.InvHUD:Remove()
+    end
+end
+ 
+cvars.AddChangeCallback("arccw_dev_cust2beta",  function() ArcCW_Regen() end)
+cvars.AddChangeCallback("arccw_hud_deadzone_x", function() ArcCW_Regen() end)
+cvars.AddChangeCallback("arccw_hud_deadzone_y", function() ArcCW_Regen() end)
+cvars.AddChangeCallback("arccw_hud_size",       function() ArcCW_Regen(true) end)
+cvars.AddChangeCallback("arccw_font",           function() ArcCW_Regen(true) end)
+hook.Add( "OnScreenSizeChanged", "ArcCW_Regen", function() ArcCW_Regen(true) end)
 
 -- surface.CreateFont( "ArcCW_12", {
 --     font = font,
