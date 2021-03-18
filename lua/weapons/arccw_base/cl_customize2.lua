@@ -648,6 +648,7 @@ function SWEP:CreateCustomize2HUD()
                     self.Inv_SelectedSlot = nil
                     ArcCW.InvHUD_Menu2:Clear()
                     clearrightpanel()
+                    if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/close.wav") end
                 else
                     local aslot = self.Attachments[i]
 
@@ -655,6 +656,7 @@ function SWEP:CreateCustomize2HUD()
                         self.Inv_SelectedSlot = self2.attindex
                         ArcCW.InvHUD_FormAttachmentSelect()
                         ArcCW.InvHUD_FormAttachmentStats(self2.attindex, self2.attindex)
+                        if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/open.wav") end
                     end
                 end
             end
