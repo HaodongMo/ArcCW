@@ -956,19 +956,23 @@ function SWEP:CreateCustomize2HUD()
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
         end
 
-        local pan_head = vgui.Create("DPanel", pan_pros)
-        pan_head:SetSize(p_w, rss * 8)
-        pan_head:SetPos(0, 0)
-        pan_head.Paint = headpaintfunc
-        pan_head.Text = translate("ui.positives")
-        pan_head.Color = col_good
+        if #pros > 0 then
+            local pan_head = vgui.Create("DPanel", pan_pros)
+            pan_head:SetSize(p_w, rss * 8)
+            pan_head:SetPos(0, 0)
+            pan_head.Paint = headpaintfunc
+            pan_head.Text = translate("ui.positives")
+            pan_head.Color = col_good
+        end
 
-        local cons_head = vgui.Create("DPanel", pan_cons)
-        cons_head:SetSize(p_w, rss * 8)
-        cons_head:SetPos(0, 0)
-        cons_head.Paint = headpaintfunc
-        cons_head.Text = translate("ui.negatives")
-        cons_head.Color = col_bad
+        if #cons > 0 then
+            local cons_head = vgui.Create("DPanel", pan_cons)
+            cons_head:SetSize(p_w, rss * 8)
+            cons_head:SetPos(0, 0)
+            cons_head.Paint = headpaintfunc
+            cons_head.Text = translate("ui.negatives")
+            cons_head.Color = col_bad
+        end
 
         for i, line in pairs(pros) do
             if !line or line == "" then continue end
