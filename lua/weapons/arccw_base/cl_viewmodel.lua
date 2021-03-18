@@ -67,8 +67,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     target.bob  = 2
 
     if self:GetReloading() then
-        if self.ReloadPos then target.pos = self.ReloadPos end
-        if self.ReloadAng then target.ang = self.ReloadAng end
+        if self:GetBuff_Override("Override_ReloadPos") or self.ReloadPos then target.pos = self.ReloadPos end
+        if self:GetBuff_Override("Override_ReloadAng") or self.ReloadAng then target.ang = self.ReloadAng end
     end
 
     local vm_right   = GetConVar("arccw_vm_right"):GetFloat()

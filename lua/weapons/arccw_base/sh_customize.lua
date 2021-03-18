@@ -231,6 +231,7 @@ function SWEP:OpenCustomizeHUD()
         gui.SetMousePos(ScrW() / 2, ScrH() / 2)
     end
 
+    ArcCW.Inv_Hidden = false
     gui.EnableScreenClicker(true)
 
     if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/extra.wav") end
@@ -239,14 +240,18 @@ end
 
 function SWEP:CloseCustomizeHUD( hide )
     if IsValid(ArcCW.InvHUD) then
-        ArcCW.InvHUD:Hide()
-        ArcCW.InvHUD:Clear()
-        if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then
-            vrmod.MenuClose( "ArcCW_Customize" )
+        if !GetConVar("arccw_dev_cust2beta"):GetBool() then
+            ArcCW.InvHUD:Hide()
+            ArcCW.InvHUD:Clear()
+            if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then
+                vrmod.MenuClose( "ArcCW_Customize" )
+            end
+            if !hide then
+                ArcCW.InvHUD:Remove()
+            end
         end
 
         if !hide then
-            ArcCW.InvHUD:Remove()
             gui.EnableScreenClicker(false)
         end
 
