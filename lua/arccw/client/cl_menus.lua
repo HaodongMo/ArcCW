@@ -157,6 +157,7 @@ local CrosshairPanel = {
     { type = "b", text = "#arccw.cvar.crosshair_shotgun", var = "arccw_crosshair_shotgun" },
     { type = "b", text = "#arccw.cvar.crosshair_equip", var = "arccw_crosshair_equip" },
     { type = "b", text = "#arccw.cvar.crosshair_static", var = "arccw_crosshair_static" },
+    { type = "b", text = "#arccw.cvar.crosshair_trueaim", var = "arccw_crosshair_trueaim" },
     { type = "b", text = "#arccw.cvar.crosshair_clump", var = "arccw_crosshair_clump" },
     { type = "b", text = "#arccw.cvar.crosshair_clump_outline", var = "arccw_crosshair_clump_outline" },
     { type = "b", text = "#arccw.cvar.crosshair_clump_always", var = "arccw_crosshair_clump_always" },
