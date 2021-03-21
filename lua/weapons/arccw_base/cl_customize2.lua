@@ -192,7 +192,7 @@ function SWEP:CreateCustomize2HUD()
     local cornerrad = ss * 4
 
     local bigbuttonheight = ss * 36
-    local smallbuttonheight = rss * 24
+    local smallbuttonheight = rss * 16
 
     local function PaintScrollBar(panel, w, h)
         local s = ss * 2
@@ -229,7 +229,7 @@ function SWEP:CreateCustomize2HUD()
             return
         end
 
-        local st = 1/8
+        local st = 1 / 8
         if self:GetState() == ArcCW.STATE_CUSTOMIZE and !ArcCW.Inv_Hidden then
             ArcCW.Inv_Fade = math.Approach(ArcCW.Inv_Fade, 1, FrameTime() * 1 / st)
         else
@@ -288,7 +288,7 @@ function SWEP:CreateCustomize2HUD()
     local closebutton = vgui.Create("DButton", ArcCW.InvHUD)
     closebutton:SetText("")
     closebutton:SetPos(scrw - smallbuttonheight - airgap_x, smallgap)
-    closebutton:SetSize(smallbuttonheight*1, bigbuttonheight)
+    closebutton:SetSize(smallbuttonheight * 1, bigbuttonheight)
     closebutton.Paint = function(self2, w, h)
         local col = col_fg
 
@@ -519,7 +519,7 @@ function SWEP:CreateCustomize2HUD()
             button.attslot = att.slot
             button:SetText("")
             button:SetSize(menu2_w - (2 * ss), smallbuttonheight)
-            button:DockMargin(0, 2 * ss, 0, 0)
+            button:DockMargin(0, smallgap, 0, 0)
             button:Dock(TOP)
             button.DoClick = function(self2, clr, btn)
                 -- self.Inv_SelectedSlot = self2.attindex
@@ -611,10 +611,10 @@ function SWEP:CreateCustomize2HUD()
                 txt = translate("name." .. self2.att) or translate(txt) or txt
 
                 surface.SetTextColor(col2)
-                surface.SetTextPos(icon_h + ss * 4, ss * 1)
+                surface.SetTextPos(icon_h + ss * 4, ss * 2)
                 surface.SetFont("ArcCW_12")
 
-                DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 1, w - icon_h - (ss * 4) - buffer)
+                DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 2, w - icon_h - (ss * 4) - buffer)
 
                 local icon = atttbl.Icon or blockedatticon
 
@@ -823,6 +823,79 @@ function SWEP:CreateCustomize2HUD()
         end
         scroll_bar.btnGrip.Paint = PaintScrollBar
 
+        local bottombuffer = 0
+
+        local m_w = menu3_w * 0.75
+        local leftbuffer = 0
+
+        if self.Attachments[slot].SlideAmount then
+            local slider = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
+
+            slider:SetSize(m_w * 2 / 3, rss * 10)
+            slider:SetPos(0, rss * 16 + rss * 24 + ss * 128 - (rss * 10))
+            slider:SetText("")
+            slider.Paint = function(self2, w, h)
+                local col = col_button
+                local col2 = col_fg
+
+                if self2:IsHovered() or ArcCW.Inv_SelectedInfo == self2.Val then
+                    col = col_fg_tr
+                    col2 = col_shadow
+                end
+
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+            end
+
+            leftbuffer = m_w * 2 / 3
+            bottombuffer = rss * 10
+        end
+
+        if atttbl.ToggleStats then
+            local toggle = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
+
+            toggle:SetSize(m_w * 1 / 3, rss * 10)
+            toggle:SetPos(leftbuffer + (ss * 4), rss * 16 + rss * 24 + ss * 128 - (rss * 10))
+            toggle:SetText("")
+            toggle.OnMousePressed = function(self2, kc)
+                self:ToggleSlot(slot)
+            end
+            toggle.Paint = function(self2, w, h)
+                local col = col_button
+                local col2 = col_fg
+
+                if self2:IsHovered() or ArcCW.Inv_SelectedInfo == self2.Val then
+                    col = col_fg_tr
+                    col2 = col_shadow
+                end
+
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+                local txt = (translate("ui.toggle"))
+                local catttbl = slot and ArcCW.AttachmentTable[self.Attachments[slot].Installed]
+                if catttbl and catttbl.ToggleStats[self.Attachments[slot].ToggleNum]
+                        and catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName then
+                    txt = ArcCW.TryTranslation(catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName)
+                end
+
+                surface.SetFont("ArcCW_8")
+                local tw, th = surface.GetTextSize(txt)
+
+                surface.SetFont("ArcCW_8_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(txt)
+
+                surface.SetFont("ArcCW_8")
+                surface.SetTextColor(col2)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(txt)
+            end
+
+            bottombuffer = rss * 10
+        end
+
+        scroll:SetSize(menu3_w - airgap_x, ss * 128 - bottombuffer)
+
         local multiline = {}
         local desc = atttbl.Description
 
@@ -830,7 +903,7 @@ function SWEP:CreateCustomize2HUD()
 
         local desc_title = vgui.Create("DPanel", scroll)
         desc_title:SetSize(scroll:GetWide(), rss * 8)
-        desc_title:Dock(TOP)
+        desc_title:SetPos(0, 0)
         desc_title.Paint = function(self2, w, h)
             surface.SetFont("ArcCW_8")
             local txt = translate("trivia.description")
@@ -850,7 +923,7 @@ function SWEP:CreateCustomize2HUD()
         for i, text in pairs(multiline) do
             local desc_line = vgui.Create("DPanel", scroll)
             desc_line:SetSize(scroll:GetWide(), rss * 10)
-            desc_line:Dock(TOP)
+            desc_line:SetPos(0, (rss * 10 * i) - (rss * 2))
             desc_line.Paint = function(self2, w, h)
                 surface.SetFont("ArcCW_10")
                 local tw = surface.GetTextSize(text)

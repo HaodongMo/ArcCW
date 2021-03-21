@@ -251,6 +251,8 @@ function SWEP:CloseCustomizeHUD( hide )
             end
         end
 
+        ArcCW.InvHUD:Remove()
+
         if !hide then
             gui.EnableScreenClicker(false)
         end
