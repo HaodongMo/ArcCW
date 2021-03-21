@@ -834,16 +834,61 @@ function SWEP:CreateCustomize2HUD()
             slider:SetSize(m_w * 2 / 3, rss * 10)
             slider:SetPos(0, rss * 16 + rss * 24 + ss * 128 - (rss * 10))
             slider:SetText("")
+            slider.Dragging = false
+            slider.NextDrag = 0
+            slider.OnRemove = function(self2)
+                self:SendDetail_SlidePos(slot)
+                self:SavePreset("autosave")
+            end
             slider.Paint = function(self2, w, h)
                 local col = col_button
                 local col2 = col_fg
 
-                if self2:IsHovered() or ArcCW.Inv_SelectedInfo == self2.Val then
+                if self2:IsHovered() or self2.Dragging then
                     col = col_fg_tr
                     col2 = col_shadow
                 end
 
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+                local linebuffer = ss * 8
+                local line_w = w - (linebuffer * 2)
+
+                if self2.Dragging or (self2:IsHovered() and input.IsMouseDown(MOUSE_LEFT)) then
+                    local x, y = self2:LocalCursorPos()
+
+                    local mouse_line_x = x - linebuffer
+
+                    local delta = mouse_line_x / line_w
+
+                    delta = math.Clamp(delta, 0, 1)
+
+                    if self.Attachments[slot].SlidePos != delta and self2.NextDrag <= CurTime() then
+                        -- local amt = math.abs(self.Attachments[slot].SlidePos - delta)
+                        EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
+                        self2.NextDrag = CurTime() + 0.05
+                    end
+
+                    self.Attachments[slot].SlidePos = delta
+
+                    self2.Dragging = true
+
+                    if !input.IsMouseDown(MOUSE_LEFT) then
+                        self2.Dragging = false
+
+                        self:SendDetail_SlidePos(slot)
+                        self:SavePreset("autosave")
+                    end
+                end
+
+                local slide = (self.Attachments[slot] or {}).SlidePos or 0.5
+
+                surface.SetDrawColor(col2)
+                surface.DrawLine(linebuffer, h / 2, w - linebuffer, h / 2)
+
+                local rect_x = slide * line_w + linebuffer
+                local rect_w = ss * 6
+                surface.DrawRect(rect_x - (rect_w / 2), (h - rect_w) / 2, rect_w, rect_w)
             end
 
             leftbuffer = m_w * 2 / 3
@@ -871,7 +916,7 @@ function SWEP:CreateCustomize2HUD()
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
                 local txt = (translate("ui.toggle"))
-                local catttbl = slot and ArcCW.AttachmentTable[self.Attachments[slot].Installed]
+                local catttbl = ArcCW.AttachmentTable[att]
                 if catttbl and catttbl.ToggleStats[self.Attachments[slot].ToggleNum]
                         and catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName then
                     txt = ArcCW.TryTranslation(catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName)
