@@ -902,7 +902,11 @@ function SWEP:CreateCustomize2HUD()
             toggle:SetPos(leftbuffer + (ss * 4), rss * 16 + rss * 24 + ss * 128 - (rss * 10))
             toggle:SetText("")
             toggle.OnMousePressed = function(self2, kc)
-                self:ToggleSlot(slot)
+                if kc == MOUSE_LEFT then
+                    self:ToggleSlot(slot)
+                elseif kc == MOUSE_RIGHT then
+                    self:ToggleSlot(slot, nil, nil, true)
+                end
             end
             toggle.Paint = function(self2, w, h)
                 local col = col_button

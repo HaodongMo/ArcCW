@@ -1270,14 +1270,20 @@ function SWEP:Detach(slot, silent, noadjust)
     end
 end
 
-function SWEP:ToggleSlot(slot, num, silent)
+function SWEP:ToggleSlot(slot, num, silent, back)
     local atttbl = ArcCW.AttachmentTable[self.Attachments[slot].Installed]
     if !atttbl.ToggleStats then return end
 
+    local amt = 1
+
+    if back then amt = -1 end
+
     if !num then
-        self.Attachments[slot].ToggleNum = (self.Attachments[slot].ToggleNum or 1) + 1
+        self.Attachments[slot].ToggleNum = (self.Attachments[slot].ToggleNum or 1) + amt
         if self.Attachments[slot].ToggleNum > #atttbl.ToggleStats then
             self.Attachments[slot].ToggleNum = 1
+        elseif self.Attachments[slot].ToggleNum < 1 then
+            self.Attachments[slot].ToggleNum = #atttbl.ToggleStats
         end
     else
         self.Attachments[slot].ToggleNum = math.Clamp(num, 1, #catttbl.ToggleStats)
