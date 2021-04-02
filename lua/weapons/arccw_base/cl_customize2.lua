@@ -1461,7 +1461,9 @@ function SWEP:CreateCustomize2HUD()
             local rpm = math.Round(60 / self:GetFiringDelay())
 
             if self:GetIsManualAction() then
-                rpm = math.Round(60 / (self:GetFiringDelay() + self:GetAnimKeyTime("cycle")))
+                local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+                local firedelay = self.Animations[fireanim].MinProgress or 0
+                rpm = math.Round(60 / (firedelay + self:GetAnimKeyTime("cycle", true)))
             end
 
             if self:GetIsManualAction() then
@@ -1657,7 +1659,7 @@ function SWEP:CreateCustomize2HUD()
 
             draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
 
-            local thicc = math.ceil(ss * 1)
+            local thicc = math.ceil(ss * 2)
 
             // segment 1: minimum range
             local x_1 = 0
@@ -1697,6 +1699,31 @@ function SWEP:CreateCustomize2HUD()
             end
 
             // damage number text
+            for i = 1, thicc do
+                local meth = ((thicc-i)/thicc)
+                surface.SetDrawColor(255, 255, 255, 127 * meth)
+
+                local of
+                if i == 1 then
+                    surface.SetDrawColor(col_fg)
+                    of = 0
+                elseif (i % 2 == 0) then
+                    -- even
+                    of = -1*i/2
+                else
+                    -- odd
+                    of = 1*i/2
+                end
+                
+                if mran > 0 then
+                    // draw seg 1
+                    surface.DrawLine(x_1, y_1 + of, x_2, y_2 + of)
+                end
+                // draw seg 2
+                surface.DrawLine(x_2, y_2 + of, x_3, y_3 + of)
+                // drag seg 3
+                surface.DrawLine(x_3, y_3 + of, x_4, y_4 + of)
+            end
 
             surface.SetTextColor(col_fg)
             surface.SetFont("ArcCW_8")
@@ -1767,20 +1794,6 @@ function SWEP:CreateCustomize2HUD()
                 local dmgt = tostring("DMG")
                 surface.SetTextPos(ss * 2, ss * 8)
                 surface.DrawText(dmgt)
-            end
-
-            for i = 1, thicc do
-
-                surface.SetDrawColor(col_fg)
-
-                if mran > 0 then
-                    // draw seg 1
-                    surface.DrawLine(x_1, y_1 + i, x_2, y_2 + i)
-                end
-                // draw seg 2
-                surface.DrawLine(x_2, y_2 + i, x_3, y_3 + i)
-                // drag seg 3
-                surface.DrawLine(x_3, y_3 + i, x_4, y_4 + i)
             end
         end
     end
