@@ -612,8 +612,6 @@ function SWEP:DrawHUD()
 
             bart.x = bart.x - ((bart.w / 4) * segcount) - bart.w/3.5 - bargap
 
-            -- x = x - ( width / 2 ) * segcount
-
             for i = 1, segcount do
                 local c = data.bars[i]
 
@@ -649,6 +647,17 @@ function SWEP:DrawHUD()
                 bart.x = bart.x + (bart.w / 2) + bargap
             end
         end
+        local wmode = {
+            x = (ScrW() / 2),
+            y = ScrH() - ScreenScaleMulti(34),
+            font = "ArcCW_12",
+            text = data.mode,
+            col = col2,
+            align = 2,
+            shadow = true,
+            alpha = alpha,
+        }
+        MyDrawText(wmode)
 
         if self:GetBuff_Override("UBGL") then
             local size = ScreenScaleMulti(32)
@@ -702,7 +711,7 @@ function SWEP:DrawHUD()
 
             local bar = {
                 x = 0,
-                y = ScrH()-ScreenScaleMulti(24)
+                y = ScrH()-ScreenScaleMulti(22)
             }
 
             surface.DrawOutlinedRect(ScrW() / 2 - ScreenScaleMulti(62), bar.y + ScreenScaleMulti(4.5), ScreenScaleMulti(124), ScreenScaleMulti(3))
