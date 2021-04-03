@@ -353,7 +353,7 @@ function SWEP:GetNPCRestTimes()
     local o = 1
 
     o = o + (m * rs * 0.5)
-    o = o + postburst
+    o = o + postburst * self:GetBuff_Mult("Mult_PostBurstDelay") + self:GetBuff_Add("Add_PostBurstDelay")
 
     return 0.2 * o, 0.6 * o
 end

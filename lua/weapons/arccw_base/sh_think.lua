@@ -87,7 +87,7 @@ function SWEP:Think()
 
             if (CurTime() + postburst) > self:GetWeaponOpDelay() then
                 --self:SetNextPrimaryFire(CurTime() + postburst)
-                self:SetWeaponOpDelay(CurTime() + postburst)
+                self:SetWeaponOpDelay(CurTime() + postburst * self:GetBuff_Mult("Mult_PostBurstDelay") + self:GetBuff_Add("Add_PostBurstDelay"))
             end
         end
     end
