@@ -324,7 +324,7 @@ function SWEP:PrimaryAttack()
 
     if self:GetCurrentFiremode().Mode < 0 and self:GetBurstCount() == self:GetBurstLength() then
         local postburst = (self:GetCurrentFiremode().PostBurstDelay or 0)
-        self:SetWeaponOpDelay(CurTime() + postburst)
+        self:SetWeaponOpDelay(CurTime() + postburst * self:GetBuff_Mult("Mult_PostBurstDelay") + self:GetBuff_Add("Add_PostBurstDelay"))
     end
 
     if (self:GetIsManualAction()) and !(self.NoLastCycle and self:Clip1() == 0) then
