@@ -207,6 +207,8 @@ function SWEP:CreateCustomize2HUD()
         end
     end
 
+    ArcCW.Inv_Fade = 0
+
     ArcCW.InvHUD:SetPos(0, 0)
     ArcCW.InvHUD:SetSize(scrw, scrh)
     ArcCW.InvHUD:Center()
