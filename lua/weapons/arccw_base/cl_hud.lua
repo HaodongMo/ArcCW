@@ -128,7 +128,7 @@ local bar_outl = Material("hud/fmbar_outlined.png",         "mips smooth")
 local bar_shad = Material("hud/fmbar_shadow.png",           "mips smooth")
 local bar_shou = Material("hud/fmbar_outlined_shadow.png",  "mips smooth")
 
-local hp = Material("hud/hp.png", "mips smooth")
+local hp = Material("hud/hp.png", "smooth")
 local hp_shad = Material("hud/hp_shadow.png", "mips smooth")
 
 local armor = Material("hud/armor.png", "mips smooth")
