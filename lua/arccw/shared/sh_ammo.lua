@@ -31,7 +31,9 @@ ArcCW.AmmoEntToArcCW = {
 }
 
 function ArcCW:AddGrenadeAmmo()
-    if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
+    -- ConVar value is not guarenteed in multiplayer at Initialize
+    -- Will cause inconsistent server/client ammo types if enabled
+    --if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
         for i, k in pairs(weapons.GetList()) do
             local class = k.ClassName
             local wpntbl = weapons.Get(class)
@@ -54,7 +56,7 @@ function ArcCW:AddGrenadeAmmo()
                 k.OldAmmo = class
             end
         end
-    end
+    --end
 end
 
 hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", ArcCW.AddGrenadeAmmo)
