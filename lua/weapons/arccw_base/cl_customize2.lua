@@ -1345,7 +1345,7 @@ function SWEP:CreateCustomize2HUD()
         info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
         info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
         info.Paint = function(self2, w, h)
-            local infos = {}
+            local infos = self.Infos_Trivia or {}
 
             local year = self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year
 
@@ -1457,7 +1457,7 @@ function SWEP:CreateCustomize2HUD()
         info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
         info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
         info.Paint = function(self2, w, h)
-            local infos = {}
+            local infos = self.Infos_Stats or {}
 
             // rpm
             local rpm = math.Round(60 / self:GetFiringDelay())
