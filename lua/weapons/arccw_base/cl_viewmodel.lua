@@ -65,8 +65,6 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
 	VMPos:Add(VMAng:Right() * VMPosOffset_Lerp.y)
 	
 	VMAng:Add(VMAngOffset_Lerp)
-	-- VMPosOffset, VMAngOffset = WorldToLocal(VMPosOffset, VMAngOffset, VMPos, VMAng)
-	-- VMPos:Add(VMPosOffset)
 	
 end
 
@@ -89,14 +87,12 @@ function SWEP:Step_Process(EyePos,EyeAng, velocity)
 	local FT = (game.SinglePlayer() and FrameTime()) or RealFrameTime()*2
 	local FTMult = 300 * FT
 	local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.5) or 1
-	-- self.StepBob = (self.StepBob + velocity * 0.0001  + (math.cos(math.pow((self.StepBob/stepend), 0.75)) * 0.03) * FrameTime() * 400)
 	self.StepBob = self.StepBob + (velocity * 0.0001 + (math.pow(delta, 0.01)*0.025)) * swayspeed * (FTMult)
 
 	if self.StepBob >= stepend then
 		self.StepBob = 0
 		self.StepRandomX = math.Rand(1,1.5)
 		self.StepRandomY = math.Rand(1,1.5)
-		print(self.StepRandomX, self.StepRandomY)
 	end
 	
 	if velocity == 0 then
@@ -181,8 +177,6 @@ function SWEP:Look_Process(EyePos, EyeAng)
 	VMPos:Add(VMAng:Right() * VMPosOffset.y)
 	
 	VMAng:Add(VMAngOffset)
-	-- VMPosOffset, VMAngOffset = WorldToLocal(VMPosOffset, VMAngOffset, VMPos, VMAng)
-	-- VMPos:Add(VMPosOffset)
 	
 end
 
@@ -218,7 +212,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     local proceduralRecoilMult = 1
 
     local SP = game.SinglePlayer()
-    -- local FT = m_min(FrameTime(), FrameTime())
     local CT = CurTime()
     local UCT = UnPredictedCurTime()
     local FT = FrameTime()
