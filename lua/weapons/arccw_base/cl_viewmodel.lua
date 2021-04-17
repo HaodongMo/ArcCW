@@ -568,8 +568,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         ang = ang + attang
         pos = pos + attpos
     end
-    owner:GetViewModel():SetRenderOrigin(pos)
-    owner:GetViewModel():SetRenderAngles(ang)
+
     return pos, ang
 end
 
