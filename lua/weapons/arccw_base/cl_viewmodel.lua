@@ -60,11 +60,11 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     VMPosOffset_Lerp.y = Lerp(8*FT, VMPosOffset_Lerp.y, VMPosOffset.y)
     
     VMAngOffset.x = math.Clamp(VMPosOffset.x * 8, -4, 4)
-    VMAngOffset.y = VMPosOffset.y * ((game.SinglePlayer() and -5) or -1)
+    VMAngOffset.y = VMPosOffset.y * ((game.SinglePlayer() and 5) or -1)
     VMAngOffset.z = VMPosOffset.y * 0.5 + (VMPosOffset.x * -5)
     
     VMAngOffset_Lerp.x = LerpC(10*FT, VMAngOffset_Lerp.x, VMAngOffset.x, 0.75)
-    VMAngOffset_Lerp.y = LerpC(5*FT, VMAngOffset_Lerp.y, VMAngOffset.y, 0.75)
+    VMAngOffset_Lerp.y = LerpC(5*FT, VMAngOffset_Lerp.y, VMAngOffset.y, 0.6)
     VMAngOffset_Lerp.z = Lerp(25*FT, VMAngOffset_Lerp.z, VMAngOffset.z)
 
     VMPos:Add(VMAng:Up() * VMPosOffset_Lerp.x)
@@ -95,7 +95,8 @@ function SWEP:Step_Process(EyePos,EyeAng, velocity)
     local FTMult = 300 * FT
     local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.25) or 1
     local sprintmult = (self:GetState() == ArcCW.STATE_SPRINT and 2) or 1
-    self.StepBob = self.StepBob + (velocity * 0.0001 + (math.pow(delta, 0.01)*0.03)) * swayspeed * (FTMult)
+	local onground = self:GetOwner():OnGround()
+    self.StepBob = self.StepBob + (velocity * 0.00015 + (math.pow(delta, 0.01)*0.03)) * swayspeed * (FTMult)
 
     if self.StepBob >= stepend then
         self.StepBob = 0
@@ -107,9 +108,9 @@ function SWEP:Step_Process(EyePos,EyeAng, velocity)
         self.StepBob = 0
     end
     
-    if self:GetOwner():OnGround() then
-        VMPosOffset.x = (math.sin(self.StepBob) * velocity * 0.00075 * sightedmult * swayxmult) * self.StepRandomX
-        VMPosOffset.y = (math.sin(self.StepBob * 0.5) * velocity * 0.001 * sightedmult * sprintmult * swayymult) * self.StepRandomY
+    if onground then
+        VMPosOffset.x = (math.sin(self.StepBob) * velocity * 0.000375 * sightedmult * swayxmult) * self.StepRandomX
+        VMPosOffset.y = (math.sin(self.StepBob * 0.5) * velocity * 0.0005 * sightedmult * sprintmult * swayymult) * self.StepRandomY
         VMPosOffset.z = math.sin(self.StepBob * 0.75) * velocity * 0.002 * sightedmult * swayzmult
     end
     
@@ -118,7 +119,7 @@ function SWEP:Step_Process(EyePos,EyeAng, velocity)
     VMPosOffset_Lerp.z = Lerp(2*FT, VMPosOffset_Lerp.z, VMPosOffset.z)
     
     VMAngOffset.x = VMPosOffset_Lerp.x * 2
-    VMAngOffset.y = VMPosOffset_Lerp.y * 7.5
+    VMAngOffset.y = VMPosOffset_Lerp.y * -7.5
     VMAngOffset.z = VMPosOffset_Lerp.y * 5
     
     
