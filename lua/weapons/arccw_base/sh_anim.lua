@@ -222,12 +222,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             timer.Simple(0, function()
                 vm:SendViewModelMatchingSequence(seq)
                 local dur = vm:SequenceDuration()
-                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), 0, 100))
+                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), 0, 10))
             end)
         else
             vm:SendViewModelMatchingSequence(seq)
             local dur = vm:SequenceDuration()
-            vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), 0, 100))
+            vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), 0, 10))
             self.LastAnimStartTime = CurTime()
             self.LastAnimFinishTime = CurTime() + (dur * mult)
         end
@@ -265,14 +265,16 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     -- end
 
     if anim.TPAnim then
-        if anim.TPAnimStartTime then
-            local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
-            if aseq then
-                self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, anim.TPAnimStartTime, true )
+        local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
+        if aseq then
+            self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, anim.TPAnimStartTime or 0, true )
+            if !game.SinglePlayer() and SERVER then
+                net.Start("arccw_networktpanim")
+                    net.WriteEntity(self:GetOwner())
+                    net.WriteUInt(aseq, 16)
+                    net.WriteFloat(anim.TPAnimStartTime or 0)
+                net.SendOmit(self:GetOwner())
             end
-        else
-            local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
-            self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, 0, true )
         end
     end
 
@@ -389,4 +391,15 @@ function SWEP:NextAnimation()
     local anim = table.remove(self.AnimQueue, 1)
 
     self:PlayAnimation(anim.k, anim.m, anim.p, 0, anim.sf)
+end
+
+if CLIENT then
+    net.Receive("arccw_networktpanim", function()
+        local ent = net.ReadEntity()
+        local aseq = net.ReadUInt(16)
+        local start = net.ReadFloat()
+        if IsValid(ent) then
+            ent:AddVCDSequenceToGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, start, true)
+        end
+    end)
 end
