@@ -503,6 +503,8 @@ att.Mult_Recoil = 1
 att.Mult_RecoilSide = 1
 att.Mult_VisualRecoilMult = 1
 
+att.Mult_Sway = 1
+
 att.Override_ShootWhileSprint = nil
 
 att.Mult_RPM = 1
