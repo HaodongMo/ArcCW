@@ -33,7 +33,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local proceduralRecoilMult = 1
 
     local SP = game.SinglePlayer()
-    local FT = m_min(FrameTime(), RealFrameTime())
+    local FT = RealFrameTime() * game.GetTimeScale()
     local CT = CurTime()
     local UCT = UnPredictedCurTime()
     --local FT = FrameTime()

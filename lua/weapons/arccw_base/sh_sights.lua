@@ -86,6 +86,7 @@ function SWEP:EnterSights()
     if self:GetCurrentFiremode().Mode == 0 then return end
     if !self.ReloadInSights and (self:GetReloading() or self:GetOwner():KeyDown(IN_RELOAD)) then return end
     if self:GetBuff_Hook("Hook_ShouldNotSight") then return end
+    if !IsFirstTimePredicted() then return end
 
     self:SetupActiveSights()
 
@@ -97,7 +98,7 @@ function SWEP:EnterSights()
 
     self:MyEmitSound(asight.SwitchToSound or "", 75, math.Rand(95, 105), 0.5, CHAN_AUTO)
 
-    self:SetLastEnterSight(CurTime()) --self.LastEnterSightTime = CurTime()
+    self.LastEnterSightTime = UnPredictedCurTime()
 
     local anim = self:SelectAnimation("enter_sight")
     if anim then
@@ -111,6 +112,7 @@ function SWEP:ExitSights()
     local asight = self:GetActiveSights()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
     if self.LockSightsInReload and self:GetReloading() then return end
+    if !IsFirstTimePredicted() then return end
 
     self:SetState(ArcCW.STATE_IDLE)
     self.Sighted = false
@@ -126,7 +128,7 @@ function SWEP:ExitSights()
 
     self:MyEmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_AUTO)
 
-    self:SetLastExitSight(CurTime()) --self.LastExitSightTime = CurTime()
+    self.LastExitSightTime = UnPredictedCurTime()
 
     local anim = self:SelectAnimation("exit_sight")
     if anim then
@@ -171,18 +173,18 @@ function SWEP:GetSprintDelta()
 end
 
 function SWEP:GetSightDelta()
-    local lst = self:GetLastExitSight() --self.LastExitSightTime
+    local lst = self.LastExitSightTime
     local st = self:GetSightTime()
     local minus = 0
 
-    local ct = CurTime()
+    local ct = UnPredictedCurTime()
 
     if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
         return 0 -- This ensures sights will always draw
     end
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
-        lst = self:GetLastEnterSight() --self.LastEnterSightTime
+        lst = self.LastEnterSightTime
         minus = 1
 
         if ct - lst >= st then
@@ -198,7 +200,7 @@ function SWEP:GetSightDelta()
 
     delta = math.abs(delta)
 
-    --if delta > 0 and delta < 1 then self:GetOwner():PrintMessage(HUD_PRINTTALK, (SERVER and "SERVER" or "CLIENT") .. " " .. delta .. " " .. CurTime() .. " " .. CurTime()) end
+    if delta > 0 and delta < 1 then print(delta, UnPredictedCurTime(), CurTime()) end
 
     return delta
 end
@@ -464,7 +466,7 @@ function SWEP:SwitchActiveSights()
         self:SetNextPrimaryFire(CurTime() + self:GetSightTime())
     end
 
-    self:SetLastEnterSight(CurTime()) --self.LastEnterSightTime = CurTime()
+    self.LastEnterSightTime = CurTime()
 end
 
 function SWEP:GetActiveSights()
