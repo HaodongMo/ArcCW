@@ -271,6 +271,11 @@ function SWEP:DrawHUD()
         
         surface.SetTextPos(ecksy, 26 * s*9.25)
         surface.DrawText("SIGHT DELTA")
+
+        surface.SetTextPos(ecksy, 26 * s*10.5)
+        surface.DrawText("TIME SINCE EXIT: " .. math.Round(CurTime() - self:GetLastExitSight(), 2))
+        surface.SetTextPos(ecksy, 26 * s*11)
+        surface.DrawText("TIME SINCE ENTER: " .. math.Round(CurTime() - self:GetLastEnterSight(), 2))
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end

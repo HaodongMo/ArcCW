@@ -736,6 +736,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
     self:NetworkVar("Float", 5, "NextIdle")
+    self:NetworkVar("Float", 6, "LastExitSight")
+    self:NetworkVar("Float", 7, "LastEnterSight")
 end
 
 function SWEP:OnRestore()
@@ -789,13 +791,11 @@ end
 
 function SWEP:SetState(v)
     self:SetNWState(v)
-    -- if CLIENT then
-    --     self.State = v
-    -- end
+    --if CLIENT then self.State = v end
 end
 
 function SWEP:GetState(v)
-    -- if CLIENT and self.State then return self.State end
+    --if CLIENT and self.State then return self.State end
     return self:GetNWState(v)
 end
 
