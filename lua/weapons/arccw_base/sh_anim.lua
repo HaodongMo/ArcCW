@@ -268,15 +268,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
 
-    self:SetTimer(ttime, function()
-        self:NextAnimation()
-    end, key)
-
-    if !pred then
-        self:SetTimer(ttime, function()
-            self:PlayIdleAnimation(pred)
-        end, "idlereset")
-    end
+    self:SetNextIdle(CurTime() + ttime)
 end
 
 function SWEP:PlayIdleAnimation(pred)
@@ -353,31 +345,6 @@ function SWEP:GetAnimKeyTime(key, min)
     return t
 end
 
-function SWEP:QueueAnimation(key, mult, pred, sf)
-    pred = pred or false
-    sf = sf or false
-    table.insert(self.AnimQueue, {k = key, m = mult, p = pred, sf = sf})
 
-    if table.Count(self.AnimQueue) == 0 then
-        self:NextAnimation()
-    end
-end
-
-function SWEP:NextAnimation()
-    if table.Count(self.AnimQueue) == 0 then return end
-
-    local anim = table.remove(self.AnimQueue, 1)
-
-    self:PlayAnimation(anim.k, anim.m, anim.p, 0, anim.sf)
-end
-
-if CLIENT then
-    net.Receive("arccw_networktpanim", function()
-        local ent = net.ReadEntity()
-        local aseq = net.ReadUInt(16)
-        local start = net.ReadFloat()
-        if IsValid(ent) then
-            ent:AddVCDSequenceToGestureSlot(GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, start, true)
-        end
-    end)
-end
+function SWEP:QueueAnimation() end
+function SWEP:NextAnimation() end
