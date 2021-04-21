@@ -222,12 +222,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
             timer.Simple(0, function()
                 vm:SendViewModelMatchingSequence(seq)
                 local dur = vm:SequenceDuration()
-                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), 0, 10))
+                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
             end)
         else
             vm:SendViewModelMatchingSequence(seq)
             local dur = vm:SequenceDuration()
-            vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), 0, 10))
+            vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
             self.LastAnimStartTime = CurTime()
             self.LastAnimFinishTime = CurTime() + (dur * mult)
         end
