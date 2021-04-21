@@ -134,6 +134,10 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         self:SetNextPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
     end
 
+    if CLIENT then
+        vm:SetAnimTime(CurTime() - startfrom)
+    end
+
     if anim.LHIK then
         -- self.LHIKTimeline = {
         --     CurTime() - startfrom,
@@ -259,10 +263,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     --         end
     --     end
     -- end
-
-    if CLIENT then
-        vm:SetAnimTime(CurTime() - startfrom)
-    end
 
     if anim.TPAnim then
         if anim.TPAnimStartTime then

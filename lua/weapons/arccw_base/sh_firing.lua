@@ -476,10 +476,12 @@ function SWEP:DoPrimaryFire(isent, data)
         else
             if owner:IsPlayer() then
                 owner:LagCompensation(true)
+                if SERVER and !game.SinglePlayer() then SuppressHostEvents(owner) end
             end
             owner:FireBullets(data)
             if owner:IsPlayer() then
                 owner:LagCompensation(false)
+                if SERVER and !game.SinglePlayer() then SuppressHostEvents(nil) end
             end
         end
     end
