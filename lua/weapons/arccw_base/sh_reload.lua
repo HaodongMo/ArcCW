@@ -119,7 +119,7 @@ function SWEP:Reload()
 
         self:SetReloading(CurTime() + (self:GetAnimKeyTime(anim) * mult))
 
-        self:SetShotgunReloading((empty and 4 or 2))
+        self:SetShotgunReloading(empty and 4 or 2)
     else
         local anim = self:SelectReloadAnimation()
 
@@ -376,7 +376,7 @@ function SWEP:ReloadInsert(empty)
         self:SetReloading(CurTime() + time * mult)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
-        self:SetShotgunReloading((empty and 4 or 2))
+        self:SetShotgunReloading(empty and 4 or 2)
     end
 end
 

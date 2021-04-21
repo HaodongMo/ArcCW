@@ -78,11 +78,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
             local st = (v.t * mult) - startfrom
 
-            if isnumber(v.t) then
-                if st < 0 then continue end
-                if self:GetOwner():IsPlayer() then
-                    self:SetTimer(st, function() if !game.SinglePlayer() and !IsFirstTimePredicted() then return end self:OurViewPunch(v.p or Vector(0, 0, 0)) end, id)
-                end
+            if isnumber(v.t) and st >= 0 and self:GetOwner():IsPlayer() and (game.SinglePlayer() or IsFirstTimePredicted()) then
+                self:SetTimer(st, function() self:OurViewPunch(v.p or Vector(0, 0, 0)) end, id)
             end
         end
     end
@@ -258,7 +255,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
 
-    if att then
+    if att and vm:GetAttachment(att) then
         local ang = vm:GetAttachment(att).Ang
 
         ang = vm:WorldToLocalAngles(ang)
