@@ -19,7 +19,6 @@ function SWEP:Think()
         self:SetShotgunReloading(3)
     elseif (sg == 2 or sg == 4) and self:GetReloadingREAL() <= CurTime() then
         self:ReloadInsert((sg == 4 and true or false))
-        print((sg == 4 and true or false))
     end
 
     if CLIENT then
