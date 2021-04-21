@@ -99,8 +99,14 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
                 end
             elseif span.TextRotState == 2 then
                 if span.StartTextRot < CurTime() - 2 then
-                    span.TextRotState = 0
+                    span.TextRotState = 3
                     span.StartTextRot = CurTime()
+                end
+            elseif span.TextRotState == 3 then
+                span.TextRot[txt] = span.TextRot[txt] - (FrameTime() * ScreenScaleMulti(16))
+                if span.TextRot[txt] <= (0) then
+                    span.StartTextRot = CurTime()
+                    span.TextRotState = 0
                 end
             end
         end
@@ -174,8 +180,8 @@ function SWEP:CreateCustomize2HUD()
     local scrwmult = GetConVar("arccw_hud_deadzone_x"):GetFloat() * scrw
     local scrhmult = GetConVar("arccw_hud_deadzone_y"):GetFloat() * scrh
 
-    local ss = (math.max(scrw, scrh) / 800) * GetConVar("arccw_hud_size"):GetFloat()
-    local rss = ScreenScale(1)
+    local ss = ASS(1)
+    local rss = ss
 
     scrw, scrh = scrw - scrwmult, scrh - scrhmult
 
@@ -222,7 +228,7 @@ function SWEP:CreateCustomize2HUD()
             ArcCW.InvHUD:Remove()
         end
 
-        surface.SetDrawColor(Color(0, 0, 0, 255 * ArcCW.Inv_Fade))
+        surface.SetDrawColor(Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 255)))
         surface.SetMaterial(grad)
         surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 
@@ -231,7 +237,7 @@ function SWEP:CreateCustomize2HUD()
             return
         end
 
-        local st = 1 / 8
+        local st = 1 / 5
         if self:GetState() == ArcCW.STATE_CUSTOMIZE and !ArcCW.Inv_Hidden then
             ArcCW.Inv_Fade = math.Approach(ArcCW.Inv_Fade, 1, FrameTime() * 1 / st)
         else
@@ -239,17 +245,17 @@ function SWEP:CreateCustomize2HUD()
             -- if (self:GetState() != ArcCW.STATE_CUSTOMIZE or !ArcCW.Inv_Hidden) and ArcCW.Inv_Fade == 0 then ArcCW.InvHUD:Remove() end
                 -- This'll completely screw up on multiplayer games and sometimes even singleplayer
         end
-        col_fg = Color(255, 255, 255, 255 * ArcCW.Inv_Fade)
-        col_fg_tr = Color(255, 255, 255, 125 * ArcCW.Inv_Fade)
-        col_shadow = Color(0, 0, 0, 255 * ArcCW.Inv_Fade)
-        col_button = Color(0, 0, 0, 175 * ArcCW.Inv_Fade)
+        col_fg = Color(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 255))
+        col_fg_tr = Color(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 125))
+        col_shadow = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 255))
+        col_button = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 175))
 
         if GetConVar("arccw_attinv_darkunowned"):GetBool() then
-            col_block = Color(0, 0, 0, 100 * ArcCW.Inv_Fade)
-            col_block_txt = Color(10, 10, 10, 255 * ArcCW.Inv_Fade)
+            col_block = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 100))
+            col_block_txt = Color(10, 10, 10, Lerp(ArcCW.Inv_Fade, 0, 255))
         else
             col_block = Color(50, 0, 0, 175 * ArcCW.Inv_Fade)
-            col_block_txt = Color(175, 10, 10, 255 * ArcCW.Inv_Fade)
+            col_block_txt = Color(175, 10, 10, Lerp(ArcCW.Inv_Fade, 0, 255))
         end
 
         --col_bad = Color(255, 50, 50, 255 * ArcCW.Inv_Fade)
@@ -297,17 +303,17 @@ function SWEP:CreateCustomize2HUD()
         if self2:IsHovered() then
             col = col_shadow
         end
-        draw.RoundedBox(ss * 1, 0, 0, w, h, Color(127, 127, 127, 127))
+        --draw.RoundedBox(ss * 1, 0, 0, w, h, Color(127, 127, 127, 127))
             -- Comment me! But it'll show when the HUD is alive.
 
         surface.SetTextColor(col_shadow)
         surface.SetTextPos(ss * 8, 0)
-        surface.SetFont("ArcCW_24_Glow")
+        surface.SetFont("ArcCWC2_24_Glow")
         surface.DrawText("x")
 
         surface.SetTextColor(col)
         surface.SetTextPos(ss * 8, 0)
-        surface.SetFont("ArcCW_24")
+        surface.SetFont("ArcCWC2_24")
         surface.DrawText("x")
     end
     closebutton.DoClick = function(self2, clr, btn)
@@ -330,17 +336,17 @@ function SWEP:CreateCustomize2HUD()
         if self2:IsHovered() then
             col = Color(col_shadow.r, col_shadow.g, col_shadow.b, col_shadow.a * ArcCW.Inv_Fade)
         end
-        draw.RoundedBox(ss * 1, 0, 0, w, h, Color(127, 127, 127, 127))
+        --draw.RoundedBox(ss * 1, 0, 0, w, h, Color(127, 127, 127, 127))
             -- Comment me! But it'll show when the HUD is alive.
 
         surface.SetTextColor(col_shadow)
         surface.SetTextPos(ss * 8, ss * -4)
-        surface.SetFont("ArcCW_24_Glow")
+        surface.SetFont("ArcCWC2_24_Glow")
         surface.DrawText("_")
 
         surface.SetTextColor(col)
         surface.SetTextPos(ss * 8, ss * -4)
-        surface.SetFont("ArcCW_24")
+        surface.SetFont("ArcCWC2_24")
         surface.DrawText("_")
     end
     hidebutton.DoClick = function(self2, clr, btn)
@@ -385,15 +391,15 @@ function SWEP:CreateCustomize2HUD()
 
         draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
-        surface.SetFont("ArcCW_8")
+        surface.SetFont("ArcCWC2_8")
         local tw, th = surface.GetTextSize(self2.Text)
 
-        surface.SetFont("ArcCW_8_Glow")
+        surface.SetFont("ArcCWC2_8_Glow")
         surface.SetTextColor(col_shadow)
         surface.SetTextPos((w - tw) / 2, (h - th) / 2)
         surface.DrawText(self2.Text)
 
-        surface.SetFont("ArcCW_8")
+        surface.SetFont("ArcCWC2_8")
         surface.SetTextColor(col2)
         surface.SetTextPos((w - tw) / 2, (h - th) / 2)
         surface.DrawText(self2.Text)
@@ -593,16 +599,16 @@ function SWEP:CreateCustomize2HUD()
 
                     local amttxt = tostring(amt)
 
-                    surface.SetFont("ArcCW_8")
+                    surface.SetFont("ArcCWC2_8")
                     local amt_w = surface.GetTextSize(amttxt)
 
                     -- surface.SetTextColor(col_shadow)
-                    -- surface.SetFont("ArcCW_8_Glow")
+                    -- surface.SetFont("ArcCWC2_8_Glow")
                     -- surface.SetTextPos(w - amt_w - (ss * 1), h - (rss * 8) - (ss * 1))
                     -- surface.DrawText(amttxt)
 
                     surface.SetTextColor(col2)
-                    surface.SetFont("ArcCW_8")
+                    surface.SetFont("ArcCWC2_8")
                     surface.SetTextPos(w - amt_w - (ss * 4), h - (rss * 8) - (ss * 1))
                     surface.DrawText(amttxt)
 
@@ -614,7 +620,7 @@ function SWEP:CreateCustomize2HUD()
 
                 surface.SetTextColor(col2)
                 surface.SetTextPos(icon_h + ss * 4, ss * 2)
-                surface.SetFont("ArcCW_12")
+                surface.SetFont("ArcCWC2_12")
 
                 DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 2, w - icon_h - (ss * 4) - buffer)
 
@@ -703,12 +709,12 @@ function SWEP:CreateCustomize2HUD()
                 surface.DrawTexturedRect(w - icon_h - ss * 2, 0, icon_h, icon_h)
 
                 surface.SetTextColor(col2)
-                surface.SetFont("ArcCW_10")
+                surface.SetFont("ArcCWC2_10")
                 surface.SetTextPos(ss * 6, ss * 4)
                 DrawTextRot(self2, slot_txt, 0, 0, ss * 6, ss * 4, w - icon_h - ss * 4)
                 -- surface.DrawText(slot.PrintName)
 
-                surface.SetFont("ArcCW_14")
+                surface.SetFont("ArcCWC2_14")
                 surface.SetTextPos(ss * 6, ss * 14)
                 DrawTextRot(self2, att_txt, 0, 0, ss * 6, ss * 14, w - icon_h - ss * 4)
             end
@@ -725,7 +731,7 @@ function SWEP:CreateCustomize2HUD()
             if pickx_amount > 8 then
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(0, ss * 4)
-                surface.SetFont("ArcCW_16")
+                surface.SetFont("ArcCWC2_16")
                 surface.DrawText("Attachments: " .. tostring(pickedatts) .. "/" .. tostring(pickx_amount))
                 return
             end
@@ -798,16 +804,16 @@ function SWEP:CreateCustomize2HUD()
         attname_panel.Paint = function(self2, w, h)
             name = atttbl.PrintName
 
-            surface.SetFont("ArcCW_24")
+            surface.SetFont("ArcCWC2_24")
             local tw = surface.GetTextSize(name)
 
             surface.SetTextColor(col_shadow)
-            surface.SetFont("ArcCW_24_Glow")
+            surface.SetFont("ArcCWC2_24_Glow")
             surface.SetTextPos(w - tw - airgap_x, 0)
             DrawTextRot(self2, name, 0, 0, 0, 0, w - airgap_x)
 
             surface.SetTextColor(col_fg)
-            surface.SetFont("ArcCW_24")
+            surface.SetFont("ArcCWC2_24")
             surface.SetTextPos(w - tw - airgap_x, 0)
             DrawTextRot(self2, name, 0, 0, 0, 0, w - airgap_x, true)
         end
@@ -928,15 +934,15 @@ function SWEP:CreateCustomize2HUD()
                     txt = ArcCW.TryTranslation(catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName)
                 end
 
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 local tw, th = surface.GetTextSize(txt)
 
-                surface.SetFont("ArcCW_8_Glow")
+                surface.SetFont("ArcCWC2_8_Glow")
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos((w - tw) / 2, (h - th) / 2)
                 surface.DrawText(txt)
 
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 surface.SetTextColor(col2)
                 surface.SetTextPos((w - tw) / 2, (h - th) / 2)
                 surface.DrawText(txt)
@@ -956,16 +962,16 @@ function SWEP:CreateCustomize2HUD()
         desc_title:SetSize(scroll:GetWide(), rss * 8)
         desc_title:SetPos(0, 0)
         desc_title.Paint = function(self2, w, h)
-            surface.SetFont("ArcCW_8")
+            surface.SetFont("ArcCWC2_8")
             local txt = translate("trivia.description")
             local tw_1 = surface.GetTextSize(txt)
 
-            surface.SetFont("ArcCW_8_Glow")
+            surface.SetFont("ArcCWC2_8_Glow")
             surface.SetTextColor(col_shadow)
             surface.SetTextPos(w - tw_1, 0)
             surface.DrawText(txt)
 
-            surface.SetFont("ArcCW_8")
+            surface.SetFont("ArcCWC2_8")
             surface.SetTextColor(col_fg)
             surface.SetTextPos(w - tw_1, 0)
             surface.DrawText(txt)
@@ -976,15 +982,15 @@ function SWEP:CreateCustomize2HUD()
             desc_line:SetSize(scroll:GetWide(), rss * 10)
             desc_line:SetPos(0, (rss * 10 * i) - (rss * 2))
             desc_line.Paint = function(self2, w, h)
-                surface.SetFont("ArcCW_10")
+                surface.SetFont("ArcCWC2_10")
                 local tw = surface.GetTextSize(text)
 
-                surface.SetFont("ArcCW_10_Glow")
+                surface.SetFont("ArcCWC2_10_Glow")
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos(w - tw, 0)
                 surface.DrawText(text)
 
-                surface.SetFont("ArcCW_10")
+                surface.SetFont("ArcCWC2_10")
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(w - tw, 0)
                 surface.DrawText(text)
@@ -1093,12 +1099,12 @@ function SWEP:CreateCustomize2HUD()
 
             local tp = h + (ss * 2)
 
-            surface.SetFont("ArcCW_10_Glow")
+            surface.SetFont("ArcCWC2_10_Glow")
             surface.SetTextColor(col_shadow)
             surface.SetTextPos(tp, 0)
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
 
-            surface.SetFont("ArcCW_10")
+            surface.SetFont("ArcCWC2_10")
             surface.SetTextColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
             surface.SetTextPos(tp, 0)
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
@@ -1107,12 +1113,12 @@ function SWEP:CreateCustomize2HUD()
         local function headpaintfunc(self2, w, h)
             local tp = 0
 
-            surface.SetFont("ArcCW_8_Glow")
+            surface.SetFont("ArcCWC2_8_Glow")
             surface.SetTextColor(col_shadow)
             surface.SetTextPos(tp, 0)
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
 
-            surface.SetFont("ArcCW_8")
+            surface.SetFont("ArcCWC2_8")
             surface.SetTextColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
             surface.SetTextPos(tp, 0)
             DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
@@ -1204,15 +1210,15 @@ function SWEP:CreateCustomize2HUD()
 
             draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
-            surface.SetFont("ArcCW_8")
+            surface.SetFont("ArcCWC2_8")
             local tw, th = surface.GetTextSize(self2.Text)
 
-            surface.SetFont("ArcCW_8_Glow")
+            surface.SetFont("ArcCWC2_8_Glow")
             surface.SetTextColor(col_shadow)
             surface.SetTextPos((w - tw) / 2, (h - th) / 2)
             surface.DrawText(self2.Text)
 
-            surface.SetFont("ArcCW_8")
+            surface.SetFont("ArcCWC2_8")
             surface.SetTextColor(col2)
             surface.SetTextPos((w - tw) / 2, (h - th) / 2)
             surface.DrawText(self2.Text)
@@ -1239,16 +1245,16 @@ function SWEP:CreateCustomize2HUD()
         weapon_title.Paint = function(self2, w, h)
             local name = translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or translate(self.PrintName) or self.PrintName
 
-            surface.SetFont("ArcCW_32")
+            surface.SetFont("ArcCWC2_32")
             local tw = surface.GetTextSize(name)
 
             surface.SetTextColor(col_shadow)
-            surface.SetFont("ArcCW_32_Glow")
+            surface.SetFont("ArcCWC2_32_Glow")
             surface.SetTextPos(w - tw - airgap_x, 0)
             DrawTextRot(self2, name, 0, 0, 0, 0, w - airgap_x)
 
             surface.SetTextColor(col_fg)
-            surface.SetFont("ArcCW_32")
+            surface.SetFont("ArcCWC2_32")
             surface.SetTextPos(w - tw - airgap_x, 0)
             DrawTextRot(self2, name, 0, 0, 0, 0, w - airgap_x, true)
         end
@@ -1265,16 +1271,16 @@ function SWEP:CreateCustomize2HUD()
                 name = name .. ", " .. cal
             end
 
-            surface.SetFont("ArcCW_16")
+            surface.SetFont("ArcCWC2_16")
             local tw = surface.GetTextSize(name)
 
             surface.SetTextColor(col_shadow)
-            surface.SetFont("ArcCW_16_Glow")
+            surface.SetFont("ArcCWC2_16_Glow")
             surface.SetTextPos(w - tw - airgap_x, 0)
             DrawTextRot(self2, name, 0, 0, 0, 0, w - airgap_x)
 
             surface.SetTextColor(col_fg)
-            surface.SetFont("ArcCW_16")
+            surface.SetFont("ArcCWC2_16")
             surface.SetTextPos(w - tw - airgap_x, 0)
             DrawTextRot(self2, name, 0, 0, 0, 0, w - airgap_x, true)
         end
@@ -1306,16 +1312,16 @@ function SWEP:CreateCustomize2HUD()
         desc_title:SetSize(scroll:GetWide(), rss * 8)
         desc_title:Dock(TOP)
         desc_title.Paint = function(self2, w, h)
-            surface.SetFont("ArcCW_8")
+            surface.SetFont("ArcCWC2_8")
             local txt = translate("trivia.description")
             local tw_1 = surface.GetTextSize(txt)
 
-            surface.SetFont("ArcCW_8_Glow")
+            surface.SetFont("ArcCWC2_8_Glow")
             surface.SetTextColor(col_shadow)
             surface.SetTextPos(w - tw_1, 0)
             surface.DrawText(txt)
 
-            surface.SetFont("ArcCW_8")
+            surface.SetFont("ArcCWC2_8")
             surface.SetTextColor(col_fg)
             surface.SetTextPos(w - tw_1, 0)
             surface.DrawText(txt)
@@ -1326,15 +1332,15 @@ function SWEP:CreateCustomize2HUD()
             desc_line:SetSize(scroll:GetWide(), rss * 10)
             desc_line:Dock(TOP)
             desc_line.Paint = function(self2, w, h)
-                surface.SetFont("ArcCW_10")
+                surface.SetFont("ArcCWC2_10")
                 local tw = surface.GetTextSize(text)
 
-                surface.SetFont("ArcCW_10_Glow")
+                surface.SetFont("ArcCWC2_10_Glow")
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos(w - tw, 0)
                 surface.DrawText(text)
 
-                surface.SetFont("ArcCW_10")
+                surface.SetFont("ArcCWC2_10")
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(w - tw, 0)
                 surface.DrawText(text)
@@ -1403,36 +1409,36 @@ function SWEP:CreateCustomize2HUD()
             for i, triv in pairs(infos) do
                 triv.unit = triv.unit or ""
                 local i_2 = i - 1
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 local tw_1 = surface.GetTextSize(triv.title)
 
-                surface.SetFont("ArcCW_8_Glow")
+                surface.SetFont("ArcCWC2_8_Glow")
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
                 surface.DrawText(triv.title)
 
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
                 surface.DrawText(triv.title)
 
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 local tw_2 = surface.GetTextSize(triv.unit)
 
-                surface.SetFont("ArcCW_8_Glow")
+                surface.SetFont("ArcCWC2_8_Glow")
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 12))
                 surface.DrawText(triv.unit)
 
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 12))
                 surface.DrawText(triv.unit)
 
-                surface.SetFont("ArcCW_16")
+                surface.SetFont("ArcCWC2_16")
                 local tw_3 = surface.GetTextSize(tostring(triv.value))
 
-                surface.SetFont("ArcCW_16_Glow")
+                surface.SetFont("ArcCWC2_16_Glow")
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos(w - tw_2 - tw_3, (i_2 * (rss * 24)) + (rss * 6))
                 -- surface.DrawText(triv.value)
@@ -1440,7 +1446,7 @@ function SWEP:CreateCustomize2HUD()
 
                 -- (span, txt, x, y, tx, ty, maxw, only)
 
-                surface.SetFont("ArcCW_16")
+                surface.SetFont("ArcCWC2_16")
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(w - tw_2 - tw_3, (i_2 * (rss * 24)) + (rss * 6))
                 -- surface.DrawText(triv.value)
@@ -1573,41 +1579,46 @@ function SWEP:CreateCustomize2HUD()
             for i, triv in pairs(infos) do
                 triv.unit = triv.unit or ""
                 local i_2 = i - 1
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 local tw_1 = surface.GetTextSize(triv.title)
 
-                surface.SetFont("ArcCW_8_Glow")
+                surface.SetFont("ArcCWC2_8_Glow")
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
                 surface.DrawText(triv.title)
 
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
                 surface.DrawText(triv.title)
 
-                surface.SetFont("ArcCW_8")
+                
+                surface.SetFont("ArcCWC2_16")
+                local tw_3a = select(2, surface.GetTextSize(tostring(triv.value)))
+
+                surface.SetFont("ArcCWC2_8")
                 local tw_2 = surface.GetTextSize(triv.unit)
+                local tw_2a = select(2, surface.GetTextSize(triv.unit))
 
-                surface.SetFont("ArcCW_8_Glow")
+                surface.SetFont("ArcCWC2_8_Glow")
                 surface.SetTextColor(col_shadow)
-                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 12))
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 4.4) + (tw_2a))
                 surface.DrawText(triv.unit)
 
-                surface.SetFont("ArcCW_8")
+                surface.SetFont("ArcCWC2_8")
                 surface.SetTextColor(col_fg)
-                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 12))
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 4.4) + (tw_2a))
                 surface.DrawText(triv.unit)
 
-                surface.SetFont("ArcCW_16")
+                surface.SetFont("ArcCWC2_16")
                 local tw_3 = surface.GetTextSize(tostring(triv.value))
 
-                surface.SetFont("ArcCW_16_Glow")
+                surface.SetFont("ArcCWC2_16_Glow")
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos(math.max(w - tw_2 - tw_3, 0), (i_2 * (rss * 24)) + (rss * 6))
                 surface.DrawText(triv.value)
 
-                surface.SetFont("ArcCW_16")
+                surface.SetFont("ArcCWC2_16")
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(math.max(w - tw_2 - tw_3, 0), (i_2 * (rss * 24)) + (rss * 6))
                 surface.DrawText(triv.value)
@@ -1628,7 +1639,7 @@ function SWEP:CreateCustomize2HUD()
                 local txt = "No Data"
 
                 surface.SetTextColor(col_fg)
-                surface.SetFont("ArcCW_24")
+                surface.SetFont("ArcCWC2_24")
                 local tw, th = surface.GetTextSize(txt)
                 surface.SetTextPos((w - tw) / 2, (h - th) / 2)
                 surface.DrawText(txt)
@@ -1728,7 +1739,7 @@ function SWEP:CreateCustomize2HUD()
             end
 
             surface.SetTextColor(col_fg)
-            surface.SetFont("ArcCW_8")
+            surface.SetFont("ArcCWC2_8")
 
             local function RangeText(range)
                 local metres = tostring(math.Round(range)) .. "m"
