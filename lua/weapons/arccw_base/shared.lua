@@ -717,6 +717,11 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 3, "LastLoad")
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
+
+    -- 2 = insert
+    -- 3 = cancelling
+    -- 4 = insert empty
+    self:NetworkVar( "Int", 6, "ShotgunReloading" )
     --self:NetworkVar("Int", 6, "LastSequence")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
@@ -725,7 +730,6 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 3, "InUBGL")
     self:NetworkVar("Bool", 4, "InCustomize")
     self:NetworkVar("Bool", 5, "GrenadePrimed")
-    self:NetworkVar("Bool", 6, "ReqEnd")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
