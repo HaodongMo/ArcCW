@@ -322,6 +322,7 @@ function SWEP:ReloadInsert(empty)
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
 
     if self:Clip1() >= total or self:Ammo1() == 0 or self:GetReqEnd() then
+        self:KillTimer("shotgunreload")
         local ret = "sgreload_finish"
 
         if empty then
@@ -374,7 +375,7 @@ function SWEP:ReloadInsert(empty)
         self:SetTimer(time * mult,
         function()
             self:ReloadInsert(empty)
-        end)
+        end, "shotgunreload")
     end
 end
 

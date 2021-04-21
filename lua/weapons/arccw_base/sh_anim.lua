@@ -288,15 +288,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
 
-    self:SetTimer(ttime, function()
-        self:NextAnimation()
-
-        -- self:ResetCheckpoints()
-    end, key)
-
-    self:SetTimer(ttime, function()
-        self:PlayIdleAnimation(pred)
-    end, "idlereset")
+    self:SetNextIdle(CurTime() + ttime)
 end
 
 function SWEP:PlayIdleAnimation(pred)
@@ -373,20 +365,6 @@ function SWEP:GetAnimKeyTime(key, min)
     return t
 end
 
-function SWEP:QueueAnimation(key, mult, pred, sf)
-    pred = pred or false
-    sf = sf or false
-    table.insert(self.AnimQueue, {k = key, m = mult, p = pred, sf = sf})
 
-    if table.Count(self.AnimQueue) == 0 then
-        self:NextAnimation()
-    end
-end
-
-function SWEP:NextAnimation()
-    if table.Count(self.AnimQueue) == 0 then return end
-
-    local anim = table.remove(self.AnimQueue, 1)
-
-    self:PlayAnimation(anim.k, anim.m, anim.p, 0, anim.sf)
-end
+function SWEP:QueueAnimation() end
+function SWEP:NextAnimation() end
