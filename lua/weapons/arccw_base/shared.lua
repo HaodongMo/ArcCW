@@ -717,6 +717,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 3, "LastLoad")
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
+    --self:NetworkVar("Int", 6, "LastSequence")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
@@ -731,6 +732,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 2, "ReloadingREAL")
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
+
+    self:NetworkVar("String", 0, "LastAnim")
 end
 
 function SWEP:OnRestore()

@@ -20,6 +20,7 @@ function SWEP:SetClipInfo(load)
 end
 
 function SWEP:Reload()
+
     if self:GetOwner():IsNPC() then
         return
     end
@@ -36,6 +37,17 @@ function SWEP:Reload()
                 -- californication
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+    -- DEBUG
+    --[[]
+    local vm = self.Owner:GetViewModel()
+    vm:SendViewModelMatchingSequence(vm:LookupSequence("reload"))
+    print("reload", CurTime())
+    if SERVER then
+        PrintMessage(HUD_PRINTTALK, "SERVER: " .. tostring(self:GetOwner()) .. " " .. CurTime())
+    end
+    if true then self:SetNextPrimaryFire(CurTime() + 2) return end
+    ]]
 
     if self.Throwing then return end
     if self.PrimaryBash then return end
@@ -335,15 +347,15 @@ function SWEP:ReloadInsert(empty)
 
         ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
-        self:PlayAnimation(ret, mult, true, 0, true, nil, true)
-            self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret, true) * mult))
-            self:SetTimer(self:GetAnimKeyTime(ret, true) * mult,
-            function()
-                self:SetNthReload(self:GetNthReload() + 1)
-                if self:GetOwner():KeyDown(IN_ATTACK2) then
-                    self:EnterSights()
-                end
-            end)
+        self:PlayAnimation(ret, mult, false, 0, true, nil, true)
+        self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret, true) * mult))
+        self:SetTimer(self:GetAnimKeyTime(ret, true) * mult,
+        function()
+            self:SetNthReload(self:GetNthReload() + 1)
+            if self:GetOwner():KeyDown(IN_ATTACK2) then
+                self:EnterSights()
+            end
+        end)
 
         self:SetReqEnd(false)
     else
@@ -370,7 +382,7 @@ function SWEP:ReloadInsert(empty)
 
         self:SetReloading(CurTime() + time * mult)
 
-        self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
+        self:PlayAnimation(insertanim, mult, false, 0, true, nil, true)
         self:SetTimer(time * mult,
         function()
             self:ReloadInsert(empty)

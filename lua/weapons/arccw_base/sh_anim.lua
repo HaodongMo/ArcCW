@@ -42,6 +42,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     ignorereload = ignorereload or false
     absolute = absolute or false
 
+    local ct = CurTime() --pred and CurTime() or UnPredictedCurTime()
+
     if !self.Animations[key] then return end
 
     if self:GetReloading() and !ignorereload then return end
@@ -131,12 +133,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if startfrom > (time * mult) then return end
 
     if tt then
-        self:SetNextPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
+        self:SetNextPrimaryFire(ct + ((anim.MinProgress or time) * mult) - startfrom)
     end
 
-    if CLIENT then
-        vm:SetAnimTime(CurTime() - startfrom)
-    end
+    --if CLIENT then
+    --    vm:SetAnimTime(ct - startfrom)
+    --end
 
     if anim.LHIK then
         -- self.LHIKTimeline = {
@@ -155,8 +157,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         --     self.LHIKTimeline[3] = math.huge
         --     self.LHIKTimeline[4] = math.huge
         -- end
-        self.LHIKStartTime = CurTime()
-        self.LHIKEndTime = CurTime() + ttime
+        self.LHIKStartTime = ct
+        self.LHIKEndTime = ct + ttime
 
         if anim.LHIKTimeline then
             self.LHIKTimeline = {}
@@ -189,7 +191,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end
 
     if anim.LastClip1OutTime then
-        self.LastClipOutTime = CurTime() + ((anim.LastClip1OutTime * mult) - startfrom)
+        self.LastClipOutTime = ct + ((anim.LastClip1OutTime * mult) - startfrom)
     end
 
     local seq = anim.Source
@@ -212,7 +214,14 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         seq = vm:LookupSequence(seq)
     end
 
+
     if seq then --!game.SinglePlayer() and CLIENT
+
+        --local lastseq = self:GetLastSequence()
+        --self:SetLastSequence(seq)
+        local lastanim = self:GetLastAnim()
+        self:SetLastAnim(key)
+
         -- Hack to fix an issue with playing one anim multiple times in a row
         -- Provided by Jackarunda
         local resetSeq = anim.HardResetAnim and vm:LookupSequence(anim.HardResetAnim)
@@ -225,44 +234,61 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
             end)
         else
+
+            --[[]
+            if seq > 0 and IsFirstTimePredicted() then
+                print(self:GetOwner(), seq, self:GetLastSequence(), CurTime(), UnPredictedCurTime())
+                if SERVER then
+                    PrintMessage(HUD_PRINTTALK, "SERVER: " .. tostring(self:GetOwner()) .. " " .. tostring(seq) .. " " .. CurTime())
+                end
+            end
+            ]]
+
+            --[[]
+            print(seq, lastseq, CurTime())
             vm:SendViewModelMatchingSequence(seq)
             local dur = vm:SequenceDuration()
             vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
-            self.LastAnimStartTime = CurTime()
-            self.LastAnimFinishTime = CurTime() + (dur * mult)
+            self.LastAnimStartTime = ct
+            self.LastAnimFinishTime = ct + (dur * mult)
+            ]]
+
+            if anim == lastanim then
+
+                vm:SendViewModelMatchingSequence(seq)
+                vm:SetPlaybackRate(0)
+                vm:SetCycle(0)
+
+                --if seq ~= lastseq then self:PlayIdleAnimation(pred) end
+                --print("identical", seq, CurTime())
+                if pred and IsFirstTimePredicted() then
+                    timer.Simple(0, function()
+                        vm:SendViewModelMatchingSequence(seq)
+                        local dur = vm:SequenceDuration()
+                        vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
+                        self.LastAnimStartTime = ct
+                        self.LastAnimFinishTime = ct + (dur * mult)
+
+                        self:SetTimer(ttime, function()
+                            self:NextAnimation()
+                        end, key)
+
+                        self:SetTimer(ttime, function()
+                            self:PlayIdleAnimation(pred)
+                        end, "idlereset")
+                    end)
+                end
+            else
+                --print("new", seq, lastseq, CurTime())
+                vm:SendViewModelMatchingSequence(seq)
+                local dur = vm:SequenceDuration()
+                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
+                self.LastAnimStartTime = ct
+                self.LastAnimFinishTime = ct + (dur * mult)
+            end
+
         end
     end
-
-    -- :(
-    -- unfortunately, gmod seems to have broken the features required for this to work.
-    -- as such, I'm reverting to a more traditional reload system.
-
-    -- local framestorealtime = 1
-
-    -- if anim.FrameRate then
-    --     framestorealtime = 1 / anim.FrameRate
-    -- end
-
-    -- local dur = vm:SequenceDuration()
-    -- vm:SetPlaybackRate(dur / (ttime + startfrom))
-
-    -- if anim.Checkpoints then
-    --     self.CheckpointAnimation = key
-    --     self.CheckpointTime = startfrom
-
-    --     for i, k in pairs(anim.Checkpoints) do
-    --         if !k then continue end
-    --         if istable(k) then continue end
-    --         local realtime = k * framestorealtime
-
-    --         if realtime > startfrom then
-    --             self:SetTimer((realtime * mult) - startfrom, function()
-    --                 self.CheckpointAnimation = key
-    --                 self.CheckpointTime = realtime
-    --             end)
-    --         end
-    --     end
-    -- end
 
     if anim.TPAnim then
         local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
@@ -292,8 +318,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     self:SetTimer(ttime, function()
         self:NextAnimation()
-
-        -- self:ResetCheckpoints()
     end, key)
 
     self:SetTimer(ttime, function()
