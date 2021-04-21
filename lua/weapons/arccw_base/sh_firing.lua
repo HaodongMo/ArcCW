@@ -506,7 +506,7 @@ function SWEP:DoPrimaryAnim()
 
     local time = self:GetBuff_Mult("Mult_FireAnimTime", anim) or 1
 
-    if anim then self:PlayAnimation(anim, time, false, 0, false) end
+    if anim then self:PlayAnimation(anim, time, true, 0, false) end
 end
 
 function SWEP:DoPenetration(tr, penleft, alreadypenned)

@@ -347,7 +347,7 @@ function SWEP:ReloadInsert(empty)
 
         ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
-        self:PlayAnimation(ret, mult, false, 0, true, nil, true)
+        self:PlayAnimation(ret, mult, true, 0, true, nil, true)
         self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret, true) * mult))
         self:SetTimer(self:GetAnimKeyTime(ret, true) * mult,
         function()
@@ -382,7 +382,7 @@ function SWEP:ReloadInsert(empty)
 
         self:SetReloading(CurTime() + time * mult)
 
-        self:PlayAnimation(insertanim, mult, false, 0, true, nil, true)
+        self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
         self:SetTimer(time * mult,
         function()
             self:ReloadInsert(empty)

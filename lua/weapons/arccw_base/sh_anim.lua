@@ -219,8 +219,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
         --local lastseq = self:GetLastSequence()
         --self:SetLastSequence(seq)
-        local lastanim = self:GetLastAnim()
-        self:SetLastAnim(key)
+        --local lastkey = self:GetLastAnim()
+        --self:SetLastAnim(key)
 
         -- Hack to fix an issue with playing one anim multiple times in a row
         -- Provided by Jackarunda
@@ -234,59 +234,11 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                 vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
             end)
         else
-
-            --[[]
-            if seq > 0 and IsFirstTimePredicted() then
-                print(self:GetOwner(), seq, self:GetLastSequence(), CurTime(), UnPredictedCurTime())
-                if SERVER then
-                    PrintMessage(HUD_PRINTTALK, "SERVER: " .. tostring(self:GetOwner()) .. " " .. tostring(seq) .. " " .. CurTime())
-                end
-            end
-            ]]
-
-            --[[]
-            print(seq, lastseq, CurTime())
             vm:SendViewModelMatchingSequence(seq)
             local dur = vm:SequenceDuration()
             vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
             self.LastAnimStartTime = ct
             self.LastAnimFinishTime = ct + (dur * mult)
-            ]]
-
-            if anim == lastanim then
-
-                vm:SendViewModelMatchingSequence(seq)
-                vm:SetPlaybackRate(0)
-                vm:SetCycle(0)
-
-                --if seq ~= lastseq then self:PlayIdleAnimation(pred) end
-                --print("identical", seq, CurTime())
-                if pred and IsFirstTimePredicted() then
-                    timer.Simple(0, function()
-                        vm:SendViewModelMatchingSequence(seq)
-                        local dur = vm:SequenceDuration()
-                        vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
-                        self.LastAnimStartTime = ct
-                        self.LastAnimFinishTime = ct + (dur * mult)
-
-                        self:SetTimer(ttime, function()
-                            self:NextAnimation()
-                        end, key)
-
-                        self:SetTimer(ttime, function()
-                            self:PlayIdleAnimation(pred)
-                        end, "idlereset")
-                    end)
-                end
-            else
-                --print("new", seq, lastseq, CurTime())
-                vm:SendViewModelMatchingSequence(seq)
-                local dur = vm:SequenceDuration()
-                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
-                self.LastAnimStartTime = ct
-                self.LastAnimFinishTime = ct + (dur * mult)
-            end
-
         end
     end
 
@@ -320,9 +272,11 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         self:NextAnimation()
     end, key)
 
-    self:SetTimer(ttime, function()
-        self:PlayIdleAnimation(pred)
-    end, "idlereset")
+    if !pred then
+        self:SetTimer(ttime, function()
+            self:PlayIdleAnimation(pred)
+        end, "idlereset")
+    end
 end
 
 function SWEP:PlayIdleAnimation(pred)
