@@ -86,7 +86,7 @@ function SWEP:EnterSights()
     if self:GetCurrentFiremode().Mode == 0 then return end
     if !self.ReloadInSights and (self:GetReloading() or self:GetOwner():KeyDown(IN_RELOAD)) then return end
     if self:GetBuff_Hook("Hook_ShouldNotSight") then return end
-    if !IsFirstTimePredicted() then return end
+    if (!game.SinglePlayer() and !IsFirstTimePredicted()) then return end
 
     self:SetupActiveSights()
 
@@ -112,7 +112,7 @@ function SWEP:ExitSights()
     local asight = self:GetActiveSights()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
     if self.LockSightsInReload and self:GetReloading() then return end
-    if !IsFirstTimePredicted() then return end
+    if (!game.SinglePlayer() and !IsFirstTimePredicted()) then return end
 
     self:SetState(ArcCW.STATE_IDLE)
     self.Sighted = false

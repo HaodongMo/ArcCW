@@ -297,8 +297,8 @@ function SWEP:ProcessRecoil()
     -- self.RecoilAmount = r - math.Clamp(ft * 20, 0, r)
     -- self.RecoilAmountSide = rs - math.Clamp(ft * 20, 0, rs)
 
-    self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 20 * r)
-    self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 20 * rs)
+    -- self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 20 * r)
+    -- self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 20 * rs)
 
     -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
     -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
