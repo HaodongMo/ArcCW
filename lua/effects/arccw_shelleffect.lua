@@ -10,7 +10,6 @@ EFFECT.AlreadyPlayedSound = false
 EFFECT.ShellTime = 1
 
 EFFECT.SpawnTime = 0
-EFFECT.CoolSmoke = {}
 
 function EFFECT:Init(data)
 
@@ -107,10 +106,10 @@ function EFFECT:Init(data)
             particle:SetVelocity(VectorRand() * 10 + (dir * i * math.Rand(48, 64)) + plyvel)
             particle:SetLifeTime(0)
             particle:SetDieTime(math.Rand(0.05, 0.15))
-            particle:SetStartAlpha(120)
+            particle:SetStartAlpha(math.Rand(40, 60))
             particle:SetEndAlpha(0)
-            particle:SetStartSize(4)
-            particle:SetEndSize(math.Rand(6, 12))
+            particle:SetStartSize(0)
+            particle:SetEndSize(math.Rand(18, 24))
             particle:SetRoll(math.rad(math.Rand(0, 360)))
             particle:SetRollDelta(math.Rand(-1, 1))
             particle:SetLighting(true)
@@ -121,35 +120,17 @@ function EFFECT:Init(data)
     end
 
     self.SpawnTime = CurTime()
-
-    self.CoolSmoke = {
-        { time = CurTime() + 0.05 },
-        { time = CurTime() + 0.06 },
-        { time = CurTime() + 0.07 },
-        { time = CurTime() + 0.08 },
-        { time = CurTime() + 0.09 },
-        { time = CurTime() + 0.10 },
-        { time = CurTime() + 0.12 },
-        { time = CurTime() + 0.14 },
-        { time = CurTime() + 0.16 },
-        { time = CurTime() + 0.18 },
-        { time = CurTime() + 0.2 },
-        { time = CurTime() + 0.3 },
-        { time = CurTime() + 0.4 },
-        { time = CurTime() + 0.5 },
-    }
 end
 
 function EFFECT:PhysicsCollide()
     if self.AlreadyPlayedSound and self.JustOnce then return end
 
     sound.Play(self.Sounds[math.random(#self.Sounds)], self:GetPos(), 65, self.HitPitch, 1)
-    table.insert(self.CoolSmoke, { time = CurTime() })
 
     self.AlreadyPlayedSound = true
 end
 
-function EFFECT:Think()    
+function EFFECT:Think()
     if (self.SpawnTime + self.ShellTime) <= CurTime() then
         self:SetRenderFX( kRenderFxFadeFast )
         if (self.SpawnTime + self.ShellTime + 1) <= CurTime() then
@@ -160,31 +141,6 @@ function EFFECT:Think()
             end
         end
     end
-    
-    for i, v in ipairs(self.CoolSmoke) do
-        if v.time < CurTime() then
-            local emitter = ParticleEmitter(self:GetPos())
-            local particle = emitter:Add("particles/smokey", self:GetPos())
-
-            if (particle) then
-                particle:SetVelocity(VectorRand())
-                particle:SetLifeTime(0)
-                particle:SetDieTime(0.1)
-                particle:SetStartAlpha(120)
-                particle:SetEndAlpha(0)
-                particle:SetStartSize(2)
-                particle:SetEndSize(0)
-                particle:SetRoll(20)
-                particle:SetRollDelta(-10)
-                particle:SetLighting(true)
-                particle:SetAirResistance(96)
-                particle:SetGravity(Vector(-7, 3, 20))
-                particle:SetColor(150, 150, 150)
-            end
-            table.remove(self.CoolSmoke, i)
-        end
-    end
-
     return true
 end
 
