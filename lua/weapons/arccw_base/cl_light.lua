@@ -317,6 +317,23 @@ function SWEP:DrawFlashlightsVM()
             end
         end
 
+        local tr = util.TraceLine({
+            start = self:GetOwner():EyePos(),
+            endpos = self:GetOwner():EyePos() - ang:Right() * 128,
+            mask = MASK_OPAQUE,
+            filter = LocalPlayer(),
+        })
+        if tr.Fraction < 1 then -- We need to push the flashlight back
+            local tr2 = util.TraceLine({
+                start = self:GetOwner():EyePos(),
+                endpos = self:GetOwner():EyePos() + ang:Right() * 128,
+                mask = MASK_OPAQUE,
+                filter = LocalPlayer(),
+            })
+            -- push it as back as the area behind us allows
+            pos = pos + ang:Right() * 128 * math.min(1 - tr.Fraction, tr2.Fraction)
+        end
+
         ang:RotateAroundAxis(ang:Up(), 90)
 
         k.light:SetPos(pos)
