@@ -99,7 +99,11 @@ function ArcCW.CreateMove(cmd)
     end
 
     local ang2 = cmd:GetViewAngles()
-    ang2 = ang2 - (Angle(wpn.RecoilAmount, wpn.RecoilAmountSide, 0) * FrameTime() * 30)
+
+    local recoil = Angle()
+    recoil = recoil + (wpn:GetBuff_Override("Override_RecoilDirection") or wpn.RecoilDirection) * wpn.RecoilAmount
+    recoil = recoil + (wpn:GetBuff_Override("Override_RecoilDirectionSide") or wpn.RecoilDirectionSide) * wpn.RecoilAmountSide
+    ang2 = ang2 - (recoil * FrameTime() * 30)
     cmd:SetViewAngles(ang2)
 
     local ft = FrameTime()
