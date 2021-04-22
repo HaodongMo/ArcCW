@@ -200,7 +200,7 @@ function SWEP:GetSightDelta()
 
     delta = math.abs(delta)
 
-    if delta > 0 and delta < 1 then print(delta, UnPredictedCurTime(), CurTime()) end
+    --if delta > 0 and delta < 1 then print(delta, UnPredictedCurTime(), CurTime()) end
 
     return delta
 end
