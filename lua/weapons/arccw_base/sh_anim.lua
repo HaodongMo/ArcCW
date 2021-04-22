@@ -248,7 +248,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
                     net.WriteEntity(self:GetOwner())
                     net.WriteUInt(aseq, 16)
                     net.WriteFloat(anim.TPAnimStartTime or 0)
-                net.SendOmit(self:GetOwner())
+                net.SendPVS(self:GetOwner():GetPos())
             end
         end
     end
@@ -342,6 +342,16 @@ function SWEP:GetAnimKeyTime(key, min)
     return t
 end
 
+if CLIENT then
+    net.Receive("arccw_networktpanim", function()
+        local ent = net.ReadEntity()
+        local aseq = net.ReadUInt(16)
+        local starttime = net.ReadFloat()
+        if ent ~= LocalPlayer() then
+            ent:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, starttime, true )
+        end
+    end)
+end
 
 function SWEP:QueueAnimation() end
 function SWEP:NextAnimation() end
