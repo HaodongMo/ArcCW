@@ -598,7 +598,8 @@ function SWEP:GetDispersion()
 
     local hip = delta * hipdisp * self.HipDispersion
 
-    if sights then hip = (delta <= 0) and (self:GetBuff("SightsDispersion")) or (hipdisp * self.HipDispersion) end
+    local sightdisp = self:GetBuff("SightsDispersion")
+    if sights then hip = Lerp(delta, sightdisp, hipdisp * self.HipDispersion) end
 
     if owner:OnGround() or owner:WaterLevel() > 0 or owner:GetMoveType() == MOVETYPE_NOCLIP then
         local speed    = owner:GetAbsVelocity():Length()
@@ -754,6 +755,7 @@ function SWEP:DoRecoil()
     ]]
 
     local punch = Angle()
+
     punch = punch + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * math.max(self.Recoil, 0.25) * recu * recv * rmul)
     punch = punch + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec  * recv * rmul)
     punch = punch + Angle(0, 0, 90) * math.Rand(-1, 1) * math.Clamp(self.Recoil, 0.25, 1) * recv * rmul * 0.01
