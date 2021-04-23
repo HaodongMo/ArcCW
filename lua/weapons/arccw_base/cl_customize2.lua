@@ -1471,7 +1471,7 @@ function SWEP:CreateCustomize2HUD()
             if self:GetIsManualAction() then
                 local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
                 local firedelay = self.Animations[fireanim].MinProgress or 0
-                rpm = math.Round(60 / (firedelay + self:GetAnimKeyTime("cycle", true)))
+                rpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
             end
 
             if self:GetIsManualAction() then
