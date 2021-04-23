@@ -254,6 +254,12 @@ att.Override_Ammo = "ar2" -- overrides the ammo type with this one
 
 att.Override_Firemodes = {}
 
+-- you can use _Priority to determine the priority of overrides.
+-- append it to the end of an Override_ stat to set this.
+-- for example, att.Override_Firemodes_Priority = 2
+-- higher priority = will be chosen over lower priority
+-- default priority for all stats is 1.
+
 -- all hooks will work when applied to the SWEP table as well
 -- e.g. SWEP.Hook_FireBullets
 
