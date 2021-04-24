@@ -76,7 +76,7 @@ end
 
 else
 
-local defaulticon = Material("hud/atts/default.png")
+local defaulticon = Material("hud/atts/default.png", "mips smooth")
 
 
 function ENT:DrawTranslucent()
