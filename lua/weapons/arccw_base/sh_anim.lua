@@ -214,18 +214,18 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         local resetSeq = anim.HardResetAnim and vm:LookupSequence(anim.HardResetAnim)
         if resetSeq then
             vm:SendViewModelMatchingSequence(resetSeq)
-            vm:SetPlaybackRate(.1)
-            timer.Simple(0,function()
+            vm:SetPlaybackRate(0.1)
+            timer.Simple(0, function()
                 vm:SendViewModelMatchingSequence(seq)
                 local dur = vm:SequenceDuration()
-                vm:SetPlaybackRate(dur / (ttime + startfrom))
+                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), 0, 100))
             end)
         else
             vm:SendViewModelMatchingSequence(seq)
             local dur = vm:SequenceDuration()
-            vm:SetPlaybackRate(dur / (ttime + startfrom))
+            vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), 0, 100))
             self.LastAnimStartTime = CurTime()
-            self.LastAnimFinishTime = CurTime() + ( dur * mult )
+            self.LastAnimFinishTime = CurTime() + (dur * mult)
         end
     end
 

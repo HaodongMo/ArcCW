@@ -3,7 +3,8 @@ local size = 0
 local cw = nil
 local clump_inner = Material("hud/clump_inner.png", "mips smooth")
 local clump_outer = Material("hud/clump_outer.png", "mips smooth")
-
+local aimtr_result = {}
+local aimtr = {}
 
 
 function SWEP:ShouldDrawCrosshair()
@@ -26,9 +27,11 @@ function SWEP:ShouldDrawCrosshair()
     return true
 end
 
+
 function SWEP:DoDrawCrosshair(x, y)
-    local pos = LocalPlayer():EyePos()
-    local ang = LocalPlayer():EyeAngles() - self:GetOurViewPunchAngles()
+    local ply = LocalPlayer()
+    local pos = ply:EyePos()
+    local ang = ply:EyeAngles() - self:GetOurViewPunchAngles()
     local dot = true
     local prong_top = true
     local prong_left = true
@@ -45,17 +48,17 @@ function SWEP:DoDrawCrosshair(x, y)
     if GetConVar("arccw_ttt_rolecrosshair") and GetConVar("arccw_ttt_rolecrosshair"):GetBool() then
         if GetRoundState() == ROUND_PREP or GetRoundState() == ROUND_POST then
             clr = Color(255, 255, 255)
-        elseif LocalPlayer().GetRoleColor and LocalPlayer():GetRoleColor() then
-            clr = LocalPlayer():GetRoleColor() -- TTT2 feature
-        elseif LocalPlayer():IsActiveTraitor() then
+        elseif ply.GetRoleColor and ply:GetRoleColor() then
+            clr = ply:GetRoleColor() -- TTT2 feature
+        elseif ply:IsActiveTraitor() then
             clr = Color(255, 50, 50)
-        elseif LocalPlayer():IsActiveDetective() then
+        elseif ply:IsActiveDetective() then
             clr = Color(50, 50, 255)
         else
             clr = Color(50, 255, 50)
         end
     end
-    if GetConVar("arccw_crosshair_aa"):GetBool() and LocalPlayer().ArcCW_AATarget != nil and GetConVar("arccw_aimassist"):GetBool() and GetConVar("arccw_aimassist_cl"):GetBool() then
+    if GetConVar("arccw_crosshair_aa"):GetBool() and ply.ArcCW_AATarget != nil and GetConVar("arccw_aimassist"):GetBool() and GetConVar("arccw_aimassist_cl"):GetBool() then
             -- whooie
         clr = Color(255, 0, 0)
     end
@@ -89,6 +92,16 @@ function SWEP:DoDrawCrosshair(x, y)
         sp = (pos + (ang:Forward() * 3200)):ToScreen()
         cam.End3D()
     end
+	
+	if GetConVar("arccw_crosshair_trueaim"):GetBool() then
+        aimtr.start = self:GetShootSrc()
+        aimtr.endpos = aimtr.start + (ply:GetAimVector() * 100000)
+        aimtr.filter = self:GetOwner()
+        aimtr.output = aimtr_result
+        util.TraceLine(aimtr)
+        local w2s = aimtr_result.HitPos:ToScreen()
+        sp.x = w2s.x sp.y = w2s.y
+	end
 
     x, y = sp.x, sp.y
 

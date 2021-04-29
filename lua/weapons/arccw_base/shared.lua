@@ -121,6 +121,8 @@ SWEP.MaxRecoilBlowback = -1
 SWEP.VisualRecoilMult = 1.25
 SWEP.RecoilPunch = 1.5
 
+SWEP.Sway = 0
+
 SWEP.ShotgunSpreadDispersion = false -- dispersion will cause pattern to increase instead of shifting
 SWEP.ShotgunSpreadPattern = nil
 SWEP.ShotgunSpreadPatternOverrun = nil

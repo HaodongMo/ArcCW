@@ -66,7 +66,7 @@ function SWEP:Bash(melee2)
     bashanim = self:GetBuff_Hook("Hook_SelectBashAnim", bashanim) or bashanim
 
     if bashanim and self.Animations[bashanim] then
-        self:PlayAnimation(bashanim, mult, true, 0, true)
+        if SERVER then self:PlayAnimation(bashanim, mult, true, 0, true) end
     else
         self:ProceduralBash()
 
