@@ -374,7 +374,7 @@ function SWEP:ReloadInsert(empty)
         self:SetTimer(time * mult,
         function()
             self:ReloadInsert(empty)
-        end)
+        end, "shotgunreload")
     end
 end
 

@@ -69,6 +69,14 @@ ArcCW.ReplaceWeapons = {
     ["weapon_annabelle"] = true,
 }
 
+ArcCW.MeleeDamageTypes = {
+    [DMG_GENERIC] = "dmg.generic",
+    [DMG_BULLET] = "dmg.bullet",
+    [DMG_SLASH] = "dmg.slash",
+    [DMG_CLUB] = "dmg.club",
+    [DMG_SHOCK] = "dmg.shock",
+}
+
 ArcCW.PenTable = {
    [MAT_ANTLION]     = 1,
    [MAT_BLOODYFLESH] = 1,

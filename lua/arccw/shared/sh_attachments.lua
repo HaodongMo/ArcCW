@@ -241,6 +241,8 @@ net.Receive("arccw_sendattinv", function(len, ply)
 
         LocalPlayer().ArcCW_AttInv[att] = acount
     end
+
+    ArcCW.InvHUD_FormAttachmentSelect()
 end)
 
 net.Receive("arccw_sendatthp", function(len, ply)

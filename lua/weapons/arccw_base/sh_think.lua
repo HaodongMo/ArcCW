@@ -270,6 +270,11 @@ function SWEP:Think()
     --if SERVER or !game.SinglePlayer() then
         self:ProcessTimers()
     --end
+
+    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() then
+        self:SetNextIdle(0)
+        self:PlayIdleAnimation(true)
+    end
 end
 
 function SWEP:ProcessRecoil()

@@ -689,6 +689,7 @@ AddCSLuaFile("sh_grenade.lua")
 AddCSLuaFile("sh_ttt.lua")
 AddCSLuaFile("sh_util.lua")
 
+AddCSLuaFile("cl_customize2.lua")
 AddCSLuaFile("cl_viewmodel.lua")
 AddCSLuaFile("cl_scope.lua")
 AddCSLuaFile("cl_crosshair.lua")
@@ -701,6 +702,7 @@ AddCSLuaFile("cl_presets.lua")
 AddCSLuaFile("cl_light.lua")
 
 if CLIENT then
+    include("cl_customize2.lua")
     include("cl_viewmodel.lua")
     include("cl_scope.lua")
     include("cl_crosshair.lua")
@@ -734,6 +736,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 2, "ReloadingREAL")
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
+    self:NetworkVar("Float", 5, "NextIdle")
 end
 
 function SWEP:OnRestore()
