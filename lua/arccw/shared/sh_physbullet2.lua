@@ -239,6 +239,10 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
             bullet.Pos = tr.HitPos
             -- if we're the client, we'll get the bullet back when it exits.
 
+            if attacker:IsPlayer() then
+                attacker:LagCompensation(true)
+            end
+
             if SERVER then
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(100,100,255), true)
             else
@@ -269,10 +273,6 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                     bullet.Weapon:GetBuff_Hook("Hook_PhysBulletHit", {bullet = bullet, tr = tr})
                 end
                 if bullet.PhysBulletImpact then
-
-                    if attacker:IsPlayer() then
-                        attacker:LagCompensation(true)
-                    end
 
                     local delta = bullet.Travelled / (bullet.Range / ArcCW.HUToM)
                     delta = math.Clamp(delta, 0, 1)
@@ -342,10 +342,10 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 end
                 bullet.Damaged[eid] = true
                 bullet.Dead = true
+            end
 
-                if attacker:IsPlayer() then
-                    attacker:LagCompensation(false)
-                end
+            if attacker:IsPlayer() then
+                attacker:LagCompensation(false)
             end
         else
             -- bullet did not impact anything
