@@ -279,11 +279,14 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
 
     if att then
-        local ang = vm:GetAttachment(att).Ang
+        local attpos = vm:GetAttachment(att)
+        if attpos then
+            local ang = attpos.Ang
 
-        ang = vm:WorldToLocalAngles(ang)
+            ang = vm:WorldToLocalAngles(ang)
 
-        self.Cam_Offset_Ang = Angle(ang)
+            self.Cam_Offset_Ang = Angle(ang)
+        end
     end
 
     self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
