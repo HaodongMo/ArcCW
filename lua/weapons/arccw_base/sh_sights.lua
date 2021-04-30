@@ -115,13 +115,13 @@ function SWEP:ExitSights()
 
     self:SetShouldHoldType()
 
+    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+    self:MyEmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_AUTO)
+
     if self:InSprint() then
         self:EnterSprint()
     end
-
-    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
-
-    self:MyEmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_AUTO)
 
     self.LastExitSightTime = CurTime()
 

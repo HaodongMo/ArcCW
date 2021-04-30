@@ -58,20 +58,20 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
 
     VMPosOffset_Lerp.x = Lerp(8*FT, VMPosOffset_Lerp.x, VMPosOffset.x)
     VMPosOffset_Lerp.y = Lerp(8*FT, VMPosOffset_Lerp.y, VMPosOffset.y)
-    
+
     VMAngOffset.x = math.Clamp(VMPosOffset.x * 8, -4, 4)
     VMAngOffset.y = VMPosOffset.y * ((game.SinglePlayer() and 5) or -1)
     VMAngOffset.z = VMPosOffset.y * 0.5 + (VMPosOffset.x * -5)
-    
+
     VMAngOffset_Lerp.x = LerpC(10*FT, VMAngOffset_Lerp.x, VMAngOffset.x, 0.75)
     VMAngOffset_Lerp.y = LerpC(5*FT, VMAngOffset_Lerp.y, VMAngOffset.y, 0.6)
     VMAngOffset_Lerp.z = Lerp(25*FT, VMAngOffset_Lerp.z, VMAngOffset.z)
 
     VMPos:Add(VMAng:Up() * VMPosOffset_Lerp.x)
     VMPos:Add(VMAng:Right() * VMPosOffset_Lerp.y)
-    
+
     VMAng:Add(VMAngOffset_Lerp)
-    
+
 end
 
 local stepend = math.pi*4
@@ -227,7 +227,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local CT = CurTime()
     local UCT = UnPredictedCurTime()
     local FT = FrameTime()
-    
+
     local TargetTick = (1/FT)/66.66
     if TargetTick < 1 then
         FT = FT*TargetTick
@@ -545,7 +545,11 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     ang = ang + self:GetOurViewPunchAngles() * Lerp(self:GetSightDelta(), 1, -1)
 
-    self.ActualVMData = actual
+    -- if IsFirstTimePredicted() then
+
+        self.ActualVMData = actual
+
+    -- end
 
     if gunbone then
         local magnitude = Lerp(self:GetSightDelta(), 0.1, 1)
@@ -572,10 +576,10 @@ function SWEP:GetViewModelPosition(pos, ang)
     return pos, ang
 end
 
-local function ShouldCheapWorldModel(wep)
+function SWEP:ShouldCheapWorldModel()
     local lp = LocalPlayer()
 
-    if lp:GetObserverMode() == OBS_MODE_IN_EYE and lp:GetObserverTarget() == wep:GetOwner() then
+    if lp:GetObserverMode() == OBS_MODE_IN_EYE and lp:GetObserverTarget() == self:GetOwner() then
         return true
     end
 
@@ -614,11 +618,7 @@ function SWEP:DrawWorldModel()
         cam.End3D2D()
     end
 
-    if ShouldCheapWorldModel(self) then
-        self:DrawModel()
-    else
-        self:DrawCustomModel(true)
-    end
+    self:DrawCustomModel(true)
 
     self:DoLaser(true)
 
