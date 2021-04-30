@@ -237,9 +237,9 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(255,200,100), true)
             end
 
-            if attacker:IsPlayer() then
-                -- attacker:LagCompensation(true)
-            end
+            -- if attacker:IsPlayer() then
+            --     attacker:LagCompensation(true)
+            -- end
 
             if CLIENT then
                 -- do an impact effect and forget about it
@@ -334,9 +334,9 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 bullet.Dead = true
             end
 
-            if attacker:IsPlayer() then
-                attacker:LagCompensation(false)
-            end
+            -- if attacker:IsPlayer() then
+            --     attacker:LagCompensation(false)
+            -- end
         else
             -- bullet did not impact anything
             bullet.Pos = tr.HitPos
@@ -428,8 +428,10 @@ function ArcCW:DrawPhysBullets()
         render.SetMaterial(head)
         render.DrawSprite(i.Pos, size, size, col)
 
-        render.SetMaterial(tracer)
-        render.DrawBeam(i.Pos, i.Pos - i.Vel:GetNormalized() * math.min(i.Vel:Length() * 0.02, 512), size * 0.75, 0, 1, col)
+        if !GetConVar("arccw_fasttracers"):GetBool() then
+            render.SetMaterial(tracer)
+            render.DrawBeam(i.Pos, i.Pos - i.Vel:GetNormalized() * math.min(i.Vel:Length() * 0.02, 512), size * 0.75, 0, 1, col)
+        end
 
         -- cam.End3D()
     end
