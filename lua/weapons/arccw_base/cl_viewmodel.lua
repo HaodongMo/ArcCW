@@ -48,7 +48,7 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
     local VMPosOffset_Lerp, VMAngOffset_Lerp = self.VMPosOffset_Lerp, self.VMAngOffset_Lerp
     local FT = (game.SinglePlayer() and FrameTime()) or RealFrameTime()*0.5308
-    local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.25) or 1
+    local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.1) or 1
 
     VMPos:Set(EyePos)
     VMAng:Set(EyeAng)
@@ -82,7 +82,7 @@ function SWEP:Step_Process(EyePos,EyeAng, velocity)
     else
         return
     end
-    
+
     local VMPos, VMAng = self.VMPos, self.VMAng
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
     local VMPosOffset_Lerp, VMAngOffset_Lerp = self.VMPosOffset_Lerp, self.VMAngOffset_Lerp
@@ -199,7 +199,7 @@ function SWEP:GetVMPosition(EyePos, EyeAng)
     self:Step_Process(EyePos, EyeAng, velocity)
     self:Breath_Process(EyePos, EyeAng)
     self:Look_Process(EyePos, EyeAng)
-    
+
     self.LastEyeAng = EyeAng
     self.LastEyePos = EyePos
     self.LastVelocity = velocity
@@ -511,7 +511,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         swayymult = GetConVar("arccw_vm_sway_xmult"):GetFloat() or 1
         swayzmult = GetConVar("arccw_vm_sway_ymult"):GetFloat() or 1
         swayspeed = GetConVar("arccw_vm_sway_speedmult"):GetFloat() or 1
-        
+
         lookxmult = GetConVar("arccw_vm_look_xmult"):GetFloat() or 1
         lookymult = GetConVar("arccw_vm_look_ymult"):GetFloat() or 1
         local npos, nang = self:GetVMPosition(oldpos, oldang)

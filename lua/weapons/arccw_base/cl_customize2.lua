@@ -164,7 +164,7 @@ function SWEP:CreateCustomize2HUD()
 
     local col_bad = Color(255, 50, 50, 255)
     local col_good = Color(100, 255, 100, 255)
-    local col_info = Color(75, 75, 255, 255)
+    local col_info = Color(150, 150, 255, 255)
 
     ArcCW.Inv_ShownAtt = nil
 
@@ -216,7 +216,7 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.Inv_Fade = 0
 
     ArcCW.InvHUD:SetPos(0, 0)
-    ArcCW.InvHUD:SetSize(scrw, scrh)
+    ArcCW.InvHUD:SetSize(ScrW(), ScrH())
     ArcCW.InvHUD:Center()
     ArcCW.InvHUD:SetDraggable(false)
     ArcCW.InvHUD:SetText("")
@@ -296,7 +296,7 @@ function SWEP:CreateCustomize2HUD()
     local closebutton = vgui.Create("DButton", ArcCW.InvHUD)
     closebutton:SetText("")
     closebutton:SetPos(scrw - smallbuttonheight - airgap_x, smallgap)
-    closebutton:SetSize(smallbuttonheight * 1, bigbuttonheight)
+    closebutton:SetSize(rss * 24, bigbuttonheight)
     closebutton.Paint = function(self2, w, h)
         local col = col_fg
 
@@ -1032,6 +1032,8 @@ function SWEP:CreateCustomize2HUD()
 
         if #infos > 0 then
             pan_infos = vgui.Create("DPanel", scroll_pros)
+            pan_infos.Paint = function()
+            end
             pan_infos:SetPos(menu3_w * 1 / 3, 0)
             pan_cons:SetPos(menu3_w * 2 / 3, 0)
 

@@ -74,7 +74,7 @@ function ArcCW:GetProsCons(att, toggle)
     for i, v in pairs(cons) do cons[i] = ArcCW.TryTranslation(v) end
     for i, v in pairs(infos) do infos[i] = ArcCW.TryTranslation(v) end
 
-    if !att.AutoStats then return pros, cons, neutrals end
+    if !att.AutoStats then return pros, cons, infos end
 
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
     local dmgboth = false
@@ -158,5 +158,5 @@ function ArcCW:GetProsCons(att, toggle)
         end
     end
 
-    return pros, cons, neutrals
+    return pros, cons, infos
 end
