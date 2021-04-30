@@ -765,7 +765,7 @@ function SWEP:DrawCustomModel(wm,origin,angle)
                 k.OffsetAng = Angle(0, 0, 0)
                 k.OffsetPos = Vector(0, 0, 0)
             end
-        elseif self:ShouldCheapWorldModel() then
+        elseif wm and self:ShouldCheapWorldModel() then
             continue
         else
             if wm and self.MirrorVMWM then
