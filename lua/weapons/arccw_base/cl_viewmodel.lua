@@ -361,7 +361,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     self.SwayScale = (coolsway and 0) or actual.sway
     self.BobScale  = (coolsway and 0) or actual.bob
 
-    pos = pos + math.min(self.RecoilPunchBack, 1) * -oldang:Forward()
+    pos = pos + math.min(self.RecoilPunchBack, self.RecoilPunchBackMax) * -oldang:Forward()
     pos = pos + self.RecoilPunchSide * oldang:Right()
     pos = pos + self.RecoilPunchUp   * -oldang:Up()
 
