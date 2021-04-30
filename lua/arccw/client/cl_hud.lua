@@ -81,7 +81,7 @@ function ASS(size)
     if ScreenScale_CacheC2[size] then return ScreenScale_CacheC2[size] end
 
     local scrw, scrh = ScrW(), ScrH()
-    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+    if vrmod and vrmod.IsPlayerInVR(LocalPlayer()) then
         -- Other resolutions seem to cause stretching issues
         scrw = 1366
         scrh = 768
