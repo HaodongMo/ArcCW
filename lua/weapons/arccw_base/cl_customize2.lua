@@ -413,7 +413,7 @@ function SWEP:CreateCustomize2HUD()
     presetsbutton.Val = 2
     presetsbutton.DoClick = function(self2, clr, btn)
         ArcCW.Inv_SelectedMenu = 2
-        ArcCW.InvHUD_FormAttachments()
+        ArcCW.InvHUD_FormPresets()
     end
     presetsbutton.Paint = customizebutton.Paint
 
@@ -426,7 +426,7 @@ function SWEP:CreateCustomize2HUD()
         inventorybutton.Val = 3
         inventorybutton.DoClick = function(self2, clr, btn)
             ArcCW.Inv_SelectedMenu = 3
-            ArcCW.InvHUD_FormAttachments()
+            ArcCW.InvHUD_FormInventory()
         end
         inventorybutton.Paint = customizebutton.Paint
     end
@@ -463,6 +463,52 @@ function SWEP:CreateCustomize2HUD()
     scroll_2.btnDown.Paint = function(span, w, h)
     end
     scroll_2.btnGrip.Paint = PaintScrollBar
+
+    function ArcCW.InvHUD_FormInventory()
+        if !IsValid(ArcCW.InvHUD) then return end
+        ArcCW.InvHUD_Menu1:Clear()
+    end
+
+    function ArcCW.InvHUD_FormPresets()
+        if !IsValid(ArcCW.InvHUD) then return end
+        ArcCW.InvHUD_Menu1:Clear()
+
+        local preset = {}
+
+        preset = self:GetPresets()
+
+        for i, k in pairs(preset) do
+            if k == "autosave.txt" then continue end
+            local button = vgui.Create("DButton", ArcCW.InvHUD_Menu1)
+            button:SetText("")
+            button.PresetName = string.sub(k, 1, -5)
+            button:SetSize(menu1_w, smallbuttonheight)
+            button:DockMargin(0, smallgap, 0, 0)
+            button:Dock(TOP)
+            button.DoClick = function(self2, clr, btn)
+                self.LastPresetName = self2.PresetName
+                self:LoadPreset(self2.PresetName)
+            end
+            button.Paint = function(self2, w, h)
+                local col = col_button
+                local col2 = col_fg
+
+                if self2:IsHovered() then
+                    col = col_fg_tr
+                    col2 = col_shadow
+                end
+
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+                local preset_txt = self2.PresetName
+
+                surface.SetFont("ArcCWC2_14")
+                surface.SetTextPos(ss * 2, ss * 2)
+                surface.SetTextColor(col2)
+                DrawTextRot(self2, preset_txt, 0, 0, ss * 2, ss * 2, w - ss * 4)
+            end
+        end
+    end
 
     function ArcCW.InvHUD_FormAttachmentSelect()
         if !IsValid(ArcCW.InvHUD) then return end
@@ -1815,9 +1861,17 @@ function SWEP:CreateCustomize2HUD()
 
     clearrightpanel()
 
-    ArcCW.InvHUD_FormAttachments()
-    if self.Inv_SelectedSlot then
-        ArcCW.InvHUD_FormAttachmentSelect()
+    ArcCW.Inv_SelectedMenu = ArcCW.Inv_SelectedMenu or 1
+
+    if ArcCW.Inv_SelectedMenu == 1 then
+        ArcCW.InvHUD_FormAttachments()
+        if self.Inv_SelectedSlot then
+            ArcCW.InvHUD_FormAttachmentSelect()
+        end
+    elseif ArcCW.Inv_SelectedMenu == 2 then
+        ArcCW.InvHUD_FormPresets()
+    elseif ArcCW.Inv_SelectedMenu == 3 then
+        ArcCW.InvHUD_FormInventory()
     end
 
 end
