@@ -12,7 +12,8 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_Recoil"] = "arccw_mult_recoil",
     ["Mult_MoveDispersion"] = "arccw_mult_movedisp",
     ["Mult_AccuracyMOA"] = "arccw_mult_accuracy",
-    ["Mult_Penetration"] = "arccw_mult_penetration"
+    ["Mult_Penetration"] = "arccw_mult_penetration",
+    ["Mult_Sway"] = "arccw_mult_sway"
 }
 
 ArcCW.ConVar_BuffAdds = {}

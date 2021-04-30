@@ -158,6 +158,7 @@ L["arccw.cvar.mult_sighttime"]            = "ADS Time"
 L["arccw.cvar.mult_defaultclip"]          = "Default Clip"
 L["arccw.cvar.mult_attchance"]            = "Random Att. Chance"
 L["arccw.cvar.mult_heat"]                 = "Heat Gain"
+L["arccw.cvar.mult_sway"]                 = "Aim Sway"
 L["arccw.cvar.mult_shootwhilesprinting"]  = "Shoot While Sprinting"
 -- ArcCW_Options_Atts
 L["arccw.attdesc1"]                       = "ArcCW supports attachment inventory style behaviour (Like ACT3) as well as attachment locking style behaviour (Like CW2.0) as well as giving everyone all attachments for free (Like TFA Base)."

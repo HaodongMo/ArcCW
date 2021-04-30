@@ -12,7 +12,7 @@ function ArcCW.Sway(cmd)
 
     local ang = cmd:GetViewAngles()
 
-    if (wpn.Sighted or wpn:GetState() == ArcCW.STATE_SIGHTS) and !wpn.NoSway and enabled:GetBool() then
+    if (wpn.Sighted or wpn:GetState() == ArcCW.STATE_SIGHTS) and !wpn.NoSway then
         local sway = mult:GetFloat() * wpn:GetBuff("Sway")
         --sway = sway * math.Clamp(1 / (wpn:GetActiveSights().ScopeMagnification or 1), 0.1, 1)
         if wpn:InBipod() then
