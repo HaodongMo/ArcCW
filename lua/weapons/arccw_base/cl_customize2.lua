@@ -467,11 +467,44 @@ function SWEP:CreateCustomize2HUD()
     function ArcCW.InvHUD_FormInventory()
         if !IsValid(ArcCW.InvHUD) then return end
         ArcCW.InvHUD_Menu1:Clear()
+        ArcCW.InvHUD_Menu2:Clear()
+        self.Inv_SelectedSlot = nil
+        clearrightpanel()
     end
 
     function ArcCW.InvHUD_FormPresets()
         if !IsValid(ArcCW.InvHUD) then return end
         ArcCW.InvHUD_Menu1:Clear()
+        ArcCW.InvHUD_Menu2:Clear()
+        self.Inv_SelectedSlot = nil
+        clearrightpanel()
+
+        local button = vgui.Create("DButton", ArcCW.InvHUD_Menu1)
+        button:SetText("")
+        button:SetSize(menu1_w, smallbuttonheight)
+        button:DockMargin(0, smallgap, 0, 0)
+        button:Dock(TOP)
+        button.DoClick = function(self2, clr, btn)
+            self:CreatePresetSave()
+        end
+        button.Paint = function(self2, w, h)
+            local col = col_button
+            local col2 = col_fg
+
+            if self2:IsHovered() then
+                col = col_fg_tr
+                col2 = col_shadow
+            end
+
+            draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+            local preset_txt = "Create New Preset"
+
+            surface.SetFont("ArcCWC2_14")
+            surface.SetTextPos(ss * 4, ss * 0)
+            surface.SetTextColor(col2)
+            DrawTextRot(self2, preset_txt, 0, 0, ss * 4, ss * 0, w - ss * 4)
+        end
 
         local preset = {}
 
@@ -503,9 +536,9 @@ function SWEP:CreateCustomize2HUD()
                 local preset_txt = self2.PresetName
 
                 surface.SetFont("ArcCWC2_14")
-                surface.SetTextPos(ss * 2, ss * 2)
+                surface.SetTextPos(ss * 4, ss * 0)
                 surface.SetTextColor(col2)
-                DrawTextRot(self2, preset_txt, 0, 0, ss * 2, ss * 2, w - ss * 4)
+                DrawTextRot(self2, preset_txt, 0, 0, ss * 4, ss * 0, w - ss * 4)
             end
         end
     end
