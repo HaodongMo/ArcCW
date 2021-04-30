@@ -75,7 +75,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
 
     table.insert(ArcCW.PhysBullets, bullet)
 
-    if wep:GetOwner():IsPlayer() then
+    if wep:GetOwner():IsPlayer() and SERVER then
         local ping = wep:GetOwner():Ping() / 1000
         ping = math.Clamp(ping, 0, 0.3)
         local timestep = 0.025
@@ -88,6 +88,8 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
 
     if SERVER then
         ArcCW:SendBullet(bullet, wep:GetOwner())
+
+        ArcCW:ProgressPhysBullet(bullet, engine.TickInterval())
     end
 end
 
