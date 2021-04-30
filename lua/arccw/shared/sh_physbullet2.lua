@@ -171,6 +171,12 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
     local drag = bullet.Drag * spd * spd * (1 / 150000)
     local gravity = timestep * GetConVar("arccw_bullet_gravity"):GetFloat() * (bullet.Gravity or 1)
 
+    local attacker = bullet.Attacker
+
+    if !IsValid(attacker) then
+        attacker = game.GetWorld()
+    end
+
     if bullet.Underwater then
         drag = drag * 3
     end
@@ -193,12 +199,20 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
             bullet.Dead = true
         end
     else
+        if attacker:IsPlayer() then
+            attacker:LagCompensation(true)
+        end
+
         local tr = util.TraceLine({
             start = oldpos,
             endpos = newpos,
             filter = bullet.Attacker,
             mask = MASK_SHOT
         })
+
+        if attacker:IsPlayer() then
+            attacker:LagCompensation(false)
+        end
 
         if SERVER then
             debugoverlay.Line(oldpos, tr.HitPos, 5, Color(100,100,255), true)
@@ -224,12 +238,6 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
             bullet.Travelled = bullet.Travelled + (oldpos - tr.HitPos):Length()
             bullet.Pos = tr.HitPos
             -- if we're the client, we'll get the bullet back when it exits.
-            local attacker = bullet.Attacker
-            local eid = tr.Entity:EntIndex()
-
-            if !IsValid(attacker) then
-                attacker = game.GetWorld()
-            end
 
             if SERVER then
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(100,100,255), true)
@@ -237,9 +245,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 debugoverlay.Cross(tr.HitPos, 5, 5, Color(255,200,100), true)
             end
 
-            -- if attacker:IsPlayer() then
-            --     attacker:LagCompensation(true)
-            -- end
+            local eid = tr.Entity:EntIndex()
 
             if CLIENT then
                 -- do an impact effect and forget about it
@@ -263,6 +269,10 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                     bullet.Weapon:GetBuff_Hook("Hook_PhysBulletHit", {bullet = bullet, tr = tr})
                 end
                 if bullet.PhysBulletImpact then
+
+                    if attacker:IsPlayer() then
+                        attacker:LagCompensation(true)
+                    end
 
                     local delta = bullet.Travelled / (bullet.Range / ArcCW.HUToM)
                     delta = math.Clamp(delta, 0, 1)
@@ -332,11 +342,11 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 end
                 bullet.Damaged[eid] = true
                 bullet.Dead = true
-            end
 
-            -- if attacker:IsPlayer() then
-            --     attacker:LagCompensation(false)
-            -- end
+                if attacker:IsPlayer() then
+                    attacker:LagCompensation(false)
+                end
+            end
         else
             -- bullet did not impact anything
             bullet.Pos = tr.HitPos
