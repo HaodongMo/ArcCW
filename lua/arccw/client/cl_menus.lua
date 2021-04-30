@@ -28,6 +28,7 @@
 
 local BulletPanel = {
     { type = "h", text = "#arccw.adminonly" },
+    { type = "h", text = "#arccw.bullet_help" },
     { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable", sv = true },
     { type = "b", text = "#arccw.cvar.enable_penetration", var = "arccw_enable_penetration", sv = true },
     { type = "b", text = "#arccw.cvar.enable_ricochet", var = "arccw_enable_ricochet", sv = true },

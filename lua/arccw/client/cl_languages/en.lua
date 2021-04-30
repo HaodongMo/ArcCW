@@ -18,6 +18,7 @@ L["arccw.menus.ammo"]                     = "Ammo"
 L["arccw.menus.dev"]                      = "Developer"
 L["arccw.menus.xhair"]                    = "Crosshair"
 L["arccw.menus.bullet"]                   = "Bullet Physics"
+L["arccw.bullet_help"]                    = "Enabling physical bullets in multiplayer may reduce the reliability of hit detection."
 -- ArcCW_Options_Ammo
 L["arccw.cvar.ammo_detonationmode"]       = "Ammo Detonation"
 L["arccw.cvar.ammo_detonationmode.desc"]  = "-1 - don't explode\n 0 - simple explosion\n 1 - fragmentation\n 2 - frag + burning"
