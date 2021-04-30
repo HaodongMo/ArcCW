@@ -104,12 +104,12 @@ local sizes_to_make = {
     8,
     10,
     12,
-    --14,
+    14,
     16,
     20,
     24,
     26,
-    --32
+    32
 }
 
 local sizes_to_make_cust2 = {
