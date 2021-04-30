@@ -379,6 +379,8 @@ function SWEP:CreateCustomize2HUD()
     customizebutton.DoClick = function(self2, clr, btn)
         ArcCW.Inv_SelectedMenu = 1
         ArcCW.InvHUD_FormAttachments()
+
+        surface.PlaySound("weapons/arccw/hover.wav")
     end
     customizebutton.Paint = function(self2, w, h)
         local col = col_button
@@ -414,6 +416,8 @@ function SWEP:CreateCustomize2HUD()
     presetsbutton.DoClick = function(self2, clr, btn)
         ArcCW.Inv_SelectedMenu = 2
         ArcCW.InvHUD_FormPresets()
+
+        surface.PlaySound("weapons/arccw/hover.wav")
     end
     presetsbutton.Paint = customizebutton.Paint
 
@@ -427,6 +431,8 @@ function SWEP:CreateCustomize2HUD()
         inventorybutton.DoClick = function(self2, clr, btn)
             ArcCW.Inv_SelectedMenu = 3
             ArcCW.InvHUD_FormInventory()
+
+            surface.PlaySound("weapons/arccw/hover.wav")
         end
         inventorybutton.Paint = customizebutton.Paint
     end
@@ -470,6 +476,90 @@ function SWEP:CreateCustomize2HUD()
         ArcCW.InvHUD_Menu2:Clear()
         self.Inv_SelectedSlot = nil
         clearrightpanel()
+
+        local attinv = LocalPlayer().ArcCW_AttInv or {}
+
+        local atts = table.GetKeys(attinv)
+
+        table.sort(atts)
+
+        for i, k in ipairs(atts) do
+            if (ArcCW:PlayerGetAtts(self:GetOwner(), k) or 0) <= 0 then continue end
+            local atttbl = ArcCW.AttachmentTable[k or ""]
+
+            if atttbl.Free then continue end
+
+            local button = vgui.Create("DButton", ArcCW.InvHUD_Menu1)
+            button.att = k
+            button:SetText("")
+            button:SetSize(menu2_w - (2 * ss), smallbuttonheight)
+            button:DockMargin(0, smallgap, 0, 0)
+            button:Dock(TOP)
+            button.DoClick = function(self2, clr, btn)
+                surface.PlaySound("weapons/arccw/uninstall.wav")
+
+                net.Start("arccw_asktodrop")
+                    net.WriteUInt(ArcCW.AttachmentTable[self2.att].ID, 24)
+                net.SendToServer()
+
+                ArcCW:PlayerTakeAtt(self:GetOwner(), self2.att)
+            end
+            button.Paint = function(self2, w, h)
+                local col = col_button
+                local col2 = col_fg
+
+                if self2:IsHovered() then
+                    col = col_fg_tr
+                    col2 = col_shadow
+                end
+
+                -- if self2:IsHovered() then
+                --     ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot)
+                -- end
+
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+                local icon_h = h
+
+                local buffer = 0
+
+                local amt = ArcCW:PlayerGetAtts(self:GetOwner(), self2.att) or 0
+
+                amt = math.min(amt, 99)
+
+                local amttxt = tostring(amt)
+
+                surface.SetFont("ArcCWC2_8")
+                local amt_w = surface.GetTextSize(amttxt)
+
+                -- surface.SetTextColor(col_shadow)
+                -- surface.SetFont("ArcCWC2_8_Glow")
+                -- surface.SetTextPos(w - amt_w - (ss * 1), h - (rss * 8) - (ss * 1))
+                -- surface.DrawText(amttxt)
+
+                surface.SetTextColor(col2)
+                surface.SetFont("ArcCWC2_8")
+                surface.SetTextPos(w - amt_w - (ss * 4), h - (rss * 8) - (ss * 1))
+                surface.DrawText(amttxt)
+
+                buffer = amt_w + (ss * 6)
+
+                local txt = atttbl.PrintName or ""
+                txt = translate("name." .. self2.att) or translate(txt) or txt
+
+                surface.SetTextColor(col2)
+                surface.SetTextPos(icon_h + ss * 4, ss * 2)
+                surface.SetFont("ArcCWC2_12")
+
+                DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 2, w - icon_h - (ss * 4) - buffer)
+
+                local icon = atttbl.Icon or blockedatticon
+
+                surface.SetDrawColor(col2)
+                surface.SetMaterial(icon)
+                surface.DrawTexturedRect(ss * 2, 0, icon_h, icon_h)
+            end
+        end
     end
 
     function ArcCW.InvHUD_FormPresets()
