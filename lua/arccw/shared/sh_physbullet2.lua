@@ -77,8 +77,8 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
 
     if wep:GetOwner():IsPlayer() and SERVER then
         local ping = wep:GetOwner():Ping() / 1000
-        ping = math.Clamp(ping, 0, 0.3)
-        local timestep = 0.025
+        ping = math.Clamp(ping, 0, 0.5)
+        local timestep = engine.TickInterval()
 
         while ping > 0 do
             ArcCW:ProgressPhysBullet(bullet, math.min(timestep, ping))
@@ -87,9 +87,9 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     end
 
     if SERVER then
-        ArcCW:SendBullet(bullet, wep:GetOwner())
+        ArcCW:ProgressPhysBullet(bullet, FrameTime())
 
-        ArcCW:ProgressPhysBullet(bullet, engine.TickInterval())
+        ArcCW:SendBullet(bullet, wep:GetOwner())
     end
 end
 
@@ -238,7 +238,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
             end
 
             if attacker:IsPlayer() then
-                attacker:LagCompensation(true)
+                -- attacker:LagCompensation(true)
             end
 
             if CLIENT then
@@ -263,6 +263,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                     bullet.Weapon:GetBuff_Hook("Hook_PhysBulletHit", {bullet = bullet, tr = tr})
                 end
                 if bullet.PhysBulletImpact then
+
                     local delta = bullet.Travelled / (bullet.Range / ArcCW.HUToM)
                     delta = math.Clamp(delta, 0, 1)
                     local dmg = Lerp(delta, bullet.DamageMax, bullet.DamageMin)

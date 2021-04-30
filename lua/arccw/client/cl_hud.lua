@@ -124,7 +124,7 @@ local sizes_to_make_cust2 = {
 
 local unscaled_sizes_to_make = {
     32,
-    --24
+    24
 }
 
 local function generatefonts()
