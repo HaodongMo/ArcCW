@@ -70,6 +70,7 @@ local PerformancePanel = {
     -- { type = "c", text = "#arccw.cvar.flatscopes.desc" },
     { type = "b", text = "#arccw.cvar.muzzleeffects", var = "arccw_muzzleeffects" },
     { type = "b", text = "#arccw.cvar.fastmuzzles", var = "arccw_fastmuzzles" },
+    { type = "b", text = "#arccw.cvar.fasttracers", var = "arccw_fasttracers" },
     { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
     { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
     { type = "i", text = "#arccw.cvar.visibility", var = "arccw_visibility", min = -1, max = 32000},

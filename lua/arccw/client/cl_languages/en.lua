@@ -92,6 +92,7 @@ L["arccw.cvar.cheapscopes.desc"]          = "A cheaper PIP scope implementation 
 --L["arccw.cvar.flatscopes.desc"]           = "For the ultimate performance gain.\nUse a traditional-style scope implementation that's not very impressive, but actually saves performance relative to even being unscoped."
 L["arccw.cvar.muzzleeffects"]             = "Enable World Muzzle Effects"
 L["arccw.cvar.fastmuzzles"]               = "Low Performance Muzzle Effects"
+L["arccw.cvar.fasttracers"]               = "Low Performance Tracer Effects"
 L["arccw.cvar.shelleffects"]              = "Enable World Case Effects"
 L["arccw.cvar.att_showothers"]            = "Show World Attachments"
 L["arccw.cvar.shelltime"]                 = "Case Lifetime"
