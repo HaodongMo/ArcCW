@@ -87,11 +87,11 @@ function SWEP:DoDrawCrosshair(x, y)
 
         local coords = trace.HitPos:ToScreen()
         sp = { visible = true, x = coords.x, y = coords.y }
-    else
-        cam.Start3D()
-        sp = (pos + (ang:Forward() * 3200)):ToScreen()
-        cam.End3D()
     end
+
+    cam.Start3D()
+    sp = (pos + (ang:Forward() * 3200)):ToScreen()
+    cam.End3D()
 
     if GetConVar("arccw_crosshair_trueaim"):GetBool() then
         aimtr.start = self:GetShootSrc()
@@ -106,7 +106,8 @@ function SWEP:DoDrawCrosshair(x, y)
     local veh = self:GetOwner():GetVehicle()
 
     if veh:IsValid() then
-        aimtr.endpos = aimtr.start + (ply:EyeAngles() + veh:GetAngles()):Forward() * 10000
+        local va = veh:GetAngles()
+        aimtr.endpos = aimtr.start + (ply:EyeAngles() + va):Forward() * 10000
         table.Add(aimtr.filter, {veh})
     end
 
