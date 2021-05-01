@@ -1,116 +1,64 @@
 AddCSLuaFile()
 
--- SPAWNABLE
-SWEP.Spawnable = false -- set to true to make it actually spawnable
-SWEP.AdminOnly = false -- self-explanatory
+SWEP.Spawnable = false -- this obviously has to be set to true
+SWEP.Category = "ArcCW - Firearms" -- edit this if you like
+SWEP.AdminOnly = false
 
--- TRIVIA
--- TrueName is used in case the True Names option is enabled.
--- You should make the PrintName an alternative, usually more fantastical or imaginary name for the gun,
--- With the TrueName being its real life name.
--- Alternatively, the PrintName could be the name a gun has in a game, versus its name in real life.
-SWEP.PrintName = "ArcCW Base" -- "9mm SMG"
-SWEP.TrueName = "ArcCW Base" -- "MP5"
-
-SWEP.Category = "ArcCW - [CATEGORY]"
-
+SWEP.PrintName = "ArcCW Base"
 SWEP.Trivia_Class = nil -- "Submachine Gun"
-SWEP.Trivia_Desc = nil -- "Common 9mm submachine gun. Well rounded performance."
-SWEP.Trivia_Manufacturer = nil -- "HK"
-SWEP.Trivia_Calibre = nil -- "9x19mm"
+SWEP.Trivia_Desc = nil -- "Ubiquitous 9mm SMG. Created as a response to the need for a faster-firing and more reliable submachine gun than existing options at the time."
+SWEP.Trivia_Manufacturer = nil -- "Auschen Waffenfabrik"
+SWEP.Trivia_Calibre = nil -- "9x21mm Jager"
 SWEP.Trivia_Mechanism = nil -- "Roller-Delayed Blowback"
 SWEP.Trivia_Country = nil -- "Austria"
 SWEP.Trivia_Year = nil -- 1968
 
--- HOLDTYPES
-SWEP.HoldtypeHolstered = "passive"
-SWEP.HoldtypeActive = "shotgun"
-SWEP.HoldtypeSights = "smg"
-SWEP.HoldtypeCustomize = "slam"
-SWEP.HoldtypeNPC = nil
-
--- MODEL
-
--- Has to be set to true to make c_hands work
 SWEP.UseHands = true
 
-SWEP.ViewModel = "" -- Viewmodel for the weapon
-SWEP.WorldModel = "" -- Worldmodel
+SWEP.ViewModel = "" -- I mean, you probably have to edit these too
+SWEP.WorldModel = ""
+SWEP.MirrorWorldModel = nil -- must have the same bones as the viewmodel. Use with MirrorWMVM
 
-SWEP.MirrorVMWM = false -- If set to true, allows the viewmodel to be used as a worldmodel.
-SWEP.MirrorWorldModel = nil -- Alternative model for MirrorVMWM. Must have the same bones as the viewmodel.
--- MirrorWorldModel could be a lower quality version of the viewmodel.
--- If MirrorVMWM is true, all worldmodel-affecting values are unused and only VM affecting ones will make a difference.
-
--- If set, WorldModelOffset allows the world model to be offset from its default position.
 --[[
 SWEP.WorldModelOffset = {
     pos        =    Vector(0, 0, 0),
     ang        =    Angle(0, 0, 0),
-    bone    =    "ValveBiped.Bip01_R_Hand", -- optional
+    bone    =    "ValveBiped.Bip01_R_Hand",
     scale   =   1
 }]]
 
-SWEP.PresetBase = nil -- Used for Presets. Make this weapon share saves with this one.
+SWEP.PresetBase = nil -- make this weapon share saves with this one.
 
 SWEP.KillIconAlias = nil -- set to other weapon class to share select and kill icons
 
-SWEP.GuaranteeLaser = false -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
-
--- Used to control default bodygroups, WM bodygroups, and skin.
 SWEP.DefaultBodygroups = "00000000"
 SWEP.DefaultWMBodygroups = "00000000"
 SWEP.DefaultSkin = 0
 SWEP.DefaultWMSkin = 0
 
-SWEP.DefaultPoseParams = {} -- {["pose"] = 0.5}
-SWEP.DefaultWMPoseParams = {}
+SWEP.WorldModelOffset = nil
+-- {
+--     pos = Vector(0, 0, 0),
+--     ang = Angle(0, 0, 0)
+-- }
 
--- If set to true, the left hand will not be hidden when customizing.
 SWEP.NoHideLeftHandInCustomization = false
 
--- NPCs
-SWEP.NotForNPCS = false
-SWEP.NPCWeaponType = nil -- string or table, the NPC weapons for this gun to replace
--- if nil, this will be based on holdtype
-SWEP.NPCWeight = 100 -- relative likeliness for an NPC to have this weapon
-SWEP.TTTWeaponType = nil -- string or table, like NPCWeaponType but specifically for TTT weapons (takes precdence over NPCWeaponType)
-SWEP.TTTWeight = 100 -- like NPCWeight but for TTT gamemode
-
--- STATS
-
-SWEP.Damage = 26 -- damage done point-blank
+SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
-SWEP.DamageRand = 0 -- damage will vary randomly each shot by this fraction.
--- e.g. DamageRand of 0.5 and Damage of 100 = damage of 50-150
+SWEP.DamageRand = 0 -- damage will vary randomly each shot by this fraction
 SWEP.RangeMin = 0 -- how far bullets will retain their maximum damage for
-SWEP.Range = 200 -- range at which bullets will deal DamageMin.
--- In METRES.
-SWEP.Penetration = 4 -- approx values for materials:
--- One unit of penetration = can penetrate one hammer unit of material
--- Concrete: 0.75
--- Metal: 2
--- Sand: 0.25
--- Tile: 0.5
--- Glass: 0.025
-SWEP.DamageType = DMG_BULLET -- Damage type bullets do on impact.
--- Special effects for DMG_BLAST and DMG_BURN
+SWEP.Range = 200 -- in METRES
+SWEP.Penetration = 4
+SWEP.DamageType = DMG_BULLET
 SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity
 -- IN M/S
-
-SWEP.CanFireUnderwater = false
-
-SWEP.TriggerDelay = false -- Set to true to play the "trigger" animation before firing. Delay time is dependent on animation time.
-
--- PHYS BULLETS
 SWEP.PhysBulletMuzzleVelocity = nil -- override phys bullet muzzle velocity
 SWEP.PhysBulletDrag = 1
 SWEP.PhysBulletGravity = 1
-SWEP.PhysBulletDontInheritPlayerVelocity = true -- No "Browning Effect"
--- if false, bullets will have the player velocity added to them
+SWEP.PhysBulletDontInheritPlayerVelocity = true
 
--- some variables for meddling with physical bullets
 SWEP.AlwaysPhysBullet = false
 SWEP.NeverPhysBullet = false
 SWEP.PhysTracerProfile = 0 -- color for phys tracer.
@@ -124,34 +72,27 @@ SWEP.PhysTracerProfile = 0 -- color for phys tracer.
 -- 6 = cyan
 -- 7 = black/invisible
 
--- TRACERS
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.TracerFinalMag = 0 -- the last X bullets in a magazine are all tracers
 SWEP.Tracer = "arccw_tracer" -- override tracer (hitscan) effect
 SWEP.TracerCol = Color(255, 255, 255)
-
--- AMMO
-SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses
+SWEP.HullSize = 0 -- HullSize used by FireBullets
 
 SWEP.ChamberSize = 1 -- how many rounds can be chambered.
 SWEP.Primary.ClipSize = 25 -- DefaultClip is automatically set.
-SWEP.ExtendedClipSize = nil -- Used for MagExtender and MagReducer.
-SWEP.ReducedClipSize = nil -- If not set, they will do nothing.
+SWEP.ExtendedClipSize = 50
+SWEP.ReducedClipSize = 10
 
--- Take over the default clip value to set the default clip only once.
+-- But if you insist...
 SWEP.ForceDefaultClip = nil
 SWEP.ForceDefaultAmmo = nil
 
-SWEP.AmmoPerShot = 1 -- Ammo needed to shoot once
+SWEP.AmmoPerShot = 1
 SWEP.InfiniteAmmo = false -- weapon can reload for free
 SWEP.BottomlessClip = false -- weapon never has to reload
 
 SWEP.DoNotEquipmentAmmo = false -- do not automatically give this weapon unique ammo when arccw_equipmentammo is used
--- Overrides SWEP.Throwable
 
-SWEP.IsShotgun = false -- weapon receives shotgun ammo types
-
--- RELOAD
 SWEP.ShotgunReload = false -- reloads like shotgun instead of magazines
 SWEP.HybridReload = false -- reload normally when empty, reload like shotgun when part full
 
@@ -160,43 +101,48 @@ SWEP.NoLastCycle = false -- do not cycle on last shot
 
 SWEP.RevolverReload = false -- cases all eject on reload
 
-SWEP.ReloadInSights = false -- can sight in while reloading
+SWEP.ReloadInSights = false
 SWEP.ReloadInSights_CloseIn = 0.25
 SWEP.ReloadInSights_FOVMult = 0.875
-SWEP.LockSightsInReload = false -- do not allow unscoping while reloading
+SWEP.LockSightsInReload = false
+
+SWEP.CanFireUnderwater = false
 
 SWEP.Disposable = false -- when all ammo is expended, the gun will remove itself when holstered
 
 SWEP.AutoReload = false -- when weapon is drawn, the gun will reload itself.
 
--- RECOIL
+SWEP.IsShotgun = false -- weapon receives shotgun ammo types
 
-SWEP.Recoil = 2 -- vertical recoil
-SWEP.RecoilSide = 1 -- horizontal recoil
--- horizontal recoil is harder to control than vertical
+SWEP.TriggerDelay = false -- Set to true to play the "trigger" animation before firing. Delay time is dependent on animation time.
 
--- visual recoil rise
+SWEP.Recoil = 2
+SWEP.RecoilSide = 1
 SWEP.RecoilRise = 1
-
--- maximum amount of recoil blowback this gun can receive per shot
 SWEP.MaxRecoilBlowback = -1
-
--- multiplier for visual recoil, which is usually automatically calculated
 SWEP.VisualRecoilMult = 1.25
-
--- amount of "punch" to the view the gun receives
 SWEP.RecoilPunch = 1.5
+SWEP.RecoilPunchBackMax = 1
 
--- direction to apply vertical/horizontal recoil in.
--- horizontal recoil will also be applied to the sides.
+SWEP.Sway = 0
+
+SWEP.ShotgunSpreadDispersion = false -- dispersion will cause pattern to increase instead of shifting
+SWEP.ShotgunSpreadPattern = nil
+SWEP.ShotgunSpreadPatternOverrun = nil
+-- {Angle(1, 1, 0), Angle(1, 0, 0) ..}
+-- list of how far each pellet should veer
+-- if only one pellet then it'll use the first index
+-- if two then the first two
+-- in case of overrun pellets will start looping, preferably with the second one, so use that for the loopables
+-- precision will still be applied
+
 SWEP.RecoilDirection = Angle(1, 0, 0)
 SWEP.RecoilDirectionSide = Angle(0, 1, 0)
 
--- FIRE MODE
 SWEP.Delay = 60 / 750 -- 60 / RPM.
 SWEP.Num = 1 -- number of shots per trigger pull.
 SWEP.Firemode = 1 -- 0: safe, 1: semi, 2: auto, negative: burst
-SWEP.Firemodes = { -- table of firemodes
+SWEP.Firemodes = {
     -- {
     --     Mode = 1,
     --     CustomBars = "---_#!",
@@ -216,67 +162,43 @@ SWEP.Firemodes = { -- table of firemodes
     -- }
 }
 
-SWEP.ShotgunSpreadDispersion = false -- dispersion will cause pattern to increase instead of shifting
-SWEP.ShotgunSpreadPattern = nil
-SWEP.ShotgunSpreadPatternOverrun = nil
--- {Angle(1, 1, 0), Angle(1, 0, 0) ..}
--- list of how far each pellet should veer
--- if only one pellet then it'll use the first index
--- if two then the first two
--- in case of overrun pellets will start looping, preferably with the second one, so use that for the loopables
--- precision will still be applied
+SWEP.ShotRecoilTable = nil -- {[1] = 0.25, [2] = 2} etc.
 
--- Multiply recoil on a per shot basis
-SWEP.ShotRecoilTable = nil -- {[1] = 0.25, [2] = 2, ...}
-SWEP.ShotModifierTable = nil -- {[1] = {["Mult_Sway" = 0.25]}, [2] = {["Mult_Sway" = 0.5, "Mult_Recoil" = 0.5]}, ...}
+SWEP.NotForNPCS = false
+SWEP.NPCWeaponType = nil -- string or table, the NPC weapons for this gun to replace
+-- if nil, this will be based on holdtype
+SWEP.NPCWeight = 100 -- relative likeliness for an NPC to have this weapon
+SWEP.TTTWeaponType = nil -- string or table, like NPCWeaponType but specifically for TTT weapons (takes precdence over NPCWeaponType)
+SWEP.TTTWeight = 100 -- like NPCWeight but for TTT gamemode
 
--- ACCURACY
 SWEP.AccuracyMOA = 15 -- accuracy in Minutes of Angle. There are 60 MOA in a degree.
 SWEP.HipDispersion = 500 -- inaccuracy added by hip firing.
 SWEP.MoveDispersion = 150 -- inaccuracy added by moving. Applies in sights as well! Walking speed is considered as "maximum".
 SWEP.SightsDispersion = 0 -- dispersion that remains even in sights
 SWEP.JumpDispersion = 300 -- dispersion penalty when in the air
 
--- IRON SIGHTS
-SWEP.KeepBaseIrons = false -- do not override iron sights when scope installed
-
-SWEP.IronSightStruct = {
-    Pos = Vector(0, 0, 0),
-    Ang = Angle(0, 0, 0),
-    Magnification = 1,
-    SwitchToSound = "",
-    SwitchFromSound = "",
-    ScrollFunc = ArcCW.SCROLL_NONE,
-    CrosshairInSights = false,
-}
-
--- HANDLING
-SWEP.SightTime = 0.33 -- Time it takes to enter iron sights
-SWEP.SprintTime = nil -- If set, use this time to enter/exit sprint
-SWEP.ShootWhileSprint = false -- This gun is able to shoot even while sprinting
-
-SWEP.SpeedMult = 1 -- Speed multiplier for the player while holding this gun
-SWEP.SightedSpeedMult = 0.75 -- Speed multiplier for the player while scoped in
-SWEP.ShootSpeedMult = 1 -- Speed multiplier for the player while they're shooting
-
-SWEP.Sway = 0 -- Amount that this gun sways
-
--- BIPOD
+-- Based off of CS+'s bipod
 SWEP.Bipod_Integral = false -- Integral bipod (ie, weapon model has one)
 SWEP.BipodDispersion = .1 -- Bipod dispersion for Integral bipods
 SWEP.BipodRecoil = 0.25 -- Bipod recoil for Integral bipods
 
--- SOUNDS
+SWEP.ShootWhileSprint = false
+
+SWEP.Primary.Ammo = "pistol" -- what ammo type the gun uses
+SWEP.MagID = "mpk1" -- the magazine pool this gun draws from
+
 SWEP.ShootVol = 125 -- volume of shoot sound
 SWEP.ShootPitch = 100 -- pitch of shoot sound
 SWEP.ShootPitchVariation = 0.05
 
 SWEP.FirstShootSound = nil
 SWEP.ShootSound = ""
+SWEP.ShootSoundLooping = nil
 SWEP.FirstShootSoundSilenced = nil
 SWEP.ShootDrySound = nil -- Add an attachment hook for Hook_GetShootDrySound please!
 SWEP.DistantShootSound = nil
 SWEP.ShootSoundSilenced = "weapons/arccw/m4a1/m4a1-1.wav"
+SWEP.ShootSoundSilencedLooping = nil
 SWEP.FiremodeSound = "weapons/arccw/firemode.wav"
 SWEP.MeleeSwingSound = "weapons/arccw/melee_lift.wav"
 SWEP.MeleeMissSound = "weapons/arccw/melee_miss.wav"
@@ -287,7 +209,6 @@ SWEP.ExitBipodSound = "weapons/arccw/bipod_up.wav"
 SWEP.SelectUBGLSound =  "weapons/arccw/ubgl_select.wav"
 SWEP.ExitUBGLSound = "weapons/arccw/ubgl_exit.wav"
 
--- EFFECTS
 SWEP.NoFlash = nil -- disable light flash
 SWEP.MuzzleEffect = nil
 SWEP.FastMuzzleEffect = nil
@@ -305,22 +226,23 @@ SWEP.ShellPitch = 100
 SWEP.ShellSounds = ArcCW.ShellSoundsTable
 SWEP.ShellRotate = 0
 SWEP.ShellTime = 0.5
-SWEP.ShellNoSmoke = false -- no smoke cloud when a shell ejects
 
--- EFFECT POINTS
-SWEP.MuzzleEffectAttachment = 1 -- which .qc attachment point to put the muzzle on
-SWEP.CaseEffectAttachment = 2 -- which .qc attachment point to put the case effect on
+SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
+SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.ProceduralViewBobAttachment = nil -- attachment on which coolview is affected by, default is muzzleeffect
 SWEP.CamAttachment = nil -- if set, this attachment will control camera movement
+
+SWEP.SpeedMult = 0.9
+SWEP.SightedSpeedMult = 0.75
+SWEP.ShootSpeedMult = 1
 
 SWEP.BulletBones = { -- the bone that represents bullets in gun/mag
     -- [0] = "bulletchamber",
     -- [1] = "bullet1"
 }
 SWEP.CaseBones = {}
--- Like bulletbones but for revolver reload shell cases
+-- Unlike BulletBones, these bones are determined by the missing bullet amount when reloading
 SWEP.StripperClipBones = {}
--- Like bulletbones but for stripper clip bullets being inserted
 
 -- the same as the bone versions but works via bodygroups.
 -- bodygroups work the same as in attachmentelements.
@@ -329,7 +251,35 @@ SWEP.BulletBGs = {}
 SWEP.CaseBGs = {}
 SWEP.StripperClipBGs = {}
 
--- JAMMING
+SWEP.KeepBaseIrons = false -- do not override iron sights when scope installed
+
+SWEP.IronSightStruct = {
+    Pos = Vector(-8.728, -13.702, 4.014),
+    Ang = Angle(-1.397, -0.341, -2.602),
+    Magnification = 1,
+    BlackBox = false,
+    ScopeTexture = nil,
+    SwitchToSound = "", -- sound that plays when switching to this sight
+    SwitchFromSound = "",
+    ScrollFunc = ArcCW.SCROLL_NONE,
+    CrosshairInSights = false,
+}
+
+-- add lasers to your weapon without attachments
+SWEP.Lasers = nil
+-- {
+--     {
+--         LaserStrength = 1,
+--         LaserBone = "laser",
+--         Color = Color(255, 0, 0)
+--     }
+-- }
+
+SWEP.ProceduralRegularFire = false
+SWEP.ProceduralIronFire = false
+SWEP.SightTime = 0.33
+SWEP.SprintTime = 0
+
 SWEP.Jamming = false
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
 SWEP.HeatDissipation = 2 -- rounds' worth of heat lost per second
@@ -337,7 +287,16 @@ SWEP.HeatLockout = false -- overheating means you cannot fire until heat has bee
 SWEP.HeatDelayTime = 0.5
 SWEP.HeatFix = false -- when the "fix" animation is played, all heat is restored.
 
--- SHIELD
+SWEP.HoldtypeHolstered = "passive"
+SWEP.HoldtypeActive = "shotgun"
+SWEP.HoldtypeSights = "smg"
+SWEP.HoldtypeCustomize = "slam"
+SWEP.HoldtypeNPC = nil
+
+SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
+
+SWEP.GuaranteeLaser = false -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
+
 SWEP.ShieldProps = nil
 -- {
 --     {
@@ -349,11 +308,6 @@ SWEP.ShieldProps = nil
 --     }
 -- }
 
--- DRIVEBY
-SWEP.AllowDriveby = false -- This weapon can be used in seats
-SWEP.DrivebyModifierTable = nil -- {[1] = {["Mult_Sway" = 0.25]}, [2] = {["Mult_Sway" = 0.5, "Mult_Recoil" = 0.5]}, ...}
-
--- MELEE
 SWEP.CanBash = true
 SWEP.PrimaryBash = false -- primary attack triggers melee attack
 
@@ -364,7 +318,6 @@ SWEP.MeleeTime = 0.5
 SWEP.MeleeGesture = nil
 SWEP.MeleeAttackTime = 0.2
 
--- Right click is replaced with a melee attack
 SWEP.Melee2 = false
 SWEP.Melee2Damage = 25
 SWEP.Melee2Range = 16
@@ -372,24 +325,31 @@ SWEP.Melee2Time = 0.5
 SWEP.Melee2Gesture = nil
 SWEP.Melee2AttackTime = 0.2
 
--- POSITIONS
 SWEP.BashPreparePos = Vector(2.187, -4.117, -7.14)
 SWEP.BashPrepareAng = Angle(32.182, -3.652, -19.039)
 
 SWEP.BashPos = Vector(8.876, 0, 0)
 SWEP.BashAng = Angle(-16.524, 70, -11.046)
 
-SWEP.ActivePos = Vector(0, 0, 0) -- position for when the gun is normal
+SWEP.ActivePos = Vector(0, 0, 0)
 SWEP.ActiveAng = Angle(0, 0, 0)
 
-SWEP.ReloadPos = nil -- position for the gun while it's reloading
+SWEP.ReloadPos = nil
 SWEP.ReloadAng = nil
 
-SWEP.CrouchPos = nil -- while crouching
+SWEP.CrouchPos = nil
 SWEP.CrouchAng = nil
 
-SWEP.HolsterPos = Vector(0.532, -6, 0) -- position to pull/holster gun to when deploying or holstering
+SWEP.HolsterPos = Vector(0.532, -6, 0)
 SWEP.HolsterAng = Angle(-4.633, 36.881, 0)
+
+-- When using custom sprint animations, set this to the same as ActivePos and ActiveAng
+SWEP.SprintPos = nil
+SWEP.SprintAng = nil
+
+SWEP.BarrelOffsetSighted = Vector(0, 0, 0)
+SWEP.BarrelOffsetCrouch = nil
+SWEP.BarrelOffsetHip = Vector(3, 0, -3)
 
 SWEP.CustomizePos = Vector(9.824, 0, -4.897)
 SWEP.CustomizeAng = Angle(12.149, 30.547, 0)
@@ -397,27 +357,15 @@ SWEP.CustomizeAng = Angle(12.149, 30.547, 0)
 SWEP.InBipodPos = Vector(-8, 0, -4)
 SWEP.InBipodMult = Vector(2, 1, 1)
 
--- When using custom sprint animations, set this to the same as ActivePos and ActiveAng
-SWEP.SprintPos = nil
-SWEP.SprintAng = nil
-
--- BARREL
-
--- Barrel Offset is a position offset for where bullets come out of the gun, so it doesn't shoot from your eyes.
-SWEP.BarrelOffsetSighted = Vector(0, 0, 0)
-SWEP.BarrelOffsetCrouch = nil
-SWEP.BarrelOffsetHip = Vector(3, 0, -3)
-
 SWEP.BarrelLength = 24
 
--- ATTACHMENT ELEMENTS
+SWEP.SightPlusOffset = nil
 
--- An attachment element defines a set of appearance tweaks to make to a specific weapon.
--- These should not be confused with attachments themselves.
--- This system is in place in order to help make appearance changes that are different between weapons, but linked to the same attachment, possible.
+SWEP.DefaultPoseParams = {} -- {["pose"] = 0.5}
+SWEP.DefaultWMPoseParams = {}
+
 SWEP.DefaultElements = {} -- {"ele1", "ele2"}
 
--- As usual, WM related variables will not be used if MirrorVMWM is set to true, and can be safely ignored if you are using it.
 SWEP.AttachmentElements = {
     -- ["name"] = {
     --     RequireFlags = {}, -- same as attachments
@@ -485,19 +433,16 @@ SWEP.AttachmentElements = {
     -- }
 }
 
--- Reject specific attachments
 SWEP.RejectAttachments = {
     -- ["optic_docter"] = true -- stop this attachment from being usable on this gun
 }
 
--- Overwrite values on attachments to be what you specifically want
 SWEP.AttachmentOverrides = {
     -- ["optic_docter"] = {} -- allows you to overwrite atttbl values
 }
 
--- ATTACHMENTS
+SWEP.TTT_DoNotAttachOnBuy = false -- don't give all attachments when bought
 
--- This table is what gives ArcCW the CW.
 SWEP.Attachments = {}
 -- [1] = {
 --     PrintName = "Optic", -- print name
@@ -546,15 +491,6 @@ SWEP.Attachments = {}
 --     HideIfBlocked = false, -- If flag requirements are not met, do not show the attachment at all
 -- }
 
-SWEP.TTT_DoNotAttachOnBuy = false -- don't give all attachments when bought
-
--- ANIMATIONS
-
--- There are several things that may be referred to as animations in ArcCW.
--- In order to reduce confusion, an entry in the SWEP.Animations table is an "Animation table entry" or "SWEP.Animations entry".
--- Animations that are referred to by the Source table are "Sequences".
--- ACT_ animations are not used by ArcCW.
-
 -- ready: deploy first time
 -- draw
 -- holster
@@ -592,17 +528,15 @@ SWEP.TTT_DoNotAttachOnBuy = false -- don't give all attachments when bought
 -- !! they MUST be in the order of this list.
 -- example: fire_iron_bipod_empty
 
--- The following hooks take two arguments, (swep, anim)
--- Anim is a SWEP.Animations table entry.
--- use Hook_TranslateAnimation, same as in attachment, to do even more behaviours
--- use Hook_SelectReloadAnimation to change the reload animation
--- use Hook_SelectInsertAnimation to change the shotgun reload insert animation
--- use Hook_SelectFireAnimation to change the fire animation
--- use Hook_SelectCycleAnimation to change the cycle/pump animation
--- use Hook_SelectBashAnimation to change the bash animation
+-- use SWEP/wep.Hook_TranslateAnimation, same as in attachment, to do even more behaviours
+-- use SWEP/wep.Hook_SelectReloadAnimation to change the reload animation
+-- use SWEP/wep.Hook_SelectInsertAnimation to change the shotgun reload insert animation
+-- use SWEP/wep.Hook_SelectFireAnimation to change the fire animation
+-- use SWEP/wep.Hook_SelectCycleAnimation to change the cycle/pump animation
+-- use SWEP/wep.Hook_SelectBashAnimation to change the bash animation
 
--- Hooks can be used as part of an attachment, or as part of the SWEP table itself.
--- e.g. function SWEP:Hook_TranslateAnimation()
+-- which sequence to derive the sight autosolver from.
+SWEP.AutosolveSourceSeq = "idle"
 
 -- Disclaimer: LHIK is *actually* a type of forward kinematics.
 -- If you prefer, LHIK can stand for "Left Hand Individual Kinematics" or some shit
@@ -670,3 +604,252 @@ SWEP.Animations = {
     --     MinProgress = 0, -- how much time in seconds must pass before the animation can be cancelled
     -- }
 }
+
+-- don't change any of this stuff
+
+SWEP.Primary.Automatic = true
+SWEP.Primary.DefaultClip = -1
+SWEP.Secondary.ClipSize = -1
+SWEP.Secondary.DefaultClip = -1
+SWEP.Secondary.Automatic = false
+SWEP.Secondary.Ammo = "none"
+SWEP.DrawCrosshair = true
+SWEP.m_WeaponDeploySpeed = 80.08135 -- 8008135 boobies is funny but it'll bitch in console :(
+        -- We don't do that here
+
+SWEP.ArcCW = true
+SWEP.BurstCount = 0
+SWEP.AnimQueue = {}
+SWEP.FiremodeIndex = 1
+SWEP.UnReady = true
+
+SWEP.ProneMod_DisableTransitions = true
+
+SWEP.DrawWeaponInfoBox = false
+SWEP.BounceWeaponIcon = false
+
+if CLIENT or game.SinglePlayer() then
+
+SWEP.RecoilAmount = 0
+SWEP.RecoilAmountSide = 0
+SWEP.RecoilPunchBack = 0
+SWEP.RecoilPunchUp = 0
+SWEP.RecoilPunchSide = 0
+SWEP.HammerDown = false
+
+SWEP.LHIKTimeline = nil
+SWEP.LHIKStartTime = 0
+-- {number starttime, number intime, number outtime, number finishouttime}
+end
+
+SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
+-- SWEP.RegularClipSize = 0
+
+if SERVER then
+
+include("sv_npc.lua")
+include("sv_shield.lua")
+
+end
+
+include("sh_model.lua")
+include("sh_timers.lua")
+include("sh_think.lua")
+include("sh_deploy.lua")
+include("sh_anim.lua")
+include("sh_firing.lua")
+include("sh_reload.lua")
+include("sh_attach.lua")
+include("sh_sights.lua")
+include("sh_firemodes.lua")
+include("sh_customize.lua")
+include("sh_ubgl.lua")
+include("sh_rocket.lua")
+include("sh_heat.lua")
+include("sh_bash.lua")
+include("sh_bipod.lua")
+include("sh_grenade.lua")
+include("sh_ttt.lua")
+include("sh_util.lua")
+AddCSLuaFile("sh_model.lua")
+AddCSLuaFile("sh_timers.lua")
+AddCSLuaFile("sh_think.lua")
+AddCSLuaFile("sh_deploy.lua")
+AddCSLuaFile("sh_anim.lua")
+AddCSLuaFile("sh_firing.lua")
+AddCSLuaFile("sh_reload.lua")
+AddCSLuaFile("sh_attach.lua")
+AddCSLuaFile("sh_sights.lua")
+AddCSLuaFile("sh_firemodes.lua")
+AddCSLuaFile("sh_customize.lua")
+AddCSLuaFile("sh_ubgl.lua")
+AddCSLuaFile("sh_rocket.lua")
+AddCSLuaFile("sh_heat.lua")
+AddCSLuaFile("sh_bash.lua")
+AddCSLuaFile("sh_bipod.lua")
+AddCSLuaFile("sh_grenade.lua")
+AddCSLuaFile("sh_ttt.lua")
+AddCSLuaFile("sh_util.lua")
+
+AddCSLuaFile("cl_customize2.lua")
+AddCSLuaFile("cl_viewmodel.lua")
+AddCSLuaFile("cl_scope.lua")
+AddCSLuaFile("cl_crosshair.lua")
+AddCSLuaFile("cl_hud.lua")
+AddCSLuaFile("cl_holosight.lua")
+AddCSLuaFile("cl_lhik.lua")
+AddCSLuaFile("cl_laser.lua")
+AddCSLuaFile("cl_blur.lua")
+AddCSLuaFile("cl_presets.lua")
+AddCSLuaFile("cl_light.lua")
+
+if CLIENT then
+    include("cl_customize2.lua")
+    include("cl_viewmodel.lua")
+    include("cl_scope.lua")
+    include("cl_crosshair.lua")
+    include("cl_hud.lua")
+    include("cl_holosight.lua")
+    include("cl_lhik.lua")
+    include("cl_laser.lua")
+    include("cl_blur.lua")
+    include("cl_presets.lua")
+    include("cl_light.lua")
+end
+
+function SWEP:SetupDataTables()
+    self:NetworkVar("Int", 0, "NWState")
+    self:NetworkVar("Int", 1, "FireMode")
+    self:NetworkVar("Int", 2, "BurstCountUM")
+    self:NetworkVar("Int", 3, "LastLoad")
+    self:NetworkVar("Int", 4, "NthReload")
+    self:NetworkVar("Int", 5, "NthShot")
+
+    self:NetworkVar("Bool", 0, "HeatLocked")
+    self:NetworkVar("Bool", 1, "NeedCycle")
+    self:NetworkVar("Bool", 2, "InBipod")
+    self:NetworkVar("Bool", 3, "InUBGL")
+    self:NetworkVar("Bool", 4, "InCustomize")
+    self:NetworkVar("Bool", 5, "GrenadePrimed")
+    self:NetworkVar("Bool", 6, "ReqEnd")
+
+    self:NetworkVar("Float", 0, "Heat")
+    self:NetworkVar("Float", 1, "WeaponOpDelay")
+    self:NetworkVar("Float", 2, "ReloadingREAL")
+    self:NetworkVar("Float", 3, "MagUpIn")
+    self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
+    self:NetworkVar("Float", 5, "NextIdle")
+end
+
+function SWEP:OnRestore()
+    self:SetNthReload(0)
+    self:SetNthShot(0)
+    self:SetBurstCountUM(0)
+    self:SetReloadingREAL(0)
+    self:SetWeaponOpDelay(0)
+    self:SetMagUpIn(0)
+
+    self:KillTimers()
+    self:Initialize()
+
+    self.UnReady = false
+end
+
+
+function SWEP:SetReloading( v )
+    if isbool(v) then
+        if v then
+            self:SetReloadingREAL(math.huge)
+        else
+            self:SetReloadingREAL(0)
+        end
+    elseif isnumber(v) and v > self:GetReloadingREAL() then
+        self:SetReloadingREAL( v )
+    end
+end
+
+function SWEP:GetReloading()
+    local decide
+
+    if self:GetReloadingREAL() > CurTime() then
+        decide = true
+    else
+        decide = false
+    end
+
+    self:GetBuff_Hook("Hook_GetReloading", decide)
+
+    return decide
+end
+
+function SWEP:SetBurstCount(b)
+    self:SetBurstCountUM(b)
+end
+
+function SWEP:GetBurstCount()
+    return self:GetBuff_Hook("Hook_GetBurstCount", self:GetBurstCountUM()) or self:GetBurstCountUM() or 0
+end
+
+function SWEP:SetState(v)
+    self:SetNWState(v)
+    -- if CLIENT then
+    --     self.State = v
+    -- end
+end
+
+function SWEP:GetState(v)
+    -- if CLIENT and self.State then return self.State end
+    return self:GetNWState(v)
+end
+
+function SWEP:IsProne()
+    if PRONE_INPRONE then
+        return self:GetOwner().IsProne and self:GetOwner():IsProne()
+    else
+        return false
+    end
+end
+
+function SWEP:BarrelHitWall()
+    if GetConVar("arccw_override_nearwall"):GetBool() then
+        local offset = self.BarrelOffsetHip
+
+        if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+            return 0 -- Never block barrel in VR
+        end
+
+        if self:GetState() == ArcCW.STATE_SIGHTS then
+            offset = self.BarrelOffsetSighted
+        end
+
+        local dir = self:GetOwner():EyeAngles()
+        local src = self:GetOwner():EyePos()
+
+        src = src + dir:Right() * offset[1]
+        src = src + dir:Forward() * offset[2]
+        src = src + dir:Up() * offset[3]
+
+        local mask = MASK_SOLID
+
+        local filter = {self:GetOwner()}
+
+        table.Add(filter, self.Shields)
+
+        local tr = util.TraceLine({
+            start = src,
+            endpos = src + (dir:Forward() * (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength"))),
+            filter = filter,
+            mask = mask
+        })
+
+        if tr.Hit and not tr.Entity.ArcCWProjectile then
+            local l = (tr.HitPos - src):Length()
+            l = l
+            return 1 - math.Clamp(l / (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength")), 0, 1)
+        else
+            return 0
+        end
+    else
+        return 0
+    end
+end
