@@ -42,6 +42,8 @@ SWEP.WorldModelOffset = nil
 --     ang = Angle(0, 0, 0)
 -- }
 
+SWEP.NoHideLeftHandInCustomization = false
+
 SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = 0 -- damage will vary randomly each shot by this fraction

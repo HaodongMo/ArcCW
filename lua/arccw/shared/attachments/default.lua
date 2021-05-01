@@ -152,6 +152,8 @@ att.LHIK_Animation = false
 att.LHIK_GunDriver = ""
 att.LHIK_CamDriver = ""
 
+att.Override_NoHideLeftHandInCustomization = nil
+
 att.ActivateElements = {}
 
 att.MountPositionOverride = nil -- set between 0 to 1 to always mount in a certain position
