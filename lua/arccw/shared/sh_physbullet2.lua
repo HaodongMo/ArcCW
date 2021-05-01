@@ -58,15 +58,24 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         WeaponClass = wep:GetClass(),
         Weapon = wep,
         Attacker = wep:GetOwner(),
+        Filter = {wep:GetOwner()},
         Damaged = {},
         Burrowing = false,
         Dead = false,
         Profile = prof or wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
     }
 
-    if wep:GetOwner() and wep:GetOwner():IsNPC() then
+    table.Add(bullet.Filter, wep.Shields or {})
+
+    local owner = wep:GetOwner()
+
+    if owner and owner:IsNPC() then
         bullet.DamageMax = bullet.DamageMax * GetConVar("arccw_mult_npcdamage"):GetFloat()
         bullet.DamageMin = bullet.DamageMin * GetConVar("arccw_mult_npcdamage"):GetFloat()
+    end
+
+    if owner and owner:IsPlayer() and owner:GetVehicle() then
+        table.Add(bullet.Filter, {owner:GetVehicle()})
     end
 
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then
@@ -206,7 +215,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         local tr = util.TraceLine({
             start = oldpos,
             endpos = newpos,
-            filter = bullet.Attacker,
+            filter = bullet.Filter,
             mask = MASK_SHOT
         })
 
