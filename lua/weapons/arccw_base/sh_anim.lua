@@ -122,6 +122,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         time = vm:SequenceDuration(tseq) or 1
     end
 
+    if anim.Time == 0 then return end
+
     if absolute then
         time = 1
     end
