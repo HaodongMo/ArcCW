@@ -107,6 +107,7 @@ function SWEP:DoDrawCrosshair(x, y)
 
     if veh:IsValid() then
         local va = veh:GetAngles()
+        -- va.p = -va.p * 2
         aimtr.endpos = aimtr.start + (ply:EyeAngles() + va):Forward() * 10000
         table.Add(aimtr.filter, {veh})
     end

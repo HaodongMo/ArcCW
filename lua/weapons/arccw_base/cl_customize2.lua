@@ -612,6 +612,11 @@ function SWEP:CreateCustomize2HUD()
                 self.LastPresetName = self2.PresetName
                 self:LoadPreset(self2.PresetName)
             end
+            button.DoRightClick = function(self2)
+                local filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. self2.PresetName .. ".txt"
+                file.Delete(filename)
+                self2:Remove()
+            end
             button.Paint = function(self2, w, h)
                 local col = col_button
                 local col2 = col_fg
