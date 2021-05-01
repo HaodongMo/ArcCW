@@ -77,7 +77,7 @@ end
 -- Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. 
 -- What is the size of your ass. What is it. Tell me.
 local ScreenScale_CacheC2 = {}
-function ASS(size)
+ArcCW.AugmentedScreenScale = function(size)
     if ScreenScale_CacheC2[size] then return ScreenScale_CacheC2[size] end
 
     local scrw, scrh = ScrW(), ScrH()
@@ -154,7 +154,7 @@ local function generatefonts()
 
         surface.CreateFont( "ArcCWC2_" .. tostring(i), {
             font = GetFont(),
-            size = ASS(i) * GetConVar("arccw_hud_size"):GetFloat(),
+            size = ArcCW.AugmentedScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
             extended = true, -- Required for non-latin fonts
@@ -162,7 +162,7 @@ local function generatefonts()
 
         surface.CreateFont( "ArcCWC2_" .. tostring(i) .. "_Glow", {
             font = GetFont(),
-            size = ASS(i) * GetConVar("arccw_hud_size"):GetFloat(),
+            size = ArcCW.AugmentedScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
             blursize = 6,

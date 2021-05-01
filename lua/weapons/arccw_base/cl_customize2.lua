@@ -180,8 +180,8 @@ function SWEP:CreateCustomize2HUD()
     local scrwmult = GetConVar("arccw_hud_deadzone_x"):GetFloat() * scrw
     local scrhmult = GetConVar("arccw_hud_deadzone_y"):GetFloat() * scrh
 
-    local ss = ASS(1)
-    local rss = ss
+    local ss = ArcCW.AugmentedScreenScale(1)
+    local rss = ss -- REAL SCREEN SCALE
 
     scrw, scrh = scrw - scrwmult, scrh - scrhmult
 
