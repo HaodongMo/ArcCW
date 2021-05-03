@@ -224,13 +224,14 @@ function SWEP:GetViewModelPosition(pos, ang)
     local proceduralRecoilMult = 1
 
     local SP = game.SinglePlayer()
+    local FT = RealFrameTime() * game.GetTimeScale()
     local CT = CurTime()
     local UCT = UnPredictedCurTime()
-    local FT = FrameTime()
+    --local FT = FrameTime()
 
-    local TargetTick = (1/FT)/66.66
+    local TargetTick = ( 1 / FT ) / 66.66
     if TargetTick < 1 then
-        FT = FT*TargetTick
+        FT = FT * TargetTick
     end
 
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
@@ -241,6 +242,9 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     local asight = self:GetActiveSights()
     local state  = self:GetState()
+    local sgtd = self:GetSightDelta()
+    local sprd = self:GetSprintDelta()
+    --print(sgtd)
 
     oldpos:Set(pos)
     oldang:Set(ang)
@@ -307,8 +311,6 @@ function SWEP:GetViewModelPosition(pos, ang)
         sprinted = state == ArcCW.STATE_SPRINT
         sighted  = state == ArcCW.STATE_SIGHTS
     end
-
-    local sprd = self:GetSprintDelta()
 
     if state == ArcCW.STATE_CUSTOMIZE then
         target.pos  = Vector()
@@ -543,7 +545,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     -- if asight and asight.Holosight then ang = ang - self:GetOurViewPunchAngles() end
 
-    ang = ang + self:GetOurViewPunchAngles() * Lerp(self:GetSightDelta(), 1, -1)
+    ang = ang + self:GetOurViewPunchAngles() * Lerp(sgtd, 1, -1)
 
     -- if IsFirstTimePredicted() then
 
@@ -552,7 +554,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     -- end
 
     if gunbone then
-        local magnitude = Lerp(self:GetSightDelta(), 0.1, 1)
+        local magnitude = Lerp(sgtd, 0.1, 1)
         local lhik_model = self.Attachments[gbslot].VElement.Model
         local att = lhik_model:LookupAttachment(gunbone)
         local attang = lhik_model:GetAttachment(att).Ang

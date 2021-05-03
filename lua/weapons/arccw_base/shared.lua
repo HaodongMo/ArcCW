@@ -725,13 +725,17 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
 
+    -- 2 = insert
+    -- 3 = cancelling
+    -- 4 = insert empty
+    self:NetworkVar("Int", 6, "ShotgunReloading")
+
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
     self:NetworkVar("Bool", 2, "InBipod")
     self:NetworkVar("Bool", 3, "InUBGL")
     self:NetworkVar("Bool", 4, "InCustomize")
     self:NetworkVar("Bool", 5, "GrenadePrimed")
-    self:NetworkVar("Bool", 6, "ReqEnd")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
@@ -792,13 +796,11 @@ end
 
 function SWEP:SetState(v)
     self:SetNWState(v)
-    -- if CLIENT then
-    --     self.State = v
-    -- end
+    if !game.SinglePlayer() and CLIENT then self.State = v end
 end
 
 function SWEP:GetState(v)
-    -- if CLIENT and self.State then return self.State end
+    if !game.SinglePlayer() and CLIENT and self.State then return self.State end
     return self:GetNWState(v)
 end
 

@@ -20,6 +20,7 @@ function SWEP:SetClipInfo(load)
 end
 
 function SWEP:Reload()
+
     if self:GetOwner():IsNPC() then
         return
     end
@@ -36,6 +37,17 @@ function SWEP:Reload()
                 -- californication
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
+
+    -- DEBUG
+    --[[]
+    local vm = self.Owner:GetViewModel()
+    vm:SendViewModelMatchingSequence(vm:LookupSequence("reload"))
+    print("reload", CurTime())
+    if SERVER then
+        PrintMessage(HUD_PRINTTALK, "SERVER: " .. tostring(self:GetOwner()) .. " " .. CurTime())
+    end
+    if true then self:SetNextPrimaryFire(CurTime() + 2) return end
+    ]]
 
     if self.Throwing then return end
     if self.PrimaryBash then return end
@@ -69,7 +81,6 @@ function SWEP:Reload()
 
     if load <= self:Clip1() then return end
 
-    self:SetReqEnd(false)
     self:SetBurstCount(0)
 
     local shouldshotgunreload = self:GetBuff_Override("Override_ShotgunReload")
@@ -105,12 +116,10 @@ function SWEP:Reload()
         self:SetClip1(self:Clip1() + insertcount)
 
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
+
         self:SetReloading(CurTime() + (self:GetAnimKeyTime(anim) * mult))
 
-        self:SetTimer(self:GetAnimKeyTime(anim) * mult,
-        function()
-            self:ReloadInsert(empty)
-        end)
+        self:SetShotgunReloading(empty and 4 or 2)
     else
         local anim = self:SelectReloadAnimation()
 
@@ -128,11 +137,6 @@ function SWEP:Reload()
 
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
         local reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
-
-        if !self.Animations[anim].MinProgress then
-            -- needs to be here to fix empty idle related issues
-            reloadtime = reloadtime * 0.9
-        end
 
         self:SetNextPrimaryFire(CurTime() + reloadtime2)
         self:SetReloading(CurTime() + reloadtime2)
@@ -321,7 +325,7 @@ function SWEP:ReloadInsert(empty)
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
 
-    if self:Clip1() >= total or self:Ammo1() == 0 or (self:GetReqEnd() and self:Clip1() > 0) then
+    if self:Clip1() >= total or self:Ammo1() == 0 or self:GetShotgunReloading() == 3 then
         local ret = "sgreload_finish"
 
         if empty then
@@ -336,16 +340,17 @@ function SWEP:ReloadInsert(empty)
         ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
         self:PlayAnimation(ret, mult, true, 0, true, nil, true)
-            self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret, true) * mult))
-            self:SetTimer(self:GetAnimKeyTime(ret, true) * mult,
-            function()
-                self:SetNthReload(self:GetNthReload() + 1)
-                if self:GetOwner():KeyDown(IN_ATTACK2) then
-                    self:EnterSights()
-                end
-            end)
+        self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret, true) * mult))
 
-        self:SetReqEnd(false)
+        self:SetTimer(self:GetAnimKeyTime(ret, true) * mult,
+        function()
+            self:SetNthReload(self:GetNthReload() + 1)
+            if self:GetOwner():KeyDown(IN_ATTACK2) then
+                self:EnterSights()
+            end
+        end)
+
+        self:SetShotgunReloading(0)
     else
         local insertcount = self:GetBuff_Override("Override_InsertAmount") or 1
         local insertanim = "sgreload_insert"
@@ -371,10 +376,7 @@ function SWEP:ReloadInsert(empty)
         self:SetReloading(CurTime() + time * mult)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
-        self:SetTimer(time * mult,
-        function()
-            self:ReloadInsert(empty)
-        end, "shotgunreload")
+        self:SetShotgunReloading(empty and 4 or 2)
     end
 end
 

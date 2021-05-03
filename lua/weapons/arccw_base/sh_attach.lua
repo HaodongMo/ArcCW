@@ -470,6 +470,11 @@ function SWEP:GetBuff_Add(buff)
     if self.TickCache_Adds[buff] then
         add = self.TickCache_Adds[buff]
 
+        local data = {
+            buff = buff,
+            add = add
+        }
+
         if !ArcCW.BuffStack then
 
             ArcCW.BuffStack = true
