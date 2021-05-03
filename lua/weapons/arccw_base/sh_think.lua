@@ -14,8 +14,11 @@ function SWEP:Think()
 
     self.BurstCount = self:GetBurstCount()
 
-    if owner:KeyPressed(IN_ATTACK) then
-        self:SetReqEnd(true)
+    local sg = self:GetShotgunReloading()
+    if (sg == 2 or sg == 4) and owner:KeyPressed(IN_ATTACK) then
+        self:SetShotgunReloading(3)
+    elseif (sg == 2 or sg == 4) and self:GetReloadingREAL() <= CurTime() then
+        self:ReloadInsert(sg == 4 and true or false)
     end
 
     if CLIENT then
@@ -294,8 +297,8 @@ function SWEP:ProcessRecoil()
     -- self.RecoilAmount = r - math.Clamp(ft * 20, 0, r)
     -- self.RecoilAmountSide = rs - math.Clamp(ft * 20, 0, rs)
 
-    self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 20 * r)
-    self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 20 * rs)
+    -- self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 20 * r)
+    -- self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 20 * rs)
 
     -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
     -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))

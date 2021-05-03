@@ -271,6 +271,13 @@ function SWEP:DrawHUD()
         
         surface.SetTextPos(ecksy, 26 * s*9.25)
         surface.DrawText("SIGHT DELTA")
+
+        surface.SetTextPos(ecksy, 26 * s*10.25)
+        if thestate == ArcCW.STATE_IDLE then
+            surface.DrawText("LAST CHANGE: " .. math.Round(CurTime() - self.LastExitSightTime, 2))
+        elseif  thestate == ArcCW.STATE_SIGHTS then
+            surface.DrawText("LAST CHANGE: " .. math.Round(CurTime() - self.LastEnterSightTime, 2))
+        end
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end

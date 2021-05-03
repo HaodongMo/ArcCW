@@ -306,7 +306,7 @@ function SWEP:Holster(wep)
 
         self:SetReloading(CurTime() + time * 1.1)
         self:SetTimer(time, function()
-            self:SetReqEnd(true)
+            self:SetShotgunReloading(0)
             self:KillTimers()
 
             self.FullyHolstered = true

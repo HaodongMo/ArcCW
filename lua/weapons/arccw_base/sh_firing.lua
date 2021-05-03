@@ -476,10 +476,12 @@ function SWEP:DoPrimaryFire(isent, data)
         else
             if owner:IsPlayer() then
                 owner:LagCompensation(true)
+                if SERVER and !game.SinglePlayer() then SuppressHostEvents(owner) end
             end
             owner:FireBullets(data)
             if owner:IsPlayer() then
                 owner:LagCompensation(false)
+                if SERVER and !game.SinglePlayer() then SuppressHostEvents(nil) end
             end
         end
     end
@@ -596,7 +598,8 @@ function SWEP:GetDispersion()
 
     local hip = delta * hipdisp * self.HipDispersion
 
-    if sights then hip = (delta <= 0) and (self:GetBuff("SightsDispersion")) or (hipdisp * self.HipDispersion) end
+    local sightdisp = self:GetBuff("SightsDispersion")
+    if sights then hip = Lerp(delta, sightdisp, hipdisp * self.HipDispersion) end
 
     if owner:OnGround() or owner:WaterLevel() > 0 or owner:GetMoveType() == MOVETYPE_NOCLIP then
         local speed    = owner:GetAbsVelocity():Length()
@@ -752,8 +755,9 @@ function SWEP:DoRecoil()
     ]]
 
     local punch = Angle()
-    punch = punch + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * math.max(self.Recoil, 0.25) * recu * recv * rmul)
-    punch = punch + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec  * recv * rmul)
+
+    punch = punch + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * math.max(self.Recoil, 0.25) * recu * recv * rmul)
+    punch = punch + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec  * recv * rmul)
     punch = punch + Angle(0, 0, 90) * math.Rand(-1, 1) * math.Clamp(self.Recoil, 0.25, 1) * recv * rmul * 0.01
     punch = punch * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
 
