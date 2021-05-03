@@ -121,6 +121,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         time = vm:SequenceDuration(tseq) or 1
     end
 
+    if anim.Time == 0 then return end
+
     if absolute then
         time = 1
     end
@@ -257,9 +259,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
     if att and vm:GetAttachment(att) then
         local ang = vm:GetAttachment(att).Ang
-
         ang = vm:WorldToLocalAngles(ang)
-
         self.Cam_Offset_Ang = Angle(ang)
     end
 

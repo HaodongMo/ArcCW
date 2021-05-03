@@ -84,24 +84,37 @@ function SWEP:DoDrawCrosshair(x, y)
     if self:GetOwner():ShouldDrawLocalPlayer() then
         local tr = util.GetPlayerTrace( self:GetOwner() )
         local trace = util.TraceLine( tr )
-		
+
         local coords = trace.HitPos:ToScreen()
         sp = { visible = true, x = coords.x, y = coords.y }
-    else
-        cam.Start3D()
-        sp = (pos + (ang:Forward() * 3200)):ToScreen()
-        cam.End3D()
     end
-	
-	if GetConVar("arccw_crosshair_trueaim"):GetBool() then
+
+    cam.Start3D()
+    sp = (pos + (ang:Forward() * 3200)):ToScreen()
+    cam.End3D()
+
+    if GetConVar("arccw_crosshair_trueaim"):GetBool() then
         aimtr.start = self:GetShootSrc()
-        aimtr.endpos = aimtr.start + (ply:GetAimVector() * 100000)
-        aimtr.filter = self:GetOwner()
-        aimtr.output = aimtr_result
-        util.TraceLine(aimtr)
-        local w2s = aimtr_result.HitPos:ToScreen()
-        sp.x = w2s.x sp.y = w2s.y
-	end
+    else
+        aimtr.start = pos
+    end
+
+    aimtr.endpos = aimtr.start + (ply:GetAimVector() * 100000)
+    aimtr.filter = {self:GetOwner()}
+    aimtr.output = aimtr_result
+
+    local veh = self:GetOwner():GetVehicle()
+
+    if veh:IsValid() then
+        local va = veh:GetAngles()
+        -- va.p = -va.p * 2
+        aimtr.endpos = aimtr.start + (ply:EyeAngles() + va):Forward() * 10000
+        table.Add(aimtr.filter, {veh})
+    end
+
+    util.TraceLine(aimtr)
+    local w2s = aimtr_result.HitPos:ToScreen()
+    sp.x = w2s.x sp.y = w2s.y
 
     x, y = sp.x, sp.y
 

@@ -74,14 +74,52 @@ local function GetFont()
     return font
 end
 
+-- Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. Yes. 
+-- What is the size of your ass. What is it. Tell me.
+local ScreenScale_CacheC2 = {}
+ArcCW.AugmentedScreenScale = function(size)
+    if ScreenScale_CacheC2[size] then return ScreenScale_CacheC2[size] end
+
+    local scrw, scrh = ScrW(), ScrH()
+    if vrmod and vrmod.IsPlayerInVR(LocalPlayer()) then
+        -- Other resolutions seem to cause stretching issues
+        scrw = 1366
+        scrh = 768
+    end
+
+    local scrwmult = GetConVar("arccw_hud_deadzone_x"):GetFloat() * scrw
+    local scrhmult = GetConVar("arccw_hud_deadzone_y"):GetFloat() * scrh
+
+    scrw, scrh = scrw - scrwmult, scrh - scrhmult
+
+    local r = size
+    r = r * (math.max(scrw, scrh) / 800)
+    r = r * GetConVar("arccw_hud_size"):GetFloat()
+    ScreenScale_CacheC2[size] = r
+    return r
+end
+
 local sizes_to_make = {
     6,
     8,
+    10,
     12,
+    14,
     16,
     20,
     24,
-    26
+    26,
+    32
+}
+
+local sizes_to_make_cust2 = {
+    8,
+    10,
+    12,
+    14,
+    16,
+    24,
+    32
 }
 
 local unscaled_sizes_to_make = {
@@ -106,7 +144,28 @@ local function generatefonts()
             size = ScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
             weight = 0,
             antialias = true,
-            blursize = 8,
+            blursize = 6,
+            extended = true,
+        } )
+
+    end
+
+    for _, i in pairs(sizes_to_make_cust2) do
+
+        surface.CreateFont( "ArcCWC2_" .. tostring(i), {
+            font = GetFont(),
+            size = ArcCW.AugmentedScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
+            weight = 0,
+            antialias = true,
+            extended = true, -- Required for non-latin fonts
+        } )
+
+        surface.CreateFont( "ArcCWC2_" .. tostring(i) .. "_Glow", {
+            font = GetFont(),
+            size = ArcCW.AugmentedScreenScale(i) * GetConVar("arccw_hud_size"):GetFloat(),
+            weight = 0,
+            antialias = true,
+            blursize = 6,
             extended = true,
         } )
 
@@ -137,29 +196,27 @@ function ScreenScale(a)
     return ScreenScale_Cache[a]
 end
 
-generatefonts()
-
 language.Add("SniperPenetratedRound_ammo", "Sniper Ammo")
 
-local lastScrH = ScrH()
-local lastScrW = ScrW()
-
-hook.Add("HUDPaint", "ArcCW_FontRegen", function()
-    if (lastScrH != ScrH()) or (lastScrW != ScrW()) then
+generatefonts()
+function ArcCW_Regen(full)
+    if full then
         generatefonts()
         ScreenScale_Cache = {}
+        ScreenScale_CacheC2 = {}
     end
+    if IsValid(ArcCW.InvHUD) then
+        ArcCW.InvHUD:Clear()
+        ArcCW.InvHUD:Remove()
+    end
+end
 
-    lastScrH = ScrH()
-    lastScrW = ScrW()
-end)
-
-cvars.AddChangeCallback("arccw_hud_size", function()
-    generatefonts()
-end)
-cvars.AddChangeCallback("arccw_font", function()
-    generatefonts()
-end)
+cvars.AddChangeCallback("arccw_dev_cust2beta",  function() ArcCW_Regen(true) end)
+cvars.AddChangeCallback("arccw_hud_deadzone_x", function() ArcCW_Regen(true) end)
+cvars.AddChangeCallback("arccw_hud_deadzone_y", function() ArcCW_Regen(true) end)
+cvars.AddChangeCallback("arccw_hud_size",       function() ArcCW_Regen(true) end)
+cvars.AddChangeCallback("arccw_font",           function() ArcCW_Regen(true) end)
+hook.Add( "OnScreenSizeChanged", "ArcCW_Regen", function() ArcCW_Regen(true) end)
 
 -- surface.CreateFont( "ArcCW_12", {
 --     font = font,

@@ -45,7 +45,7 @@ ArcCW.AutoStats = {
     ["Mult_DrawTime"]         = { "autostat.drawtime",    "mult", true },
     ["Mult_SightTime"]        = { "autostat.sighttime",   "mult", true },
     ["Mult_CycleTime"]        = { "autostat.cycletime",   "mult", true },
-    --["Add_Sway"]              = { "autostat.sway",        "add",  true },
+    ["Mult_Sway"]             = { "autostat.sway",        "mult",  true },
     ["Mult_HeatCapacity"]     = { "autostat.heatcap",     "mult", false },
     ["Mult_HeatDissipation"]  = { "autostat.heatdrain",   "mult", false },
     ["Mult_FixTime"]          = { "autostat.heatfix",     "mult", true },
@@ -63,15 +63,18 @@ end
 function ArcCW:GetProsCons(att, toggle)
     local pros = {}
     local cons = {}
+    local infos = {}
 
     tbl_add(pros, att.Desc_Pros or {})
     tbl_add(cons, att.Desc_Cons or {})
+    tbl_add(infos, att.Desc_Neutrals or {})
 
     -- Localize pro and con text
     for i, v in pairs(pros) do pros[i] = ArcCW.TryTranslation(v) end
     for i, v in pairs(cons) do cons[i] = ArcCW.TryTranslation(v) end
+    for i, v in pairs(infos) do infos[i] = ArcCW.TryTranslation(v) end
 
-    if !att.AutoStats then return pros, cons end
+    if !att.AutoStats then return pros, cons, infos end
 
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
     local dmgboth = false
@@ -155,5 +158,5 @@ function ArcCW:GetProsCons(att, toggle)
         end
     end
 
-    return pros, cons
+    return pros, cons, infos
 end

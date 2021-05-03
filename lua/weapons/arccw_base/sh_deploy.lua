@@ -202,6 +202,61 @@ SWEP.HolsterSwitchTo = nil
 function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
     if wep == self then return end
+
+    -- Props deploy to NULL
+    if wep == NULL then
+        -- We need to go! Right! Now!
+        local time = 0.25
+        local anim = self:SelectAnimation("holster")
+        if anim then
+            self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
+            time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
+        else
+            if CLIENT then
+                self:ProceduralHolster()
+            end
+            time = time * self:GetBuff_Mult("Mult_DrawTime")
+        end
+
+        self:SetReqEnd(true)
+        self:KillTimers()
+
+        self.FullyHolstered = true
+
+        if CLIENT then
+            self:KillFlashlights()
+        end
+        if SERVER then
+            if self:GetBuff_Override("UBGL_UnloadOnDequip") then
+                local clip = self:Clip2()
+
+                local ammo = self:GetBuff_Override("UBGL_Ammo") or "smg1_grenade"
+
+                if IsValid(self:GetOwner()) then
+                    self:GetOwner():GiveAmmo(clip, ammo, true)
+                end
+
+                self:SetClip2(0)
+            end
+
+            self:KillShields()
+
+            local vm = self:GetOwner():GetViewModel()
+
+            if IsValid(vm) then
+                for i = 0, vm:GetNumBodyGroups() do
+                    vm:SetBodygroup(i, 0)
+                end
+                vm:SetSkin(0)
+            end
+
+            if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
+                self:GetOwner():StripWeapon(self:GetClass())
+            end
+        end
+
+        return true
+    end
     if self:GetBurstCount() > 0 and self:Clip1() > 0 then return false end
     if self.FullyHolstered then return true end
 

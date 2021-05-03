@@ -152,6 +152,8 @@ att.LHIK_Animation = false
 att.LHIK_GunDriver = ""
 att.LHIK_CamDriver = ""
 
+att.Override_NoHideLeftHandInCustomization = nil
+
 att.ActivateElements = {}
 
 att.MountPositionOverride = nil -- set between 0 to 1 to always mount in a certain position
@@ -253,6 +255,12 @@ att.HolosightColor = Color(255, 255, 255)
 att.Override_Ammo = "ar2" -- overrides the ammo type with this one
 
 att.Override_Firemodes = {}
+
+-- you can use _Priority to determine the priority of overrides.
+-- append it to the end of an Override_ stat to set this.
+-- for example, att.Override_Firemodes_Priority = 2
+-- higher priority = will be chosen over lower priority
+-- default priority for all stats is 1.
 
 -- all hooks will work when applied to the SWEP table as well
 -- e.g. SWEP.Hook_FireBullets
@@ -502,6 +510,8 @@ att.Add_ChamberSize = nil
 att.Mult_Recoil = 1
 att.Mult_RecoilSide = 1
 att.Mult_VisualRecoilMult = 1
+
+att.Mult_Sway = 1
 
 att.Override_ShootWhileSprint = nil
 

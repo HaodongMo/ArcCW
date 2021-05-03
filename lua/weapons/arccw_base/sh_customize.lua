@@ -8,6 +8,8 @@ local temp = 0
 local SolidBlack = Color(temp, temp, temp)
 -- don't fucking mess with the shadow, makes the menu hurt your goddamn eyes
 
+CreateConVar("arccw_dev_cust2beta", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, nil, 0, 1)
+
 local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
     local tw, th = surface.GetTextSize(txt)
 
@@ -138,11 +140,19 @@ end
 function SWEP:ValidateAttachment(attname, attslot, i)
     if !self:IsValid() or !self.Attachments then return false end
     local atttbl = ArcCW.AttachmentTable[attname]
+    if !atttbl then return true, nil, nil, nil end
 
+    attslot = attslot or self.Attachments[i]
+
+    local show = true
     local showqty = true
     local installed = false
-    local blocked = atttbl and !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
+    local blocked = !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags)
     local owned = self:PlayerOwnsAtt(attname)
+
+    if !ArcCW:SlotAcceptsAtt(attslot.Slot or "", self, attname) then
+        blocked = true
+    end
 
     if !atttbl or atttbl.Free then
         showqty = false
@@ -152,9 +162,9 @@ function SWEP:ValidateAttachment(attname, attslot, i)
         showqty = false
     end
 
-    if !owned then
-        showqty = false
-    end
+    -- if !owned then
+    --     showqty = false
+    -- end
 
     if GetConVar("arccw_attinv_lockmode"):GetBool() then
         showqty = false
@@ -168,31 +178,6 @@ function SWEP:ValidateAttachment(attname, attslot, i)
         installed = true
     end
 
-    for _, slot in pairs(attslot.MergeSlots or {}) do
-        if !slot then continue end
-        if !self.Attachments[slot] then continue end
-        if !blocked and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, attname) and
-                !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
-                !orighas then
-            blocked = true
-            if self.Attachments[slot].HideIfBlocked then
-                return false
-            end
-        end
-        if self.Attachments[slot].Installed == attname then
-            installed = true
-            break
-        end
-    end
-
-    if blocked and atttbl and atttbl.HideIfBlocked then
-        return false
-    end
-
-    if !owned and atttbl and atttbl.HideIfUnavailable then
-        return false
-    end
-
     if attname == "" and !attslot.Installed then
         installed = true
 
@@ -204,7 +189,37 @@ function SWEP:ValidateAttachment(attname, attslot, i)
         end
     end
 
-    return true, installed, blocked, showqty
+    for _, slot in pairs(attslot.MergeSlots or {}) do
+        if !slot then continue end
+        if !self.Attachments[slot] then continue end
+        if !blocked and ArcCW:SlotAcceptsAtt(self.Attachments[slot], self, attname) and
+                !self:CheckFlags(self.Attachments[slot].ExcludeFlags, self.Attachments[slot].RequireFlags) and
+                !orighas then
+            blocked = true
+            if self.Attachments[slot].HideIfBlocked then
+                show = false
+            end
+            break
+        end
+        if self.Attachments[slot].Installed == attname then
+            installed = true
+            break
+        end
+    end
+
+    if blocked and atttbl and atttbl.HideIfBlocked then
+        show = false
+    end
+
+    if !owned and atttbl and atttbl.HideIfUnavailable then
+        show = false
+    end
+
+    if !owned and GetConVar("arccw_attinv_hideunowned"):GetBool() then
+        show = false
+    end
+
+    return show, installed, blocked, showqty
 end
 
 function SWEP:OpenCustomizeHUD()
@@ -212,24 +227,34 @@ function SWEP:OpenCustomizeHUD()
         ArcCW.InvHUD:Show()
         -- ArcCW.InvHUD:RequestFocus()
     else
-        self:CreateCustomizeHUD()
+        if GetConVar("arccw_dev_cust2beta"):GetBool() then self:CreateCustomize2HUD() else self:CreateCustomizeHUD() end
         gui.SetMousePos(ScrW() / 2, ScrH() / 2)
     end
 
+    ArcCW.Inv_Hidden = false
     gui.EnableScreenClicker(true)
 
     if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/extra.wav") end
 
 end
 
-function SWEP:CloseCustomizeHUD()
+function SWEP:CloseCustomizeHUD( hide )
     if IsValid(ArcCW.InvHUD) then
-        ArcCW.InvHUD:Hide()
-        ArcCW.InvHUD:Clear()
+        if !GetConVar("arccw_dev_cust2beta"):GetBool() then
+            ArcCW.InvHUD:Hide()
+            ArcCW.InvHUD:Clear()
+            if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then
+                vrmod.MenuClose( "ArcCW_Customize" )
+            end
+            if !hide then
+                ArcCW.InvHUD:Remove()
+            end
+        end
+
         ArcCW.InvHUD:Remove()
-        gui.EnableScreenClicker(false)
-        if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then
-            vrmod.MenuClose( "ArcCW_Customize" )
+
+        if !hide then
+            gui.EnableScreenClicker(false)
         end
 
         if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/extra2.wav") end

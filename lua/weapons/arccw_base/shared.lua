@@ -42,6 +42,8 @@ SWEP.WorldModelOffset = nil
 --     ang = Angle(0, 0, 0)
 -- }
 
+SWEP.NoHideLeftHandInCustomization = false
+
 SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = 0 -- damage will vary randomly each shot by this fraction
@@ -120,6 +122,9 @@ SWEP.RecoilRise = 1
 SWEP.MaxRecoilBlowback = -1
 SWEP.VisualRecoilMult = 1.25
 SWEP.RecoilPunch = 1.5
+SWEP.RecoilPunchBackMax = 1
+
+SWEP.Sway = 0
 
 SWEP.ShotgunSpreadDispersion = false -- dispersion will cause pattern to increase instead of shifting
 SWEP.ShotgunSpreadPattern = nil
@@ -686,6 +691,7 @@ AddCSLuaFile("sh_grenade.lua")
 AddCSLuaFile("sh_ttt.lua")
 AddCSLuaFile("sh_util.lua")
 
+AddCSLuaFile("cl_customize2.lua")
 AddCSLuaFile("cl_viewmodel.lua")
 AddCSLuaFile("cl_scope.lua")
 AddCSLuaFile("cl_crosshair.lua")
@@ -698,6 +704,7 @@ AddCSLuaFile("cl_presets.lua")
 AddCSLuaFile("cl_light.lua")
 
 if CLIENT then
+    include("cl_customize2.lua")
     include("cl_viewmodel.lua")
     include("cl_scope.lua")
     include("cl_crosshair.lua")
@@ -736,8 +743,6 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
     self:NetworkVar("Float", 5, "NextIdle")
-    --self:NetworkVar("Float", 6, "LastExitSight")
-    --self:NetworkVar("Float", 7, "LastEnterSight")
 end
 
 function SWEP:OnRestore()
