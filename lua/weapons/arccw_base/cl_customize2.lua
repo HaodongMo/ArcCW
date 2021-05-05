@@ -291,7 +291,7 @@ function SWEP:CreateCustomize2HUD()
     end
 
     local menu1_w = bar1_w - airgap_x
-    local menu1_h = scrh - (2 * airgap_y) - bottom_zone - top_zone
+    local menu1_h = scrh - (2 * airgap_y) - bottom_zone - top_zone + smallgap
 
     local closebutton = vgui.Create("DButton", ArcCW.InvHUD)
     closebutton:SetText("")
@@ -358,7 +358,7 @@ function SWEP:CreateCustomize2HUD()
 
     -- Menu for attachment slots/presets
     ArcCW.InvHUD_Menu1 = vgui.Create("DScrollPanel", ArcCW.InvHUD)
-    ArcCW.InvHUD_Menu1:SetPos(airgap_x, airgap_y + top_zone)
+    ArcCW.InvHUD_Menu1:SetPos(airgap_x, airgap_y + top_zone + smallgap)
     ArcCW.InvHUD_Menu1:SetSize(menu1_w, menu1_h)
 
     local scroll_1 = ArcCW.InvHUD_Menu1:GetVBar()
@@ -496,6 +496,8 @@ function SWEP:CreateCustomize2HUD()
             button:DockMargin(0, smallgap, 0, 0)
             button:Dock(TOP)
             button.DoClick = function(self2, clr, btn)
+                if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+
                 surface.PlaySound("weapons/arccw/uninstall.wav")
 
                 net.Start("arccw_asktodrop")
@@ -503,6 +505,9 @@ function SWEP:CreateCustomize2HUD()
                 net.SendToServer()
 
                 ArcCW:PlayerTakeAtt(self:GetOwner(), self2.att)
+                if self:GetOwner().ArcCW_AttInv[self2.att] == 0 then
+                    self2:Remove()
+                end
             end
             button.Paint = function(self2, w, h)
                 local col = col_button
@@ -825,7 +830,7 @@ function SWEP:CreateCustomize2HUD()
             button.attindex = i
             button:SetText("")
             button:SetSize(menu1_w, bigbuttonheight)
-            button:DockMargin(0, smallgap, 0, 0)
+            button:DockMargin(0, 0, 0, smallgap)
             button:Dock(TOP)
             button.DoClick = function(self2, clr, btn)
                 if self.Inv_SelectedSlot == self2.attindex then
