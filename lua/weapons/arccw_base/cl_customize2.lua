@@ -39,7 +39,7 @@ end
 
 function SWEP:ShowInventoryButton()
     if GetConVar("arccw_attinv_free"):GetBool() then return false end
-    if GetConVar("arccw_attinv_lockmode"):GetBool() then return false end
+    --if GetConVar("arccw_attinv_lockmode"):GetBool() then return false end
     if !GetConVar("arccw_enable_dropping"):GetBool() then return false end
 
     return true
@@ -483,25 +483,33 @@ function SWEP:CreateCustomize2HUD()
 
         table.sort(atts)
 
+        local str = ""
         if #atts == 0 then
+            str = translate("ui.noatts")
+        elseif GetConVar("arccw_attinv_lockmode"):GetBool() then
+            str = translate("ui.lockinv")
+        end
+
+        if str then
             local msg = vgui.Create("DPanel", ArcCW.InvHUD_Menu1)
             msg:SetText("")
-            msg:SetSize(menu2_w - (2 * ss), smallbuttonheight * 2)
+            msg:SetSize(menu2_w - (2 * ss), rss * 12)
             msg:Dock(TOP)
             msg.Paint = function(self2, w, h)
-                local txt = translate("ui.noatts")
-
+                local old = DisableClipping(true)
                 surface.SetTextColor(col_shadow)
                 surface.SetTextPos(ss * 4, ss * 2)
                 surface.SetFont("ArcCWC2_12_Glow")
-                DrawTextRot(self2, txt, ss * 4, 0, ss * 4, ss * 2, w - (ss * 4))
+                surface.DrawText(str)
+                --DrawTextRot(self2, str, ss * 4, 0, ss * 4, ss * 2, w - (ss * 4))
 
                 surface.SetTextColor(col_fg)
                 surface.SetTextPos(ss * 4, ss * 2)
                 surface.SetFont("ArcCWC2_12")
-                DrawTextRot(self2, txt, ss * 4, 0, ss * 4, ss * 2, w - (ss * 4))
+                surface.DrawText(str)
+                --DrawTextRot(self2, str, ss * 4, 0, ss * 4, ss * 2, w - (ss * 4))
+                DisableClipping(old)
             end
-            return
         end
 
         for i, k in ipairs(atts) do
@@ -546,29 +554,27 @@ function SWEP:CreateCustomize2HUD()
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
                 local icon_h = h
-
                 local buffer = 0
 
-                local amt = ArcCW:PlayerGetAtts(self:GetOwner(), self2.att) or 0
+                if !GetConVar("arccw_attinv_lockmode"):GetBool() then
+                    local amt = ArcCW:PlayerGetAtts(self:GetOwner(), self2.att) or 0
+                    amt = math.min(amt, 99)
+                    local amttxt = tostring(amt)
+                    surface.SetFont("ArcCWC2_8")
+                    local amt_w = surface.GetTextSize(amttxt)
 
-                amt = math.min(amt, 99)
+                    -- surface.SetTextColor(col_shadow)
+                    -- surface.SetFont("ArcCWC2_8_Glow")
+                    -- surface.SetTextPos(w - amt_w - (ss * 1), h - (rss * 8) - (ss * 1))
+                    -- surface.DrawText(amttxt)
 
-                local amttxt = tostring(amt)
+                    surface.SetTextColor(col2)
+                    surface.SetFont("ArcCWC2_8")
+                    surface.SetTextPos(w - amt_w - (ss * 4), h - (rss * 8) - (ss * 1))
+                    surface.DrawText(amttxt)
 
-                surface.SetFont("ArcCWC2_8")
-                local amt_w = surface.GetTextSize(amttxt)
-
-                -- surface.SetTextColor(col_shadow)
-                -- surface.SetFont("ArcCWC2_8_Glow")
-                -- surface.SetTextPos(w - amt_w - (ss * 1), h - (rss * 8) - (ss * 1))
-                -- surface.DrawText(amttxt)
-
-                surface.SetTextColor(col2)
-                surface.SetFont("ArcCWC2_8")
-                surface.SetTextPos(w - amt_w - (ss * 4), h - (rss * 8) - (ss * 1))
-                surface.DrawText(amttxt)
-
-                buffer = amt_w + (ss * 6)
+                    buffer = amt_w + (ss * 6)
+                end
 
                 local txt = atttbl.PrintName or ""
                 txt = translate("name." .. self2.att) or translate(txt) or txt
@@ -1240,7 +1246,8 @@ function SWEP:CreateCustomize2HUD()
         end
         scroll_bar_pros.btnGrip.Paint = PaintScrollBar
 
-        local pros, cons, infos = ArcCW:GetProsCons(atttbl, self.Attachments[slot].ToggleNum)
+        -- It's kind of weird to have some stats disappear depending on state
+        local pros, cons, infos = ArcCW:GetProsCons(atttbl) -- self.Attachments[slot].ToggleNum
 
         pros = pros or {}
         cons = cons or {}

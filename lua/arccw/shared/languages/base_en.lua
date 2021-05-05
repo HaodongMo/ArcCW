@@ -267,6 +267,7 @@ L["ui.gamemode_usehint"] = "You can hold USE to access original keybinds."
 L["ui.darkrpdrop"] = "Drop Weapon"
 L["ui.noatts"] = "You have no attachments"
 L["ui.noatts_slot"] = "You have no attachments for this slot"
+L["ui.lockinv"] = "These attachments are unlocked for all weapons."
 
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
