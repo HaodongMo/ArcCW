@@ -168,8 +168,8 @@ function ArcCW:PlayerTakeAtt(ply, att, amt)
 
     ply.ArcCW_AttInv[att] = (ply.ArcCW_AttInv[att] or 0) - amt
 
-    if ply.ArcCW_AttInv[att] < 0 then
-        ply.ArcCW_AttInv[att] = 0
+    if ply.ArcCW_AttInv[att] <= 0 then
+        ply.ArcCW_AttInv[att] = nil
     end
 end
 

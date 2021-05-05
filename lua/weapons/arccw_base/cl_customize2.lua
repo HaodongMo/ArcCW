@@ -483,6 +483,27 @@ function SWEP:CreateCustomize2HUD()
 
         table.sort(atts)
 
+        if #atts == 0 then
+            local msg = vgui.Create("DPanel", ArcCW.InvHUD_Menu1)
+            msg:SetText("")
+            msg:SetSize(menu2_w - (2 * ss), smallbuttonheight * 2)
+            msg:Dock(TOP)
+            msg.Paint = function(self2, w, h)
+                local txt = translate("ui.noatts")
+
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(ss * 4, ss * 2)
+                surface.SetFont("ArcCWC2_12_Glow")
+                DrawTextRot(self2, txt, ss * 4, 0, ss * 4, ss * 2, w - (ss * 4))
+
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(ss * 4, ss * 2)
+                surface.SetFont("ArcCWC2_12")
+                DrawTextRot(self2, txt, ss * 4, 0, ss * 4, ss * 2, w - (ss * 4))
+            end
+            return
+        end
+
         for i, k in ipairs(atts) do
             if (ArcCW:PlayerGetAtts(self:GetOwner(), k) or 0) <= 0 then continue end
             local atttbl = ArcCW.AttachmentTable[k or ""]
@@ -505,7 +526,7 @@ function SWEP:CreateCustomize2HUD()
                 net.SendToServer()
 
                 ArcCW:PlayerTakeAtt(self:GetOwner(), self2.att)
-                if self:GetOwner().ArcCW_AttInv[self2.att] == 0 then
+                if (self:GetOwner().ArcCW_AttInv[self2.att] or 0) == 0 then
                     self2:Remove()
                 end
             end
@@ -1979,7 +2000,7 @@ function SWEP:CreateCustomize2HUD()
             shop:SetSize(ss * 64, ss * 24)
             shop:SetPos(ScrW() * 0.5 - ss * (64 + 4), ScrH() - ss * (24 + 10))
             shop:SetText("")
-            shop.Text = ArcCW.GetTranslation("ui.tttequip")
+            shop.Text = translate("ui.tttequip")
             shop.DoClick = function(self2, clr, btn)
                 RunConsoleCommand("ttt_cl_traitorpopup")
             end
@@ -1989,7 +2010,7 @@ function SWEP:CreateCustomize2HUD()
             quickchat:SetSize(ss * 64, ss * 24)
             quickchat:SetPos(ScrW() * 0.5 + ss * 4, ScrH() - ss * (24 + 10))
             quickchat:SetText("")
-            quickchat.Text = ArcCW.GetTranslation("ui.tttchat")
+            quickchat.Text = translate("ui.tttchat")
             quickchat.DoClick = function(self2, clr, btn)
                 if RADIO then RADIO:ShowRadioCommands(!RADIO.Show) end
             end
@@ -2001,7 +2022,7 @@ function SWEP:CreateCustomize2HUD()
             drop:SetSize(ss * 96, ss * 24)
             drop:SetPos(ScrW() * 0.5 - ss * 48, ScrH() - ss * (24 + 10))
             drop:SetText("")
-            drop.Text = ArcCW.GetTranslation("ui.darkrpdrop")
+            drop.Text = translate("ui.darkrpdrop")
             drop.DoClick = function(self2, clr, btn)
                 LocalPlayer():ConCommand("say /drop")
             end
@@ -2014,7 +2035,7 @@ function SWEP:CreateCustomize2HUD()
             text:SetPos(ScrW() * 0.5 - ss * 128, ScrH() - ss * (24 + 12 + 12))
             text.Paint = function(self2, w, h)
                 local col2 = col_fg
-                local str = ArcCW.GetTranslation("ui.gamemode_buttons")
+                local str = translate("ui.gamemode_buttons")
                 surface.SetFont("ArcCWC2_12")
                 local tw, th = surface.GetTextSize(str)
 
@@ -2034,7 +2055,7 @@ function SWEP:CreateCustomize2HUD()
             text2:SetPos(ScrW() * 0.5 - ss * 128, ScrH() - ss * 9)
             text2.Paint = function(self2, w, h)
                 local col2 = col_fg
-                local str = ArcCW.GetTranslation("ui.gamemode_usehint")
+                local str = translate("ui.gamemode_usehint")
                 surface.SetFont("ArcCWC2_8")
                 local tw, th = surface.GetTextSize(str)
 
