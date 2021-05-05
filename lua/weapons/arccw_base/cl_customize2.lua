@@ -714,6 +714,7 @@ function SWEP:CreateCustomize2HUD()
             return order_a > order_b
         end)
 
+        local has = false
         for _, att in pairs(atts) do
             if !att then continue end
             if !istable(att) then continue end
@@ -722,6 +723,7 @@ function SWEP:CreateCustomize2HUD()
             -- if !ArcCW.AttachmentTable[att] then continue end
 
             if !show then continue end
+            has = (att.att != "")
 
             local button = vgui.Create("DButton", ArcCW.InvHUD_Menu2)
             button.att = att.att
@@ -738,7 +740,8 @@ function SWEP:CreateCustomize2HUD()
                     self2:DoRightClick()
                 else
                     self:Attach(self2.attslot, self2.att)
-                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot)
+                    ArcCW.Inv_ShownAtt = nil -- Force a regen on the panel so we can see toggle/slider options
+                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot, true)
                 end
             end
             button.DoRightClick = function(self2)
@@ -763,17 +766,17 @@ function SWEP:CreateCustomize2HUD()
                 end
 
                 if self2:IsHovered() then
-                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot)
+                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot, installed == self2.att)
                 end
 
                 local owned = ArcCW:PlayerGetAtts(self:GetOwner(), att.att) > 0
 
-                if blocked or !owned then
+                if blocked or (!owned and installed != self2.att) then
                     col = col_block
                     col2 = col_block_txt
                 end
 
-                if !owned then
+                if !owned and installed != self2.att then
                     showqty = false
                 end
 
@@ -833,6 +836,26 @@ function SWEP:CreateCustomize2HUD()
                 surface.DrawTexturedRect(ss * 2, 0, icon_h, icon_h)
             end
         end
+
+        if table.Count(atts) > 1 and !has then
+            local msg = vgui.Create("DPanel", ArcCW.InvHUD_Menu2)
+            msg:SetText("")
+            msg:SetSize(menu2_w - (2 * ss), smallbuttonheight)
+            msg:Dock(TOP)
+            msg.Paint = function(self2, w, h)
+                local txt = translate("ui.noatts_slot")
+
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(ss * 4, ss * 2)
+                surface.SetFont("ArcCWC2_10_Glow")
+                DrawTextRot(self2, txt, ss * 4, 0, ss * 4, ss * 2, w - (ss * 4))
+
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(ss * 4, ss * 2)
+                surface.SetFont("ArcCWC2_10")
+                DrawTextRot(self2, txt, ss * 4, 0, ss * 4, ss * 2, w - (ss * 4))
+            end
+        end
     end
 
     -- add attachments
@@ -865,7 +888,7 @@ function SWEP:CreateCustomize2HUD()
                     if self:CheckFlags(aslot.ExcludeFlags, aslot.RequireFlags) then
                         self.Inv_SelectedSlot = self2.attindex
                         ArcCW.InvHUD_FormAttachmentSelect()
-                        ArcCW.InvHUD_FormAttachmentStats(self2.attindex, self2.attindex)
+                        ArcCW.InvHUD_FormAttachmentStats(self2.attindex, self2.attindex, true)
                         if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/open.wav") end
                     end
                 end
@@ -968,8 +991,10 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.InvHUD_Menu3:SetPos(scrw - menu3_w, airgap_y + smallgap)
     ArcCW.InvHUD_Menu3:SetSize(menu3_w, menu3_h)
 
-    function ArcCW.InvHUD_FormAttachmentStats(att, slot)
-        if ArcCW.Inv_ShownAtt == att then return end
+    function ArcCW.InvHUD_FormAttachmentStats(att, slot, equipped)
+        if ArcCW.Inv_ShownAtt == att then
+            return
+        end
         if isnumber(att) then
             local installed = self:GetSlotInstalled(att)
 
@@ -1040,7 +1065,7 @@ function SWEP:CreateCustomize2HUD()
         local m_w = menu3_w * 0.75
         local leftbuffer = 0
 
-        if self.Attachments[slot].SlideAmount then
+        if equipped and self.Attachments[slot].SlideAmount then
             local slider = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
 
             slider:SetSize(m_w * 2 / 3, rss * 10)
@@ -1107,7 +1132,7 @@ function SWEP:CreateCustomize2HUD()
             bottombuffer = rss * 10
         end
 
-        if atttbl.ToggleStats then
+        if equipped and atttbl.ToggleStats then
             local toggle = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
 
             toggle:SetSize(m_w * 1 / 3, rss * 10)

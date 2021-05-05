@@ -134,6 +134,7 @@ function ArcCW:PlayerGiveAtt(ply, att, amt)
     local atttbl = ArcCW.AttachmentTable[att]
 
     if !atttbl then print("Invalid att " .. att) return end
+    if atttbl.Free then return end -- You can't give a free attachment, silly
 
     if atttbl.InvAtt then att = atttbl.InvAtt end
 
@@ -144,6 +145,7 @@ function ArcCW:PlayerGiveAtt(ply, att, amt)
         ply.ArcCW_AttInv[att] = (ply.ArcCW_AttInv[att] or 0) + amt
     end
 end
+
 
 function ArcCW:PlayerTakeAtt(ply, att, amt)
     amt = amt or 1
@@ -157,20 +159,21 @@ function ArcCW:PlayerTakeAtt(ply, att, amt)
     end
 
     local atttbl = ArcCW.AttachmentTable[att]
+    if !atttbl or atttbl.Free then return end
 
     if atttbl.InvAtt then att = atttbl.InvAtt end
 
     ply.ArcCW_AttInv[att] = ply.ArcCW_AttInv[att] or 0
 
-    if ply.ArcCW_AttInv[att] <= 0 then
-        return
+    if ply.ArcCW_AttInv[att] < amt then
+        return false
     end
 
-    ply.ArcCW_AttInv[att] = (ply.ArcCW_AttInv[att] or 0) - amt
-
+    ply.ArcCW_AttInv[att] = ply.ArcCW_AttInv[att] - amt
     if ply.ArcCW_AttInv[att] <= 0 then
         ply.ArcCW_AttInv[att] = nil
     end
+    return true
 end
 
 if CLIENT then
