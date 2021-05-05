@@ -875,7 +875,7 @@ function SWEP:CreateCustomize2HUD()
                 if atttbl then
                     att_txt = translate("name." .. installed) or atttbl.PrintName
                     att_icon = atttbl and atttbl.Icon
-                    if !atttbl.Icon or atttbl.Icon:IsError() then icon = bird end
+                    if !att_icon or att_icon:IsError() then att_icon = bird end
                 end
 
                 local slot_txt = translate(slot.PrintName) or slot.PrintName
