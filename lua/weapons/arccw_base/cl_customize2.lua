@@ -1841,7 +1841,7 @@ function SWEP:CreateCustomize2HUD()
             -- damage number text
             for i = 1, thicc do
                 local meth = ((thicc - i) / thicc)
-                surface.SetDrawColor(255, 255, 255, 127 * meth)
+                surface.SetDrawColor(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 127 * meth))
 
                 local of
                 if i == 1 then
