@@ -204,7 +204,7 @@ function SWEP:Holster(wep)
     if wep == self then return end
 
     -- Props deploy to NULL
-    if wep == NULL then
+    if !IsValid(wep) then
         -- We need to go! Right! Now!
         local time = 0.25
         local anim = self:SelectAnimation("holster")
@@ -218,7 +218,7 @@ function SWEP:Holster(wep)
             time = time * self:GetBuff_Mult("Mult_DrawTime")
         end
 
-        self:SetReqEnd(true)
+        --self:SetReqEnd(true)
         self:KillTimers()
 
         self.FullyHolstered = true
