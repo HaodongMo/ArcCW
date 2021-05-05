@@ -553,7 +553,8 @@ function SWEP:CreateCustomize2HUD()
 
                 DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 2, w - icon_h - (ss * 4) - buffer)
 
-                local icon = atttbl.Icon or blockedatticon
+                local icon = atttbl.Icon
+                if !icon or icon:IsError() then icon = bird end
 
                 surface.SetDrawColor(col2)
                 surface.SetMaterial(icon)
@@ -798,7 +799,8 @@ function SWEP:CreateCustomize2HUD()
 
                 DrawTextRot(self2, txt, icon_h + (ss * 4), 0, icon_h + ss * 4, ss * 2, w - icon_h - (ss * 4) - buffer)
 
-                local icon = atttbl.Icon or blockedatticon
+                local icon = atttbl.Icon
+                if !icon or icon:IsError() then icon = bird end
 
                 surface.SetDrawColor(col2)
                 surface.SetMaterial(icon)
@@ -873,6 +875,7 @@ function SWEP:CreateCustomize2HUD()
                 if atttbl then
                     att_txt = translate("name." .. installed) or atttbl.PrintName
                     att_icon = atttbl and atttbl.Icon
+                    if !atttbl.Icon or atttbl.Icon:IsError() then icon = bird end
                 end
 
                 local slot_txt = translate(slot.PrintName) or slot.PrintName
@@ -965,7 +968,8 @@ function SWEP:CreateCustomize2HUD()
         bgim:SetPos(menu3_w - s - (ss * 25), 0)
         bgim:SetSize(s, s)
         bgim.Paint = function(self2, w, h)
-            local icon = atttbl.Icon or bird
+            local icon = atttbl.Icon
+            if !icon or icon:IsError() then icon = bird end
 
             surface.SetDrawColor(255, 255, 255, 25 * ArcCW.Inv_Fade)
             surface.SetMaterial(icon)
@@ -1174,6 +1178,7 @@ function SWEP:CreateCustomize2HUD()
         local scroll_pros = vgui.Create("DScrollPanel", ArcCW.InvHUD_Menu3)
         scroll_pros:SetSize(menu3_w, ss * 172)
         scroll_pros:SetPos(0, menu3_h - (ss * 172))
+        scroll_pros.Paint = function() end
 
         local scroll_bar_pros = scroll_pros:GetVBar()
         scroll_bar_pros.Paint = function() end
@@ -1194,76 +1199,20 @@ function SWEP:CreateCustomize2HUD()
 
         local pan_pros = vgui.Create("DPanel", scroll_pros)
         pan_pros:SetPos(0, 0)
-        pan_pros.Paint = function(self2, w, h)
-        end
+        pan_pros.Paint = function() end
 
         local pan_cons = vgui.Create("DPanel", scroll_pros)
-        pan_cons:SetPos(menu3_w * 1 / 2, 0)
-        pan_cons.Paint = function()
-        end
+        pan_cons:SetPos(#pros > 0 and (menu3_w * 1 / 2) or 0, 0)
+        pan_cons.Paint = function() end
 
         local pan_infos
 
         if #infos > 0 then
             pan_infos = vgui.Create("DPanel", scroll_pros)
-            pan_infos.Paint = function()
-            end
-            pan_infos:SetPos(menu3_w * 1 / 3, 0)
-            pan_cons:SetPos(menu3_w * 2 / 3, 0)
-
-            p_w = menu3_w / 3
+            pan_infos:SetWide(menu3_w)
+            pan_infos.Paint = function() end
         end
-
-        if #pros > 0 then
-            if #cons > 0 then
-                if #infos > 0 then
-                    -- all 3
-                    pan_infos:SetPos(menu3_w * 1 / 3, 0)
-                    pan_cons:SetPos(menu3_w * 2 / 3, 0)
-
-                    p_w = menu3_w / 3
-                else
-                    -- pros, cons, no info
-                    pan_cons:SetPos(menu3_w * 1 / 2, 0)
-
-                    p_w = menu3_w / 2
-                end
-            else
-                if #infos > 0 then
-                    -- pros + info
-                    pan_infos:SetPos(menu3_w * 1 / 2, 0)
-
-                    p_w = menu3_w / 2
-                else
-                    -- just pros
-                    p_w = menu3_w
-                end
-            end
-        else
-            if #cons > 0 then
-                if #infos > 0 then
-                    -- just cons and infos
-                    pan_infos:SetPos(menu3_w * 0, 0)
-                    pan_cons:SetPos(menu3_w * 1 / 2, 0)
-
-                    p_w = menu3_w / 2
-                else
-                    -- just cons
-                    pan_cons:SetPos(menu3_w * 0, 0)
-
-                    p_w = menu3_w
-                end
-            else
-                if #infos > 0 then
-                    -- just infos
-                    pan_infos:SetPos(menu3_w * 0, 0)
-
-                    p_w = menu3_w
-                -- else
-                    -- nothing
-                end
-            end
-        end
+        p_w = (pan_pros and pan_cons) and (menu3_w / 2) or p_w
 
         local function linepaintfunc(self2, w, h)
             surface.SetDrawColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
@@ -1302,20 +1251,20 @@ function SWEP:CreateCustomize2HUD()
 
         if #pros > 0 then
             local pan_head = vgui.Create("DPanel", pan_pros)
-            pan_head:SetSize(p_w, rss * 8)
-            pan_head:SetPos(0, 0)
+            pan_head:SetTall(rss * 8)
+            pan_head:Dock(TOP)
             pan_head.Paint = headpaintfunc
             pan_head.Text = translate("ui.positives")
             pan_head.Color = col_good
         end
 
         if #cons > 0 then
-            local cons_head = vgui.Create("DPanel", pan_cons)
-            cons_head:SetSize(p_w, rss * 8)
-            cons_head:SetPos(0, 0)
-            cons_head.Paint = headpaintfunc
-            cons_head.Text = translate("ui.negatives")
-            cons_head.Color = col_bad
+            local pan_head = vgui.Create("DPanel", pan_cons)
+            pan_head:SetTall(rss * 8)
+            pan_head:Dock(TOP)
+            pan_head.Paint = headpaintfunc
+            pan_head.Text = translate("ui.negatives")
+            pan_head.Color = col_bad
         end
 
         for i, line in pairs(pros) do
@@ -1343,23 +1292,27 @@ function SWEP:CreateCustomize2HUD()
         pan_cons:SizeToChildren(true, true)
 
         if #infos > 0 then
-            local infos_head = vgui.Create("DPanel", pan_infos)
-            infos_head:SetSize(p_w, rss * 8)
-            infos_head:SetPos(0, 0)
-            infos_head.Paint = headpaintfunc
-            infos_head.Text = translate("ui.information")
-            infos_head.Color = col_info
+            local pan_head = vgui.Create("DPanel", pan_infos)
+            pan_head:SetTall(rss * 8)
+            pan_head:Dock(TOP)
+            pan_head.Paint = headpaintfunc
+            pan_head.Text = translate("ui.information")
+            pan_head.Color = col_info
 
             for i, line in pairs(infos) do
                 if !line or line == "" then continue end
                 local pan_line = vgui.Create("DPanel", pan_infos)
-                pan_line:SetSize(p_w, rss * 10)
+                pan_line:SetSize(menu3_w, rss * 10)
                 pan_line:SetPos(0, rss * 10 * i)
                 pan_line.Paint = linepaintfunc
                 pan_line.Text = line
                 pan_line.Color = col_info
             end
 
+            -- We can't do this on initialize because SizeToChildren isn't called yet
+            local h = math.max(pan_pros and pan_pros:GetTall() or 0, pan_cons and pan_cons:GetTall() or 0)
+            h = (h > 0) and (h + rss * 10) or 0 -- if only info, don't add padding
+            pan_infos:SetPos(0, h)
             pan_infos:SizeToChildren(true, true)
         end
     end
