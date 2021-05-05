@@ -5,8 +5,6 @@ local tostr   = tostring
 
 -- ["buff"] = {"desc", string mode (mult, add, override, func), bool lowerbetter or function(val)}
 
-local simple_cvar = GetConVar("arccw_attinv_simpleproscons")
-
 ArcCW.AutoStats = {
     -- Attachments
     ["MagExtender"]           = { "autostat.magextender", "override", false },
@@ -71,7 +69,7 @@ local function stattext(i, k, dmgboth)
     if i == "Mult_DamageMin" and dmgboth then return end
 
     local stat = ArcCW.AutoStats[i]
-    local simple = simple_cvar:GetBool()
+    local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
 
     local txt = ""
     local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
