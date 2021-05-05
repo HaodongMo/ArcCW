@@ -299,13 +299,17 @@ L["arccw.cvar.mult_crouchdisp"]           = "Crouched Dispersion"
 L["arccw.cvar.mult_crouchrecoil"]         = "Crouched Recoil"
 
 -- 2021-2-19
-L["arccw.cvar.dev_debug"]           = "Debug Menu"
-L["arccw.cvar.dev_debug.desc"]         = "Disabled by default.\nDraws a debug menu over your screen where you can view certain elements blah blah?"
+L["arccw.cvar.dev_debug"]                 = "Debug Menu"
+L["arccw.cvar.dev_debug.desc"]            = "Disabled by default.\nDraws a debug menu over your screen where you can view certain elements blah blah?"
 
-L["arccw.cvar.attinv_sound"]           = "Menu Toggle Sound"
+L["arccw.cvar.attinv_sound"]              = "Menu Toggle Sound"
 L["arccw.cvar.attinv_sound.desc"]         = "Sounds for opening and closing the customization menu.\nIf it's really not your thing."
 
 -- 2021-3-2
-L["arccw.ammohud"]                           = "\nAmmo HUD" -- Obsoletes "3D2D HUD" since they're basically the same now"
-L["arccw.cvar.hud_fcgbars"]                  = "Show Firemode Bars"
-L["arccw.bind.toggle_att"]                   = "Toggle Attachments"
+L["arccw.ammohud"]                        = "\nAmmo HUD" -- Obsoletes "3D2D HUD" since they're basically the same now"
+L["arccw.cvar.hud_fcgbars"]               = "Show Firemode Bars"
+L["arccw.bind.toggle_att"]                = "Toggle Attachments"
+
+-- 2021-05-05
+L["arccw.cvar.attinv_gamemodebuttons"]    = "Gamemode-specific buttons"
+L["arccw.cvar.attinv_gamemodebuttons.desc"] = "Shows helpful functions for gamemodes like TTT and DarkRP.\nIn addition to using these, you can hold USE to access original keybinds as well."

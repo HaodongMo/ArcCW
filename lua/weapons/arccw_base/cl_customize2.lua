@@ -1938,6 +1938,114 @@ function SWEP:CreateCustomize2HUD()
         end
     end
 
+    function ArcCW.InvHUD_FormGamemodeFunctions()
+
+        if !GetConVar("arccw_attinv_gamemodebuttons"):GetBool() then return end
+
+        local shoulddrawtitle = false
+        local function paint_gmbutton(self2, w, h)
+            local col = col_button
+            local col2 = col_fg
+
+            if self2:IsHovered() then
+                col = col_fg_tr
+                col2 = col_shadow
+            end
+
+            draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+            surface.SetFont("ArcCWC2_14")
+            local tw, th = surface.GetTextSize(self2.Text)
+
+            surface.SetFont("ArcCWC2_14_Glow")
+            surface.SetTextColor(col_shadow)
+            surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+            surface.DrawText(self2.Text)
+
+            surface.SetFont("ArcCWC2_14")
+            surface.SetTextColor(col2)
+            surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+            surface.DrawText(self2.Text)
+        end
+
+        if engine.ActiveGamemode() == "terrortown" then
+            shoulddrawtitle = true
+            local shop = vgui.Create("DButton", ArcCW.InvHUD)
+            shop:SetSize(ss * 64, ss * 24)
+            shop:SetPos(ScrW() * 0.5 - ss * (64 + 4), ScrH() - ss * (24 + 10))
+            shop:SetText("")
+            shop.Text = ArcCW.GetTranslation("ui.tttequip")
+            shop.DoClick = function(self2, clr, btn)
+                RunConsoleCommand("ttt_cl_traitorpopup")
+            end
+            shop.Paint = paint_gmbutton
+
+            local quickchat = vgui.Create("DButton", ArcCW.InvHUD)
+            quickchat:SetSize(ss * 64, ss * 24)
+            quickchat:SetPos(ScrW() * 0.5 + ss * 4, ScrH() - ss * (24 + 10))
+            quickchat:SetText("")
+            quickchat.Text = ArcCW.GetTranslation("ui.tttchat")
+            quickchat.DoClick = function(self2, clr, btn)
+                if RADIO then RADIO:ShowRadioCommands(!RADIO.Show) end
+            end
+            quickchat.Paint = paint_gmbutton
+        elseif engine.ActiveGamemode() == "darkrp" or DarkRP then
+            -- Check for the global table, as DarkRP has many derivatives
+            shoulddrawtitle = true
+            local drop = vgui.Create("DButton", ArcCW.InvHUD)
+            drop:SetSize(ss * 96, ss * 24)
+            drop:SetPos(ScrW() * 0.5 - ss * 48, ScrH() - ss * (24 + 10))
+            drop:SetText("")
+            drop.Text = ArcCW.GetTranslation("ui.darkrpdrop")
+            drop.DoClick = function(self2, clr, btn)
+                LocalPlayer():ConCommand("say /drop")
+            end
+            drop.Paint = paint_gmbutton
+        end
+
+        if shoulddrawtitle then
+            local text = vgui.Create("DPanel", ArcCW.InvHUD)
+            text:SetSize(ss * 256, ss * 12)
+            text:SetPos(ScrW() * 0.5 - ss * 128, ScrH() - ss * (24 + 12 + 12))
+            text.Paint = function(self2, w, h)
+                local col2 = col_fg
+                local str = ArcCW.GetTranslation("ui.gamemode_buttons")
+                surface.SetFont("ArcCWC2_12")
+                local tw, th = surface.GetTextSize(str)
+
+                surface.SetFont("ArcCWC2_12_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(str)
+
+                surface.SetFont("ArcCWC2_12")
+                surface.SetTextColor(col2)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(str)
+            end
+
+            local text2 = vgui.Create("DPanel", ArcCW.InvHUD)
+            text2:SetSize(ss * 256, ss * 8)
+            text2:SetPos(ScrW() * 0.5 - ss * 128, ScrH() - ss * 9)
+            text2.Paint = function(self2, w, h)
+                local col2 = col_fg
+                local str = ArcCW.GetTranslation("ui.gamemode_usehint")
+                surface.SetFont("ArcCWC2_8")
+                local tw, th = surface.GetTextSize(str)
+
+                surface.SetFont("ArcCWC2_8_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(str)
+
+                surface.SetFont("ArcCWC2_8")
+                surface.SetTextColor(col2)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(str)
+            end
+        end
+    end
+
     clearrightpanel()
 
     ArcCW.Inv_SelectedMenu = ArcCW.Inv_SelectedMenu or 1
@@ -1952,5 +2060,7 @@ function SWEP:CreateCustomize2HUD()
     elseif ArcCW.Inv_SelectedMenu == 3 then
         ArcCW.InvHUD_FormInventory()
     end
+
+    ArcCW.InvHUD_FormGamemodeFunctions()
 
 end

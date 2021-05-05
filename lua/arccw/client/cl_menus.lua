@@ -134,6 +134,8 @@ local HudPanel = {
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
     { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
     { type = "b", text = "#arccw.cvar.attinv_simpleproscons", var = "arccw_attinv_simpleproscons" },
+    --{ type = "b", text = "#arccw.cvar.attinv_gamemodebuttons", var = "arccw_attinv_gamemodebuttons" },
+    --{ type = "c", text = "#arccw.cvar.attinv_gamemodebuttons.desc" },
 
     { type = "h", text = "#arccw.ammohud" },
     { type = "b", text = "#arccw.cvar.hud_3dfun", var = "arccw_hud_3dfun" },

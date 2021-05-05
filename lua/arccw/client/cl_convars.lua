@@ -41,6 +41,7 @@ ArcCW.ClientConVars = {
     ["arccw_attinv_hideunowned"]      = { def =  0 },
     ["arccw_attinv_darkunowned"]      = { def =  0 },
     ["arccw_attinv_closeonhurt"]      = { def =  0, usri = true },
+    ["arccw_attinv_gamemodebuttons"]  = { def =  1 },
 
     ["arccw_language"]                = { def =  "", usri = true },
     ["arccw_font"]                    = { def =  "", usri = true },

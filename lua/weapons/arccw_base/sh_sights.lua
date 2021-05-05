@@ -512,9 +512,11 @@ function SWEP:TranslateFOV(fov)
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
 
     self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
-
     self.CurrentViewModelFOV = math.Approach(self.CurrentViewModelFOV, app_vm, FrameTime() * (self.CurrentViewModelFOV - app_vm))
-
+    if CLIENT and self:GetState() != ArcCW.STATE_SIGHTS and math.abs(GetConVar("fov_desired"):GetFloat() - self.CurrentFOV) > 0.0001 then
+        -- This mainly exists to handle suitzoom, as you can now hold USE to use it
+        self.CurrentViewModelFOV = app_vm * (self.CurrentFOV / GetConVar("fov_desired"):GetFloat())
+    end
     return self.CurrentFOV
 
     -- return 90

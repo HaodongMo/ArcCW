@@ -146,7 +146,8 @@ function SWEP:Think()
 
         -- no it really doesn't, past me
         local sighted = self:GetState() == ArcCW.STATE_SIGHTS
-        local toggle = self:GetOwner():GetInfoNum("arccw_toggleads", 0) >= 1
+        local toggle = owner:GetInfoNum("arccw_toggleads", 0) >= 1
+        local suitzoom = owner:KeyDown(IN_ZOOM)
         local sp_cl = game.SinglePlayer() and CLIENT
 
         -- if in singleplayer, client realm should be completely ignored
@@ -154,14 +155,16 @@ function SWEP:Think()
             if owner:KeyPressed(IN_ATTACK2) then
                 if sighted then
                     self:ExitSights()
-                else
+                elseif !suitzoom then
                     self:EnterSights()
                 end
+            elseif suitzoom and sighted then
+                self:ExitSights()
             end
         elseif !toggle then
-            if owner:KeyDown(IN_ATTACK2) and !sighted then
+            if (owner:KeyDown(IN_ATTACK2) and !suitzoom) and !sighted then
                 self:EnterSights()
-            elseif !owner:KeyDown(IN_ATTACK2) and sighted then
+            elseif (!owner:KeyDown(IN_ATTACK2) or suitzoom) and sighted then
                 self:ExitSights()
             end
         end

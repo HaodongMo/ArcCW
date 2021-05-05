@@ -68,8 +68,8 @@ L["ui.savepreset"] = "Save Preset"
 L["ui.loadpreset"] = "Load Preset"
 L["ui.stats"] = "Stats"
 L["ui.trivia"] = "Trivia"
-L["ui.tttequip"] = "TTT Equipment"
-L["ui.tttchat"] = "TTT Quickchat"
+L["ui.tttequip"] = "Equipment"
+L["ui.tttchat"] = "Quickchat"
 L["ui.position"] = "POSITION"
 L["ui.positives"] = "POSITIVES:"
 L["ui.negatives"] = "NEGATIVES:"
@@ -260,6 +260,11 @@ L["dmg.shock"] = "Shock"
 L["ui.presets"] = "Presets"
 L["ui.customize"] = "Customize"
 L["ui.inventory"] = "Inventory"
+
+-- 2021-05-05
+L["ui.gamemode_buttons"] = "Gamemode-specific commands"
+L["ui.gamemode_usehint"] = "You can hold USE to access original keybinds."
+L["ui.darkrpdrop"] = "Drop Weapon"
 
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
