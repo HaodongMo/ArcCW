@@ -249,9 +249,12 @@ function SWEP:CloseCustomizeHUD( hide )
             if !hide then
                 ArcCW.InvHUD:Remove()
             end
+        else
+            -- The new hud fades out instead of commiting sudoku, only do this if we're debugging
+            if GetConVar("arccw_dev_removeonclose"):GetBool() then
+                ArcCW.InvHUD:Remove()
+            end
         end
-
-        ArcCW.InvHUD:Remove()
 
         if !hide then
             gui.EnableScreenClicker(false)

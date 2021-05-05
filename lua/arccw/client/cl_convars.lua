@@ -100,14 +100,14 @@ ArcCW.ClientConVars = {
     ["arccw_vm_coolsway"]             = { def =  1 },
     ["arccw_vm_coolview"]             = { def =  1 },
     ["arccw_vm_coolview_mult"]        = { def =  1 },
-    ["arccw_vm_look_xmult"]            = { def =  1 },
-    ["arccw_vm_look_ymult"]            = { def =  1 },
-    ["arccw_vm_sway_xmult"]            = { def =  1 },
-    ["arccw_vm_sway_ymult"]            = { def =  1 },
-    ["arccw_vm_sway_zmult"]            = { def =  1 },
+    ["arccw_vm_look_xmult"]           = { def =  1 },
+    ["arccw_vm_look_ymult"]           = { def =  1 },
+    ["arccw_vm_sway_xmult"]           = { def =  1 },
+    ["arccw_vm_sway_ymult"]           = { def =  1 },
+    ["arccw_vm_sway_zmult"]           = { def =  1 },
 
-    ["arccw_vm_sway_speedmult"]        = { def =  1 },
-    ["arccw_vm_sway_rotatemult"]       = { def =  1 },
+    ["arccw_vm_sway_speedmult"]       = { def =  1 },
+    ["arccw_vm_sway_rotatemult"]      = { def =  1 },
 
     ["arccw_toggleads"]               = { def = 0, usri = true },
     ["arccw_altubglkey"]              = { def = 0, usri = true },
@@ -117,7 +117,9 @@ ArcCW.ClientConVars = {
     ["arccw_altsafety"]               = { def = 0, usri = true },
     ["arccw_automaticreload"]         = { def = 0, usri = true },
 
-    ["arccw_aimassist_cl"]               = { def = 0, usri = true },
+    ["arccw_aimassist_cl"]            = { def = 0, usri = true },
+
+    ["arccw_dev_removeonclose"]       = { def = 0, desc = "Remove the hud when closing instead of fading out, allowing easy reloading of the hud." },
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do
