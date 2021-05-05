@@ -104,7 +104,7 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
                 end
             elseif span.TextRotState == 3 then
                 span.TextRot[txt] = span.TextRot[txt] - (FrameTime() * ScreenScaleMulti(16))
-                if span.TextRot[txt] <= (0) then
+                if span.TextRot[txt] <= 0 then
                     span.StartTextRot = CurTime()
                     span.TextRotState = 0
                 end
@@ -602,22 +602,22 @@ function SWEP:CreateCustomize2HUD()
 
         for i, k in pairs(preset) do
             if k == "autosave.txt" then continue end
-            local button = vgui.Create("DButton", ArcCW.InvHUD_Menu1)
-            button:SetText("")
-            button.PresetName = string.sub(k, 1, -5)
-            button:SetSize(menu1_w, smallbuttonheight)
-            button:DockMargin(0, smallgap, 0, 0)
-            button:Dock(TOP)
-            button.DoClick = function(self2, clr, btn)
+            local load_btn = vgui.Create("DButton", ArcCW.InvHUD_Menu1)
+            load_btn:SetText("")
+            load_btn.PresetName = string.sub(k, 1, -5)
+            load_btn:SetSize(menu1_w, smallbuttonheight)
+            load_btn:DockMargin(0, smallgap, 0, 0)
+            load_btn:Dock(TOP)
+            load_btn.DoClick = function(self2, clr, btn)
                 self.LastPresetName = self2.PresetName
                 self:LoadPreset(self2.PresetName)
             end
-            button.DoRightClick = function(self2)
+            load_btn.DoRightClick = function(self2)
                 local filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. self2.PresetName .. ".txt"
                 file.Delete(filename)
                 self2:Remove()
             end
-            button.Paint = function(self2, w, h)
+            load_btn.Paint = function(self2, w, h)
                 local col = col_button
                 local col2 = col_fg
 
@@ -976,7 +976,7 @@ function SWEP:CreateCustomize2HUD()
         attname_panel:SetSize(menu3_w, rss * 24)
         attname_panel:SetPos(0, rss * 16)
         attname_panel.Paint = function(self2, w, h)
-            name = atttbl.PrintName
+            local name = atttbl.PrintName
 
             surface.SetFont("ArcCWC2_24")
             local tw = surface.GetTextSize(name)
@@ -1037,7 +1037,7 @@ function SWEP:CreateCustomize2HUD()
                 local line_w = w - (linebuffer * 2)
 
                 if self2.Dragging or (self2:IsHovered() and input.IsMouseDown(MOUSE_LEFT)) then
-                    local x, y = self2:LocalCursorPos()
+                    local x, _ = self2:LocalCursorPos()
 
                     local mouse_line_x = x - linebuffer
 
@@ -1217,50 +1217,50 @@ function SWEP:CreateCustomize2HUD()
         if #pros > 0 then
             if #cons > 0 then
                 if #infos > 0 then
-                    // all 3
+                    -- all 3
                     pan_infos:SetPos(menu3_w * 1 / 3, 0)
                     pan_cons:SetPos(menu3_w * 2 / 3, 0)
 
                     p_w = menu3_w / 3
                 else
-                    // pros, cons, no info
+                    -- pros, cons, no info
                     pan_cons:SetPos(menu3_w * 1 / 2, 0)
 
                     p_w = menu3_w / 2
                 end
             else
                 if #infos > 0 then
-                    // pros + info
+                    -- pros + info
                     pan_infos:SetPos(menu3_w * 1 / 2, 0)
 
                     p_w = menu3_w / 2
                 else
-                    // just pros
+                    -- just pros
                     p_w = menu3_w
                 end
             end
         else
             if #cons > 0 then
                 if #infos > 0 then
-                    // just cons and infos
+                    -- just cons and infos
                     pan_infos:SetPos(menu3_w * 0, 0)
                     pan_cons:SetPos(menu3_w * 1 / 2, 0)
 
                     p_w = menu3_w / 2
                 else
-                    // just cons
+                    -- just cons
                     pan_cons:SetPos(menu3_w * 0, 0)
 
                     p_w = menu3_w
                 end
             else
                 if #infos > 0 then
-                    // just infos
+                    -- just infos
                     pan_infos:SetPos(menu3_w * 0, 0)
 
                     p_w = menu3_w
-                // else
-                    // nothing
+                -- else
+                    -- nothing
                 end
             end
         end
@@ -1641,7 +1641,7 @@ function SWEP:CreateCustomize2HUD()
         info.Paint = function(self2, w, h)
             local infos = self.Infos_Stats or {}
 
-            // rpm
+            -- rpm
             local rpm = math.Round(60 / self:GetFiringDelay())
 
             if self:GetIsManualAction() then
@@ -1664,7 +1664,7 @@ function SWEP:CreateCustomize2HUD()
                 })
             end
 
-            // precision
+            -- precision
             local precision = math.Round(self:GetBuff("AccuracyMOA"), 1)
 
             if !self.PrimaryBash and !self.Throwing then
@@ -1675,7 +1675,7 @@ function SWEP:CreateCustomize2HUD()
                 })
             end
 
-            // ammo type
+            -- ammo type
             if self.Primary.Ammo and self.Primary.Ammo != "" and self.Primary.Ammo != "none" then
                 local ammotype = language.GetPhrase(self.Primary.Ammo .. "_ammo")
                 if ammotype then
@@ -1686,21 +1686,19 @@ function SWEP:CreateCustomize2HUD()
                 end
             end
 
-            // penetration
+            -- penetration
             local shootent = self:GetBuff("ShootEntity", true)
 
-            if !self.PrimaryBash then
-                if !shootent then
-                    local pen  = self:GetBuff("Penetration")
-                    table.insert(infos, {
-                        title = translate("trivia.penetration"),
-                        value = pen,
-                        unit = translate("unit.mm"),
-                    })
-                end
+            if !self.PrimaryBash and !shootent then
+                local pen  = self:GetBuff("Penetration")
+                table.insert(infos, {
+                    title = translate("trivia.penetration"),
+                    value = pen,
+                    unit = translate("unit.mm"),
+                })
             end
 
-            // noise
+            -- noise
             local noise = self:GetBuff("ShootVol")
 
             if !self.PrimaryBash then
@@ -1768,7 +1766,7 @@ function SWEP:CreateCustomize2HUD()
                 surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
                 surface.DrawText(triv.title)
 
-                
+
                 surface.SetFont("ArcCWC2_16")
                 local tw_3a = select(2, surface.GetTextSize(tostring(triv.value)))
 
@@ -1778,12 +1776,12 @@ function SWEP:CreateCustomize2HUD()
 
                 surface.SetFont("ArcCWC2_8_Glow")
                 surface.SetTextColor(col_shadow)
-                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 4.4) + (tw_2a))
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 4.4) + tw_2a)
                 surface.DrawText(triv.unit)
 
                 surface.SetFont("ArcCWC2_8")
                 surface.SetTextColor(col_fg)
-                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 4.4) + (tw_2a))
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 4.4) + tw_2a)
                 surface.DrawText(triv.unit)
 
                 surface.SetFont("ArcCWC2_16")
@@ -1850,17 +1848,17 @@ function SWEP:CreateCustomize2HUD()
 
             local thicc = math.ceil(ss * 2)
 
-            // segment 1: minimum range
+            -- segment 1: minimum range
             local x_1 = 0
             local y_1 = h - (dmgmax / scale * h)
             y_1 = math.Clamp(y_1, ss * 16, h - (ss * 16))
-            // segment 2: slope
+            -- segment 2: slope
             local x_2 = 0
             local y_2 = y_1
             if mran > 0 then
                 x_2 = w * 1 / 3
             end
-            // segment 3: maximum range
+            -- segment 3: maximum range
             local x_3 = w * 2 / 3
             local y_3 = h - (dmgmin / scale * h)
             y_3 = math.Clamp(y_3, ss * 16, h - (ss * 16))
@@ -1877,19 +1875,19 @@ function SWEP:CreateCustomize2HUD()
 
             surface.SetDrawColor(col_vline)
 
-            // line for min range
+            -- line for min range
             if dmgmax != dmgmin and mran > 0 then
                 surface.DrawLine(x_2, 0, x_2, h)
             end
 
-            // line for max range
+            -- line for max range
             if dmgmax != dmgmin then
                 surface.DrawLine(x_3, 0, x_3, h)
             end
 
-            // damage number text
+            -- damage number text
             for i = 1, thicc do
-                local meth = ((thicc-i)/thicc)
+                local meth = ((thicc - i) / thicc)
                 surface.SetDrawColor(255, 255, 255, 127 * meth)
 
                 local of
@@ -1898,19 +1896,19 @@ function SWEP:CreateCustomize2HUD()
                     of = 0
                 elseif (i % 2 == 0) then
                     -- even
-                    of = -1*i/2
+                    of = -1 * i / 2
                 else
                     -- odd
-                    of = 1*i/2
+                    of = 1 * i / 2
                 end
-                
+
                 if mran > 0 then
-                    // draw seg 1
+                    -- draw seg 1
                     surface.DrawLine(x_1, y_1 + of, x_2, y_2 + of)
                 end
-                // draw seg 2
+                -- draw seg 2
                 surface.DrawLine(x_2, y_2 + of, x_3, y_3 + of)
-                // drag seg 3
+                -- drag seg 3
                 surface.DrawLine(x_3, y_3 + of, x_4, y_4 + of)
             end
 
