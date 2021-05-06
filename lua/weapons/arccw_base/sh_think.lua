@@ -287,13 +287,13 @@ function SWEP:ProcessRecoil()
     local owner = self:GetOwner()
     local ft = FrameTime()
     local newang = owner:EyeAngles()
-    local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
-    local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
+    -- local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
+    -- local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
 
     local ra = Angle(0, 0, 0)
 
-    ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.5)
-    ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
+    ra = ra + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * self.RecoilAmount * 0.5)
+    ra = ra + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
 
     newang = newang - ra
 
