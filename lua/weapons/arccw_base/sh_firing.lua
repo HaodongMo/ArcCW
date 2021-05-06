@@ -748,16 +748,10 @@ function SWEP:DoRecoil()
         rmul = rmul * GetConVar("arccw_mult_crouchrecoil"):GetFloat()
     end
 
-    --[[]
-    rmul = rec and recoil or rmul
-    recv = rec and visual or recv
-    recs = rec and side or recs
-    ]]
-
     local punch = Angle()
 
     punch = punch + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * math.max(self.Recoil, 0.25) * recu * recv * rmul)
-    punch = punch + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec  * recv * rmul)
+    punch = punch + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec * recv * rmul)
     punch = punch + Angle(0, 0, 90) * math.Rand(-1, 1) * math.Clamp(self.Recoil, 0.25, 1) * recv * rmul * 0.01
     punch = punch * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
 
