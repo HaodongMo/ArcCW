@@ -378,6 +378,10 @@ function SWEP:GetBuff_Override(buff, default)
 
     end
 
+    if current == nil then
+        current = default
+    end
+
     return current, winningslot
 end
 
