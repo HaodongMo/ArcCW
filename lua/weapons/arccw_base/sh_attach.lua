@@ -103,10 +103,9 @@ function SWEP:GetBuff(buff, defaultnil, defaultvar)
         result = 1
     end
 
-    if self:GetBuff_Override("Override_" .. buff) == false then
-        result = false
-    else
-        result = self:GetBuff_Override("Override_" .. buff) or result
+    local override = self:GetBuff_Override("Override_" .. buff)
+    if override != nil then
+        result = override
     end
 
     if isnumber(result) then
@@ -141,16 +140,15 @@ function SWEP:GetBuff_Hook(buff, data)
     -- end
 
     if self.AttCache_Hooks[buff] then
-        for i, k in pairs(self.AttCache_Hooks[buff]) do
+        for i, k in ipairs(self.AttCache_Hooks[buff]) do
             local ret = k(self, data)
-
-            if ret == nil then continue end
-
-            if ret == false then return end
-
-            data = ret
+            if ret == false then
+                return
+            elseif ret != nil then
+                data = ret
+                break
+            end
         end
-
         data = hook.Call(buff, nil, self, data) or data
 
         return data
@@ -158,6 +156,7 @@ function SWEP:GetBuff_Hook(buff, data)
         self.AttCache_Hooks[buff] = {}
     end
 
+    local retfalse = false
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
@@ -166,39 +165,47 @@ function SWEP:GetBuff_Hook(buff, data)
         if !atttbl then continue end
 
         if isfunction(atttbl[buff]) then
-            local ret = atttbl[buff](self, data)
-
             table.insert(self.AttCache_Hooks[buff], atttbl[buff])
+            if !retfalse and data == nil then
+                local ret = atttbl[buff](self, data)
 
-            if ret == nil then continue end
+                if ret == false then
+                    retfalse = true
+                    continue
+                elseif ret == nil then
+                    continue
+                end
 
-            if ret == false then return end
-
-            data = ret
+                data = ret
+            end
         elseif atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and isfunction(atttbl.ToggleStats[k.ToggleNum][buff]) then
-           local ret = atttbl.ToggleStats[k.ToggleNum][buff](self, data)
             table.insert(self.AttCache_Hooks[buff], atttbl.ToggleStats[k.ToggleNum][buff])
-            if ret == nil then continue end
-            if ret == false then return end
-            data = ret
+            if !retfalse and data == nil then
+                local ret = atttbl.ToggleStats[k.ToggleNum][buff](self, data)
+
+                if ret == false then
+                    retfalse = true
+                    continue
+                elseif ret == nil then
+                    continue
+                end
+
+                data = ret
+            end
         end
     end
 
     local cfm = self:GetCurrentFiremode()
 
     if cfm and isfunction(cfm[buff]) then
-        local ret = cfm[buff](self, data)
-
         table.insert(self.AttCache_Hooks[buff], cfm[buff])
-
-        hasany = true
-
-        if ret != nil then
-
-            if ret == false then return end
-
-            data = ret
-
+        if !retfalse and data == nil then
+            local ret = cfm[buff](self, data)
+            if ret == false then
+                retfalse = true
+            elseif ret != nil then
+                data = ret
+            end
         end
     end
 
@@ -206,34 +213,27 @@ function SWEP:GetBuff_Hook(buff, data)
         local ele = self.AttachmentElements[e]
 
         if ele and ele[buff] then
-            local ret = ele[buff](self, data)
-
             table.insert(self.AttCache_Hooks[buff], ele[buff])
-
-            hasany = true
-
-            if ret != nil then
-
-                if ret == false then return end
-
-                data = ret
+            if !retfalse and data == nil then
+                local ret = ele[buff](self, data)
+                if ret == false then
+                    retfalse = true
+                elseif ret != nil then
+                    data = ret
+                end
             end
         end
     end
 
     if isfunction(self:GetTable()[buff]) then
-        local ret = self:GetTable()[buff](self, data)
-
         table.insert(self.AttCache_Hooks[buff], self:GetTable()[buff])
-
-        hasany = true
-
-        if ret != nil then
-
-            if ret == false then return end
-
-            data = ret
-
+        if !retfalse and data == nil then
+            local ret = self:GetTable()[buff](self, data)
+            if ret == false then
+                retfalse = true
+            elseif ret != nil then
+                data = ret
+            end
         end
     end
 
@@ -1051,13 +1051,11 @@ function SWEP:Attach(slot, attname, silent, noadjust)
 
     local pick = self:GetPickX()
 
-    if pick > 0 then
-        if self:CountAttachments() >= pick and !attslot.FreeSlot then
-            if CLIENT and !silent then
-                surface.PlaySound("items/medshotno1.wav")
-            end
-            return
+    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot then
+        if CLIENT and !silent then
+            surface.PlaySound("items/medshotno1.wav")
         end
+        return
     end
 
     if !self:CheckFlags(attslot.ExcludeFlags, attslot.RequireFlags) then return end
