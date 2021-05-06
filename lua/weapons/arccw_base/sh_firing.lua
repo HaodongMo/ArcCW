@@ -802,6 +802,19 @@ function SWEP:FireAnimationEvent(pos, ang, event, options)
     return true
 end
 
+function SWEP:GetRangeFraction(range, decrease)
+    local mran = self.RangeMin or 0
+    local sran = self.Range
+    local bran = self:GetBuff_Mult("Mult_Range")
+    local vran = self:GetBuff_Mult("Mult_RangeMin")
+
+    if range < mran * bran * vran then
+        return 0
+    else
+        return math.Clamp((decrease and (range / (sran / bran))) or (range / (sran * bran)), 0, 1)
+    end
+end
+
 function SWEP:GetDamage(range, pellet)
     local ovr = self:GetBuff_Override("Override_Num")
     local add = self:GetBuff_Add("Add_Num")
@@ -816,19 +829,7 @@ function SWEP:GetDamage(range, pellet)
 
     local dmgmax = self:GetBuff("Damage") * mul
     local dmgmin = self:GetBuff("DamageMin") * mul
-    local delta = 1
-
-    local mran = self.RangeMin or 0
-    local sran = self.Range
-    local bran = self:GetBuff_Mult("Mult_Range")
-    local vran = self:GetBuff_Mult("Mult_RangeMin")
-
-    if range < mran * bran * vran then
-        return dmgmax
-    else
-        delta = (dmgmax < dmgmin and (range / (sran / bran))) or (range / (sran * bran))
-        delta = math.Clamp(delta, 0, 1)
-    end
+    local delta = self:GetRangeFraction(range, dmgmax < dmgmin)
 
     local lerped = Lerp(delta, dmgmax, dmgmin)
 
