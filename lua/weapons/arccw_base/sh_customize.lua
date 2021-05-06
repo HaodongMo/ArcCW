@@ -1553,7 +1553,7 @@ function SWEP:CreateCustomizeHUD()
             local gw, gh = w - (2 * sidegap), h - smallgap - ScreenScaleMulti(6)
 
             local dmgmax = math.Round(self:GetDamage(0))
-            local dmgmin = math.Round(self:GetDamage(self.Range))
+            local dmgmin = math.Round(self:GetDamage(math.huge))
 
             local grsh = math.max(dmgmax, dmgmin)
 

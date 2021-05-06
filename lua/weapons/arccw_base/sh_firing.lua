@@ -136,7 +136,7 @@ function SWEP:PrimaryAttack()
     bullet.Spread     = Vector(0, 0, 0) --Vector(spread, spread, spread)
     bullet.Damage     = 0
     bullet.Num        = num
-    bullet.Force      = (self:GetDamage(0) + self:GetDamage(self:GetBuff("Range"))) / 50
+    bullet.Force      = (self:GetDamage(0) + self:GetDamage(math.huge)) / 50
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
     bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
@@ -511,7 +511,7 @@ end
 
 function SWEP:DoPenetration(tr, penleft, alreadypenned)
     local bullet = {
-        Damage = self:GetDamage((tr.HitPos - tr.StartPos):Length()),
+        Damage = self:GetDamage((tr.HitPos - tr.StartPos):Length() * ArcCW.HUToM),
         DamageType = self:GetBuff_Override("Override_DamageType") or self.DamageType,
         Weapon = self,
         Penetration = self:GetBuff("Penetration"),
@@ -808,10 +808,17 @@ function SWEP:GetRangeFraction(range, decrease)
     local bran = self:GetBuff_Mult("Mult_Range")
     local vran = self:GetBuff_Mult("Mult_RangeMin")
 
+    print(math.Round(range), mran * bran * vran, sran * bran)
+
     if range < mran * bran * vran then
         return 0
     else
-        return math.Clamp((decrease and (range / (sran / bran))) or (range / (sran * bran)), 0, 1)
+        range = range - mran * bran * vran
+        if decrease then
+            return math.Clamp(range / (sran / bran), 0, 1)
+        else
+            return math.Clamp(range / (sran * bran), 0, 1)
+        end
     end
 end
 
@@ -832,6 +839,7 @@ function SWEP:GetDamage(range, pellet)
     local delta = self:GetRangeFraction(range, dmgmax < dmgmin)
 
     local lerped = Lerp(delta, dmgmax, dmgmin)
+    print("delta", 1 - delta)
 
     return lerped
 end

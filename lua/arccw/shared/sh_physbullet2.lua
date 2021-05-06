@@ -38,7 +38,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     local num = wep:GetBuff_Override("Override_Num") or wep.Num
     local bullet = {
         DamageMax = wep:GetDamage(0) / num,
-        DamageMin = wep:GetDamage(wep:GetBuff("Range")) / num,
+        DamageMin = wep:GetDamage(math.huge) / num,
         Range = wep:GetBuff("Range"),
         DamageType = wep:GetBuff_Override("Override_DamageType") or wep.DamageType,
         Penleft = wep:GetBuff("Penetration"),
