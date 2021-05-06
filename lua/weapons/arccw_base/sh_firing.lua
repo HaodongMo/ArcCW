@@ -808,8 +808,6 @@ function SWEP:GetRangeFraction(range, decrease)
     local bran = self:GetBuff_Mult("Mult_Range")
     local vran = self:GetBuff_Mult("Mult_RangeMin")
 
-    print(math.Round(range), mran * bran * vran, sran * bran)
-
     if range < mran * bran * vran then
         return 0
     else
@@ -839,7 +837,6 @@ function SWEP:GetDamage(range, pellet)
     local delta = self:GetRangeFraction(range, dmgmax < dmgmin)
 
     local lerped = Lerp(delta, dmgmax, dmgmin)
-    print("delta", 1 - delta)
 
     return lerped
 end
