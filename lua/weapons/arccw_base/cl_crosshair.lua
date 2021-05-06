@@ -111,11 +111,13 @@ function SWEP:DoDrawCrosshair(x, y)
         aimtr.endpos = aimtr.start + (ply:EyeAngles() + va):Forward() * 10000
         table.Add(aimtr.filter, {veh})
     end
-
     util.TraceLine(aimtr)
-    local w2s = aimtr_result.HitPos:ToScreen()
-    sp.x = w2s.x sp.y = w2s.y
 
+    cam.Start3D()
+    local w2s = aimtr_result.HitPos:ToScreen()
+    cam.End3D()
+
+    sp.x = w2s.x sp.y = w2s.y
     x, y = sp.x, sp.y
 
     local st = self:GetSightTime() / 4
