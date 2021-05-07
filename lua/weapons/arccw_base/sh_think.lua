@@ -16,9 +16,9 @@ function SWEP:Think()
 
     local sg = self:GetShotgunReloading()
     if (sg == 2 or sg == 4) and owner:KeyPressed(IN_ATTACK) then
-        self:SetShotgunReloading(3)
-    elseif (sg == 2 or sg == 4) and self:GetReloadingREAL() <= CurTime() then
-        self:ReloadInsert(sg == 4 and true or false)
+        self:SetShotgunReloading(sg + 1)
+    elseif (sg >= 2) and self:GetReloadingREAL() <= CurTime() then
+        self:ReloadInsert((sg >= 4) and true or false)
     end
 
     if CLIENT then
