@@ -756,6 +756,7 @@ function SWEP:CreateCustomize2HUD()
                 ArcCW.InvHUD_FormAttachmentSelect()
             end
             button.Paint = function(self2, w, h)
+                if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
                 local col = col_button
                 local col2 = col_fg
 
