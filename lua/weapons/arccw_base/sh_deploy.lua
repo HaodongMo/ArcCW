@@ -175,8 +175,6 @@ function SWEP:Initialize()
     self:SetClip2(0)
     self:SetLastLoad(self:Clip1())
 
-    self:SetNWBool("laserenabled", true) -- J
-
     self.Attachments["BaseClass"] = nil
 
     self:SetHoldType(self.HoldtypeActive)
