@@ -226,6 +226,7 @@ function SWEP:CreateCustomize2HUD()
         if !IsValid(self) then
             gui.EnableScreenClicker(false)
             ArcCW.InvHUD:Remove()
+            return
         end
 
         surface.SetDrawColor(Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 255)))
@@ -233,7 +234,7 @@ function SWEP:CreateCustomize2HUD()
         surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 
         if self:GetReloading() then
-            ArcCW.InvHUD:Remove()
+            --ArcCW.InvHUD:Remove()
             return
         end
 
@@ -471,7 +472,7 @@ function SWEP:CreateCustomize2HUD()
     scroll_2.btnGrip.Paint = PaintScrollBar
 
     function ArcCW.InvHUD_FormInventory()
-        if !IsValid(ArcCW.InvHUD) then return end
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         ArcCW.InvHUD_Menu1:Clear()
         ArcCW.InvHUD_Menu2:Clear()
         self.Inv_SelectedSlot = nil
@@ -596,7 +597,7 @@ function SWEP:CreateCustomize2HUD()
     end
 
     function ArcCW.InvHUD_FormPresets()
-        if !IsValid(ArcCW.InvHUD) then return end
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         ArcCW.InvHUD_Menu1:Clear()
         ArcCW.InvHUD_Menu2:Clear()
         self.Inv_SelectedSlot = nil
@@ -672,7 +673,7 @@ function SWEP:CreateCustomize2HUD()
     end
 
     function ArcCW.InvHUD_FormAttachmentSelect()
-        if !IsValid(ArcCW.InvHUD) then return end
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         ArcCW.InvHUD_Menu2:Clear()
 
         local slot = self.Attachments[self.Inv_SelectedSlot or 0]
@@ -867,7 +868,7 @@ function SWEP:CreateCustomize2HUD()
     -- add attachments
 
     function ArcCW.InvHUD_FormAttachments()
-        if !IsValid(ArcCW.InvHUD) then return end
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         ArcCW.InvHUD_Menu1:Clear()
         for i, slot in pairs(self.Attachments) do
             if !istable(slot) then continue end
@@ -904,6 +905,7 @@ function SWEP:CreateCustomize2HUD()
                 ArcCW.InvHUD_FormAttachmentSelect()
             end
             button.Paint = function(self2, w, h)
+                if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
                 local col = col_button
                 local col2 = col_fg
 
@@ -956,6 +958,7 @@ function SWEP:CreateCustomize2HUD()
         pickxpanel:SetSize(menu1_w, bottom_zone - airgap_y)
         pickxpanel:SetPos(airgap_x, scrh - bottom_zone - airgap_y)
         pickxpanel.Paint = function(self2, w, h)
+            if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
             local pickx_amount = self:GetPickX()
             local pickedatts = self:CountAttachments()
 
@@ -1376,6 +1379,7 @@ function SWEP:CreateCustomize2HUD()
     end
 
     function ArcCW.InvHUD_FormStatsTriviaBar()
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         local statsbutton = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
         statsbutton:SetSize(ss * 48, ss * 16)
         statsbutton:SetPos(menu3_w - (ss * 48 * 2) - airgap_x - (ss * 4), rss * 48 + ss * 12)
@@ -1425,11 +1429,13 @@ function SWEP:CreateCustomize2HUD()
     end
 
     function ArcCW.InvHUD_FormWeaponName()
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         ArcCW.InvHUD_FormStatsTriviaBar()
         local weapon_title = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
         weapon_title:SetSize(menu3_w, rss * 32)
         weapon_title:SetPos(0, 0)
         weapon_title.Paint = function(self2, w, h)
+            if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
             local name = translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or translate(self.PrintName) or self.PrintName
 
             surface.SetFont("ArcCWC2_32")
@@ -1450,6 +1456,7 @@ function SWEP:CreateCustomize2HUD()
         weapon_cat:SetSize(menu3_w, rss * 16)
         weapon_cat:SetPos(0, rss * 32)
         weapon_cat.Paint = function(self2, w, h)
+            if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
             local class = translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class
             local cal = translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre) or self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre
             local name = class
@@ -1474,6 +1481,7 @@ function SWEP:CreateCustomize2HUD()
     end
 
     function ArcCW.InvHUD_FormWeaponTrivia()
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         ArcCW.InvHUD_Menu3:Clear()
         ArcCW.InvHUD_FormWeaponName()
 
@@ -1643,6 +1651,7 @@ function SWEP:CreateCustomize2HUD()
     end
 
     function ArcCW.InvHUD_FormWeaponStats()
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         ArcCW.InvHUD_Menu3:Clear()
         ArcCW.InvHUD_FormWeaponName()
 
@@ -1650,6 +1659,7 @@ function SWEP:CreateCustomize2HUD()
         info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
         info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
         info.Paint = function(self2, w, h)
+            if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
             local infos = self.Infos_Stats or {}
 
             -- rpm
@@ -1814,6 +1824,7 @@ function SWEP:CreateCustomize2HUD()
         rangegraph:SetSize(ss * 200, ss * 110)
         rangegraph:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32)
         rangegraph.Paint = function(self2, w, h)
+            if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
             if self.PrimaryBash or
                 self.ShootEntity or
                 self:GetBuff_Override("Override_ShootEntity") or
@@ -1997,7 +2008,7 @@ function SWEP:CreateCustomize2HUD()
     end
 
     function ArcCW.InvHUD_FormGamemodeFunctions()
-
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
         if !GetConVar("arccw_attinv_gamemodebuttons"):GetBool() then return end
 
         local shoulddrawtitle = false
