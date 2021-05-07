@@ -11,7 +11,7 @@ function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
     if !GetConVar("arccw_crosshair"):GetBool() then return false end
     if self:GetReloading() then return false end
-    if self:BarrelHitWall() > 0 then return end
+    if self:BarrelHitWall() > 0 then return false end
     local asight = self:GetActiveSights()
 
     if !self:GetOwner():ShouldDrawLocalPlayer()
@@ -85,7 +85,9 @@ function SWEP:DoDrawCrosshair(x, y)
         local tr = util.GetPlayerTrace( self:GetOwner() )
         local trace = util.TraceLine( tr )
 
+        cam.Start3D()
         local coords = trace.HitPos:ToScreen()
+        cam.End3D()
         sp = { visible = true, x = coords.x, y = coords.y }
     end
 
@@ -108,9 +110,10 @@ function SWEP:DoDrawCrosshair(x, y)
     if veh:IsValid() then
         local va = veh:GetAngles()
         -- va.p = -va.p * 2
-        aimtr.endpos = aimtr.start + (ply:EyeAngles() + va):Forward() * 10000
+        aimtr.endpos = aimtr.start + (ply:EyeAngles() + va):Forward() * 100000
         table.Add(aimtr.filter, {veh})
     end
+
     util.TraceLine(aimtr)
 
     cam.Start3D()

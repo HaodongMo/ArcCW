@@ -365,16 +365,16 @@ function SWEP:SetupModel(wm)
             if !ele then continue end
 
             if ((ele.AttPosMods or {})[i] or {}).bone then
-                repbone = ele.AttPosMods.bone
+                repbone = ele.AttPosMods[i].bone
             end
 
             if wm then
                 if ((ele.AttPosMods or {})[i] or {}).wang then
-                    repang = ele.AttPosMods.wang
+                    repang = ele.AttPosMods[i].wang
                 end
             else
                 if ((ele.AttPosMods or {})[i] or {}).vang then
-                    repang = ele.AttPosMods.vang
+                    repang = ele.AttPosMods[i].vang
                 end
             end
         end
