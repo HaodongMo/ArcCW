@@ -1042,6 +1042,14 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     if !attslot then return end
     if attslot.Installed == attname then return end
 
+    -- Make an additional check to see if we can detach the current attachment
+    if attslot.Installed and !ArcCW:PlayerCanAttach(self:GetOwner(), self, attslot.Installed, slot, true) then
+        if CLIENT and !silent then
+            surface.PlaySound("items/medshotno1.wav")
+        end
+        return
+    end
+
     if !ArcCW:PlayerCanAttach(self:GetOwner(), self, attname, slot, false) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
