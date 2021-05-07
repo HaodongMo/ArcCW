@@ -234,7 +234,7 @@ function SWEP:CreateCustomize2HUD()
         surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 
         if self:GetReloading() then
-            --ArcCW.InvHUD:Remove()
+            ArcCW.InvHUD:Remove()
             return
         end
 
