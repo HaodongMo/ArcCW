@@ -21,6 +21,7 @@ ArcCW.AutoStats = {
     ["Mult_Damage"]           = { "autostat.damage",      "mult", false },
     ["Mult_DamageMin"]        = { "autostat.damagemin",   "mult", false },
     ["Mult_Range"]            = { "autostat.range",       "mult", false },
+    ["Mult_RangeMin"]         = { "autostat.rangemin",    "mult", false },
     ["Mult_Penetration"]      = { "autostat.penetration", "mult", false },
     ["Mult_MuzzleVelocity"]   = { "autostat.muzzlevel",   "mult", false },
     ["Mult_MeleeTime"]        = { "autostat.meleetime",   "mult", true },

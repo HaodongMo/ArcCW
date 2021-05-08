@@ -222,6 +222,10 @@ function SWEP:PrimaryAttack()
         decal = self:GetBuff_Override("Override_ImpactDecal") or decal
 
         if decal then util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), self:GetOwner()) end
+
+        if GetConVar("developer"):GetInt() >= 2 then
+            debugoverlay.Text(hitpos, string.format("%ddmg/%dm(%d%%)", dmg:GetDamage(), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100)), 5)
+        end
     end
 
     local shootent = self:GetBuff("ShootEntity", true) --self:GetBuff_Override("Override_ShootEntity", self.ShootEntity)
@@ -802,7 +806,8 @@ function SWEP:FireAnimationEvent(pos, ang, event, options)
     return true
 end
 
-function SWEP:GetRangeFraction(range, decrease)
+function SWEP:GetRangeFraction(range)
+    local decrease = self:GetBuff("Damage") < self:GetBuff("DamageMin")
     local mran = self.RangeMin or 0
     local sran = self.Range
     local bran = self:GetBuff_Mult("Mult_Range")
@@ -834,7 +839,7 @@ function SWEP:GetDamage(range, pellet)
 
     local dmgmax = self:GetBuff("Damage") * mul
     local dmgmin = self:GetBuff("DamageMin") * mul
-    local delta = self:GetRangeFraction(range, dmgmax < dmgmin)
+    local delta = self:GetRangeFraction(range)
 
     local lerped = Lerp(delta, dmgmax, dmgmin)
 

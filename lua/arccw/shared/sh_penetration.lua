@@ -26,10 +26,11 @@ function ArcCW:IsPenetrating(ptr, ptrent)
     elseif IsValid(ptrent) then
         local mins, maxs = ptrent:WorldSpaceAABB()
         local withinbounding = ptr.HitPos:WithinAABox(mins, maxs)
-        if withinbounding and GetConVar("developer"):GetBool() then
+        if  GetConVar("developer"):GetInt() >= 2 and withinbounding then
             --debugoverlay.Box(Vector(0, 0, 0), mins, maxs, 5, Color(255, 255, 255, 50))
-            debugoverlay.Sphere(ptr.HitPos, 1, 5, Color(255, 255, 0), true)
+            debugoverlay.Cross(ptr.HitPos, 2, 5, Color(255, 255, 0), true)
         end
+
         if withinbounding then return true end
         --[[]
         -- Check whether the point is inside the hitbox
