@@ -246,9 +246,8 @@ net.Receive("arccw_sendattinv", function(len, ply)
     end
 
     -- This function will not exist until initialized (by having an ArcCW weapon exist)!
-    -- Also, no point calling it unless player is actually customizing
-    local w = LocalPlayer():GetActiveWeapon()
-    if ArcCW.InvHUD_FormAttachmentSelect and IsValid(w) and w.ArcCW and w:GetState() == ArcCW.STATE_CUSTOMIZE then
+    -- It also obviously needs menu2 open
+    if ArcCW.InvHUD_FormAttachmentSelect and IsValid(ArcCW.InvHUD) and IsValid(ArcCW.InvHUD_Menu2) then
         ArcCW.InvHUD_FormAttachmentSelect()
     end
 end)
