@@ -796,9 +796,13 @@ function SWEP:CreateCustomize2HUD()
 
                 if !self2.att or self2.att == "" then
                     local attslot = self.Attachments[self2.attslot]
+                    local name = self:GetBuff_Hook("Hook_GetDefaultAttName", self2.attslot)
+                    local icon = self:GetBuff_Hook("Hook_GetDefaultAttIcon", self2.attslot)
+                    if name == self2.attslot then name = nil end
+                    if icon == self2.attslot then icon = nil end
                     atttbl = {
-                        PrintName = translate(attslot.DefaultAttName) or attslot.DefaultAttName or translate("attslot.noatt"),
-                        Icon = attslot.DefaultAttIcon or defaultatticon
+                        PrintName = name or translate(attslot.DefaultAttName) or attslot.DefaultAttName or translate("attslot.noatt"),
+                        Icon = icon or attslot.DefaultAttIcon or defaultatticon
                     }
                 end
 
@@ -926,8 +930,12 @@ function SWEP:CreateCustomize2HUD()
 
                 local installed = self:GetSlotInstalled(i)
 
-                local att_icon = slot.DefaultAttIcon or defaultatticon
-                local att_txt = translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
+                local name = self:GetBuff_Hook("Hook_GetDefaultAttName", i)
+                local icon = self:GetBuff_Hook("Hook_GetDefaultAttIcon", i)
+                if name == i then name = nil end
+                if icon == i then icon = nil end
+                local att_icon = icon or slot.DefaultAttIcon or defaultatticon
+                local att_txt = name or translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
                 local atttbl = ArcCW.AttachmentTable[installed or ""]
 
                 if atttbl then

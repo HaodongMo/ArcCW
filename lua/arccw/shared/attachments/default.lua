@@ -411,6 +411,11 @@ att.Hook_GetShootSound = function(wep, sound) end
 att.Hook_GetShootDrySound = function(wep, sound) end
 att.Hook_GetDistantShootSound = function(wep, sound) end
 
+-- return a string to change the default attachment name and icon for that slot
+-- int slot = slot of attachment to name/set icon
+att.Hook_GetDefaultAttName = function(wep, slot) end
+att.Hook_GetDefaultAttIcon = function(wep, slot) end
+
 -- or just add more!
 -- data has entries:
 -- string sound
