@@ -23,7 +23,16 @@ function SWEP:CanPrimaryAttack()
     if self:GetHeatLocked() then return end
 
     -- Coostimzing
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        if CLIENT and ArcCW.Inv_Hidden then
+            ArcCW.Inv_Hidden = false
+            gui.EnableScreenClicker(true)
+        elseif game.SinglePlayer() then
+            -- Kind of ugly hack: in SP this is only called serverside so we ask client to do the same check
+            self:CallOnClient("CanPrimaryAttack")
+        end
+        return
+    end
 
     -- Attempting a bash
     if self:GetState() != ArcCW.STATE_SIGHTS and owner:KeyDown(IN_USE) or self.PrimaryBash then self:Bash() return end
