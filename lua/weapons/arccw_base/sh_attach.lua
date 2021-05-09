@@ -130,7 +130,7 @@ function SWEP:GetBuff_Stat(buff, slot)
     end
 end
 
-function SWEP:GetBuff_Hook(buff, data, default)
+function SWEP:GetBuff_Hook(buff, data, defaultnil)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
     -- Fesiug, this will only work if you have just one hook.
@@ -140,15 +140,20 @@ function SWEP:GetBuff_Hook(buff, data, default)
     -- end
 
     if self.AttCache_Hooks[buff] then
+        local retvalue = nil
         for i, k in ipairs(self.AttCache_Hooks[buff]) do
             local ret = k(self, data)
             if ret == false then
                 return
             elseif ret != nil then
-                data = ret
+                retvalue = ret
                 break
             end
         end
+
+        if retvalue then data = retvalue
+        elseif defaultnil then data = nil end
+
         data = hook.Call(buff, nil, self, data) or data
 
         return data
@@ -237,8 +242,10 @@ function SWEP:GetBuff_Hook(buff, data, default)
             end
         end
     end
+
     if retvalue then data = retvalue
-    elseif default then data = default end
+    elseif defaultnil then data = nil end
+
     data = hook.Call(buff, nil, self, data) or data
 
     return data
