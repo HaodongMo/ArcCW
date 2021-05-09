@@ -246,7 +246,8 @@ net.Receive("arccw_sendattinv", function(len, ply)
     end
 
     -- This function will not exist until initialized (by having an ArcCW weapon exist)!
-    if ArcCW.InvHUD_FormAttachmentSelect then
+    local w = LocalPlayer():GetActiveWeapon()
+    if IsValid(w) and w.ArcCW and w:GetState() == ArcCW.STATE_CUSTOMIZE then
         ArcCW.InvHUD_FormAttachmentSelect()
     end
 end)
