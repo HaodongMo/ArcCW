@@ -205,6 +205,7 @@ att.Silencer = false
 att.Bipod = false
 att.Mult_BipodRecoil = 0.25
 att.Mult_BipodDispersion = 0.1
+att.Override_InBipodPos = nil
 
 att.Override_AlwaysPhysBullet = nil
 att.Override_NeverPhysBullet = nil

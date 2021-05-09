@@ -290,13 +290,14 @@ function SWEP:GetViewModelPosition(pos, ang)
         local BEA = self.BipodAngle - owner:EyeAngles()
 
         local irons = self:GetActiveSights()
+        local bpos = self:GetBuff_Override("Override_InBipodPos", self.InBipodPos)
 
         target.pos = irons.Pos or target.pos
         target.ang = irons.Ang or target.ang
 
-        target.pos = target.pos + ((BEA):Right()   * self.InBipodPos.x * self.InBipodMult.x)
-        target.pos = target.pos + ((BEA):Forward() * self.InBipodPos.y * self.InBipodMult.y)
-        target.pos = target.pos + ((BEA):Up()      * self.InBipodPos.z * self.InBipodMult.z)
+        target.pos = target.pos + ((BEA):Right()   * bpos.x * self.InBipodMult.x)
+        target.pos = target.pos + ((BEA):Forward() * bpos.y * self.InBipodMult.y)
+        target.pos = target.pos + ((BEA):Up()      * bpos.z * self.InBipodMult.z)
 
         target.sway = 0.2
     end
