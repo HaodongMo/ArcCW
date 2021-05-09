@@ -130,7 +130,7 @@ function SWEP:GetBuff_Stat(buff, slot)
     end
 end
 
-function SWEP:GetBuff_Hook(buff, data)
+function SWEP:GetBuff_Hook(buff, data, default)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
     -- Fesiug, this will only work if you have just one hook.
@@ -157,6 +157,7 @@ function SWEP:GetBuff_Hook(buff, data)
     end
 
     local retfalse = false
+    local retvalue = nil
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
@@ -166,7 +167,7 @@ function SWEP:GetBuff_Hook(buff, data)
 
         if isfunction(atttbl[buff]) then
             table.insert(self.AttCache_Hooks[buff], atttbl[buff])
-            if !retfalse and data == nil then
+            if !retfalse and retvalue == nil then
                 local ret = atttbl[buff](self, data)
 
                 if ret == false then
@@ -176,11 +177,11 @@ function SWEP:GetBuff_Hook(buff, data)
                     continue
                 end
 
-                data = ret
+                retvalue = ret
             end
         elseif atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and isfunction(atttbl.ToggleStats[k.ToggleNum][buff]) then
             table.insert(self.AttCache_Hooks[buff], atttbl.ToggleStats[k.ToggleNum][buff])
-            if !retfalse and data == nil then
+            if !retfalse and retvalue == nil then
                 local ret = atttbl.ToggleStats[k.ToggleNum][buff](self, data)
 
                 if ret == false then
@@ -190,7 +191,7 @@ function SWEP:GetBuff_Hook(buff, data)
                     continue
                 end
 
-                data = ret
+                retvalue = ret
             end
         end
     end
@@ -199,12 +200,12 @@ function SWEP:GetBuff_Hook(buff, data)
 
     if cfm and isfunction(cfm[buff]) then
         table.insert(self.AttCache_Hooks[buff], cfm[buff])
-        if !retfalse and data == nil then
+        if !retfalse and retvalue == nil then
             local ret = cfm[buff](self, data)
             if ret == false then
                 retfalse = true
             elseif ret != nil then
-                data = ret
+                retvalue = ret
             end
         end
     end
@@ -214,12 +215,12 @@ function SWEP:GetBuff_Hook(buff, data)
 
         if ele and ele[buff] then
             table.insert(self.AttCache_Hooks[buff], ele[buff])
-            if !retfalse and data == nil then
+            if !retfalse and retvalue == nil then
                 local ret = ele[buff](self, data)
                 if ret == false then
                     retfalse = true
                 elseif ret != nil then
-                    data = ret
+                    retvalue = ret
                 end
             end
         end
@@ -232,11 +233,12 @@ function SWEP:GetBuff_Hook(buff, data)
             if ret == false then
                 retfalse = true
             elseif ret != nil then
-                data = ret
+                retvalue = ret
             end
         end
     end
-
+    if retvalue then data = retvalue
+    elseif default then data = default end
     data = hook.Call(buff, nil, self, data) or data
 
     return data
