@@ -480,6 +480,9 @@ att.Mult_HeatDelayTime = 1
 att.Override_HeatFix = nil
 att.Override_HeatLockout = nil
 att.Hook_Overheat = function(wep, heat) end
+att.Hook_PostOverheat = function(wep) end
+-- Return true to not do animation/heat locking
+att.Hook_OnOverheat = function(wep) end
 
 att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil

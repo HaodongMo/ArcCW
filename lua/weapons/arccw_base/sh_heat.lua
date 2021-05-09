@@ -41,10 +41,14 @@ function SWEP:AddHeat(a)
     self:SetHeat(self.Heat)
 
     if overheat then
+
+        local ret = self:GetBuff_Hook("Hook_OnOverheat")
+        if ret then return end
+
         if anim then
             self:PlayAnimation(anim, mult, true, 0, true)
 
-            if self.HeatFix or self:GetBuff_Override("Override_HeatFix") then
+            if self:GetBuff_Override("Override_HeatFix", self.HeatFix) then
                 self:SetTimer(self:GetAnimKeyTime(anim) * mult,
                 function()
                     self:SetHeat(0)
@@ -55,6 +59,8 @@ function SWEP:AddHeat(a)
         if self.HeatLockout or self:GetBuff_Override("Override_HeatLockout") then
             self:SetHeatLocked(true)
         end
+
+        self:GetBuff_Hook("Hook_PostOverheat")
     end
 end
 
