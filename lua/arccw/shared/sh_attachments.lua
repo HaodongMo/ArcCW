@@ -245,7 +245,10 @@ net.Receive("arccw_sendattinv", function(len, ply)
         LocalPlayer().ArcCW_AttInv[att] = acount
     end
 
-    ArcCW.InvHUD_FormAttachmentSelect()
+    -- This function will not exist until initialized (by having an ArcCW weapon exist)!
+    if ArcCW.InvHUD_FormAttachmentSelect then
+        ArcCW.InvHUD_FormAttachmentSelect()
+    end
 end)
 
 net.Receive("arccw_sendatthp", function(len, ply)
