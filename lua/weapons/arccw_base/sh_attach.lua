@@ -1052,7 +1052,7 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     if attslot.Installed == attname then return end
 
     -- Make an additional check to see if we can detach the current attachment
-    if attslot.Installed and !ArcCW:PlayerCanAttach(self:GetOwner(), self, attslot.Installed, slot, true) then
+    if attslot.Installed and !ArcCW:PlayerCanAttach(self:GetOwner(), self, attslot.Installed, slot, attname) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
@@ -1201,17 +1201,17 @@ function SWEP:DetachAllMergeSlots(slot, silent)
     table.Add(slots, (self.Attachments[slot] or {}).MergeSlots or {})
 
     for _, i in pairs(slots) do
-        self:Detach(i, silent)
+        self:Detach(i, silent, nil, true)
     end
 end
 
-function SWEP:Detach(slot, silent, noadjust)
+function SWEP:Detach(slot, silent, noadjust, nocheck)
     if !slot then return end
     if !self.Attachments[slot] then return end
 
     if !self.Attachments[slot].Installed then return end
 
-    if !ArcCW:PlayerCanAttach(self:GetOwner(), self, self.Attachments[slot].Installed, slot, true) then
+    if !nocheck and !ArcCW:PlayerCanAttach(self:GetOwner(), self, self.Attachments[slot].Installed, slot, true) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
