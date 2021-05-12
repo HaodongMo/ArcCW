@@ -289,10 +289,11 @@ SWEP.HeatLockout = false -- overheating means you cannot fire until heat has bee
 SWEP.HeatDelayTime = 0.5
 SWEP.HeatFix = false -- when the "fix" animation is played, all heat is restored.
 
--- If Malfunction is enabled, the gun has a random chance to play the "fix" animation instead of firing.
--- if no "fix" or "cycle" animations exist, the magazine will be emptied, forcing a reload
+-- If Malfunction is enabled, the gun has a random chance to be jammed
+-- after the gun is jammed, it won't fire unless reload is pressed, which plays the "unjam" animation
+-- if no "unjam", "fix", or "cycle" animations exist, the weapon will reload instead
 SWEP.Malfunction = false
-SWEP.MalfunctionJam = true -- After a malfunction happens, the gun will dryfire until reload is pressed (and the gun is unjammed).
+SWEP.MalfunctionJam = true -- After a malfunction happens, the gun will dryfire until reload is pressed. If unset, instead plays animation right after.
 SWEP.MalfunctionTakeRound = true -- When malfunctioning, a bullet is consumed.
 SWEP.MalfunctionWait = 0.5 -- The amount of time to wait before playing malfunction animation (or can reload)
 SWEP.MalfunctionMean = nil -- The mean number of shots between malfunctions, will be autocalculated if nil
@@ -530,10 +531,11 @@ SWEP.Attachments = {}
 -- you can append suffixes for different states
 -- append list:
 
--- _iron, _sights, or _sight    for sighted variation
--- _sprint                        for sprinting variation
+-- _iron, _sights, or _sight     for sighted variation
+-- _sprint                       for sprinting variation
 -- _bipod                        for bipod variation
 -- _empty                        for empty variation
+-- _jammed                       for jammed variation
 
 -- this does not apply to reload animations.
 

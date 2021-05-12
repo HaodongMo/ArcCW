@@ -92,7 +92,8 @@ function SWEP:MalfunctionEnabled()
 end
 
 function SWEP:GetMalfunctionAnimation()
-    local anim = self:SelectAnimation("fix")
+    local anim = self:SelectAnimation("unjam")
+    if !self.Animations[anim] then anim = self:SelectAnimation("fix") end
     if !self.Animations[anim] then anim = self:SelectAnimation("cycle") end
     if !self.Animations[anim] then anim = nil end
     return anim
@@ -180,7 +181,7 @@ function SWEP:MalfunctionClear()
 
     local anim = self:GetMalfunctionAnimation()
     if anim then
-        self:PlayAnimation(anim, 1, true, 0, true)
+        self:PlayAnimation(anim, self:GetBuff_Mult("Mult_MalfunctionFixTime"), true, 0, true)
         local wait = self:GetAnimKeyTime(anim)
         self:SetTimer(wait,
         function()

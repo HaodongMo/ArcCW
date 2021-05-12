@@ -491,6 +491,7 @@ att.Override_MalfunctionTakeRound = nil
 att.Override_MalfunctionJam = nil
 att.Mult_MalfunctionMean = 1
 att.Mult_MalfunctionVariance = 1
+att.Mult_MalfunctionFixTime = 1
 
 -- Called every time malfunction is checked. return true to cause malfunction
 att.Hook_Malfunction = function(wep, count) end

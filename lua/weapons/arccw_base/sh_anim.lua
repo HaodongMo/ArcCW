@@ -25,6 +25,10 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_empty"
     end
 
+    if self:GetMalfunctionJam() and self.Animations[anim .. "_jammed"] then
+        anim = anim .. "_jammed"
+    end
+
     if !self.Animations[anim] then return end
 
     return anim
