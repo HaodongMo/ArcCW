@@ -47,6 +47,8 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Tick_Mults = {}
 
     self.AttCache_Hooks = {}
+
+    self.NextMalfunction = nil
 end
 
 function SWEP:GetIsShotgun()

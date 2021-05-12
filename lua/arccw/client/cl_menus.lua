@@ -289,8 +289,11 @@ local MultsPanel = {
     { type = "f", text = "#arccw.cvar.mult_crouchdisp",      var = "arccw_mult_crouchdisp", min = 0, max = 1, sv = true },
     { type = "f", text = "#arccw.cvar.mult_crouchrecoil",    var = "arccw_mult_crouchrecoil", min = 0, max = 1, sv = true },
     { type = "f", text = "#arccw.cvar.mult_sway",            var = "arccw_mult_sway", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_malfunction",     var = "arccw_mult_malfunction", min = 0, max = 10, sv = true },
     { type = "b", text = "#arccw.cvar.mult_startunloaded",   var = "arccw_mult_startunloaded", sv = true },
     { type = "b", text = "#arccw.cvar.mult_shootwhilesprinting",   var = "arccw_mult_shootwhilesprinting", sv = true },
+    { type = "o", text = "#arccw.cvar.malfunction", var = "arccw_malfunction", sv = true,
+            choices = {[0] = "#arccw.cvar.malfunction.0", [1] = "#arccw.cvar.malfunction.1", [2] = "#arccw.cvar.malfunction.2"}},
 }
 
 local MultPresets = {
@@ -306,7 +309,10 @@ local MultPresets = {
         arccw_mult_sighttime                = "1",
         arccw_mult_defaultclip              = "1",
         arccw_mult_attchance                = "1",
+        arccw_mult_crouchdisp               = "1",
+        arccw_mult_crouchrecoil             = "1",
         arccw_mult_heat                     = "1",
+        arccw_mult_malfunction              = "1",
     }
 }
 

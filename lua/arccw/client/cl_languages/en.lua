@@ -313,3 +313,10 @@ L["arccw.bind.toggle_att"]                = "Toggle Attachments"
 -- 2021-05-05
 L["arccw.cvar.attinv_gamemodebuttons"]    = "Gamemode-specific buttons"
 L["arccw.cvar.attinv_gamemodebuttons.desc"] = "Shows helpful functions for gamemodes like TTT and DarkRP.\nIn addition to using these, you can hold USE to access original keybinds as well."
+
+-- 2021-05-13
+L["arccw.cvar.mult_malfunction"] = "Malfunction Chance"
+L["arccw.cvar.malfunction"]    = "Malfunction Mode"
+L["arccw.cvar.malfunction.0"]   = "0 - Force disable on all guns"
+L["arccw.cvar.malfunction.1"]    = "1 - Enabled"
+L["arccw.cvar.malfunction.2"]    = "2 - Force enable on all guns"

@@ -273,6 +273,11 @@ L["autostat.ammotype"] = "Converts weapon ammo type to %s"
 -- 2021-05-08
 L["autostat.rangemin"] = "Minimum range"
 
+-- 2021-05-13
+L["autostat.malfunctionmean"] = "Reliability"
+L["ui.heat"] = "HEAT"
+L["ui.jammed"] = "JAMMED"
+
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
 -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]

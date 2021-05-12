@@ -101,20 +101,30 @@ function SWEP:PrimaryAttack()
         return
     end
 
-    local desync = GetConVar("arccw_desync"):GetBool()
-    local desyncnum = (desync and math.random()) or 0
-    math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
-
-    self.Primary.Automatic = true
-
     local dir = owner:GetAimVector()
     local src = self:GetShootSrc()
 
     if bit.band(util.PointContents(src), CONTENTS_WATER) == CONTENTS_WATER and !(self.CanFireUnderwater or self:GetBuff_Override("Override_CanFireUnderwater")) then
         self:DryFire()
-
         return
     end
+
+    if self:GetMalfunctionJam() then
+        self:DryFire()
+        return
+    end
+
+    -- Try malfunctioning
+    local mal = self:DoMalfunction()
+    if mal == true then
+        return
+    end
+
+    local desync = GetConVar("arccw_desync"):GetBool()
+    local desyncnum = (desync and math.random()) or 0
+    math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
+
+    self.Primary.Automatic = true
 
     local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
 

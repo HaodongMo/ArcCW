@@ -63,7 +63,12 @@ function SWEP:Reload()
     -- Don't accidently reload when changing firemode
     if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
 
-    if self:Ammo1() <= 0 then return end
+    if self:GetMalfunctionJam() then
+        local r = self:MalfunctionClear()
+        if r then return end
+    end
+
+    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 then return end
 
     if self:GetBuff_Hook("Hook_PreReload") then return end
 
@@ -79,7 +84,7 @@ function SWEP:Reload()
 
     local load = math.Clamp(clip + chamber, 0, reserve)
 
-    if load <= self:Clip1() then return end
+    if !self:GetMalfunctionJam() and load <= self:Clip1() then return end
 
     self:SetBurstCount(0)
 

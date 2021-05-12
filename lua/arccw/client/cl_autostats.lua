@@ -51,6 +51,7 @@ ArcCW.AutoStats = {
     ["Mult_HeatDissipation"]  = { "autostat.heatdrain",   "mult", false },
     ["Mult_FixTime"]          = { "autostat.heatfix",     "mult", true },
     ["Mult_HeatDelayTime"]    = { "autostat.heatdelay",   "mult", true },
+    ["Mult_MalfunctionMean"]  = { "autostat.malfunctionmean", "mult", false},
 
     ["Override_Ammo"] = {"autostat.ammotype", "func", function(val)
         return string.format(ArcCW.GetTranslation("autostat.ammotype"), string.lower(language.GetPhrase(val .. "_ammo"))), "infos"

@@ -485,6 +485,20 @@ att.Hook_PostOverheat = function(wep) end
 -- Return true to not do animation/heat locking
 att.Hook_OnOverheat = function(wep) end
 
+-- malfunction related buffs
+att.Override_Malfunction = nil
+att.Override_MalfunctionTakeRound = nil
+att.Override_MalfunctionJam = nil
+att.Mult_MalfunctionMean = 1
+att.Mult_MalfunctionVariance = 1
+
+-- Called every time malfunction is checked. return true to cause malfunction
+att.Hook_Malfunction = function(wep, count) end
+-- Called when a malfunction is about to happen. return true to stop malfunction
+att.Hook_OnMalfunction = function(wep, count) end
+-- Called after a malfunction has occurred.
+att.Hook_PostMalfunction = function(wep) end
+
 att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil
 -- att.Override_TracerCol = nil

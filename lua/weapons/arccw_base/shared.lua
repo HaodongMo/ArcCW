@@ -280,12 +280,24 @@ SWEP.ProceduralIronFire = false
 SWEP.SightTime = 0.33
 SWEP.SprintTime = 0
 
+-- If Jamming is enabled, a heat meter will gradually build up until it reaches HeatCapacity.
+-- Once that happens, the gun will overheat, playing an animation. If HeatLockout is true, it cannot be fired until heat is 0 again.
 SWEP.Jamming = false
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
 SWEP.HeatDissipation = 2 -- rounds' worth of heat lost per second
 SWEP.HeatLockout = false -- overheating means you cannot fire until heat has been fully depleted
 SWEP.HeatDelayTime = 0.5
 SWEP.HeatFix = false -- when the "fix" animation is played, all heat is restored.
+
+-- If Malfunction is enabled, the gun has a random chance to play the "fix" animation instead of firing.
+-- if no "fix" or "cycle" animations exist, the magazine will be emptied, forcing a reload
+SWEP.Malfunction = false
+SWEP.MalfunctionJam = true -- After a malfunction happens, the gun will dryfire until reload is pressed (and the gun is unjammed).
+SWEP.MalfunctionTakeRound = true -- When malfunctioning, a bullet is consumed.
+SWEP.MalfunctionWait = 0.5 -- The amount of time to wait before playing malfunction animation (or can reload)
+SWEP.MalfunctionMean = nil -- The mean number of shots between malfunctions, will be autocalculated if nil
+SWEP.MalfunctionVariance = 0.25 -- The fraction of mean for variance. e.g. 0.2 means 20% variance
+SWEP.MalfunctionSound = "weapons/arccw/dryfire.wav"
 
 SWEP.HoldtypeHolstered = "passive"
 SWEP.HoldtypeActive = "shotgun"
@@ -737,6 +749,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 3, "InUBGL")
     self:NetworkVar("Bool", 4, "InCustomize")
     self:NetworkVar("Bool", 5, "GrenadePrimed")
+    self:NetworkVar("Bool", 6, "MalfunctionJam")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")

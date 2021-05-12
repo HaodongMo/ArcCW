@@ -1,4 +1,4 @@
-
+local translate = ArcCW.GetTranslation
 
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
@@ -66,7 +66,7 @@ function SWEP:GetHUDData()
         mode = self:GetFiremodeName(),
         ammotype = self.Primary.Ammo,
         heat_enabled        = self:HeatEnabled(),
-        heat_name           = "HEAT",
+        heat_name           = translate("ui.heat"),
         heat_level          = self:GetHeat(),
         heat_maxlevel       = self:GetMaxHeat(),
         heat_locked         = self:GetHeatLocked(),
@@ -482,7 +482,37 @@ function SWEP:DrawHUD()
             MyDrawText(wmode)
 
             -- overheat bar 3d
-            if data.heat_enabled then
+            if self:GetMalfunctionJam() then
+                local col = Color(255, 0, 32)
+
+                local wheat = {
+                    x = apan_bg.x + apan_bg.w - airgap,
+                    y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 1 ),
+                    font = "ArcCW_12",
+                    text = translate("ui.jammed"),
+                    col = col,
+                    align = 1,
+                    shadow = true,
+                    alpha = alpha,
+                }
+                if GetConVar("arccw_hud_fcgbars"):GetBool() then
+                    wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
+                end
+
+                local wheat_shad = {
+                    x = wheat.x,
+                    y = wheat.y,
+                    font = "ArcCW_12_Glow",
+                    text = wheat.text,
+                    col = col,
+                    align = 1,
+                    shadow = false,
+                    alpha = alpha,
+                }
+                MyDrawText(wheat_shad)
+
+                MyDrawText(wheat)
+            elseif data.heat_enabled then
                 local pers = math.Clamp(1 - (data.heat_level / data.heat_maxlevel), 0, 1)
                 local pers2 = math.Clamp(data.heat_level / data.heat_maxlevel, 0, 1)
                 local colheat1 = data.heat_locked and Color(255, 0, 0) or Color(255, 128+127*pers, 128+127*pers)
