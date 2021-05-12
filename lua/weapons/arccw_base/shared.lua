@@ -298,7 +298,7 @@ SWEP.MalfunctionTakeRound = true -- When malfunctioning, a bullet is consumed.
 SWEP.MalfunctionWait = 0.5 -- The amount of time to wait before playing malfunction animation (or can reload)
 SWEP.MalfunctionMean = nil -- The mean number of shots between malfunctions, will be autocalculated if nil
 SWEP.MalfunctionVariance = 0.25 -- The fraction of mean for variance. e.g. 0.2 means 20% variance
-SWEP.MalfunctionSound = "weapons/arccw/dryfire.wav"
+SWEP.MalfunctionSound = "weapons/arccw/malfunction.wav"
 
 SWEP.HoldtypeHolstered = "passive"
 SWEP.HoldtypeActive = "shotgun"
