@@ -231,6 +231,7 @@ SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.ProceduralViewBobAttachment = nil -- attachment on which coolview is affected by, default is muzzleeffect
 SWEP.CamAttachment = nil -- if set, this attachment will control camera movement
+SWEP.MuzzleFlashColor = Color(244, 209, 66)
 
 SWEP.SpeedMult = 0.9
 SWEP.SightedSpeedMult = 0.75

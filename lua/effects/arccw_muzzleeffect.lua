@@ -36,8 +36,8 @@ function EFFECT:Init(data)
         att = 1
     end
 
-    if wpn.Owner != LocalPlayer() then
-        if !GetConVar("arccw_muzzleeffects"):GetBool() then return end
+    if wpn.Owner != LocalPlayer() and !GetConVar("arccw_muzzleeffects"):GetBool() then
+        return
     end
 
     local mdl = wpn:GetMuzzleDevice(wm)
@@ -75,16 +75,19 @@ function EFFECT:Init(data)
 
     if !pos then return end
 
-    if !wpn.NoFlash and !wpn:GetBuff_Override("Silencer") and !wpn:GetBuff_Override("FlashHider") then
+    if !GetConVar("arccw_fastmuzzles"):GetBool() and !wpn.NoFlash
+            and !wpn:GetBuff_Override("Silencer")
+            and !wpn:GetBuff_Override("FlashHider") then
         local light = DynamicLight(self:EntIndex())
+        local clr = wpn:GetBuff_Override("Override_MuzzleFlashColor", wpn.MuzzleFlashColor)
         if (light) then
             light.Pos = pos
-            light.r = 244
-            light.g = 209
-            light.b = 66
+            light.r = clr.r
+            light.g = clr.g
+            light.b = clr.b
             light.Brightness = 2
             light.Decay = 2500
-            light.Size = 256
+            light.Size = wpn.Owner == LocalPlayer() and 256 or 128
             light.DieTime = CurTime() + 0.1
         end
     end
