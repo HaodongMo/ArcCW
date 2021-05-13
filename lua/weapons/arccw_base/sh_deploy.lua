@@ -140,7 +140,7 @@ function SWEP:Initialize()
         end
 
         -- Check for incompatibile addons once 
-        if LocalPlayer().ArcCW_IncompatibilityCheck != true and !game.IsDedicated() then
+        if LocalPlayer().ArcCW_IncompatibilityCheck != true and game.SinglePlayer() then
             LocalPlayer().ArcCW_IncompatibilityCheck = true
             local incompatList = {}
             local addons = engine.GetAddons()
