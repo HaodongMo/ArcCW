@@ -616,13 +616,13 @@ function SWEP:GetDispersion()
 
     if vrmod and vrmod.IsPlayerInVR(owner) then return 0 end
 
-    local hipdisp = self:GetBuff_Mult("Mult_HipDispersion")
+    local hipdisp = self:GetBuff("HipDispersion")
     local sights  = self:GetState() == ArcCW.STATE_SIGHTS
 
-    local hip = delta * hipdisp * self.HipDispersion
+    local hip = hipdisp
 
     local sightdisp = self:GetBuff("SightsDispersion")
-    if sights then hip = Lerp(delta, sightdisp, hipdisp * self.HipDispersion) end
+    if sights then hip = Lerp(delta, sightdisp, hipdisp) end
 
     if owner:OnGround() or owner:WaterLevel() > 0 or owner:GetMoveType() == MOVETYPE_NOCLIP then
         local speed    = owner:GetAbsVelocity():Length()
