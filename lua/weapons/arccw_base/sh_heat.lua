@@ -147,7 +147,7 @@ function SWEP:DoMalfunction()
         local ret2 = self:GetBuff_Hook("Hook_OnMalfunction", count, true)
         if ret2 then return false end
 
-        self:MyEmitSound(self:GetBuff_Override("Override_MalfunctionSound", self.MalfunctionSound), 75, 100, 1, CHAN_ITEM)
+        self:MyEmitSound(self:GetBuff_Override("Override_MalfunctionSound") or self.MalfunctionSound, 75, 100, 1, CHAN_ITEM)
 
         local wait = self:GetBuff("MalfunctionWait")
         self:SetNextPrimaryFire(CurTime() + wait)
