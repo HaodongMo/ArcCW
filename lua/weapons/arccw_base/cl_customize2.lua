@@ -141,6 +141,7 @@ SWEP.Inv_Scroll = {}
 
 -- 1: Stats
 -- 2: Trivia
+-- 3: Ballistics
 ArcCW.Inv_SelectedInfo = 1
 
 ArcCW.Inv_Fade = 0
@@ -210,6 +211,8 @@ function SWEP:CreateCustomize2HUD()
             ArcCW.InvHUD_FormWeaponStats()
         elseif ArcCW.Inv_SelectedInfo == 2  then
             ArcCW.InvHUD_FormWeaponTrivia()
+        elseif ArcCW.Inv_SelectedInfo == 3 then
+            ArcCW.InvHUD_FormWeaponBallistics()
         end
     end
 
@@ -1427,6 +1430,18 @@ function SWEP:CreateCustomize2HUD()
             ArcCW.Inv_SelectedInfo = 2
         end
         triviabutton.Paint = statsbutton.Paint
+
+        local ballisticsbutton = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
+        ballisticsbutton:SetSize(ss * 48, ss * 16)
+        ballisticsbutton:SetPos(menu3_w - (ss * 48 * 3) - airgap_x - (ss * 4 * 2), rss * 48 + ss * 12)
+        ballisticsbutton:SetText("")
+        ballisticsbutton.Text = "Ballistics"
+        ballisticsbutton.Val = 3
+        ballisticsbutton.DoClick = function(self2, clr, btn)
+            ArcCW.InvHUD_FormWeaponBallistics()
+            ArcCW.Inv_SelectedInfo = 3
+        end
+        ballisticsbutton.Paint = statsbutton.Paint
     end
 
     function ArcCW.InvHUD_FormWeaponName()
@@ -2005,6 +2020,118 @@ function SWEP:CreateCustomize2HUD()
                 surface.SetTextPos(ss * 2, ss * 8)
                 surface.DrawText(dmgt)
             end
+        end
+    end
+
+    function ArcCW.InvHUD_FormWeaponBallistics()
+        if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
+        ArcCW.InvHUD_Menu3:Clear()
+        ArcCW.InvHUD_FormWeaponName()
+
+        local info = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
+        info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
+        info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
+        info.Paint = function(self2, w, h)
+            if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
+            local infos = self.Infos_Stats or {}
+
+            table.insert(infos, {
+                title = translate("trivia.muzzlevel"),
+                value = self:GetMuzzleVelocity() * ArcCW.HUToM,
+                unit = translate("unit.mps"),
+            })
+
+            table.insert(infos, {
+                title = translate("trivia.recoil"),
+                value = math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1),
+                unit = translate("unit.lbfps"),
+            })
+
+            for i, triv in pairs(infos) do
+                triv.unit = triv.unit or ""
+                local i_2 = i - 1
+                surface.SetFont("ArcCWC2_8")
+                local tw_1 = surface.GetTextSize(triv.title)
+
+                surface.SetFont("ArcCWC2_8_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
+                surface.DrawText(triv.title)
+
+                surface.SetFont("ArcCWC2_8")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw_1, i_2 * (rss * 24))
+                surface.DrawText(triv.title)
+
+
+                surface.SetFont("ArcCWC2_16")
+                local tw_3a = select(2, surface.GetTextSize(tostring(triv.value)))
+
+                surface.SetFont("ArcCWC2_8")
+                local tw_2 = surface.GetTextSize(triv.unit)
+                local tw_2a = select(2, surface.GetTextSize(triv.unit))
+
+                surface.SetFont("ArcCWC2_8_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 4.4) + tw_2a)
+                surface.DrawText(triv.unit)
+
+                surface.SetFont("ArcCWC2_8")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(w - tw_2, (i_2 * (rss * 24)) + (rss * 4.4) + tw_2a)
+                surface.DrawText(triv.unit)
+
+                surface.SetFont("ArcCWC2_16")
+                local tw_3 = surface.GetTextSize(tostring(triv.value))
+
+                surface.SetFont("ArcCWC2_16_Glow")
+                surface.SetTextColor(col_shadow)
+                surface.SetTextPos(math.max(w - tw_2 - tw_3, 0), (i_2 * (rss * 24)) + (rss * 6))
+                surface.DrawText(triv.value)
+
+                surface.SetFont("ArcCWC2_16")
+                surface.SetTextColor(col_fg)
+                surface.SetTextPos(math.max(w - tw_2 - tw_3, 0), (i_2 * (rss * 24)) + (rss * 6))
+                surface.DrawText(triv.value)
+            end
+        end
+
+        local ballisticchart = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
+        ballisticchart:SetSize(ss * 200, ss * 110)
+        ballisticchart:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32)
+        ballisticchart.Paint = function(self2, w, h)
+            if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
+            if self.PrimaryBash
+            then
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
+
+                local txt = "No Data"
+
+                surface.SetTextColor(col_fg)
+                surface.SetFont("ArcCWC2_24")
+                local tw, th = surface.GetTextSize(txt)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(txt)
+                return
+            end
+
+            draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
+
+            local range_3 = self.Range * self:GetBuff_Mult("Mult_Range")
+            local range_2 = range_3 * 0.5
+            local range_1 = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
+
+            if range_1 == 0 then
+                range_1 = range_3 * 0.1
+            end
+
+            local moa = 0
+
+            -- dispersion at min range OR 10% max range
+
+            -- dispersion at 50% max range
+
+            -- dispersion at max range
         end
     end
 

@@ -278,6 +278,12 @@ L["autostat.malfunctionmean"] = "Reliability"
 L["ui.heat"] = "HEAT"
 L["ui.jammed"] = "JAMMED"
 
+-- 2021-05-15
+
+L["trivia.muzzlevel"] = "Muzzle Velocity"
+L["unit.mps"] = "m/s"
+L["unit.lbfps"] = "lb-fps"
+
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]
 -- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]

@@ -1052,6 +1052,7 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     local attslot = self.Attachments[slot]
     if !attslot then return end
     if attslot.Installed == attname then return end
+    if attslot.Internal then return end
 
     -- Make an additional check to see if we can detach the current attachment
     if attslot.Installed and !ArcCW:PlayerCanAttach(self:GetOwner(), self, attslot.Installed, slot, attname) then
@@ -1212,6 +1213,8 @@ function SWEP:Detach(slot, silent, noadjust, nocheck)
     if !self.Attachments[slot] then return end
 
     if !self.Attachments[slot].Installed then return end
+
+    if self.Attachments[slot].Internal then return end
 
     if !nocheck and !ArcCW:PlayerCanAttach(self:GetOwner(), self, self.Attachments[slot].Installed, slot, true) then
         if CLIENT and !silent then

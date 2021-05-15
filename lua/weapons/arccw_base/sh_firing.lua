@@ -446,6 +446,26 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
     self:GetBuff_Hook("Hook_AddShootSound", data)
 end
 
+function SWEP:GetMuzzleVelocity()
+    local vel = self:GetBuff_Override("Override_PhysBulletMuzzleVelocity", self.PhysBulletMuzzleVelocity)
+
+    if !vel then
+        vel = math.Clamp(self:GetBuff("Range"), 30, 300) * 8 * self:GetBuff_Mult("Mult_Range")
+
+        if self.DamageMin > self.Damage then
+            vel = vel * 3
+        end
+    end
+
+    vel = vel / ArcCW.HUToM
+
+    vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity")
+
+    vel = vel * GetConVar("arccw_bullet_velocity"):GetFloat()
+
+    return vel
+end
+
 function SWEP:DoPrimaryFire(isent, data)
     local clip = self:Clip1()
     if self:HasBottomlessClip() then
@@ -470,8 +490,6 @@ function SWEP:DoPrimaryFire(isent, data)
         if !IsFirstTimePredicted() then return end
 
         if shouldphysical then
-            local vel = self:GetBuff_Override("Override_PhysBulletMuzzleVelocity", self.PhysBulletMuzzleVelocity)
-
             local tracernum = data.TracerNum or 1
             local prof
 
@@ -479,19 +497,7 @@ function SWEP:DoPrimaryFire(isent, data)
                 prof = 7
             end
 
-            if !vel then
-                vel = math.Clamp(self:GetBuff("Range"), 30, 300) * 8 * self:GetBuff_Mult("Mult_Range")
-
-                if self.DamageMin > self.Damage then
-                    vel = vel * 3
-                end
-            end
-
-            vel = vel / ArcCW.HUToM
-
-            vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity")
-
-            vel = vel * GetConVar("arccw_bullet_velocity"):GetFloat()
+            local vel = self:GetMuzzleVelocity()
 
             vel = vel * data.Dir:GetNormalized()
 
