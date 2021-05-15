@@ -122,6 +122,9 @@ local translate = ArcCW.GetTranslation
 local defaultatticon = Material("hud/atts/default.png", "mips smooth")
 local blockedatticon = Material("hud/atts/blocked.png", "mips smooth")
 
+local bullseye = Material("hud/bullseye.png", "mips smooth")
+local mat_hit = Material("hud/hit.png", "mips smooth")
+
 local pickx_empty = Material("hud/pickx_empty.png", "mips smooth")
 local pickx_full = Material("hud/pickx_filled.png", "mips smooth")
 
@@ -151,7 +154,7 @@ ArcCW.Inv_Hidden = false
 
 function SWEP:CreateCustomize2HUD()
     local col_fg = Color(255, 255, 255, 255)
-    local col_fg_tr = Color(255, 255, 255, 125)
+    local col_fg_tr = Color(255, 255, 255, 100)
     local col_shadow = Color(0, 0, 0, 255)
     local col_button = Color(0, 0, 0, 175)
 
@@ -2096,6 +2099,46 @@ function SWEP:CreateCustomize2HUD()
             end
         end
 
+        local range_3 = self.Range * self:GetBuff_Mult("Mult_Range")
+        local range_1 = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
+
+        if range_1 == 0 then
+            range_1 = range_3 * 0.5
+        end
+
+        local ang = self:GetBuff("AccuracyMOA") / 60
+
+        -- given fov and distance solve apparent size
+        local function solvetriangle(angle, dist)
+            local a = angle / 2
+            local b = dist
+            return b * math.tan(a) * 2
+        end
+
+        local radius_1 = solvetriangle(ang, range_1 * ArcCW.HUToM)
+        local radius_3 = solvetriangle(ang, range_3 * ArcCW.HUToM)
+
+        local hits_1 = {}
+        local hits_3 = {}
+
+        local function rollhit(radius)
+            local anglerand = math.Rand(0, 360)
+            local dist = math.Rand(0, radius)
+
+            local hit_x = math.sin(anglerand) * dist
+            local hit_y = math.cos(anglerand) * dist
+
+            return {x = hit_x, y = hit_y}
+        end
+
+        for i = 1, 10 do
+            table.insert(hits_1, rollhit(radius_1))
+        end
+
+        for i = 1, 10 do
+            table.insert(hits_3, rollhit(radius_3))
+        end
+
         local ballisticchart = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
         ballisticchart:SetSize(ss * 200, ss * 110)
         ballisticchart:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32)
@@ -2117,17 +2160,54 @@ function SWEP:CreateCustomize2HUD()
 
             draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
 
-            local range_3 = self.Range * self:GetBuff_Mult("Mult_Range")
-            local range_2 = range_3 * 0.5
-            local range_1 = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
+            local s = w / 2
 
-            if range_1 == 0 then
-                range_1 = range_3 * 0.1
+            local range_1_txt = tostring(math.Round(range_1 / 5) * 5) .. "m"
+            local range_3_txt = tostring(math.Round(range_3 / 5) * 5) .. "m"
+
+            local col_bullseye = Color(200, 200, 200, 100)
+
+            surface.SetMaterial(bullseye)
+            surface.SetDrawColor(col_bullseye)
+            surface.DrawTexturedRect(0, 0, s, s)
+
+            local r_1_x, r_1_y = self2:LocalToScreen(0, 0)
+
+            render.SetScissorRect(r_1_x, r_1_y, r_1_x + s, r_1_y + s, true)
+
+            for _, hit in ipairs(hits_1) do
+                surface.SetMaterial(mat_hit)
+                surface.SetDrawColor(col_fg)
+                surface.DrawTexturedRect((s / 2) + (hit.x * s) - (ss * 6), (s / 2) + (hit.y * s) - (ss * 6), ss * 12, ss * 12)
             end
 
-            local moa = 0
+            render.SetScissorRect(r_1_x, r_1_y, r_1_x + s, r_1_y + s, false)
 
-            -- dispersion at min range OR 10% max range
+            surface.SetTextColor(col_fg_tr)
+            surface.SetFont("ArcCWC2_12")
+            local range_1_txtw = surface.GetTextSize(range_1_txt)
+            surface.SetTextPos((s - range_1_txtw) / 2, h - (ss * 12) - (ss * 1))
+            surface.DrawText(range_1_txt)
+
+            surface.SetMaterial(bullseye)
+            surface.SetDrawColor(col_bullseye)
+            surface.DrawTexturedRect(s, 0, s, s)
+
+            render.SetScissorRect(r_1_x + s, r_1_y, r_1_x + (s * 2), r_1_y + s, true)
+
+            for _, hit in ipairs(hits_3) do
+                surface.SetMaterial(mat_hit)
+                surface.SetDrawColor(col_fg)
+                surface.DrawTexturedRect(s + (s / 2) + (hit.x * s) - (ss * 6), (s / 2) + (hit.y * s) - (ss * 6), ss * 12, ss * 12)
+            end
+
+            render.SetScissorRect(r_1_x, r_1_y, r_1_x + s, r_1_y + s, false)
+
+            surface.SetTextColor(col_fg_tr)
+            surface.SetFont("ArcCWC2_12")
+            local range_3_txtw = surface.GetTextSize(range_3_txt)
+            surface.SetTextPos(s + (s - range_3_txtw) / 2, h - (ss * 12) - (ss * 1))
+            surface.DrawText(range_3_txt)
 
             -- dispersion at 50% max range
 
