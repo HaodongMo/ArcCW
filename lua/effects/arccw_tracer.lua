@@ -36,8 +36,8 @@ function EFFECT:Init(data)
         self.Speed = speed
     end
 
-    if IsValid(wep) then
-        profile = wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
+    if IsValid(wep) and wep.GetBuff_Override then
+        profile = wep:GetBuff_Override("Override_PhysTracerProfile", wep.PhysTracerProfile) or 0
     end
 
     self.LifeTime = (hit - start):Length() / self.Speed
