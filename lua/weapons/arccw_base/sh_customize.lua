@@ -264,8 +264,8 @@ function SWEP:CloseCustomizeHUD( hide )
     end
 end
 
-local defaultatticon = Material("hud/atts/default.png", "mips")
-local blockedatticon = Material("hud/atts/blocked.png", "mips")
+local defaultatticon = Material("arccw/hud/atts/default.png", "mips")
+local blockedatticon = Material("arccw/hud/atts/blocked.png", "mips")
 local activeslot = nil
 
 SWEP.InAttMenu = false

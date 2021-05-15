@@ -1,8 +1,8 @@
 local delta = 0
 local size = 0
 local cw = nil
-local clump_inner = Material("hud/clump_inner.png", "mips smooth")
-local clump_outer = Material("hud/clump_outer.png", "mips smooth")
+local clump_inner = Material("arccw/hud/clump_inner.png", "mips smooth")
+local clump_outer = Material("arccw/hud/clump_outer.png", "mips smooth")
 local aimtr_result = {}
 local aimtr = {}
 

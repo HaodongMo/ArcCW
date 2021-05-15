@@ -128,11 +128,11 @@ local bar_outl = Material("hud/fmbar_outlined.png",         "mips smooth")
 local bar_shad = Material("hud/fmbar_shadow.png",           "mips smooth")
 local bar_shou = Material("hud/fmbar_outlined_shadow.png",  "mips smooth")
 
-local hp = Material("hud/hp.png", "smooth")
-local hp_shad = Material("hud/hp_shadow.png", "mips smooth")
+local hp = Material("arccw/hud/hp.png", "smooth")
+local hp_shad = Material("arccw/hud/hp_shadow.png", "mips smooth")
 
-local armor = Material("hud/armor.png", "mips smooth")
-local armor_shad = Material("hud/armor_shadow.png", "mips smooth")
+local armor = Material("arccw/hud/armor.png", "mips smooth")
+local armor_shad = Material("arccw/hud/armor_shadow.png", "mips smooth")
 
 function SWEP:DrawHUD()
     -- DEBUG PANEL
@@ -232,7 +232,7 @@ function SWEP:DrawHUD()
 
         surface.SetTextPos(ecksy, 26 * s*9.25)
         surface.DrawText( mr(self:GetSightDelta()*100) .. "%" )
-        
+
         surface.DrawOutlinedRect(ecksy, 26 * s*10, s*64, s*4, s/2)
         surface.DrawRect(ecksy, 26 * s*10+s*1, s*64*self:GetSightDelta(), s*4-s*2)
 
@@ -267,8 +267,8 @@ function SWEP:DrawHUD()
         surface.DrawText("CURRENT ANIMATION")
 
         surface.SetTextPos(ecksy, 26 * s*8.5)
-        surface.DrawText("WEAPON STATE")  
-        
+        surface.DrawText("WEAPON STATE")
+
         surface.SetTextPos(ecksy, 26 * s*9.25)
         surface.DrawText("SIGHT DELTA")
 

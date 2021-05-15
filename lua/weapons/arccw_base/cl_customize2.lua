@@ -119,19 +119,19 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
 end
 
 local translate = ArcCW.GetTranslation
-local defaultatticon = Material("hud/atts/default.png", "mips smooth")
-local blockedatticon = Material("hud/atts/blocked.png", "mips smooth")
+local defaultatticon = Material("arccw/hud/atts/default.png", "mips smooth")
+local blockedatticon = Material("arccw/hud/atts/blocked.png", "mips smooth")
 
-local bullseye = Material("hud/bullseye.png", "mips smooth")
-local mat_hit = Material("hud/hit.png", "mips smooth")
-local mat_hit_dot = Material("hud/hit_dot.png", "mips smooth")
+local bullseye = Material("arccw/hud/bullseye.png", "mips smooth")
+local mat_hit = Material("arccw/hud/hit.png", "mips smooth")
+local mat_hit_dot = Material("arccw/hud/hit_dot.png", "mips smooth")
 
-local pickx_empty = Material("hud/pickx_empty.png", "mips smooth")
-local pickx_full = Material("hud/pickx_filled.png", "mips smooth")
+local pickx_empty = Material("arccw/hud/pickx_empty.png", "mips smooth")
+local pickx_full = Material("arccw/hud/pickx_filled.png", "mips smooth")
 
-local grad = Material("hud/grad.png", "mips smooth")
+local grad = Material("arccw/hud/grad.png", "mips smooth")
 
-local bird = Material("hud/arccw_bird.png", "mips smooth")
+local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
 
 -- 1: Customize
 -- 2: Presets
