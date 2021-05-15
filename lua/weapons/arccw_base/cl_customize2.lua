@@ -124,6 +124,7 @@ local blockedatticon = Material("hud/atts/blocked.png", "mips smooth")
 
 local bullseye = Material("hud/bullseye.png", "mips smooth")
 local mat_hit = Material("hud/hit.png", "mips smooth")
+local mat_hit_dot = Material("hud/hit_dot.png", "mips smooth")
 
 local pickx_empty = Material("hud/pickx_empty.png", "mips smooth")
 local pickx_full = Material("hud/pickx_filled.png", "mips smooth")
@@ -2099,8 +2100,8 @@ function SWEP:CreateCustomize2HUD()
             end
         end
 
-        local range_3 = self.Range * self:GetBuff_Mult("Mult_Range")
-        local range_1 = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
+        local range_3 = math.Round(self:GetBuff("Range") / 25) * 25 --self.Range * self:GetBuff_Mult("Mult_Range")
+        local range_1 = math.Round(range_3 / 3 / 25) * 25 --(self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
 
         if range_1 == 0 then
             range_1 = range_3 * 0.5
@@ -2131,11 +2132,13 @@ function SWEP:CreateCustomize2HUD()
             return {x = hit_x, y = hit_y}
         end
 
-        for i = 1, 10 do
+        local hitcount = math.Clamp(math.max(math.Round(self:GetCapacity() / 4), math.Round(self:GetBuff("Num") * 2)), 10, 20)
+
+        for i = 1, hitcount do
             table.insert(hits_1, rollhit(radius_1))
         end
 
-        for i = 1, 10 do
+        for i = 1, hitcount do
             table.insert(hits_3, rollhit(radius_3))
         end
 
@@ -2144,8 +2147,7 @@ function SWEP:CreateCustomize2HUD()
         ballisticchart:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32)
         ballisticchart.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-            if self.PrimaryBash
-            then
+            if self.PrimaryBash then
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
 
                 local txt = "No Data"
@@ -2161,6 +2163,7 @@ function SWEP:CreateCustomize2HUD()
             draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
 
             local s = w / 2
+            local s2 = ss * 10
 
             local range_1_txt = tostring(math.Round(range_1 / 5) * 5) .. "m"
             local range_3_txt = tostring(math.Round(range_3 / 5) * 5) .. "m"
@@ -2176,14 +2179,18 @@ function SWEP:CreateCustomize2HUD()
             render.SetScissorRect(r_1_x, r_1_y, r_1_x + s, r_1_y + s, true)
 
             for _, hit in ipairs(hits_1) do
-                surface.SetMaterial(mat_hit)
+                if self:GetBuff("Num") > 1 then
+                    surface.SetMaterial(mat_hit_dot)
+                else
+                    surface.SetMaterial(mat_hit)
+                end
                 surface.SetDrawColor(col_fg)
-                surface.DrawTexturedRect((s / 2) + (hit.x * s) - (ss * 6), (s / 2) + (hit.y * s) - (ss * 6), ss * 12, ss * 12)
+                surface.DrawTexturedRect((s / 2) + (hit.x * s) - (s2 / 2), (s / 2) + (hit.y * s) - (s2 / 2), s2, s2)
             end
 
             render.SetScissorRect(r_1_x, r_1_y, r_1_x + s, r_1_y + s, false)
 
-            surface.SetTextColor(col_fg_tr)
+            surface.SetTextColor(col_fg)
             surface.SetFont("ArcCWC2_12")
             local range_1_txtw = surface.GetTextSize(range_1_txt)
             surface.SetTextPos((s - range_1_txtw) / 2, h - (ss * 12) - (ss * 1))
@@ -2196,14 +2203,18 @@ function SWEP:CreateCustomize2HUD()
             render.SetScissorRect(r_1_x + s, r_1_y, r_1_x + (s * 2), r_1_y + s, true)
 
             for _, hit in ipairs(hits_3) do
-                surface.SetMaterial(mat_hit)
+                if self:GetBuff("Num") > 1 then
+                    surface.SetMaterial(mat_hit_dot)
+                else
+                    surface.SetMaterial(mat_hit)
+                end
                 surface.SetDrawColor(col_fg)
-                surface.DrawTexturedRect(s + (s / 2) + (hit.x * s) - (ss * 6), (s / 2) + (hit.y * s) - (ss * 6), ss * 12, ss * 12)
+                surface.DrawTexturedRect(s + (s / 2) + (hit.x * s) - (s2 / 2), (s / 2) + (hit.y * s) - (s2 / 2), s2, s2)
             end
 
             render.SetScissorRect(r_1_x, r_1_y, r_1_x + s, r_1_y + s, false)
 
-            surface.SetTextColor(col_fg_tr)
+            surface.SetTextColor(col_fg)
             surface.SetFont("ArcCWC2_12")
             local range_3_txtw = surface.GetTextSize(range_3_txt)
             surface.SetTextPos(s + (s - range_3_txtw) / 2, h - (ss * 12) - (ss * 1))
