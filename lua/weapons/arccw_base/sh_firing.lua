@@ -130,17 +130,17 @@ function SWEP:PrimaryAttack()
 
     dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
 
-    dir = dir + VectorRand() * self:GetDispersion() / 360 / 60
+    dir = dir + VectorRand() * self:GetDispersion() * ArcCW.MOAToAcc / 10
 
     local delay = self:GetFiringDelay()
-	
-	local curtime = CurTime()
-	local curatt = self:GetNextPrimaryFire()
-	local diff = curtime - curatt
 
-	if diff > engine.TickInterval() or diff < 0 then
-		curatt = curtime
-	end
+    local curtime = CurTime()
+    local curatt = self:GetNextPrimaryFire()
+    local diff = curtime - curatt
+
+    if diff > engine.TickInterval() or diff < 0 then
+        curatt = curtime
+    end
 
     self:SetNextPrimaryFire(curatt + delay)
     self:SetNextPrimaryFireSlowdown(curatt + delay) -- shadow for ONLY fire time
@@ -259,7 +259,7 @@ function SWEP:PrimaryAttack()
     local shpatt   = self:GetBuff_Override("Override_ShotgunSpreadPattern", self.ShotgunSpreadPattern)
     local shpattov = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun", self.ShotgunSpreadPatternOverrun)
 
-    local extraspread = AngleRand() * self:GetDispersion() / 360 / 60
+    local extraspread = AngleRand() * self:GetDispersion() * ArcCW.MOAToAcc / 10
 
     local projectiledata = {}
 
@@ -283,7 +283,7 @@ function SWEP:PrimaryAttack()
 
                 local dispers = self:GetBuff_Override("Override_ShotgunSpreadDispersion") or self.ShotgunSpreadDispersion
                 local offset  = self:GetShotgunSpreadOffset(n)
-                local calcoff = dispers and (offset * self:GetDispersion() / 360 / 60) or (offset + extraspread)
+                local calcoff = dispers and (offset * self:GetDispersion() * ArcCW.MOAToAcc / 10) or (offset + extraspread)
 
                 local ang = owner:EyeAngles()
                 ang:RotateAroundAxis(owner:EyeAngles():Right(), -1 * calcoff.p)
