@@ -133,9 +133,17 @@ function SWEP:PrimaryAttack()
     dir = dir + VectorRand() * self:GetDispersion() / 360 / 60
 
     local delay = self:GetFiringDelay()
+	
+	local curtime = CurTime()
+	local curatt = self:GetNextPrimaryFire()
+	local diff = curtime - curatt
 
-    self:SetNextPrimaryFire(CurTime() + delay)
-    self:SetNextPrimaryFireSlowdown(CurTime() + delay) -- shadow for ONLY fire time
+	if diff > engine.TickInterval() or diff < 0 then
+		curatt = curtime
+	end
+
+    self:SetNextPrimaryFire(curatt + delay)
+    self:SetNextPrimaryFireSlowdown(curatt + delay) -- shadow for ONLY fire time
 
     local num = self:GetBuff_Override("Override_Num") or self.Num
 
