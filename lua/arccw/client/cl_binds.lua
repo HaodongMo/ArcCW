@@ -157,6 +157,7 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
             end
         elseif bind == "switchscope" then
             wep:SwitchActiveSights()
+            block = true
         end
     end
 

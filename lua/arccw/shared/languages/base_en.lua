@@ -39,7 +39,7 @@ L["trivia.manufacturer"] = "Manufacturer"
 L["trivia.clipsize"] = "Magazine Capacity"
 L["trivia.precision"] = "Precision"
 L["trivia.noise"] = "Noise"
-L["trivia.recoil"] = "Effective Recoil Momentum"
+L["trivia.recoil"] = "Vertical Recoil"
 L["trivia.penetration"] = "Penetration"
 L["trivia.firerate"] = "Fire Rate"
 L["trivia.fusetime"] = "Fuse Time"
@@ -283,6 +283,7 @@ L["ui.jammed"] = "JAMMED"
 L["trivia.muzzlevel"] = "Muzzle Velocity"
 L["unit.mps"] = "m/s"
 L["unit.lbfps"] = "lb-fps"
+L["trivia.recoilside"] = "Horizontal Recoil"
 
 -- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 -- Similarly, you can translate attachment and weapon names with ["name.class_name"]

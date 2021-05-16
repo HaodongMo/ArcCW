@@ -158,6 +158,7 @@ function SWEP:CreateCustomize2HUD()
     local col_fg_tr = Color(255, 255, 255, 100)
     local col_shadow = Color(0, 0, 0, 255)
     local col_button = Color(0, 0, 0, 175)
+    local col_button_hv = Color(75, 75, 75, 175)
 
     local col_block = Color(50, 0, 0, 175)
     local col_block_txt = Color(175, 10, 10, 255)
@@ -2047,7 +2048,13 @@ function SWEP:CreateCustomize2HUD()
 
             table.insert(infos, {
                 title = translate("trivia.recoil"),
-                value = math.Truncate(self.Recoil * 41.4 * self:GetBuff_Mult("Mult_Recoil"), 1),
+                value = math.Truncate(self.Recoil * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_Recoil"), 1),
+                unit = translate("unit.lbfps"),
+            })
+
+            table.insert(infos, {
+                title = translate("trivia.recoilside"),
+                value = math.Truncate(self.RecoilSide * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_RecoilSide"), 1),
                 unit = translate("unit.lbfps"),
             })
 
@@ -2100,8 +2107,8 @@ function SWEP:CreateCustomize2HUD()
             end
         end
 
-        local range_3 = math.Round(self:GetBuff("Range") / 25) * 25 --self.Range * self:GetBuff_Mult("Mult_Range")
-        local range_1 = math.Round(range_3 / 3 / 25) * 25 --(self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
+        local range_3 = math.max(math.Round(self:GetBuff("Range") / 25) * 25, 50) --self.Range * self:GetBuff_Mult("Mult_Range")
+        local range_1 = math.max(math.Round(range_3 / 3 / 25) * 25, 15) --(self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
 
         if range_1 == 0 then
             range_1 = range_3 * 0.5
@@ -2142,13 +2149,24 @@ function SWEP:CreateCustomize2HUD()
             table.insert(hits_3, rollhit(radius_3))
         end
 
-        local ballisticchart = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
+        local ballisticchart = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
         ballisticchart:SetSize(ss * 200, ss * 110)
         ballisticchart:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32)
+        ballisticchart:SetText("")
+        ballisticchart.DoClick = function(self2)
+            ArcCW.InvHUD_FormWeaponBallistics()
+            ArcCW.Inv_SelectedInfo = 3
+        end
         ballisticchart.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
+
+            local col = col_button
+            if self2:IsHovered() then
+                col = col_button_hv
+            end
+
             if self.PrimaryBash then
-                draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
                 local txt = "No Data"
 
@@ -2160,13 +2178,13 @@ function SWEP:CreateCustomize2HUD()
                 return
             end
 
-            draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
+            draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
             local s = w / 2
             local s2 = ss * 10
 
-            local range_1_txt = tostring(math.Round(range_1 / 5) * 5) .. "m"
-            local range_3_txt = tostring(math.Round(range_3 / 5) * 5) .. "m"
+            local range_1_txt = tostring(range_1) .. "m / " .. tostring(math.Round(range_1 / ArcCW.HUToM)) .. "HU"
+            local range_3_txt = tostring(range_3) .. "m / " .. tostring(math.Round(range_3 / ArcCW.HUToM)) .. "HU"
 
             local col_bullseye = Color(200, 200, 200, 100)
 

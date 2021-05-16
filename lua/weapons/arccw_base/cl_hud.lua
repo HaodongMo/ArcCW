@@ -121,7 +121,7 @@ local t_states = {
 }
 
 local mr = math.Round
-local bird = Material("hud/really cool bird.png",   "mips smooth")
+local bird = Material("arccw/hud/really cool bird.png", "mips smooth")
 
 local bar_fill = Material("hud/fmbar_filled.png",           "mips smooth")
 local bar_outl = Material("hud/fmbar_outlined.png",         "mips smooth")
@@ -548,7 +548,7 @@ function SWEP:DrawHUD()
             end
             if self:GetInUBGL() then
                 local size = ScreenScaleMulti(32)
-                local awesomematerial = Material( "hud/ubgl.png", "smooth" )
+                local awesomematerial = Material("arccw/hud/ubgl.png", "smooth")
                 local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, alpha) or
                                                     Color(255, 255, 255, 0)
                 local bar = {
@@ -565,7 +565,7 @@ function SWEP:DrawHUD()
 
             if self:CanBipod() or self:GetInBipod() then
                 local size = ScreenScaleMulti(32)
-                local awesomematerial = Material( "hud/bipod.png", "smooth" )
+                local awesomematerial = Material("arccw/hud/bipod.png", "smooth")
                 local whatsthecolor =   self:GetInBipod() and     Color(255, 255, 255, alpha) or
                                         self:CanBipod() and   Color(255, 255, 255, alpha / 4) or Color(0, 0, 0, 0)
                 local bar = {
@@ -705,7 +705,7 @@ function SWEP:DrawHUD()
 
         if self:GetBuff_Override("UBGL") then
             local size = ScreenScaleMulti(32)
-            local awesomematerial = Material( "hud/ubgl.png", "smooth" )
+            local awesomematerial = Material("arccw/hud/ubgl.png", "smooth")
             local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, 255) or
                                                     Color(255, 255, 255, 0)
             local bar2 = {
@@ -721,7 +721,7 @@ function SWEP:DrawHUD()
 
         if self:CanBipod() or self:GetInBipod() then
             local size = ScreenScaleMulti(32)
-            local awesomematerial = Material( "hud/bipod.png", "smooth" )
+            local awesomematerial = Material("arccw/hud/bipod.png", "smooth")
             local whatsthecolor =   self:GetInBipod() and   Color(255, 255, 255, 255) or
                                     self:CanBipod() and     Color(255, 255, 255, 127) or
                                                             Color(255, 255, 255, 0)
