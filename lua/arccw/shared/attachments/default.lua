@@ -186,6 +186,8 @@ att.AdditionalSights = {
 }
 
 att.UBGL = false -- is underbarrel grenade launcher
+att.UBGL_Icon = nil -- set to a IMaterial to replace icon in HUD
+
 
 att.UBGL_Automatic = false
 att.UBGL_ClipSize = 1
@@ -203,6 +205,7 @@ att.UBGL_Reload = function(wep, ubgl) end
 att.Silencer = false
 
 att.Bipod = false
+att.Bipod_Icon = nil -- set to a IMaterial to replace icon in HUD
 att.Mult_BipodRecoil = 0.25
 att.Mult_BipodDispersion = 0.1
 att.Override_InBipodPos = nil

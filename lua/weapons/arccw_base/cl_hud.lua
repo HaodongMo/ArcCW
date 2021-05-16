@@ -133,6 +133,8 @@ local hp_shad = Material("arccw/hud/hp_shadow.png", "mips smooth")
 
 local armor = Material("arccw/hud/armor.png", "mips smooth")
 local armor_shad = Material("arccw/hud/armor_shadow.png", "mips smooth")
+local ubgl_mat = Material("arccw/hud/ubgl.png", "smooth")
+local bipod_mat = Material("arccw/hud/bipod.png", "smooth")
 
 function SWEP:DrawHUD()
     -- DEBUG PANEL
@@ -548,7 +550,7 @@ function SWEP:DrawHUD()
             end
             if self:GetInUBGL() then
                 local size = ScreenScaleMulti(32)
-                local awesomematerial = Material("arccw/hud/ubgl.png", "smooth")
+                local awesomematerial = self:GetBuff_Override("UBGL_Icon", ubgl_mat)
                 local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, alpha) or
                                                     Color(255, 255, 255, 0)
                 local bar = {
@@ -565,7 +567,7 @@ function SWEP:DrawHUD()
 
             if self:CanBipod() or self:GetInBipod() then
                 local size = ScreenScaleMulti(32)
-                local awesomematerial = Material("arccw/hud/bipod.png", "smooth")
+                local awesomematerial = self:GetBuff_Override("Bipod_Icon", bipod_mat)
                 local whatsthecolor =   self:GetInBipod() and     Color(255, 255, 255, alpha) or
                                         self:CanBipod() and   Color(255, 255, 255, alpha / 4) or Color(0, 0, 0, 0)
                 local bar = {
@@ -705,7 +707,7 @@ function SWEP:DrawHUD()
 
         if self:GetBuff_Override("UBGL") then
             local size = ScreenScaleMulti(32)
-            local awesomematerial = Material("arccw/hud/ubgl.png", "smooth")
+            local awesomematerial = self:GetBuff_Override("UBGL_Icon", ubgl_mat)
             local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, 255) or
                                                     Color(255, 255, 255, 0)
             local bar2 = {
@@ -721,7 +723,7 @@ function SWEP:DrawHUD()
 
         if self:CanBipod() or self:GetInBipod() then
             local size = ScreenScaleMulti(32)
-            local awesomematerial = Material("arccw/hud/bipod.png", "smooth")
+            local awesomematerial = self:GetBuff_Override("Bipod_Icon", bipod_mat)
             local whatsthecolor =   self:GetInBipod() and   Color(255, 255, 255, 255) or
                                     self:CanBipod() and     Color(255, 255, 255, 127) or
                                                             Color(255, 255, 255, 0)
