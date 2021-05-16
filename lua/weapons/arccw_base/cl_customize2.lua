@@ -2034,8 +2034,8 @@ function SWEP:CreateCustomize2HUD()
         ArcCW.InvHUD_FormWeaponName()
 
         local info = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
-        info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
-        info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
+        info:SetSize(menu3_w - airgap_x, menu3_h - (ss * 110) - (ss * 70) - rss * 48 - ss * 32)
+        info:SetPos(0, rss * 48 + ss * 32 + (ss * 110) + (ss * 70))
         info.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
             local infos = self.Infos_Stats or {}
@@ -2114,17 +2114,12 @@ function SWEP:CreateCustomize2HUD()
             range_1 = range_3 * 0.5
         end
 
-        local ang = self:GetBuff("AccuracyMOA") / 60
-
         -- given fov and distance solve apparent size
         local function solvetriangle(angle, dist)
             local a = angle / 2
             local b = dist
             return b * math.tan(a) * 2
         end
-
-        local radius_1 = solvetriangle(ang, range_1 * ArcCW.HUToM)
-        local radius_3 = solvetriangle(ang, range_3 * ArcCW.HUToM)
 
         local hits_1 = {}
         local hits_3 = {}
@@ -2139,15 +2134,24 @@ function SWEP:CreateCustomize2HUD()
             return {x = hit_x, y = hit_y}
         end
 
-        local hitcount = math.Clamp(math.max(math.Round(self:GetCapacity() / 4), math.Round(self:GetBuff("Num") * 2)), 10, 20)
+        local function rollallhits()
+            local ang = self:GetBuff("AccuracyMOA") / 60
 
-        for i = 1, hitcount do
-            table.insert(hits_1, rollhit(radius_1))
+            local radius_1 = solvetriangle(ang, range_1 * ArcCW.HUToM)
+            local radius_3 = solvetriangle(ang, range_3 * ArcCW.HUToM)
+
+            local hitcount = math.Clamp(math.max(math.Round(self:GetCapacity() / 4), math.Round(self:GetBuff("Num") * 2)), 10, 20)
+
+            for i = 1, hitcount do
+                table.insert(hits_1, rollhit(radius_1))
+            end
+
+            for i = 1, hitcount do
+                table.insert(hits_3, rollhit(radius_3))
+            end
         end
 
-        for i = 1, hitcount do
-            table.insert(hits_3, rollhit(radius_3))
-        end
+        rollallhits()
 
         local ballisticchart = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
         ballisticchart:SetSize(ss * 200, ss * 110)
@@ -2237,10 +2241,147 @@ function SWEP:CreateCustomize2HUD()
             local range_3_txtw = surface.GetTextSize(range_3_txt)
             surface.SetTextPos(s + (s - range_3_txtw) / 2, h - (ss * 12) - (ss * 1))
             surface.DrawText(range_3_txt)
+        end
 
-            -- dispersion at 50% max range
+        local penchart = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
+        penchart:SetSize(ss * 200, ss * 60)
+        penchart:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32 + (ss * 115))
+        penchart:SetText("")
+        penchart.Paint = function(self2, w, h)
+            if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
 
-            -- dispersion at max range
+            local col = col_button
+
+            draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+            local pen = self:GetBuff("Penetration")
+
+            local pm_wood = ArcCW.PenTable[MAT_WOOD]
+            local pm_metal = ArcCW.PenTable[MAT_METAL]
+            local pm_concrete = ArcCW.PenTable[MAT_CONCRETE]
+
+            local line_s = ss * 1
+            local line_h = h - (rss * 8 * 2) - (ss * 2)
+
+            -- wood
+
+            local pen_wood = math.Round(pen / pm_wood, 1)
+            local wood_txt = "WOOD"
+
+            surface.SetTextColor(col_fg)
+            surface.SetFont("ArcCWC2_8")
+            local wood_txtw = surface.GetTextSize(wood_txt)
+            surface.SetTextPos((w * 1 / 6) - (wood_txtw / 2), h - (rss * 8))
+            surface.DrawText(wood_txt)
+
+            local wood_txt2 = tostring(pen_wood) .. "HU"
+
+            surface.SetTextColor(col_fg)
+            surface.SetFont("ArcCWC2_8")
+            local wood_txt2w = surface.GetTextSize(wood_txt)
+            surface.SetTextPos((w * 1 / 6) - (wood_txt2w / 2), h - (rss * 8 * 2))
+            surface.DrawText(wood_txt2)
+
+            local wood_width = (math.ceil(pen_wood / 5) * 5)
+            wood_width = math.max(wood_width, 5)
+            wood_width = math.min(wood_width, 20)
+
+            local wood_s = wood_width * ss
+
+            surface.SetDrawColor(col_fg_tr)
+            surface.DrawRect((w * 1 / 6) - (wood_s / 2), ss * 4, wood_s, line_h / 2 - (line_s / 2) - (ss * 4))
+            surface.DrawRect((w * 1 / 6) - (wood_s / 2), line_h / 2 + (line_s / 2), wood_s, line_h / 2 - (line_s / 2))
+            -- bullet
+            surface.DrawRect((w * 1 / 6) - (wood_s / 2) - (w / 6), line_h / 2 - (line_s / 2), w / 6, line_s)
+
+            if pen_wood > wood_width then
+                -- penetrated
+                surface.DrawRect((w * 1 / 6) + (wood_s / 2), line_h / 2 - (line_s / 2), ss * 4, line_s)
+            else
+                -- did not penetrate
+                local pen_percent = (pen_wood / wood_width)
+                surface.DrawRect((w * 1 / 6) - (wood_s / 2) + math.ceil(wood_s * pen_percent), line_h / 2 - (line_s / 2) - 1, wood_s - math.ceil(wood_s * pen_percent), line_s + 1)
+            end
+
+            -- metal
+
+            local pen_metal = math.Round(pen / pm_metal, 1)
+            local metal_txt = "METAL"
+
+            surface.SetTextColor(col_fg)
+            surface.SetFont("ArcCWC2_8")
+            local metal_txtw = surface.GetTextSize(metal_txt)
+            surface.SetTextPos((w * 3 / 6) - (metal_txtw / 2), h - (rss * 8))
+            surface.DrawText(metal_txt)
+
+            local metal_txt2 = tostring(pen_metal) .. "HU"
+
+            surface.SetTextColor(col_fg)
+            surface.SetFont("ArcCWC2_8")
+            local metal_txt2w = surface.GetTextSize(metal_txt)
+            surface.SetTextPos((w * 3 / 6) - (metal_txt2w / 2), h - (rss * 8 * 2))
+            surface.DrawText(metal_txt2)
+
+            local metal_width = (math.ceil(pen_metal / 5) * 5)
+            metal_width = math.max(metal_width, 5)
+            metal_width = math.min(metal_width, 20)
+
+            local metal_s = metal_width * ss
+
+            surface.SetDrawColor(col_fg_tr)
+            surface.DrawRect((w * 3 / 6) - (metal_s / 2), ss * 4, metal_s, line_h / 2 - (line_s / 2) - (ss * 4))
+            surface.DrawRect((w * 3 / 6) - (metal_s / 2), line_h / 2 + (line_s / 2), metal_s, line_h / 2 - (line_s / 2))
+            -- bullet
+            surface.DrawRect((w * 3 / 6) - (metal_s / 2) - (w / 6), line_h / 2 - (line_s / 2), w / 6, line_s)
+
+            if pen_metal > metal_width then
+                -- penetrated
+                surface.DrawRect((w * 3 / 6) + (metal_s / 2), line_h / 2 - (line_s / 2), ss * 4, line_s)
+            else
+                -- did not penetrate
+                local pen_percent = (pen_metal / metal_width)
+                surface.DrawRect((w * 3 / 6) - (metal_s / 2) + math.ceil(metal_s * pen_percent), line_h / 2 - (line_s / 2) - 1, metal_s - math.ceil(metal_s * pen_percent), line_s + 1)
+            end
+
+            -- concrete
+
+            local pen_concrete = math.Round(pen / pm_concrete, 1)
+            local concrete_txt = "CONCRETE"
+
+            surface.SetTextColor(col_fg)
+            surface.SetFont("ArcCWC2_8")
+            local concrete_txtw = surface.GetTextSize(concrete_txt)
+            surface.SetTextPos((w * 5 / 6) - (concrete_txtw / 2), h - (rss * 8))
+            surface.DrawText(concrete_txt)
+
+            local concrete_txt2 = tostring(pen_concrete) .. "HU"
+
+            surface.SetTextColor(col_fg)
+            surface.SetFont("ArcCWC2_8")
+            local concrete_txt2w = surface.GetTextSize(concrete_txt)
+            surface.SetTextPos((w * 5 / 6) - (concrete_txt2w / 2), h - (rss * 8 * 2))
+            surface.DrawText(concrete_txt2)
+
+            local concrete_width = (math.ceil(pen_concrete / 5) * 5)
+            concrete_width = math.max(concrete_width, 5)
+            concrete_width = math.min(concrete_width, 20)
+
+            local concrete_s = concrete_width * ss
+
+            surface.SetDrawColor(col_fg_tr)
+            surface.DrawRect((w * 5 / 6) - (concrete_s / 2), ss * 4, concrete_s, line_h / 2 - (line_s / 2) - (ss * 4))
+            surface.DrawRect((w * 5 / 6) - (concrete_s / 2), line_h / 2 + (line_s / 2), concrete_s, line_h / 2 - (line_s / 2))
+            -- bullet
+            surface.DrawRect((w * 5 / 6) - (concrete_s / 2) - (w / 6), line_h / 2 - (line_s / 2), w / 6, line_s)
+
+            if pen_concrete > concrete_width then
+                -- penetrated
+                surface.DrawRect((w * 5 / 6) + (concrete_s / 2), line_h / 2 - (line_s / 2), ss * 4, line_s)
+            else
+                -- did not penetrate
+                local pen_percent = (pen_concrete / concrete_width)
+                surface.DrawRect((w * 5 / 6) - (concrete_s / 2) + math.ceil(concrete_s * pen_percent), line_h / 2 - (line_s / 2) - 1, concrete_s - math.ceil(concrete_s * pen_percent), line_s + 1)
+            end
         end
     end
 

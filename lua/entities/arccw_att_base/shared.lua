@@ -78,7 +78,7 @@ end
 
 else
 
-local defaulticon = Material("hud/atts/default.png")
+local defaulticon = Material("arccw/hud/atts/default.png")
 
 
 function ENT:DrawTranslucent()
