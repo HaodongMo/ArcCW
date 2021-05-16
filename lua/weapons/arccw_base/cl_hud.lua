@@ -123,10 +123,10 @@ local t_states = {
 local mr = math.Round
 local bird = Material("arccw/hud/really cool bird.png", "mips smooth")
 
-local bar_fill = Material("hud/fmbar_filled.png",           "mips smooth")
-local bar_outl = Material("hud/fmbar_outlined.png",         "mips smooth")
-local bar_shad = Material("hud/fmbar_shadow.png",           "mips smooth")
-local bar_shou = Material("hud/fmbar_outlined_shadow.png",  "mips smooth")
+local bar_fill = Material("arccw/hud/fmbar_filled.png",           "mips smooth")
+local bar_outl = Material("arccw/hud/fmbar_outlined.png",         "mips smooth")
+local bar_shad = Material("arccw/hud/fmbar_shadow.png",           "mips smooth")
+local bar_shou = Material("arccw/hud/fmbar_outlined_shadow.png",  "mips smooth")
 
 local hp = Material("arccw/hud/hp.png", "smooth")
 local hp_shad = Material("arccw/hud/hp_shadow.png", "mips smooth")

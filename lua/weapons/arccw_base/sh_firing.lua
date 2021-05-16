@@ -133,14 +133,14 @@ function SWEP:PrimaryAttack()
     dir = dir + VectorRand() * self:GetDispersion() / 360 / 60
 
     local delay = self:GetFiringDelay()
-	
-	local curtime = CurTime()
-	local curatt = self:GetNextPrimaryFire()
-	local diff = curtime - curatt
 
-	if diff > engine.TickInterval() or diff < 0 then
-		curatt = curtime
-	end
+    local curtime = CurTime()
+    local curatt = self:GetNextPrimaryFire()
+    local diff = curtime - curatt
+
+    if diff > engine.TickInterval() or diff < 0 then
+        curatt = curtime
+    end
 
     self:SetNextPrimaryFire(curatt + delay)
     self:SetNextPrimaryFireSlowdown(curatt + delay) -- shadow for ONLY fire time
