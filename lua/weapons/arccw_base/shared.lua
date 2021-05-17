@@ -760,6 +760,10 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
     self:NetworkVar("Float", 5, "NextIdle")
+
+    self:NetworkVar("Vector", 0, "BipodPos")
+
+    self:NetworkVar("Angle", 0, "BipodAngle")
 end
 
 function SWEP:OnRestore()
