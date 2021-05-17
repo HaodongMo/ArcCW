@@ -768,7 +768,11 @@ function SWEP:CreateCustomize2HUD()
                 local col = col_button
                 local col2 = col_fg
 
+                local atttbl = ArcCW.AttachmentTable[self2.att or ""]
+
                 local _, _, blocked, showqty = self:ValidateAttachment(att.att, nil, att.slot)
+
+                if blocked and atttbl.HideIfBlocked then self2:Remove() return end
 
                 local installed = self:GetSlotInstalled(self2.attslot)
 
@@ -799,8 +803,6 @@ function SWEP:CreateCustomize2HUD()
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
                 local icon_h = h
-
-                local atttbl = ArcCW.AttachmentTable[self2.att or ""]
 
                 if !self2.att or self2.att == "" then
                     local attslot = self.Attachments[self2.attslot]
