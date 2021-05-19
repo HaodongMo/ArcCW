@@ -2069,19 +2069,21 @@ function SWEP:CreateCustomize2HUD()
             aars = aars + (self.Recoil + self:GetBuff_Add("Add_Recoil")) * self:GetBuff_Mult("Mult_Recoil")
             aars = aars + (self.RecoilSide + self:GetBuff_Add("Add_RecoilSide")) * self:GetBuff_Mult("Mult_RecoilSide") * 0.5
 
-            if self:GetCurrentFiremode().Mode == 1 and !self:GetIsManualAction() then
-                aars = aars * math.min(400, (60 / self:GetFiringDelay()))
-            else
-                aars = aars * (60 / self:GetFiringDelay())
-            end
-
-            
-            if self:GetCurrentFiremode().Mode == 1 and !self:GetIsManualAction() then
-                disclaimers = disclaimers .. " " .. math.min(400, (60 / self:GetFiringDelay())) .. "rpm"
-            end
+            local arpm = (60 / self:GetFiringDelay())
 
             if self:GetIsManualAction() then
-                disclaimers = disclaimers .. " manual action, inaccurate"
+                local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+                local firedelay = self.Animations[fireanim].MinProgress or 0
+
+                arpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
+            elseif self:GetCurrentFiremode().Mode == 1 then
+                arpm = math.min(400, (60 / self:GetFiringDelay()))
+            end
+            aars = aars * arpm
+
+            
+            if self:GetCurrentFiremode().Mode == 1 or self:GetIsManualAction() then
+                disclaimers = disclaimers .. " " .. arpm .. "rpm"
             end
 
             table.insert(infos, {
