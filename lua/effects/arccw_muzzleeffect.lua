@@ -13,7 +13,7 @@ function EFFECT:Init(data)
 
     if wpn.GetInUBGL and wpn:GetInUBGL() then
         muzzle = wpn:GetBuff_Override("UBGL_MuzzleEffect") or muzzle
-    elseif wpn.EffectLastAkimbo and wpn:GetBuff_Override("Akimbo_MuzzleEffect") then
+    elseif wpn:GetEffectLastAkimbo() and wpn:GetBuff_Override("Akimbo_MuzzleEffect") then
         muzzle = wpn:GetBuff_Override("Akimbo_MuzzleEffect") or muzzle
     end
 
@@ -42,7 +42,7 @@ function EFFECT:Init(data)
         return
     end
 
-    local mdl = wpn:GetMuzzleDevice(wm, wpn.EffectLastAkimbo)
+    local mdl = wpn:GetMuzzleDevice(wm, wpn:GetEffectLastAkimbo())
     local parent = mdl
 
     if !wm then

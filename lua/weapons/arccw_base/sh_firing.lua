@@ -720,9 +720,10 @@ function SWEP:DoEffects(att, akimbo)
     efov.eff = "arccw_muzzleeffect"
     efov.fx  = ed
 
+    self:SetEffectLastAkimbo(akimbo)
+
     if self:GetBuff_Hook("Hook_PreDoEffects", efov) == true then return end
 
-    self.EffectLastAkimbo = akimbo
     util.Effect("arccw_muzzleeffect", ed)
 end
 
