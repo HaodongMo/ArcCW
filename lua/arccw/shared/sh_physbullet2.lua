@@ -77,6 +77,69 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     if owner and owner:IsPlayer() and owner:GetVehicle() then
         table.Add(bullet.Filter, {owner:GetVehicle()})
     end
+	
+	for k, v in ipairs( ents.FindByClass("gmod_sent_vehicle_fphysics_base") ) do
+	
+		if IsValid(v) then
+		--See if there is a driver on a vehicle that is the owner of the gun, if not, damage it.
+		local Driver = v.DriverSeat:GetDriver()
+		
+		if IsValid(Driver) and Driver == owner then
+			table.Add(bullet.Filter, {v})
+			table.Add(bullet.Filter, {v.DriverSeat})
+			table.Add(bullet.Filter, {Driver})
+			--Passengers
+			if istable(v.pSeat) then
+				for i = 1, table.Count(v.pSeat) do
+					local Seat = v.pSeat[ i ]
+					if IsValid(Seat) then
+						table.Add(bullet.Filter, {Seat})
+						local Passenger = Seat:GetDriver()
+						if IsValid(Passenger) then
+							table.Add(bullet.Filter, {Passenger})
+						end
+					end
+				end
+			end
+			--Wheels
+			if istable(v.Wheels) then
+				for i = 1, table.Count( v.Wheels ) do
+					local Wheel = v.Wheels[ i ]
+					if IsValid(Wheel) then
+						table.Add(bullet.Filter, {Wheel})
+					end
+				end
+			end
+		end
+		
+		--Same Check, but for Passenger only
+		if istable(v.pSeat) then
+			for i = 1, table.Count(v.pSeat) do
+				local Seat = v.pSeat[ i ]
+				if IsValid(Seat) then
+					local Passenger = Seat:GetDriver()
+					if IsValid(Passenger) then
+						table.Add(bullet.Filter, {v})
+						table.Add(bullet.Filter, {v.DriverSeat})
+						table.Add(bullet.Filter, {Seat})
+						table.Add(bullet.Filter, {Passenger})
+						if IsValid(Driver) then
+							table.Add(bullet.Filter, {Driver})
+						end
+						if istable(v.Wheels) then
+							for i = 1, table.Count( v.Wheels ) do
+								local Wheel = v.Wheels[ i ]
+									if IsValid(Wheel) then
+										table.Add(bullet.Filter, {Wheel})
+									end
+								end
+							end
+						end
+					end
+				end
+			end
+		end
+	end
 
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then
         bullet.Underwater = true
