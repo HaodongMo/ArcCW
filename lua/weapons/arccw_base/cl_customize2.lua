@@ -224,7 +224,7 @@ function SWEP:CreateCustomize2HUD()
     ArcCW.Inv_Fade = 0
 
     ArcCW.InvHUD:SetPos(0, 0)
-    ArcCW.InvHUD:SetSize(ScrW(), ScrH())
+    ArcCW.InvHUD:SetSize(scrw, scrh)
     ArcCW.InvHUD:Center()
     ArcCW.InvHUD:SetDraggable(false)
     ArcCW.InvHUD:SetText("")
@@ -335,6 +335,9 @@ function SWEP:CreateCustomize2HUD()
         if IsValid(self) and self.ToggleCustomizeHUD then
             self:ToggleCustomizeHUD(false)
         end
+    end
+    closebutton.DoRightClick = function(self2, clr, btn)
+        ArcCW.InvHUD:Remove()
     end
 
     local hidebutton = vgui.Create("DButton", ArcCW.InvHUD)
