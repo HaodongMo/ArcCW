@@ -81,6 +81,7 @@ function SWEP:Reload()
     local clip = self:GetCapacity()
 
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    if self:GetNeedCycle() then chamber = 0 end
 
     local load = math.Clamp(clip + chamber, 0, reserve)
 
@@ -104,7 +105,7 @@ function SWEP:Reload()
         local anim = "sgreload_start"
         local insertcount = 0
 
-        local empty = (self:Clip1() == 0) or self:GetNeedCycle()
+        local empty = self:Clip1() == 0 --or self:GetNeedCycle()
 
         if self.Animations.sgreload_start_empty and empty then
             anim = "sgreload_start_empty"
@@ -127,14 +128,6 @@ function SWEP:Reload()
         self:SetShotgunReloading(empty and 4 or 2)
     else
         local anim = self:SelectReloadAnimation()
-
-        -- Yes, this will cause an issue in mag-fed manual action weapons where
-        -- despite an empty casing being in the chamber, you can load +1 and 
-        -- cycle an empty shell afterwards.
-        -- No, I am not in the correct mental state to fix this. - 8Z
-        if self:Clip1() == 0 then
-            self:SetNeedCycle(false)
-        end
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
@@ -199,6 +192,7 @@ end
 function SWEP:RestoreAmmo(count)
     if self:GetOwner():IsNPC() then return end
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    if self:GetNeedCycle() then chamber = 0 end
     local clip = self:GetCapacity()
 
     if self:HasInfiniteAmmo() then
@@ -324,7 +318,7 @@ function SWEP:ReloadInsert(empty)
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
-    if !empty then
+    if !empty and !self:GetNeedCycle() then
         total = total + (self:GetChamberSize())
     end
 
