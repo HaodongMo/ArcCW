@@ -249,9 +249,11 @@ function SWEP:CreateCustomize2HUD()
         local st = 1 / 5
         if self:GetState() == ArcCW.STATE_CUSTOMIZE and !ArcCW.Inv_Hidden then
             ArcCW.Inv_Fade = math.Approach(ArcCW.Inv_Fade, 1, FrameTime() * 1 / st)
+            --print("nooo")
         else
             ArcCW.Inv_Fade = math.Approach(ArcCW.Inv_Fade, 0, FrameTime() * 1 / st)
-            -- if (self:GetState() != ArcCW.STATE_CUSTOMIZE or !ArcCW.Inv_Hidden) and ArcCW.Inv_Fade == 0 then ArcCW.InvHUD:Remove() end
+            --if (!game.SinglePlayer() and IsFirstTimePredicted() or true) and (self:GetState() != ArcCW.STATE_CUSTOMIZE or !ArcCW.Inv_Hidden) and ArcCW.Inv_Fade == 0 then ArcCW.InvHUD:Remove() end
+            --print(CurTime())
                 -- This'll completely screw up on multiplayer games and sometimes even singleplayer
         end
         col_fg = Color(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 255))
@@ -2060,6 +2062,34 @@ function SWEP:CreateCustomize2HUD()
                 unit = translate("unit.lbfps"),
             })
 
+            -- arccw_approved_recoil_score
+            local aars = 0
+            local disclaimers = ""
+
+            aars = aars + (self.Recoil + self:GetBuff_Add("Add_Recoil")) * self:GetBuff_Mult("Mult_Recoil")
+            aars = aars + (self.RecoilSide + self:GetBuff_Add("Add_RecoilSide")) * self:GetBuff_Mult("Mult_RecoilSide") * 0.5
+
+            if self:GetCurrentFiremode().Mode == 1 and !self:GetIsManualAction() then
+                aars = aars * math.min(400, (60 / self:GetFiringDelay()))
+            else
+                aars = aars * (60 / self:GetFiringDelay())
+            end
+
+            
+            if self:GetCurrentFiremode().Mode == 1 and !self:GetIsManualAction() then
+                disclaimers = disclaimers .. " " .. math.min(400, (60 / self:GetFiringDelay())) .. "rpm"
+            end
+
+            if self:GetIsManualAction() then
+                disclaimers = disclaimers .. " manual action, inaccurate"
+            end
+
+            table.insert(infos, {
+                title = "Fesiug's Recoil Score (lower is better)",
+                value = math.Round(aars),
+                unit = " points" .. disclaimers,
+            })
+
             for i, triv in pairs(infos) do
                 triv.unit = triv.unit or ""
                 local i_2 = i - 1
@@ -2192,7 +2222,7 @@ function SWEP:CreateCustomize2HUD()
             local range_1_txt = tostring(range_1) .. "m / " .. tostring(math.Round(range_1 / ArcCW.HUToM)) .. "HU"
             local range_3_txt = tostring(range_3) .. "m / " .. tostring(math.Round(range_3 / ArcCW.HUToM)) .. "HU"
 
-            local col_bullseye = Color(200, 200, 200, 100)
+            local col_bullseye = Color(200, 200, 200, Lerp(ArcCW.Inv_Fade, 0, 100))
 
             surface.SetMaterial(bullseye)
             surface.SetDrawColor(col_bullseye)
