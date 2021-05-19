@@ -1708,9 +1708,17 @@ function SWEP:CreateCustomize2HUD()
             elseif !self.PrimaryBash and !self.Throwing then
                 table.insert(infos, {
                     title = translate("trivia.firerate"),
-                    value = rpm,
+                    value = tostring(rpm),
                     unit = translate("unit.rpm"),
                 })
+                local mode = self:GetCurrentFiremode()
+                if mode.Mode < 0 and mode.PostBurstDelay then
+                    table.insert(infos, {
+                        title = translate("trivia.firerate_burst"),
+                        value = tostring( math.Round( 60/(self:GetFiringDelay()+(mode.PostBurstDelay/-mode.Mode)) ) ),
+                        unit = translate("unit.rpm"),
+                    })
+                end
             end
 
             -- precision
