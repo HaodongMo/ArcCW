@@ -245,7 +245,8 @@ function SWEP:GetBuff_Hook(buff, data, defaultnil)
         end
     end
 
-    if retvalue then data = retvalue
+    if retfalse then data = false
+    elseif retvalue then data = retvalue
     elseif defaultnil then data = nil end
 
     data = hook.Call(buff, nil, self, data) or data
