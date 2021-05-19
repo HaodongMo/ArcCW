@@ -56,10 +56,11 @@ function SWEP:DeselectUBGL()
 end
 
 function SWEP:RecoilUBGL()
-    if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
-    if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
-        self:CallOnClient("RecoilUBGL")
-    end
+    local single = game.SinglePlayer()
+
+    if !single and !IsFirstTimePredicted() then return end
+
+    if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("RecoilUBGL") end
 
     local amt = self:GetBuff_Override("UBGL_Recoil")
     local amtside = self:GetBuff_Override("UBGL_RecoilSide") or (self:GetBuff_Override("UBGL_Recoil") * 0.5)
@@ -81,8 +82,6 @@ function SWEP:RecoilUBGL()
     if CLIENT then
         self:OurViewPunch(vpa)
     end
-    -- self:SetNWFloat("recoil", self.Recoil * m)
-    -- self:SetNWFloat("recoilside", r * self.RecoilSide * m)
 
     if CLIENT or game.SinglePlayer() then
 

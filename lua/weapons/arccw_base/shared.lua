@@ -745,6 +745,7 @@ function SWEP:SetupDataTables()
     -- 4 = insert empty
     -- 5 = cancelling empty
     self:NetworkVar("Int", 6, "ShotgunReloading")
+    self:NetworkVar("Int", 7, "MagUpCount")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")

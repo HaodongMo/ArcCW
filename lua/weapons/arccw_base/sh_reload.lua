@@ -118,12 +118,18 @@ function SWEP:Reload()
 
         anim = self:GetBuff_Hook("Hook_SelectReloadAnimation", anim) or anim
 
-        self:GetOwner():SetAmmo(self:Ammo1() - insertcount, self.Primary.Ammo)
-        self:SetClip1(self:Clip1() + insertcount)
+        local time = self:GetAnimKeyTime(anim)
+        local time2 = self:GetAnimKeyTime(anim, true)
 
+        if time2 == time then
+            time2 = 0
+        end
+
+        self:SetMagUpCount(insertcount)
+        self:SetMagUpIn(CurTime() + time2 * mult)
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
 
-        self:SetReloading(CurTime() + (self:GetAnimKeyTime(anim) * mult))
+        self:SetReloading(CurTime() + time * mult)
 
         self:SetShotgunReloading(empty and 4 or 2)
     else
@@ -139,6 +145,7 @@ function SWEP:Reload()
         self:SetNextPrimaryFire(CurTime() + reloadtime2)
         self:SetReloading(CurTime() + reloadtime2)
 
+        self:SetMagUpCount(0)
         self:SetMagUpIn(CurTime() + reloadtime)
     end
 
@@ -166,7 +173,8 @@ end
 
 function SWEP:WhenTheMagUpIn()
     -- yeah my function names are COOL and QUIRKY and you can't say a DAMN thing about it.
-    self:RestoreAmmo()
+    self:RestoreAmmo((self:GetMagUpCount() != 0 and self:GetMagUpCount()))
+    self:SetMagUpCount(0)
     self:SetLastLoad(self:Clip1())
     self:SetNthReload(self:GetNthReload() + 1)
 end
@@ -368,9 +376,15 @@ function SWEP:ReloadInsert(empty)
             self:CallOnClient("SetClipInfo", tostring(load))
         end
 
-        self:RestoreAmmo(insertcount)
+        local time = self:GetAnimKeyTime(insertanim, false)
+        local time2 = self:GetAnimKeyTime(insertanim, true)
 
-        local time = self:GetAnimKeyTime(insertanim, true)
+        if time2 >= time then
+            time2 = 0
+        end
+
+        self:SetMagUpCount(insertcount)
+        self:SetMagUpIn(CurTime() + time2 * mult)
 
         self:SetReloading(CurTime() + time * mult)
 
