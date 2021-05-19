@@ -741,7 +741,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 3, "LastLoad")
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
-    self:NetworkVar("Int", 6, "BurstCountUM2") -- akimbo trolololol
+    self:NetworkVar("Int", 7, "BurstCountUM2") -- akimbo trolololol
 
     -- 2 = insert
     -- 3 = cancelling

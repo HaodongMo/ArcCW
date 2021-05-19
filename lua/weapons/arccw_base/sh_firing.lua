@@ -735,7 +735,7 @@ function SWEP:DryFire()
     self:SetNextPrimaryFire(CurTime() + 0.25)
 end
 
-function SWEP:DoRecoil()
+function SWEP:DoRecoil(akimbo)
     local single = game.SinglePlayer()
 
     if !single and !IsFirstTimePredicted() then return end
@@ -750,6 +750,10 @@ function SWEP:DoRecoil()
         VisualRecoilMul = 1
     }
     rec = self:GetBuff_Hook("Hook_ModifyRecoil", rec) or rec
+
+    local stat_up = akimbo and self:GetBuff_Override("Akimbo_Recoil") or self.Recoil
+    local stat_side = akimbo and self:GetBuff_Override("Akimbo_RecoilSide") or self.RecoilSide
+    local stat_rise = akimbo and self:GetBuff_Override("Akimbo_RecoilRise") or self.RecoilRise
 
     local recoil = rec.Recoil
     local side   = rec.RecoilSide
@@ -788,9 +792,9 @@ function SWEP:DoRecoil()
 
     local punch = Angle()
 
-    punch = punch + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * math.max(self.Recoil, 0.25) * recu * recv * rmul)
-    punch = punch + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec * recv * rmul)
-    punch = punch + Angle(0, 0, 90) * math.Rand(-1, 1) * math.Clamp(self.Recoil, 0.25, 1) * recv * rmul * 0.01
+    punch = punch + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * math.max(stat_up, 0.25) * recu * recv * rmul)
+    punch = punch + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * math.max(stat_side, 0.25) * irec * recv * rmul)
+    punch = punch + Angle(0, 0, 90) * math.Rand(-1, 1) * math.Clamp(stat_up, 0.25, 1) * recv * rmul * 0.01
     punch = punch * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
 
     if CLIENT then self:OurViewPunch(punch) end
@@ -798,16 +802,16 @@ function SWEP:DoRecoil()
     if CLIENT or single then
         recv = recv * self.VisualRecoilMult
 
-        self.RecoilAmount     = self.RecoilAmount + (self.Recoil * rmul * recu)
-        self.RecoilAmountSide = self.RecoilAmountSide + (self.RecoilSide * irec * recs * rmul)
+        self.RecoilAmount     = self.RecoilAmount + (stat_up * rmul * recu)
+        self.RecoilAmountSide = self.RecoilAmountSide + (stat_side * irec * recs * rmul)
         self.RecoilPunchBack  = math.Clamp(self.RecoilAmount * recv * 5, 1, 5)
 
         if self.MaxRecoilBlowback > 0 then
             self.RecoilPunchBack = math.Clamp(self.RecoilPunchBack, 0, self.MaxRecoilBlowback)
         end
 
-        self.RecoilPunchSide = self.RecoilSide * 0.1 * irec * recv * rmul
-        self.RecoilPunchUp   = self.RecoilRise * 0.1 * recu
+        self.RecoilPunchSide = stat_side * 0.1 * irec * recv * rmul
+        self.RecoilPunchUp   = stat_rise * 0.1 * recu
     end
 
     -- math.randomseed(CurTime() + (self:EntIndex() * 3))

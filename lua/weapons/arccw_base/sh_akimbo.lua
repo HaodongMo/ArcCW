@@ -346,8 +346,7 @@ function SWEP:AkimboAttack()
         end
     end
 
-    -- TODO akimbo recoil
-    self:DoRecoil()
+    self:DoRecoil(true)
 
     --self:SetNthShot(self:GetNthShot() + 1)
 
