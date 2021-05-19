@@ -277,7 +277,8 @@ function SWEP:Think()
         self:ProcessTimers()
     --end
 
-    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() then
+    -- Only reset to idle if we don't need cycle. empty idle animation usually doesn't play nice
+    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle() then
         self:SetNextIdle(0)
         self:PlayIdleAnimation(true)
     end
