@@ -12,7 +12,8 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_Recoil"] = "arccw_mult_recoil",
     ["Mult_MoveDispersion"] = "arccw_mult_movedisp",
     ["Mult_AccuracyMOA"] = "arccw_mult_accuracy",
-    ["Mult_Penetration"] = "arccw_mult_penetration"
+    ["Mult_Penetration"] = "arccw_mult_penetration",
+    ["Mult_Sway"] = "arccw_mult_sway"
 }
 
 ArcCW.ConVar_BuffAdds = {}
@@ -46,6 +47,8 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Tick_Mults = {}
 
     self.AttCache_Hooks = {}
+
+    self.NextMalfunction = nil
 end
 
 function SWEP:GetIsShotgun()
@@ -102,10 +105,9 @@ function SWEP:GetBuff(buff, defaultnil, defaultvar)
         result = 1
     end
 
-    if self:GetBuff_Override("Override_" .. buff) == false then
-        result = false
-    else
-        result = self:GetBuff_Override("Override_" .. buff) or result
+    local override = self:GetBuff_Override("Override_" .. buff)
+    if override != nil then
+        result = override
     end
 
     if isnumber(result) then
@@ -130,7 +132,7 @@ function SWEP:GetBuff_Stat(buff, slot)
     end
 end
 
-function SWEP:GetBuff_Hook(buff, data)
+function SWEP:GetBuff_Hook(buff, data, defaultnil)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
     -- Fesiug, this will only work if you have just one hook.
@@ -140,15 +142,19 @@ function SWEP:GetBuff_Hook(buff, data)
     -- end
 
     if self.AttCache_Hooks[buff] then
-        for i, k in pairs(self.AttCache_Hooks[buff]) do
+        local retvalue = nil
+        for i, k in ipairs(self.AttCache_Hooks[buff]) do
             local ret = k(self, data)
-
-            if ret == nil then continue end
-
-            if ret == false then return end
-
-            data = ret
+            if ret == false then
+                return
+            elseif ret != nil then
+                retvalue = ret
+                break
+            end
         end
+
+        if retvalue then data = retvalue
+        elseif defaultnil then data = nil end
 
         data = hook.Call(buff, nil, self, data) or data
 
@@ -157,6 +163,8 @@ function SWEP:GetBuff_Hook(buff, data)
         self.AttCache_Hooks[buff] = {}
     end
 
+    local retfalse = false
+    local retvalue = nil
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
 
@@ -165,39 +173,47 @@ function SWEP:GetBuff_Hook(buff, data)
         if !atttbl then continue end
 
         if isfunction(atttbl[buff]) then
-            local ret = atttbl[buff](self, data)
-
             table.insert(self.AttCache_Hooks[buff], atttbl[buff])
+            if !retfalse and retvalue == nil then
+                local ret = atttbl[buff](self, data)
 
-            if ret == nil then continue end
+                if ret == false then
+                    retfalse = true
+                    continue
+                elseif ret == nil then
+                    continue
+                end
 
-            if ret == false then return end
-
-            data = ret
+                retvalue = ret
+            end
         elseif atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and isfunction(atttbl.ToggleStats[k.ToggleNum][buff]) then
-           local ret = atttbl.ToggleStats[k.ToggleNum][buff](self, data)
             table.insert(self.AttCache_Hooks[buff], atttbl.ToggleStats[k.ToggleNum][buff])
-            if ret == nil then continue end
-            if ret == false then return end
-            data = ret
+            if !retfalse and retvalue == nil then
+                local ret = atttbl.ToggleStats[k.ToggleNum][buff](self, data)
+
+                if ret == false then
+                    retfalse = true
+                    continue
+                elseif ret == nil then
+                    continue
+                end
+
+                retvalue = ret
+            end
         end
     end
 
     local cfm = self:GetCurrentFiremode()
 
     if cfm and isfunction(cfm[buff]) then
-        local ret = cfm[buff](self, data)
-
         table.insert(self.AttCache_Hooks[buff], cfm[buff])
-
-        hasany = true
-
-        if ret != nil then
-
-            if ret == false then return end
-
-            data = ret
-
+        if !retfalse and retvalue == nil then
+            local ret = cfm[buff](self, data)
+            if ret == false then
+                retfalse = true
+            elseif ret != nil then
+                retvalue = ret
+            end
         end
     end
 
@@ -205,36 +221,32 @@ function SWEP:GetBuff_Hook(buff, data)
         local ele = self.AttachmentElements[e]
 
         if ele and ele[buff] then
-            local ret = ele[buff](self, data)
-
             table.insert(self.AttCache_Hooks[buff], ele[buff])
-
-            hasany = true
-
-            if ret != nil then
-
-                if ret == false then return end
-
-                data = ret
+            if !retfalse and retvalue == nil then
+                local ret = ele[buff](self, data)
+                if ret == false then
+                    retfalse = true
+                elseif ret != nil then
+                    retvalue = ret
+                end
             end
         end
     end
 
     if isfunction(self:GetTable()[buff]) then
-        local ret = self:GetTable()[buff](self, data)
-
         table.insert(self.AttCache_Hooks[buff], self:GetTable()[buff])
-
-        hasany = true
-
-        if ret != nil then
-
-            if ret == false then return end
-
-            data = ret
-
+        if !retfalse and data == nil then
+            local ret = self:GetTable()[buff](self, data)
+            if ret == false then
+                retfalse = true
+            elseif ret != nil then
+                retvalue = ret
+            end
         end
     end
+
+    if retvalue then data = retvalue
+    elseif defaultnil then data = nil end
 
     data = hook.Call(buff, nil, self, data) or data
 
@@ -377,6 +389,10 @@ function SWEP:GetBuff_Override(buff, default)
 
     end
 
+    if current == nil then
+        current = default
+    end
+
     return current, winningslot
 end
 
@@ -468,6 +484,11 @@ function SWEP:GetBuff_Add(buff)
 
     if self.TickCache_Adds[buff] then
         add = self.TickCache_Adds[buff]
+
+        local data = {
+            buff = buff,
+            add = add
+        }
 
         if !ArcCW.BuffStack then
 
@@ -1031,6 +1052,15 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     local attslot = self.Attachments[slot]
     if !attslot then return end
     if attslot.Installed == attname then return end
+    if attslot.Internal then return end
+
+    -- Make an additional check to see if we can detach the current attachment
+    if attslot.Installed and !ArcCW:PlayerCanAttach(self:GetOwner(), self, attslot.Installed, slot, attname) then
+        if CLIENT and !silent then
+            surface.PlaySound("items/medshotno1.wav")
+        end
+        return
+    end
 
     if !ArcCW:PlayerCanAttach(self:GetOwner(), self, attname, slot, false) then
         if CLIENT and !silent then
@@ -1041,13 +1071,11 @@ function SWEP:Attach(slot, attname, silent, noadjust)
 
     local pick = self:GetPickX()
 
-    if pick > 0 then
-        if self:CountAttachments() >= pick and !attslot.FreeSlot then
-            if CLIENT and !silent then
-                surface.PlaySound("items/medshotno1.wav")
-            end
-            return
+    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot then
+        if CLIENT and !silent then
+            surface.PlaySound("items/medshotno1.wav")
         end
+        return
     end
 
     if !self:CheckFlags(attslot.ExcludeFlags, attslot.RequireFlags) then return end
@@ -1102,6 +1130,12 @@ function SWEP:Attach(slot, attname, silent, noadjust)
         end
     else
         self:DetachAllMergeSlots(slot)
+
+        for i, k in pairs(self.Attachments) do
+            if table.HasValue(k.MergeSlots or {}, slot) then
+                self:DetachAllMergeSlots(i)
+            end
+        end
     end
 
     attslot.Installed = attname
@@ -1170,17 +1204,19 @@ function SWEP:DetachAllMergeSlots(slot, silent)
     table.Add(slots, (self.Attachments[slot] or {}).MergeSlots or {})
 
     for _, i in pairs(slots) do
-        self:Detach(i, silent)
+        self:Detach(i, silent, nil, true)
     end
 end
 
-function SWEP:Detach(slot, silent, noadjust)
+function SWEP:Detach(slot, silent, noadjust, nocheck)
     if !slot then return end
     if !self.Attachments[slot] then return end
 
     if !self.Attachments[slot].Installed then return end
 
-    if !ArcCW:PlayerCanAttach(self:GetOwner(), self, self.Attachments[slot].Installed, slot, true) then
+    if self.Attachments[slot].Internal then return end
+
+    if !nocheck and !ArcCW:PlayerCanAttach(self:GetOwner(), self, self.Attachments[slot].Installed, slot, true) then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
@@ -1264,14 +1300,20 @@ function SWEP:Detach(slot, silent, noadjust)
     end
 end
 
-function SWEP:ToggleSlot(slot, num, silent)
+function SWEP:ToggleSlot(slot, num, silent, back)
     local atttbl = ArcCW.AttachmentTable[self.Attachments[slot].Installed]
     if !atttbl.ToggleStats then return end
 
+    local amt = 1
+
+    if back then amt = -1 end
+
     if !num then
-        self.Attachments[slot].ToggleNum = (self.Attachments[slot].ToggleNum or 1) + 1
+        self.Attachments[slot].ToggleNum = (self.Attachments[slot].ToggleNum or 1) + amt
         if self.Attachments[slot].ToggleNum > #atttbl.ToggleStats then
             self.Attachments[slot].ToggleNum = 1
+        elseif self.Attachments[slot].ToggleNum < 1 then
+            self.Attachments[slot].ToggleNum = #atttbl.ToggleStats
         end
     else
         self.Attachments[slot].ToggleNum = math.Clamp(num, 1, #catttbl.ToggleStats)

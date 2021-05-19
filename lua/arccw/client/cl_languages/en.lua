@@ -18,6 +18,7 @@ L["arccw.menus.ammo"]                     = "Ammo"
 L["arccw.menus.dev"]                      = "Developer"
 L["arccw.menus.xhair"]                    = "Crosshair"
 L["arccw.menus.bullet"]                   = "Bullet Physics"
+L["arccw.bullet_help"]                    = "\nEnabling physical bullets in multiplayer may reduce the reliability of hit detection."
 -- ArcCW_Options_Ammo
 L["arccw.cvar.ammo_detonationmode"]       = "Ammo Detonation"
 L["arccw.cvar.ammo_detonationmode.desc"]  = "-1 - don't explode\n 0 - simple explosion\n 1 - fragmentation\n 2 - frag + burning"
@@ -91,6 +92,7 @@ L["arccw.cvar.cheapscopes.desc"]          = "A cheaper PIP scope implementation 
 --L["arccw.cvar.flatscopes.desc"]           = "For the ultimate performance gain.\nUse a traditional-style scope implementation that's not very impressive, but actually saves performance relative to even being unscoped."
 L["arccw.cvar.muzzleeffects"]             = "Enable World Muzzle Effects"
 L["arccw.cvar.fastmuzzles"]               = "Low Performance Muzzle Effects"
+L["arccw.cvar.fasttracers"]               = "Low Performance Tracer Effects"
 L["arccw.cvar.shelleffects"]              = "Enable World Case Effects"
 L["arccw.cvar.att_showothers"]            = "Show World Attachments"
 L["arccw.cvar.shelltime"]                 = "Case Lifetime"
@@ -156,6 +158,7 @@ L["arccw.cvar.mult_sighttime"]            = "ADS Time"
 L["arccw.cvar.mult_defaultclip"]          = "Default Clip"
 L["arccw.cvar.mult_attchance"]            = "Random Att. Chance"
 L["arccw.cvar.mult_heat"]                 = "Heat Gain"
+L["arccw.cvar.mult_sway"]                 = "Aim Sway"
 L["arccw.cvar.mult_shootwhilesprinting"]  = "Shoot While Sprinting"
 -- ArcCW_Options_Atts
 L["arccw.attdesc1"]                       = "ArcCW supports attachment inventory style behaviour (Like ACT3) as well as attachment locking style behaviour (Like CW2.0) as well as giving everyone all attachments for free (Like TFA Base)."
@@ -296,13 +299,24 @@ L["arccw.cvar.mult_crouchdisp"]           = "Crouched Dispersion"
 L["arccw.cvar.mult_crouchrecoil"]         = "Crouched Recoil"
 
 -- 2021-2-19
-L["arccw.cvar.dev_debug"]           = "Debug Menu"
-L["arccw.cvar.dev_debug.desc"]         = "Disabled by default.\nDraws a debug menu over your screen where you can view certain elements blah blah?"
+L["arccw.cvar.dev_debug"]                 = "Debug Menu"
+L["arccw.cvar.dev_debug.desc"]            = "Disabled by default.\nDraws a debug menu over your screen where you can view certain elements blah blah?"
 
-L["arccw.cvar.attinv_sound"]           = "Menu Toggle Sound"
+L["arccw.cvar.attinv_sound"]              = "Menu Toggle Sound"
 L["arccw.cvar.attinv_sound.desc"]         = "Sounds for opening and closing the customization menu.\nIf it's really not your thing."
 
 -- 2021-3-2
-L["arccw.ammohud"]                           = "\nAmmo HUD" -- Obsoletes "3D2D HUD" since they're basically the same now"
-L["arccw.cvar.hud_fcgbars"]                  = "Show Firemode Bars"
-L["arccw.bind.toggle_att"]                   = "Toggle Attachments"
+L["arccw.ammohud"]                        = "\nAmmo HUD" -- Obsoletes "3D2D HUD" since they're basically the same now"
+L["arccw.cvar.hud_fcgbars"]               = "Show Firemode Bars"
+L["arccw.bind.toggle_att"]                = "Toggle Attachments"
+
+-- 2021-05-05
+L["arccw.cvar.attinv_gamemodebuttons"]    = "Gamemode-specific buttons"
+L["arccw.cvar.attinv_gamemodebuttons.desc"] = "Shows helpful functions for gamemodes like TTT and DarkRP.\nIn addition to using these, you can hold USE to access original keybinds as well."
+
+-- 2021-05-13
+L["arccw.cvar.mult_malfunction"] = "Malfunction Chance"
+L["arccw.cvar.malfunction"]    = "Malfunction Mode"
+L["arccw.cvar.malfunction.0"]   = "0 - Force disable on all guns"
+L["arccw.cvar.malfunction.1"]    = "1 - Enabled"
+L["arccw.cvar.malfunction.2"]    = "2 - Force enable on all guns"

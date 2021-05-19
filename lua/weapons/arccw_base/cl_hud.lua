@@ -1,4 +1,4 @@
-
+local translate = ArcCW.GetTranslation
 
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
@@ -66,7 +66,7 @@ function SWEP:GetHUDData()
         mode = self:GetFiremodeName(),
         ammotype = self.Primary.Ammo,
         heat_enabled        = self:HeatEnabled(),
-        heat_name           = "HEAT",
+        heat_name           = translate("ui.heat"),
         heat_level          = self:GetHeat(),
         heat_maxlevel       = self:GetMaxHeat(),
         heat_locked         = self:GetHeatLocked(),
@@ -121,18 +121,20 @@ local t_states = {
 }
 
 local mr = math.Round
-local bird = Material("hud/really cool bird.png",   "mips smooth")
+local bird = Material("arccw/hud/really cool bird.png", "mips smooth")
 
-local bar_fill = Material("hud/fmbar_filled.png",           "mips smooth")
-local bar_outl = Material("hud/fmbar_outlined.png",         "mips smooth")
-local bar_shad = Material("hud/fmbar_shadow.png",           "mips smooth")
-local bar_shou = Material("hud/fmbar_outlined_shadow.png",  "mips smooth")
+local bar_fill = Material("arccw/hud/fmbar_filled.png",           "mips smooth")
+local bar_outl = Material("arccw/hud/fmbar_outlined.png",         "mips smooth")
+local bar_shad = Material("arccw/hud/fmbar_shadow.png",           "mips smooth")
+local bar_shou = Material("arccw/hud/fmbar_outlined_shadow.png",  "mips smooth")
 
-local hp = Material("hud/hp.png", "smooth")
-local hp_shad = Material("hud/hp_shadow.png", "mips smooth")
+local hp = Material("arccw/hud/hp.png", "smooth")
+local hp_shad = Material("arccw/hud/hp_shadow.png", "mips smooth")
 
-local armor = Material("hud/armor.png", "mips smooth")
-local armor_shad = Material("hud/armor_shadow.png", "mips smooth")
+local armor = Material("arccw/hud/armor.png", "mips smooth")
+local armor_shad = Material("arccw/hud/armor_shadow.png", "mips smooth")
+local ubgl_mat = Material("arccw/hud/ubgl.png", "smooth")
+local bipod_mat = Material("arccw/hud/bipod.png", "smooth")
 
 function SWEP:DrawHUD()
     -- DEBUG PANEL
@@ -232,7 +234,7 @@ function SWEP:DrawHUD()
 
         surface.SetTextPos(ecksy, 26 * s*9.25)
         surface.DrawText( mr(self:GetSightDelta()*100) .. "%" )
-        
+
         surface.DrawOutlinedRect(ecksy, 26 * s*10, s*64, s*4, s/2)
         surface.DrawRect(ecksy, 26 * s*10+s*1, s*64*self:GetSightDelta(), s*4-s*2)
 
@@ -267,10 +269,17 @@ function SWEP:DrawHUD()
         surface.DrawText("CURRENT ANIMATION")
 
         surface.SetTextPos(ecksy, 26 * s*8.5)
-        surface.DrawText("WEAPON STATE")  
-        
+        surface.DrawText("WEAPON STATE")
+
         surface.SetTextPos(ecksy, 26 * s*9.25)
         surface.DrawText("SIGHT DELTA")
+
+        surface.SetTextPos(ecksy, 26 * s*10.25)
+        if thestate == ArcCW.STATE_IDLE then
+            surface.DrawText("LAST CHANGE: " .. math.Round(CurTime() - self.LastExitSightTime, 2))
+        elseif  thestate == ArcCW.STATE_SIGHTS then
+            surface.DrawText("LAST CHANGE: " .. math.Round(CurTime() - self.LastEnterSightTime, 2))
+        end
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end
@@ -475,7 +484,37 @@ function SWEP:DrawHUD()
             MyDrawText(wmode)
 
             -- overheat bar 3d
-            if data.heat_enabled then
+            if self:GetMalfunctionJam() then
+                local col = Color(255, 0, 32)
+
+                local wheat = {
+                    x = apan_bg.x + apan_bg.w - airgap,
+                    y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 1 ),
+                    font = "ArcCW_12",
+                    text = translate("ui.jammed"),
+                    col = col,
+                    align = 1,
+                    shadow = true,
+                    alpha = alpha,
+                }
+                if GetConVar("arccw_hud_fcgbars"):GetBool() then
+                    wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
+                end
+
+                local wheat_shad = {
+                    x = wheat.x,
+                    y = wheat.y,
+                    font = "ArcCW_12_Glow",
+                    text = wheat.text,
+                    col = col,
+                    align = 1,
+                    shadow = false,
+                    alpha = alpha,
+                }
+                MyDrawText(wheat_shad)
+
+                MyDrawText(wheat)
+            elseif data.heat_enabled then
                 local pers = math.Clamp(1 - (data.heat_level / data.heat_maxlevel), 0, 1)
                 local pers2 = math.Clamp(data.heat_level / data.heat_maxlevel, 0, 1)
                 local colheat1 = data.heat_locked and Color(255, 0, 0) or Color(255, 128+127*pers, 128+127*pers)
@@ -511,7 +550,7 @@ function SWEP:DrawHUD()
             end
             if self:GetInUBGL() then
                 local size = ScreenScaleMulti(32)
-                local awesomematerial = Material( "hud/ubgl.png", "smooth" )
+                local awesomematerial = self:GetBuff_Override("UBGL_Icon", ubgl_mat)
                 local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, alpha) or
                                                     Color(255, 255, 255, 0)
                 local bar = {
@@ -528,7 +567,7 @@ function SWEP:DrawHUD()
 
             if self:CanBipod() or self:GetInBipod() then
                 local size = ScreenScaleMulti(32)
-                local awesomematerial = Material( "hud/bipod.png", "smooth" )
+                local awesomematerial = self:GetBuff_Override("Bipod_Icon", bipod_mat)
                 local whatsthecolor =   self:GetInBipod() and     Color(255, 255, 255, alpha) or
                                         self:CanBipod() and   Color(255, 255, 255, alpha / 4) or Color(0, 0, 0, 0)
                 local bar = {
@@ -668,7 +707,7 @@ function SWEP:DrawHUD()
 
         if self:GetBuff_Override("UBGL") then
             local size = ScreenScaleMulti(32)
-            local awesomematerial = Material( "hud/ubgl.png", "smooth" )
+            local awesomematerial = self:GetBuff_Override("UBGL_Icon", ubgl_mat)
             local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, 255) or
                                                     Color(255, 255, 255, 0)
             local bar2 = {
@@ -684,7 +723,7 @@ function SWEP:DrawHUD()
 
         if self:CanBipod() or self:GetInBipod() then
             local size = ScreenScaleMulti(32)
-            local awesomematerial = Material( "hud/bipod.png", "smooth" )
+            local awesomematerial = self:GetBuff_Override("Bipod_Icon", bipod_mat)
             local whatsthecolor =   self:GetInBipod() and   Color(255, 255, 255, 255) or
                                     self:CanBipod() and     Color(255, 255, 255, 127) or
                                                             Color(255, 255, 255, 0)

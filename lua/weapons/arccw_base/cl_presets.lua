@@ -150,6 +150,8 @@ function SWEP:CreatePresetSave()
         self:SavePreset(txt)
         bg:Close()
         bg:Remove()
+
+        ArcCW.InvHUD_FormPresets()
     end
 
     accept.Paint = function(spaa, w, h)

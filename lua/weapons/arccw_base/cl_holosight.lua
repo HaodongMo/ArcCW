@@ -63,7 +63,7 @@ local rtmat = GetRenderTarget("arccw_rtmat", rtsize, rtsize, false)
 local rtmat_cheap = GetRenderTarget("arccw_rtmat_cheap", ScrW(), ScrH(), false)
 local rtmat_spare = GetRenderTarget("arccw_rtmat_spare", ScrW(), ScrH(), false)
 
--- local shadow = Material("hud/scopes/shadow.png")
+-- local shadow = Material("arccw/hud/scopes/shadow.png")
 
 local thermal = Material("models/debug/debugwhite")
 local colormod = Material("pp/colour")
@@ -401,8 +401,8 @@ hook.Add("RenderScene", "ArcCW", function()
     wpn:FormRTScope()
 end)
 
-local black = Material("hud/black.png")
-local defaultdot = Material("hud/scopes/dot.png")
+local black = Material("arccw/hud/black.png")
+local defaultdot = Material("arccw/hud/scopes/dot.png")
 
 function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     -- holosight structure

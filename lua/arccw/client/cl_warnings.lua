@@ -1,11 +1,9 @@
 ArcCW.IncompatibleAddons = {
-    -- ["2137567877"] = "Causes viewmodel flickering with LHIK attachments",
     ["847269692"] = "Causes viewmodel flickering, may crash when customization menu opens",
-    ["1875551051"] = "Breaks LHIK attachments. VManip has similar features and doesn't conflict.",
     ["306149085"] = "Makes the customize menu mouse unable to appear.",
     ["541434990"] = "Neurotec is ancient, half the base is missing, and it flat-out doesn't work. Causes all sorts of problems. For the love of god, let go.", -- Neurotec
     --["1100368137"] = "May cause Lua errors. Use the wOS version instead.", -- Prone Mod
-    ["476997621"] = "Causes issues with arms.",
+    ["476997621"] = "Causes issues with arms.", -- Improved Combine NPCs
     -- ["1308077613"] = "Will make near-walling look exaggerated; known to conflict with cBobbing.", -- View model bump, should be fixed
     -- ["1429489453"] = "Causes issues with arms." -- bio annihilation extended sninctbur
     ["1588705429"] = "Causes damage calculation to not work properly.", -- Realistic Bullet Overhaul

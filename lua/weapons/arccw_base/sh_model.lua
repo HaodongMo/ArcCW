@@ -365,16 +365,16 @@ function SWEP:SetupModel(wm)
             if !ele then continue end
 
             if ((ele.AttPosMods or {})[i] or {}).bone then
-                repbone = ele.AttPosMods.bone
+                repbone = ele.AttPosMods[i].bone
             end
 
             if wm then
                 if ((ele.AttPosMods or {})[i] or {}).wang then
-                    repang = ele.AttPosMods.wang
+                    repang = ele.AttPosMods[i].wang
                 end
             else
                 if ((ele.AttPosMods or {})[i] or {}).vang then
-                    repang = ele.AttPosMods.vang
+                    repang = ele.AttPosMods[i].vang
                 end
             end
         end
@@ -742,7 +742,12 @@ function SWEP:DrawCustomModel(wm,origin,angle)
         --     end
         -- end
 
-        if k.IsBaseWM then
+        if k.IsBaseVM and !custompos then
+            k.Model:SetParent(self:GetOwner():GetViewModel())
+            vm = self
+            selfmode = true
+            basewm = true
+        elseif k.IsBaseWM then
             if self:GetOwner():IsValid() and !custompos then
                 local wmo = self.WorldModelOffset
                 if !wmo then
@@ -760,11 +765,8 @@ function SWEP:DrawCustomModel(wm,origin,angle)
                 k.OffsetAng = Angle(0, 0, 0)
                 k.OffsetPos = Vector(0, 0, 0)
             end
-        elseif k.IsBaseVM and !custompos then
-            k.Model:SetParent(self:GetOwner():GetViewModel())
-            vm = self
-            selfmode = true
-            basewm = true
+        elseif wm and self:ShouldCheapWorldModel() then
+            continue
         else
             if wm and self.MirrorVMWM then
                 vm = self.WMModel or self

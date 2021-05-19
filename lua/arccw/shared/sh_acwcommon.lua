@@ -5,6 +5,7 @@ ArcCW.NoDraw = true
 
 ArcCW.HUToM    = 0.0254 -- 1 / 12 * 0.3048
 ArcCW.MOAToAcc = 0.00092592592 -- 10 / 180 / 60
+ArcCW.RecoilUnit = 41.4 -- lbfps
 
 ArcCW.STATE_IDLE      = 0
 ArcCW.STATE_SIGHTS    = 1
@@ -67,6 +68,14 @@ ArcCW.ReplaceWeapons = {
     ["weapon_crossbow"]  = true,
     ["weapon_rpg"]       = true,
     ["weapon_annabelle"] = true,
+}
+
+ArcCW.MeleeDamageTypes = {
+    [DMG_GENERIC] = "dmg.generic",
+    [DMG_BULLET] = "dmg.bullet",
+    [DMG_SLASH] = "dmg.slash",
+    [DMG_CLUB] = "dmg.club",
+    [DMG_SHOCK] = "dmg.shock",
 }
 
 ArcCW.PenTable = {

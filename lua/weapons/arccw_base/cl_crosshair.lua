@@ -1,8 +1,8 @@
 local delta = 0
 local size = 0
 local cw = nil
-local clump_inner = Material("hud/clump_inner.png", "mips smooth")
-local clump_outer = Material("hud/clump_outer.png", "mips smooth")
+local clump_inner = Material("arccw/hud/clump_inner.png", "mips smooth")
+local clump_outer = Material("arccw/hud/clump_outer.png", "mips smooth")
 local aimtr_result = {}
 local aimtr = {}
 
@@ -11,7 +11,7 @@ function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
     if !GetConVar("arccw_crosshair"):GetBool() then return false end
     if self:GetReloading() then return false end
-    if self:BarrelHitWall() > 0 then return end
+    if self:BarrelHitWall() > 0 then return false end
     local asight = self:GetActiveSights()
 
     if !self:GetOwner():ShouldDrawLocalPlayer()
@@ -84,25 +84,43 @@ function SWEP:DoDrawCrosshair(x, y)
     if self:GetOwner():ShouldDrawLocalPlayer() then
         local tr = util.GetPlayerTrace( self:GetOwner() )
         local trace = util.TraceLine( tr )
-		
-        local coords = trace.HitPos:ToScreen()
-        sp = { visible = true, x = coords.x, y = coords.y }
-    else
-        cam.Start3D()
-        sp = (pos + (ang:Forward() * 3200)):ToScreen()
-        cam.End3D()
-    end
-	
-	if GetConVar("arccw_crosshair_trueaim"):GetBool() then
-        aimtr.start = self:GetShootSrc()
-        aimtr.endpos = aimtr.start + (ply:GetAimVector() * 100000)
-        aimtr.filter = self:GetOwner()
-        aimtr.output = aimtr_result
-        util.TraceLine(aimtr)
-        local w2s = aimtr_result.HitPos:ToScreen()
-        sp.x = w2s.x sp.y = w2s.y
-	end
 
+        cam.Start3D()
+        local coords = trace.HitPos:ToScreen()
+        cam.End3D()
+        sp = { visible = true, x = coords.x, y = coords.y }
+    end
+
+    cam.Start3D()
+    sp = (pos + (ang:Forward() * 3200)):ToScreen()
+    cam.End3D()
+
+    if GetConVar("arccw_crosshair_trueaim"):GetBool() then
+        aimtr.start = self:GetShootSrc()
+    else
+        aimtr.start = pos
+    end
+
+    aimtr.endpos = aimtr.start + (ply:GetAimVector() * 100000)
+    aimtr.filter = {self:GetOwner()}
+    aimtr.output = aimtr_result
+
+    local veh = self:GetOwner():GetVehicle()
+
+    if veh:IsValid() then
+        local va = veh:GetAngles()
+        -- va.p = -va.p * 2
+        aimtr.endpos = aimtr.start + (ply:EyeAngles() + va):Forward() * 100000
+        table.Add(aimtr.filter, {veh})
+    end
+
+    util.TraceLine(aimtr)
+
+    cam.Start3D()
+    local w2s = aimtr_result.HitPos:ToScreen()
+    cam.End3D()
+
+    sp.x = w2s.x sp.y = w2s.y
     x, y = sp.x, sp.y
 
     local st = self:GetSightTime() / 4

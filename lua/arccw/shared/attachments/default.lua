@@ -152,6 +152,8 @@ att.LHIK_Animation = false
 att.LHIK_GunDriver = ""
 att.LHIK_CamDriver = ""
 
+att.Override_NoHideLeftHandInCustomization = nil
+
 att.ActivateElements = {}
 
 att.MountPositionOverride = nil -- set between 0 to 1 to always mount in a certain position
@@ -184,6 +186,8 @@ att.AdditionalSights = {
 }
 
 att.UBGL = false -- is underbarrel grenade launcher
+att.UBGL_Icon = nil -- set to a IMaterial to replace icon in HUD
+
 
 att.UBGL_Automatic = false
 att.UBGL_ClipSize = 1
@@ -201,8 +205,10 @@ att.UBGL_Reload = function(wep, ubgl) end
 att.Silencer = false
 
 att.Bipod = false
+att.Bipod_Icon = nil -- set to a IMaterial to replace icon in HUD
 att.Mult_BipodRecoil = 0.25
 att.Mult_BipodDispersion = 0.1
+att.Override_InBipodPos = nil
 
 att.Override_AlwaysPhysBullet = nil
 att.Override_NeverPhysBullet = nil
@@ -253,6 +259,12 @@ att.HolosightColor = Color(255, 255, 255)
 att.Override_Ammo = "ar2" -- overrides the ammo type with this one
 
 att.Override_Firemodes = {}
+
+-- you can use _Priority to determine the priority of overrides.
+-- append it to the end of an Override_ stat to set this.
+-- for example, att.Override_Firemodes_Priority = 2
+-- higher priority = will be chosen over lower priority
+-- default priority for all stats is 1.
 
 -- all hooks will work when applied to the SWEP table as well
 -- e.g. SWEP.Hook_FireBullets
@@ -403,6 +415,11 @@ att.Hook_GetShootSound = function(wep, sound) end
 att.Hook_GetShootDrySound = function(wep, sound) end
 att.Hook_GetDistantShootSound = function(wep, sound) end
 
+-- return a string to change the default attachment name and icon for that slot
+-- int slot = slot of attachment to name/set icon
+att.Hook_GetDefaultAttName = function(wep, slot) end
+att.Hook_GetDefaultAttIcon = function(wep, slot) end
+
 -- or just add more!
 -- data has entries:
 -- string sound
@@ -467,6 +484,24 @@ att.Mult_HeatDelayTime = 1
 att.Override_HeatFix = nil
 att.Override_HeatLockout = nil
 att.Hook_Overheat = function(wep, heat) end
+att.Hook_PostOverheat = function(wep) end
+-- Return true to not do animation/heat locking
+att.Hook_OnOverheat = function(wep) end
+
+-- malfunction related buffs
+att.Override_Malfunction = nil
+att.Override_MalfunctionTakeRound = nil
+att.Override_MalfunctionJam = nil
+att.Mult_MalfunctionMean = 1
+att.Mult_MalfunctionVariance = 1
+att.Mult_MalfunctionFixTime = 1
+
+-- Called every time malfunction is checked. return true to cause malfunction
+att.Hook_Malfunction = function(wep, count) end
+-- Called when a malfunction is about to happen. return true to stop malfunction
+att.Hook_OnMalfunction = function(wep, count) end
+-- Called after a malfunction has occurred.
+att.Hook_PostMalfunction = function(wep) end
 
 att.Override_Tracer = nil -- tracer effect name
 att.Override_TracerNum = nil
@@ -502,6 +537,8 @@ att.Add_ChamberSize = nil
 att.Mult_Recoil = 1
 att.Mult_RecoilSide = 1
 att.Mult_VisualRecoilMult = 1
+
+att.Mult_Sway = 1
 
 att.Override_ShootWhileSprint = nil
 

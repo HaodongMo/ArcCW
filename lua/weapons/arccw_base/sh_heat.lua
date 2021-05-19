@@ -41,10 +41,14 @@ function SWEP:AddHeat(a)
     self:SetHeat(self.Heat)
 
     if overheat then
+
+        local ret = self:GetBuff_Hook("Hook_OnOverheat")
+        if ret then return end
+
         if anim then
             self:PlayAnimation(anim, mult, true, 0, true)
 
-            if self.HeatFix or self:GetBuff_Override("Override_HeatFix") then
+            if self:GetBuff_Override("Override_HeatFix", self.HeatFix) then
                 self:SetTimer(self:GetAnimKeyTime(anim) * mult,
                 function()
                     self:SetHeat(0)
@@ -55,6 +59,8 @@ function SWEP:AddHeat(a)
         if self.HeatLockout or self:GetBuff_Override("Override_HeatLockout") then
             self:SetHeatLocked(true)
         end
+
+        self:GetBuff_Hook("Hook_PostOverheat")
     end
 end
 
@@ -78,4 +84,112 @@ end
 
 function SWEP:HeatEnabled()
     return self.Jamming or self:GetBuff_Override("Override_Jamming")
+end
+
+function SWEP:MalfunctionEnabled()
+    local cvar = GetConVar("arccw_malfunction"):GetInt()
+    return cvar == 2 or (cvar == 1 and self:GetBuff_Override("Override_Malfunction", self.Malfunction))
+end
+
+function SWEP:GetMalfunctionAnimation()
+    local anim = self:SelectAnimation("unjam")
+    if !self.Animations[anim] then anim = self:SelectAnimation("fix") end
+    if !self.Animations[anim] then anim = self:SelectAnimation("cycle") end
+    if !self.Animations[anim] then anim = nil end
+    return anim
+end
+
+function SWEP:DoMalfunction()
+
+    if !self:MalfunctionEnabled() then return false end
+
+    -- Auto calculated malfunction mean
+    if self.MalfunctionMean == nil then
+        local mm
+        if self.Jamming then mm = self.HeatCapacity * 4
+        else mm = self.Primary.ClipSize * 8 end
+
+        if self.ManualAction then
+            -- Manual guns are less likely to jam
+            mm = mm * 2
+        else
+            -- Burst and semi only guns are less likely to jam
+            local a, b = false, false
+            for k, v in pairs(self.Firemodes) do
+                if !v.Mode then continue end
+                if v.Mode == 2 then a = true
+                elseif v.Mode < 0 then b = true end
+            end
+            if !a and b then
+                mm = mm * 1.25
+            elseif !a and !b then
+                mm = mm * 1.5
+            end
+        end
+        self.MalfunctionMean = mm
+    end
+
+    local cvar = GetConVar("arccw_mult_malfunction"):GetFloat()
+    local mean = self:GetBuff("MalfunctionMean") / math.max(cvar, 0.00001)
+    local var = mean * math.Clamp(self:GetBuff("MalfunctionVariance") * (1 + cvar * cvar), 0, 1)
+    local count = (self.ShotsSinceMalfunction or 0)
+
+    if !self.NextMalfunction then
+        math.randomseed(math.Round(util.SharedRandom(count, -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)))
+        self.NextMalfunction = math.sqrt(-2 * var * math.log(math.random())) * math.cos(2 * math.pi * math.random())
+    end
+
+    local ret = self:GetBuff_Hook("Hook_Malfunction", count, true)
+    if ret != nil then return ret end
+
+    --print(mean, var, count, self.NextMalfunction)
+    if count >= self.NextMalfunction + mean then
+        local ret2 = self:GetBuff_Hook("Hook_OnMalfunction", count, true)
+        if ret2 then return false end
+
+        self:MyEmitSound(self:GetBuff_Override("Override_MalfunctionSound") or self.MalfunctionSound, 75, 100, 1, CHAN_ITEM)
+
+        local wait = self:GetBuff("MalfunctionWait")
+        self:SetNextPrimaryFire(CurTime() + wait)
+
+        local anim = self:GetMalfunctionAnimation()
+        if !anim or self:GetBuff_Override("Override_MalfunctionJam", self.MalfunctionJam) then
+            self:SetMalfunctionJam(true)
+        else
+            self:SetTimer(wait,
+            function()
+                self:MalfunctionClear()
+            end)
+        end
+
+        self:GetBuff_Hook("Hook_PostMalfunction")
+        self.ShotsSinceMalfunction = 0
+        self.NextMalfunction = nil
+
+        return true
+    else
+        self.ShotsSinceMalfunction = (self.ShotsSinceMalfunction or 0) + 1
+        return false
+    end
+end
+
+function SWEP:MalfunctionClear()
+
+    if self:GetBuff_Override("Override_MalfunctionTakeRound", self.MalfunctionTakeRound) then
+        self:TakePrimaryAmmo(self:GetBuff("AmmoPerShot"))
+    end
+
+    local anim = self:GetMalfunctionAnimation()
+    if anim then
+        self:PlayAnimation(anim, self:GetBuff_Mult("Mult_MalfunctionFixTime"), true, 0, true)
+        local wait = self:GetAnimKeyTime(anim)
+        self:SetTimer(wait,
+        function()
+            self:SetMalfunctionJam(false)
+        end)
+        return true
+    else
+        self:SetMalfunctionJam(false)
+        return false
+    end
 end

@@ -28,6 +28,7 @@
 
 local BulletPanel = {
     { type = "h", text = "#arccw.adminonly" },
+    { type = "c", text = "#arccw.bullet_help" },
     { type = "b", text = "#arccw.cvar.bullet_enable", var = "arccw_bullet_enable", sv = true },
     { type = "b", text = "#arccw.cvar.enable_penetration", var = "arccw_enable_penetration", sv = true },
     { type = "b", text = "#arccw.cvar.enable_ricochet", var = "arccw_enable_ricochet", sv = true },
@@ -69,6 +70,7 @@ local PerformancePanel = {
     -- { type = "c", text = "#arccw.cvar.flatscopes.desc" },
     { type = "b", text = "#arccw.cvar.muzzleeffects", var = "arccw_muzzleeffects" },
     { type = "b", text = "#arccw.cvar.fastmuzzles", var = "arccw_fastmuzzles" },
+    { type = "b", text = "#arccw.cvar.fasttracers", var = "arccw_fasttracers" },
     { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
     { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
     { type = "i", text = "#arccw.cvar.visibility", var = "arccw_visibility", min = -1, max = 32000},
@@ -132,6 +134,8 @@ local HudPanel = {
     { type = "b", text = "#arccw.cvar.attinv_darkunowned", var = "arccw_attinv_darkunowned" },
     { type = "b", text = "#arccw.cvar.attinv_onlyinspect", var = "arccw_attinv_onlyinspect" },
     { type = "b", text = "#arccw.cvar.attinv_simpleproscons", var = "arccw_attinv_simpleproscons" },
+    --{ type = "b", text = "#arccw.cvar.attinv_gamemodebuttons", var = "arccw_attinv_gamemodebuttons" },
+    --{ type = "c", text = "#arccw.cvar.attinv_gamemodebuttons.desc" },
 
     { type = "h", text = "#arccw.ammohud" },
     { type = "b", text = "#arccw.cvar.hud_3dfun", var = "arccw_hud_3dfun" },
@@ -257,6 +261,8 @@ local DevPanel = {
     { type = "c", text = "#arccw.cvar.dev_showignored.desc" },
     { type = "b", text = "#arccw.cvar.dev_debug", var = "arccw_dev_debug", sv = true },
     { type = "c", text = "#arccw.cvar.dev_debug.desc" },
+    { type = "b", text = "Customization Menu Overhaul beta", var = "arccw_dev_cust2beta", sv = true },
+    { type = "c", text = "Enable the customization menu overhaul. Remove this convar when we done doe" },
     { type = "p", text = "#arccw.cvar.dev_reloadatts", func = function() RunConsoleCommand("arccw_reloadatts") end },
     { type = "h", text = "#arccw.cvar.dev_reloadatts.desc" },
     { type = "p", text = "#arccw.cvar.dev_reloadlangs", func = function() RunConsoleCommand("arccw_reloadlangs") end },
@@ -282,8 +288,12 @@ local MultsPanel = {
     { type = "f", text = "#arccw.cvar.mult_heat",            var = "arccw_mult_heat", min = 0, max = 3, sv = true },
     { type = "f", text = "#arccw.cvar.mult_crouchdisp",      var = "arccw_mult_crouchdisp", min = 0, max = 1, sv = true },
     { type = "f", text = "#arccw.cvar.mult_crouchrecoil",    var = "arccw_mult_crouchrecoil", min = 0, max = 1, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_sway",            var = "arccw_mult_sway", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_malfunction",     var = "arccw_mult_malfunction", min = 0, max = 10, sv = true },
     { type = "b", text = "#arccw.cvar.mult_startunloaded",   var = "arccw_mult_startunloaded", sv = true },
     { type = "b", text = "#arccw.cvar.mult_shootwhilesprinting",   var = "arccw_mult_shootwhilesprinting", sv = true },
+    { type = "o", text = "#arccw.cvar.malfunction", var = "arccw_malfunction", sv = true,
+            choices = {[0] = "#arccw.cvar.malfunction.0", [1] = "#arccw.cvar.malfunction.1", [2] = "#arccw.cvar.malfunction.2"}},
 }
 
 local MultPresets = {
@@ -299,7 +309,10 @@ local MultPresets = {
         arccw_mult_sighttime                = "1",
         arccw_mult_defaultclip              = "1",
         arccw_mult_attchance                = "1",
+        arccw_mult_crouchdisp               = "1",
+        arccw_mult_crouchrecoil             = "1",
         arccw_mult_heat                     = "1",
+        arccw_mult_malfunction              = "1",
     }
 }
 
@@ -636,6 +649,6 @@ ArcCW.ClientMenus = {
 
 hook.Add("PopulateToolMenu", "ArcCW_Options", function()
     for menu, data in pairs(ArcCW.ClientMenus) do
-        spawnmenu.AddToolMenuOption("Options", "ArcCW", menu, data.text, "", "", data.func)
+        spawnmenu.AddToolMenuOption("Utilities", "ArcCW", menu, data.text, "", "", data.func)
     end
 end)

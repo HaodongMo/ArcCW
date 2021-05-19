@@ -150,7 +150,7 @@ function ENT:DetonateRound()
         AmmoType = self.AmmoType,
         Src = self:WorldSpaceCenter(),
         Dir = self:GetUp(),
-        Spread = Vector(3, 3, 0),
+        Spread = Vector(math.pi * 2, math.pi * 2, 0),
         IgnoreEntity = self
     })
     self.AmmoCount = self.AmmoCount - count
@@ -173,7 +173,7 @@ function ENT:Detonate(wet, attacker)
             AmmoType = self.AmmoType,
             Src = self:WorldSpaceCenter(),
             Dir = self:GetUp(),
-            Spread = Vector(3, 3, 0),
+            Spread = Vector(math.pi * 2, math.pi * 2, 0),
             IgnoreEntity = self
         })
     end

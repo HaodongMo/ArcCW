@@ -41,6 +41,7 @@ ArcCW.ClientConVars = {
     ["arccw_attinv_hideunowned"]      = { def =  0 },
     ["arccw_attinv_darkunowned"]      = { def =  0 },
     ["arccw_attinv_closeonhurt"]      = { def =  0, usri = true },
+    ["arccw_attinv_gamemodebuttons"]  = { def =  1 },
 
     ["arccw_language"]                = { def =  "", usri = true },
     ["arccw_font"]                    = { def =  "", usri = true },
@@ -57,6 +58,7 @@ ArcCW.ClientConVars = {
     ["arccw_att_showothers"]          = { def =  1 },
     ["arccw_visibility"]              = { def =  8000 },
     ["arccw_fastmuzzles"]             = { def =  0 },
+    ["arccw_fasttracers"]             = { def =  0 },
 
     ["arccw_2d3d"]                    = { def =  1 },
 
@@ -98,14 +100,14 @@ ArcCW.ClientConVars = {
     ["arccw_vm_coolsway"]             = { def =  1 },
     ["arccw_vm_coolview"]             = { def =  1 },
     ["arccw_vm_coolview_mult"]        = { def =  1 },
-    ["arccw_vm_look_xmult"]            = { def =  1 },
-    ["arccw_vm_look_ymult"]            = { def =  1 },
-    ["arccw_vm_sway_xmult"]            = { def =  1 },
-    ["arccw_vm_sway_ymult"]            = { def =  1 },
-    ["arccw_vm_sway_zmult"]            = { def =  1 },
+    ["arccw_vm_look_xmult"]           = { def =  1 },
+    ["arccw_vm_look_ymult"]           = { def =  1 },
+    ["arccw_vm_sway_xmult"]           = { def =  1 },
+    ["arccw_vm_sway_ymult"]           = { def =  1 },
+    ["arccw_vm_sway_zmult"]           = { def =  1 },
 
-    ["arccw_vm_sway_speedmult"]        = { def =  1 },
-    ["arccw_vm_sway_rotatemult"]       = { def =  1 },
+    ["arccw_vm_sway_speedmult"]       = { def =  1 },
+    ["arccw_vm_sway_rotatemult"]      = { def =  1 },
 
     ["arccw_toggleads"]               = { def = 0, usri = true },
     ["arccw_altubglkey"]              = { def = 0, usri = true },
@@ -115,7 +117,9 @@ ArcCW.ClientConVars = {
     ["arccw_altsafety"]               = { def = 0, usri = true },
     ["arccw_automaticreload"]         = { def = 0, usri = true },
 
-    ["arccw_aimassist_cl"]               = { def = 0, usri = true },
+    ["arccw_aimassist_cl"]            = { def = 0, usri = true },
+
+    ["arccw_dev_removeonclose"]       = { def = 0, desc = "Remove the hud when closing instead of fading out, allowing easy reloading of the hud." },
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do
