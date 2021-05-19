@@ -61,6 +61,8 @@ function ENT:Use(activator, caller)
             end
         end
 
+        if hook.Run("ArcCW_PickupAttEnt", caller, i, k) then continue end
+
         ArcCW:PlayerGiveAtt(caller, i, k)
 
         take = true
@@ -76,7 +78,7 @@ end
 
 else
 
-local defaulticon = Material("hud/atts/default.png")
+local defaulticon = Material("arccw/hud/atts/default.png")
 
 
 function ENT:DrawTranslucent()

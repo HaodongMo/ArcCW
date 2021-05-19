@@ -190,12 +190,9 @@ function SWEP:NPC_Shoot()
                 dmg:SetDamageType(ret.dmgtype)
                 dmg:SetDamage(ret.damage)
 
-                if dmg:GetDamageType() == DMG_BURN and ret.range <= self.Range then
-                    if num == 1 then
-                        dmg:SetDamageType(DMG_BULLET)
-                    else
-                        dmg:SetDamageType(DMG_BUCKSHOT)
-                    end
+                if dmg:IsDamageType(DMG_BURN) and hit.range <= self.Range then
+                    dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
+
                     local fx = EffectData()
                     fx:SetOrigin(tr.HitPos)
                     util.Effect("arccw_incendiaryround", fx)
@@ -356,7 +353,7 @@ function SWEP:GetNPCRestTimes()
     local o = 1
 
     o = o + (m * rs * 0.5)
-    o = o + postburst
+    o = o + postburst * self:GetBuff_Mult("Mult_PostBurstDelay") + self:GetBuff_Add("Add_PostBurstDelay")
 
     return 0.2 * o, 0.6 * o
 end

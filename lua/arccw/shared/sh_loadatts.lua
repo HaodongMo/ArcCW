@@ -50,12 +50,22 @@ function ArcCW.LoadAttachmentType(att)
     end
 end
 
+local function VerifyBlacklist()
+    for attName, v in pairs(ArcCW.AttachmentBlacklistTable) do
+        if !ArcCW.AttachmentTable[attName] then
+            ArcCW.AttachmentBlacklistTable[attName] = nil
+        end
+    end
+end
+
 local function ArcCW_SendBlacklist(ply)
     if SERVER then
         -- Only load if table is empty, bruh
         if table.IsEmpty(ArcCW.AttachmentBlacklistTable) then
             ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
-            print("Loaded " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " blacklisted ArcCW attachments.")
+            local curcount = table.Count(ArcCW.AttachmentBlacklistTable)
+            VerifyBlacklist()
+            print("Loaded " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " active (" .. curcount .. " total) blacklisted ArcCW attachments.")
         end
         if ArcCW.AttachmentBlacklistTable and player.GetCount() > 0 then
             timer.Simple(0, function()
@@ -75,6 +85,16 @@ local function ArcCW_SendBlacklist(ply)
     end
 end
 
+local function ArcCW_LoadAtt(v)
+    att = {}
+    shortname = string.sub(v, 1, -5)
+
+    include("arccw/shared/attachments/" .. v)
+    AddCSLuaFile("arccw/shared/attachments/" .. v)
+
+    ArcCW.LoadAttachmentType(att)
+end
+
 local function ArcCW_LoadAtts()
     ArcCW.AttachmentTable = {}
     ArcCW.AttachmentIDTable = {}
@@ -83,13 +103,9 @@ local function ArcCW_LoadAtts()
     ArcCW.AttachmentBits = nil
 
     for k, v in pairs(file.Find("arccw/shared/attachments/*", "LUA")) do
-        att = {}
-        shortname = string.sub(v, 1, -5)
-
-        include("arccw/shared/attachments/" .. v)
-        AddCSLuaFile("arccw/shared/attachments/" .. v)
-
-        ArcCW.LoadAttachmentType(att)
+        if !pcall(function() ArcCW_LoadAtt(v) end) then
+            print("!!!! Attachment " .. v .. " has errors!")
+        end
     end
 
     print("Loaded " .. tostring(ArcCW.NumAttachments) .. " ArcCW attachments.")
@@ -115,9 +131,17 @@ function ArcCW.GetBitNecessity()
     return ArcCW.AttachmentBits
 end
 
-ArcCW_LoadAtts()
-
 if CLIENT then
+    concommand.Add("arccw_reloadatts", function()
+        if !LocalPlayer():IsSuperAdmin() then return end
+
+        net.Start("arccw_reloadatts")
+        net.SendToServer()
+    end)
+
+    net.Receive("arccw_reloadatts", function(len, ply)
+        ArcCW_LoadAtts()
+    end)
 
     spawnmenu.AddCreationTab( "#spawnmenu.category.entities", function()
 
@@ -151,20 +175,7 @@ if CLIENT then
             net.SendToServer()
         end
     end )
-
-    concommand.Add("arccw_reloadatts", function()
-        if !LocalPlayer():IsSuperAdmin() then return end
-
-        net.Start("arccw_reloadatts")
-        net.SendToServer()
-    end)
-
-    net.Receive("arccw_reloadatts", function(len, ply)
-        ArcCW_LoadAtts()
-    end)
-
 elseif SERVER then
-
     net.Receive("arccw_reloadatts", function(len, ply)
         if !ply:IsSuperAdmin() then return end
 
@@ -212,3 +223,5 @@ end
 hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()
     if GetConVar("arccw_reloadatts_mapcleanup"):GetBool() then ArcCW_LoadAtts() end
 end)
+
+ArcCW_LoadAtts()

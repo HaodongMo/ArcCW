@@ -42,6 +42,8 @@ SWEP.WorldModelOffset = nil
 --     ang = Angle(0, 0, 0)
 -- }
 
+SWEP.NoHideLeftHandInCustomization = false
+
 SWEP.Damage = 26
 SWEP.DamageMin = 10 -- damage done at maximum range
 SWEP.DamageRand = 0 -- damage will vary randomly each shot by this fraction
@@ -72,7 +74,7 @@ SWEP.PhysTracerProfile = 0 -- color for phys tracer.
 
 SWEP.TracerNum = 1 -- tracer every X
 SWEP.TracerFinalMag = 0 -- the last X bullets in a magazine are all tracers
-SWEP.Tracer = nil -- override tracer (hitscan) effect
+SWEP.Tracer = "arccw_tracer" -- override tracer (hitscan) effect
 SWEP.TracerCol = Color(255, 255, 255)
 SWEP.HullSize = 0 -- HullSize used by FireBullets
 
@@ -120,6 +122,9 @@ SWEP.RecoilRise = 1
 SWEP.MaxRecoilBlowback = -1
 SWEP.VisualRecoilMult = 1.25
 SWEP.RecoilPunch = 1.5
+SWEP.RecoilPunchBackMax = 1
+
+SWEP.Sway = 0
 
 SWEP.ShotgunSpreadDispersion = false -- dispersion will cause pattern to increase instead of shifting
 SWEP.ShotgunSpreadPattern = nil
@@ -140,11 +145,15 @@ SWEP.Firemode = 1 -- 0: safe, 1: semi, 2: auto, negative: burst
 SWEP.Firemodes = {
     -- {
     --     Mode = 1,
-    --     CustomBars = "----_--_-_", -- custom bar setup
-                                      --  '-' for filled
-                                      --  '_' for hollow
-                                      --  '#' for empty
-                                      --  '!' for red w white outline
+    --     CustomBars = "---_#!",
+--[[ 
+                Custom bar setup
+        Colored variants        Classic
+        'a' Filled              '-' Filled
+        'b' Outline             '_' Outline
+        'd' CLR w Outline       '!' Red w Outline        
+                    '#' Empty
+]]
     --     PrintName = "PUMP",
     --     RunAwayBurst = false,
     --     AutoBurst = false, -- hold fire to continue firing bursts
@@ -191,12 +200,12 @@ SWEP.DistantShootSound = nil
 SWEP.ShootSoundSilenced = "weapons/arccw/m4a1/m4a1-1.wav"
 SWEP.ShootSoundSilencedLooping = nil
 SWEP.FiremodeSound = "weapons/arccw/firemode.wav"
-SWEP.MeleeSwingSound = "weapons/arccw/m249/m249_draw.wav"
-SWEP.MeleeMissSound = "weapons/iceaxe/iceaxe_swing1.wav"
-SWEP.MeleeHitSound = "weapons/arccw/knife/knife_hitwall1.wav"
-SWEP.MeleeHitNPCSound = "physics/body/body_medium_break2.wav"
-SWEP.EnterBipodSound = "weapons/arccw/m249/m249_coverdown.wav"
-SWEP.ExitBipodSound = "weapons/arccw/m249/m249_coverup.wav"
+SWEP.MeleeSwingSound = "weapons/arccw/melee_lift.wav"
+SWEP.MeleeMissSound = "weapons/arccw/melee_miss.wav"
+SWEP.MeleeHitSound = "weapons/arccw/melee_hitworld.wav"
+SWEP.MeleeHitNPCSound = "weapons/arccw/melee_hitbody.wav"
+SWEP.EnterBipodSound = "weapons/arccw/bipod_down.wav"
+SWEP.ExitBipodSound = "weapons/arccw/bipod_up.wav"
 SWEP.SelectUBGLSound =  "weapons/arccw/ubgl_select.wav"
 SWEP.ExitUBGLSound = "weapons/arccw/ubgl_exit.wav"
 
@@ -222,6 +231,7 @@ SWEP.MuzzleEffectAttachment = 1 -- which attachment to put the muzzle on
 SWEP.CaseEffectAttachment = 2 -- which attachment to put the case effect on
 SWEP.ProceduralViewBobAttachment = nil -- attachment on which coolview is affected by, default is muzzleeffect
 SWEP.CamAttachment = nil -- if set, this attachment will control camera movement
+SWEP.MuzzleFlashColor = Color(244, 209, 66)
 
 SWEP.SpeedMult = 0.9
 SWEP.SightedSpeedMult = 0.75
@@ -271,12 +281,25 @@ SWEP.ProceduralIronFire = false
 SWEP.SightTime = 0.33
 SWEP.SprintTime = 0
 
+-- If Jamming is enabled, a heat meter will gradually build up until it reaches HeatCapacity.
+-- Once that happens, the gun will overheat, playing an animation. If HeatLockout is true, it cannot be fired until heat is 0 again.
 SWEP.Jamming = false
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
 SWEP.HeatDissipation = 2 -- rounds' worth of heat lost per second
 SWEP.HeatLockout = false -- overheating means you cannot fire until heat has been fully depleted
 SWEP.HeatDelayTime = 0.5
 SWEP.HeatFix = false -- when the "fix" animation is played, all heat is restored.
+
+-- If Malfunction is enabled, the gun has a random chance to be jammed
+-- after the gun is jammed, it won't fire unless reload is pressed, which plays the "unjam" animation
+-- if no "unjam", "fix", or "cycle" animations exist, the weapon will reload instead
+SWEP.Malfunction = false
+SWEP.MalfunctionJam = true -- After a malfunction happens, the gun will dryfire until reload is pressed. If unset, instead plays animation right after.
+SWEP.MalfunctionTakeRound = true -- When malfunctioning, a bullet is consumed.
+SWEP.MalfunctionWait = 0.5 -- The amount of time to wait before playing malfunction animation (or can reload)
+SWEP.MalfunctionMean = nil -- The mean number of shots between malfunctions, will be autocalculated if nil
+SWEP.MalfunctionVariance = 0.25 -- The fraction of mean for variance. e.g. 0.2 means 20% variance
+SWEP.MalfunctionSound = "weapons/arccw/malfunction.wav"
 
 SWEP.HoldtypeHolstered = "passive"
 SWEP.HoldtypeActive = "shotgun"
@@ -345,7 +368,7 @@ SWEP.BarrelOffsetHip = Vector(3, 0, -3)
 SWEP.CustomizePos = Vector(9.824, 0, -4.897)
 SWEP.CustomizeAng = Angle(12.149, 30.547, 0)
 
-SWEP.InBipodPos = Vector(-4, 0, -4)
+SWEP.InBipodPos = Vector(-8, 0, -4)
 SWEP.InBipodMult = Vector(2, 1, 1)
 
 SWEP.BarrelLength = 24
@@ -509,10 +532,11 @@ SWEP.Attachments = {}
 -- you can append suffixes for different states
 -- append list:
 
--- _iron, _sights, or _sight    for sighted variation
--- _sprint                        for sprinting variation
+-- _iron, _sights, or _sight     for sighted variation
+-- _sprint                       for sprinting variation
 -- _bipod                        for bipod variation
 -- _empty                        for empty variation
+-- _jammed                       for jammed variation
 
 -- this does not apply to reload animations.
 
@@ -605,7 +629,7 @@ SWEP.Secondary.DefaultClip = -1
 SWEP.Secondary.Automatic = false
 SWEP.Secondary.Ammo = "none"
 SWEP.DrawCrosshair = true
-SWEP.m_WeaponDeploySpeed = 90 -- 8008135 boobies is funny but it'll bitch in console :(
+SWEP.m_WeaponDeploySpeed = 80.08135 -- 8008135 boobies is funny but it'll bitch in console :(
         -- We don't do that here
 
 SWEP.ArcCW = true
@@ -634,7 +658,7 @@ SWEP.LHIKStartTime = 0
 end
 
 SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
-SWEP.RegularClipSize = 0
+-- SWEP.RegularClipSize = 0
 
 if SERVER then
 
@@ -684,6 +708,7 @@ AddCSLuaFile("sh_ttt.lua")
 AddCSLuaFile("sh_util.lua")
 AddCSLuaFile("sh_akimbo.lua")
 
+AddCSLuaFile("cl_customize2.lua")
 AddCSLuaFile("cl_viewmodel.lua")
 AddCSLuaFile("cl_scope.lua")
 AddCSLuaFile("cl_crosshair.lua")
@@ -696,6 +721,7 @@ AddCSLuaFile("cl_presets.lua")
 AddCSLuaFile("cl_light.lua")
 
 if CLIENT then
+    include("cl_customize2.lua")
     include("cl_viewmodel.lua")
     include("cl_scope.lua")
     include("cl_crosshair.lua")
@@ -717,21 +743,32 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 5, "NthShot")
     self:NetworkVar("Int", 6, "BurstCountUM2") -- akimbo trolololol
 
+    -- 2 = insert
+    -- 3 = cancelling
+    -- 4 = insert empty
+    -- 5 = cancelling empty
+    self:NetworkVar("Int", 6, "ShotgunReloading")
+
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
     self:NetworkVar("Bool", 2, "InBipod")
     self:NetworkVar("Bool", 3, "InUBGL")
     self:NetworkVar("Bool", 4, "InCustomize")
     self:NetworkVar("Bool", 5, "GrenadePrimed")
-    self:NetworkVar("Bool", 6, "ReqEnd")
+    self:NetworkVar("Bool", 6, "MalfunctionJam")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
     self:NetworkVar("Float", 2, "ReloadingREAL")
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
-    self:NetworkVar("Float", 5, "ReloadingREAL2") -- akimbo trolololol
-    self:NetworkVar("Float", 6, "MagUpIn2") -- electric boogaloo
+    self:NetworkVar("Float", 5, "NextIdle")
+    self:NetworkVar("Float", 6, "ReloadingREAL2") -- akimbo trolololol
+    self:NetworkVar("Float", 7, "MagUpIn2") -- electric boogaloo
+
+    self:NetworkVar("Vector", 0, "BipodPos")
+
+    self:NetworkVar("Angle", 0, "BipodAngle")
 end
 
 function SWEP:OnRestore()
@@ -818,13 +855,11 @@ end
 
 function SWEP:SetState(v)
     self:SetNWState(v)
-    -- if CLIENT then
-    --     self.State = v
-    -- end
+    if !game.SinglePlayer() and CLIENT then self.State = v end
 end
 
 function SWEP:GetState(v)
-    -- if CLIENT and self.State then return self.State end
+    if !game.SinglePlayer() and CLIENT and self.State then return self.State end
     return self:GetNWState(v)
 end
 

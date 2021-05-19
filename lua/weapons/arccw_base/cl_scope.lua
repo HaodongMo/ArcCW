@@ -80,7 +80,7 @@ end
 
 -- scraped from source SDK 2013, just like this viewpunch damping code
 local PUNCH_DAMPING = 9
-local PUNCH_SPRING_CONSTANT = 100
+local PUNCH_SPRING_CONSTANT = 120
 
 function SWEP:DoOurViewPunch()
     -- if ( player->m_Local.m_vecPunchAngle->LengthSqr() > 0.001 || player->m_Local.m_vecPunchAngleVel->LengthSqr() > 0.001 )
@@ -88,13 +88,15 @@ function SWEP:DoOurViewPunch()
     local vpa = self.ViewPunchAngle
     local vpv = self.ViewPunchVelocity
 
-    if lensqr(vpa) > 0.001 or lensqr(vpv) > 0.001 then
+    if lensqr(vpa) + lensqr(vpv) > 0.000001 then
         -- {
         --     player->m_Local.m_vecPunchAngle += player->m_Local.m_vecPunchAngleVel * gpGlobals->frametime;
         --     float damping = 1 - (PUNCH_DAMPING * gpGlobals->frametime);
 
-        vpa = vpa + (vpv * FrameTime())
-        local damping = 1 - (PUNCH_DAMPING * FrameTime())
+        local ft = FrameTime()
+
+        vpa = vpa + (vpv * ft)
+        local damping = 1 - (PUNCH_DAMPING * ft)
 
         --     if ( damping < 0 )
         --     {
@@ -110,7 +112,7 @@ function SWEP:DoOurViewPunch()
         --     // torsional spring
         --     // UNDONE: Per-axis spring constant?
         --     float springForceMagnitude = PUNCH_SPRING_CONSTANT * gpGlobals->frametime;
-        local springforcemagnitude = PUNCH_SPRING_CONSTANT * FrameTime()
+        local springforcemagnitude = PUNCH_SPRING_CONSTANT * ft
         --     springForceMagnitude = clamp(springForceMagnitude, 0.f, 2.f );
         springforcemagnitude = math.Clamp(springforcemagnitude, 0, 2)
         --     player->m_Local.m_vecPunchAngleVel -= player->m_Local.m_vecPunchAngle * springForceMagnitude;
@@ -154,7 +156,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
 
-    if att then
+    if att and (!game.SinglePlayer() or SERVER) then
         local attang = vm:GetAttachment(att).Ang
 
         attang = vm:WorldToLocalAngles(attang)

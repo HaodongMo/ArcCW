@@ -5,6 +5,7 @@ ArcCW.NoDraw = true
 
 ArcCW.HUToM    = 0.0254 -- 1 / 12 * 0.3048
 ArcCW.MOAToAcc = 0.00092592592 -- 10 / 180 / 60
+ArcCW.RecoilUnit = 41.4 -- lbfps
 
 ArcCW.STATE_IDLE      = 0
 ArcCW.STATE_SIGHTS    = 1
@@ -40,6 +41,14 @@ ArcCW.ShotgunShellSoundsTable = {
     "weapons/fx/tink/shotgun_shell3.wav"
 }
 
+ArcCW.RicochetSounds = {
+    "weapons/arccw/ricochet01.wav",
+    "weapons/arccw/ricochet02.wav",
+    "weapons/arccw/ricochet03.wav",
+    "weapons/arccw/ricochet04.wav",
+    "weapons/arccw/ricochet05.wav"
+ }
+
 ArcCW.ReloadTimeTable = {
     [ACT_HL2MP_GESTURE_RELOAD_AR2]      = 2,
     [ACT_HL2MP_GESTURE_RELOAD_SMG1]     = 2,
@@ -61,13 +70,21 @@ ArcCW.ReplaceWeapons = {
     ["weapon_annabelle"] = true,
 }
 
+ArcCW.MeleeDamageTypes = {
+    [DMG_GENERIC] = "dmg.generic",
+    [DMG_BULLET] = "dmg.bullet",
+    [DMG_SLASH] = "dmg.slash",
+    [DMG_CLUB] = "dmg.club",
+    [DMG_SHOCK] = "dmg.shock",
+}
+
 ArcCW.PenTable = {
    [MAT_ANTLION]     = 1,
    [MAT_BLOODYFLESH] = 1,
    [MAT_CONCRETE]    = 0.75,
    [MAT_DIRT]        = 0.5,
    [MAT_EGGSHELL]    = 1,
-   [MAT_FLESH]       = 0.25,
+   [MAT_FLESH]       = 0.1,
    [MAT_GRATE]       = 1,
    [MAT_ALIENFLESH]  = 0.25,
    [MAT_CLIP]        = 1000,

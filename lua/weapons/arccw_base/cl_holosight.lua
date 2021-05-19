@@ -53,13 +53,17 @@ function SWEP:DoHolosight()
     end
 end
 
+function SWEP:ShouldFlatScope()
+    return false -- this system was removed, but we need to keep this function
+end
+
 local rtsize = ScrH()
 
 local rtmat = GetRenderTarget("arccw_rtmat", rtsize, rtsize, false)
 local rtmat_cheap = GetRenderTarget("arccw_rtmat_cheap", ScrW(), ScrH(), false)
 local rtmat_spare = GetRenderTarget("arccw_rtmat_spare", ScrW(), ScrH(), false)
 
--- local shadow = Material("hud/scopes/shadow.png")
+-- local shadow = Material("arccw/hud/scopes/shadow.png")
 
 local thermal = Material("models/debug/debugwhite")
 local colormod = Material("pp/colour")
@@ -348,7 +352,7 @@ function SWEP:FormRTScope()
     local rt = {
         w = rtsize,
         h = rtsize,
-        angles = LocalPlayer():EyeAngles() + (self:GetOwner():GetViewPunchAngles() * 0.5),
+        angles = LocalPlayer():EyeAngles() + (self:GetOurViewPunchAngles() * 0.5),
         origin = LocalPlayer():EyePos(),
         drawviewmodel = false,
         fov = self:GetOwner():GetFOV() / mag / 1.2,
@@ -393,13 +397,12 @@ hook.Add("RenderScene", "ArcCW", function()
     local wpn = LocalPlayer():GetActiveWeapon()
 
     if !wpn.ArcCW then return end
-    if wpn:ShouldFlatScope() then return end
 
     wpn:FormRTScope()
 end)
 
-local black = Material("hud/black.png")
-local defaultdot = Material("hud/scopes/dot.png")
+local black = Material("arccw/hud/black.png")
+local defaultdot = Material("arccw/hud/scopes/dot.png")
 
 function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     -- holosight structure
@@ -456,53 +459,6 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     end
 
     local size = hs.HolosightSize or 1
-
-    if self:ShouldFlatScope() then
-        render.UpdateScreenEffectTexture()
-        local screen = render.GetScreenEffectTexture()
-
-        if asight.NVScope then
-            self:FormNightVision(screen)
-        end
-
-        if asight.Thermal then
-            self:FormThermalImaging(screen)
-        end
-
-        if asight.SpecialScopeFunction then
-            asight.SpecialScopeFunction(screen)
-        end
-
-        render.DrawTextureToScreen(screen)
-
-        render.ClearStencil()
-        render.SetStencilEnable(true)
-        render.SetStencilPassOperation(STENCIL_REPLACE)
-        render.SetStencilCompareFunction(STENCIL_ALWAYS)
-        render.SetStencilFailOperation(STENCIL_KEEP)
-        render.SetStencilZFailOperation(STENCIL_REPLACE)
-        render.SetStencilWriteMask(255)
-        render.SetStencilTestMask(255)
-
-        render.SetStencilReferenceValue(ref)
-
-        local spos = EyePos() + ((EyeAngles() + (Angle(0.1, 0, 0) * delta) + (self:GetOwner():GetViewPunchAngles() * 0.25)):Forward() * 2048)
-
-        cam.IgnoreZ(true)
-
-        render.SetMaterial(hs.HolosightReticle or defaultdot)
-        render.DrawSprite(spos, 3 * (1 - delta), 3 * (1 - delta), hsc or Color(255, 255, 255))
-
-        render.SetStencilPassOperation(STENCIL_REPLACE)
-        render.SetStencilCompareFunction(STENCIL_NOTEQUAL)
-
-        render.SetMaterial(black)
-        render.DrawScreenQuad()
-
-        render.SetStencilEnable(false)
-        cam.IgnoreZ(false)
-        return
-    end
 
     local hsmag = asight.ScopeMagnification or 1
 
@@ -588,15 +544,13 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     ang:RotateAroundAxis(ang:Forward(), -90)
 
-    ang = ang + (self:GetOwner():GetViewPunchAngles() * 0.25)
-
     local dir = ang:Up()
 
     local pdiff = (pos - EyePos()):Length()
 
     pos = LerpVector(delta, EyePos(), pos)
 
-    local eyeangs = self:GetOwner():EyeAngles() - (self:GetOwner():GetViewPunchAngles() * 0.25)
+    local eyeangs = self:GetOwner():EyeAngles() + (self:GetOurViewPunchAngles() * 0.5)
 
     -- local vm = hsm or hsp
 
@@ -606,7 +560,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     pdiff = Lerp(delta, pdiff, 0)
 
-    local d = (32 + pdiff)
+    local d = (8 + pdiff)
 
     d = hs.HolosightConstDist or d
 
@@ -659,7 +613,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             -- local sx = -(sw - ScrW()) / 2
             -- local sy = -(sh - ScrH()) / 2
 
-            local cpos = self:GetOwner():EyePos() + ((EyeAngles() + (self:GetOwner():GetViewPunchAngles() * 0.5)):Forward() * 2048)
+            local cpos = self:GetOwner():EyePos() + ((EyeAngles() + (self:GetOurViewPunchAngles() * 0.5)):Forward() * 2048)
 
             cpos:Rotate(Angle(0, -ArcCW.StrafeTilt(self), 0))
 
@@ -704,39 +658,68 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     -- render.DrawQuad( corner1, corner2, corner3, corner4, hsc or hs.HolosightColor )
     cam.IgnoreZ( true )
 
+    render.SetStencilReferenceValue(ref)
+
+    -- render.SetMaterial(hs.HolosightReticle or defaultdot)
+    -- render.DrawSprite( pos, size * hsx, size * hsy, hsc or Color(255, 255, 255) )
+    -- if !hs.HolosightNoFlare then
+    --     render.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
+    --     local hss = 0.75
+    --     if hs.HolosightFlare then
+    --         hss = 1
+    --     end
+    --     render.DrawSprite( pos, size * hss * hsx, size * hss * hsy, Color(255, 255, 255, 255) )
+    -- end
+
+    local a = pos:ToScreen()
+    local x = a.x
+    local y = a.y
+
+    cam.Start2D()
+
     if hs.HolosightBlackbox then
-        render.SetStencilPassOperation(STENCIL_ZERO)
-        render.SetStencilCompareFunction(STENCIL_EQUAL)
+        render.SetStencilPassOperation(STENCIL_KEEP)
 
-        render.SetStencilReferenceValue(ref)
-
-        render.SetMaterial(hs.HolosightReticle or defaultdot)
-        render.DrawSprite(pos, size * hsx, size * hsy, hsc or Color(255, 255, 255))
-
-        if !hs.HolosightNoFlare then
-            render.SetMaterial(hs.HolosightFlare or hs.HolosightReticle)
-            render.DrawSprite(pos, size * 0.5 * hsx, size * 0.5 * hsy, Color(255, 255, 255))
-        end
-
-        render.SetStencilPassOperation(STENCIL_REPLACE)
-        render.SetStencilCompareFunction(STENCIL_EQUAL)
-
-        render.SetMaterial(black)
-        render.DrawScreenQuad()
-    else
-        render.SetStencilReferenceValue(ref)
-
-        render.SetMaterial(hs.HolosightReticle or defaultdot)
-        render.DrawSprite( pos, size * hsx, size * hsy, hsc or Color(255, 255, 255) )
-        if !hs.HolosightNoFlare then
-            render.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
-            local hss = 0.75
-            if hs.HolosightFlare then
-                hss = 1
-            end
-            render.DrawSprite( pos, size * hss * hsx, size * hss * hsy, Color(255, 255, 255, 255) )
-        end
+        surface.SetDrawColor(0, 0, 0, 255 * delta)
+        surface.DrawRect(0, 0, ScrW(), ScrH())
     end
+
+    render.SetStencilPassOperation(STENCIL_DECR)
+    render.SetStencilCompareFunction(STENCIL_EQUAL)
+
+    local hss = size * 32 * math.min(ScrW(), ScrH()) / 800
+
+    surface.SetMaterial(hs.HolosightReticle or defaultdot)
+    surface.SetDrawColor(hsc or Color(255, 255, 255))
+    surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
+
+    if !hs.HolosightNoFlare then
+        render.SetStencilPassOperation(STENCIL_KEEP)
+        render.SetStencilReferenceValue(ref - 1)
+        surface.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
+        surface.SetDrawColor(Color(255, 255, 255, 150))
+
+        local hss2 = hss
+
+        if !hs.HolosightFlare then
+            hss2 = hss2 * 0.75
+        end
+
+        surface.DrawTexturedRect(x - (hss2 / 2), y - (hss2 / 2), hss2, hss2)
+
+        render.SetStencilReferenceValue(ref)
+    end
+
+    if hs.HolosightBlackbox then
+        -- render.SetColorMaterialIgnoreZ()
+        -- render.DrawScreenQuad()
+
+        surface.SetDrawColor(0, 0, 0)
+        surface.DrawRect(0, 0, ScrW(), ScrH())
+        -- surface.DrawRect(0, (ScrH() - hss) / 2, ScrW(), (ScrH() - hss) / 2)
+    end
+
+    cam.End2D()
 
     render.SetStencilEnable( false )
 

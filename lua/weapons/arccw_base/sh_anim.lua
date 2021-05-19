@@ -25,12 +25,17 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_empty"
     end
 
+    if self:GetMalfunctionJam() and self.Animations[anim .. "_jammed"] then
+        anim = anim .. "_jammed"
+    end
+
     if !self.Animations[anim] then return end
 
     return anim
 end
 
 SWEP.LastAnimStartTime = 0
+SWEP.LastAnimFinishTime = 0
 
 function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorereload, absolute)
     mult = mult or 1
@@ -40,6 +45,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     skipholster = skipholster or false
     ignorereload = ignorereload or false
     absolute = absolute or false
+
+    local ct = CurTime() --pred and CurTime() or UnPredictedCurTime()
 
     if !self.Animations[key] then return end
 
@@ -75,11 +82,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 
             local st = (v.t * mult) - startfrom
 
-            if isnumber(v.t) then
-                if st < 0 then continue end
-                if self:GetOwner():IsPlayer() then
-                    self:SetTimer(st, function() if !game.SinglePlayer() and !IsFirstTimePredicted() then return end self:OurViewPunch(v.p or Vector(0, 0, 0)) end, id)
-                end
+            if isnumber(v.t) and st >= 0 and self:GetOwner():IsPlayer() and (game.SinglePlayer() or IsFirstTimePredicted()) then
+                self:SetTimer(st, function() self:OurViewPunch(v.p or Vector(0, 0, 0)) end, id)
             end
         end
     end
@@ -121,6 +125,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         time = vm:SequenceDuration(tseq) or 1
     end
 
+    if anim.Time == 0 then return end
+
     if absolute then
         time = 1
     end
@@ -130,8 +136,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if startfrom > (time * mult) then return end
 
     if tt then
-        self:SetNextPrimaryFire(CurTime() + ((anim.MinProgress or time) * mult) - startfrom)
+        self:SetNextPrimaryFire(ct + ((anim.MinProgress or time) * mult) - startfrom)
     end
+
+    --if CLIENT then
+    --    vm:SetAnimTime(ct - startfrom)
+    --end
 
     if anim.LHIK then
         -- self.LHIKTimeline = {
@@ -150,8 +160,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         --     self.LHIKTimeline[3] = math.huge
         --     self.LHIKTimeline[4] = math.huge
         -- end
-        self.LHIKStartTime = CurTime()
-        self.LHIKEndTime = CurTime() + ttime
+        self.LHIKStartTime = ct
+        self.LHIKEndTime = ct + ttime
 
         if anim.LHIKTimeline then
             self.LHIKTimeline = {}
@@ -184,7 +194,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end
 
     if anim.LastClip1OutTime then
-        self.LastClipOutTime = CurTime() + ((anim.LastClip1OutTime * mult) - startfrom)
+        self.LastClipOutTime = ct + ((anim.LastClip1OutTime * mult) - startfrom)
     end
 
     local seq = anim.Source
@@ -207,93 +217,59 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         seq = vm:LookupSequence(seq)
     end
 
+
     if seq then --!game.SinglePlayer() and CLIENT
+
+        --local lastseq = self:GetLastSequence()
+        --self:SetLastSequence(seq)
+        --local lastkey = self:GetLastAnim()
+        --self:SetLastAnim(key)
+
         -- Hack to fix an issue with playing one anim multiple times in a row
         -- Provided by Jackarunda
         local resetSeq = anim.HardResetAnim and vm:LookupSequence(anim.HardResetAnim)
         if resetSeq then
             vm:SendViewModelMatchingSequence(resetSeq)
-            vm:SetPlaybackRate(.1)
-            timer.Simple(0,function()
+            vm:SetPlaybackRate(0.1)
+            timer.Simple(0, function()
                 vm:SendViewModelMatchingSequence(seq)
                 local dur = vm:SequenceDuration()
-                vm:SetPlaybackRate(dur / (ttime + startfrom))
+                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
             end)
         else
             vm:SendViewModelMatchingSequence(seq)
             local dur = vm:SequenceDuration()
-            vm:SetPlaybackRate(dur / (ttime + startfrom))
+            vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
+            self.LastAnimStartTime = ct
+            self.LastAnimFinishTime = ct + (dur * mult)
         end
     end
 
-    -- :(
-    -- unfortunately, gmod seems to have broken the features required for this to work.
-    -- as such, I'm reverting to a more traditional reload system.
-
-    -- local framestorealtime = 1
-
-    -- if anim.FrameRate then
-    --     framestorealtime = 1 / anim.FrameRate
-    -- end
-
-    -- local dur = vm:SequenceDuration()
-    -- vm:SetPlaybackRate(dur / (ttime + startfrom))
-
-    -- if anim.Checkpoints then
-    --     self.CheckpointAnimation = key
-    --     self.CheckpointTime = startfrom
-
-    --     for i, k in pairs(anim.Checkpoints) do
-    --         if !k then continue end
-    --         if istable(k) then continue end
-    --         local realtime = k * framestorealtime
-
-    --         if realtime > startfrom then
-    --             self:SetTimer((realtime * mult) - startfrom, function()
-    --                 self.CheckpointAnimation = key
-    --                 self.CheckpointTime = realtime
-    --             end)
-    --         end
-    --     end
-    -- end
-
-    if CLIENT then
-        vm:SetAnimTime(CurTime() - startfrom)
-    end
-
     if anim.TPAnim then
-        if anim.TPAnimStartTime then
-            local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
-            if aseq then
-                self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, anim.TPAnimStartTime, true )
+        local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
+        if aseq then
+            self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, anim.TPAnimStartTime or 0, true )
+            if !game.SinglePlayer() and SERVER then
+                net.Start("arccw_networktpanim")
+                    net.WriteEntity(self:GetOwner())
+                    net.WriteUInt(aseq, 16)
+                    net.WriteFloat(anim.TPAnimStartTime or 0)
+                net.SendPVS(self:GetOwner():GetPos())
             end
-        else
-            local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
-            self:GetOwner():AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, 0, true )
         end
     end
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
 
-    if att then
+    if att and vm:GetAttachment(att) then
         local ang = vm:GetAttachment(att).Ang
-
         ang = vm:WorldToLocalAngles(ang)
-
         self.Cam_Offset_Ang = Angle(ang)
     end
 
     self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
 
-    self:SetTimer(ttime, function()
-        self:NextAnimation()
-
-        -- self:ResetCheckpoints()
-    end, key)
-
-    self:SetTimer(ttime, function()
-        self:PlayIdleAnimation(pred)
-    end, "idlereset")
+    self:SetNextIdle(CurTime() + ttime)
 end
 
 function SWEP:PlayIdleAnimation(pred)
@@ -370,20 +346,16 @@ function SWEP:GetAnimKeyTime(key, min)
     return t
 end
 
-function SWEP:QueueAnimation(key, mult, pred, sf)
-    pred = pred or false
-    sf = sf or false
-    table.insert(self.AnimQueue, {k = key, m = mult, p = pred, sf = sf})
-
-    if table.Count(self.AnimQueue) == 0 then
-        self:NextAnimation()
-    end
+if CLIENT then
+    net.Receive("arccw_networktpanim", function()
+        local ent = net.ReadEntity()
+        local aseq = net.ReadUInt(16)
+        local starttime = net.ReadFloat()
+        if ent ~= LocalPlayer() then
+            ent:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, starttime, true )
+        end
+    end)
 end
 
-function SWEP:NextAnimation()
-    if table.Count(self.AnimQueue) == 0 then return end
-
-    local anim = table.remove(self.AnimQueue, 1)
-
-    self:PlayAnimation(anim.k, anim.m, anim.p, 0, anim.sf)
-end
+function SWEP:QueueAnimation() end
+function SWEP:NextAnimation() end

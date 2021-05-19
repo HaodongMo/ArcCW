@@ -5,7 +5,7 @@ function SWEP:GetReloadTime()
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
     local anim = self:SelectReloadAnimation()
 
-    if !self.Animations[anim] then return {1.337, .69} end
+    if !self.Animations[anim] then return false end
 
     local full = self:GetAnimKeyTime(anim) * mult
     local magin = self:GetAnimKeyTime(anim, true) * mult
@@ -20,6 +20,7 @@ function SWEP:SetClipInfo(load)
 end
 
 function SWEP:Reload()
+
     if self:GetOwner():IsNPC() then
         return
     end
@@ -41,6 +42,17 @@ function SWEP:Reload()
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
+    -- DEBUG
+    --[[]
+    local vm = self.Owner:GetViewModel()
+    vm:SendViewModelMatchingSequence(vm:LookupSequence("reload"))
+    print("reload", CurTime())
+    if SERVER then
+        PrintMessage(HUD_PRINTTALK, "SERVER: " .. tostring(self:GetOwner()) .. " " .. CurTime())
+    end
+    if true then self:SetNextPrimaryFire(CurTime() + 2) return end
+    ]]
+
     if self.Throwing then return end
     if self.PrimaryBash then return end
 
@@ -55,9 +67,14 @@ function SWEP:Reload()
     -- Don't accidently reload when changing firemode
     if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
 
-    if self:Ammo1() <= 0 then return end
+    if self:GetMalfunctionJam() then
+        local r = self:MalfunctionClear()
+        if r then return end
+    end
 
-    self:GetBuff_Hook("Hook_PreReload")
+    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 then return end
+
+    if self:GetBuff_Hook("Hook_PreReload") then return end
 
     self.LastClip1 = self:Clip1()
 
@@ -68,12 +85,12 @@ function SWEP:Reload()
     local clip = self:GetCapacity()
 
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    if self:GetNeedCycle() then chamber = 0 end
 
     local load = math.Clamp(clip + chamber, 0, reserve)
 
-    if load <= self:Clip1() then return end
+    if !self:GetMalfunctionJam() and load <= self:Clip1() then return end
 
-    self:SetReqEnd(false)
     self:SetBurstCount(0)
 
     local shouldshotgunreload = self:GetBuff_Override("Override_ShotgunReload")
@@ -92,7 +109,7 @@ function SWEP:Reload()
         local anim = "sgreload_start"
         local insertcount = 0
 
-        local empty = (self:Clip1() == 0) or self:GetNeedCycle()
+        local empty = self:Clip1() == 0 --or self:GetNeedCycle()
 
         if self.Animations.sgreload_start_empty and empty then
             anim = "sgreload_start_empty"
@@ -109,22 +126,12 @@ function SWEP:Reload()
         self:SetClip1(self:Clip1() + insertcount)
 
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
-        self:SetReloading(CurTime() + (self:GetAnimKeyTime(anim) * mult) + 1)
 
-        self:SetTimer(self:GetAnimKeyTime(anim) * mult,
-        function()
-            self:ReloadInsert(empty)
-        end)
+        self:SetReloading(CurTime() + (self:GetAnimKeyTime(anim) * mult))
+
+        self:SetShotgunReloading(empty and 4 or 2)
     else
         local anim = self:SelectReloadAnimation()
-
-        -- Yes, this will cause an issue in mag-fed manual action weapons where
-        -- despite an empty casing being in the chamber, you can load +1 and 
-        -- cycle an empty shell afterwards.
-        -- No, I am not in the correct mental state to fix this. - 8Z
-        if self:Clip1() == 0 then
-            self:SetNeedCycle(false)
-        end
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
@@ -140,7 +147,9 @@ function SWEP:Reload()
     end
 
     self:SetClipInfo(load)
-    self:CallOnClient("SetClipInfo", tostring(load))
+    if game.SinglePlayer() then
+        self:CallOnClient("SetClipInfo", tostring(load))
+    end
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -198,6 +207,7 @@ end
 function SWEP:RestoreAmmo(count)
     if self:GetOwner():IsNPC() then return end
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    if self:GetNeedCycle() then chamber = 0 end
     local clip = self:GetCapacity()
 
     if self:HasInfiniteAmmo() then
@@ -323,13 +333,13 @@ function SWEP:ReloadInsert(empty)
 
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
-    if !empty then
+    if !empty and !self:GetNeedCycle() then
         total = total + (self:GetChamberSize())
     end
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
 
-    if self:Clip1() >= total or self:Ammo1() == 0 or self:GetReqEnd() then
+    if self:Clip1() >= total or self:Ammo1() == 0 or ((self:GetShotgunReloading() == 3 or self:GetShotgunReloading() == 5) and self:Clip1() > 0) then
         local ret = "sgreload_finish"
 
         if empty then
@@ -344,16 +354,17 @@ function SWEP:ReloadInsert(empty)
         ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
         self:PlayAnimation(ret, mult, true, 0, true, nil, true)
-            self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret) * mult))
-            self:SetTimer(self:GetAnimKeyTime(ret) * mult,
-            function()
-                self:SetNthReload(self:GetNthReload() + 1)
-                if self:GetOwner():KeyDown(IN_ATTACK2) then
-                    self:EnterSights()
-                end
-            end)
+        self:SetReloading(CurTime() + (self:GetAnimKeyTime(ret, true) * mult))
 
-        self:SetReqEnd(false)
+        self:SetTimer(self:GetAnimKeyTime(ret, true) * mult,
+        function()
+            self:SetNthReload(self:GetNthReload() + 1)
+            if self:GetOwner():KeyDown(IN_ATTACK2) then
+                self:EnterSights()
+            end
+        end)
+
+        self:SetShotgunReloading(0)
     else
         local insertcount = self:GetBuff_Override("Override_InsertAmount") or 1
         local insertanim = "sgreload_insert"
@@ -368,24 +379,28 @@ function SWEP:ReloadInsert(empty)
         local load = self:GetCapacity() + math.min(self:Clip1(), self:GetChamberSize())
         if load - self:Clip1() > self:Ammo1() then load = self:Clip1() + self:Ammo1() end
         self:SetClipInfo(load)
-        self:CallOnClient("SetClipInfo", tostring(load))
+        if game.SinglePlayer() then
+            self:CallOnClient("SetClipInfo", tostring(load))
+        end
 
         self:RestoreAmmo(insertcount)
 
         local time = self:GetAnimKeyTime(insertanim, true)
 
-        self:SetReloading(CurTime() + time)
+        self:SetReloading(CurTime() + time * mult)
 
         self:PlayAnimation(insertanim, mult, true, 0, true, nil, true)
-        self:SetTimer(time * mult,
-        function()
-            self:ReloadInsert(empty)
-        end)
+        self:SetShotgunReloading(empty and 4 or 2)
     end
 end
 
 function SWEP:GetCapacity()
     local clip = self.RegularClipSize or self.Primary.ClipSize
+
+    if !self.RegularClipSize then
+        self.RegularClipSize = self.Primary.ClipSize
+    end
+
     local level = 1
 
     if self:GetBuff_Override("MagExtender") then
@@ -402,7 +417,7 @@ function SWEP:GetCapacity()
         clip = self.ExtendedClipSize
     end
 
-    clip = self:GetBuff("ClipSize", true) or clip
+    clip = self:GetBuff("ClipSize", true, clip) or clip
 
     local ret = self:GetBuff_Hook("Hook_GetCapacity", clip)
 

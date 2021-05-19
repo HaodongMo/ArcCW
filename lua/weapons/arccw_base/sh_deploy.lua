@@ -70,7 +70,7 @@ function SWEP:Deploy()
     self.LHIKAnimation = nil
 
     timer.Simple(0, function()
-        self:SetupModel(false)
+        if IsValid(self) then self:SetupModel(false) end
     end)
 
     if SERVER then
@@ -140,7 +140,7 @@ function SWEP:Initialize()
         end
 
         -- Check for incompatibile addons once 
-        if LocalPlayer().ArcCW_IncompatibilityCheck != true then
+        if LocalPlayer().ArcCW_IncompatibilityCheck != true and game.SinglePlayer() then
             LocalPlayer().ArcCW_IncompatibilityCheck = true
             local incompatList = {}
             local addons = engine.GetAddons()
@@ -175,8 +175,6 @@ function SWEP:Initialize()
     self:SetClip2(0)
     self:SetLastLoad(self:Clip1())
 
-    self:SetNWBool("laserenabled", true) -- J
-
     self.Attachments["BaseClass"] = nil
 
     self:SetHoldType(self.HoldtypeActive)
@@ -202,6 +200,61 @@ SWEP.HolsterSwitchTo = nil
 function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
     if wep == self then return end
+
+    -- Props deploy to NULL
+    if !IsValid(wep) then
+        -- We need to go! Right! Now!
+        local time = 0.25
+        local anim = self:SelectAnimation("holster")
+        if anim then
+            self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
+            time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
+        else
+            if CLIENT then
+                self:ProceduralHolster()
+            end
+            time = time * self:GetBuff_Mult("Mult_DrawTime")
+        end
+
+        --self:SetReqEnd(true)
+        self:KillTimers()
+
+        self.FullyHolstered = true
+
+        if CLIENT then
+            self:KillFlashlights()
+        end
+        if SERVER then
+            if self:GetBuff_Override("UBGL_UnloadOnDequip") then
+                local clip = self:Clip2()
+
+                local ammo = self:GetBuff_Override("UBGL_Ammo") or "smg1_grenade"
+
+                if IsValid(self:GetOwner()) then
+                    self:GetOwner():GiveAmmo(clip, ammo, true)
+                end
+
+                self:SetClip2(0)
+            end
+
+            self:KillShields()
+
+            local vm = self:GetOwner():GetViewModel()
+
+            if IsValid(vm) then
+                for i = 0, vm:GetNumBodyGroups() do
+                    vm:SetBodygroup(i, 0)
+                end
+                vm:SetSkin(0)
+            end
+
+            if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
+                self:GetOwner():StripWeapon(self:GetClass())
+            end
+        end
+
+        return true
+    end
     if self:GetBurstCount() > 0 and self:Clip1() > 0 then return false end
     if self.FullyHolstered then return true end
 
@@ -232,15 +285,17 @@ function SWEP:Holster(wep)
     end
 
     local time = 0.25
-    local anim = self:SelectAnimation("holster")
-    if anim then
-        self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-        time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
-    else
-        if CLIENT then
-            self:ProceduralHolster()
+    if skip then
+        local anim = self:SelectAnimation("holster")
+        if anim then
+            self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
+            time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
+        else
+            if CLIENT then
+                self:ProceduralHolster()
+            end
+            time = time * self:GetBuff_Mult("Mult_DrawTime")
         end
-        time = time * self:GetBuff_Mult("Mult_DrawTime")
     end
 
     if !skip then time = 0 end
@@ -249,7 +304,7 @@ function SWEP:Holster(wep)
 
         self:SetReloading(CurTime() + time * 1.1)
         self:SetTimer(time, function()
-            self:SetReqEnd(true)
+            self:SetShotgunReloading(0)
             self:KillTimers()
 
             self.FullyHolstered = true

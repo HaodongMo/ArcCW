@@ -23,7 +23,7 @@ function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
     rocket:SetPos(src)
 
     rocket:SetOwner(self:GetOwner())
-    rocket.Owner = self.Owner
+    rocket.Owner = self:GetOwner()
     rocket.Inflictor = self
 
     rocket.Damage = self.Damage * math.Rand(1 - self.DamageRand, 1 + self.DamageRand)

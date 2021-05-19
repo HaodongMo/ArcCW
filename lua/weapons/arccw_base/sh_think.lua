@@ -14,8 +14,11 @@ function SWEP:Think()
 
     self.BurstCount = self:GetBurstCount()
 
-    if owner:KeyPressed(IN_ATTACK) then
-        self:SetReqEnd(true)
+    local sg = self:GetShotgunReloading()
+    if (sg == 2 or sg == 4) and owner:KeyPressed(IN_ATTACK) then
+        self:SetShotgunReloading(sg + 1)
+    elseif (sg >= 2) and self:GetReloadingREAL() <= CurTime() then
+        self:ReloadInsert((sg >= 4) and true or false)
     end
 
     if CLIENT then
@@ -95,30 +98,20 @@ function SWEP:Think()
         if self:GetCurrentFiremode().Mode < 0 and !self:GetCurrentFiremode().RunawayBurst then
             local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
 
-            if (CurTime() + postburst) > self:GetNextPrimaryFire() then
-                self:SetNextPrimaryFire(CurTime() + postburst)
-                self:SetWeaponOpDelay(CurTime() + postburst)
+            if (CurTime() + postburst) > self:GetWeaponOpDelay() then
+                --self:SetNextPrimaryFire(CurTime() + postburst)
+                self:SetWeaponOpDelay(CurTime() + postburst * self:GetBuff_Mult("Mult_PostBurstDelay") + self:GetBuff_Add("Add_PostBurstDelay"))
             end
         end
     end
 
-    if game.SinglePlayer() or IsFirstTimePredicted() then
+    if IsFirstTimePredicted() then
         if self:InSprint() and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT) then
             self:EnterSprint()
         elseif !self:InSprint() and (self.Sprinted or self:GetState() == ArcCW.STATE_SPRINT) then
             self:ExitSprint()
         end
     end
-
-    -- That seems a good way to do such things
-    -- local altlaser = owner:GetInfoNum("arccw_altlaserkey", 0) == 1
-    -- local laserdown, laserpress = altlaser and IN_USE or IN_WALK, altlaser and IN_WALK or IN_USE -- Can't find good alt keys
-
-    -- if owner:KeyDown(laserdown) and owner:KeyPressed(laserpress) then
-    --     self:SetNWBool("laserenabled", !self:GetNWBool("laserenabled", true))
-    -- end
-
-    -- Yeah, this would be OP unless we can also turn off the laser stats, too.
 
     if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
         self:Reload()
@@ -159,28 +152,32 @@ function SWEP:Think()
         end
     elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
         self:ExitSights()
-    else
+    elseif !self:GetBuff_Override("Akimbo") then
 
-        if game.SinglePlayer() or IsFirstTimePredicted() then
-            -- everything here has to be predicted for the first time
-            if owner:GetInfoNum("arccw_toggleads", 0) == 0 then
-                if owner:KeyDown(IN_ATTACK2) and (!self.Sighted or self:GetState() != ArcCW.STATE_SIGHTS) and !self:GetBuff_Override("Akimbo") then
-                    self:EnterSights()
-                elseif !owner:KeyDown(IN_ATTACK2) and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+        -- no it really doesn't, past me
+        local sighted = self:GetState() == ArcCW.STATE_SIGHTS
+        local toggle = owner:GetInfoNum("arccw_toggleads", 0) >= 1
+        local suitzoom = owner:KeyDown(IN_ZOOM)
+        local sp_cl = game.SinglePlayer() and CLIENT
+
+        -- if in singleplayer, client realm should be completely ignored
+        if toggle and !sp_cl then
+            if owner:KeyPressed(IN_ATTACK2) then
+                if sighted then
                     self:ExitSights()
+                elseif !suitzoom then
+                    self:EnterSights()
                 end
-            else
-                if owner:KeyDown(IN_ATTACK2) and !LastAttack2 then
-                    if self:GetState() != ArcCW.STATE_SIGHTS and !self:GetBuff_Override("Akimbo") then
-                        self:EnterSights()
-                    else
-                        self:ExitSights()
-                    end
-                end
+            elseif suitzoom and sighted then
+                self:ExitSights()
+            end
+        elseif !toggle then
+            if (owner:KeyDown(IN_ATTACK2) and !suitzoom) and !sighted then
+                self:EnterSights()
+            elseif (!owner:KeyDown(IN_ATTACK2) or suitzoom) and sighted then
+                self:ExitSights()
             end
         end
-
-        LastAttack2 = owner:KeyDown(IN_ATTACK2)
 
     end
 
@@ -294,34 +291,36 @@ function SWEP:Think()
     --if SERVER or !game.SinglePlayer() then
         self:ProcessTimers()
     --end
+
+    -- Only reset to idle if we don't need cycle. empty idle animation usually doesn't play nice
+    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle() then
+        self:SetNextIdle(0)
+        self:PlayIdleAnimation(true)
+    end
 end
 
 function SWEP:ProcessRecoil()
     local owner = self:GetOwner()
     local ft = FrameTime()
     local newang = owner:EyeAngles()
-    local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
-    local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
+    -- local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
+    -- local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
 
     local ra = Angle(0, 0, 0)
 
-    ra = ra + ((self:GetBuff_Override("Override_RecoilDirection") or self.RecoilDirection) * self.RecoilAmount * 0.5)
-    ra = ra + ((self:GetBuff_Override("Override_RecoilDirectionSide") or self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
+    ra = ra + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * self.RecoilAmount * 0.5)
+    ra = ra + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
 
     newang = newang - ra
 
-    self.RecoilAmount = r - (ft * r * 20)
-    self.RecoilAmountSide = rs - (ft * rs * 20)
+    -- self.RecoilAmount = r - math.Clamp(ft * 20, 0, r)
+    -- self.RecoilAmountSide = rs - math.Clamp(ft * 20, 0, rs)
 
-    self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 0.1)
-    self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 0.1)
+    -- self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 20 * r)
+    -- self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 20 * rs)
 
     -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
     -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
-
-    if newang.r == 0 or CLIENT then
-        owner:SetEyeAngles(newang)
-    end
 
     local rpb = self.RecoilPunchBack
     local rps = self.RecoilPunchSide

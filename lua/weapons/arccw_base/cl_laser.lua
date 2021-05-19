@@ -6,16 +6,19 @@ local SetMat     = rnd.SetMaterial
 local DrawBeam   = rnd.DrawBeam
 local DrawSprite = rnd.DrawSprite
 local cam        = cam
-local IgnoreZ    = cam.IgnoreZ
 
 local lasermat = Material("arccw/laser")
 local flaremat = Material("effects/whiteflare")
 local delta    = 1
 
 function SWEP:DoLaser(world)
-    local toworld = world or false
+    world = world or false
 
-    if !self:GetNWBool("laserenabled", true) then return end
+    if world then
+        cam.Start3D()
+    else
+        cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV)
+    end
 
     for slot, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -25,12 +28,9 @@ function SWEP:DoLaser(world)
         if self:GetBuff_Stat("Laser", slot) then
             local color = self:GetBuff_Stat("LaserColor", slot) or attach.ColorOptionsTable[k.ColorOptionIndex or 1]
 
-            if toworld then
+            if world then
                 if !k.WElement then continue end
-
-                cam.Start3D()
-                    self:DrawLaser(attach, k.WElement.Model, color, true)
-                cam.End3D()
+                self:DrawLaser(attach, k.WElement.Model, color, true)
             else
                 if !k.VElement then continue end
                 self:DrawLaser(attach, k.VElement.Model, color)
@@ -40,11 +40,9 @@ function SWEP:DoLaser(world)
 
     if self.Lasers then
         if world then
-            cam.Start3D()
             for _, k in pairs(self.Lasers) do
                 self:DrawLaser(k, self.WMModel or self, k.LaserColor, true)
             end
-            cam.End3D()
         else
             -- cam.Start3D(nil, nil, self.ViewmodelFOV)
             for _, k in pairs(self.Lasers) do
@@ -53,6 +51,8 @@ function SWEP:DoLaser(world)
             -- cam.End3D()
         end
     end
+
+    cam.End3D()
 end
 
 function SWEP:DrawLaser(laser, model, color, world)
@@ -90,7 +90,7 @@ function SWEP:DrawLaser(laser, model, color, world)
 
         dir = ang:Forward()
 
-        local eyeang   = owner:EyeAngles() + (owner:GetViewPunchAngles() * 0.5)
+        local eyeang   = self:GetOwner():EyeAngles() - self:GetOurViewPunchAngles()
         local canlaser = self:GetCurrentFiremode().Mode != 0 and !self:GetReloading() and self:BarrelHitWall() <= 0
 
         delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
@@ -105,13 +105,10 @@ function SWEP:DrawLaser(laser, model, color, world)
     beamdir = world and (-ang:Right()) or beamdir
 
     if behav and !world then
-        local cheap = GetConVar("arccw_cheapscopes"):GetBool()
-        if self:ShouldFlatScope() then
-            cheap = true
-        end
-        local punch = owner:GetViewPunchAngles()
+        -- local cheap = GetConVar("arccw_cheapscopes"):GetBool()
+        local punch = self:GetOurViewPunchAngles()
 
-        ang = EyeAngles() - (punch * (cheap and 0.5 or 1))
+        ang = self:GetOwner():EyeAngles() - punch
 
         tracepos = EyePos() - Vector(0, 0, 1)
         pos, dir = tracepos, ang:Forward()
@@ -144,35 +141,27 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     local width = m_rand(0.05, 0.1) * strength
 
-    if self:ShouldFlatScope() then
-        cam.Start3D()
-    end
-
-    if !behav or world then
-        if hit then
-            SetMat(lasermat)
-            DrawBeam(pos, btr.HitPos, width, 1, 0, color)
-        end
-    else
-        IgnoreZ(true)
+    if (!behav or world) and hit then
+        SetMat(lasermat)
+        DrawBeam(pos, btr.HitPos, width, 1, 0, color)
     end
 
     if hit and !tr.HitSky then
         local mul = 1 * strength
-        -- if !self:ShouldFlatScope() then
-            mul = m_log10((hitpos - EyePos()):Length()) * strength
-        -- end
+        mul = m_log10((hitpos - EyePos()):Length()) * strength
         local rad = m_rand(4, 6) * mul
         local glr = rad * m_rand(0.2, 0.3)
 
         SetMat(flaremat)
+
+        if !world then
+            cam.IgnoreZ(true)
+        end
         DrawSprite(laserpos, rad, rad, color)
         DrawSprite(laserpos, glr, glr, color_white)
-    end
 
-    IgnoreZ(false)
-
-    if self:ShouldFlatScope() then
-        cam.End3D()
+        if !world then
+            cam.IgnoreZ(false)
+        end
     end
 end
