@@ -10,7 +10,7 @@ local aimtr = {}
 function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
     if !GetConVar("arccw_crosshair"):GetBool() then return false end
-    if self:GetReloading() then return false end
+    if self:GetReloading() and (!self:GetBuff_Override("Akimbo") or self:GetReloading(true)) then return false end
     if self:BarrelHitWall() > 0 then return false end
     local asight = self:GetActiveSights()
 
