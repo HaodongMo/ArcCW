@@ -44,13 +44,8 @@ CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whet
 
 hook.Add("InitPostEntity", "ArcCW_TTT", function()
 
-    if weapons.GetStored("arccw_base") then
-        -- Blocks TTT from autospawning the base, which it likes to do
-        weapons.GetStored("arccw_base").AutoSpawnable = false
-    end
-
     for i, wep in pairs(weapons.GetList()) do
-        if !weapons.IsBasedOn(wep.ClassName, "arccw_base") then continue end
+        if !wep.ArcCW or wep.ClassName == "arccw_base" then continue end
 
         if ArcCW.Ammo_To_TTTAmmo[wep.Primary.Ammo] then
             wep.Primary.Ammo = ArcCW.Ammo_To_TTTAmmo[wep.Primary.Ammo]
@@ -99,6 +94,11 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
             wep.Icon = path
         end
 
+    end
+
+    if weapons.GetStored("arccw_base") then
+        -- Blocks TTT from autospawning the base, which it likes to do
+        weapons.GetStored("arccw_base").AutoSpawnable = false
     end
 
     -- Language string(s)
