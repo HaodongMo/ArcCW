@@ -148,7 +148,7 @@ SWEP.Inv_Scroll = {}
 -- 3: Ballistics
 ArcCW.Inv_SelectedInfo = 1
 
-ArcCW.Inv_Fade = 0
+ArcCW.Inv_Fade = 0.01
 
 ArcCW.Inv_ShownAtt = nil
 ArcCW.Inv_Hidden = false
@@ -221,7 +221,7 @@ function SWEP:CreateCustomize2HUD()
         end
     end
 
-    ArcCW.Inv_Fade = 0
+    ArcCW.Inv_Fade = 0.01
 
     ArcCW.InvHUD:SetPos(0, 0)
     ArcCW.InvHUD:SetSize(scrw, scrh)
@@ -294,6 +294,7 @@ function SWEP:CreateCustomize2HUD()
             end
         end
 
+        --print("INVHUD REMOVED", CurTime())
         gui.EnableScreenClicker(false)
     end
 

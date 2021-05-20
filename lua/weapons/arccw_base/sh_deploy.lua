@@ -201,6 +201,8 @@ function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
     if wep == self then return end
 
+    if CLIENT and self:GetOwner() == LocalPlayer() and ArcCW.InvHUD then ArcCW.InvHUD:Remove() end
+
     -- Props deploy to NULL
     if !IsValid(wep) then
         -- We need to go! Right! Now!
@@ -276,9 +278,9 @@ function SWEP:Holster(wep)
     self.Sprinted = false
     self:SetMagUpIn(0)
 
-    if CLIENT and LocalPlayer() == self:GetOwner() then
+    --[[if CLIENT and LocalPlayer() == self:GetOwner() then
         self:ToggleCustomizeHUD(false)
-    end
+    end]]
 
     if !self.FullyHolstered then
         self.HolsterSwitchTo = wep
