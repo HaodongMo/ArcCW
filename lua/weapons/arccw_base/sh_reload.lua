@@ -323,6 +323,10 @@ function SWEP:SelectReloadAnimation()
         ret = "reload"
     end
 
+    if self:GetBuff_Override("Akimbo") and self.Animations[ret .. "_akimbo"] then
+        ret = ret .. "_akimbo"
+    end
+
     ret = self:GetBuff_Hook("Hook_SelectReloadAnimation", ret) or ret
 
     return ret

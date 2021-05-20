@@ -37,39 +37,6 @@ function SWEP:CanAkimboAttack()
     return true
 end
 
-function SWEP:SelectAkimboAnimation(anim)
-    local tbl = self:GetBuff_Override("Akimbo_Animations")
-    if !tbl then return end
-
-    if self:GetState() == ArcCW.STATE_SIGHTS and tbl[anim .. "_iron"] then
-        anim = anim .. "_iron"
-    end
-
-    if self:GetState() == ArcCW.STATE_SIGHTS and tbl[anim .. "_sights"] then
-        anim = anim .. "_sights"
-    end
-
-    if self:GetState() == ArcCW.STATE_SIGHTS and tbl[anim .. "_sight"] then
-        anim = anim .. "_sight"
-    end
-
-    if self:GetState() == ArcCW.STATE_SPRINT and tbl[anim .. "_sprint"] then
-        anim = anim .. "_sprint"
-    end
-
-    if self:InBipod() and tbl[anim .. "_bipod"] then
-        anim = anim .. "_bipod"
-    end
-
-    if self:Clip2() == 0 and tbl[anim .. "_empty"] then
-        anim = anim .. "_empty"
-    end
-
-    if !tbl[anim] then return end
-
-    return anim
-end
-
 function SWEP:DryFireAkimbo()
     local anim = (self:GetBuff_Override("Akimbo_Animations") or {}).fire_dry
 
