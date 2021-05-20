@@ -6,9 +6,21 @@ local lastUBGL = 0
 local LastAttack2 = false
 
 function SWEP:Think()
+    if IsValid(self:GetOwner()) and self:GetClass() == "arccw_base" then
+        self:Remove()
+        return
+    end
+
     local owner = self:GetOwner()
 
     if !IsValid(owner) or owner:IsNPC() then return end
+
+    if CLIENT and IsFirstTimePredicted() then
+        if self:GetOwner() == LocalPlayer() and ArcCW.InvHUD and !ArcCW.Inv_Hidden and ArcCW.Inv_Fade == 0 then
+            ArcCW.Inv_Fade = 0.01
+            ArcCW.InvHUD:Remove()
+        end
+    end
 
     local vm = owner:GetViewModel()
 

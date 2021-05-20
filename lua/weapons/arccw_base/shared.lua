@@ -788,7 +788,7 @@ function SWEP:SetReloading( v )
         if v then
             self:SetReloadingREAL(math.huge)
         else
-            self:SetReloadingREAL(0)
+            self:SetReloadingREAL(-math.huge)
         end
     elseif isnumber(v) and v > self:GetReloadingREAL() then
         self:SetReloadingREAL( v )

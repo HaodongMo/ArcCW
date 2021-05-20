@@ -5,7 +5,7 @@ function SWEP:InBipod()
     --     self:ExitBipod()
     -- end
 
-    if self:GetBipodPos() != self:GetOwner():EyePos() then
+    if IsValid(self:GetOwner()) and self:GetBipodPos() != self:GetOwner():EyePos() then
         self:ExitBipod()
     end
 

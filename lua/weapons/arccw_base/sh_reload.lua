@@ -121,12 +121,14 @@ function SWEP:Reload()
         local time = self:GetAnimKeyTime(anim)
         local time2 = self:GetAnimKeyTime(anim, true)
 
-        if time2 == time then
+        if time2 >= time then
             time2 = 0
         end
 
-        self:SetMagUpCount(insertcount)
-        self:SetMagUpIn(CurTime() + time2 * mult)
+        if insertcount > 0 then
+            self:SetMagUpCount(insertcount)
+            self:SetMagUpIn(CurTime() + time2 * mult)
+        end
         self:PlayAnimation(anim, mult, true, 0, true, nil, true)
 
         self:SetReloading(CurTime() + time * mult)
