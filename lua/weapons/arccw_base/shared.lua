@@ -17,14 +17,15 @@ SWEP.UseHands = true
 
 SWEP.ViewModel = "" -- I mean, you probably have to edit these too
 SWEP.WorldModel = ""
-SWEP.MirrorWorldModel = nil -- must have the same bones as the viewmodel. Use with MirrorWMVM
 
---[[
-SWEP.WorldModelOffset = {
-    pos        =    Vector(0, 0, 0),
-    ang        =    Angle(0, 0, 0),
-    bone    =    "ValveBiped.Bip01_R_Hand",
-    scale   =   1
+SWEP.MirrorVMWM = nil -- Copy the viewmodel, along with all its attachments, to the worldmodel. Super convenient!
+SWEP.MirrorWorldModel = nil -- Use this to set the mirrored viewmodel to a different model, without any floating speedloaders or cartridges you may have. Needs MirrorVMWM
+
+--[[SWEP.WorldModelOffset = {
+    pos = Vector(0, 0, 0),
+    ang = Angle(0, 0, 0),
+    bone = "ValveBiped.Bip01_R_Hand",
+    scale = 1
 }]]
 
 SWEP.PresetBase = nil -- make this weapon share saves with this one.

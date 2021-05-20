@@ -42,6 +42,7 @@ L["trivia.noise"] = "Noise"
 L["trivia.recoil"] = "Vertical Recoil"
 L["trivia.penetration"] = "Penetration"
 L["trivia.firerate"] = "Fire Rate"
+L["trivia.firerate_burst"] = "Burst Fire Rate"
 L["trivia.fusetime"] = "Fuse Time"
 
 -- Class
