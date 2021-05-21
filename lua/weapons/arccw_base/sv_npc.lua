@@ -368,4 +368,8 @@ function SWEP:OnDrop()
     if self.Singleton or self.Primary.ClipSize == -1 then
         self.Primary.DefaultClip = 1
     end
+
+    if engine.ActiveGamemode() == "terrortown" then
+        self.UnReady = true
+    end
 end
