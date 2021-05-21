@@ -47,6 +47,13 @@ ArcCW.PistolShellSoundsTable = {
     "weapons/arccw/casings/casing_9mm_4.wav"
 }
 
+ArcCW.TinyShellSoundsTable = {
+    "weapons/arccw/casings/casing_22_1.wav",
+    "weapons/arccw/casings/casing_22_2.wav",
+    "weapons/arccw/casings/casing_22_3.wav",
+    "weapons/arccw/casings/casing_22_4.wav"
+}
+
 ArcCW.ShotgunShellSoundsTable = {
     "weapons/fx/tink/shotgun_shell1.wav",
     "weapons/fx/tink/shotgun_shell2.wav",
