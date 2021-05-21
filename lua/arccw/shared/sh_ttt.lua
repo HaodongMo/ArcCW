@@ -43,9 +43,26 @@ CreateConVar("arccw_ttt_customizemode", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "If
 CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
 
 hook.Add("InitPostEntity", "ArcCW_TTT", function()
-
     for i, wep in pairs(weapons.GetList()) do
-        if !wep.ArcCW or wep.ClassName == "arccw_base" then continue end
+        local weap = weapons.Get(wep.ClassName)
+        if weap then
+            if !weap.ArcCW then
+                --print(weap.ClassName)
+                --print("\t- No ArcCW")
+                continue
+            end
+            if weap.ArcCW and !weap.Spawnable then
+                if weap.AutoSpawnable then
+                    --print(weap.ClassName)
+                    --print("\t- Not spawnable but AutoSpawnable so alright")
+                end
+                --print(weap.ClassName)
+                --print("\t- Not spawnable, ignored")
+                continue
+            end
+            --print(wep.ClassName)
+            --print("\t- Accepted")
+        end
 
         if ArcCW.Ammo_To_TTTAmmo[wep.Primary.Ammo] then
             wep.Primary.Ammo = ArcCW.Ammo_To_TTTAmmo[wep.Primary.Ammo]
@@ -94,11 +111,6 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
             wep.Icon = path
         end
 
-    end
-
-    if weapons.GetStored("arccw_base") then
-        -- Blocks TTT from autospawning the base, which it likes to do
-        weapons.GetStored("arccw_base").AutoSpawnable = false
     end
 
     -- Language string(s)
