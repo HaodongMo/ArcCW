@@ -1,6 +1,7 @@
 AddCSLuaFile()
 
 SWEP.Spawnable = false -- this obviously has to be set to true
+SWEP.AutoSpawnable = nil -- TTT weapon autospawn. ArcCW weapons automatically spawn in TTT as long as SWEP.Spawnable is set to true
 SWEP.Category = "ArcCW - Firearms" -- edit this if you like
 SWEP.AdminOnly = false
 
