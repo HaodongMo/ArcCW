@@ -30,9 +30,21 @@ COND_WEAPON_HAS_LOS = 41
 COND_WEAPON_SIGHT_OCCLUDED = 45
 
 ArcCW.ShellSoundsTable = {
-    "player/pl_shell1.wav",
-    "player/pl_shell2.wav",
-    "player/pl_shell3.wav"
+    "weapons/arccw/casings/casing_556_1.wav",
+    "weapons/arccw/casings/casing_556_2.wav",
+    "weapons/arccw/casings/casing_556_3.wav",
+    "weapons/arccw/casings/casing_556_4.wav",
+    "weapons/arccw/casings/casing_308_1.wav",
+    "weapons/arccw/casings/casing_308_2.wav",
+    "weapons/arccw/casings/casing_308_3.wav",
+    "weapons/arccw/casings/casing_308_4.wav"
+}
+
+ArcCW.PistolShellSoundsTable = {
+    "weapons/arccw/casings/casing_9mm_1.wav",
+    "weapons/arccw/casings/casing_9mm_2.wav",
+    "weapons/arccw/casings/casing_9mm_3.wav",
+    "weapons/arccw/casings/casing_9mm_4.wav"
 }
 
 ArcCW.ShotgunShellSoundsTable = {
