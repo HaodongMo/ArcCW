@@ -77,3 +77,18 @@ hook.Add("PostDrawEffects", "ArcCW_CleanFlashlights", function()
 
     wpn:KillFlashlightsVM()
 end)
+
+concommand.Add("arccw_dev_loadallattmodels", function()
+    local e = ClientsideModel("models/weapons/v_pistol.mdl")
+    print("created subject", e)
+    
+    for i, v in pairs(ArcCW.AttachmentTable) do
+        if v.Model then
+            print("\t- " .. v.Model)
+            e:SetModel(v.Model)
+        end
+    end
+
+    print("removed subject", e)
+    e:Remove()
+end)
