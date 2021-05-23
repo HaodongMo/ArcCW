@@ -225,7 +225,7 @@ SWEP.ShellEjectPosCorrection = nil
 SWEP.ShellScale = 1
 SWEP.ShellPhysScale = 1
 SWEP.ShellPitch = 100
-SWEP.ShellSounds = ArcCW.ShellSoundsTable
+SWEP.ShellSounds = "autocheck"--ArcCW.ShellSoundsTable
 SWEP.ShellRotate = 0
 SWEP.ShellTime = 0.5
 
