@@ -198,6 +198,9 @@ function SWEP:Holster(wep)
         return
     end
 
+    if wep == self then self:Deploy() return false end
+    if self:GetHolster_Time() > CurTime() then return false end
+
     -- Props deploy to NULL, finish holster on NULL too
     if (self:GetHolster_Time() != 0 and self:GetHolster_Time() <= CurTime()) or !IsValid(wep) then
         self:SetHolster_Time(0)
@@ -216,9 +219,6 @@ function SWEP:Holster(wep)
         self:SetShotgunReloading(0)
         self:SetMagUpCount(0)
         self:SetMagUpIn(0)
-
-        if wep == self then self:Deploy() return false end
-        if self:GetHolster_Time() > CurTime() then return false end
 
         local time = 0.25
         local skip = true
