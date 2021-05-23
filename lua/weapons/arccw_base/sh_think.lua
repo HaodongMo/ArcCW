@@ -290,7 +290,7 @@ function SWEP:Think()
     --end
 
     -- Only reset to idle if we don't need cycle. empty idle animation usually doesn't play nice
-    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle() then
+    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle() and self:GetHolster_Time() == 0 and self:GetShotgunReloading() == 0 then
         self:SetNextIdle(0)
         self:PlayIdleAnimation(true)
     end
