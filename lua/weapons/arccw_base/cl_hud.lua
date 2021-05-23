@@ -238,6 +238,13 @@ function SWEP:DrawHUD()
         surface.DrawOutlinedRect(ecksy, 26 * s*10, s*64, s*4, s/2)
         surface.DrawRect(ecksy, 26 * s*10+s*1, s*64*self:GetSightDelta(), s*4-s*2)
 
+        
+        surface.SetTextPos(ecksy, 26 * s*11)
+        surface.DrawText( mr(self:GetHolster_Time(), 1) )
+
+        surface.SetTextPos(ecksy, 26 * s*12)
+        surface.DrawText( tostring(self:GetHolster_Entity()) )
+
         -- Labels
         surface.SetTextColor(255, 255, 255, 255)
         surface.SetFont("ArcCW_8")
@@ -280,6 +287,12 @@ function SWEP:DrawHUD()
         elseif  thestate == ArcCW.STATE_SIGHTS then
             surface.DrawText("LAST CHANGE: " .. math.Round(CurTime() - self.LastEnterSightTime, 2))
         end
+
+        surface.SetTextPos(ecksy, 26 * s*11)
+        surface.DrawText("HOLSTER TIME")
+
+        surface.SetTextPos(ecksy, 26 * s*12)
+        surface.DrawText("HOLSTER ENT")
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end
