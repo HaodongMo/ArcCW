@@ -221,26 +221,18 @@ function SWEP:Holster(wep)
         self:SetMagUpIn(0)
 
         local time = 0.25
-        local skip = true
-        if skip then
-            local anim = self:SelectAnimation("holster")
-            if anim then
-                self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-                self:SetHolster_Time(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime"))
-            else
-                if CLIENT then
-                    self:ProceduralHolster()
-                end
-                self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
-            end
+        local anim = self:SelectAnimation("holster")
+        if anim then
+            self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
+            self:SetHolster_Time(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime"))
         else
-            self:SetHolster_Time(CurTime())
+            if CLIENT then
+                self:ProceduralHolster()
+            end
+            self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         end
         self:SetReloading(CurTime() + time)
         self:SetWeaponOpDelay(CurTime() + time)
-
-        local vm = self:GetOwner():GetViewModel()
-        vm:SetPlaybackRate(1)
     end
 end
 
@@ -271,6 +263,7 @@ function SWEP:FinishHolster()
             end
             vm:SetSkin(0)
         end
+        vm:SetPlaybackRate(1)
 
         if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
             self:GetOwner():StripWeapon(self:GetClass())
