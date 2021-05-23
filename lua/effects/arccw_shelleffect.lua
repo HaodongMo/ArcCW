@@ -139,9 +139,7 @@ end
 function EFFECT:PhysicsCollide()
     if self.AlreadyPlayedSound and self.JustOnce then return end
 
-    local choose = self.Sounds[math.random(#self.Sounds)]
-    print(choose)
-    sound.Play(choose, self:GetPos(), 65, self.HitPitch, 1)
+    sound.Play(self.Sounds[math.random(#self.Sounds)], self:GetPos(), 65, self.HitPitch, 1)
 
     self.AlreadyPlayedSound = true
 end
