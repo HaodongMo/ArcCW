@@ -5,27 +5,20 @@ function SWEP:Deploy()
 
     self:InitTimers()
 
-    self.FullyHolstered = false
-
     self:SetShouldHoldType()
 
     self:SetReloading(false)
     self:SetState(0)
     self:SetInUBGL(false)
+    self:SetMagUpCount(0)
     self:SetMagUpIn(0)
+    self:SetShotgunReloading(0)
+    self:SetHolster_Time(0)
+    self:SetHolster_Entity(NULL)
 
     self.LHIKAnimation = nil
 
     self:SetBurstCount(0)
-
-    -- Remove me shall I interfere
-    --[[if CLIENT then
-        if ArcCW.LastWeapon != self then
-            self:LoadPreset("autosave")
-        end
-
-        ArcCW.LastWeapon = self
-    end]]
 
     -- Don't play anim if in vehicle. This can be caused by HL2 level changes
 
@@ -194,180 +187,88 @@ function SWEP:Initialize()
     self:AdjustAtts()
 end
 
-SWEP.FullyHolstered = false
-SWEP.HolsterSwitchTo = nil
-
 function SWEP:Holster(wep)
     if self:GetOwner():IsNPC() then return end
-    if wep == self then return end
 
     if CLIENT and self:GetOwner() == LocalPlayer() and ArcCW.InvHUD then ArcCW.InvHUD:Remove() end
 
-    -- Props deploy to NULL
-    if !IsValid(wep) then
-        -- We need to go! Right! Now!
-        local time = 0.25
-        local anim = self:SelectAnimation("holster")
-        if anim then
-            self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-            time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
-        else
-            if CLIENT then
-                self:ProceduralHolster()
-            end
-            time = time * self:GetBuff_Mult("Mult_DrawTime")
-        end
-
-        --self:SetReqEnd(true)
-        self:KillTimers()
-
-        self.FullyHolstered = true
-
-        if CLIENT then
-            self:KillFlashlights()
-        end
-        if SERVER then
-            if self:GetBuff_Override("UBGL_UnloadOnDequip") then
-                local clip = self:Clip2()
-
-                local ammo = self:GetBuff_Override("UBGL_Ammo") or "smg1_grenade"
-
-                if IsValid(self:GetOwner()) then
-                    self:GetOwner():GiveAmmo(clip, ammo, true)
-                end
-
-                self:SetClip2(0)
-            end
-
-            self:KillShields()
-
-            local vm = self:GetOwner():GetViewModel()
-
-            if IsValid(vm) then
-                for i = 0, vm:GetNumBodyGroups() do
-                    vm:SetBodygroup(i, 0)
-                end
-                vm:SetSkin(0)
-            end
-
-            if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
-                self:GetOwner():StripWeapon(self:GetClass())
-            end
-        end
-
-        return true
-    end
     if self:GetBurstCount() > 0 and self:Clip1() > 0 then return false end
-    if self.FullyHolstered then return true end
-
-    local skip = GetConVar("arccw_holstering"):GetBool()
 
     if CLIENT and LocalPlayer() != self:GetOwner() then
         return
     end
 
-    if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
-        self:CallOnClient("Holster")
-    end
+    if wep == self then self:Deploy() return false end
+    if self:GetHolster_Time() > CurTime() then return false end
 
-    if self:GetGrenadePrimed() then
-        self:Throw()
-    end
+    -- Props deploy to NULL, finish holster on NULL too
+    if (self:GetHolster_Time() != 0 and self:GetHolster_Time() <= CurTime()) or !IsValid(wep) then
+        self:SetHolster_Time(0)
+        self:SetHolster_Entity(NULL)
+        self:FinishHolster()
+        return true
+    else
+        self:SetHolster_Entity(wep)
 
-    self.Sighted = false
-    self.Sprinted = false
-    self:SetMagUpIn(0)
+        if self:GetGrenadePrimed() then
+            self:Throw()
+        end
 
-    --[[if CLIENT and LocalPlayer() == self:GetOwner() then
-        self:ToggleCustomizeHUD(false)
-    end]]
+        self.Sighted = false
+        self.Sprinted = false
+        self:SetShotgunReloading(0)
+        self:SetMagUpCount(0)
+        self:SetMagUpIn(0)
 
-    if !self.FullyHolstered then
-        self.HolsterSwitchTo = wep
-    end
-
-    local time = 0.25
-    if skip then
+        local time = 0.25
         local anim = self:SelectAnimation("holster")
         if anim then
             self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-            time = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime")
+            self:SetHolster_Time(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime"))
         else
             if CLIENT then
                 self:ProceduralHolster()
             end
-            time = time * self:GetBuff_Mult("Mult_DrawTime")
+            self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
+        end
+        self:SetReloading(CurTime() + time)
+        self:SetWeaponOpDelay(CurTime() + time)
+    end
+end
+
+function SWEP:FinishHolster()
+    self:KillTimers()
+
+    if CLIENT then
+        self:KillFlashlights()
+    else
+        if self:GetBuff_Override("UBGL_UnloadOnDequip") then
+            local clip = self:Clip2()
+
+            local ammo = self:GetBuff_Override("UBGL_Ammo") or "smg1_grenade"
+
+            if IsValid(self:GetOwner()) then
+                self:GetOwner():GiveAmmo(clip, ammo, true)
+            end
+
+            self:SetClip2(0)
+        end
+
+        self:KillShields()
+
+        local vm = self:GetOwner():GetViewModel()
+        if IsValid(vm) then
+            for i = 0, vm:GetNumBodyGroups() do
+                vm:SetBodygroup(i, 0)
+            end
+            vm:SetSkin(0)
+        end
+        vm:SetPlaybackRate(1)
+
+        if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
+            self:GetOwner():StripWeapon(self:GetClass())
         end
     end
-
-    if !skip then time = 0 end
-
-    if !self.FullyHolstered then
-
-        self:SetReloading(CurTime() + time * 1.1)
-        self:SetTimer(time, function()
-            self:SetShotgunReloading(0)
-            self:KillTimers()
-
-            self.FullyHolstered = true
-
-            self:Holster(self.HolsterSwitchTo)
-
-            if CLIENT then
-                if isstring(self.HolsterSwitchTo) then
-                    self.HolsterSwitchTo = LocalPlayer():GetWeapon(self.HolsterSwitchTo)
-                end
-                if IsValid(self.HolsterSwitchTo) then
-                    input.SelectWeapon(self.HolsterSwitchTo)
-                end
-
-                self:KillFlashlights()
-            else
-                if SERVER then
-                    if self:GetBuff_Override("UBGL_UnloadOnDequip") then
-                        local clip = self:Clip2()
-
-                        local ammo = self:GetBuff_Override("UBGL_Ammo") or "smg1_grenade"
-
-                        if IsValid(self:GetOwner()) then
-                            self:GetOwner():GiveAmmo(clip, ammo, true)
-                        end
-
-                        self:SetClip2(0)
-                    end
-
-                    self:KillShields()
-
-                    if IsValid(self:GetOwner()) and IsValid(self.HolsterSwitchTo) then
-                        self:GetOwner():SelectWeapon(self.HolsterSwitchTo:GetClass())
-                    end
-
-                    local vm = self:GetOwner():GetViewModel()
-
-                    if IsValid(vm) then
-                        for i = 0, vm:GetNumBodyGroups() do
-                            vm:SetBodygroup(i, 0)
-                        end
-                        vm:SetSkin(0)
-                    end
-
-                    if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
-                        self:GetOwner():StripWeapon(self:GetClass())
-                    end
-                end
-            end
-        end)
-    end
-
-    -- return true
-
-    if !skip then return true end
-
-    local vm = self:GetOwner():GetViewModel()
-
-    vm:SetPlaybackRate(1)
-
-    return self.FullyHolstered
 end
 
 function SWEP:ProceduralDraw()

@@ -134,6 +134,17 @@ function ArcCW.StartCommand(ply, ucmd)
         ucmd:SetButtons(ucmd:GetButtons() - IN_SPEED)
     end
 
+    -- Holster code
+    if IsValid(wep) and wep.ArcCW then
+        if wep:GetHolster_Time() != 0 and wep:GetHolster_Time() <= CurTime() then
+            if IsValid(wep:GetHolster_Entity()) then
+                wep:SetHolster_Time(-math.huge)
+                ucmd:SelectWeapon(wep:GetHolster_Entity())
+            end
+        end
+    end
+
+
     -- Aim assist
     if CLIENT and IsValid(wep) and wep.ArcCW
             and (wep:GetBuff("AimAssist", true) or (GetConVar("arccw_aimassist"):GetBool() and ply:GetInfoNum("arccw_aimassist_cl", 0) == 1))  then

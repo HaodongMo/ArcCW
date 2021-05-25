@@ -12,6 +12,16 @@ ArcCW.HUDElementConVars = {
     ["CHudSecondaryAmmo"] = GetConVar("arccw_hud_showammo"),
 }
 
+local grad = Material("arccw/hud/grad.png", "mips smooth")
+hook.Add("PreDrawViewModels", "ArcCW_PreDrawViewmodels_Grad", function()
+    render.SetViewPort( 0, 0, ScrW(), ScrH() )
+    cam.Start2D()
+        surface.SetDrawColor(Color(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 255)))
+        surface.SetMaterial(grad)
+        surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+    cam.End2D()
+end)
+
 hook.Add("HUDShouldDraw", "ArcCW_HideHUD", function(name)
     if !hide[name] then return end
     if !LocalPlayer():IsValid() then return end
