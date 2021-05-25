@@ -1,6 +1,6 @@
 CreateConVar("arccw_enable_penetration", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
 CreateConVar("arccw_enable_ricochet", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
-CreateConVar("arccw_enable_customization", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
+CreateConVar("arccw_enable_customization", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", -1, 1)
 CreateConVar("arccw_enable_dropping", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
 CreateConVar("arccw_enable_sway", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
 
