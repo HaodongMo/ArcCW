@@ -757,17 +757,26 @@ function SWEP:CreateCustomize2HUD()
                 -- self.Inv_SelectedSlot = self2.attindex
                 -- ArcCW.InvHUD_FormAttachmentSelect()
                 -- self:DetachAllMergeSlots(self2.attslot, true)
-                if self2.att == "" then
-                    self2:DoRightClick()
+                --if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
+                if ArcCW:PlayerCanAttach(LocalPlayer():GetOwner(), LocalPlayer(), self2.att, self2.attslot, false) then
+                    if self2.att == "" then
+                        self2:DoRightClick()
+                    else
+                        self:Attach(self2.attslot, self2.att)
+                        ArcCW.Inv_ShownAtt = nil -- Force a regen on the panel so we can see toggle/slider options
+                        ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot, true)
+                    end
                 else
-                    self:Attach(self2.attslot, self2.att)
-                    ArcCW.Inv_ShownAtt = nil -- Force a regen on the panel so we can see toggle/slider options
-                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot, true)
+                    if CLIENT then surface.PlaySound("items/medshotno1.wav") end
                 end
             end
             button.DoRightClick = function(self2)
-                self:DetachAllMergeSlots(self2.attslot)
-                ArcCW.InvHUD_FormAttachmentSelect()
+                if ArcCW:PlayerCanAttach(LocalPlayer():GetOwner(), LocalPlayer(), self2.att, self2.attslot, true) then
+                    self:DetachAllMergeSlots(self2.attslot)
+                    ArcCW.InvHUD_FormAttachmentSelect()
+                else
+                    if CLIENT then surface.PlaySound("items/medshotno1.wav") end
+                end
             end
             button.Paint = function(self2, w, h)
                 if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
@@ -918,8 +927,12 @@ function SWEP:CreateCustomize2HUD()
                 end
             end
             button.DoRightClick = function(self2)
-                self:DetachAllMergeSlots(self2.attindex)
-                ArcCW.InvHUD_FormAttachmentSelect()
+                if ArcCW:PlayerCanAttach(LocalPlayer():GetOwner(), LocalPlayer(), nil, self2.attindex, true) then
+                    self:DetachAllMergeSlots(self2.attindex)
+                    ArcCW.InvHUD_FormAttachmentSelect()
+                else
+                    if CLIENT then surface.PlaySound("items/medshotno1.wav") end
+                end
             end
             button.Paint = function(self2, w, h)
                 if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
