@@ -129,8 +129,6 @@ local mat_hit_dot = Material("arccw/hud/hit_dot.png", "mips smooth")
 local pickx_empty = Material("arccw/hud/pickx_empty.png", "mips smooth")
 local pickx_full = Material("arccw/hud/pickx_filled.png", "mips smooth")
 
-local grad = Material("arccw/hud/grad.png", "mips smooth")
-
 local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
 
 -- 1: Customize
@@ -236,10 +234,6 @@ function SWEP:CreateCustomize2HUD()
             ArcCW.InvHUD:Remove()
             return
         end
-
-        surface.SetDrawColor(Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 255)))
-        surface.SetMaterial(grad)
-        surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 
         if self:GetReloading() then
             ArcCW.InvHUD:Remove()

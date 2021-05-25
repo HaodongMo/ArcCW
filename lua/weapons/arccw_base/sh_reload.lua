@@ -173,7 +173,7 @@ function SWEP:Reload()
     self:GetBuff_Hook("Hook_PostReload")
 end
 
-function SWEP:WhenTheMagUpIn()
+function SWEP:ReloadTimed()
     -- yeah my function names are COOL and QUIRKY and you can't say a DAMN thing about it.
     self:RestoreAmmo((self:GetMagUpCount() != 0 and self:GetMagUpCount()))
     self:SetMagUpCount(0)
