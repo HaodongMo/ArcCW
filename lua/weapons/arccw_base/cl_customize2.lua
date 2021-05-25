@@ -289,6 +289,7 @@ function SWEP:CreateCustomize2HUD()
         end
 
         --print("INVHUD REMOVED", CurTime())
+        ArcCW.Inv_Fade = 0.01
         gui.EnableScreenClicker(false)
     end
 
