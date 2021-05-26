@@ -320,3 +320,7 @@ L["arccw.cvar.malfunction"]    = "Malfunction Mode"
 L["arccw.cvar.malfunction.0"]   = "0 - Force disable on all guns"
 L["arccw.cvar.malfunction.1"]    = "1 - Enabled"
 L["arccw.cvar.malfunction.2"]    = "2 - Force enable on all guns"
+
+-- 2021-05-26
+L["arccw.cvar.mult_meleedamage"] = "Melee Damage"
+L["arccw.cvar.mult_meleetime"] = "Melee Time"

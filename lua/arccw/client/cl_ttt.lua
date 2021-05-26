@@ -10,7 +10,7 @@ ArcCW.TTT_AttInfo = ArcCW.TTT_AttInfo or {}
 local TTTPanel = {
     { type = "h", text = "#arccw.ttt_serverhelp" },
     { type = "b", text = "#arccw.cvar.ttt_replace", var = "arccw_ttt_replace", sv = true },
-    { type = "b", text = "#arccw.cvar.ammo_replace", var = "arccw_ammo_replace", sv = true },
+    { type = "b", text = "#arccw.cvar.ammo_replace", var = "arccw_ttt_ammo", sv = true },
     { type = "b", text = "#arccw.cvar.ttt_atts", var = "arccw_ttt_atts", sv = true },
     { type = "o", text = "#arccw.cvar.ttt_customizemode", var = "arccw_ttt_customizemode", sv = true,
             choices = {[0] = "#arccw.cvar.ttt_customizemode.0", [1] = "#arccw.cvar.ttt_customizemode.1", [2] = "#arccw.cvar.ttt_customizemode.2", [3] = "#arccw.cvar.ttt_customizemode.3"}},

@@ -80,6 +80,7 @@ if SERVER then
                         timer.Simple(2, function()
                             if IsValid(ammoent) then ammoent:SetOwner(nil) end
                         end)
+                        ammoent.AmmoCount = ent.AmmoAmount
                     end
 
                     -- Dropped ammo may have less rounds than usual
@@ -90,7 +91,6 @@ if SERVER then
                         -- Because most SMGs use pistol ammo (unlike vanilla TTT) and it runs out quickly
                         ammoent.AmmoCount = 30
                     end
-
                     ammoent:SetNWInt("truecount", ammoent.AmmoCount)
                 end
             end)
