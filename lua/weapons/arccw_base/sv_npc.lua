@@ -98,10 +98,11 @@ function SWEP:NPC_SetupAttachments()
         n = n + 1
     end
 
+    self.ActiveElementCache = nil -- Reset cache so we have the proper attachments to check with
     for i, slot in pairs(self.Attachments) do
         if !slot.Installed then continue end
         local atttbl = ArcCW.AttachmentTable[slot.Installed]
-        if !ArcCW:SlotAcceptsAtt(slot.Slot, self, slot.Installed) then slot.Installed = nil end
+        if !ArcCW:SlotAcceptsAtt(slot.Slot, self, slot.Installed) then slot.Installed = nil continue end
         if !self:CheckFlags(slot.ExcludeFlags, slot.RequireFlags) then slot.Installed = nil continue end
         if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then slot.Installed = nil continue end
     end
