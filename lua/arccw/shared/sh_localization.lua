@@ -205,6 +205,7 @@ function ArcCW.LoadLanguages()
 
         print("Loaded ArcCW language file " .. v .. " with " .. table.Count(L) .. " strings.")
         L = nil
+        STL = nil
     end
 
     if CLIENT then

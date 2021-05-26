@@ -1073,7 +1073,8 @@ function SWEP:Attach(slot, attname, silent, noadjust)
 
     local pick = self:GetPickX()
 
-    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot then
+    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot
+            and !attslot.Installed then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end

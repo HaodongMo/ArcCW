@@ -817,8 +817,10 @@ function SWEP:CreateCustomize2HUD()
 
                 if !self2.att or self2.att == "" then
                     local attslot = self.Attachments[self2.attslot]
+                    local att_txt = self:GetBuff_Hook("Hook_GetDefaultAttName", self2.attslot, true) or attslot.DefaultAttName
+                    att_txt = att_txt and try_translate(att_txt) or translate("attslot.noatt")
                     atttbl = {
-                        PrintName = self:GetBuff_Hook("Hook_GetDefaultAttName", self2.attslot, true) or try_translate(attslot.DefaultAttName) or translate("attslot.noatt"),
+                        PrintName = att_txt,
                         Icon = self:GetBuff_Hook("Hook_GetDefaultAttIcon", self2.attslot, true) or attslot.DefaultAttIcon or defaultatticon
                     }
                 end
@@ -952,7 +954,8 @@ function SWEP:CreateCustomize2HUD()
                 local installed = self:GetSlotInstalled(i)
 
                 local att_icon = self:GetBuff_Hook("Hook_GetDefaultAttIcon", i, true) or slot.DefaultAttIcon or defaultatticon
-                local att_txt = self:GetBuff_Hook("Hook_GetDefaultAttName", i, true) or try_translate(slot.DefaultAttName) or translate("attslot.noatt")
+                local att_txt = self:GetBuff_Hook("Hook_GetDefaultAttName", i, true) or slot.DefaultAttName
+                att_txt = att_txt and try_translate(att_txt) or translate("attslot.noatt")
                 local atttbl = ArcCW.AttachmentTable[installed or ""]
 
                 if atttbl then
@@ -993,7 +996,7 @@ function SWEP:CreateCustomize2HUD()
                 local txt = string.format(translate("ui.pickx"), pickedatts, pickx_amount)
                 local s = surface.GetTextSize(txt)
                 surface.SetTextColor(col_fg)
-                surface.SetTextPos(s / 2, ss * 4)
+                surface.SetTextPos(w / 2 - s, ss * 4)
                 surface.SetFont("ArcCWC2_16")
                 surface.DrawText(txt)
                 return
@@ -1006,6 +1009,15 @@ function SWEP:CreateCustomize2HUD()
 
             x = (w - (s * pickx_amount)) / 2
 
+            local icons = {}
+            for k, v in pairs(self.Attachments) do
+                if v.Installed and !v.FreeSlot then
+                    local icon = (ArcCW.AttachmentTable[v.Installed] or {}).Icon or defaultatticon
+                    if !icon or icon:IsError() then icon = bird end
+                    table.insert(icons, icon)
+                end
+            end
+
             for i = 1, pickx_amount do
                 surface.SetDrawColor(col_fg)
                 if i > pickedatts then
@@ -1014,6 +1026,11 @@ function SWEP:CreateCustomize2HUD()
                     surface.SetMaterial(pickx_full)
                 end
                 surface.DrawTexturedRect(x, y, s, s)
+                if i <= pickedatts and icons[i] then
+                    surface.SetDrawColor(col_shadow)
+                    surface.SetMaterial(icons[i])
+                    surface.DrawTexturedRect(x + ss * 3, y + ss * 3, ss * 14, ss * 14)
+                end
 
                 x = x + s
             end
@@ -1220,7 +1237,7 @@ function SWEP:CreateCustomize2HUD()
         scroll:SetSize(menu3_w - airgap_x, ss * 128 - bottombuffer)
 
         local multiline = {}
-        local desc = atttbl.Description
+        local desc = translate("desc." .. atttbl.ShortName) or atttbl.Description
 
         multiline = multlinetext(desc, scroll:GetWide() - (ss * 2), "ArcCW_10")
 
