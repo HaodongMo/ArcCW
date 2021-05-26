@@ -189,7 +189,7 @@ function SWEP:DrawFlashlightsWM()
         if !k.Installed then continue end
         local atttbl = ArcCW.AttachmentTable[k.Installed]
 
-        if !self:GetBuff_Stat("Flashlight", i) then continue end
+        if !atttbl or !self:GetBuff_Stat("Flashlight", i) then continue end
 
         local maxz = atttbl.FlashlightFarZ or 512
         local bone = atttbl.FlashlightBone or "laser"
@@ -200,8 +200,8 @@ function SWEP:DrawFlashlightsWM()
         local pos, ang, dir
 
         if !model then
-            pos = self:GetOwner():EyePos()
-            ang = self:GetOwner():EyeAngles()
+            pos = owner:EyePos()
+            ang = owner:EyeAngles()
             dir = ang:Forward()
         else
             local att = model:LookupAttachment(bone or "laser")
@@ -210,7 +210,7 @@ function SWEP:DrawFlashlightsWM()
 
             if att == 0 then
                 pos = model:GetPos()
-                ang = owner:EyeAngles()
+                ang = IsValid(owner) and owner:EyeAngles() or model:GetAngles()
                 dir = ang:Forward()
                 dir_2 = ang:Up()
             else
