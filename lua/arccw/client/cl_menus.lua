@@ -101,7 +101,6 @@ local ViewmodelPanel = {
     { type = "f", text = "#arccw.cvar.vm_sway_ymult", var = "arccw_vm_sway_ymult", min = -5, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_sway_zmult", var = "arccw_vm_sway_zmult", min = -5, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_sway_speedmult", var = "arccw_vm_sway_speedmult", min = 0, max = 2 },
-    { type = "f", text = "#arccw.cvar.vm_sway_rotatemult", var = "arccw_vm_sway_rotatemult", min = -3, max = 3 },
     { type = "h", text = "" },
     { type = "c", text = "#arccw.cvar.vm_viewwarn" },
     { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -5, max = 5 },
@@ -546,7 +545,6 @@ local ViewmodelPresets = {
         arccw_vm_sway_ymult            = "1",
         arccw_vm_sway_zmult            = "1",
         arccw_vm_sway_speedmult        = "1",
-        arccw_vm_sway_rotatemult       = "1",
         arccw_vm_coolview_mult        = "1",
     }
 }
