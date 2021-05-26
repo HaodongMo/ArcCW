@@ -753,7 +753,7 @@ function SWEP:CreateCustomize2HUD()
                 -- ArcCW.InvHUD_FormAttachmentSelect()
                 -- self:DetachAllMergeSlots(self2.attslot, true)
                 --if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
-                if ArcCW:PlayerCanAttach(LocalPlayer():GetOwner(), LocalPlayer(), self2.att, self2.attslot, false) then
+                if ArcCW:PlayerCanAttach(LocalPlayer(), self, self2.att, self2.attslot, false) then
                     if self2.att == "" then
                         self2:DoRightClick()
                     else
@@ -766,7 +766,7 @@ function SWEP:CreateCustomize2HUD()
                 end
             end
             button.DoRightClick = function(self2)
-                if ArcCW:PlayerCanAttach(LocalPlayer():GetOwner(), LocalPlayer(), self2.att, self2.attslot, true) then
+                if ArcCW:PlayerCanAttach(LocalPlayer(), self, self2.att, self2.attslot, true) then
                     self:DetachAllMergeSlots(self2.attslot)
                     ArcCW.InvHUD_FormAttachmentSelect()
                 else
@@ -922,7 +922,7 @@ function SWEP:CreateCustomize2HUD()
                 end
             end
             button.DoRightClick = function(self2)
-                if ArcCW:PlayerCanAttach(LocalPlayer():GetOwner(), LocalPlayer(), nil, self2.attindex, true) then
+                if ArcCW:PlayerCanAttach(LocalPlayer(), self, nil, self2.attindex, true) then
                     self:DetachAllMergeSlots(self2.attindex)
                     ArcCW.InvHUD_FormAttachmentSelect()
                 else
