@@ -38,6 +38,9 @@ CreateConVar("arccw_mult_attchance", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multi
 CreateConVar("arccw_mult_heat", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much heat increases per shot on certain weapons.", 0)
 CreateConVar("arccw_mult_sway", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much sway exists when in sights.", 0)
 CreateConVar("arccw_mult_malfunction", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how often malfunctions occur.", 0)
+CreateConVar("arccw_mult_meleedamage", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for melee damage.", 0)
+CreateConVar("arccw_mult_meleetime", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for melee speed.", 0)
+
 
 CreateConVar("arccw_mult_crouchdisp", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for hip dispersion while crouching.", 0)
 CreateConVar("arccw_mult_crouchrecoil", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for recoil while crouching.", 0)

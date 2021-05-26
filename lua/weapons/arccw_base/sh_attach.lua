@@ -13,7 +13,9 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_MoveDispersion"] = "arccw_mult_movedisp",
     ["Mult_AccuracyMOA"] = "arccw_mult_accuracy",
     ["Mult_Penetration"] = "arccw_mult_penetration",
-    ["Mult_Sway"] = "arccw_mult_sway"
+    ["Mult_Sway"] = "arccw_mult_sway",
+    ["Mult_MeleeDamage"] = "arccw_mult_meleedamage",
+    ["Mult_MeleeTime"] = "arccw_mult_meleetime",
 }
 
 ArcCW.ConVar_BuffAdds = {}
@@ -1071,7 +1073,8 @@ function SWEP:Attach(slot, attname, silent, noadjust)
 
     local pick = self:GetPickX()
 
-    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot then
+    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot
+            and !attslot.Installed then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
@@ -1196,6 +1199,7 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     end
 
     self:RefreshBGs()
+    return true
 end
 
 function SWEP:DetachAllMergeSlots(slot, silent)
@@ -1298,6 +1302,7 @@ function SWEP:Detach(slot, silent, noadjust, nocheck)
     if !noadjust then
         self:AdjustAtts()
     end
+    return true
 end
 
 function SWEP:ToggleSlot(slot, num, silent, back)

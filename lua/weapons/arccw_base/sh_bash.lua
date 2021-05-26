@@ -38,7 +38,7 @@ end
 
 function SWEP:Bash(melee2)
     melee2 = melee2 or false
-    if self:GetState() == ArcCW.STATE_SIGHTS then return end
+    if self:GetState() == ArcCW.STATE_SIGHTS or self:GetState() == ArcCW.STATE_SPRINT or self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
     if self:GetNextPrimaryFire() > CurTime() then return end
 
     if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
@@ -98,7 +98,7 @@ function SWEP:Bash(melee2)
         mat = self.Melee2AttackTime
     end
 
-    mat = mat * self:GetBuff_Mult("Mult_MeleeAttackTime")
+    mat = mat * self:GetBuff_Mult("Mult_MeleeAttackTime") * math.pow(mult, 1.5)
 
     self:SetTimer(mat or (0.125 * mt), function()
         if !IsValid(self) then return end
