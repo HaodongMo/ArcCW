@@ -1199,6 +1199,7 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     end
 
     self:RefreshBGs()
+    return true
 end
 
 function SWEP:DetachAllMergeSlots(slot, silent)
@@ -1301,6 +1302,7 @@ function SWEP:Detach(slot, silent, noadjust, nocheck)
     if !noadjust then
         self:AdjustAtts()
     end
+    return true
 end
 
 function SWEP:ToggleSlot(slot, num, silent, back)

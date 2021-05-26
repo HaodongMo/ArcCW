@@ -757,10 +757,11 @@ function SWEP:CreateCustomize2HUD()
                 if ArcCW:PlayerCanAttach(LocalPlayer(), self, self2.att, self2.attslot, false) then
                     if self2.att == "" then
                         self2:DoRightClick()
-                    else
-                        self:Attach(self2.attslot, self2.att)
+                    elseif self:Attach(self2.attslot, self2.att) then
                         ArcCW.Inv_ShownAtt = nil -- Force a regen on the panel so we can see toggle/slider options
                         ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot, true)
+                    elseif self:CountAttachments() >= self:GetPickX() then
+                        ArcCW.Inv_LastPickXBlock = CurTime()
                     end
                 else
                     if CLIENT then surface.PlaySound("items/medshotno1.wav") end
@@ -984,20 +985,27 @@ function SWEP:CreateCustomize2HUD()
         end
 
         local pickxpanel = vgui.Create("DPanel", ArcCW.InvHUD)
-        pickxpanel:SetSize(menu1_w, bottom_zone - airgap_y)
-        pickxpanel:SetPos(airgap_x, scrh - bottom_zone - airgap_y)
+        pickxpanel:SetSize(menu1_w - ArcCW.InvHUD_Menu1:GetVBar():GetWide(), bottom_zone - smallgap * 4)
+        pickxpanel:SetPos(airgap_x, scrh - bottom_zone - smallgap * 4)
         pickxpanel.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
             local pickx_amount = self:GetPickX()
             local pickedatts = self:CountAttachments()
 
+            local col_fg_pick = col_fg
+            local d = 0.5
+            local diff = CurTime() - (ArcCW.Inv_LastPickXBlock or 0 + d)
+            if diff > 0 then
+                col_fg_pick = Color(255, 255 * diff / d, 255 * diff / d)
+            end
+
             if pickx_amount == 0 then return end
             if pickx_amount > 8 then
+                surface.SetFont("ArcCWC2_16")
                 local txt = string.format(translate("ui.pickx"), pickedatts, pickx_amount)
                 local s = surface.GetTextSize(txt)
-                surface.SetTextColor(col_fg)
-                surface.SetTextPos(w / 2 - s, ss * 4)
-                surface.SetFont("ArcCWC2_16")
+                surface.SetTextColor(col_fg_pick)
+                surface.SetTextPos(w / 2 - s / 2, ss * 4)
                 surface.DrawText(txt)
                 return
             end
@@ -1019,7 +1027,7 @@ function SWEP:CreateCustomize2HUD()
             end
 
             for i = 1, pickx_amount do
-                surface.SetDrawColor(col_fg)
+                surface.SetDrawColor(col_fg_pick)
                 if i > pickedatts then
                     surface.SetMaterial(pickx_empty)
                 else
