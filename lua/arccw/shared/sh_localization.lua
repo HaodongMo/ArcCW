@@ -135,6 +135,7 @@ if CLIENT then
         local lang = ArcCW.GetLanguage()
         files = files or file.Find("arccw/client/cl_languages/*", "LUA")
 
+        --[[]
         -- First make sure there is actually a file in such language; otherwise default to english
         local has = false
         for _, v in pairs(files) do
@@ -142,17 +143,30 @@ if CLIENT then
             if exp[#exp] == lang then has = true break end
         end
         if !has then lang = "en" end
+        ]]
+        local lang_tbl = {}
+        local lang_tbl_en = {}
 
         for _, v in pairs(files) do
             local exp = string.Explode("_", string.lower(string.Replace(v, ".lua", "")))
-            if exp[#exp] ~= lang then continue end
-            include("arccw/client/cl_languages/" .. v)
-            for phrase, str in pairs(L) do
-                language.Add(phrase, str)
+            if lang != "en" and exp[#exp] == lang then
+                include("arccw/client/cl_languages/" .. v)
+                for phrase, str in pairs(L) do
+                    lang_tbl[phrase] = str
+                end
+                print("Loaded ArcCW cl_language file " .. v .. " with " .. table.Count(L) .. " strings.")
+                L = nil
+            elseif exp[#exp] == "en" then
+                -- Always load english as backup
+                include("arccw/client/cl_languages/" .. v)
+                for phrase, str in pairs(L) do
+                    lang_tbl_en[phrase] = str
+                end
             end
-
-            print("Loaded ArcCW cl_language file " .. v .. " with " .. table.Count(L) .. " strings.")
-            L = nil
+        end
+        table.Merge(lang_tbl_en, lang_tbl)
+        for phrase, str in pairs(lang_tbl_en) do
+            language.Add(phrase, str)
         end
     end
 elseif SERVER then
