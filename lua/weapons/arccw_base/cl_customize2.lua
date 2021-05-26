@@ -119,6 +119,7 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
 end
 
 local translate = ArcCW.GetTranslation
+local try_translate = ArcCW.TryTranslation
 local defaultatticon = Material("arccw/hud/atts/default.png", "mips smooth")
 local blockedatticon = Material("arccw/hud/atts/blocked.png", "mips smooth")
 
@@ -817,7 +818,7 @@ function SWEP:CreateCustomize2HUD()
                 if !self2.att or self2.att == "" then
                     local attslot = self.Attachments[self2.attslot]
                     atttbl = {
-                        PrintName = self:GetBuff_Hook("Hook_GetDefaultAttName", self2.attslot, true) or translate(attslot.DefaultAttName) or attslot.DefaultAttName or translate("attslot.noatt"),
+                        PrintName = self:GetBuff_Hook("Hook_GetDefaultAttName", self2.attslot, true) or try_translate(attslot.DefaultAttName) or translate("attslot.noatt"),
                         Icon = self:GetBuff_Hook("Hook_GetDefaultAttIcon", self2.attslot, true) or attslot.DefaultAttIcon or defaultatticon
                     }
                 end
@@ -951,7 +952,7 @@ function SWEP:CreateCustomize2HUD()
                 local installed = self:GetSlotInstalled(i)
 
                 local att_icon = self:GetBuff_Hook("Hook_GetDefaultAttIcon", i, true) or slot.DefaultAttIcon or defaultatticon
-                local att_txt = self:GetBuff_Hook("Hook_GetDefaultAttName", i, true) or translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
+                local att_txt = self:GetBuff_Hook("Hook_GetDefaultAttName", i, true) or try_translate(slot.DefaultAttName) or translate("attslot.noatt")
                 local atttbl = ArcCW.AttachmentTable[installed or ""]
 
                 if atttbl then
@@ -960,7 +961,7 @@ function SWEP:CreateCustomize2HUD()
                     if !att_icon or att_icon:IsError() then att_icon = bird end
                 end
 
-                local slot_txt = translate(slot.PrintName) or slot.PrintName
+                local slot_txt = try_translate(slot.PrintName)
 
                 surface.SetDrawColor(col2)
                 local icon_h = h
@@ -989,10 +990,12 @@ function SWEP:CreateCustomize2HUD()
 
             if pickx_amount == 0 then return end
             if pickx_amount > 8 then
+                local txt = string.format(translate("ui.pickx"), pickedatts, pickx_amount)
+                local s = surface.GetTextSize(txt)
                 surface.SetTextColor(col_fg)
-                surface.SetTextPos(0, ss * 4)
+                surface.SetTextPos(s / 2, ss * 4)
                 surface.SetFont("ArcCWC2_16")
-                surface.DrawText("Attachments: " .. tostring(pickedatts) .. "/" .. tostring(pickx_amount))
+                surface.DrawText(txt)
                 return
             end
 
@@ -1065,7 +1068,7 @@ function SWEP:CreateCustomize2HUD()
         attname_panel:SetSize(menu3_w, rss * 24)
         attname_panel:SetPos(0, rss * 16)
         attname_panel.Paint = function(self2, w, h)
-            local name = atttbl.PrintName
+            local name = translate("name." .. atttbl.ShortName) or atttbl.PrintName
 
             surface.SetFont("ArcCWC2_24")
             local tw = surface.GetTextSize(name)
@@ -1194,7 +1197,7 @@ function SWEP:CreateCustomize2HUD()
                 local catttbl = ArcCW.AttachmentTable[att]
                 if catttbl and catttbl.ToggleStats[self.Attachments[slot].ToggleNum]
                         and catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName then
-                    txt = ArcCW.TryTranslation(catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName)
+                    txt = try_translate(catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName)
                 end
 
                 surface.SetFont("ArcCWC2_8")
