@@ -54,6 +54,7 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
     if (atttbl.NotForNPC or atttbl.NotForNPCs) and wep.Owner and wep.Owner:IsNPC() then
         return false
     end
+    if atttbl.AdminOnly and IsValid(wep:GetOwner()) and wep:GetOwner():IsPlayer() and !wep:GetOwner():IsAdmin() then return false end
 
     if wep.RejectAttachments and wep.RejectAttachments[att] then return false end
 
@@ -136,6 +137,7 @@ function ArcCW:PlayerGiveAtt(ply, att, amt)
 
     if !atttbl then print("Invalid att " .. att) return end
     if atttbl.Free then return end -- You can't give a free attachment, silly
+    if !ply:IsAdmin() and atttbl.AdminOnly then return false end
 
     if atttbl.InvAtt then att = atttbl.InvAtt end
 
