@@ -94,7 +94,7 @@ L["arccw.cvar.muzzleeffects"]             = "Enable World Muzzle Effects"
 L["arccw.cvar.fastmuzzles"]               = "Low Performance Muzzle Effects"
 L["arccw.cvar.fasttracers"]               = "Low Performance Tracer Effects"
 L["arccw.cvar.shelleffects"]              = "Enable World Case Effects"
-L["arccw.cvar.att_showothers"]            = "Show World Attachments"
+L["arccw.cvar.att_showothers"]            = "Show Others' Attachments"
 L["arccw.cvar.shelltime"]                 = "Case Lifetime"
 L["arccw.cvar.blur"]                      = "Customization Blur"
 L["arccw.cvar.blur_toytown"]              = "Aim Blur"
@@ -324,3 +324,8 @@ L["arccw.cvar.malfunction.2"]    = "2 - Force enable on all guns"
 -- 2021-05-26
 L["arccw.cvar.mult_meleedamage"] = "Melee Damage"
 L["arccw.cvar.mult_meleetime"] = "Melee Time"
+
+-- 2021-05-27
+L["arccw.cvar.ammonames"] = "Custom Ammo Names"
+L["arccw.cvar.ammonames.desc"] = "Replaces default ammo type names with custom ones that are a bit more realistic (such as Pulse Ammo to Rifle Ammo). Also replaces references everywhere else!"
+L["arccw.cvar.att_showground"]            = "Show Ground Attachments"

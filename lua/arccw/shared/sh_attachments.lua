@@ -21,12 +21,13 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     return (ret == nil and true) or ret
 end
 
-function ArcCW:GetAttsForSlot(slot, wep)
+function ArcCW:GetAttsForSlot(slot, wep, random)
     local ret = {}
 
-    for id, _ in pairs(ArcCW.AttachmentTable) do
+    for id, atttbl in pairs(ArcCW.AttachmentTable) do
 
         if !ArcCW:SlotAcceptsAtt(slot, wep, id) then continue end
+        if random and atttbl.NoRandom then continue end
 
         table.insert(ret, id)
     end
@@ -53,6 +54,7 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
     if (atttbl.NotForNPC or atttbl.NotForNPCs) and wep.Owner and wep.Owner:IsNPC() then
         return false
     end
+    if atttbl.AdminOnly and IsValid(wep:GetOwner()) and wep:GetOwner():IsPlayer() and !wep:GetOwner():IsAdmin() then return false end
 
     if wep.RejectAttachments and wep.RejectAttachments[att] then return false end
 
@@ -135,6 +137,7 @@ function ArcCW:PlayerGiveAtt(ply, att, amt)
 
     if !atttbl then print("Invalid att " .. att) return end
     if atttbl.Free then return end -- You can't give a free attachment, silly
+    if !ply:IsAdmin() and atttbl.AdminOnly then return false end
 
     if atttbl.InvAtt then att = atttbl.InvAtt end
 

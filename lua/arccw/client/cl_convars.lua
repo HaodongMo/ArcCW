@@ -45,6 +45,7 @@ ArcCW.ClientConVars = {
 
     ["arccw_language"]                = { def =  "", usri = true },
     ["arccw_font"]                    = { def =  "", usri = true },
+    ["arccw_ammonames"]               = { def =  0 },
 
     ["arccw_cheapscopes"]             = { def =  1 },
     ["arccw_cheapscopesautoconfig"]   = { def =  0 },
@@ -56,6 +57,7 @@ ArcCW.ClientConVars = {
     ["arccw_shelleffects"]            = { def =  1 },
     ["arccw_shelltime"]               = { def =  0 },
     ["arccw_att_showothers"]          = { def =  1 },
+    ["arccw_att_showground"]          = { def =  1 },
     ["arccw_visibility"]              = { def =  8000 },
     ["arccw_fastmuzzles"]             = { def =  0 },
     ["arccw_fasttracers"]             = { def =  0 },
@@ -107,7 +109,6 @@ ArcCW.ClientConVars = {
     ["arccw_vm_sway_zmult"]           = { def =  1 },
 
     ["arccw_vm_sway_speedmult"]       = { def =  1 },
-    ["arccw_vm_sway_rotatemult"]      = { def =  1 },
 
     ["arccw_toggleads"]               = { def = 0, usri = true },
     ["arccw_altubglkey"]              = { def = 0, usri = true },

@@ -764,7 +764,8 @@ function SWEP:NetworkWeapon(sendto)
     if sendto then
         net.Send(sendto)
     else
-        net.Broadcast()
+        net.SendPVS(self:GetPos())
+        --net.Broadcast()
     end
 end
 

@@ -1019,7 +1019,7 @@ function SWEP:CreateCustomize2HUD()
 
             local icons = {}
             for k, v in pairs(self.Attachments) do
-                if v.Installed and !v.FreeSlot then
+                if v.Installed and !v.FreeSlot and !ArcCW.AttachmentTable[v.Installed].IgnorePickX then
                     local icon = (ArcCW.AttachmentTable[v.Installed] or {}).Icon or defaultatticon
                     if !icon or icon:IsError() then icon = bird end
                     table.insert(icons, icon)
@@ -1437,7 +1437,7 @@ function SWEP:CreateCustomize2HUD()
         statsbutton:SetSize(ss * 48, ss * 16)
         statsbutton:SetPos(menu3_w - (ss * 48 * 2) - airgap_x - (ss * 4), rss * 48 + ss * 12)
         statsbutton:SetText("")
-        statsbutton.Text = "Stats"
+        statsbutton.Text = translate("ui.stats")
         statsbutton.Val = 1
         statsbutton.DoClick = function(self2, clr, btn)
             ArcCW.InvHUD_FormWeaponStats()
@@ -1472,7 +1472,7 @@ function SWEP:CreateCustomize2HUD()
         triviabutton:SetSize(ss * 48, ss * 16)
         triviabutton:SetPos(menu3_w - ss * 48 - airgap_x, rss * 48 + ss * 12)
         triviabutton:SetText("")
-        triviabutton.Text = "Trivia"
+        triviabutton.Text = translate("ui.trivia")
         triviabutton.Val = 2
         triviabutton.DoClick = function(self2, clr, btn)
             ArcCW.InvHUD_FormWeaponTrivia()
@@ -1484,7 +1484,7 @@ function SWEP:CreateCustomize2HUD()
         ballisticsbutton:SetSize(ss * 48, ss * 16)
         ballisticsbutton:SetPos(menu3_w - (ss * 48 * 3) - airgap_x - (ss * 4 * 2), rss * 48 + ss * 12)
         ballisticsbutton:SetText("")
-        ballisticsbutton.Text = "Ballistics"
+        ballisticsbutton.Text = translate("ui.ballistics")
         ballisticsbutton.Val = 3
         ballisticsbutton.DoClick = function(self2, clr, btn)
             ArcCW.InvHUD_FormWeaponBallistics()
@@ -1522,8 +1522,8 @@ function SWEP:CreateCustomize2HUD()
         weapon_cat:SetPos(0, rss * 32)
         weapon_cat.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-            local class = translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class
-            local cal = translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre) or self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre
+            local class = try_translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class)
+            local cal = try_translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre)
             local name = class
 
             if !self.PrimaryMelee and !self.Throwing and cal then
@@ -1770,12 +1770,14 @@ function SWEP:CreateCustomize2HUD()
             end
 
             -- ammo type
-            if self.Primary.Ammo and self.Primary.Ammo != "" and self.Primary.Ammo != "none" then
-                local ammotype = language.GetPhrase(self.Primary.Ammo .. "_ammo")
+            local ammo = string.lower(self:GetBuff_Override("Override_Ammo", self.Primary.Ammo))
+            if (ammo or "") != "" and ammo != "none" then
+                local ammotype = ArcCW.TranslateAmmo(ammo) --language.GetPhrase(self.Primary.Ammo .. "_ammo")
                 if ammotype then
                     table.insert(infos, {
                         title = translate("trivia.ammo"),
                         value = ammotype,
+                        --unit = " (" .. ammo .. ")",
                     })
                 end
             end
