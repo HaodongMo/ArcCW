@@ -1019,7 +1019,7 @@ function SWEP:CreateCustomize2HUD()
 
             local icons = {}
             for k, v in pairs(self.Attachments) do
-                if v.Installed and !v.FreeSlot then
+                if v.Installed and !v.FreeSlot and !ArcCW.AttachmentTable[v.Installed].IgnorePickX then
                     local icon = (ArcCW.AttachmentTable[v.Installed] or {}).Icon or defaultatticon
                     if !icon or icon:IsError() then icon = bird end
                     table.insert(icons, icon)

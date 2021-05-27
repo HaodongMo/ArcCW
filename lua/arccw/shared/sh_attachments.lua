@@ -21,12 +21,13 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     return (ret == nil and true) or ret
 end
 
-function ArcCW:GetAttsForSlot(slot, wep)
+function ArcCW:GetAttsForSlot(slot, wep, random)
     local ret = {}
 
-    for id, _ in pairs(ArcCW.AttachmentTable) do
+    for id, atttbl in pairs(ArcCW.AttachmentTable) do
 
         if !ArcCW:SlotAcceptsAtt(slot, wep, id) then continue end
+        if random and atttbl.NoRandom then continue end
 
         table.insert(ret, id)
     end

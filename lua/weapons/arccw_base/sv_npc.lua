@@ -39,7 +39,7 @@ function SWEP:AssignRandomAttToSlot(slot)
     if slot.DoNotRandomize then return end
     if slot.Installed then return end
 
-    local atts = ArcCW:GetAttsForSlot(slot.Slot, self)
+    local atts = ArcCW:GetAttsForSlot(slot.Slot, self, true)
     if #atts <= 0 then return end
 
     slot.Installed = table.Random(atts)
