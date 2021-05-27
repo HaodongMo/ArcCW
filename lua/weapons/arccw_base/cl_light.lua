@@ -195,6 +195,7 @@ function SWEP:DrawFlashlightsWM()
         local bone = atttbl.FlashlightBone or "laser"
         local col = atttbl.FlashlightColor or Color(255, 255, 255)
 
+        if !k.WElement then continue end
         local model = k.WElement.Model
 
         local pos, ang, dir

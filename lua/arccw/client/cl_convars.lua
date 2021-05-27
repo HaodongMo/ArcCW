@@ -57,6 +57,7 @@ ArcCW.ClientConVars = {
     ["arccw_shelleffects"]            = { def =  1 },
     ["arccw_shelltime"]               = { def =  0 },
     ["arccw_att_showothers"]          = { def =  1 },
+    ["arccw_att_showground"]          = { def =  0 },
     ["arccw_visibility"]              = { def =  8000 },
     ["arccw_fastmuzzles"]             = { def =  0 },
     ["arccw_fasttracers"]             = { def =  0 },

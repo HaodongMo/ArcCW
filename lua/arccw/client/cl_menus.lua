@@ -75,6 +75,7 @@ local PerformancePanel = {
     { type = "b", text = "#arccw.cvar.fasttracers", var = "arccw_fasttracers" },
     { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
     { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
+    { type = "b", text = "#arccw.cvar.att_showground", var = "arccw_att_showground" },
     { type = "i", text = "#arccw.cvar.visibility", var = "arccw_visibility", min = -1, max = 32000},
     { type = "c", text = "#arccw.cvar.visibility.desc" },
     { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
