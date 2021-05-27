@@ -59,6 +59,8 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.2d3d_info" },
     { type = "t", text = "#arccw.cvar.language", var = "arccw_language"  },
     { type = "c", text = "#arccw.cvar.language_info" },
+    { type = "b", text = "#arccw.cvar.ammonames", var = "arccw_ammonames" },
+    { type = "c", text = "#arccw.cvar.ammonames.desc" },
 }
 
 local PerformancePanel = {
@@ -187,7 +189,6 @@ local BindsPanel = {
     { type = "d", text = "#arccw.bind.melee", var = "arccw_melee" },
     { type = "d", text = "#arccw.bind.toggle_att", var = "arccw_toggle_att" },
 }
-
 
 local ServerPanel = {
     { type = "h", text = "#arccw.adminonly" },

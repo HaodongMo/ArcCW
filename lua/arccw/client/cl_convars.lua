@@ -45,6 +45,7 @@ ArcCW.ClientConVars = {
 
     ["arccw_language"]                = { def =  "", usri = true },
     ["arccw_font"]                    = { def =  "", usri = true },
+    ["arccw_ammonames"]               = { def =  0 },
 
     ["arccw_cheapscopes"]             = { def =  1 },
     ["arccw_cheapscopesautoconfig"]   = { def =  0 },

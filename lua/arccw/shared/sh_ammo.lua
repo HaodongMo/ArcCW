@@ -50,6 +50,7 @@ function ArcCW:AddGrenadeAmmo()
                     if CLIENT then
                         language.Add(class .. "_ammo", wpntbl.PrintName)
                     end
+                    ArcCW.LangTable["en"]["ammo." .. class] = wpntbl.PrintName
                 end
 
                 k.Primary.Ammo = class

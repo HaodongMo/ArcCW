@@ -54,7 +54,7 @@ ArcCW.AutoStats = {
     ["Mult_MalfunctionMean"]  = { "autostat.malfunctionmean", "mult", false},
 
     ["Override_Ammo"] = {"autostat.ammotype", "func", function(val)
-        return string.format(ArcCW.GetTranslation("autostat.ammotype"), string.lower(language.GetPhrase(val .. "_ammo"))), "infos"
+        return string.format(ArcCW.GetTranslation("autostat.ammotype"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
     end},
 }
 

@@ -324,3 +324,7 @@ L["arccw.cvar.malfunction.2"]    = "2 - Force enable on all guns"
 -- 2021-05-26
 L["arccw.cvar.mult_meleedamage"] = "Melee Damage"
 L["arccw.cvar.mult_meleetime"] = "Melee Time"
+
+-- 2021-05-27
+L["arccw.cvar.ammonames"] = "Custom Ammo Names"
+L["arccw.cvar.ammonames.desc"] = "Replaces default ammo type names with custom ones that are a bit more realistic (such as Pulse Ammo to Rifle Ammo). Also replaces references everywhere else!"

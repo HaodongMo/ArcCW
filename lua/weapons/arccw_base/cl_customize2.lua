@@ -1770,12 +1770,14 @@ function SWEP:CreateCustomize2HUD()
             end
 
             -- ammo type
-            if self.Primary.Ammo and self.Primary.Ammo != "" and self.Primary.Ammo != "none" then
-                local ammotype = language.GetPhrase(self.Primary.Ammo .. "_ammo")
+            local ammo = string.lower(self:GetBuff_Override("Override_Ammo", self.Primary.Ammo))
+            if (ammo or "") != "" and ammo != "none" then
+                local ammotype = ArcCW.TranslateAmmo(ammo) --language.GetPhrase(self.Primary.Ammo .. "_ammo")
                 if ammotype then
                     table.insert(infos, {
                         title = translate("trivia.ammo"),
                         value = ammotype,
+                        --unit = " (" .. ammo .. ")",
                     })
                 end
             end

@@ -2,7 +2,7 @@ if SERVER and game.SinglePlayer() then
     util.AddNetworkString("arccw_sp_reloadlangs")
 end
 
-ArcCW.LangTable = {}
+ArcCW.LangTable = ArcCW.LangTable or {}
 -- Converts raw string to a lang phrase. not case sensitive.
 ArcCW.StringToLang = {
     -- Class
@@ -130,6 +130,25 @@ function ArcCW.AddTranslation(phrase, str, lang)
     ArcCW.LangTable[lang][string.lower(phrase)] = str
 end
 
+-- Translates an ammo string. If enabled, we will use our custom names (pulse -> rifle, smg -> carbine);
+-- Otherwise returns the in-game translation for it.
+function ArcCW.TranslateAmmo(ammo)
+    if isnumber(ammo) then ammo = game.GetAmmoName(ammo) end
+    if !ammo or !isstring(ammo) then return nil end
+    ammo = string.lower(ammo)
+
+    local lang = ArcCW.GetLanguage()
+    local str = "ammo." .. ammo
+    if SERVER or GetConVar("arccw_ammonames"):GetBool() then
+        if ArcCW.LangTable[lang][str] then
+            return ArcCW.LangTable[lang][str]
+        elseif ArcCW.LangTable["en"][str] then
+            return ArcCW.LangTable["en"][str]
+        end
+    end
+    return SERVER and (ammo .. " ammo") or language.GetPhrase(ammo .. "_ammo")
+end
+
 if CLIENT then
     function ArcCW.LoadClientLanguage(files)
         local lang = ArcCW.GetLanguage()
@@ -210,11 +229,25 @@ function ArcCW.LoadLanguages()
 
     if CLIENT then
         ArcCW.LoadClientLanguage()
+
+        if GetConVar("arccw_ammonames"):GetBool() then
+            local ourlang = ArcCW.GetLanguage()
+            for _, name in pairs(game.GetAmmoTypes()) do
+                if ArcCW.LangTable[ourlang]["ammo." .. string.lower(name)] then
+                    language.Add(name .. "_ammo", ArcCW.LangTable[ourlang]["ammo." .. string.lower(name)])
+                elseif ArcCW.LangTable["en"]["ammo." .. string.lower(name)] then
+                    language.Add(name .. "_ammo", ArcCW.LangTable["en"]["ammo." .. string.lower(name)])
+                end
+            end
+        end
     end
 
     hook.Run("ArcCW_LocalizationLoaded")
 end
-ArcCW.LoadLanguages()
+
+hook.Add("PreGamemodeLoaded", "ArcCW_Lang", function()
+    ArcCW.LoadLanguages()
+end)
 
 concommand.Add("arccw_reloadlangs", function(ply)
     ArcCW.LoadLanguages()
