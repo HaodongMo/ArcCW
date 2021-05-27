@@ -101,7 +101,7 @@ function ArcCW.GetTranslation(phrase, format)
     if !lang or lang == "" or !ArcCW.LangTable[lang] or !ArcCW.LangTable[lang][phrase] then
         lang = "en"
     end
-    if ArcCW.LangTable[lang][phrase] then
+    if ArcCW.LangTable[lang] and ArcCW.LangTable[lang][phrase] then
         local str = ArcCW.LangTable[lang][phrase]
         for i, v in pairs(format or {}) do
             -- print(i, v)
@@ -245,9 +245,12 @@ function ArcCW.LoadLanguages()
     hook.Run("ArcCW_LocalizationLoaded")
 end
 
+ArcCW.LoadLanguages()
+--[[]
 hook.Add("PreGamemodeLoaded", "ArcCW_Lang", function()
     ArcCW.LoadLanguages()
 end)
+]]
 
 concommand.Add("arccw_reloadlangs", function(ply)
     ArcCW.LoadLanguages()
