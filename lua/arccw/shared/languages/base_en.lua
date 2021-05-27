@@ -287,6 +287,7 @@ L["trivia.recoilside"] = "Horizontal Recoil"
 
 --2021-05-27
 L["ui.pickx"] = "Attachments: %d/%d"
+L["ui.ballistics"] = "Ballistics"
 
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
