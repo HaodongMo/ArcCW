@@ -72,7 +72,7 @@ function SWEP:NPC_SetupAttachments()
     local n = 0
 
     for i, slot in pairs(self.Attachments) do
-        if n >= pick then continue end
+        if n > pick then continue end
         if !self:CheckFlags(slot.ExcludeFlags, slot.RequireFlags) then continue end
         if math.Rand(0, 100) > (chance * (slot.RandomChance or 1)) then continue end
 
