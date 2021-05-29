@@ -248,15 +248,11 @@ function SWEP:SetupModel(wm)
     --     table.insert(elements, element)
     -- end
 
-    -- Traditional WMs are drawn traditionally to improve performance
     if wm and CLIENT then
-        --[[]
         local sm = self.WorldModel
         if self.MirrorVMWM then
             sm = self.MirrorWorldModel or self.ViewModel
         end
-        ]]
-        local sm = self.MirrorWorldModel or self.ViewModel
         local vs = (self.WorldModelOffset or {}).scale or 1
         vscale = Vector(vs, vs, vs)
         local model = ClientsideModel(sm)
@@ -673,13 +669,6 @@ end
 
 function SWEP:DrawCustomModel(wm,origin,angle)
     if ArcCW.VM_OverDraw then return end
-
-    -- p e r f o r m a n c e
-    if wm and self:ShouldCheapWorldModel() then
-        self:DrawModel()
-        return
-    end
-
     local disttoeye = self:GetPos():DistToSqr(EyePos())
     local visibility = math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
     local always = false
@@ -883,6 +872,7 @@ function SWEP:DrawCustomModel(wm,origin,angle)
         end
 
         local apos, aang
+
         if k.CharmParent and IsValid(k.CharmParent.Model) then
             local cm = k.CharmParent.Model
             local boneindex = cm:LookupAttachment(k.CharmAtt)
