@@ -1907,7 +1907,7 @@ function SWEP:CreateCustomize2HUD()
             then
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
 
-                local txt = "No Data"
+                local txt = translate("ui.nodata")
 
                 surface.SetTextColor(col_fg)
                 surface.SetFont("ArcCWC2_24")
@@ -1917,23 +1917,12 @@ function SWEP:CreateCustomize2HUD()
 
                 return
             end
+            local dmgmax = self:GetDamage(0)
+            local dmgmin = self:GetDamage(math.huge)
 
-            local ovr = self:GetBuff_Override("Override_Num")
-            local add = self:GetBuff_Add("Add_Num")
-
-            local num = self.Num
-            local nbr = (ovr or num) + add
-            local mul = 1
-
-            mul = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num != nbr) and (num / nbr)) or 1
-
-            if !pellet then mul = mul * nbr end
-
-            local dmgmax = self:GetBuff("Damage") * mul
-            local dmgmin = self:GetBuff("DamageMin") * mul
-
-            local mran = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
-            local sran = self.Range * self:GetBuff_Mult("Mult_Range")
+            --local mran = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
+            --local sran = self.Range * self:GetBuff_Mult("Mult_Range")
+            local mran, sran = self:GetMinMaxRange()
 
             local scale = math.ceil((math.max(dmgmax, dmgmin) + 10) / 25) * 25
             local hscale = math.ceil(math.max(mran, sran) / 100) * 100

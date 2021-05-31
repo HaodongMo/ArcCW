@@ -297,6 +297,9 @@ L["ammo.buckshot"] = "Shotgun Ammo"
 L["ammo.sniperpenetratedround"] = "Sniper Ammo"
 L["ammo.smg1_grenade"] = "Rifle Grenades"
 
+--2021-05-31
+L["ui.nodata"] = "No Data"
+
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 Similarly, you can translate attachment and weapon names with ["name.class_name"]
