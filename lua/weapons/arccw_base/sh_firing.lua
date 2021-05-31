@@ -90,6 +90,12 @@ function SWEP:FireWeapon(refname)
     local reftbl = self:GetRefTable(refname)
     local is_secondary = isstring(refname) and refname != ""
 
+    if is_secondary then
+        self.Secondary.Automatic = true
+    else
+        self.Primary.Automatic = true
+    end
+
     -- TODO HasBottomlessClip and HasInfiniteAmmo support refname
     if self:HasBottomlessClip(is_secondary) then
         clip = refname and self:Ammo2() or self:Ammo1()
