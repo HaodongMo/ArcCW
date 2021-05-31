@@ -796,14 +796,13 @@ function SWEP:OnRestore()
 end
 
 
-<<<<<<< HEAD
 function SWEP:SetReloading(v, akimbo)
     if akimbo then
         if isbool(v) then
             if v then
                 self:SetReloadingREAL2(math.huge)
             else
-                self:SetReloadingREAL2(0)
+                self:SetReloadingREAL2(-math.huge)
             end
         elseif isnumber(v) and v > self:GetReloadingREAL2() then
             self:SetReloadingREAL2(v)
@@ -813,18 +812,10 @@ function SWEP:SetReloading(v, akimbo)
             if v then
                 self:SetReloadingREAL(math.huge)
             else
-                self:SetReloadingREAL(0)
+                self:SetReloadingREAL(-math.huge)
             end
         elseif isnumber(v) and v > self:GetReloadingREAL() then
             self:SetReloadingREAL(v)
-=======
-function SWEP:SetReloading( v )
-    if isbool(v) then
-        if v then
-            self:SetReloadingREAL(math.huge)
-        else
-            self:SetReloadingREAL(-math.huge)
->>>>>>> 4eea705433f264dc020b59da1d9e08f1a1559bdb
         end
     end
 end
