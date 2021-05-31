@@ -291,8 +291,9 @@ local MultsPanel = {
     { type = "f", text = "#arccw.cvar.mult_crouchrecoil",    var = "arccw_mult_crouchrecoil", min = 0, max = 1, sv = true },
     { type = "f", text = "#arccw.cvar.mult_sway",            var = "arccw_mult_sway", min = 0, max = 10, sv = true },
     { type = "f", text = "#arccw.cvar.mult_meleedamage",     var = "arccw_mult_meleedamage", min = 0, max = 4, sv = true },
-    { type = "f", text = "#arccw.cvar.mult_meleetime",     var = "arccw_mult_meleetime", min = 0, max = 3, sv = true }
-    ,
+    { type = "f", text = "#arccw.cvar.mult_meleetime",     var = "arccw_mult_meleetime", min = 0, max = 3, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_malfunction",     var = "arccw_mult_malfunction", min = 0, max = 10, sv = true },
+
     { type = "b", text = "#arccw.cvar.mult_startunloaded",   var = "arccw_mult_startunloaded", sv = true },
     { type = "b", text = "#arccw.cvar.mult_shootwhilesprinting",   var = "arccw_mult_shootwhilesprinting", sv = true },
     { type = "o", text = "#arccw.cvar.malfunction", var = "arccw_malfunction", sv = true,
