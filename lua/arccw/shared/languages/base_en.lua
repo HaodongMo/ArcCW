@@ -299,6 +299,8 @@ L["ammo.smg1_grenade"] = "Rifle Grenades"
 
 --2021-05-31
 L["ui.nodata"] = "No Data"
+L["ui.createpreset"] = "Create..."
+L["ui.deletepreset"] = "Delete..."
 
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
