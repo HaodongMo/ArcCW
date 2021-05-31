@@ -741,13 +741,13 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 3, "LastLoad")
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
-
     -- 2 = insert
     -- 3 = cancelling
     -- 4 = insert empty
     -- 5 = cancelling empty
     self:NetworkVar("Int", 6, "ShotgunReloading")
     self:NetworkVar("Int", 7, "MagUpCount")
+    self:NetworkVar("Int", 8, "BurstCountUM2")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
@@ -756,6 +756,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 4, "InCustomize")
     self:NetworkVar("Bool", 5, "GrenadePrimed")
     self:NetworkVar("Bool", 6, "MalfunctionJam")
+    self:NetworkVar("Bool", 7, "EffectLastSecondary")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
@@ -764,6 +765,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
     self:NetworkVar("Float", 5, "NextIdle")
     self:NetworkVar("Float", 6, "Holster_Time")
+    self:NetworkVar("Float", 7, "ReloadingREAL2")
+    self:NetworkVar("Float", 8, "MagUpIn2")
 
     self:NetworkVar("Vector", 0, "BipodPos")
 
@@ -776,9 +779,12 @@ function SWEP:OnRestore()
     self:SetNthReload(0)
     self:SetNthShot(0)
     self:SetBurstCountUM(0)
+    self:SetBurstCountUM2(0)
     self:SetReloadingREAL(0)
+    self:SetReloadingREAL2(0)
     self:SetWeaponOpDelay(0)
     self:SetMagUpIn(0)
+    self:SetMagUpIn2(0)
 
     self:KillTimers()
     self:Initialize()
@@ -787,38 +793,68 @@ function SWEP:OnRestore()
 end
 
 
-function SWEP:SetReloading( v )
-    if isbool(v) then
-        if v then
-            self:SetReloadingREAL(math.huge)
-        else
-            self:SetReloadingREAL(-math.huge)
+function SWEP:SetReloading(v, is_secondary)
+    if is_secondary then
+        if isbool(v) then
+            if v then
+                self:SetReloadingREAL2(math.huge)
+            else
+                self:SetReloadingREAL2(-math.huge)
+            end
+        elseif isnumber(v) and v > self:GetReloadingREAL2() then
+            self:SetReloadingREAL2(v)
         end
-    elseif isnumber(v) and v > self:GetReloadingREAL() then
-        self:SetReloadingREAL( v )
+    else
+        if isbool(v) then
+            if v then
+                self:SetReloadingREAL(math.huge)
+            else
+                self:SetReloadingREAL(-math.huge)
+            end
+        elseif isnumber(v) and v > self:GetReloadingREAL() then
+            self:SetReloadingREAL(v)
+        end
     end
 end
 
-function SWEP:GetReloading()
+function SWEP:GetReloading(is_secondary)
     local decide
 
-    if self:GetReloadingREAL() > CurTime() then
-        decide = true
-    else
-        decide = false
-    end
+    if is_secondary then
+        if self:GetReloadingREAL2() > CurTime() then
+            decide = true
+        else
+            decide = false
+        end
 
-    self:GetBuff_Hook("Hook_GetReloading", decide)
+        decide = self:GetBuff_Hook("Hook_GetReloading", decide) or decide
+    else
+        if self:GetReloadingREAL() > CurTime() then
+            decide = true
+        else
+            decide = false
+        end
+
+        decide = self:GetBuff_Hook("Hook_GetReloading", decide) or decide
+    end
 
     return decide
 end
 
-function SWEP:SetBurstCount(b)
-    self:SetBurstCountUM(b)
+function SWEP:SetBurstCount(b, is_secondary)
+    if is_secondary then
+        self:SetBurstCountUM2(b)
+    else
+        self:SetBurstCountUM(b)
+    end
 end
 
-function SWEP:GetBurstCount()
-    return self:GetBuff_Hook("Hook_GetBurstCount", self:GetBurstCountUM()) or self:GetBurstCountUM() or 0
+function SWEP:GetBurstCount(is_secondary)
+    if is_secondary then
+        return self:GetBuff_Hook("Hook_GetBurstCount2", self:GetBurstCountUM2()) or self:GetBurstCountUM2() or 0
+    else
+        return self:GetBuff_Hook("Hook_GetBurstCount", self:GetBurstCountUM()) or self:GetBurstCountUM() or 0
+    end
 end
 
 function SWEP:SetState(v)

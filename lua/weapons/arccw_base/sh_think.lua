@@ -92,6 +92,16 @@ function SWEP:Think()
         end
     end
 
+    -- Akimbo stuff
+    if self:GetBuff_Override("Akimbo") then
+        if owner:KeyDown(IN_ATTACK2) then
+            self:AkimboAttack()
+        elseif self:GetBurstCount(true) == self:GetBurstLength(true) then
+            self:SetBurstCount(0, true)
+            self.Primary.Automatic = false
+        end
+    end
+
     if owner:KeyReleased(IN_ATTACK) then
         if !self:GetCurrentFiremode().RunawayBurst then
             self:SetBurstCount(0)
@@ -154,7 +164,7 @@ function SWEP:Think()
         end
     elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
         self:ExitSights()
-    else
+    elseif !self:GetBuff_Override("Akimbo") then
 
         -- no it really doesn't, past me
         local sighted = self:GetState() == ArcCW.STATE_SIGHTS
@@ -277,10 +287,16 @@ function SWEP:Think()
 
     -- self:RefreshBGs()
 
-    if self:GetMagUpIn() != 0 and CurTime() > self:GetMagUpIn() then
+    if self:GetMagUpIn() > 0 and CurTime() > self:GetMagUpIn() then
         self:ReloadTimed()
-        self:SetMagUpIn( 0 )
+        self:SetMagUpIn(0)
     end
+
+    if self:GetMagUpIn2() > 0 and CurTime() > self:GetMagUpIn2() then
+        self:ReloadTimed(true)
+        self:SetMagUpIn2(0)
+    end
+
 
     self:GetBuff_Hook("Hook_Think")
 

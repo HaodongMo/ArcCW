@@ -481,7 +481,7 @@ function SWEP:SetupModel(wm)
             end
         end
 
-        if atttbl.IsMuzzleDevice or atttbl.UBGL then
+        if atttbl.IsMuzzleDevice or atttbl.UBGL or atttbl.Akimbo then
             local hspmodel = ClientsideModel(atttbl.Model)
 
             if k.BoneMerge then

@@ -221,14 +221,14 @@ function SWEP:NPC_Shoot()
 
                 btabl.Dir = ang:Forward()
 
-                self:DoPrimaryFire(false, btabl)
+                self:Shoot(false, btabl)
             end
         elseif se then
             self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"))
         else
             self:GetBuff_Hook("Hook_FireBullets", btabl)
 
-            self:DoPrimaryFire(false, btabl)
+            self:Shoot(false, btabl)
         end
     end
 
