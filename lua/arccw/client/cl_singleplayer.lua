@@ -93,16 +93,6 @@ concommand.Add("arccw_listvmatts", function()
     --PrintTable(alist)
 end)
 
-net.Receive("arccw_sp_loadautosave", function(len, ply)
-    local wep = LocalPlayer():GetActiveWeapon()
-
-    if !(wep and IsValid(wep)) then return end
-
-    if !wep.ArcCW then return end
-
-    wpn:LoadPreset()
-end)
-
 local lastwpn = nil
 
 hook.Add("Think", "ArcCW_FixDeploy", function()

@@ -107,25 +107,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if !vm then return end
     if !IsValid(vm) then return end
 
-    self:KillTimer("idlereset")
-
-    self:GetAnimKeyTime(key)
-
-    local time = anim.Time
-
-    -- stoled from getanimkeytime
-    if !anim.Time then
-        local tseq = anim.Source
-        if istable(tseq) then
-            tseq["BaseClass"] = nil -- god I hate Lua inheritance
-            tseq = tseq[1]
-        end
-        if !tseq then return end
-        tseq = vm:LookupSequence(tseq)
-        time = vm:SequenceDuration(tseq) or 1
-    end
-
-    if anim.Time == 0 then return end
+    local time = self:GetAnimKeyTime(key)
+    if time == 0 then return end
 
     if absolute then
         time = 1
@@ -276,35 +259,32 @@ function SWEP:PlayIdleAnimation(pred)
     local ianim
     local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
     if self:GetState() == ArcCW.STATE_SPRINT and !s then
-        ianim = self:SelectAnimation((ianim or "idle") .. "_sprint") or ianim
+        ianim = self:SelectAnimation("idle_sprint") or ianim
     end
 
     if self:InBipod() then
-        ianim = self:SelectAnimation((ianim or "idle") .. "_bipod") or ianim
+        ianim = self:SelectAnimation("idle_bipod") or ianim
     end
 
     if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
-        ianim = self:SelectAnimation((ianim or "idle") .. "_sight") or self:SelectAnimation((ianim or "idle") .. "_sights") or ianim
+        ianim = self:SelectAnimation("idle_sight") or self:SelectAnimation("idle_sights") or ianim
     end
 
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then
-        ianim = self:SelectAnimation((ianim or "idle") .. "_inspect") or ianim
+        ianim = self:SelectAnimation("idle_inspect") or ianim
     end
 
+    -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
     if self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL()
             and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then
-        ianim = self:SelectAnimation((ianim or "idle") .. "_ubgl_empty") or ianim
+        ianim = "idle_ubgl_empty"
     elseif self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL() and self.Animations.idle_ubgl then
-        ianim = self:SelectAnimation((ianim or "idle") .. "_ubgl") or ianim
-    end
-
-    if (self:Clip1() == 0 or self:GetNeedCycle()) and self.Animations.idle_empty then
+        ianim = "idle_ubgl"
+    elseif (self:Clip1() == 0 or self:GetNeedCycle()) and self.Animations.idle_empty then
         ianim = ianim or "idle_empty"
     else
         ianim = ianim or "idle"
     end
-
-    -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
     self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
 end
 
@@ -321,7 +301,8 @@ function SWEP:GetAnimKeyTime(key, min)
 
     if !vm or !IsValid(vm) then return 1 end
 
-    if !anim.Time then
+    local t = anim.Time
+    if !t then
         local tseq = anim.Source
 
         if istable(tseq) then
@@ -330,13 +311,11 @@ function SWEP:GetAnimKeyTime(key, min)
         end
 
         if !tseq then return 1 end
-
         tseq = vm:LookupSequence(tseq)
 
-        anim.Time = vm:SequenceDuration(tseq) or 1
+		-- to hell with it, just spits wrong on draw sometimes
+        t = vm:SequenceDuration(tseq) or 1
     end
-
-    local t = anim.Time
 
     if min and anim.MinProgress then
         t = anim.MinProgress
