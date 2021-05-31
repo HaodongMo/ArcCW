@@ -59,6 +59,8 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.2d3d_info" },
     { type = "t", text = "#arccw.cvar.language", var = "arccw_language"  },
     { type = "c", text = "#arccw.cvar.language_info" },
+    { type = "b", text = "#arccw.cvar.ammonames", var = "arccw_ammonames" },
+    { type = "c", text = "#arccw.cvar.ammonames.desc" },
 }
 
 local PerformancePanel = {
@@ -73,6 +75,7 @@ local PerformancePanel = {
     { type = "b", text = "#arccw.cvar.fasttracers", var = "arccw_fasttracers" },
     { type = "b", text = "#arccw.cvar.shelleffects", var = "arccw_shelleffects" },
     { type = "b", text = "#arccw.cvar.att_showothers", var = "arccw_att_showothers" },
+    { type = "b", text = "#arccw.cvar.att_showground", var = "arccw_att_showground" },
     { type = "i", text = "#arccw.cvar.visibility", var = "arccw_visibility", min = -1, max = 32000},
     { type = "c", text = "#arccw.cvar.visibility.desc" },
     { type = "b", text = "#arccw.cvar.blur", var = "arccw_blur" },
@@ -101,7 +104,6 @@ local ViewmodelPanel = {
     { type = "f", text = "#arccw.cvar.vm_sway_ymult", var = "arccw_vm_sway_ymult", min = -5, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_sway_zmult", var = "arccw_vm_sway_zmult", min = -5, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_sway_speedmult", var = "arccw_vm_sway_speedmult", min = 0, max = 2 },
-    { type = "f", text = "#arccw.cvar.vm_sway_rotatemult", var = "arccw_vm_sway_rotatemult", min = -3, max = 3 },
     { type = "h", text = "" },
     { type = "c", text = "#arccw.cvar.vm_viewwarn" },
     { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -5, max = 5 },
@@ -188,7 +190,6 @@ local BindsPanel = {
     { type = "d", text = "#arccw.bind.melee", var = "arccw_melee" },
     { type = "d", text = "#arccw.bind.toggle_att", var = "arccw_toggle_att" },
 }
-
 
 local ServerPanel = {
     { type = "h", text = "#arccw.adminonly" },
@@ -289,7 +290,10 @@ local MultsPanel = {
     { type = "f", text = "#arccw.cvar.mult_crouchdisp",      var = "arccw_mult_crouchdisp", min = 0, max = 1, sv = true },
     { type = "f", text = "#arccw.cvar.mult_crouchrecoil",    var = "arccw_mult_crouchrecoil", min = 0, max = 1, sv = true },
     { type = "f", text = "#arccw.cvar.mult_sway",            var = "arccw_mult_sway", min = 0, max = 10, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_meleedamage",     var = "arccw_mult_meleedamage", min = 0, max = 4, sv = true },
+    { type = "f", text = "#arccw.cvar.mult_meleetime",     var = "arccw_mult_meleetime", min = 0, max = 3, sv = true },
     { type = "f", text = "#arccw.cvar.mult_malfunction",     var = "arccw_mult_malfunction", min = 0, max = 10, sv = true },
+
     { type = "b", text = "#arccw.cvar.mult_startunloaded",   var = "arccw_mult_startunloaded", sv = true },
     { type = "b", text = "#arccw.cvar.mult_shootwhilesprinting",   var = "arccw_mult_shootwhilesprinting", sv = true },
     { type = "o", text = "#arccw.cvar.malfunction", var = "arccw_malfunction", sv = true,
@@ -546,7 +550,6 @@ local ViewmodelPresets = {
         arccw_vm_sway_ymult            = "1",
         arccw_vm_sway_zmult            = "1",
         arccw_vm_sway_speedmult        = "1",
-        arccw_vm_sway_rotatemult       = "1",
         arccw_vm_coolview_mult        = "1",
     }
 }

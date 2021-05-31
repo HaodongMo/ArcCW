@@ -115,7 +115,7 @@ end
 
 function SWEP:Breath_Health()
     local owner = self:GetOwner()
-    if not IsValid(owner) then return end
+    if !IsValid(owner) then return end
     local health = owner:Health()
     local maxhealth = owner:GetMaxHealth()
     self.Breath_Intensity = math.Clamp(maxhealth / health, 0, 2)
@@ -124,7 +124,7 @@ end
 
 function SWEP:Breath_StateMult()
     local owner = self:GetOwner()
-    if not IsValid(owner) then return end
+    if !IsValid(owner) then return end
     local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.05) or 1
     self.Breath_Intensity = self.Breath_Intensity * sightedmult
 end
@@ -186,7 +186,7 @@ end
 
 function SWEP:GetViewModelPosition(pos, ang)
     local owner = self:GetOwner()
-    if not IsValid(owner) or not owner:Alive() then return end
+    if !IsValid(owner) or !owner:Alive() then return end
     local proceduralRecoilMult = 1
     local SP = game.SinglePlayer()
     local FT = RealFrameTime() * game.GetTimeScale()
@@ -254,7 +254,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     if self:InBipod() then
-        if not self:GetBipodAngle() then
+        if !self:GetBipodAngle() then
             self:SetBipodPos(self:GetOwner():EyePos())
             self:SetBipodAngle(self:GetOwner():EyeAngles())
         end
@@ -297,7 +297,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         if self.InAttMenu then
             target.ang = target.ang + Angle(0, -5, 0)
         end
-    elseif (sprinted and not (self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint)) or holstered then
+    elseif (sprinted and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint)) or holstered then
         target.pos = Vector()
         target.ang = Angle()
         target.down = 1
@@ -330,7 +330,7 @@ function SWEP:GetViewModelPosition(pos, ang)
             target.ang:Set(irons.Ang)
             target.ang.r = sightroll
         end
-    elseif sprd > 0 and not self:GetBuff("ShootWhileSprint") then
+    elseif sprd > 0 and !self:GetBuff("ShootWhileSprint") then
         local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
         local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
         target.pos = LerpVector(sprd, target.pos, spos or hpos)
@@ -347,7 +347,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.bob = 2
     end
 
-    if not isangle(target.ang) then
+    if !isangle(target.ang) then
         target.ang = Angle(target.ang)
     end
 
@@ -418,7 +418,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         nap[3] = m_clamp(nap[1], -1, 1) * 1
         target.pos = target.pos + nap
 
-        if not self.ViewModel_Hit:IsZero() then
+        if !self.ViewModel_Hit:IsZero() then
             local naa = Angle()
             naa[1] = self.ViewModel_Hit[1]
             naa[2] = self.ViewModel_Hit[2]
@@ -512,13 +512,14 @@ end
 function SWEP:ShouldCheapWorldModel()
     local lp = LocalPlayer()
     if lp:GetObserverMode() == OBS_MODE_IN_EYE and lp:GetObserverTarget() == self:GetOwner() then return true end
+    if !IsValid(self:GetOwner()) and !GetConVar("arccw_att_showground"):GetBool() then return true end
 
-    return not GetConVar("arccw_att_showothers"):GetBool()
+    return !GetConVar("arccw_att_showothers"):GetBool()
 end
 
 function SWEP:DrawWorldModel()
     -- 512^2
-    if not IsValid(self:GetOwner()) and not TTT2 and GetConVar("arccw_2d3d"):GetBool() and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then
+    if !IsValid(self:GetOwner()) and !TTT2 and GetConVar("arccw_2d3d"):GetBool() and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then
         local ang = LocalPlayer():EyeAngles()
         ang:RotateAroundAxis(ang:Forward(), 180)
         ang:RotateAroundAxis(ang:Right(), 90)
@@ -550,7 +551,7 @@ function SWEP:DrawWorldModel()
         self:DoScopeGlint()
     end
 
-    if not self.CertainAboutAtts then
+    if !self.CertainAboutAtts then
         net.Start("arccw_rqwpnnet")
         net.WriteEntity(self)
         net.SendToServer()
@@ -558,12 +559,12 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:ShouldCheapScope()
-    if not self:GetConVar("arccw_cheapscopes"):GetBool() then return end
+    if !self:GetConVar("arccw_cheapscopes"):GetBool() then return end
 end
 
 function SWEP:PreDrawViewModel(vm)
     if ArcCW.VM_OverDraw then return end
-    if not vm then return end
+    if !vm then return end
 
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then
         self:BlurNotWeapon()

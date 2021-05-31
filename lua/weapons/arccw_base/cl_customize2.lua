@@ -119,6 +119,7 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
 end
 
 local translate = ArcCW.GetTranslation
+local try_translate = ArcCW.TryTranslation
 local defaultatticon = Material("arccw/hud/atts/default.png", "mips smooth")
 local blockedatticon = Material("arccw/hud/atts/blocked.png", "mips smooth")
 
@@ -128,8 +129,6 @@ local mat_hit_dot = Material("arccw/hud/hit_dot.png", "mips smooth")
 
 local pickx_empty = Material("arccw/hud/pickx_empty.png", "mips smooth")
 local pickx_full = Material("arccw/hud/pickx_filled.png", "mips smooth")
-
-local grad = Material("arccw/hud/grad.png", "mips smooth")
 
 local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
 
@@ -148,7 +147,7 @@ SWEP.Inv_Scroll = {}
 -- 3: Ballistics
 ArcCW.Inv_SelectedInfo = 1
 
-ArcCW.Inv_Fade = 0
+ArcCW.Inv_Fade = 0.01
 
 ArcCW.Inv_ShownAtt = nil
 ArcCW.Inv_Hidden = false
@@ -221,10 +220,10 @@ function SWEP:CreateCustomize2HUD()
         end
     end
 
-    ArcCW.Inv_Fade = 0
+    ArcCW.Inv_Fade = 0.01
 
     ArcCW.InvHUD:SetPos(0, 0)
-    ArcCW.InvHUD:SetSize(ScrW(), ScrH())
+    ArcCW.InvHUD:SetSize(scrw, scrh)
     ArcCW.InvHUD:Center()
     ArcCW.InvHUD:SetDraggable(false)
     ArcCW.InvHUD:SetText("")
@@ -236,10 +235,6 @@ function SWEP:CreateCustomize2HUD()
             ArcCW.InvHUD:Remove()
             return
         end
-
-        surface.SetDrawColor(Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 255)))
-        surface.SetMaterial(grad)
-        surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
 
         if self:GetReloading() then
             ArcCW.InvHUD:Remove()
@@ -294,6 +289,8 @@ function SWEP:CreateCustomize2HUD()
             end
         end
 
+        --print("INVHUD REMOVED", CurTime())
+        ArcCW.Inv_Fade = 0.01
         gui.EnableScreenClicker(false)
     end
 
@@ -335,6 +332,9 @@ function SWEP:CreateCustomize2HUD()
         if IsValid(self) and self.ToggleCustomizeHUD then
             self:ToggleCustomizeHUD(false)
         end
+    end
+    closebutton.DoRightClick = function(self2, clr, btn)
+        ArcCW.InvHUD:Remove()
     end
 
     local hidebutton = vgui.Create("DButton", ArcCW.InvHUD)
@@ -753,17 +753,27 @@ function SWEP:CreateCustomize2HUD()
                 -- self.Inv_SelectedSlot = self2.attindex
                 -- ArcCW.InvHUD_FormAttachmentSelect()
                 -- self:DetachAllMergeSlots(self2.attslot, true)
-                if self2.att == "" then
-                    self2:DoRightClick()
+                --if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
+                if ArcCW:PlayerCanAttach(LocalPlayer(), self, self2.att, self2.attslot, false) then
+                    if self2.att == "" then
+                        self2:DoRightClick()
+                    elseif self:Attach(self2.attslot, self2.att) then
+                        ArcCW.Inv_ShownAtt = nil -- Force a regen on the panel so we can see toggle/slider options
+                        ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot, true)
+                    elseif self:CountAttachments() >= self:GetPickX() then
+                        ArcCW.Inv_LastPickXBlock = CurTime()
+                    end
                 else
-                    self:Attach(self2.attslot, self2.att)
-                    ArcCW.Inv_ShownAtt = nil -- Force a regen on the panel so we can see toggle/slider options
-                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot, true)
+                    if CLIENT then surface.PlaySound("items/medshotno1.wav") end
                 end
             end
             button.DoRightClick = function(self2)
-                self:DetachAllMergeSlots(self2.attslot)
-                ArcCW.InvHUD_FormAttachmentSelect()
+                if ArcCW:PlayerCanAttach(LocalPlayer(), self, self2.att, self2.attslot, true) then
+                    self:DetachAllMergeSlots(self2.attslot)
+                    ArcCW.InvHUD_FormAttachmentSelect()
+                else
+                    if CLIENT then surface.PlaySound("items/medshotno1.wav") end
+                end
             end
             button.Paint = function(self2, w, h)
                 if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
@@ -808,8 +818,10 @@ function SWEP:CreateCustomize2HUD()
 
                 if !self2.att or self2.att == "" then
                     local attslot = self.Attachments[self2.attslot]
+                    local att_txt = self:GetBuff_Hook("Hook_GetDefaultAttName", self2.attslot, true) or attslot.DefaultAttName
+                    att_txt = att_txt and try_translate(att_txt) or translate("attslot.noatt")
                     atttbl = {
-                        PrintName = self:GetBuff_Hook("Hook_GetDefaultAttName", self2.attslot, true) or translate(attslot.DefaultAttName) or attslot.DefaultAttName or translate("attslot.noatt"),
+                        PrintName = att_txt,
                         Icon = self:GetBuff_Hook("Hook_GetDefaultAttIcon", self2.attslot, true) or attslot.DefaultAttIcon or defaultatticon
                     }
                 end
@@ -914,8 +926,12 @@ function SWEP:CreateCustomize2HUD()
                 end
             end
             button.DoRightClick = function(self2)
-                self:DetachAllMergeSlots(self2.attindex)
-                ArcCW.InvHUD_FormAttachmentSelect()
+                if ArcCW:PlayerCanAttach(LocalPlayer(), self, nil, self2.attindex, true) then
+                    self:DetachAllMergeSlots(self2.attindex)
+                    ArcCW.InvHUD_FormAttachmentSelect()
+                else
+                    if CLIENT then surface.PlaySound("items/medshotno1.wav") end
+                end
             end
             button.Paint = function(self2, w, h)
                 if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
@@ -939,7 +955,8 @@ function SWEP:CreateCustomize2HUD()
                 local installed = self:GetSlotInstalled(i)
 
                 local att_icon = self:GetBuff_Hook("Hook_GetDefaultAttIcon", i, true) or slot.DefaultAttIcon or defaultatticon
-                local att_txt = self:GetBuff_Hook("Hook_GetDefaultAttName", i, true) or translate(slot.DefaultAttName) or slot.DefaultAttName or translate("attslot.noatt")
+                local att_txt = self:GetBuff_Hook("Hook_GetDefaultAttName", i, true) or slot.DefaultAttName
+                att_txt = att_txt and try_translate(att_txt) or translate("attslot.noatt")
                 local atttbl = ArcCW.AttachmentTable[installed or ""]
 
                 if atttbl then
@@ -948,7 +965,7 @@ function SWEP:CreateCustomize2HUD()
                     if !att_icon or att_icon:IsError() then att_icon = bird end
                 end
 
-                local slot_txt = translate(slot.PrintName) or slot.PrintName
+                local slot_txt = try_translate(slot.PrintName)
 
                 surface.SetDrawColor(col2)
                 local icon_h = h
@@ -968,19 +985,28 @@ function SWEP:CreateCustomize2HUD()
         end
 
         local pickxpanel = vgui.Create("DPanel", ArcCW.InvHUD)
-        pickxpanel:SetSize(menu1_w, bottom_zone - airgap_y)
-        pickxpanel:SetPos(airgap_x, scrh - bottom_zone - airgap_y)
+        pickxpanel:SetSize(menu1_w - ArcCW.InvHUD_Menu1:GetVBar():GetWide(), bottom_zone - smallgap * 4)
+        pickxpanel:SetPos(airgap_x, scrh - bottom_zone - smallgap * 4)
         pickxpanel.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
             local pickx_amount = self:GetPickX()
             local pickedatts = self:CountAttachments()
 
+            local col_fg_pick = col_fg
+            local d = 0.5
+            local diff = CurTime() - (ArcCW.Inv_LastPickXBlock or 0 + d)
+            if diff > 0 then
+                col_fg_pick = Color(255, 255 * diff / d, 255 * diff / d)
+            end
+
             if pickx_amount == 0 then return end
             if pickx_amount > 8 then
-                surface.SetTextColor(col_fg)
-                surface.SetTextPos(0, ss * 4)
                 surface.SetFont("ArcCWC2_16")
-                surface.DrawText("Attachments: " .. tostring(pickedatts) .. "/" .. tostring(pickx_amount))
+                local txt = string.format(translate("ui.pickx"), pickedatts, pickx_amount)
+                local s = surface.GetTextSize(txt)
+                surface.SetTextColor(col_fg_pick)
+                surface.SetTextPos(w / 2 - s / 2, ss * 4)
+                surface.DrawText(txt)
                 return
             end
 
@@ -991,14 +1017,28 @@ function SWEP:CreateCustomize2HUD()
 
             x = (w - (s * pickx_amount)) / 2
 
+            local icons = {}
+            for k, v in pairs(self.Attachments) do
+                if v.Installed and !v.FreeSlot and !ArcCW.AttachmentTable[v.Installed].IgnorePickX then
+                    local icon = (ArcCW.AttachmentTable[v.Installed] or {}).Icon or defaultatticon
+                    if !icon or icon:IsError() then icon = bird end
+                    table.insert(icons, icon)
+                end
+            end
+
             for i = 1, pickx_amount do
-                surface.SetDrawColor(col_fg)
+                surface.SetDrawColor(col_fg_pick)
                 if i > pickedatts then
                     surface.SetMaterial(pickx_empty)
                 else
                     surface.SetMaterial(pickx_full)
                 end
                 surface.DrawTexturedRect(x, y, s, s)
+                if i <= pickedatts and icons[i] then
+                    surface.SetDrawColor(col_shadow)
+                    surface.SetMaterial(icons[i])
+                    surface.DrawTexturedRect(x + ss * 3, y + ss * 3, ss * 14, ss * 14)
+                end
 
                 x = x + s
             end
@@ -1053,7 +1093,7 @@ function SWEP:CreateCustomize2HUD()
         attname_panel:SetSize(menu3_w, rss * 24)
         attname_panel:SetPos(0, rss * 16)
         attname_panel.Paint = function(self2, w, h)
-            local name = atttbl.PrintName
+            local name = translate("name." .. atttbl.ShortName) or atttbl.PrintName
 
             surface.SetFont("ArcCWC2_24")
             local tw = surface.GetTextSize(name)
@@ -1182,7 +1222,7 @@ function SWEP:CreateCustomize2HUD()
                 local catttbl = ArcCW.AttachmentTable[att]
                 if catttbl and catttbl.ToggleStats[self.Attachments[slot].ToggleNum]
                         and catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName then
-                    txt = ArcCW.TryTranslation(catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName)
+                    txt = try_translate(catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName)
                 end
 
                 surface.SetFont("ArcCWC2_8")
@@ -1205,7 +1245,7 @@ function SWEP:CreateCustomize2HUD()
         scroll:SetSize(menu3_w - airgap_x, ss * 128 - bottombuffer)
 
         local multiline = {}
-        local desc = atttbl.Description
+        local desc = translate("desc." .. atttbl.ShortName) or atttbl.Description
 
         multiline = multlinetext(desc, scroll:GetWide() - (ss * 2), "ArcCW_10")
 
@@ -1397,7 +1437,7 @@ function SWEP:CreateCustomize2HUD()
         statsbutton:SetSize(ss * 48, ss * 16)
         statsbutton:SetPos(menu3_w - (ss * 48 * 2) - airgap_x - (ss * 4), rss * 48 + ss * 12)
         statsbutton:SetText("")
-        statsbutton.Text = "Stats"
+        statsbutton.Text = translate("ui.stats")
         statsbutton.Val = 1
         statsbutton.DoClick = function(self2, clr, btn)
             ArcCW.InvHUD_FormWeaponStats()
@@ -1432,7 +1472,7 @@ function SWEP:CreateCustomize2HUD()
         triviabutton:SetSize(ss * 48, ss * 16)
         triviabutton:SetPos(menu3_w - ss * 48 - airgap_x, rss * 48 + ss * 12)
         triviabutton:SetText("")
-        triviabutton.Text = "Trivia"
+        triviabutton.Text = translate("ui.trivia")
         triviabutton.Val = 2
         triviabutton.DoClick = function(self2, clr, btn)
             ArcCW.InvHUD_FormWeaponTrivia()
@@ -1444,7 +1484,7 @@ function SWEP:CreateCustomize2HUD()
         ballisticsbutton:SetSize(ss * 48, ss * 16)
         ballisticsbutton:SetPos(menu3_w - (ss * 48 * 3) - airgap_x - (ss * 4 * 2), rss * 48 + ss * 12)
         ballisticsbutton:SetText("")
-        ballisticsbutton.Text = "Ballistics"
+        ballisticsbutton.Text = translate("ui.ballistics")
         ballisticsbutton.Val = 3
         ballisticsbutton.DoClick = function(self2, clr, btn)
             ArcCW.InvHUD_FormWeaponBallistics()
@@ -1482,8 +1522,8 @@ function SWEP:CreateCustomize2HUD()
         weapon_cat:SetPos(0, rss * 32)
         weapon_cat.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-            local class = translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class
-            local cal = translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre) or self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre
+            local class = try_translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class)
+            local cal = try_translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre)
             local name = class
 
             if !self.PrimaryMelee and !self.Throwing and cal then
@@ -1705,9 +1745,17 @@ function SWEP:CreateCustomize2HUD()
             elseif !self.PrimaryBash and !self.Throwing then
                 table.insert(infos, {
                     title = translate("trivia.firerate"),
-                    value = rpm,
+                    value = tostring(rpm),
                     unit = translate("unit.rpm"),
                 })
+                local mode = self:GetCurrentFiremode()
+                if mode.Mode < 0 and mode.PostBurstDelay then
+                    table.insert(infos, {
+                        title = translate("trivia.firerate_burst"),
+                        value = tostring( math.Round( 60/(self:GetFiringDelay()+(mode.PostBurstDelay/-mode.Mode)) ) ),
+                        unit = translate("unit.rpm"),
+                    })
+                end
             end
 
             -- precision
@@ -1722,12 +1770,14 @@ function SWEP:CreateCustomize2HUD()
             end
 
             -- ammo type
-            if self.Primary.Ammo and self.Primary.Ammo != "" and self.Primary.Ammo != "none" then
-                local ammotype = language.GetPhrase(self.Primary.Ammo .. "_ammo")
+            local ammo = string.lower(self:GetBuff_Override("Override_Ammo", self.Primary.Ammo))
+            if (ammo or "") != "" and ammo != "none" then
+                local ammotype = ArcCW.TranslateAmmo(ammo) --language.GetPhrase(self.Primary.Ammo .. "_ammo")
                 if ammotype then
                     table.insert(infos, {
                         title = translate("trivia.ammo"),
                         value = ammotype,
+                        --unit = " (" .. ammo .. ")",
                     })
                 end
             end
@@ -2069,19 +2119,21 @@ function SWEP:CreateCustomize2HUD()
             aars = aars + (self.Recoil + self:GetBuff_Add("Add_Recoil")) * self:GetBuff_Mult("Mult_Recoil")
             aars = aars + (self.RecoilSide + self:GetBuff_Add("Add_RecoilSide")) * self:GetBuff_Mult("Mult_RecoilSide") * 0.5
 
-            if self:GetCurrentFiremode().Mode == 1 and !self:GetIsManualAction() then
-                aars = aars * math.min(400, (60 / self:GetFiringDelay()))
-            else
-                aars = aars * (60 / self:GetFiringDelay())
-            end
-
-            
-            if self:GetCurrentFiremode().Mode == 1 and !self:GetIsManualAction() then
-                disclaimers = disclaimers .. " " .. math.min(400, (60 / self:GetFiringDelay())) .. "rpm"
-            end
+            local arpm = (60 / self:GetFiringDelay())
 
             if self:GetIsManualAction() then
-                disclaimers = disclaimers .. " manual action, inaccurate"
+                local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+                local firedelay = self.Animations[fireanim].MinProgress or 0
+
+                arpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
+            elseif self:GetCurrentFiremode().Mode == 1 then
+                arpm = math.min(400, (60 / self:GetFiringDelay()))
+            end
+            aars = aars * arpm
+
+            
+            if self:GetCurrentFiremode().Mode == 1 or self:GetIsManualAction() then
+                disclaimers = disclaimers .. " " .. arpm .. "rpm"
             end
 
             table.insert(infos, {

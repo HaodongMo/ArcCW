@@ -91,6 +91,7 @@ end
 
 -- Ditto - unused outside of TTT
 function ENT:TTT_CheckForWeapon(ply)
+    --[[]
     if !self.CachedWeapons then
         local tbl = {}
         for k,v in pairs(weapons.GetList()) do
@@ -100,12 +101,16 @@ function ENT:TTT_CheckForWeapon(ply)
         end
         self.CachedWeapons = tbl
     end
+    ]]
 
     -- Why does TTT not iterate over the player's weapons? This is obviously faster
     for _, wep in pairs(ply:GetWeapons()) do
-        if self.CachedWeapons[wep:GetClass()] then return true end
-        -- Perform a special check for overwritten ammo types (attachments) and UBGLs
-        if wep.ArcCW and (wep:GetBuff_Override("UBGL_Ammo") == self.AmmoType or  wep:GetBuff_Override("Override_Ammo") == self.AmmoType) then
+        --if self.CachedWeapons[wep:GetClass()] then return true end
+        -- Perform check for overwritten ammo types (attachments) and UBGLs
+        if wep.ArcCW and
+                (wep:GetBuff_Override("UBGL_Ammo") == self.AmmoType
+                or wep:GetBuff_Override("Override_Ammo", wep.Primary.Ammo) == self.AmmoType
+                or wep:GetBuff_Override("Akimbo_Ammo") == self.AmmoType) then
             return true
         end
     end

@@ -13,7 +13,9 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_MoveDispersion"] = "arccw_mult_movedisp",
     ["Mult_AccuracyMOA"] = "arccw_mult_accuracy",
     ["Mult_Penetration"] = "arccw_mult_penetration",
-    ["Mult_Sway"] = "arccw_mult_sway"
+    ["Mult_Sway"] = "arccw_mult_sway",
+    ["Mult_MeleeDamage"] = "arccw_mult_meleedamage",
+    ["Mult_MeleeTime"] = "arccw_mult_meleetime",
 }
 
 ArcCW.ConVar_BuffAdds = {}
@@ -135,113 +137,52 @@ end
 function SWEP:GetBuff_Hook(buff, data, defaultnil)
     -- call through hook function, args = data. return nil to do nothing. return false to prevent thing from happening.
 
-    -- Fesiug, this will only work if you have just one hook.
-    -- if self.TickCache_Hooks[buff] and self.TickCache_Tick_Hooks[buff] == CurTime() then
-    --     hook.Call(buff, ArcCW, self, data)
-    --     return data
-    -- end
-
-    if self.AttCache_Hooks[buff] then
-        local retvalue = nil
-        for i, k in ipairs(self.AttCache_Hooks[buff]) do
-            local ret = k(self, data)
-            if ret == false then
-                return
-            elseif ret != nil then
-                retvalue = ret
-                break
-            end
-        end
-
-        if retvalue then data = retvalue
-        elseif defaultnil then data = nil end
-
-        data = hook.Call(buff, nil, self, data) or data
-
-        return data
-    else
+    if !self.AttCache_Hooks[buff] then
         self.AttCache_Hooks[buff] = {}
+
+        for i, k in pairs(self.Attachments) do
+            if !k.Installed then continue end
+
+            local atttbl = ArcCW.AttachmentTable[k.Installed]
+
+            if !atttbl then continue end
+
+            if isfunction(atttbl[buff]) then
+                table.insert(self.AttCache_Hooks[buff], {atttbl[buff], atttbl[buff .. "_Priority"] or 0})
+            elseif atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and isfunction(atttbl.ToggleStats[k.ToggleNum][buff]) then
+                table.insert(self.AttCache_Hooks[buff], {atttbl.ToggleStats[k.ToggleNum][buff], atttbl.ToggleStats[k.ToggleNum][buff .. "_Priority"] or 0})
+            end
+        end
+
+        local cfm = self:GetCurrentFiremode()
+
+        if cfm and isfunction(cfm[buff]) then
+            table.insert(self.AttCache_Hooks[buff], {cfm[buff], cfm[buff .. "_Priority"] or 0})
+        end
+
+        for i, e in pairs(self:GetActiveElements()) do
+            local ele = self.AttachmentElements[e]
+
+            if ele and ele[buff] then
+                table.insert(self.AttCache_Hooks[buff], {ele[buff], ele[buff .. "_Priority"] or 0})
+            end
+        end
+
+        if isfunction(self:GetTable()[buff]) then
+            table.insert(self.AttCache_Hooks[buff], {self:GetTable()[buff], self:GetTable()[buff .. "_Priority"] or 0})
+        end
+
+        table.sort(self.AttCache_Hooks[buff], function(a, b) return a[2] >= b[2] end)shouldsort = true
     end
 
-    local retfalse = false
     local retvalue = nil
-    for i, k in pairs(self.Attachments) do
-        if !k.Installed then continue end
-
-        local atttbl = ArcCW.AttachmentTable[k.Installed]
-
-        if !atttbl then continue end
-
-        if isfunction(atttbl[buff]) then
-            table.insert(self.AttCache_Hooks[buff], atttbl[buff])
-            if !retfalse and retvalue == nil then
-                local ret = atttbl[buff](self, data)
-
-                if ret == false then
-                    retfalse = true
-                    continue
-                elseif ret == nil then
-                    continue
-                end
-
-                retvalue = ret
-            end
-        elseif atttbl.ToggleStats and k.ToggleNum and atttbl.ToggleStats[k.ToggleNum] and isfunction(atttbl.ToggleStats[k.ToggleNum][buff]) then
-            table.insert(self.AttCache_Hooks[buff], atttbl.ToggleStats[k.ToggleNum][buff])
-            if !retfalse and retvalue == nil then
-                local ret = atttbl.ToggleStats[k.ToggleNum][buff](self, data)
-
-                if ret == false then
-                    retfalse = true
-                    continue
-                elseif ret == nil then
-                    continue
-                end
-
-                retvalue = ret
-            end
-        end
-    end
-
-    local cfm = self:GetCurrentFiremode()
-
-    if cfm and isfunction(cfm[buff]) then
-        table.insert(self.AttCache_Hooks[buff], cfm[buff])
-        if !retfalse and retvalue == nil then
-            local ret = cfm[buff](self, data)
-            if ret == false then
-                retfalse = true
-            elseif ret != nil then
-                retvalue = ret
-            end
-        end
-    end
-
-    for i, e in pairs(self:GetActiveElements()) do
-        local ele = self.AttachmentElements[e]
-
-        if ele and ele[buff] then
-            table.insert(self.AttCache_Hooks[buff], ele[buff])
-            if !retfalse and retvalue == nil then
-                local ret = ele[buff](self, data)
-                if ret == false then
-                    retfalse = true
-                elseif ret != nil then
-                    retvalue = ret
-                end
-            end
-        end
-    end
-
-    if isfunction(self:GetTable()[buff]) then
-        table.insert(self.AttCache_Hooks[buff], self:GetTable()[buff])
-        if !retfalse and data == nil then
-            local ret = self:GetTable()[buff](self, data)
-            if ret == false then
-                retfalse = true
-            elseif ret != nil then
-                retvalue = ret
-            end
+    for i, k in ipairs(self.AttCache_Hooks[buff]) do
+        local ret = k[1](self, data)
+        if ret == false then
+            return
+        elseif ret != nil then
+            retvalue = ret
+            break
         end
     end
 
@@ -770,7 +711,8 @@ function SWEP:NetworkWeapon(sendto)
     if sendto then
         net.Send(sendto)
     else
-        net.Broadcast()
+        net.SendPVS(self:GetPos())
+        --net.Broadcast()
     end
 end
 
@@ -1079,7 +1021,8 @@ function SWEP:Attach(slot, attname, silent, noadjust)
 
     local pick = self:GetPickX()
 
-    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot then
+    if pick > 0 and self:CountAttachments() >= pick and !attslot.FreeSlot
+            and !attslot.Installed then
         if CLIENT and !silent then
             surface.PlaySound("items/medshotno1.wav")
         end
@@ -1204,6 +1147,7 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     end
 
     self:RefreshBGs()
+    return true
 end
 
 function SWEP:DetachAllMergeSlots(slot, silent)
@@ -1306,6 +1250,7 @@ function SWEP:Detach(slot, silent, noadjust, nocheck)
     if !noadjust then
         self:AdjustAtts()
     end
+    return true
 end
 
 function SWEP:ToggleSlot(slot, num, silent, back)

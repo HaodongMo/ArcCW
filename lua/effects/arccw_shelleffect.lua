@@ -57,6 +57,20 @@ function EFFECT:Init(data)
         self.Pitch = ent:GetBuff_Override("Override_ShellPitch") or ent.ShellPitch or 100
         self.Sounds = ent:GetBuff_Override("Override_ShellSounds") or ent.ShellSounds
         self.ShellTime = (ent.ShellTime or 0) + st
+
+        if self.Sounds == "autocheck" and ent:GetPrimaryAmmoType() then
+            local t = ent:GetPrimaryAmmoType()
+            if t == game.GetAmmoID("buckshot") then
+                self.Sounds = ArcCW.ShotgunShellSoundsTable
+            elseif ent.Trivia_Calibre and string.find(ent.Trivia_Calibre, ".22") then
+                self.Sounds = ArcCW.TinyShellSoundsTable
+            elseif t == game.GetAmmoID("pistol") or t == game.GetAmmoID("357") or t == game.GetAmmoID("AlyxGun") then
+                self.Sounds = ArcCW.PistolShellSoundsTable
+            else
+                self.Sounds = ArcCW.ShellSoundsTable
+            end
+        end
+        
     end
 
     self:SetPos(origin)

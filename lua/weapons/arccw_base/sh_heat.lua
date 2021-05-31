@@ -129,9 +129,9 @@ function SWEP:DoMalfunction()
         self.MalfunctionMean = mm
     end
 
-    local cvar = GetConVar("arccw_mult_malfunction"):GetFloat()
-    local mean = self:GetBuff("MalfunctionMean") / math.max(cvar, 0.00001)
-    local var = mean * math.Clamp(self:GetBuff("MalfunctionVariance") * (1 + cvar * cvar), 0, 1)
+    local cvar = math.max(GetConVar("arccw_mult_malfunction"):GetFloat(), 0.00000001)
+    local mean = self:GetBuff("MalfunctionMean") / cvar
+    local var = mean * math.Clamp(self:GetBuff("MalfunctionVariance") * math.max(1, math.sqrt(cvar)), 0, 1)
     local count = (self.ShotsSinceMalfunction or 0)
 
     if !self.NextMalfunction then

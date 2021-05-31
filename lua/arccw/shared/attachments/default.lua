@@ -18,6 +18,7 @@ att.IgnorePickX = false -- will not increment the Pick X counter
 att.Hidden = false
 att.HideIfBlocked = false -- if the attachment cannot be attached due to flag reasons, do not show up
 att.HideIfUnavailable = false -- if the attachment is not owned, do not show up even if "Hide Unowned Attachments" is off
+att.NoRandom = false -- will not be randomly rolled
 
 att.NotForNPCs = false
 

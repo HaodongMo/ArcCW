@@ -2,7 +2,7 @@ if SERVER and game.SinglePlayer() then
     util.AddNetworkString("arccw_sp_reloadlangs")
 end
 
-ArcCW.LangTable = {}
+ArcCW.LangTable = ArcCW.LangTable or {}
 -- Converts raw string to a lang phrase. not case sensitive.
 ArcCW.StringToLang = {
     -- Class
@@ -101,7 +101,7 @@ function ArcCW.GetTranslation(phrase, format)
     if !lang or lang == "" or !ArcCW.LangTable[lang] or !ArcCW.LangTable[lang][phrase] then
         lang = "en"
     end
-    if ArcCW.LangTable[lang][phrase] then
+    if ArcCW.LangTable[lang] and ArcCW.LangTable[lang][phrase] then
         local str = ArcCW.LangTable[lang][phrase]
         for i, v in pairs(format or {}) do
             -- print(i, v)
@@ -130,11 +130,31 @@ function ArcCW.AddTranslation(phrase, str, lang)
     ArcCW.LangTable[lang][string.lower(phrase)] = str
 end
 
+-- Translates an ammo string. If enabled, we will use our custom names (pulse -> rifle, smg -> carbine);
+-- Otherwise returns the in-game translation for it.
+function ArcCW.TranslateAmmo(ammo)
+    if isnumber(ammo) then ammo = game.GetAmmoName(ammo) end
+    if !ammo or !isstring(ammo) then return nil end
+    ammo = string.lower(ammo)
+
+    local lang = ArcCW.GetLanguage()
+    local str = "ammo." .. ammo
+    if SERVER or GetConVar("arccw_ammonames"):GetBool() then
+        if ArcCW.LangTable[lang][str] then
+            return ArcCW.LangTable[lang][str]
+        elseif ArcCW.LangTable["en"][str] then
+            return ArcCW.LangTable["en"][str]
+        end
+    end
+    return SERVER and (ammo .. " ammo") or language.GetPhrase(ammo .. "_ammo")
+end
+
 if CLIENT then
     function ArcCW.LoadClientLanguage(files)
         local lang = ArcCW.GetLanguage()
         files = files or file.Find("arccw/client/cl_languages/*", "LUA")
 
+        --[[]
         -- First make sure there is actually a file in such language; otherwise default to english
         local has = false
         for _, v in pairs(files) do
@@ -142,17 +162,30 @@ if CLIENT then
             if exp[#exp] == lang then has = true break end
         end
         if !has then lang = "en" end
+        ]]
+        local lang_tbl = {}
+        local lang_tbl_en = {}
 
         for _, v in pairs(files) do
             local exp = string.Explode("_", string.lower(string.Replace(v, ".lua", "")))
-            if exp[#exp] ~= lang then continue end
-            include("arccw/client/cl_languages/" .. v)
-            for phrase, str in pairs(L) do
-                language.Add(phrase, str)
+            if lang != "en" and exp[#exp] == lang then
+                include("arccw/client/cl_languages/" .. v)
+                for phrase, str in pairs(L) do
+                    lang_tbl[phrase] = str
+                end
+                print("Loaded ArcCW cl_language file " .. v .. " with " .. table.Count(L) .. " strings.")
+                L = nil
+            elseif exp[#exp] == "en" then
+                -- Always load english as backup
+                include("arccw/client/cl_languages/" .. v)
+                for phrase, str in pairs(L) do
+                    lang_tbl_en[phrase] = str
+                end
             end
-
-            print("Loaded ArcCW cl_language file " .. v .. " with " .. table.Count(L) .. " strings.")
-            L = nil
+        end
+        table.Merge(lang_tbl_en, lang_tbl)
+        for phrase, str in pairs(lang_tbl_en) do
+            language.Add(phrase, str)
         end
     end
 elseif SERVER then
@@ -191,15 +224,31 @@ function ArcCW.LoadLanguages()
 
         print("Loaded ArcCW language file " .. v .. " with " .. table.Count(L) .. " strings.")
         L = nil
+        STL = nil
     end
 
     if CLIENT then
         ArcCW.LoadClientLanguage()
+
     end
 
     hook.Run("ArcCW_LocalizationLoaded")
 end
+
 ArcCW.LoadLanguages()
+hook.Add("PreGamemodeLoaded", "ArcCW_Lang", function()
+    if CLIENT and GetConVar("arccw_ammonames"):GetBool() then
+        local ourlang = ArcCW.GetLanguage()
+        for _, name in pairs(game.GetAmmoTypes()) do
+            if ArcCW.LangTable[ourlang]["ammo." .. string.lower(name)] then
+                language.Add(name .. "_ammo", ArcCW.LangTable[ourlang]["ammo." .. string.lower(name)])
+            elseif ArcCW.LangTable["en"]["ammo." .. string.lower(name)] then
+                language.Add(name .. "_ammo", ArcCW.LangTable["en"]["ammo." .. string.lower(name)])
+            end
+        end
+    end
+end)
+
 
 concommand.Add("arccw_reloadlangs", function(ply)
     ArcCW.LoadLanguages()

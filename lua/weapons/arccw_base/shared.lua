@@ -1,6 +1,7 @@
 AddCSLuaFile()
 
 SWEP.Spawnable = false -- this obviously has to be set to true
+SWEP.AutoSpawnable = nil -- TTT weapon autospawn. ArcCW weapons automatically spawn in TTT as long as SWEP.Spawnable is set to true
 SWEP.Category = "ArcCW - Firearms" -- edit this if you like
 SWEP.AdminOnly = false
 
@@ -17,14 +18,15 @@ SWEP.UseHands = true
 
 SWEP.ViewModel = "" -- I mean, you probably have to edit these too
 SWEP.WorldModel = ""
-SWEP.MirrorWorldModel = nil -- must have the same bones as the viewmodel. Use with MirrorWMVM
 
---[[
-SWEP.WorldModelOffset = {
-    pos        =    Vector(0, 0, 0),
-    ang        =    Angle(0, 0, 0),
-    bone    =    "ValveBiped.Bip01_R_Hand",
-    scale   =   1
+SWEP.MirrorVMWM = nil -- Copy the viewmodel, along with all its attachments, to the worldmodel. Super convenient!
+SWEP.MirrorWorldModel = nil -- Use this to set the mirrored viewmodel to a different model, without any floating speedloaders or cartridges you may have. Needs MirrorVMWM
+
+--[[SWEP.WorldModelOffset = {
+    pos = Vector(0, 0, 0),
+    ang = Angle(0, 0, 0),
+    bone = "ValveBiped.Bip01_R_Hand",
+    scale = 1
 }]]
 
 SWEP.PresetBase = nil -- make this weapon share saves with this one.
@@ -223,7 +225,7 @@ SWEP.ShellEjectPosCorrection = nil
 SWEP.ShellScale = 1
 SWEP.ShellPhysScale = 1
 SWEP.ShellPitch = 100
-SWEP.ShellSounds = ArcCW.ShellSoundsTable
+SWEP.ShellSounds = "autocheck"--ArcCW.ShellSoundsTable
 SWEP.ShellRotate = 0
 SWEP.ShellTime = 0.5
 
@@ -748,6 +750,7 @@ function SWEP:SetupDataTables()
     -- 4 = insert empty
     -- 5 = cancelling empty
     self:NetworkVar("Int", 6, "ShotgunReloading")
+    self:NetworkVar("Int", 7, "MagUpCount")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
@@ -764,12 +767,15 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 3, "MagUpIn")
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
     self:NetworkVar("Float", 5, "NextIdle")
-    self:NetworkVar("Float", 6, "ReloadingREAL2") -- akimbo trolololol
-    self:NetworkVar("Float", 7, "MagUpIn2") -- electric boogaloo
+    self:NetworkVar("Float", 6, "Holster_Time")
+    self:NetworkVar("Float", 7, "ReloadingREAL2") -- akimbo trolololol
+    self:NetworkVar("Float", 8, "MagUpIn2") -- electric boogaloo
 
     self:NetworkVar("Vector", 0, "BipodPos")
 
     self:NetworkVar("Angle", 0, "BipodAngle")
+
+    self:NetworkVar("Entity", 0, "Holster_Entity")
 end
 
 function SWEP:OnRestore()
@@ -790,6 +796,7 @@ function SWEP:OnRestore()
 end
 
 
+<<<<<<< HEAD
 function SWEP:SetReloading(v, akimbo)
     if akimbo then
         if isbool(v) then
@@ -810,6 +817,14 @@ function SWEP:SetReloading(v, akimbo)
             end
         elseif isnumber(v) and v > self:GetReloadingREAL() then
             self:SetReloadingREAL(v)
+=======
+function SWEP:SetReloading( v )
+    if isbool(v) then
+        if v then
+            self:SetReloadingREAL(math.huge)
+        else
+            self:SetReloadingREAL(-math.huge)
+>>>>>>> 4eea705433f264dc020b59da1d9e08f1a1559bdb
         end
     end
 end

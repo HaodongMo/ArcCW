@@ -10,7 +10,6 @@ function SWEP:IsEquipment()
 end
 
 SWEP.IsSilent = false
-SWEP.AutoSpawnable = nil -- If not set, automatically set to true in InitPostEntity 
 
 -- The OnDrop() hook is useless for this as it happens AFTER the drop. OwnerChange
 -- does not occur when a drop happens for some reason. Hence this thing.

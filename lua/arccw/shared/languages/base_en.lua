@@ -42,6 +42,7 @@ L["trivia.noise"] = "Noise"
 L["trivia.recoil"] = "Vertical Recoil"
 L["trivia.penetration"] = "Penetration"
 L["trivia.firerate"] = "Fire Rate"
+L["trivia.firerate_burst"] = "Burst Fire Rate"
 L["trivia.fusetime"] = "Fuse Time"
 
 -- Class
@@ -279,13 +280,29 @@ L["ui.heat"] = "HEAT"
 L["ui.jammed"] = "JAMMED"
 
 -- 2021-05-15
-
 L["trivia.muzzlevel"] = "Muzzle Velocity"
 L["unit.mps"] = "m/s"
 L["unit.lbfps"] = "lb-fps"
 L["trivia.recoilside"] = "Horizontal Recoil"
 
--- You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
--- Similarly, you can translate attachment and weapon names with ["name.class_name"]
--- When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]
--- Example: {L["desc.fcg_auto"] = "blah blah blah automatic firemode" ["name.fcg_auto"] = "Auto But Cooler"}
+--2021-05-27
+L["ui.pickx"] = "Attachments: %d/%d"
+L["ui.ballistics"] = "Ballistics"
+
+L["ammo.pistol"] = "Pistol Ammo"
+L["ammo.357"] = "Magnum Ammo"
+L["ammo.smg1"] = "Carbine Ammo"
+L["ammo.ar2"] = "Rifle Ammo"
+L["ammo.buckshot"] = "Shotgun Ammo"
+L["ammo.sniperpenetratedround"] = "Sniper Ammo"
+L["ammo.smg1_grenade"] = "Rifle Grenades"
+
+--[[]
+You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
+Similarly, you can translate attachment and weapon names with ["name.class_name"]
+When translating weapon names, append .true for truename, like ["name.arccw_p228.true"]
+Example:
+ L["desc.fcg_auto"] = "blah blah blah automatic firemode"
+ L["name.fcg_auto"] = "Auto But Cooler"
+You can also translate custom firemodes with "fcg.FIREMODE_NAME"
+]]

@@ -54,7 +54,7 @@ ArcCW.AutoStats = {
     ["Mult_MalfunctionMean"]  = { "autostat.malfunctionmean", "mult", false},
 
     ["Override_Ammo"] = {"autostat.ammotype", "func", function(val)
-        return string.format(ArcCW.GetTranslation("autostat.ammotype"), string.lower(language.GetPhrase(val .. "_ammo"))), "infos"
+        return string.format(ArcCW.GetTranslation("autostat.ammotype"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
     end},
 }
 
@@ -90,8 +90,8 @@ local function stattext(i, k, dmgboth)
         local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
         txt = simple and "+ " or sign .. tostr(state) .. " "
         return txt .. str, k > 1 and tpro or tcon
-    elseif stat[2] == "override" and ((st == false and k == true) or (st == true and k == false)) then
-        return str, k and tcon or tpro
+    elseif stat[2] == "override" and k == true then
+        return str, tcon
     elseif stat[2] == "func" then
         local a, b = stat[3](k)
         if a and b then return a, b end

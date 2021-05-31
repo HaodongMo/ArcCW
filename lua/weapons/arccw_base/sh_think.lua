@@ -6,9 +6,21 @@ local lastUBGL = 0
 local LastAttack2 = false
 
 function SWEP:Think()
+    if IsValid(self:GetOwner()) and self:GetClass() == "arccw_base" then
+        self:Remove()
+        return
+    end
+
     local owner = self:GetOwner()
 
     if !IsValid(owner) or owner:IsNPC() then return end
+
+    if CLIENT and IsFirstTimePredicted() then
+        if self:GetOwner() == LocalPlayer() and ArcCW.InvHUD and !ArcCW.Inv_Hidden and ArcCW.Inv_Fade == 0 then
+            ArcCW.Inv_Fade = 0.01
+            ArcCW.InvHUD:Remove()
+        end
+    end
 
     local vm = owner:GetViewModel()
 
@@ -276,14 +288,15 @@ function SWEP:Think()
     -- self:RefreshBGs()
 
     if self:GetMagUpIn() != 0 and CurTime() > self:GetMagUpIn() then
-        self:WhenTheMagUpIn()
+        self:ReloadTimed()
         self:SetMagUpIn(0)
     end
 
     if self:GetMagUpIn2() != 0 and CurTime() > self:GetMagUpIn2() then
-        self:WhenTheMagUpIn(true)
+        self:ReloadTimed(true)
         self:SetMagUpIn2(0)
     end
+
 
     self:GetBuff_Hook("Hook_Think")
 
@@ -293,7 +306,7 @@ function SWEP:Think()
     --end
 
     -- Only reset to idle if we don't need cycle. empty idle animation usually doesn't play nice
-    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle() then
+    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle() and self:GetHolster_Time() == 0 and self:GetShotgunReloading() == 0 then
         self:SetNextIdle(0)
         self:PlayIdleAnimation(true)
     end
