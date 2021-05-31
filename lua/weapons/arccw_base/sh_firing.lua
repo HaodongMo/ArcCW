@@ -1,11 +1,11 @@
-function SWEP:CanPrimaryAttack()
+function SWEP:CanAttack(is_secondary)
     local owner = self:GetOwner()
 
     -- Should we not fire? But first.
     if self:GetBuff_Hook("Hook_ShouldNotFireFirst") then return end
 
     -- Inoperable
-    if self:GetReloading() then return end
+    if self:GetReloading(is_secondary) then return end
 
     -- Inoperable, but internally (burst resetting for example)
     if self:GetWeaponOpDelay() > CurTime() then return end
@@ -72,20 +72,27 @@ function SWEP:CanPrimaryAttack()
     return true
 end
 
+function SWEP:CanPrimaryAttack()
+    return self:CanAttack(false)
+end
 
+function SWEP:CanSecondaryAttack()
+    return self:CanAttack(true)
+end
 
-function SWEP:PrimaryAttack()
+-- Fires the weapon according to its stats.
+-- If refname is provided, fires reftbl using secondary fire.
+function SWEP:FireWeapon(refname)
+
     local owner = self:GetOwner()
+    local clip = refname and self:Clip2() or self:Clip1()
+    local aps = self:GetBuffRef("AmmoPerShot", refname)
+    local reftbl = self:GetRefTable(refname)
+    local is_secondary = isstring(refname) and refname != ""
 
-    self.Primary.Automatic = true
-
-    if !self:CanPrimaryAttack() then return end
-
-    local clip = self:Clip1()
-    local aps = self:GetBuff("AmmoPerShot")
-
-    if self:HasBottomlessClip() then
-        clip = self:Ammo1()
+    -- TODO HasBottomlessClip and HasInfiniteAmmo support refname
+    if self:HasBottomlessClip(is_secondary) then
+        clip = refname and self:Ammo2() or self:Ammo1()
 
         if self:HasInfiniteAmmo() then
             clip = 10
@@ -93,64 +100,69 @@ function SWEP:PrimaryAttack()
     end
 
     if clip < aps then
-        self:SetBurstCount(0)
-        self:DryFire()
-
-        self.Primary.Automatic = false
-
+        self:SetBurstCount(0, is_secondary)
+        self:DryFire(is_secondary)
+        if is_secondary then
+            self.Secondary.Automatic = false
+        else
+            self.Primary.Automatic = false
+        end
         return
+    end
+
+    if bit.band(util.PointContents(self:GetShootSrc()), CONTENTS_WATER) == CONTENTS_WATER and !self:GetBuffRef("CanFireUnderwater", refname) then
+        self:DryFire(is_secondary)
+        return
+    end
+
+    if !is_secondary then
+        if self:GetMalfunctionJam() then
+            self:DryFire()
+            return
+        else
+            -- Try malfunctioning
+            local mal = self:DoMalfunction()
+            if mal == true then
+                return
+            end
+        end
     end
 
     local dir = owner:GetAimVector()
     local src = self:GetShootSrc()
 
-    if bit.band(util.PointContents(src), CONTENTS_WATER) == CONTENTS_WATER and !(self.CanFireUnderwater or self:GetBuff_Override("Override_CanFireUnderwater")) then
-        self:DryFire()
-        return
-    end
-
-    if self:GetMalfunctionJam() then
-        self:DryFire()
-        return
-    end
-
-    -- Try malfunctioning
-    local mal = self:DoMalfunction()
-    if mal == true then
-        return
-    end
-
     local desync = GetConVar("arccw_desync"):GetBool()
     local desyncnum = (desync and math.random()) or 0
     math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
 
-    self.Primary.Automatic = true
 
-    local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
+    local spread = ArcCW.MOAToAcc * self:GetBuffRef("AccuracyMOA", refname)
 
     dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
-
-    dir = dir + VectorRand() * self:GetDispersion() * ArcCW.MOAToAcc / 10
-
+    dir = dir + VectorRand() * self:GetDispersion(refname) * ArcCW.MOAToAcc / 10
     local delay = self:GetFiringDelay()
 
     local curtime = CurTime()
-    local curatt = self:GetNextPrimaryFire()
+    local curatt = is_secondary and self:GetNextSecondaryFire() or self:GetNextPrimaryFire()
     local diff = curtime - curatt
 
     if diff > engine.TickInterval() or diff < 0 then
         curatt = curtime
     end
 
-    self:SetNextPrimaryFire(curatt + delay)
-    self:SetNextPrimaryFireSlowdown(curatt + delay) -- shadow for ONLY fire time
+    if is_secondary then
+        self:SetNextSecondaryFire(curatt + delay)
+    else
+        self:SetNextPrimaryFire(curatt + delay)
+        self:SetNextPrimaryFireSlowdown(curatt + delay) -- shadow for ONLY fire time
+    end
 
-    local num = self:GetBuff_Override("Override_Num") or self.Num
+    local num = self:GetBuff_Override("Override_Num", reftbl.Num, refname)
+    num = num + self:GetBuff_Add("Add_Num", refname)
+    --local num = self:GetBuffRef("Num", refname)
 
-    num = num + self:GetBuff_Add("Add_Num")
-
-    local tracernum = self:GetBuff_Override("Override_TracerNum") or self.TracerNum
-    local lastout = self:GetBuff_Override("Override_TracerFinalMag") or self.TracerFinalMag
+    local tracernum = self:GetBuff_Override("Override_TracerNum", reftbl.TracerNum, refname)
+    local lastout = self:GetBuff_Override("Override_TracerFinalMag", reftbl.TracerFinalMag, refname)
 
     if lastout >= clip then
         tracernum = 1
@@ -166,16 +178,16 @@ function SWEP:PrimaryAttack()
     bullet.Force      = (self:GetDamage(0) + self:GetDamage(math.huge)) / 50
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
-    bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
+    bullet.HullSize   = self:GetBuffRef("HullSize", refname)
     bullet.Tracer     = tracernum or 0
-    bullet.TracerName = self:GetBuff_Override("Override_Tracer") or self.Tracer
+    bullet.TracerName = self:GetBuffRef("TracerName", refname)
     bullet.Weapon     = self
     bullet.Callback   = function(att, tr, dmg)
         local hitpos, hitnormal = tr.HitPos, tr.HitNormal
         local trent = tr.Entity
 
         local dist = (hitpos - src):Length() * ArcCW.HUToM
-        local pen  = self:GetBuff("Penetration")
+        local pen  = self:GetBuffRef("Penetration", refname)
 
         if SERVER then
             debugoverlay.Cross(hitpos, 5, 5, Color(255, 0, 0), true)
@@ -192,7 +204,7 @@ function SWEP:PrimaryAttack()
             util.Effect(bullet.TracerName or "tracer", fx)
         end]]
 
-        local randfactor = self:GetBuff("DamageRand")
+        local randfactor = self:GetBuffRef("DamageRand", refname)
         local mul = 1
         if randfactor > 0 then
             mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
@@ -204,20 +216,20 @@ function SWEP:PrimaryAttack()
         hit.dmg     = dmg
         hit.range   = dist
         hit.damage  = self:GetDamage(dist, true) * mul
-        hit.dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType
+        hit.dmgtype = self:GetBuff_Override("Override_DamageType", reftbl.DamageType, refname)
         hit.penleft = pen
 
-        hit = self:GetBuff_Hook("Hook_BulletHit", hit)
+        hit = self:GetBuff_Hook("Hook_BulletHit", hit, refname)
 
         if !hit then return end
 
         dmg:SetDamageType(hit.dmgtype)
         dmg:SetDamage(hit.damage)
 
-        local effect = self.ImpactEffect
-        local decal  = self.ImpactDecal
+        local effect = reftbl.ImpactEffect
+        local decal  = reftbl.ImpactDecal
 
-        if dmg:IsDamageType(DMG_BURN) and hit.range <= self.Range then
+        if dmg:IsDamageType(DMG_BURN) and self:GetRangeFraction(hit.range) < 1 then
             dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
 
             effect = "arccw_incendiaryround"
@@ -297,11 +309,11 @@ function SWEP:PrimaryAttack()
                 if shootent then
                     projectiledata.ang = ang
 
-                    self:DoPrimaryFire(true, projectiledata)
+                    self:Shoot(true, projectiledata)
                 else
                     bullet.Dir = ang:Forward()
 
-                    self:DoPrimaryFire(false, bullet)
+                    self:Shoot(false, bullet)
                 end
             end
         elseif shootent then
@@ -313,7 +325,7 @@ function SWEP:PrimaryAttack()
 
             projectiledata.ang = ang
 
-            self:DoPrimaryFire(true, projectiledata)
+            self:Shoot(true, projectiledata)
         end
     else
         if !bullet then return end
@@ -326,14 +338,9 @@ function SWEP:PrimaryAttack()
             end
             bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
 
-            self:DoPrimaryFire(false, bullet)
+            self:Shoot(false, bullet)
         end
     end
-
-    self:DoRecoil()
-
-    self:SetNthShot(self:GetNthShot() + 1)
-
     owner:DoAnimationEvent(self:GetBuff_Override("Override_AnimShoot") or self.AnimShoot)
 
     local shouldsupp = SERVER and !game.SinglePlayer()
@@ -342,12 +349,19 @@ function SWEP:PrimaryAttack()
 
     self:DoEffects()
 
-    self:TakePrimaryAmmo(aps)
+    self:DoRecoil(refname)
+
+    if is_secondary then
+        self:TakeSecondaryAmmo(aps)
+    else
+        self:SetNthShot(self:GetNthShot() + 1)
+        self:TakePrimaryAmmo(aps)
+    end
 
     self:SetBurstCount(self:GetBurstCount() + 1)
 
-    if self:HasBottomlessClip() and self:Clip1() > 0 then
-        self:Unload()
+    if self:HasBottomlessClip(is_secondary) and ((is_secondary and self:Clip2() > 0) or (!is_secondary and self:Clip1() > 0)) then
+        self:Unload(is_secondary)
     end
 
     self:DoShootSound()
@@ -373,6 +387,21 @@ function SWEP:PrimaryAttack()
     self:GetBuff_Hook("Hook_PostFireBullets")
 
     if shouldsupp then SuppressHostEvents(nil) end
+end
+
+function SWEP:PrimaryAttack()
+    if !self:CanPrimaryAttack() then return end
+    self:FireWeapon(false)
+end
+
+function SWEP:SecondaryAttack()
+    --return self.Melee2 and self:Bash(true)
+    if self.Melee2 then
+        return self:Bash(true)
+    elseif isstring(self:GetBuff_Override("UBGL2")) and self:GetBuff_Override("UBGL2_SecondaryFire") then
+        if !self:CanSecondaryAttack() then return end
+        self:FireWeapon(self:GetBuff_Override("UBGL2"))
+    end
 end
 
 function SWEP:TryBustDoor(ent, dmg)
@@ -474,10 +503,10 @@ function SWEP:GetMuzzleVelocity()
     return vel
 end
 
-function SWEP:DoPrimaryFire(isent, data)
-    local clip = self:Clip1()
-    if self:HasBottomlessClip() then
-        clip = self:Ammo1()
+function SWEP:Shoot(isent, data, refname)
+    local clip = refname and self:Clip2() or self:Clip1()
+    if self:HasBottomlessClip(refname) then
+        clip = refname and self:Ammo2() or self:Ammo1()
     end
     local owner = self:GetOwner()
 
@@ -541,7 +570,7 @@ function SWEP:DoPrimaryAnim()
 
     anim = self:GetBuff_Hook("Hook_SelectFireAnimation", anim) or anim
 
-    local time = self:GetBuff_Mult("Mult_FireAnimTime", anim) or 1
+    local time = self:GetBuff_Mult("Mult_FireAnimTime") or 1
 
     if anim then self:PlayAnimation(anim, time, true, 0, false) end
 end
@@ -559,14 +588,14 @@ function SWEP:DoPenetration(tr, penleft, alreadypenned)
     ArcCW:DoPenetration(tr, bullet.Damage, bullet, penleft, false, alreadypenned)
 end
 
-function SWEP:GetFiringDelay()
-    local delay = (self.Delay * (1 / self:GetBuff_Mult("Mult_RPM")))
+function SWEP:GetFiringDelay(refname)
+    local reftbl = self:GetRefTable(refname)
+    local delay = (reftbl.Delay * (1 / self:GetBuff_Mult("Mult_RPM", refname) + self:GetBuff_Add("Add_RPM", refname)))
     delay = self:GetBuff_Hook("Hook_ModifyRPM", delay) or delay
-
     return delay
 end
 
-function SWEP:GetShootSrc()
+function SWEP:GetShootSrc(refname) -- TODO refname
     local owner = self:GetOwner()
 
     if owner:IsNPC() then return owner:GetShootPos() end
@@ -592,10 +621,11 @@ function SWEP:GetShootSrc()
     return src
 end
 
-function SWEP:GetShotgunSpreadOffset(num)
+function SWEP:GetShotgunSpreadOffset(num, refname)
+    local reftbl = self:GetRefTable(refname)
     local rotate = Angle()
-    local spreadpt = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern or {}
-    local spreadov = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or self.ShotgunSpreadPatternOverrun or { Angle() }
+    local spreadpt = self:GetBuff_Override("Override_ShotgunSpreadPattern") or reftbl.ShotgunSpreadPattern or {}
+    local spreadov = self:GetBuff_Override("Override_ShotgunSpreadPatternOverrun") or reftbl.ShotgunSpreadPatternOverrun or { Angle() }
 
     if istable(spreadpt) and istable(spreadov) then
         spreadpt["BaseClass"] = nil
@@ -619,36 +649,36 @@ function SWEP:GetShotgunSpreadOffset(num)
     rottoang.num = num
     rottoang.ang = rotate
 
-    rotate = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", rottoang).ang
+    rotate = self:GetBuff_Hook("Hook_ShotgunSpreadOffset", rottoang, refname).ang
 
     return rotate or Angle()
 end
 
-function SWEP:GetDispersion()
+function SWEP:GetDispersion(refname)
     local owner = self:GetOwner()
     local delta = self:GetSightDelta()
 
     if vrmod and vrmod.IsPlayerInVR(owner) then return 0 end
 
-    local hipdisp = self:GetBuff("HipDispersion")
+    local hipdisp = self:GetBuffRef("HipDispersion", refname)
     local sights  = self:GetState() == ArcCW.STATE_SIGHTS
 
     local hip = hipdisp
 
-    local sightdisp = self:GetBuff("SightsDispersion")
+    local sightdisp = self:GetBuffRef("SightsDispersion", refname)
     if sights then hip = Lerp(delta, sightdisp, hipdisp) end
 
     if owner:OnGround() or owner:WaterLevel() > 0 or owner:GetMoveType() == MOVETYPE_NOCLIP then
         local speed    = owner:GetAbsVelocity():Length()
-        local maxspeed = owner:GetWalkSpeed() * self:GetBuff("SpeedMult")
+        local maxspeed = owner:GetWalkSpeed() * self:GetBuffRef("SpeedMult", refname)
 
-        if sights then maxspeed = maxspeed * self:GetBuff("SightedSpeedMult") end
+        if sights then maxspeed = maxspeed * self:GetBuffRef("SightedSpeedMult", refname) end
 
         speed = math.Clamp(speed / maxspeed, 0, 2)
 
-        hip = hip + (speed * self:GetBuff("MoveDispersion"))
+        hip = hip + (speed * self:GetBuffRef("MoveDispersion", refname))
     else
-        hip = hip + self:GetBuff("JumpDispersion")
+        hip = hip + self:GetBuffRef("JumpDispersion", refname)
     end
 
     if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
@@ -659,7 +689,7 @@ function SWEP:GetDispersion()
 
     --local t = hook.Run("ArcCW_ModDispersion", self, {dispersion = hip})
     --hip = t and t.dispersion or hip
-    hip = self:GetBuff_Hook("Hook_ModDispersion", hip) or hip
+    hip = self:GetBuff_Hook("Hook_ModDispersion", hip, refname) or hip
 
     return hip
 end
@@ -708,7 +738,7 @@ function SWEP:DoShellEject(atti)
     util.Effect(eff, ed)
 end
 
-function SWEP:DoEffects(att, akimbo)
+function SWEP:DoEffects(att, is_secondary)
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     local ed = EffectData()
@@ -720,28 +750,33 @@ function SWEP:DoEffects(att, akimbo)
     efov.eff = "arccw_muzzleeffect"
     efov.fx  = ed
 
-    self:SetEffectLastAkimbo(akimbo)
+    self:SetEffectLastSecondary(is_secondary)
 
     if self:GetBuff_Hook("Hook_PreDoEffects", efov) == true then return end
 
     util.Effect("arccw_muzzleeffect", ed)
 end
 
-function SWEP:DryFire()
-
-    if self.Animations.fire_dry then
-        return self:PlayAnimation("fire_dry", 1, true, 0, true)
+function SWEP:DryFire(refname)
+    local tbl = self:GetRefTable(refname)
+    if tbl.Animations.fire_dry then
+        if tbl.Animations.fire_dry.IsLHIKAnim then
+            return self:DoLHIKAnimation("fire_dry", tbl.Animations.fire_dry.Time)
+        else
+            return self:PlayAnimation("fire_dry", 1, true, 0, true)
+        end
     end
-    self:MyEmitSound(self.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
+    self:MyEmitSound(tbl.ShootDrySound or "weapons/arccw/dryfire.wav", 75, 100, 1, CHAN_ITEM)
     self:SetNextPrimaryFire(CurTime() + 0.25)
 end
 
-function SWEP:DoRecoil(akimbo)
+function SWEP:DoRecoil(refname)
     local single = game.SinglePlayer()
-
     if !single and !IsFirstTimePredicted() then return end
+    if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("DoRecoil", refname) end
 
-    if single and self:GetOwner():IsValid() and SERVER then self:CallOnClient("DoRecoil") end
+    local reftable = self:GetRefTable(refname)
+    local is_secondary = isstring(refname)
 
     -- math.randomseed(self:GetBurstLength() + (self.Recoil * 409) + (self.RecoilSide * 519))
 
@@ -752,17 +787,17 @@ function SWEP:DoRecoil(akimbo)
     }
     rec = self:GetBuff_Hook("Hook_ModifyRecoil", rec) or rec
 
-    local stat_up = akimbo and self:GetBuff_Override("Akimbo_Recoil") or self.Recoil
-    local stat_side = akimbo and self:GetBuff_Override("Akimbo_RecoilSide") or self.RecoilSide
-    local stat_rise = akimbo and self:GetBuff_Override("Akimbo_RecoilRise") or self.RecoilRise
+    local stat_up = reftable.Recoil
+    local stat_side = reftable.RecoilSide
+    local stat_rise = reftable.RecoilRise
 
     local recoil = rec.Recoil
     local side   = rec.RecoilSide
     local visual = rec.VisualRecoilMul
 
-    local rmul = (recoil or 1) * self:GetBuff_Mult("Mult_Recoil")
-    local recv = (visual or 1) * self:GetBuff_Mult("Mult_VisualRecoilMult")
-    local recs = (side or 1)   * self:GetBuff_Mult("Mult_RecoilSide")
+    local rmul = (recoil or 1) * self:GetBuff_Mult("Mult_Recoil", refname)
+    local recv = (visual or 1) * self:GetBuff_Mult("Mult_VisualRecoilMult", refname)
+    local recs = (side or 1)   * self:GetBuff_Mult("Mult_RecoilSide", refname)
 
     -- local rrange = math.Rand(-recs, recs) * self.RecoilSide
 
@@ -773,8 +808,8 @@ function SWEP:DoRecoil(akimbo)
     local recu = 1
 
     if self:InBipod() then
-        local biprec = self.BipodRecoil
-        local bipmul = self:GetBuff_Mult("Mult_BipodRecoil")
+        local biprec = reftable.BipodRecoil
+        local bipmul = self:GetBuff_Mult("Mult_BipodRecoil", refname)
 
         local b = ((biprec or 1) * bipmul or 0.25)
 
@@ -783,9 +818,9 @@ function SWEP:DoRecoil(akimbo)
         recv = recv * b
     end
 
-    local recoiltbl = self:GetBuff_Override("Override_ShotRecoilTable") or self.ShotRecoilTable
+    local recoiltbl = self:GetBuffRef("ShotRecoilTable", refname, true)
 
-    if recoiltbl and recoiltbl[self:GetBurstCount()] then rmul = rmul * recoiltbl[self:GetBurstCount()] end
+    if recoiltbl and recoiltbl[self:GetBurstCount(is_secondary)] then rmul = rmul * recoiltbl[self:GetBurstCount(is_secondary)] end
 
     if GetConVar("arccw_mult_crouchrecoil"):GetFloat() != 1 and self:GetOwner():OnGround() and self:GetOwner():Crouching() then
         rmul = rmul * GetConVar("arccw_mult_crouchrecoil"):GetFloat()
@@ -793,15 +828,15 @@ function SWEP:DoRecoil(akimbo)
 
     local punch = Angle()
 
-    punch = punch + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * math.max(stat_up, 0.25) * recu * recv * rmul)
-    punch = punch + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * math.max(stat_side, 0.25) * irec * recv * rmul)
+    punch = punch + (self:GetBuffRef("RecoilDirection", refname) * math.max(stat_up, 0.25) * recu * recv * rmul)
+    punch = punch + (self:GetBuffRef("RecoilDirectionSide", refname) * math.max(stat_side, 0.25) * irec * recv * rmul)
     punch = punch + Angle(0, 0, 90) * math.Rand(-1, 1) * math.Clamp(stat_up, 0.25, 1) * recv * rmul * 0.01
-    punch = punch * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
+    punch = punch * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch", refname)
 
     if CLIENT then self:OurViewPunch(punch) end
 
     if CLIENT or single then
-        recv = recv * self.VisualRecoilMult
+        recv = recv * reftable.VisualRecoilMult
 
         self.RecoilAmount     = self.RecoilAmount + (stat_up * rmul * recu)
         self.RecoilAmountSide = self.RecoilAmountSide + (stat_side * irec * recs * rmul)
@@ -818,39 +853,41 @@ function SWEP:DoRecoil(akimbo)
     -- math.randomseed(CurTime() + (self:EntIndex() * 3))
 end
 
-function SWEP:GetBurstLength()
-    local clip = self:Clip1()
-    if self:HasBottomlessClip() then
-        clip = self:Ammo1()
+function SWEP:GetBurstLength(refname)
+    local is_secondary = isstring(refname) and refname != ""
+    local clip = is_secondary and self:Clip2() or self:Clip1()
+    if self:HasBottomlessClip(is_secondary) then
+        clip = is_secondary and self:Ammo2() or self:Ammo1()
     end
     if clip == 0 then return 1 end
 
     local len = self:GetCurrentFiremode().Mode
 
-    if !len then return self:GetBurstCount() + 10 end
+    if !len then return self:GetBurstCount(refname) + 10 end
 
-    local hookedlen = self:GetBuff_Hook("Hook_GetBurstLength", len)
+    local hookedlen = self:GetBuff_Hook("Hook_GetBurstLength", len, refname)
 
     if len == 1 then return 1 end
-    if len >= 2 then return self:GetBurstCount() + 10 end
+    if len >= 2 then return self:GetBurstCount(refname) + 10 end
 
     if hookedlen != len then return hookedlen end
 
     if len < 0 then return -len end
 
-    return self:GetBurstCount() + 10
+    return self:GetBurstCount(refname) + 10
 end
 
 function SWEP:FireAnimationEvent(pos, ang, event, options)
     return true
 end
 
-function SWEP:GetRangeFraction(range)
-    local decrease = self:GetBuff("Damage") < self:GetBuff("DamageMin")
-    local mran = self.RangeMin or 0
-    local sran = self.Range
-    local bran = self:GetBuff_Mult("Mult_Range")
-    local vran = self:GetBuff_Mult("Mult_RangeMin")
+function SWEP:GetRangeFraction(range, refname)
+    local reftbl = self:GetRefTable(refname)
+    local decrease = self:GetBuffRef("Damage", refname) < self:GetBuffRef("DamageMin", refname)
+    local mran = reftbl.RangeMin or 0
+    local sran = reftbl.Range
+    local bran = self:GetBuff_Mult("Mult_Range", refname)
+    local vran = self:GetBuff_Mult("Mult_RangeMin", refname)
 
     if range < mran * bran * vran then
         return 0
@@ -864,11 +901,12 @@ function SWEP:GetRangeFraction(range)
     end
 end
 
-function SWEP:GetDamage(range, pellet)
-    local ovr = self:GetBuff_Override("Override_Num")
-    local add = self:GetBuff_Add("Add_Num")
+function SWEP:GetDamage(range, pellet, refname)
+    local reftbl = self:GetRefTable(refname)
+    local ovr = self:GetBuff_Override("Override_Num", nil, refname)
+    local add = self:GetBuff_Add("Add_Num", refname)
 
-    local num = self.Num
+    local num = reftbl.Num
     local nbr = (ovr or num) + add
     local mul = 1
 
@@ -876,15 +914,11 @@ function SWEP:GetDamage(range, pellet)
 
     if !pellet then mul = mul * nbr end
 
-    local dmgmax = self:GetBuff("Damage") * mul
-    local dmgmin = self:GetBuff("DamageMin") * mul
-    local delta = self:GetRangeFraction(range)
+    local dmgmax = self:GetBuffRef("Damage", refname) * mul
+    local dmgmin = self:GetBuffRef("DamageMin", refname) * mul
+    local delta = self:GetRangeFraction(range, refname)
 
     local lerped = Lerp(delta, dmgmax, dmgmin)
 
     return lerped
-end
-
-function SWEP:SecondaryAttack()
-    return self.Melee2 and self:Bash(true)
 end

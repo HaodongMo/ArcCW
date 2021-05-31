@@ -177,8 +177,8 @@ function SWEP:Reload()
     self:GetBuff_Hook("Hook_PostReload")
 end
 
-function SWEP:ReloadTimed(akimbo)
-    if akimbo then
+function SWEP:ReloadTimed(is_secondary)
+    if is_secondary then
         self:RestoreAkimboAmmo()
     else
         self:RestoreAmmo(self:GetMagUpCount() != 0 and self:GetMagUpCount())
@@ -188,9 +188,9 @@ function SWEP:ReloadTimed(akimbo)
     end
 end
 
-function SWEP:Unload(akimbo)
+function SWEP:Unload(is_secondary)
     if !self:GetOwner():IsPlayer() then return end
-    if akimbo then
+    if is_secondary then
         if SERVER then
             self:GetOwner():GiveAmmo(self:Clip2(), self.Secondary.Ammo or "", true)
         end
@@ -203,45 +203,52 @@ function SWEP:Unload(akimbo)
     end
 end
 
-function SWEP:HasBottomlessClip()
-    if self.BottomlessClip or self:GetBuff_Override("Override_BottomlessClip") then return true end
-    return false
+function SWEP:HasBottomlessClip(refname)
+    return self:GetBuff_Override("Override_BottomlessClip", self:GetRefTable(refname).BottomlessClip, refname)
 end
 
-function SWEP:HasInfiniteAmmo()
-    if self.InfiniteAmmo or self:GetBuff_Override("Override_InfiniteAmmo") then return true end
-    return false
+function SWEP:HasInfiniteAmmo(refname)
+    return self:GetBuff_Override("Override_InfiniteAmmo", self:GetRefTable(refname).InfiniteAmmo, refname)
 end
 
-function SWEP:RestoreAmmo(count)
+function SWEP:RestoreAmmo(count, is_secondary)
     if self:GetOwner():IsNPC() then return end
-    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
+    local curclip = is_secondary and self:Clip2() or self:Clip1()
+    local chamber = math.Clamp(curclip, 0, self:GetChamberSize(is_secondary))
     if self:GetNeedCycle() then chamber = 0 end
-    local clip = self:GetCapacity()
+    local clip = self:GetCapacity(is_secondary)
 
-    if self:HasInfiniteAmmo() then
-        self:SetClip1(clip + chamber)
+    if self:HasInfiniteAmmo(is_secondary) then
+        if is_secondary then
+            self:SetClip2(clip + chamber)
+        else
+            self:SetClip1(clip + chamber)
+        end
         return
     end
 
     count = count or (clip + chamber)
 
-    local reserve = self:Ammo1()
+    local reserve = is_secondary and self:Ammo2() or self:Ammo1()
 
-    reserve = reserve + self:Clip1()
+    reserve = reserve + curclip
 
-    local load = math.Clamp(self:Clip1() + count, 0, reserve)
+    local loadamt = math.Clamp(curclip + count, 0, reserve)
 
-    load = math.Clamp(load, 0, clip + chamber)
+    loadamt = math.Clamp(loadamt, 0, clip + chamber)
 
-    reserve = reserve - load
+    reserve = reserve - loadamt
 
-    -- if load <= self:Clip1() then return end
+    -- if loadamt <= self:Clip1() then return end
 
     --if SERVER then
-        self:GetOwner():SetAmmo(reserve, self.Primary.Ammo, true)
+        self:GetOwner():SetAmmo(reserve, is_secondary and self.Secondary.Ammo or self.Primary.Ammo, true)
     --end
-    self:SetClip1(load)
+    if is_secondary then
+        self:SetClip2(loadamt)
+    else
+        self:SetClip1(loadamt)
+    end
 end
 
 -- local lastframeclip1 = 0
@@ -413,42 +420,48 @@ function SWEP:ReloadInsert(empty)
     end
 end
 
-function SWEP:GetCapacity()
-    local clip = self.RegularClipSize or self.Primary.ClipSize
+function SWEP:GetCapacity(refname)
+    local reftbl = self:GetRefTable(refname)
+    local cs = (refname and reftbl.ClipSize) or self.Primary.ClipSize
+    local clip = reftbl.RegularClipSize or cs
 
-    if !self.RegularClipSize then
-        self.RegularClipSize = self.Primary.ClipSize
+    if !reftbl.RegularClipSize then
+        reftbl.RegularClipSize = cs
     end
 
     local level = 1
 
-    if self:GetBuff_Override("MagExtender") then
+    if self:GetBuff_Override("MagExtender", nil, refname) then
         level = level + 1
     end
 
-    if self:GetBuff_Override("MagReducer") then
+    if self:GetBuff_Override("MagReducer", nil, refname) then
         level = level - 1
     end
 
     if level == 0 then
-        clip = self.ReducedClipSize
+        clip = reftbl.ReducedClipSize
     elseif level == 2 then
-        clip = self.ExtendedClipSize
+        clip = reftbl.ExtendedClipSize
     end
 
-    clip = self:GetBuff("ClipSize", true, clip) or clip
+    clip = self:GetBuff("ClipSize", true, clip, refname) or clip
 
-    local ret = self:GetBuff_Hook("Hook_GetCapacity", clip)
+    local ret = self:GetBuff_Hook("Hook_GetCapacity", clip, refname)
 
     clip = ret or clip
 
     clip = math.Clamp(clip, 0, math.huge)
 
-    self.Primary.ClipSize = clip
+    if refname then
+        self.Secondary.ClipSize = clip
+    else
+        self.Primary.ClipSize = clip
+    end
 
     return clip
 end
 
-function SWEP:GetChamberSize()
-    return self:GetBuff("ChamberSize") --(self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize) + self:GetBuff_Add("Add_ChamberSize")
+function SWEP:GetChamberSize(refname)
+    return self:GetBuffRef("ChamberSize", refname) --(self:GetBuff_Override("Override_ChamberSize") or self.ChamberSize) + self:GetBuff_Add("Add_ChamberSize")
 end

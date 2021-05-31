@@ -287,12 +287,12 @@ function SWEP:Think()
 
     -- self:RefreshBGs()
 
-    if self:GetMagUpIn() != 0 and CurTime() > self:GetMagUpIn() then
+    if self:GetMagUpIn() > 0 and CurTime() > self:GetMagUpIn() then
         self:ReloadTimed()
         self:SetMagUpIn(0)
     end
 
-    if self:GetMagUpIn2() != 0 and CurTime() > self:GetMagUpIn2() then
+    if self:GetMagUpIn2() > 0 and CurTime() > self:GetMagUpIn2() then
         self:ReloadTimed(true)
         self:SetMagUpIn2(0)
     end

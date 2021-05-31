@@ -19,7 +19,7 @@ function EFFECT:Init(data)
     if !IsValid(wep) then return end
 
     local speed = data:GetScale()
-    local start = (wep.GetTracerOrigin and wep:GetTracerOrigin(wep:GetEffectLastAkimbo())) or data:GetStart()
+    local start = (wep.GetTracerOrigin and wep:GetTracerOrigin(wep:GetEffectLastSecondary())) or data:GetStart()
 
     if GetConVar("arccw_fasttracers"):GetBool() then
             local fx = EffectData()

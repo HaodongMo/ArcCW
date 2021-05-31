@@ -13,8 +13,8 @@ function EFFECT:Init(data)
 
     if wpn.GetInUBGL and wpn:GetInUBGL() then
         muzzle = wpn:GetBuff_Override("UBGL_MuzzleEffect") or muzzle
-    elseif wpn:GetEffectLastAkimbo() and wpn:GetBuff_Override("Akimbo_MuzzleEffect") then
-        muzzle = wpn:GetBuff_Override("Akimbo_MuzzleEffect") or muzzle
+    elseif wpn:GetEffectLastSecondary() and wpn:GetBuff_Override("Secondary_MuzzleEffect") then
+        muzzle = wpn:GetBuff_Override("Secondary_MuzzleEffect") or muzzle
     end
 
     if GetConVar("arccw_fastmuzzles"):GetBool() then
@@ -42,7 +42,7 @@ function EFFECT:Init(data)
         return
     end
 
-    local mdl = wpn:GetMuzzleDevice(wm, wpn:GetEffectLastAkimbo())
+    local mdl = wpn:GetMuzzleDevice(wm, wpn:GetEffectLastSecondary())
     local parent = mdl
 
     if !wm then

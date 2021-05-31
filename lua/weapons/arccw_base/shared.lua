@@ -688,7 +688,6 @@ include("sh_bipod.lua")
 include("sh_grenade.lua")
 include("sh_ttt.lua")
 include("sh_util.lua")
-include("sh_akimbo.lua")
 AddCSLuaFile("sh_model.lua")
 AddCSLuaFile("sh_timers.lua")
 AddCSLuaFile("sh_think.lua")
@@ -708,7 +707,6 @@ AddCSLuaFile("sh_bipod.lua")
 AddCSLuaFile("sh_grenade.lua")
 AddCSLuaFile("sh_ttt.lua")
 AddCSLuaFile("sh_util.lua")
-AddCSLuaFile("sh_akimbo.lua")
 
 AddCSLuaFile("cl_customize2.lua")
 AddCSLuaFile("cl_viewmodel.lua")
@@ -743,14 +741,13 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Int", 3, "LastLoad")
     self:NetworkVar("Int", 4, "NthReload")
     self:NetworkVar("Int", 5, "NthShot")
-    self:NetworkVar("Int", 7, "BurstCountUM2") -- akimbo trolololol
-
     -- 2 = insert
     -- 3 = cancelling
     -- 4 = insert empty
     -- 5 = cancelling empty
     self:NetworkVar("Int", 6, "ShotgunReloading")
     self:NetworkVar("Int", 7, "MagUpCount")
+    self:NetworkVar("Int", 8, "BurstCountUM2")
 
     self:NetworkVar("Bool", 0, "HeatLocked")
     self:NetworkVar("Bool", 1, "NeedCycle")
@@ -759,7 +756,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 4, "InCustomize")
     self:NetworkVar("Bool", 5, "GrenadePrimed")
     self:NetworkVar("Bool", 6, "MalfunctionJam")
-    self:NetworkVar("Bool", 7, "EffectLastAkimbo")
+    self:NetworkVar("Bool", 7, "EffectLastSecondary")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
@@ -768,8 +765,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
     self:NetworkVar("Float", 5, "NextIdle")
     self:NetworkVar("Float", 6, "Holster_Time")
-    self:NetworkVar("Float", 7, "ReloadingREAL2") -- akimbo trolololol
-    self:NetworkVar("Float", 8, "MagUpIn2") -- electric boogaloo
+    self:NetworkVar("Float", 7, "ReloadingREAL2")
+    self:NetworkVar("Float", 8, "MagUpIn2")
 
     self:NetworkVar("Vector", 0, "BipodPos")
 
@@ -796,8 +793,8 @@ function SWEP:OnRestore()
 end
 
 
-function SWEP:SetReloading(v, akimbo)
-    if akimbo then
+function SWEP:SetReloading(v, is_secondary)
+    if is_secondary then
         if isbool(v) then
             if v then
                 self:SetReloadingREAL2(math.huge)
@@ -820,10 +817,10 @@ function SWEP:SetReloading(v, akimbo)
     end
 end
 
-function SWEP:GetReloading(akimbo)
+function SWEP:GetReloading(is_secondary)
     local decide
 
-    if akimbo then
+    if is_secondary then
         if self:GetReloadingREAL2() > CurTime() then
             decide = true
         else
@@ -844,17 +841,17 @@ function SWEP:GetReloading(akimbo)
     return decide
 end
 
-function SWEP:SetBurstCount(b, akimbo)
-    if akimbo then
+function SWEP:SetBurstCount(b, is_secondary)
+    if is_secondary then
         self:SetBurstCountUM2(b)
     else
         self:SetBurstCountUM(b)
     end
 end
 
-function SWEP:GetBurstCount(akimbo)
-    if akimbo then
-        return self:GetBuff_Hook("Hook_GetBurstCountAkimbo", self:GetBurstCountUM2()) or self:GetBurstCountUM2() or 0
+function SWEP:GetBurstCount(is_secondary)
+    if is_secondary then
+        return self:GetBuff_Hook("Hook_GetBurstCount2", self:GetBurstCountUM2()) or self:GetBurstCountUM2() or 0
     else
         return self:GetBuff_Hook("Hook_GetBurstCount", self:GetBurstCountUM()) or self:GetBurstCountUM() or 0
     end
