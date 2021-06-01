@@ -224,6 +224,7 @@ function SWEP:SetupActiveSights()
     if !vm or !vm:IsValid() then return end
 
     local kbi = self.KeepBaseIrons or true
+    local bif = self.BaseIronsFirst or true
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
@@ -234,6 +235,7 @@ function SWEP:SetupActiveSights()
         if !addsights then continue end
 
         if !k.KeepBaseIrons and !atttbl.KeepBaseIrons then kbi = false end
+        if !k.BaseIronsFirst and !atttbl.BaseIronsFirst then bif = false end
 
         for _, s in pairs(addsights) do
             local stab = table.Copy(s)
@@ -435,7 +437,12 @@ function SWEP:SetupActiveSights()
     end
 
     if kbi then
-        table.insert(sighttable, table.Copy(self:GetBuff_Override("Override_IronSightStruct") or self.IronSightStruct))
+        local t = table.Copy(self:GetBuff_Override("Override_IronSightStruct") or self.IronSightStruct)
+        if bif then
+            table.insert(sighttable, 1, t)
+        else
+            table.insert(sighttable, t)
+        end
     end
 
     self.SightTable = sighttable

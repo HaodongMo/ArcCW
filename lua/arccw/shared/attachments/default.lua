@@ -66,6 +66,7 @@ att.ToggleStats = {
 }
 
 att.KeepBaseIrons = false
+att.BaseIronsFirst = false
 
 att.GivesFlags = {}
 att.RequireFlags = {}

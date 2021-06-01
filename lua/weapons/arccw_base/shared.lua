@@ -255,6 +255,7 @@ SWEP.CaseBGs = {}
 SWEP.StripperClipBGs = {}
 
 SWEP.KeepBaseIrons = false -- do not override iron sights when scope installed
+SWEP.BaseIronsFirst = false -- If a sight keeps base irons, irons comes first
 
 SWEP.IronSightStruct = {
     Pos = Vector(-8.728, -13.702, 4.014),
