@@ -839,22 +839,41 @@ function SWEP:FireAnimationEvent(pos, ang, event, options)
     return true
 end
 
-function SWEP:GetRangeFraction(range)
-    local decrease = self:GetBuff("Damage") < self:GetBuff("DamageMin")
-    local mran = self.RangeMin or 0
-    local sran = self.Range
-    local bran = self:GetBuff_Mult("Mult_Range")
-    local vran = self:GetBuff_Mult("Mult_RangeMin")
+function SWEP:IsRampupWeapon()
+    local ovr = self:GetBuff_Override("Override_IsRampupWeapon")
+    if ovr != nil then return ovr end
+    return self:GetBuff("Damage") < self:GetBuff("DamageMin")
+end
 
-    if range < mran * bran * vran then
+function SWEP:GetMinMaxRange()
+    local decrease = !self:IsRampupWeapon()
+
+    local min = self:GetBuff_Override("Override_RangeMin", self.RangeMin or 0)
+    local max = self:GetBuff_Override("Override_Range", self.Range)
+    local min_add = self:GetBuff_Add("Add_RangeMin")
+    local max_add = self:GetBuff_Add("Add_Range")
+    local min_mult = self:GetBuff_Mult("Mult_RangeMin")
+    local max_mult = self:GetBuff_Mult("Mult_Range")
+
+    if decrease then
+        -- MinRange is also affected by Mult_Range, this is intentional
+        local total_min = math.max((min + min_add) * min_mult * max_mult, 0)
+        return total_min, math.max((max + max_add) * max_mult, total_min)
+    else
+        -- For "rampup weapons" (dmgmin > dmg), range buffs *decrease* range, as it ramps up damage quicker
+        -- After all, +Range is supposed to be a positive buff no matter the kind of gun
+        local total_min = math.max((min - min_add) / min_mult / max_mult, 0)
+        return total_min, math.max((max - max_add) / max_mult, total_min)
+    end
+end
+
+function SWEP:GetRangeFraction(range)
+    local min, max = self:GetMinMaxRange()
+    if range < min then
         return 0
     else
-        range = range - mran * bran * vran
-        if decrease then
-            return math.Clamp(range / (sran / bran), 0, 1)
-        else
-            return math.Clamp(range / (sran * bran), 0, 1)
-        end
+        range = range - min
+        return math.Clamp(range / max, 0, 1)
     end
 end
 

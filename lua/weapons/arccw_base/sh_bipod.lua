@@ -112,6 +112,9 @@ function SWEP:ExitBipod()
 
     self:SetNextSecondaryFire(CurTime() + 0.075)
 
+    self:SetBipodPos(Vector(0, 0, 0))
+    self:SetBipodAngle(Angle(0, 0, 0))
+
     if game.SinglePlayer() and CLIENT then return end
 
     self:MyEmitSound(self.ExitBipodSound)

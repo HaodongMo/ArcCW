@@ -381,9 +381,14 @@ function SWEP:CreateCustomize2HUD()
     end
     scroll_1.btnGrip.Paint = PaintScrollBar
 
-    local customizebutton = vgui.Create("DButton", ArcCW.InvHUD)
+    local topframe = vgui.Create("DPanel", ArcCW.InvHUD)
+    topframe:SetSize(menu1_w, ss * 16)
+    topframe:SetPos(airgap_x, airgap_y + ss * 8)
+    topframe.Paint = function() end
+
+    local customizebutton = vgui.Create("DButton", topframe)
     customizebutton:SetSize(ss * 90, ss * 16)
-    customizebutton:SetPos(airgap_x, airgap_y + ss * 8)
+    customizebutton:SetPos(0, 0)
     customizebutton:SetText("")
     customizebutton.Text = translate("ui.customize")
     customizebutton.Val = 1
@@ -418,9 +423,9 @@ function SWEP:CreateCustomize2HUD()
         surface.DrawText(self2.Text)
     end
 
-    local presetsbutton = vgui.Create("DButton", ArcCW.InvHUD)
-    presetsbutton:SetSize(ss * 72, ss * 16)
-    presetsbutton:SetPos(airgap_x + customizebutton:GetWide() + (ss * 8), airgap_y + ss * 8)
+    local presetsbutton = vgui.Create("DButton", topframe)
+    presetsbutton:SetSize(ss * 80, ss * 16)
+    presetsbutton:SetPos(ss * 94, 0)
     presetsbutton:SetText("")
     presetsbutton.Text = translate("ui.presets")
     presetsbutton.Val = 2
@@ -433,9 +438,13 @@ function SWEP:CreateCustomize2HUD()
     presetsbutton.Paint = customizebutton.Paint
 
     if self:ShowInventoryButton() then
-        local inventorybutton = vgui.Create("DButton", ArcCW.InvHUD)
-        inventorybutton:SetSize(ss * 72, ss * 16)
-        inventorybutton:SetPos(airgap_x + customizebutton:GetWide() + (ss * 8 * 2) + presetsbutton:GetWide(), airgap_y + ss * 8)
+        customizebutton:SetSize(ss * 60, ss * 16)
+        presetsbutton:SetSize(ss * 55, ss * 16)
+        presetsbutton:SetPos(ss * 65, 0)
+
+        local inventorybutton = vgui.Create("DButton", topframe)
+        inventorybutton:SetSize(ss * 50, ss * 16)
+        inventorybutton:SetPos(ss * 125, 0)
         inventorybutton:SetText("")
         inventorybutton.Text = translate("ui.inventory")
         inventorybutton.Val = 3
@@ -494,7 +503,7 @@ function SWEP:CreateCustomize2HUD()
 
         table.sort(atts)
 
-        local str = ""
+        local str = nil
         if #atts == 0 then
             str = translate("ui.noatts")
         elseif GetConVar("arccw_attinv_lockmode"):GetBool() then
@@ -548,6 +557,10 @@ function SWEP:CreateCustomize2HUD()
                 if (self:GetOwner().ArcCW_AttInv[self2.att] or 0) == 0 then
                     self2:Remove()
                 end
+                clearrightpanel()
+            end
+            button.DoRightClick = function(self2, clr, btn)
+                ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot)
             end
             button.Paint = function(self2, w, h)
                 local col = col_button
@@ -558,9 +571,11 @@ function SWEP:CreateCustomize2HUD()
                     col2 = col_shadow
                 end
 
-                -- if self2:IsHovered() then
-                --     ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot)
-                -- end
+                --[[]
+                if self2:IsHovered() then
+                    ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot)
+                end
+                ]]
 
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
@@ -611,15 +626,23 @@ function SWEP:CreateCustomize2HUD()
         ArcCW.InvHUD_Menu1:Clear()
         ArcCW.InvHUD_Menu2:Clear()
         self.Inv_SelectedSlot = nil
+        self.Preset_DeleteMode = false
         clearrightpanel()
 
-        local button = vgui.Create("DButton", ArcCW.InvHUD_Menu1)
+        local framer = vgui.Create("DPanel", ArcCW.InvHUD_Menu1)
+        framer:SetSize(menu1_w, smallbuttonheight * 1.2)
+        framer:DockMargin(0, 0, 0, smallgap)
+        framer:Dock(TOP)
+        framer.Paint = function() end
+
+        local button = vgui.Create("DButton", framer)
         button:SetText("")
-        button:SetSize(menu1_w, smallbuttonheight)
-        button:DockMargin(0, smallgap, 0, 0)
-        button:Dock(TOP)
+        button:Dock(LEFT)
+        button:SetWide(menu1_w * 0.5)
+        button:DockMargin(0, 0, smallgap, 0)
         button.DoClick = function(self2, clr, btn)
             self:CreatePresetSave()
+            surface.PlaySound("weapons/arccw/open.wav")
         end
         button.Paint = function(self2, w, h)
             local col = col_button
@@ -632,7 +655,7 @@ function SWEP:CreateCustomize2HUD()
 
             draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
-            local preset_txt = "Create New Preset"
+            local preset_txt = translate("ui.createpreset") --"Create New Preset"
 
             surface.SetFont("ArcCWC2_14")
             surface.SetTextPos(ss * 4, ss * 0)
@@ -640,32 +663,93 @@ function SWEP:CreateCustomize2HUD()
             DrawTextRot(self2, preset_txt, 0, 0, ss * 4, ss * 0, w - ss * 4)
         end
 
+        local remov = vgui.Create("DButton", framer)
+        remov:SetText("")
+        remov:Dock(FILL)
+        remov.DoClick = function(self2, clr, btn)
+            self.Preset_DeleteMode = !self.Preset_DeleteMode
+            surface.PlaySound(self.Preset_DeleteMode and "weapons/arccw/open.wav" or "weapons/arccw/close.wav")
+        end
+        remov.Paint = function(self2, w, h)
+            local col = col_button
+            local col2 = col_fg
+
+            if self.Preset_DeleteMode then
+                if self2:IsHovered() then
+                    col = Color(200, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 125))
+                    col2 = col_shadow
+                else
+                    col = Color(100, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 175))
+                end
+            elseif self2:IsHovered() then
+                col = col_fg_tr
+                col2 = col_shadow
+            end
+
+            draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
+            local preset_txt = translate("ui.deletepreset")
+
+            surface.SetFont("ArcCWC2_14")
+            surface.SetTextPos(ss * 4, ss * 0)
+            surface.SetTextColor(col2)
+            DrawTextRot(self2, preset_txt, 0, 0, ss * 4, ss * 0, w - ss * 4)
+        end
+
+        local presetpanel = vgui.Create("DScrollPanel", ArcCW.InvHUD_Menu1)
+        presetpanel:SetSize(menu1_w, menu1_h - smallbuttonheight * 1.2 - smallgap)
+        presetpanel:SetPos(0, smallbuttonheight * 1.2 + smallgap)
+
+        local scroll_preset = presetpanel:GetVBar()
+        scroll_preset.Paint = function() end
+        scroll_preset.btnUp.Paint = function(span, w, h)
+        end
+        scroll_preset.btnDown.Paint = function(span, w, h)
+        end
+        scroll_preset.btnGrip.Paint = PaintScrollBar
+
         local preset = {}
 
         preset = self:GetPresets()
 
         for i, k in pairs(preset) do
             if k == "autosave.txt" then continue end
-            local load_btn = vgui.Create("DButton", ArcCW.InvHUD_Menu1)
+            local load_btn = vgui.Create("DButton", presetpanel)
             load_btn:SetText("")
             load_btn.PresetName = string.sub(k, 1, -5)
             load_btn:SetSize(menu1_w, smallbuttonheight)
             load_btn:DockMargin(0, smallgap, 0, 0)
             load_btn:Dock(TOP)
             load_btn.DoClick = function(self2, clr, btn)
-                self.LastPresetName = self2.PresetName
-                self:LoadPreset(self2.PresetName)
+                if !self.Preset_DeleteMode then
+                    self.LastPresetName = self2.PresetName
+                    self:LoadPreset(self2.PresetName)
+                else
+                    local filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. self2.PresetName .. ".txt"
+                    file.Delete(filename)
+                    self2:Remove()
+                    surface.PlaySound("weapons/arccw/uninstall.wav")
+                end
             end
+            --[[]
             load_btn.DoRightClick = function(self2)
                 local filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. self2.PresetName .. ".txt"
                 file.Delete(filename)
                 self2:Remove()
             end
+            ]]
             load_btn.Paint = function(self2, w, h)
                 local col = col_button
                 local col2 = col_fg
 
-                if self2:IsHovered() then
+                if self.Preset_DeleteMode then
+                    if self2:IsHovered() then
+                        col = Color(200, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 125))
+                        col2 = col_shadow
+                    --else
+                    --    col = Color(100, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 175))
+                    end
+                elseif self2:IsHovered() then
                     col = col_fg_tr
                     col2 = col_shadow
                 end
@@ -1522,7 +1606,7 @@ function SWEP:CreateCustomize2HUD()
         weapon_cat:SetPos(0, rss * 32)
         weapon_cat.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-            local class = try_translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class)
+            local class = try_translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or "missing"
             local cal = try_translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre)
             local name = class
 
@@ -1749,10 +1833,10 @@ function SWEP:CreateCustomize2HUD()
                     unit = translate("unit.rpm"),
                 })
                 local mode = self:GetCurrentFiremode()
-                if mode.Mode < 0 and mode.PostBurstDelay then
+                if mode.Mode < 0 then
                     table.insert(infos, {
                         title = translate("trivia.firerate_burst"),
-                        value = tostring( math.Round( 60/(self:GetFiringDelay()+(mode.PostBurstDelay/-mode.Mode)) ) ),
+                        value = tostring( math.Round( 60/(self:GetFiringDelay()+((mode.PostBurstDelay or 0)/-mode.Mode)) ) ),
                         unit = translate("unit.rpm"),
                     })
                 end
@@ -1797,12 +1881,23 @@ function SWEP:CreateCustomize2HUD()
             -- noise
             local noise = self:GetBuff("ShootVol")
 
-            if !self.PrimaryBash then
+            if !self.PrimaryBash and !self.Throwing then
                 table.insert(infos, {
                     title = translate("trivia.noise"),
                     value = noise,
                     unit = translate("unit.db"),
                 })
+            end
+
+            if self.Throwing then
+                local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+                if ft and ft > 0 then
+                    table.insert(infos, {
+                        title = translate("trivia.fusetime"),
+                        value = tostring(math.Round(ft, 1)),
+                        unit = "s"
+                    })
+                end
             end
 
             if self.PrimaryBash then
@@ -1834,16 +1929,6 @@ function SWEP:CreateCustomize2HUD()
                         value = translate(ArcCW.MeleeDamageTypes[dmgtype]),
                     })
                 end
-            end
-
-            if self.Throwing then
-                local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
-
-                table.insert(infos, {
-                    title = translate("trivia.fusetime"),
-                    value = tostring(math.Round(ft, 1)),
-                    unit = "s"
-                })
             end
 
             for i, triv in pairs(infos) do
@@ -1907,7 +1992,7 @@ function SWEP:CreateCustomize2HUD()
             then
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
 
-                local txt = "No Data"
+                local txt = translate("ui.nodata")
 
                 surface.SetTextColor(col_fg)
                 surface.SetFont("ArcCWC2_24")
@@ -1917,23 +2002,12 @@ function SWEP:CreateCustomize2HUD()
 
                 return
             end
+            local dmgmax = self:GetDamage(0)
+            local dmgmin = self:GetDamage(math.huge)
 
-            local ovr = self:GetBuff_Override("Override_Num")
-            local add = self:GetBuff_Add("Add_Num")
-
-            local num = self.Num
-            local nbr = (ovr or num) + add
-            local mul = 1
-
-            mul = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num != nbr) and (num / nbr)) or 1
-
-            if !pellet then mul = mul * nbr end
-
-            local dmgmax = self:GetBuff("Damage") * mul
-            local dmgmin = self:GetBuff("DamageMin") * mul
-
-            local mran = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
-            local sran = self.Range * self:GetBuff_Mult("Mult_Range")
+            --local mran = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
+            --local sran = self.Range * self:GetBuff_Mult("Mult_Range")
+            local mran, sran = self:GetMinMaxRange()
 
             local scale = math.ceil((math.max(dmgmax, dmgmin) + 10) / 25) * 25
             local hscale = math.ceil(math.max(mran, sran) / 100) * 100
