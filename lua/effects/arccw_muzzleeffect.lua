@@ -79,7 +79,7 @@ function EFFECT:Init(data)
             and !wpn:GetBuff_Override("Silencer")
             and !wpn:GetBuff_Override("FlashHider") then
         local light = DynamicLight(self:EntIndex())
-        local clr = wpn:GetBuff_Override("Override_MuzzleFlashColor", wpn.MuzzleFlashColor)
+        local clr = wpn:GetBuff_Override("Override_MuzzleFlashColor", wpn.MuzzleFlashColor) or Color(244, 209, 66)
         if (light) then
             light.Pos = pos
             light.r = clr.r

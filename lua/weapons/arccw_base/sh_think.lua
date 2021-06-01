@@ -15,10 +15,10 @@ function SWEP:Think()
 
     if !IsValid(owner) or owner:IsNPC() then return end
 
-    if CLIENT and IsFirstTimePredicted() then
+    if CLIENT and (!game.SinglePlayer() and IsFirstTimePredicted() or true) then
         if self:GetOwner() == LocalPlayer() and ArcCW.InvHUD and !ArcCW.Inv_Hidden and ArcCW.Inv_Fade == 0 then
-            ArcCW.Inv_Fade = 0.01
             ArcCW.InvHUD:Remove()
+            ArcCW.Inv_Fade = 0.01
         end
     end
 
@@ -31,14 +31,6 @@ function SWEP:Think()
         self:SetShotgunReloading(sg + 1)
     elseif (sg >= 2) and self:GetReloadingREAL() <= CurTime() then
         self:ReloadInsert((sg >= 4) and true or false)
-    end
-
-    if CLIENT then
-        if ArcCW.LastWeapon != self then
-            self:LoadPreset("autosave")
-        end
-
-        ArcCW.LastWeapon = self
     end
 
     self:InBipod()

@@ -841,7 +841,7 @@ function SWEP:IsProne()
 end
 
 function SWEP:BarrelHitWall()
-    if GetConVar("arccw_override_nearwall"):GetBool() then
+    if self.BarrelLength != 0 and GetConVar("arccw_override_nearwall"):GetBool() then
         local offset = self.BarrelOffsetHip
 
         if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then

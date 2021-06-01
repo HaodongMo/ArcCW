@@ -1606,7 +1606,7 @@ function SWEP:CreateCustomize2HUD()
         weapon_cat:SetPos(0, rss * 32)
         weapon_cat.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-            local class = try_translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class)
+            local class = try_translate(self:GetBuff_Override("Override_Trivia_Class") or self.Trivia_Class) or "missing"
             local cal = try_translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre)
             local name = class
 
@@ -1833,10 +1833,10 @@ function SWEP:CreateCustomize2HUD()
                     unit = translate("unit.rpm"),
                 })
                 local mode = self:GetCurrentFiremode()
-                if mode.Mode < 0 and mode.PostBurstDelay then
+                if mode.Mode < 0 then
                     table.insert(infos, {
                         title = translate("trivia.firerate_burst"),
-                        value = tostring( math.Round( 60/(self:GetFiringDelay()+(mode.PostBurstDelay/-mode.Mode)) ) ),
+                        value = tostring( math.Round( 60/(self:GetFiringDelay()+((mode.PostBurstDelay or 0)/-mode.Mode)) ) ),
                         unit = translate("unit.rpm"),
                     })
                 end
@@ -1881,12 +1881,23 @@ function SWEP:CreateCustomize2HUD()
             -- noise
             local noise = self:GetBuff("ShootVol")
 
-            if !self.PrimaryBash then
+            if !self.PrimaryBash and !self.Throwing then
                 table.insert(infos, {
                     title = translate("trivia.noise"),
                     value = noise,
                     unit = translate("unit.db"),
                 })
+            end
+
+            if self.Throwing then
+                local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+                if ft and ft > 0 then
+                    table.insert(infos, {
+                        title = translate("trivia.fusetime"),
+                        value = tostring(math.Round(ft, 1)),
+                        unit = "s"
+                    })
+                end
             end
 
             if self.PrimaryBash then
@@ -1918,16 +1929,6 @@ function SWEP:CreateCustomize2HUD()
                         value = translate(ArcCW.MeleeDamageTypes[dmgtype]),
                     })
                 end
-            end
-
-            if self.Throwing then
-                local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
-
-                table.insert(infos, {
-                    title = translate("trivia.fusetime"),
-                    value = tostring(math.Round(ft, 1)),
-                    unit = "s"
-                })
             end
 
             for i, triv in pairs(infos) do

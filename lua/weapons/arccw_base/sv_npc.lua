@@ -372,5 +372,7 @@ function SWEP:OnDrop()
 
     if engine.ActiveGamemode() == "terrortown" then
         self.UnReady = true
+    else
+        self.UnReady = false
     end
 end

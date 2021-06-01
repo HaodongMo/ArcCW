@@ -2,6 +2,7 @@ function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
         return
     end
+    if CLIENT and self.UnReady then self:LoadPreset("autosave") end
 
     self:InitTimers()
 
@@ -34,7 +35,7 @@ function SWEP:Deploy()
             self:SetReloading(CurTime() + self:GetAnimKeyTime(r_anim))
 
             prd = self.Animations[r_anim].ProcDraw
-        else
+        elseif self.Animations[d_anim] then
             self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
 
             self:SetReloading(CurTime() + (self:GetAnimKeyTime(d_anim) * self:GetBuff_Mult("Mult_DrawTime")))
@@ -42,7 +43,7 @@ function SWEP:Deploy()
             prd = self.Animations[d_anim].ProcDraw
         end
 
-        if prd then
+        if prd or (!self.Animations[r_anim] and !self.Animations[d_anim]) then
             self:ProceduralDraw()
         end
     end
@@ -224,15 +225,16 @@ function SWEP:Holster(wep)
         local anim = self:SelectAnimation("holster")
         if anim then
             self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-            self:SetHolster_Time(CurTime() + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_DrawTime"))
+            local time = self:GetAnimKeyTime(anim)
+            self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         else
             if CLIENT then
                 self:ProceduralHolster()
             end
             self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         end
-        self:SetReloading(CurTime() + time)
-        self:SetWeaponOpDelay(CurTime() + time)
+        self:SetReloading(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
+        self:SetWeaponOpDelay(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
     end
 end
 
