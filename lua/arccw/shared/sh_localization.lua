@@ -140,7 +140,7 @@ function ArcCW.TranslateAmmo(ammo)
     local lang = ArcCW.GetLanguage()
     local str = "ammo." .. ammo
     if SERVER or GetConVar("arccw_ammonames"):GetBool() then
-        if ArcCW.LangTable[lang][str] then
+        if ArcCW.LangTable[lang] and ArcCW.LangTable[lang][str] then
             return ArcCW.LangTable[lang][str]
         elseif ArcCW.LangTable["en"][str] then
             return ArcCW.LangTable["en"][str]
@@ -240,7 +240,7 @@ hook.Add("PreGamemodeLoaded", "ArcCW_Lang", function()
     if CLIENT and GetConVar("arccw_ammonames"):GetBool() then
         local ourlang = ArcCW.GetLanguage()
         for _, name in pairs(game.GetAmmoTypes()) do
-            if ArcCW.LangTable[ourlang]["ammo." .. string.lower(name)] then
+            if ArcCW.LangTable[ourlang] and ArcCW.LangTable[ourlang]["ammo." .. string.lower(name)] then
                 language.Add(name .. "_ammo", ArcCW.LangTable[ourlang]["ammo." .. string.lower(name)])
             elseif ArcCW.LangTable["en"]["ammo." .. string.lower(name)] then
                 language.Add(name .. "_ammo", ArcCW.LangTable["en"]["ammo." .. string.lower(name)])
