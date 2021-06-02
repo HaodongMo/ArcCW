@@ -31,17 +31,16 @@ ArcCW.AmmoEntToArcCW = {
 }
 
 function ArcCW:AddGrenadeAmmo()
-    -- ConVar value is not guarenteed in multiplayer at Initialize
-    -- Will cause inconsistent server/client ammo types if enabled
-    --if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
+    if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
         for i, k in pairs(weapons.GetList()) do
             local class = k.ClassName
             local wpntbl = weapons.Get(class)
 
             if (wpntbl.Throwing or wpntbl.Disposable) and !wpntbl.Singleton and !wpntbl.DoNotEquipmentAmmo then
-                local ammoid = game.GetAmmoID(class)
-
-                if ammoid == -1 then
+                -- ammoid check will cause inconsistency between SV/CL on map change
+                -- Initialize is only run once anyways, so it should be fine
+                --local ammoid = game.GetAmmoID(class)
+                --if ammoid == -1 then
                     -- if ammo type does not exist, build it
                     game.AddAmmoType({
                         name = class,
@@ -51,13 +50,13 @@ function ArcCW:AddGrenadeAmmo()
                         language.Add(class .. "_ammo", wpntbl.PrintName)
                     end
                     ArcCW.LangTable["en"]["ammo." .. class] = wpntbl.PrintName
-                end
+                --end
 
                 k.Primary.Ammo = class
                 k.OldAmmo = class
             end
         end
-    --end
+    end
 end
 
 hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", ArcCW.AddGrenadeAmmo)
