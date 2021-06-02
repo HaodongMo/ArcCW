@@ -91,6 +91,9 @@ function SWEP:InitialDefaultClip()
     if engine.ActiveGamemode() == "darkrp" then return end -- DarkRP is god's second biggest mistake after gmod
 
     if self:GetOwner() and self:GetOwner():IsPlayer() then
+        if self:HasBottomlessClip() and self:Clip1() > 0 then
+            self:SetClip1(0)
+        end
         if self.ForceDefaultAmmo then
             self:GetOwner():GiveAmmo(self.ForceDefaultAmmo, self.Primary.Ammo)
         elseif engine.ActiveGamemode() != "terrortown" then
@@ -228,7 +231,6 @@ function SWEP:Holster(wep)
             local time = self:GetAnimKeyTime(anim)
             self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         else
-
             if game.SinglePlayer() and SERVER then
                 self:CallOnClient("ProceduralHolster")
             elseif !game.SinglePlayer() and CLIENT then

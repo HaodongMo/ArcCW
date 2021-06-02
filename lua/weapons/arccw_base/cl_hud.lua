@@ -81,7 +81,7 @@ function SWEP:GetHUDData()
         data.clip = "-"
     end
 
-    if self.PrimaryBash or self:HasInfiniteAmmo() then
+    if self.PrimaryBash then
         data.ammo = "-"
     end
 
@@ -411,7 +411,7 @@ function SWEP:DrawHUD()
             apan_bg.x = math.Clamp(apan_bg.x, ScreenScaleMulti(8), ScrW() - CopeX() - ScreenScaleMulti(128 + 8))
             apan_bg.y = math.Clamp(apan_bg.y, ScreenScaleMulti(8), ScrH() - CopeY() - ScreenScaleMulti(48))
 
-            if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() then
+            if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() or self:HasBottomlessClip() and !self:HasInfiniteAmmo() then
                 local wammotype = {
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = apan_bg.y - ScreenScaleMulti(8),
@@ -445,7 +445,10 @@ function SWEP:DrawHUD()
                 wammo.col = col3
             end
 
-            MyDrawText(wammo)
+            if tostring(data.clip) != "-" then
+                MyDrawText(wammo)
+            end
+            surface.SetFont("ArcCW_26")
             wammo.w, wammo.h = surface.GetTextSize(wammo.text)
 
             if data.plus then
@@ -462,24 +465,34 @@ function SWEP:DrawHUD()
                 MyDrawText(wplus)
             end
 
-            local wreserve = {
-                x = wammo.x - wammo.w - ScreenScaleMulti(4),
-                y = apan_bg.y + ScreenScaleMulti(10),
-                text = tostring(data.ammo) .. " /",
-                font = "ArcCW_12",
-                col = col2,
-                align = 1,
-                yalign = 2,
-                shadow = true,
-                alpha = alpha,
-            }
+            if tostring(data.ammo) != "-" then
+                local wreserve = {
+                    x = wammo.x - wammo.w - ScreenScaleMulti(4),
+                    y = apan_bg.y + ScreenScaleMulti(10),
+                    text = tostring(data.ammo) .. " /",
+                    font = "ArcCW_12",
+                    col = col2,
+                    align = 1,
+                    yalign = 2,
+                    shadow = true,
+                    alpha = alpha,
+                }
 
-            if self.PrimaryBash then
-                wreserve.text = ""
+                if self:HasInfiniteAmmo() then
+                    wreserve.text = tostring(self:GetMaxClip1()) .. " |"
+                end
+
+                if self:GetPrimaryAmmoType() <= 0 then
+                    wreserve.text = "!"
+                end
+
+                if self.PrimaryBash then
+                    wreserve.text = ""
+                end
+
+                MyDrawText(wreserve)
+                wreserve.w, wreserve.h = surface.GetTextSize(wreserve.text)
             end
-
-            MyDrawText(wreserve)
-            wreserve.w, wreserve.h = surface.GetTextSize(wreserve.text)
 
             local wmode = {
                 x = apan_bg.x + apan_bg.w - airgap,

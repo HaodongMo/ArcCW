@@ -14,12 +14,14 @@ ArcCW.HUDElementConVars = {
 
 local grad = Material("arccw/hud/grad.png", "mips smooth")
 hook.Add("PreDrawViewModels", "ArcCW_PreDrawViewmodels_Grad", function()
-    render.SetViewPort( 0, 0, ScrW(), ScrH() )
-    cam.Start2D()
-        surface.SetDrawColor(Color(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 255)))
-        surface.SetMaterial(grad)
-        surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
-    cam.End2D()
+    if ArcCW.InvHUD then
+        render.SetViewPort( 0, 0, ScrW(), ScrH() )
+        cam.Start2D()
+            surface.SetDrawColor(Color(255, 255, 255, Lerp(ArcCW.Inv_Fade-0.01, 0, 255)))
+            surface.SetMaterial(grad)
+            surface.DrawTexturedRect(0, 0, ScrW(), ScrH())
+        cam.End2D()
+    end
 end)
 
 hook.Add("HUDShouldDraw", "ArcCW_HideHUD", function(name)

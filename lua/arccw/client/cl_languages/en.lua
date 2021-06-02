@@ -329,3 +329,7 @@ L["arccw.cvar.mult_meleetime"] = "Melee Time"
 L["arccw.cvar.ammonames"] = "Custom Ammo Names"
 L["arccw.cvar.ammonames.desc"] = "Replaces default ammo type names with custom ones that are a bit more realistic (such as Pulse Ammo to Rifle Ammo). Also replaces references everywhere else!"
 L["arccw.cvar.att_showground"]            = "Show Ground Attachments"
+
+-- 2021-06-02
+L["arccw.cvar.mult_bottomlessclip"] = "Bottomless Clip"
+L["arccw.cvar.mult_infiniteammo"] = "Infinite Ammo"

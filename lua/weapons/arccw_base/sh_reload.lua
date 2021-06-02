@@ -68,7 +68,7 @@ function SWEP:Reload()
         if r then return end
     end
 
-    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 then return end
+    if !self:GetMalfunctionJam() and self:Ammo1() <= 0 and !self:HasInfiniteAmmo() then return end
 
     if self:GetBuff_Hook("Hook_PreReload") then return end
 
@@ -85,7 +85,7 @@ function SWEP:Reload()
 
     local load = math.Clamp(clip + chamber, 0, reserve)
 
-    if !self:GetMalfunctionJam() and load <= self:Clip1() then return end
+    if !self:GetMalfunctionJam() and load <= self:Clip1() and !self:HasInfiniteAmmo() then return end
 
     self:SetBurstCount(0)
 
@@ -190,11 +190,13 @@ function SWEP:Unload()
 end
 
 function SWEP:HasBottomlessClip()
+    if GetConVar("arccw_mult_bottomlessclip"):GetBool() then return true end
     if self.BottomlessClip or self:GetBuff_Override("Override_BottomlessClip") then return true end
     return false
 end
 
 function SWEP:HasInfiniteAmmo()
+    if GetConVar("arccw_mult_infiniteammo"):GetBool() then return true end
     if self.InfiniteAmmo or self:GetBuff_Override("Override_InfiniteAmmo") then return true end
     return false
 end

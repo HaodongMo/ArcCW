@@ -298,6 +298,9 @@ local MultsPanel = {
     { type = "b", text = "#arccw.cvar.mult_shootwhilesprinting",   var = "arccw_mult_shootwhilesprinting", sv = true },
     { type = "o", text = "#arccw.cvar.malfunction", var = "arccw_malfunction", sv = true,
             choices = {[0] = "#arccw.cvar.malfunction.0", [1] = "#arccw.cvar.malfunction.1", [2] = "#arccw.cvar.malfunction.2"}},
+
+    { type = "b", text = "#arccw.cvar.mult_bottomlessclip",   var = "arccw_mult_bottomlessclip", sv = true },
+    { type = "b", text = "#arccw.cvar.mult_infiniteammo",   var = "arccw_mult_infiniteammo", sv = true },
 }
 
 local MultPresets = {

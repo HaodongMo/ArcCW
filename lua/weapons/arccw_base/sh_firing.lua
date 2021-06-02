@@ -342,13 +342,9 @@ function SWEP:PrimaryAttack()
 
     self:DoEffects()
 
-    self:TakePrimaryAmmo(aps)
-
     self:SetBurstCount(self:GetBurstCount() + 1)
 
-    if self:HasBottomlessClip() and self:Clip1() > 0 then
-        self:Unload()
-    end
+    self:TakePrimaryAmmo(aps)
 
     self:DoShootSound()
     self:DoPrimaryAnim()
@@ -816,6 +812,9 @@ function SWEP:GetBurstLength()
     local clip = self:Clip1()
     if self:HasBottomlessClip() then
         clip = self:Ammo1()
+        if self:HasInfiniteAmmo() then
+            clip = math.huge
+        end
     end
     if clip == 0 then return 1 end
 

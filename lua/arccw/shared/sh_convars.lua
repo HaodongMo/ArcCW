@@ -41,6 +41,9 @@ CreateConVar("arccw_mult_malfunction", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Mul
 CreateConVar("arccw_mult_meleedamage", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for melee damage.", 0)
 CreateConVar("arccw_mult_meleetime", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for melee speed.", 0)
 
+CreateConVar("arccw_mult_bottomlessclip", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Enable bottomless clip.", 0, 1)
+CreateConVar("arccw_mult_infiniteammo", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Enable infinite reserve ammo.", 0, 1)
+
 
 CreateConVar("arccw_mult_crouchdisp", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for hip dispersion while crouching.", 0)
 CreateConVar("arccw_mult_crouchrecoil", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for recoil while crouching.", 0)
