@@ -480,7 +480,11 @@ end
 function SWEP:DoPrimaryFire(isent, data)
     local clip = self:Clip1()
     if self:HasBottomlessClip() then
-        clip = self:Ammo1()
+        if !self:GetOwner():IsPlayer() then
+            clip = math.huge
+        else
+            clip = self:Ammo1() 
+        end
     end
     local owner = self:GetOwner()
 
