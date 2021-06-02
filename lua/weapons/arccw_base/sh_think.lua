@@ -274,6 +274,13 @@ function SWEP:Think()
         self:SetMagUpIn( 0 )
     end
 
+    if self:HasBottomlessClip() and self:Clip1() >= 0 and self:Clip1() != 999999 then
+        self:Unload()
+        self:SetClip1(999999)
+    elseif !self:HasBottomlessClip() and self:Clip1() == 999999 then
+        self:SetClip1(0)
+    end
+
     self:GetBuff_Hook("Hook_Think")
 
     -- Running this only serverside in SP breaks animation processing and causes CheckpointAnimation to !reset.

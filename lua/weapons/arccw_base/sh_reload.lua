@@ -203,32 +203,24 @@ end
 
 function SWEP:RestoreAmmo(count)
     if self:GetOwner():IsNPC() then return end
+
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
     if self:GetNeedCycle() then chamber = 0 end
-    local clip = self:GetCapacity()
 
-    if self:HasInfiniteAmmo() then
-        self:SetClip1(clip + chamber)
-        return
-    end
+    local clip = self:GetCapacity()
 
     count = count or (clip + chamber)
 
-    local reserve = self:Ammo1()
-
+    local reserve = (self:HasInfiniteAmmo() and math.huge or self:Ammo1())
     reserve = reserve + self:Clip1()
 
     local load = math.Clamp(self:Clip1() + count, 0, reserve)
-
     load = math.Clamp(load, 0, clip + chamber)
-
     reserve = reserve - load
-
-    -- if load <= self:Clip1() then return end
-
-    --if SERVER then
+    
+    if !self:HasInfiniteAmmo() then
         self:GetOwner():SetAmmo(reserve, self.Primary.Ammo, true)
-    --end
+    end
     self:SetClip1(load)
 end
 
@@ -336,7 +328,7 @@ function SWEP:ReloadInsert(empty)
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
 
-    if self:Clip1() >= total or self:Ammo1() == 0 or ((self:GetShotgunReloading() == 3 or self:GetShotgunReloading() == 5) and self:Clip1() > 0) then
+    if self:Clip1() >= total or (self:Ammo1() == 0 and !self:HasInfiniteAmmo()) or ((self:GetShotgunReloading() == 3 or self:GetShotgunReloading() == 5) and self:Clip1() > 0) then
         local ret = "sgreload_finish"
 
         if empty then

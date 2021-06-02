@@ -88,6 +88,9 @@ function SWEP:GetHUDData()
     if self:HasBottomlessClip() then
         data.clip = data.ammo
         data.ammo = "-"
+        if self:HasInfiniteAmmo() then
+            data.clip = "∞"
+        end
     end
 
     if self:GetInUBGL() then
@@ -322,6 +325,8 @@ function SWEP:DrawHUD()
 
     local muzz = self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1
 
+    local fmbars = GetConVar("arccw_hud_fcgbars"):GetBool() and string.len( self:GetFiremodeBars() or "-----" ) != 0
+
     if ArcCW:ShouldDrawHUDElement("CHudAmmo") then
         local decaytime = GetConVar("arccw_hud_3dfun_decaytime"):GetFloat()
         if decaytime == 0 then decaytime = math.huge end
@@ -451,7 +456,7 @@ function SWEP:DrawHUD()
             surface.SetFont("ArcCW_26")
             wammo.w, wammo.h = surface.GetTextSize(wammo.text)
 
-            if data.plus then
+            if data.plus and !self:HasBottomlessClip() then
                 local wplus = {
                     x = wammo.x,
                     y = wammo.y,
@@ -504,7 +509,7 @@ function SWEP:DrawHUD()
                 shadow = true,
                 alpha = alpha,
             }
-            if GetConVar("arccw_hud_fcgbars"):GetBool() then
+            if fmbars then
                 wmode.y = wammo.y + wammo.h + ScreenScaleMulti(6)
             end
             MyDrawText(wmode)
@@ -523,7 +528,7 @@ function SWEP:DrawHUD()
                     shadow = true,
                     alpha = alpha,
                 }
-                if GetConVar("arccw_hud_fcgbars"):GetBool() then
+                if fmbars then
                     wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
                 end
 
@@ -556,7 +561,7 @@ function SWEP:DrawHUD()
                     shadow = true,
                     alpha = alpha,
                 }
-                if GetConVar("arccw_hud_fcgbars"):GetBool() then
+                if fmbars then
                     wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
                 end
 
@@ -622,7 +627,7 @@ function SWEP:DrawHUD()
                 items = items + 1
             end
 
-            if GetConVar("arccw_hud_fcgbars"):GetBool() then
+            if fmbars then
                 local segcount = string.len( self:GetFiremodeBars() or "-----" )
                 local bargap = ScreenScaleMulti(2)
                 local bart = {
@@ -672,7 +677,7 @@ function SWEP:DrawHUD()
             end
         end
     elseif GetConVar("arccw_hud_minimal"):GetBool() then
-        if GetConVar("arccw_hud_fcgbars"):GetBool() then
+        if fmbars then
             local segcount = string.len( self:GetFiremodeBars() or "-----" )
             local bargap = ScreenScaleMulti(2)
             local bart = {

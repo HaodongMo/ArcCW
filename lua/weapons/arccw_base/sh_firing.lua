@@ -72,7 +72,14 @@ function SWEP:CanPrimaryAttack()
     return true
 end
 
-
+function SWEP:TakePrimaryAmmo( num )
+	if ( self:HasBottomlessClip() or self:Clip1() <= 0 ) then
+		if ( self:Ammo1() <= 0 ) then return end
+        if self:HasInfiniteAmmo() then return end
+		self:GetOwner():RemoveAmmo( num, self:GetPrimaryAmmoType() )
+	return end
+	self:SetClip1( self:Clip1() - num )	
+end
 
 function SWEP:PrimaryAttack()
     local owner = self:GetOwner()
