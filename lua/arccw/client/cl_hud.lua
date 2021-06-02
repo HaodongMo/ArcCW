@@ -14,7 +14,7 @@ ArcCW.HUDElementConVars = {
 
 local grad = Material("arccw/hud/grad.png", "mips smooth")
 hook.Add("PreDrawViewModels", "ArcCW_PreDrawViewmodels_Grad", function()
-    if ArcCW.InvHUD then
+    if ArcCW.InvHUD and !grad:IsError() then
         render.SetViewPort( 0, 0, ScrW(), ScrH() )
         cam.Start2D()
             surface.SetDrawColor(Color(255, 255, 255, Lerp(ArcCW.Inv_Fade-0.01, 0, 255)))

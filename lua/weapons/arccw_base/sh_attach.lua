@@ -1292,7 +1292,7 @@ function SWEP:AdjustAtts()
     self:RecalcAllBuffs()
 
     if SERVER then
-        local cs = (self:HasBottomlessClip() and 0) or self:GetCapacity() + self:GetChamberSize()
+        local cs = self:GetCapacity() + self:GetChamberSize()
 
         if self:Clip1() > cs then
             local diff = self:Clip1() - cs

@@ -300,11 +300,12 @@ local MultsPanel = {
             choices = {[0] = "#arccw.cvar.malfunction.0", [1] = "#arccw.cvar.malfunction.1", [2] = "#arccw.cvar.malfunction.2"}},
 
     { type = "b", text = "#arccw.cvar.mult_bottomlessclip",   var = "arccw_mult_bottomlessclip", sv = true },
+    { type = "c", text = "Bottomless Clip is currently unfinished and will just give you a bunch of ammo if you change attachments with it on." },
     { type = "b", text = "#arccw.cvar.mult_infiniteammo",   var = "arccw_mult_infiniteammo", sv = true },
 }
 
 local MultPresets = {
-    ["#preset.default"] = {
+    ["#preset.default"] = { -- this needs fills
         arccw_mult_damage                   = "1",
         arccw_mult_npcdamage                = "1",
         arccw_mult_range                    = "1",
@@ -319,7 +320,13 @@ local MultPresets = {
         arccw_mult_crouchdisp               = "1",
         arccw_mult_crouchrecoil             = "1",
         arccw_mult_heat                     = "1",
+        arccw_mult_meleetime                = "1",
+        arccw_mult_meleedamage              = "1",
         arccw_mult_malfunction              = "1",
+        arccw_mult_startunloaded            = "0",
+        arccw_mult_shootwhilesprinting      = "0",
+        arccw_mult_bottomlessclip           = "0",
+        arccw_mult_infiniteammo             = "0",
     }
 }
 
