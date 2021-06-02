@@ -228,7 +228,10 @@ function SWEP:Holster(wep)
             local time = self:GetAnimKeyTime(anim)
             self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         else
-            if CLIENT then
+
+            if game.SinglePlayer() and SERVER then
+                self:CallOnClient("ProceduralHolster")
+            elseif !game.SinglePlayer() and CLIENT then
                 self:ProceduralHolster()
             end
             self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
