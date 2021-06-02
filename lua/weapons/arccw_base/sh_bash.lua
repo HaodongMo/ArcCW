@@ -38,7 +38,11 @@ end
 
 function SWEP:Bash(melee2)
     melee2 = melee2 or false
-    if self:GetState() == ArcCW.STATE_SIGHTS or self:GetState() == ArcCW.STATE_SPRINT or self:GetState() == ArcCW.STATE_CUSTOMIZE then return end
+    if self:GetState() == ArcCW.STATE_SIGHTS
+            or (self:GetState() == ArcCW.STATE_SPRINT and !self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint))
+            or self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        return
+    end
     if self:GetNextPrimaryFire() > CurTime() then return end
 
     if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
