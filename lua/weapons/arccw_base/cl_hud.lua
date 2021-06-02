@@ -483,7 +483,7 @@ function SWEP:DrawHUD()
                     alpha = alpha,
                 }
 
-                if self:HasInfiniteAmmo() then
+                if self:HasInfiniteAmmo() and !self:GetInUBGL() then
                     wreserve.text = tostring(self:GetMaxClip1()) .. " |"
                 end
 
