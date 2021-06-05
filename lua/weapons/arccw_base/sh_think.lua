@@ -15,6 +15,14 @@ function SWEP:Think()
 
     if !IsValid(owner) or owner:IsNPC() then return end
 
+    for i, v in pairs(self.EventTable) do
+        if i <= CurTime() then
+            print(i)
+            self:PlayEvent(v)
+            self.EventTable[i] = nil
+        end
+    end
+
     if CLIENT and (!game.SinglePlayer() and IsFirstTimePredicted() or true) then
         if self:GetOwner() == LocalPlayer() and ArcCW.InvHUD and !ArcCW.Inv_Hidden and ArcCW.Inv_Fade == 0 then
             ArcCW.InvHUD:Remove()
