@@ -30,15 +30,15 @@ function SWEP:Deploy()
         local d_anim = self:SelectAnimation("draw")
 
         if self.Animations[r_anim] and self.UnReady then
-            self:PlayAnimation(r_anim, 1, true, 0, true)
+            self:PlayAnimation(r_anim, 1, true, 0, false)
 
-            self:SetReloading(CurTime() + self:GetAnimKeyTime(r_anim))
+            self:SetReloading(CurTime() + self:GetAnimKeyTime(r_anim, true))
 
             prd = self.Animations[r_anim].ProcDraw
         elseif self.Animations[d_anim] then
-            self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, true)
+            self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false)
 
-            self:SetReloading(CurTime() + (self:GetAnimKeyTime(d_anim) * self:GetBuff_Mult("Mult_DrawTime")))
+            self:SetReloading(CurTime() + (self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime")))
 
             prd = self.Animations[d_anim].ProcDraw
         end
@@ -231,11 +231,7 @@ function SWEP:Holster(wep)
             local time = self:GetAnimKeyTime(anim)
             self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         else
-            if game.SinglePlayer() and SERVER then
-                self:CallOnClient("ProceduralHolster")
-            elseif !game.SinglePlayer() and CLIENT then
-                self:ProceduralHolster()
-            end
+            self:ProceduralHolster()
             self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         end
         self:SetReloading(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
@@ -278,24 +274,26 @@ function SWEP:FinishHolster()
     end
 end
 
+-- doesn't work if they dont call in prediction blah blah
+
 function SWEP:ProceduralDraw()
-    if game.SinglePlayer() and self:GetOwner():IsValid() then
+    if SERVER and self:GetOwner():IsValid() then
         self:CallOnClient("ProceduralDraw")
     end
 
+    self.InProcHolster = false
     self.InProcDraw = true
     self.ProcDrawTime = CurTime()
-    self:SetTimer(0.25, function()
-        self.InProcDraw = false
-    end)
 end
 
 function SWEP:ProceduralHolster()
+    if SERVER and self:GetOwner():IsValid() then
+        self:CallOnClient("ProceduralHolster")
+    end
+
+    self.InProcDraw = false
     self.InProcHolster = true
     self.ProcHolsterTime = CurTime()
-    self:SetTimer(0.25 * self:GetBuff_Mult("Mult_HolsterTime"), function()
-        self.InProcHolster = false
-    end)
 end
 
 function SWEP:ProceduralBash()

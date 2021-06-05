@@ -359,10 +359,6 @@ function SWEP:GetViewModelPosition(pos, ang)
         targetdown = target.down
         targetsway = target.sway
         targetbob = target.bob
-
-        if delta == 1 then
-            self.InProcDraw = false
-        end
     end
 
     if self.InProcHolster then
@@ -373,10 +369,6 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.down = target.down
         target.sway = target.sway
         target.bob = target.bob
-
-        if delta == 0 then
-            self.InProcHolster = false
-        end
     end
 
     if self.InProcBash then

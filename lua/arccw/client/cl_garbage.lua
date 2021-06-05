@@ -1,7 +1,3 @@
-local tbl     = table
-local tbl_ins = tbl.insert
-local rem_ent = SafeRemoveEntity
-
 ArcCW.CSModels       = {} -- [entid] = { Weapon = NULL, WModels = {}, VModels = {} }
 ArcCW.CSModelPile    = {} -- { {Model = NULL, Weapon = NULL} }
 ArcCW.FlashlightPile = {} -- { {Weapon = NULL, ProjectedTexture = NULL}}
@@ -14,10 +10,10 @@ local function ArcCW_CollectGarbage()
         if !IsValid(k.Weapon) then
             removed = removed + 1
 
-            tbl_ins(removedents, i)
+            table.insert(removedents, i)
 
-            if k.WModels then for _, m in pairs(k.WModels) do rem_ent(m.Model) end end
-            if k.VModels then for _, m in pairs(k.VModels) do rem_ent(m.Model) end end
+            if k.WModels then for _, m in pairs(k.WModels) do SafeRemoveEntity(m.Model) end end
+            if k.VModels then for _, m in pairs(k.VModels) do SafeRemoveEntity(m.Model) end end
         end
     end
 
@@ -27,12 +23,12 @@ local function ArcCW_CollectGarbage()
 
     for _, k in pairs(ArcCW.CSModelPile) do
         if IsValid(k.Weapon) then
-            tbl_ins(newpile, k)
+            table.insert(newpile, k)
 
             continue
         end
 
-        rem_ent(k.Model)
+        SafeRemoveEntity(k.Model)
 
         removed = removed + 1
     end
@@ -55,7 +51,7 @@ hook.Add("PostDrawEffects", "ArcCW_CleanFlashlights", function()
 
     for _, k in pairs(ArcCW.FlashlightPile) do
         if IsValid(k.Weapon) and k.Weapon == LocalPlayer():GetActiveWeapon() then
-            tbl_ins(newflashlightpile, k)
+            table.insert(newflashlightpile, k)
 
             continue
         end
