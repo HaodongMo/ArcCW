@@ -38,7 +38,6 @@ function ENT:Initialize()
         for i = 1, amt do
             local smoke = emitter:Add(GetSmokeImage(), self:GetPos())
             smoke:SetVelocity( VectorRand() * 8 + (Angle(0, i * (360 / amt), 0):Forward() * 400) )
-            smoke:SetDieTime( self.BillowTime )
             smoke:SetStartAlpha( 0 )
             smoke:SetEndAlpha( 255 )
             smoke:SetStartSize( 0 )
@@ -52,15 +51,41 @@ function ENT:Initialize()
             smoke:SetBounce( 0.2 )
             smoke:SetLighting( false )
             smoke:SetNextThink( CurTime() + FrameTime() )
+            smoke.bt = CurTime() + self.BillowTime
+            smoke.dt = CurTime() + self.BillowTime + self.Life
+            smoke.ft = CurTime() + self.BillowTime + self.Life + math.Rand(2.5, 5)
+            smoke:SetDieTime(smoke.ft)
+            smoke.life = self.Life
+            smoke.billowed = false
+            smoke.radius = self.SmokeRadius
             smoke:SetThinkFunction( function(pa)
                 if !pa then return end
 
-                local d = pa:GetLifeTime() / pa:GetDieTime()
+                local prog = 1
+                local alph = 0
 
-                local prog = (-d ^ 2) + (2 * d)
+                if pa.ft < CurTime() then
+                    return
+                elseif pa.dt < CurTime() then
+                    local d = (CurTime() - pa.dt) / (pa.ft - pa.dt)
 
-                pa:SetEndSize( self.SmokeRadius * prog )
-                pa:SetStartSize( self.SmokeRadius * prog )
+                    alph = 1 - d
+                elseif pa.bt < CurTime() then
+                    alph = 1
+                else
+                    local d = math.Clamp(pa:GetLifeTime() / (pa.bt - CurTime()), 0, 1)
+
+                    prog = (-d ^ 2) + (2 * d)
+
+                    alph = d
+                end
+
+                pa:SetEndSize( pa.radius * prog )
+                pa:SetStartSize( pa.radius * prog )
+
+                pa:SetStartAlpha(255 * alph)
+                pa:SetEndAlpha(255 * alph)
+
                 pa:SetNextThink( CurTime() + FrameTime() )
             end )
 
@@ -70,8 +95,6 @@ function ENT:Initialize()
         emitter:Finish()
     end
 
-    self.bt = CurTime() + self.BillowTime
-    self.billowed = false
     self.dt = CurTime() + self.Life + self.BillowTime
 end
 
@@ -86,28 +109,8 @@ function ENT:Think()
         end
     end
 
-    if self.bt < CurTime() and !self.billowed then
-        self.billowed = true
-        if CLIENT then
-            for i, k in pairs(self.Particles or {}) do
-                if !k then continue end
-                k:SetThinkFunction(function() end)
-                k:SetLifeTime(0)
-                k:SetDieTime(self.Life)
-                k:SetStartAlpha(255)
-            end
-        end
-    end
-
     if self.dt < CurTime() then
-        if CLIENT then
-            for i, k in pairs(self.Particles or {}) do
-                if !k then continue end
-                k:SetLifeTime(0)
-                k:SetDieTime(math.Rand(2.5, 5))
-                k:SetEndAlpha(0)
-            end
-        else
+        if SERVER then
             SafeRemoveEntity(self)
         end
     end
