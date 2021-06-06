@@ -71,7 +71,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     local VMPos, VMAng = self.VMPos, self.VMAng
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
     local VMPosOffset_Lerp, VMAngOffset_Lerp = self.VMPosOffset_Lerp, self.VMAngOffset_Lerp
-    velocity = math.min(velocity:Length(), 500)
+    velocity = math.min(velocity:Length(), 400)
 
     if self:GetState() == ArcCW.STATE_SPRINT then
         velocity = velocity * 1.25
@@ -315,11 +315,12 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         target.ang.p = m_clamp(target.ang.p, -80, 80)
     elseif sighted then
+        local delta = self:GetSightDelta()
         local irons = self:GetActiveSights()
-        target.pos = irons.Pos
-        target.ang = irons.Ang
-        target.evpos = irons.EVPos or Vector()
-        target.evang = irons.EVAng or Angle()
+        target.pos = f_lerp(delta, irons.Pos, target.pos)
+        target.ang = f_lerp(delta, irons.Ang, target.ang)
+        target.evpos = f_lerp(delta, irons.EVPos or Vector(), Vector(0, 0, 0))
+        target.evang = f_lerp(delta, irons.EVAng or Angle(), Angle(0, 0, 0))
         target.down = 0
         target.sway = 0.1
         target.bob = 0.1
@@ -354,11 +355,11 @@ function SWEP:GetViewModelPosition(pos, ang)
     if self.InProcDraw then
         self.InProcHolster = false
         local delta = m_clamp((CT - self.ProcDrawTime) / (0.25 * self:GetBuff_Mult("Mult_DrawTime")), 0, 1)
-        targetpos = LerpVector(delta, Vector(0, 0, -5), target.pos)
-        targetang = LerpAngle(delta, Angle(-70, 30, 0), target.ang)
-        targetdown = target.down
-        targetsway = target.sway
-        targetbob = target.bob
+        target.pos = LerpVector(delta, Vector(0, 0, -5), target.pos)
+        target.ang = LerpAngle(delta, Angle(-70, 30, 0), target.ang)
+        target.down = target.down
+        target.sway = target.sway
+        target.bob = target.bob
     end
 
     if self.InProcHolster then
@@ -432,7 +433,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2)
     local speed = target.speed or 3
     -- For some reason, in multiplayer the sighting speed is twice as fast
-    speed = 1 / self:GetSightTime() * speed * FT * (SP and 1 or 0.5)
+    -- speed = 1 / self:GetSightTime() * speed * FT * (SP and 1 or 0.5)
+    speed = 15 * FT * (SP and 1 or 0.5)
     actual.pos = LerpVector(speed, actual.pos, target.pos)
     actual.ang = LerpAngle(speed, actual.ang, target.ang)
     actual.down = f_lerp(speed, actual.down, target.down)
