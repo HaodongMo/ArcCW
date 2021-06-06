@@ -98,20 +98,16 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
         if ttime < 0 then continue end
         if !(IsValid(self) and IsValid(owner)) then continue end
 
-        if game.SinglePlayer() and SERVER then
-            net.Start("arccw_networksound")
-            v.ntttime = ttime
-            net.WriteTable(v)
-            net.WriteEntity(self)
-            net.Send(owner)
+        
+        if game.SinglePlayer() then
+            if SERVER then
+                net.Start("arccw_networksound")
+                v.ntttime = ttime
+                net.WriteTable(v)
+                net.WriteEntity(self)
+                net.Send(owner)
+            end
         end
-
-        self.EventTable[CurTime() + ttime] = v
-    end
-end
-
-function SWEP:PlayEvent(v)
-    if !v or !istable(v) then error("no event to play") end
 
         self.EventTable[CurTime() + ttime] = v
 
