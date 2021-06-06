@@ -640,6 +640,7 @@ SWEP.BurstCount = 0
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true
+SWEP.EventTable = {}
 
 SWEP.ProneMod_DisableTransitions = true
 

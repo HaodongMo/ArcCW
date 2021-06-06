@@ -17,7 +17,6 @@ function SWEP:Think()
 
     for i, v in pairs(self.EventTable) do
         if i <= CurTime() then
-            print(i)
             self:PlayEvent(v)
             self.EventTable[i] = nil
         end
