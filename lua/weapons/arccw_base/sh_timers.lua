@@ -90,15 +90,12 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
         if table.IsEmpty(v) then continue end
 
         local ttime
-
         if v.t then
             ttime = (v.t * mult) - start
         else
             continue
         end
-
         if ttime < 0 then continue end
-
         if !(IsValid(self) and IsValid(owner)) then continue end
 
         if game.SinglePlayer() and SERVER then
@@ -116,50 +113,39 @@ end
 function SWEP:PlayEvent(v)
     if !v or !istable(v) then error("no event to play") end
 
-            if game.SinglePlayer() then
-                if SERVER then
-                    net.Start("arccw_networksound")
-                    net.WriteTable(v)
-                    net.Send(owner)
-                end
-            end
+        self.EventTable[CurTime() + ttime] = v
 
-            if !game.SinglePlayer() and v.s then
-                self:MyEmitSound(v.s, v.l, v.p, v.v, v.c or CHAN_AUTO)
-            end
-
-            if v.bg then
-                self:SetBodygroupTr(v.ind or 0, v.bg)
-            end
-
-            if v.pp then
-                local vm = self:GetOwner():GetViewModel()
-
-                vm:SetPoseParameter(pp, ppv)
-            end
-        end, "soundtable")
     end
 end
 
+function SWEP:PlayEvent(v)
+    if !v or !istable(v) then error("no event to play") end
+
+    if v.e and IsFirstTimePredicted() then
+        DoShell(self, v)
+    end
+
+    if v.s then
+        self:MyEmitSound(v.s, v.l, v.p, v.v, v.c or CHAN_AUTO)
+    end
+
+    if v.bg then
+        self:SetBodygroupTr(v.ind or 0, v.bg)
+    end
+
+    if v.pp then
+        local vm = self:GetOwner():GetViewModel()
+
+        vm:SetPoseParameter(pp, ppv)
+    end
+end
+
+
 if CLIENT then
     net.Receive("arccw_networksound", function(len)
-        local wep = LocalPlayer():GetActiveWeapon()
         local v = net.ReadTable()
+        local wep = net.ReadEntity()
 
-        if !(IsValid(wep) and wep.ArcCW) then return end
-
-        if v.s then
-            wep:MyEmitSound(v.s, v.l, v.p, v.v, v.c or CHAN_AUTO)
-        end
-
-        if v.bg then
-            wep:SetBodygroupTr(v.ind or 0, v.bg)
-        end
-
-        if v.pp then
-            local vm = LocalPlayer():GetViewModel()
-
-            vm:SetPoseParameter(pp, ppv)
-        end
+        wep.EventTable[CurTime() + v.ntttime] = v
     end)
 end
