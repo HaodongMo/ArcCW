@@ -8,6 +8,8 @@ function SWEP:Deploy()
         if sp then
             if SERVER then
                 self:CallOnClient("LoadPreset", "autosave")
+            else
+                self:LoadPreset("autosave")
             end
         else
             if SERVER then
