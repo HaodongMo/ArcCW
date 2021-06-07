@@ -319,8 +319,13 @@ function SWEP:GetViewModelPosition(pos, ang)
         -- delta = (4 * math.pow(delta - 0.5, 3)) + 0.5
         delta = math.pow(delta, 2)
         local irons = self:GetActiveSights()
-        target.pos = f_lerp(delta, irons.Pos, target.pos)
-        target.ang = f_lerp(delta, irons.Ang, target.ang)
+
+        local coolilove = delta * math.cos(delta*(math.pi/2))
+        local joffset = (Vector(0, 30, -5) * coolilove)
+        local jaffset = (Angle(0, 0, -45) * coolilove)
+
+        target.pos = f_lerp(delta, irons.Pos, target.pos + Vector(0, 0, -1)) + joffset
+        target.ang = f_lerp(delta, irons.Ang, target.ang) + jaffset
         target.evpos = f_lerp(delta, irons.EVPos or Vector(), Vector(0, 0, 0))
         target.evang = f_lerp(delta, irons.EVAng or Angle(), Angle(0, 0, 0))
         target.down = 0
