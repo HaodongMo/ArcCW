@@ -125,12 +125,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         seq = vm:LookupSequence(seq)
     end
 
-    local time = self:GetAnimKeyTime(key)
+    local time = absolute and 1 or self:GetAnimKeyTime(key)
     if time == 0 then return end
-
-    if absolute then -- meme
-        time = 1
-    end
 
     local ttime = (time * mult) - startfrom
     if startfrom > (time * mult) then return end
