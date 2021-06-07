@@ -2,7 +2,7 @@ function SWEP:OnRestore()
 end
 
 function SWEP:GetHeadshotMultiplier(victim, dmginfo)
-    return 2.5
+    return 2.5 -- Hey hey hey, don't forget about me!!!
 end
 
 function SWEP:IsEquipment()

@@ -338,16 +338,13 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
                             if dmgtable then
                                 local hg = ctr.HitGroup
+                                local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
                                 if dmgtable[hg] then
                                     cdmg:ScaleDamage(dmgtable[hg])
                                 end
 
                                 -- cancelling gmod's stupid default values
-                                if hg == HITGROUP_HEAD then
-                                    cdmg:ScaleDamage(0.5)
-                                elseif hg == HITGROUP_LEFTARM || hg == HITGROUP_RIGHTARM || hg == HITGROUP_LEFTLEG || hg == HITGROUP_RIGHTLEG || hg == HITGROUP_GEAR then
-                                    cdmg:ScaleDamage(4)
-                                end
+                                if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then cdmg:ScaleDamage(gam[hg]) end
                             end
 
                             ArcCW.TryBustDoor(ctr.Entity, cdmg)
