@@ -271,6 +271,10 @@ SWEP.BaseIronsFirst = false -- If a sight keeps base irons, irons comes first
 SWEP.IronSightStruct = {
     Pos = Vector(-8.728, -13.702, 4.014),
     Ang = Angle(-1.397, -0.341, -2.602),
+    Midpoint = { -- Where the gun should be at the middle of it's irons
+        Pos = Vector(0, 30, -5),
+        Ang = Angle(0, 0, -45),
+    },
     Magnification = 1,
     BlackBox = false,
     ScopeTexture = nil,
