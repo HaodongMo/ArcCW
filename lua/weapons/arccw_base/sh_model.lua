@@ -985,20 +985,9 @@ function SWEP:GetFromReference(boneid)
 
     seq = self.AutosolveSourceSeq or seq
 
-    local id = ArcCW.ReferenceModel:LookupSequence(seq)
+    local ma = ArcCW.ReferenceModel:GetBoneMatrix(boneid)
 
-    ArcCW.ReferenceModel:ResetSequence(id)
-    ArcCW.ReferenceModel:SetCycle(0)
-
-    -- local transform = ArcCW.ReferenceModel:GetBoneMatrix(boneid)
-
-    -- local bpos, bang = transform:GetTranslation(), transform:GetAngles()
-
-    local bpos, bang = ArcCW.ReferenceModel:GetBonePosition(boneid)
-    if bpos == ArcCW.ReferenceModel:GetPos() then
-        bpos = ArcCW.ReferenceModel:GetBoneMatrix(0):GetTranslation()
-        bang = ArcCW.ReferenceModel:GetBoneMatrix(0):GetAngles()
-    end
+    local bpos, bang = ma:GetTranslation(), ma:GetAngles()
 
     -- SafeRemoveEntity(ArcCW.ReferenceModel)
 
