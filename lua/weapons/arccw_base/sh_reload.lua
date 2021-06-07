@@ -77,6 +77,7 @@ function SWEP:Reload()
     local reserve = self:Ammo1()
 
     reserve = reserve + self:Clip1()
+    if self:HasInfiniteAmmo() then reserve = self:GetCapacity() + self:Clip1() end
 
     local clip = self:GetCapacity()
 
@@ -85,7 +86,7 @@ function SWEP:Reload()
 
     local load = math.Clamp(clip + chamber, 0, reserve)
 
-    if !self:GetMalfunctionJam() and load <= self:Clip1() and !self:HasInfiniteAmmo() then return end
+    if !self:GetMalfunctionJam() and load <= self:Clip1() then return end
 
     self:SetBurstCount(0)
 
@@ -139,7 +140,7 @@ function SWEP:Reload()
 
         if !self.Animations[anim] then print("Invalid animation \"" .. anim .. "\"") return end
 
-        self:PlayAnimation(anim, mult, true)
+        self:PlayAnimation(anim, mult, true, 0, false, nil, true)
 
         local reloadtime = self:GetAnimKeyTime(anim, true) * mult
         local reloadtime2 = self:GetAnimKeyTime(anim, false) * mult
