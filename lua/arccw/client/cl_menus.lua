@@ -662,6 +662,6 @@ ArcCW.ClientMenus = {
 
 hook.Add("PopulateToolMenu", "ArcCW_Options", function()
     for menu, data in pairs(ArcCW.ClientMenus) do
-        spawnmenu.AddToolMenuOption("Utilities", "ArcCW", menu, data.text, "", "", data.func)
+        spawnmenu.AddToolMenuOption("Options", "ArcCW", menu, data.text, "", "", data.func)
     end
 end)
