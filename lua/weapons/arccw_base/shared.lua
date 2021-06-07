@@ -61,6 +61,16 @@ SWEP.PhysBulletDrag = 1
 SWEP.PhysBulletGravity = 1
 SWEP.PhysBulletDontInheritPlayerVelocity = true
 
+SWEP.BodyDamageMults = nil
+-- if a limb is not set the damage multiplier will default to 1
+-- that means gmod's stupid default limb mults will **NOT** apply
+-- {
+--     [HITGROUP_HEAD] = 1.25,
+--     [HITGROUP_CHEST] = 1,
+--     [HITGROUP_LEFTARM] = 0.9,
+--     [HITGROUP_RIGHTARM] = 0.9,
+-- }
+
 SWEP.AlwaysPhysBullet = false
 SWEP.NeverPhysBullet = false
 SWEP.PhysTracerProfile = 0 -- color for phys tracer.

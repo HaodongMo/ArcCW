@@ -183,7 +183,8 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
     local attacker = bullet.Attacker
 
     if !IsValid(attacker) then
-        attacker = game.GetWorld()
+        bullet.Dead = true
+        return
     end
 
     if bullet.Underwater then
@@ -278,8 +279,12 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 end
                 return
             elseif SERVER then
+                local dmgtable
                 if IsValid(bullet.Weapon) then
                     bullet.Weapon:GetBuff_Hook("Hook_PhysBulletHit", {bullet = bullet, tr = tr})
+
+                    dmgtable = bullet.Weapon.BodyDamageMults
+                    dmgtable = bullet.Weapon:GetBuff_Override("Override_BodyDamageMults") or dmgtable
                 end
                 if bullet.PhysBulletImpact then
 
@@ -328,6 +333,20 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                                     CreateVFire(ctr.Entity, ctr.HitPos, ctr.HitNormal, dmg * 0.02)
                                 else
                                     ctr.Entity:Ignite(1, 0)
+                                end
+                            end
+
+                            if dmgtable then
+                                local hg = ctr.HitGroup
+                                if dmgtable[hg] then
+                                    cdmg:ScaleDamage(dmgtable[hg])
+                                end
+
+                                -- cancelling gmod's stupid default values
+                                if hg == HITGROUP_HEAD then
+                                    cdmg:ScaleDamage(0.5)
+                                elseif hg == HITGROUP_LEFTARM || hg == HITGROUP_RIGHTARM || hg == HITGROUP_LEFTLEG || hg == HITGROUP_RIGHTLEG || hg == HITGROUP_GEAR then
+                                    cdmg:ScaleDamage(4)
                                 end
                             end
 

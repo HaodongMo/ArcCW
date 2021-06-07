@@ -163,6 +163,9 @@ function SWEP:PrimaryAttack()
         tracernum = 1
     end
 
+    local dmgtable = self.BodyDamageMults
+    dmgtable = self:GetBuff_Override("Override_BodyDamageMults") or dmgtable
+
     local bullet      = {}
     bullet.Attacker   = owner
     bullet.Dir        = dir
@@ -236,6 +239,20 @@ function SWEP:PrimaryAttack()
                 else
                     trent:Ignite(1, 0)
                 end
+            end
+        end
+
+        if dmgtable then
+            local hg = ctr.HitGroup
+            if dmgtable[hg] then
+                cdmg:ScaleDamage(dmgtable[hg])
+            end
+
+            -- cancelling gmod's stupid default values
+            if hg == HITGROUP_HEAD then
+                cdmg:ScaleDamage(0.5)
+            elseif hg == HITGROUP_LEFTARM || hg == HITGROUP_RIGHTARM || hg == HITGROUP_LEFTLEG || hg == HITGROUP_RIGHTLEG || hg == HITGROUP_GEAR then
+                cdmg:ScaleDamage(4)
             end
         end
 

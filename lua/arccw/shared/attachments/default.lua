@@ -475,6 +475,8 @@ att.Override_DamageType = nil
 att.Override_ShootEntity = nil
 att.Mult_MuzzleVelocity = 1
 
+att.Override_BodyDamageMults = nil
+
 att.Override_ShotgunSpreadPattern = {}
 att.Override_ShotgunSpreadPatternOverrun = {}
 
