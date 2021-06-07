@@ -126,7 +126,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end
 
     local time = absolute and 1 or self:GetAnimKeyTime(key)
-    if time == 0 then return end
+    --if time == 0 then return end
 
     local ttime = (time * mult) - startfrom
     if startfrom > (time * mult) then return end
