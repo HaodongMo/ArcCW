@@ -110,7 +110,8 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
             end
         end]]
 
-        --self.EventTable[1] = v--[CurTime() + ttime] = v
+        -- i may go fucking insane
+        if !self.EventTable[1] then self.EventTable[1] = {} end
 
         for i, de in ipairs(self.EventTable) do
             if de[jhon] then
