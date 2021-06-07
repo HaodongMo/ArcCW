@@ -4,6 +4,8 @@ CreateConVar("arccw_enable_customization", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, 
 CreateConVar("arccw_enable_dropping", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
 CreateConVar("arccw_enable_sway", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
 
+CreateConVar("arccw_bodydamagemult_cancel", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
+
 CreateConVar("arccw_attinv_lockmode", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Once owned, players can use attachments as much as they like.")
 CreateConVar("arccw_attinv_free", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "All attachments can always be used.")
 CreateConVar("arccw_attinv_loseondie", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "All attachments reset on death. If set to 2, drops all attachments in a box.", 0, 2)

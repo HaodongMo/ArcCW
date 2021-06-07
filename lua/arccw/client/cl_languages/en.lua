@@ -333,3 +333,8 @@ L["arccw.cvar.att_showground"]            = "Show Ground Attachments"
 -- 2021-06-02
 L["arccw.cvar.mult_bottomlessclip"] = "Bottomless Clip"
 L["arccw.cvar.mult_infiniteammo"] = "Infinite Ammo"
+
+-- 2021-06-07
+
+L["#arccw.cvar.bodydamagecancel"] = "Cancel Body Damage"
+L["#arccw.cvar.bodydamagecancel.desc"] = "When a weapon specifies limb damage modifiers, cancel Gmod's default multipliers. Disable when you have another mod that does this."

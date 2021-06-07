@@ -248,11 +248,13 @@ function SWEP:PrimaryAttack()
                 cdmg:ScaleDamage(dmgtable[hg])
             end
 
-            -- cancelling gmod's stupid default values
-            if hg == HITGROUP_HEAD then
-                cdmg:ScaleDamage(0.5)
-            elseif hg == HITGROUP_LEFTARM || hg == HITGROUP_RIGHTARM || hg == HITGROUP_LEFTLEG || hg == HITGROUP_RIGHTLEG || hg == HITGROUP_GEAR then
-                cdmg:ScaleDamage(4)
+            if GetConVar("arccw_bodydamagemult_cancel"):GetBool() then
+                -- cancelling gmod's stupid default values
+                if hg == HITGROUP_HEAD then
+                    cdmg:ScaleDamage(0.5)
+                elseif hg == HITGROUP_LEFTARM || hg == HITGROUP_RIGHTARM || hg == HITGROUP_LEFTLEG || hg == HITGROUP_RIGHTLEG || hg == HITGROUP_GEAR then
+                    cdmg:ScaleDamage(4)
+                end
             end
         end
 
