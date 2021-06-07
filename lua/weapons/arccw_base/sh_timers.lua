@@ -79,7 +79,7 @@ local function DoShell(wep, data)
 end
 
 function SWEP:PlaySoundTable(soundtable, mult, start)
-    if CLIENT and game.SinglePlayer() then return end
+    --if CLIENT and game.SinglePlayer() then return end
 
     local owner = self:GetOwner()
 
@@ -90,66 +90,76 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
         if table.IsEmpty(v) then continue end
 
         local ttime
-
         if v.t then
             ttime = (v.t * mult) - start
         else
             continue
         end
-
         if ttime < 0 then continue end
-
         if !(IsValid(self) and IsValid(owner)) then continue end
 
-        self:SetTimer(ttime, function()
-            if v.e and IsFirstTimePredicted() then
-                DoShell(self, v)
-            end
+        local jhon = CurTime() + ttime
 
-            if game.SinglePlayer() then
-                if SERVER then
-                    net.Start("arccw_networksound")
-                    net.WriteTable(v)
-                    net.Send(owner)
-                end
+        --[[if game.SinglePlayer() then
+            if SERVER then
+                net.Start("arccw_networksound")
+                v.ntttime = ttime
+                net.WriteTable(v)
+                net.WriteEntity(self)
+                net.Send(owner)
             end
+        end]]
 
-            if !game.SinglePlayer() and v.s then
-                self:MyEmitSound(v.s, v.l, v.p, v.v, v.c or CHAN_AUTO)
+        -- i may go fucking insane
+        if !self.EventTable[1] then self.EventTable[1] = {} end
+
+        for i, de in ipairs(self.EventTable) do
+            if de[jhon] then
+                if !self.EventTable[i+1] then --[[print(CurTime(), "Occupier at " .. i .. ", creating " .. i+1)]] self.EventTable[i+1] = {} continue end
+            else
+                self.EventTable[i][jhon] = v
+                --print(CurTime(), "Clean at " .. i)
             end
+        end
 
-            if v.bg then
-                self:SetBodygroupTr(v.ind or 0, v.bg)
-            end
-
-            if v.pp then
-                local vm = self:GetOwner():GetViewModel()
-
-                vm:SetPoseParameter(pp, ppv)
-            end
-        end, "soundtable")
     end
 end
 
+function SWEP:PlayEvent(v)
+    if !v or !istable(v) then error("no event to play") end
+
+    v = self:GetBuff_Hook("Hook_PrePlayEvent", v) or v
+
+    if v.e and IsFirstTimePredicted() then
+        DoShell(self, v)
+    end
+
+    if v.s then
+        if v.s_km then
+            self:StopSound(v.s)
+        end
+        self:MyEmitSound(v.s, v.l, v.p, v.v, v.c or CHAN_AUTO)
+    end
+
+    if v.bg then
+        self:SetBodygroupTr(v.ind or 0, v.bg)
+    end
+
+    if v.pp then
+        local vm = self:GetOwner():GetViewModel()
+
+        vm:SetPoseParameter(pp, ppv)
+    end
+
+    v = self:GetBuff_Hook("Hook_PostPlayEvent", v) or v
+end
+
+
 if CLIENT then
     net.Receive("arccw_networksound", function(len)
-        local wep = LocalPlayer():GetActiveWeapon()
         local v = net.ReadTable()
+        local wep = net.ReadEntity()
 
-        if !(IsValid(wep) and wep.ArcCW) then return end
-
-        if v.s then
-            wep:MyEmitSound(v.s, v.l, v.p, v.v, v.c or CHAN_AUTO)
-        end
-
-        if v.bg then
-            wep:SetBodygroupTr(v.ind or 0, v.bg)
-        end
-
-        if v.pp then
-            local vm = LocalPlayer():GetViewModel()
-
-            vm:SetPoseParameter(pp, ppv)
-        end
+        wep.EventTable[CurTime() + v.ntttime] = v
     end)
 end

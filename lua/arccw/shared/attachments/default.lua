@@ -365,6 +365,8 @@ att.Hook_TranslateSequence = function(wep, seq) end
 -- allows any sound to be translated to any other
 att.Hook_TranslateSound = function(wep, soundname) end
 
+-- directly changes sequence to play
+-- return "DoNotPlayIdle" to stop idle animation
 att.Hook_LHIK_TranslateAnimation = function(wep, anim) end
 
 -- att.Hook_TranslateAnimation = function(wep, anim)
@@ -407,6 +409,13 @@ att.Hook_PostReload = function(wep) end
 att.Hook_GetVisualBullets = function(wep) end
 
 att.Hook_GetVisualClip = function(wep) end
+
+-- modify what the event system be do
+-- the event is a table containing stuff that it does
+-- sh_timers last stuff timers are stupid lets not
+-- please dont return anything people kinda would wanna run events i'd imagine
+att.Hook_PrePlayEvent = function(wep, event) end
+att.Hook_PostPlayEvent = function(wep, event) end
 
 -- return to set mag capacity
 att.Hook_GetCapacity = function(wep, cap) end

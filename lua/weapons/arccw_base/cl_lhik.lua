@@ -14,7 +14,12 @@ SWEP.LHIKAnimationTime = 0
 SWEP.LHIKCamAng = Angle(0, 0, 0)
 SWEP.LHIKGunAng = Angle(0, 0, 0)
 
-function SWEP:DoLHIKAnimation(key, time)
+function SWEP:DoLHIKAnimation(key, time, spbitch)
+    if game.SinglePlayer() and !spbitch then
+        timer.Simple(0, function() self:DoLHIKAnimation(key, time, true) end)
+        return
+    end
+
     local lhik_model
     local LHIK_GunDriver
     local LHIK_CamDriver
@@ -102,7 +107,7 @@ function SWEP:DoLHIK()
     local vm = self:GetOwner():GetViewModel()
 
     if !self.NoHideLeftHandInCustomization and !self:GetBuff_Override("Override_NoHideLeftHandInCustomization") then
-        if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        if self:GetState() == ArcCW.STATE_CUSTOMIZE and !ArcCW.Inv_Hidden then
             self.Customize_Hide = math.Approach(self.Customize_Hide, 1, FrameTime() / 0.25)
         else
             self.Customize_Hide = math.Approach(self.Customize_Hide, 0, FrameTime() / 0.25)
@@ -281,7 +286,9 @@ function SWEP:DoLHIK()
 
         key = tranim or key
 
-        self:DoLHIKAnimation(key, 1)
+        if key and key != "DoNotPlayIdle" then 
+            self:DoLHIKAnimation(key, 0)
+        end
 
         self.LHIKAnimation_IsIdle = true
     end

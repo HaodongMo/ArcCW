@@ -2,7 +2,23 @@ function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
         return
     end
-    if CLIENT and self.UnReady then self:LoadPreset("autosave") end
+    if self.UnReady then
+        local sp = game.SinglePlayer()
+
+        if sp then
+            if SERVER then
+                self:CallOnClient("LoadPreset", "autosave")
+            end
+        else
+            if SERVER then
+                -- the server... can't get the client's attachments in time.
+                -- can make it so client has to do a thing and tell the server it's ready,
+                -- and that's probably what i'll do later.
+            else
+                self:LoadPreset("autosave")
+            end
+        end
+    end
 
     self:InitTimers()
 
@@ -22,6 +38,7 @@ function SWEP:Deploy()
     self:SetBurstCount(0)
 
     self:CallOnClient("FuckingKillMe")
+    self:FuckingKillMe()
     -- Don't play anim if in vehicle. This can be caused by HL2 level changes
 
     if !self:GetOwner():InVehicle() then
@@ -204,6 +221,7 @@ function SWEP:Holster(wep)
     end
 
     self:CallOnClient("FuckingKillMe")
+    self:FuckingKillMe()
 
     if wep == self then self:Deploy() return false end
     if self:GetHolster_Time() > CurTime() then return false end
@@ -298,6 +316,7 @@ function SWEP:ProceduralHolster()
 end
 
 function SWEP:FuckingKillMe()
+    table.Empty(self.EventTable)
     self.InProcDraw = false
     self.InProcHolster = false
 end

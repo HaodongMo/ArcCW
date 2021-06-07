@@ -259,6 +259,7 @@ function SWEP:CloseCustomizeHUD( hide )
         if !hide then
             gui.EnableScreenClicker(false)
         end
+        ArcCW.Inv_Hidden = false
 
         if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/extra2.wav") end
     end
