@@ -4,12 +4,12 @@ net.Receive("arccw_sp_anim", function(len, ply)
     local mul    = net.ReadFloat()
     local start  = net.ReadFloat()
     local time   = net.ReadBool()
-    local skip   = net.ReadBool()
+    --local skip   = net.ReadBool() Unused
     local ignore = net.ReadBool()
 
     if !wep.ArcCW then return end
 
-    wep:PlayAnimation(key, mul, false, start, time, skip, ignore)
+    wep:PlayAnimation(key, mul, false, start, time, false, ignore)
 end)
 
 net.Receive("arccw_sp_checkpoints", function(len, ply)

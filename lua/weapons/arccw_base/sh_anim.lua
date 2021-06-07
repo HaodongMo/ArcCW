@@ -37,32 +37,23 @@ end
 SWEP.LastAnimStartTime = 0
 SWEP.LastAnimFinishTime = 0
 
+function SWEP:PlayAnimationEZ(key, mult, ignorereload)
+    self:PlayAnimation(key, mult, true, 0, false, false, ignorereload, false)
+end
+
 function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorereload, absolute)
     mult = mult or 1
     pred = pred or false
     startfrom = startfrom or 0
     tt = tt or false
-    skipholster = skipholster or false
+    --skipholster = skipholster or false Unused
     ignorereload = ignorereload or false
     absolute = absolute or false
+    if !key then return end
 
     local ct = CurTime() --pred and CurTime() or UnPredictedCurTime()
 
-    if !self.Animations[key] then return end
-
     if self:GetReloading() and !ignorereload then return end
-
-    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
-
-    local anim = self.Animations[key]
-
-    local tranim = self:GetBuff_Hook("Hook_TranslateAnimation", key)
-
-    if !tranim then return end
-
-    if self.Animations[tranim] then
-        anim = self.Animations[tranim]
-    end
 
     if game.SinglePlayer() and SERVER and pred then
         net.Start("arccw_sp_anim")
@@ -70,9 +61,21 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         net.WriteFloat(mult)
         net.WriteFloat(startfrom)
         net.WriteBool(tt)
-        net.WriteBool(skipholster)
+        --net.WriteBool(skipholster) Unused
         net.WriteBool(ignorereload)
         net.Send(self:GetOwner())
+    end
+
+    local anim = self.Animations[key]
+    if !anim then return end
+    local tranim = self:GetBuff_Hook("Hook_TranslateAnimation", key)
+    if self.Animations[tranim] then
+        key = tranim
+        anim = self.Animations[tranim]
+    --[[elseif self.Animations[key] then -- Can't do due to backwards compatibility... unless you have a better idea?
+        anim = self.Animations[key]
+    else
+        return]]
     end
 
     if anim.ViewPunchTable and CLIENT then
@@ -107,42 +110,36 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if !vm then return end
     if !IsValid(vm) then return end
 
+    local seq = anim.Source
+    if anim.RareSource and util.SharedRandom("raresource", 1, anim.RareSourceChance or 100, CurTime()/13) <= 1 then
+        seq = anim.RareSource
+    end
+    seq = self:GetBuff_Hook("Hook_TranslateSequence", seq)
+    
+    if istable(seq) then
+        seq["BaseClass"] = nil
+        seq = seq[math.Round(util.SharedRandom("randomseq" .. CurTime(), 1, #seq))]
+    end
+
+    if isstring(seq) then
+        seq = vm:LookupSequence(seq)
+    end
+
     local time = self:GetAnimKeyTime(key)
     if time == 0 then return end
 
-    if absolute then
+    if absolute then -- meme
         time = 1
     end
 
     local ttime = (time * mult) - startfrom
-
     if startfrom > (time * mult) then return end
 
     if tt then
         self:SetNextPrimaryFire(ct + ((anim.MinProgress or time) * mult) - startfrom)
     end
 
-    --if CLIENT then
-    --    vm:SetAnimTime(ct - startfrom)
-    --end
-
     if anim.LHIK then
-        -- self.LHIKTimeline = {
-        --     CurTime() - startfrom,
-        --     CurTime() - startfrom + ((anim.LHIKIn or 0.1) * mult),
-        --     CurTime() - startfrom + ttime - ((anim.LHIKOut or 0.1) * mult),
-        --     CurTime() - startfrom + ttime
-        -- }
-
-        -- if anim.LHIKIn == 0 then
-        --     self.LHIKTimeline[1] = -math.huge
-        --     self.LHIKTimeline[2] = -math.huge
-        -- end
-
-        -- if anim.LHIKOut == 0 then
-        --     self.LHIKTimeline[3] = math.huge
-        --     self.LHIKTimeline[4] = math.huge
-        -- end
         self.LHIKStartTime = ct
         self.LHIKEndTime = ct + ttime
 
@@ -180,54 +177,6 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         self.LastClipOutTime = ct + ((anim.LastClip1OutTime * mult) - startfrom)
     end
 
-    local seq = anim.Source
-
-    if anim.RareSource and math.random(1, anim.RareSourceChance or 100) <= 1 then
-        seq = anim.RareSource
-    end
-
-    seq = self:GetBuff_Hook("Hook_TranslateSequence", seq)
-
-    if !seq then return end
-
-    if istable(seq) then
-        seq["BaseClass"] = nil
-
-        seq = table.Random(seq)
-    end
-
-    if isstring(seq) then
-        seq = vm:LookupSequence(seq)
-    end
-
-
-    if seq then --!game.SinglePlayer() and CLIENT
-
-        --local lastseq = self:GetLastSequence()
-        --self:SetLastSequence(seq)
-        --local lastkey = self:GetLastAnim()
-        --self:SetLastAnim(key)
-
-        -- Hack to fix an issue with playing one anim multiple times in a row
-        -- Provided by Jackarunda
-        local resetSeq = anim.HardResetAnim and vm:LookupSequence(anim.HardResetAnim)
-        if resetSeq then
-            vm:SendViewModelMatchingSequence(resetSeq)
-            vm:SetPlaybackRate(0.1)
-            timer.Simple(0, function()
-                vm:SendViewModelMatchingSequence(seq)
-                local dur = vm:SequenceDuration()
-                vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
-            end)
-        else
-            vm:SendViewModelMatchingSequence(seq)
-            local dur = vm:SequenceDuration()
-            vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
-            self.LastAnimStartTime = ct
-            self.LastAnimFinishTime = ct + (dur * mult)
-        end
-    end
-
     if anim.TPAnim then
         local aseq = self:GetOwner():SelectWeightedSequence(anim.TPAnim)
         if aseq then
@@ -242,16 +191,23 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         end
     end
 
-    local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
+    if !(game.SinglePlayer() and CLIENT) then
+        self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
+    end
 
+    if seq then
+        vm:SendViewModelMatchingSequence(seq)
+        local dur = vm:SequenceDuration()
+        vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
+        self.LastAnimStartTime = ct
+        self.LastAnimFinishTime = ct + (dur)
+    end
+
+    local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment -- why is this here if we just... do cool stuff elsewhere?
     if att and vm:GetAttachment(att) then
         local ang = vm:GetAttachment(att).Ang
         ang = vm:WorldToLocalAngles(ang)
         self.Cam_Offset_Ang = Angle(ang)
-    end
-
-    if !(game.SinglePlayer() and CLIENT) then
-        self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
     end
 
     self:SetNextIdle(CurTime() + ttime)
