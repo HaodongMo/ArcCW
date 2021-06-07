@@ -316,6 +316,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.ang.p = m_clamp(target.ang.p, -80, 80)
     elseif sighted then
         local delta = self:GetSightDelta()
+        -- delta = (4 * math.pow(delta - 0.5, 3)) + 0.5
+        delta = math.pow(delta, 2)
         local irons = self:GetActiveSights()
         target.pos = f_lerp(delta, irons.Pos, target.pos)
         target.ang = f_lerp(delta, irons.Ang, target.ang)
