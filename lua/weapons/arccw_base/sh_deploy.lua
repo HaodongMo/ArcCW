@@ -2,7 +2,23 @@ function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
         return
     end
-    if CLIENT and self.UnReady then self:LoadPreset("autosave") end
+    if self.UnReady then
+        local sp = game.SinglePlayer()
+
+        if sp then
+            if SERVER then
+                self:CallOnClient("LoadPreset", "autosave")
+            end
+        else
+            if SERVER then
+                -- the server... can't get the client's attachments in time.
+                -- can make it so client has to do a thing and tell the server it's ready,
+                -- and that's probably what i'll do later.
+            else
+                self:LoadPreset("autosave")
+            end
+        end
+    end
 
     self:InitTimers()
 

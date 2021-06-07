@@ -14,7 +14,12 @@ SWEP.LHIKAnimationTime = 0
 SWEP.LHIKCamAng = Angle(0, 0, 0)
 SWEP.LHIKGunAng = Angle(0, 0, 0)
 
-function SWEP:DoLHIKAnimation(key, time)
+function SWEP:DoLHIKAnimation(key, time, spbitch)
+    if game.SinglePlayer() and !spbitch then
+        timer.Simple(0, function() self:DoLHIKAnimation(key, time, true) end)
+        return
+    end
+
     local lhik_model
     local LHIK_GunDriver
     local LHIK_CamDriver
@@ -281,7 +286,9 @@ function SWEP:DoLHIK()
 
         key = tranim or key
 
-        self:DoLHIKAnimation(key, 1)
+        if key and key != "DoNotPlayIdle" then 
+            self:DoLHIKAnimation(key, 0)
+        end
 
         self.LHIKAnimation_IsIdle = true
     end
