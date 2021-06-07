@@ -287,7 +287,7 @@ function SWEP:DoLHIK()
         key = tranim or key
 
         if key and key != "DoNotPlayIdle" then 
-            self:DoLHIKAnimation(key, 0)
+            self:DoLHIKAnimation(key, 1)
         end
 
         self.LHIKAnimation_IsIdle = true
