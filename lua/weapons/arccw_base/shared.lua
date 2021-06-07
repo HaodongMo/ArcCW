@@ -125,6 +125,7 @@ SWEP.MaxRecoilBlowback = -1
 SWEP.VisualRecoilMult = 1.25
 SWEP.RecoilPunch = 1.5
 SWEP.RecoilPunchBackMax = 1
+SWEP.RecoilPunchBackMaxSights = nil -- may clip with scopes
 
 SWEP.Sway = 0
 

@@ -461,7 +461,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         ang:Set(nang)
     end
 
-    pos = pos + math.min(self.RecoilPunchBack, self.RecoilPunchBackMax) * -oldang:Forward()
+    pos = pos + math.min(self.RecoilPunchBack, Lerp(self:GetSightDelta(), self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -oldang:Forward()
     pos = pos + self.RecoilPunchSide * oldang:Right()
     pos = pos + self.RecoilPunchUp * -oldang:Up()
     ang:RotateAroundAxis(oldang:Right(), actual.ang.x)
