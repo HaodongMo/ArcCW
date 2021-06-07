@@ -408,6 +408,13 @@ att.Hook_GetVisualBullets = function(wep) end
 
 att.Hook_GetVisualClip = function(wep) end
 
+-- modify what the event system be do
+-- the event is a table containing stuff that it does
+-- sh_timers last stuff timers are stupid lets not
+-- please dont return anything people kinda would wanna run events i'd imagine
+att.Hook_PrePlayEvent = function(wep, event) end
+att.Hook_PostPlayEvent = function(wep, event) end
+
 -- return to set mag capacity
 att.Hook_GetCapacity = function(wep, cap) end
 

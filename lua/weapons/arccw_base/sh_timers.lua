@@ -79,7 +79,7 @@ local function DoShell(wep, data)
 end
 
 function SWEP:PlaySoundTable(soundtable, mult, start)
-    if CLIENT and game.SinglePlayer() then return end
+    --if CLIENT and game.SinglePlayer() then return end
 
     local owner = self:GetOwner()
 
@@ -98,8 +98,9 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
         if ttime < 0 then continue end
         if !(IsValid(self) and IsValid(owner)) then continue end
 
-        
-        if game.SinglePlayer() then
+        local jhon = CurTime() + ttime
+
+        --[[if game.SinglePlayer() then
             if SERVER then
                 net.Start("arccw_networksound")
                 v.ntttime = ttime
@@ -107,9 +108,18 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
                 net.WriteEntity(self)
                 net.Send(owner)
             end
-        end
+        end]]
 
-        self.EventTable[CurTime() + ttime] = v
+        --self.EventTable[1] = v--[CurTime() + ttime] = v
+
+        for i, de in ipairs(self.EventTable) do
+            if de[jhon] then
+                if !self.EventTable[i+1] then --[[print(CurTime(), "Occupier at " .. i .. ", creating " .. i+1)]] self.EventTable[i+1] = {} continue end
+            else
+                self.EventTable[i][jhon] = v
+                --print(CurTime(), "Clean at " .. i)
+            end
+        end
 
     end
 end
@@ -117,11 +127,16 @@ end
 function SWEP:PlayEvent(v)
     if !v or !istable(v) then error("no event to play") end
 
+    v = self:GetBuff_Hook("Hook_PrePlayEvent", v) or v
+
     if v.e and IsFirstTimePredicted() then
         DoShell(self, v)
     end
 
     if v.s then
+        if v.s_km then
+            self:StopSound(v.s)
+        end
         self:MyEmitSound(v.s, v.l, v.p, v.v, v.c or CHAN_AUTO)
     end
 
@@ -134,6 +149,8 @@ function SWEP:PlayEvent(v)
 
         vm:SetPoseParameter(pp, ppv)
     end
+
+    v = self:GetBuff_Hook("Hook_PostPlayEvent", v) or v
 end
 
 

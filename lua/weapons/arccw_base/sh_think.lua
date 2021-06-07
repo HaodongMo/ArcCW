@@ -15,10 +15,14 @@ function SWEP:Think()
 
     if !IsValid(owner) or owner:IsNPC() then return end
 
-    for i, v in pairs(self.EventTable) do
-        if i <= CurTime() then
-            self:PlayEvent(v)
-            self.EventTable[i] = nil
+    for i, v in ipairs(self.EventTable) do
+        for ed, bz in pairs(v) do
+            if ed <= CurTime() then
+                self:PlayEvent(bz)
+                self.EventTable[i][ed] = nil
+                --print(CurTime(), "Event completed at " .. i, ed)
+                if table.IsEmpty(v) and i != 1 then self.EventTable[i] = nil --[[print(CurTime(), "No more events at " .. i .. ", killing")]] end
+            end
         end
     end
 

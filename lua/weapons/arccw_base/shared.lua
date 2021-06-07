@@ -640,7 +640,9 @@ SWEP.BurstCount = 0
 SWEP.AnimQueue = {}
 SWEP.FiremodeIndex = 1
 SWEP.UnReady = true
-SWEP.EventTable = {}
+SWEP.EventTable = {
+    [1] = {} -- for every overlapping one, a new one is made -- checked to be removed afterwards, except 1
+}
 
 SWEP.ProneMod_DisableTransitions = true
 

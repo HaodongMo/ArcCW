@@ -250,7 +250,9 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         self.Cam_Offset_Ang = Angle(ang)
     end
 
-    self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
+    if !(game.SinglePlayer() and CLIENT) then
+        self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
+    end
 
     self:SetNextIdle(CurTime() + ttime)
 end

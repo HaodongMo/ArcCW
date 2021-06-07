@@ -434,7 +434,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local speed = target.speed or 3
     -- For some reason, in multiplayer the sighting speed is twice as fast
     -- speed = 1 / self:GetSightTime() * speed * FT * (SP and 1 or 0.5)
-    speed = 15 * FT * (SP and 1 or 0.5)
+    speed = ( 40 / ( self:GetState() == ArcCW.STATE_SIGHTS and self:GetSightTime() or 1 ) ) * FT * (SP and 1 or 0.5)
     actual.pos = LerpVector(speed, actual.pos, target.pos)
     actual.ang = LerpAngle(speed, actual.ang, target.ang)
     actual.down = f_lerp(speed, actual.down, target.down)
