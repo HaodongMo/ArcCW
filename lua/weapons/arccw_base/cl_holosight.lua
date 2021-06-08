@@ -689,9 +689,13 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     local hss = size * 32 * math.min(ScrW(), ScrH()) / 800
 
+    --local thej = self.TheJ.anga + LocalPlayer():GetViewPunchAngles() + self:GetOurViewPunchAngles()
+                    -- AYE, UR ACTIVE ANG BEIN TWISTED DUNT GIVE AUH SHET
+
     surface.SetMaterial(hs.HolosightReticle or defaultdot)
     surface.SetDrawColor(hsc or Color(255, 255, 255))
     surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
+    --surface.DrawTexturedRectRotated(x, y, hss, hss, -thej.r or 0)
 
     if !hs.HolosightNoFlare then
         render.SetStencilPassOperation(STENCIL_KEEP)
@@ -706,6 +710,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         end
 
         surface.DrawTexturedRect(x - (hss2 / 2), y - (hss2 / 2), hss2, hss2)
+        --surface.DrawTexturedRectRotated(x, y, hss2, hss2, -thej.r or 0)
 
         render.SetStencilReferenceValue(ref)
     end

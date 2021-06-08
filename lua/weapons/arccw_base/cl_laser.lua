@@ -95,7 +95,7 @@ function SWEP:DrawLaser(laser, model, color, world)
 
         delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
 
-        if self.GuaranteeLaser then delta = 1 end
+        if self.GuaranteeLaser then delta = self:GetSightDelta() end
 
         dir = Lerp(delta, eyeang:Forward(), dir)
     end

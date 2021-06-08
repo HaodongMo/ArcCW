@@ -16,7 +16,7 @@ SWEP.LHIKGunAng = Angle(0, 0, 0)
 
 function SWEP:DoLHIKAnimation(key, time, spbitch)
     if game.SinglePlayer() and !spbitch then
-        timer.Simple(0, function() self:DoLHIKAnimation(key, time, true) end)
+        timer.Simple(0, function() if IsValid(self) then self:DoLHIKAnimation(key, time, true) end end)
         return
     end
 

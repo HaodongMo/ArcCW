@@ -184,6 +184,8 @@ local function ApprVecAng(from, to, dlt)
     return ret
 end
 
+SWEP.TheJ = {posa = Vector(), anga = Angle()}
+
 function SWEP:GetViewModelPosition(pos, ang)
     local owner = self:GetOwner()
     if !IsValid(owner) or !owner:Alive() then return end
@@ -470,12 +472,13 @@ function SWEP:GetViewModelPosition(pos, ang)
         pos:Set(npos)
         ang:Set(nang)
     end
+    self.TheJ = {posa = actual.pos, anga = actual.ang}
 
     pos = pos + math.min(self.RecoilPunchBack, Lerp(self:GetSightDelta(), self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -oldang:Forward()
     pos = pos + self.RecoilPunchSide * oldang:Right()
     pos = pos + self.RecoilPunchUp * -oldang:Up()
-    ang:RotateAroundAxis(oldang:Right(), actual.ang.x)
-    ang:RotateAroundAxis(oldang:Up(), actual.ang.y)
+    ang:RotateAroundAxis(oldang:Right(), actual.ang.x + (math.Rand(0, 1) * 4 * self.RecoilPunchUp))
+    ang:RotateAroundAxis(oldang:Up(), actual.ang.y + (math.Rand(-1, 1) * 10 * self.RecoilPunchSide))
     ang:RotateAroundAxis(oldang:Forward(), actual.ang.z)
     ang:RotateAroundAxis(oldang:Right(), actual.evang.x)
     ang:RotateAroundAxis(oldang:Up(), actual.evang.y)
