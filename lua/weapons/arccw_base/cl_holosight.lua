@@ -575,6 +575,19 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     pos = pos + (dir * d)
 
+    local pos2 = pos + (dir * -8)
+
+    local a = pos:ToScreen()
+    local x = a.x
+    local y = a.y
+
+    local a2 = pos2:ToScreen()
+    local x2 = a2.x
+    local y2 = a2.y
+
+    local off_x = x2 - (ScrW() / 2)
+    local off_y = y2 - (ScrH() / 2)
+
     --pos = pos + Vector(ArcCW.StrafeTilt(self), 0, 0)
 
     -- local corner1, corner2, corner3, corner4
@@ -619,8 +632,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
             local ts = cpos:ToScreen()
 
-            local sx = ts.x - (sw / 2)
-            local sy = ts.y - (sh / 2)
+            local sx = ts.x - (sw / 2) - off_x
+            local sy = ts.y - (sh / 2) - off_y
 
             render.SetMaterial(black)
             render.DrawScreenQuad()
@@ -632,8 +645,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             local sw = ScrH()
             local sh = sw
 
-            local sx = (ScrW() - sw) / 2
-            local sy = (ScrH() - sh) / 2
+            local sx = ((ScrW() - sw) / 2) - off_x
+            local sy = ((ScrH() - sh) / 2) - off_x
 
             render.SetMaterial(black)
             render.DrawScreenQuad()
@@ -670,10 +683,6 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     --     end
     --     render.DrawSprite( pos, size * hss * hsx, size * hss * hsy, Color(255, 255, 255, 255) )
     -- end
-
-    local a = pos:ToScreen()
-    local x = a.x
-    local y = a.y
 
     cam.Start2D()
 
