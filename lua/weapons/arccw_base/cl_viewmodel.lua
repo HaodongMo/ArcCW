@@ -569,6 +569,7 @@ function SWEP:ShouldCheapScope()
     if !self:GetConVar("arccw_cheapscopes"):GetBool() then return end
 end
 
+local lst = SysTime()
 function SWEP:PreDrawViewModel(vm)
     if ArcCW.VM_OverDraw then return end
     if !vm then return end
@@ -578,7 +579,8 @@ function SWEP:PreDrawViewModel(vm)
     end
 
     if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
-        local fps = 1 / m_min(FrameTime(), FrameTime())
+        local fps = 1 / (SysTime()-lst)
+        lst = SysTime()
         local lowfps = fps <= 45
         GetConVar("arccw_cheapscopes"):SetBool(lowfps)
         GetConVar("arccw_cheapscopesautoconfig"):SetBool(false)

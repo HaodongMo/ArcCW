@@ -97,20 +97,6 @@ function ArcCW.CreateMove(cmd)
 
         cmd:SetViewAngles(ang)
     end
-
-    local ang2 = cmd:GetViewAngles()
-
-    local recoil = Angle()
-    recoil = recoil + (wpn:GetBuff_Override("Override_RecoilDirection") or wpn.RecoilDirection) * wpn.RecoilAmount
-    recoil = recoil + (wpn:GetBuff_Override("Override_RecoilDirectionSide") or wpn.RecoilDirectionSide) * wpn.RecoilAmountSide
-    ang2 = ang2 - (recoil * engine.TickInterval() * 30)
-    cmd:SetViewAngles(ang2)
-
-    local ft = engine.TickInterval()
-    local r = wpn.RecoilAmount
-    local rs = wpn.RecoilAmountSide
-    wpn.RecoilAmount = math.Approach(wpn.RecoilAmount, 0, ft * 20 * r)
-    wpn.RecoilAmountSide = math.Approach(wpn.RecoilAmountSide, 0, ft * 20 * rs)
 end
 
 hook.Add("CreateMove", "ArcCW_CreateMove", ArcCW.CreateMove)
@@ -124,6 +110,8 @@ local function tgt_pos(ent, head)
     end
     return pos
 end
+
+local lst = SysTime()
 
 function ArcCW.StartCommand(ply, ucmd)
     -- Sprint will not interrupt a runaway burst
@@ -193,6 +181,23 @@ function ArcCW.StartCommand(ply, ucmd)
             end
         end
     end
+
+    if CLIENT and IsValid(wep) and wep.ArcCW then
+        local ang2 = ucmd:GetViewAngles()
+        local ft = (SysTime() - (lst or SysTime())) * GetConVar("host_timescale"):GetFloat()
+
+        local recoil = Angle()
+        recoil = recoil + (wep:GetBuff_Override("Override_RecoilDirection") or wep.RecoilDirection) * wep.RecoilAmount
+        recoil = recoil + (wep:GetBuff_Override("Override_RecoilDirectionSide") or wep.RecoilDirectionSide) * wep.RecoilAmountSide
+        ang2 = ang2 - (recoil * ft * 30)
+        ucmd:SetViewAngles(ang2)
+
+        local r = wep.RecoilAmount
+        local rs = wep.RecoilAmountSide
+        wep.RecoilAmount = math.Approach(wep.RecoilAmount, 0, ft * 20 * r)
+        wep.RecoilAmountSide = math.Approach(wep.RecoilAmountSide, 0, ft * 20 * rs)
+    end
+    lst = SysTime()
 end
 
 hook.Add("StartCommand", "ArcCW_StartCommand", ArcCW.StartCommand)

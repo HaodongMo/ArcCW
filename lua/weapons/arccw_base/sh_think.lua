@@ -186,7 +186,7 @@ function SWEP:Think()
 
     end
 
-    if (CLIENT or game.SinglePlayer()) and (IsFirstTimePredicted() or game.SinglePlayer()) then
+    if CLIENT and (game.SinglePlayer() and true or IsFirstTimePredicted()) then
         self:ProcessRecoil()
     end
 
@@ -306,9 +306,11 @@ function SWEP:Think()
     end
 end
 
+local lst = SysTime()
+
 function SWEP:ProcessRecoil()
     local owner = self:GetOwner()
-    local ft = FrameTime()
+    local ft = SysTime() - (lst or SysTime())
     local newang = owner:EyeAngles()
     -- local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
     -- local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
@@ -319,15 +321,6 @@ function SWEP:ProcessRecoil()
     ra = ra + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
 
     newang = newang - ra
-
-    -- self.RecoilAmount = r - math.Clamp(ft * 20, 0, r)
-    -- self.RecoilAmountSide = rs - math.Clamp(ft * 20, 0, rs)
-
-    -- self.RecoilAmount = math.Approach(self.RecoilAmount, 0, ft * 20 * r)
-    -- self.RecoilAmountSide = math.Approach(self.RecoilAmountSide, 0, ft * 20 * rs)
-
-    -- self:SetNWFloat("recoil", r - (FrameTime() * r * 50))
-    -- self:SetNWFloat("recoilside", rs - (FrameTime() * rs * 50))
 
     local rpb = self.RecoilPunchBack
     local rps = self.RecoilPunchSide
@@ -344,6 +337,8 @@ function SWEP:ProcessRecoil()
     if rpu != 0 then
         self.RecoilPunchUp = math.Approach(rpu, 0, ft * rpu * 5)
     end
+
+    lst = SysTime()
 end
 
 function SWEP:InSprint()
