@@ -173,7 +173,10 @@ function SWEP:PrimaryAttack()
     bullet.Spread     = Vector(0, 0, 0) --Vector(spread, spread, spread)
     bullet.Damage     = 0
     bullet.Num        = num
-    bullet.Force      = (self:GetDamage(0) + self:GetDamage(math.huge)) / 50
+    
+    local sglove = math.ceil(num/4)
+    bullet.Force      = math.Clamp( ( (40/sglove) / ( (self:GetDamage(0, true) + self:GetDamage(math.huge, true)) / 2 ) ) * sglove, 0, 3 )
+                        -- Overperforming weapons get the jerf, underperforming gets boost
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
     bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
@@ -240,6 +243,11 @@ function SWEP:PrimaryAttack()
                     trent:Ignite(1, 0)
                 end
             end
+        end
+
+        if dmg:IsDamageType(DMG_BULLET) and !dmg:IsDamageType(DMG_AIRBOAT) and hit.tr.Entity and hit.tr.Entity:GetClass() == "npc_helicopter" then
+            dmg:SetDamageType(dmg:GetDamageType() + DMG_AIRBOAT)
+            dmg:ScaleDamage(1/10) -- coostimizable?
         end
 
         if dmgtable then
