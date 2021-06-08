@@ -93,6 +93,10 @@ function SWEP:GetHUDData()
         end
     end
 
+    if self:HasInfiniteAmmo() then
+        data.ammo = self:GetCapacity()
+    end
+
     if self:GetInUBGL() then
         data.clip = self:Clip2()
         local ubglammo = self:GetBuff_Override("UBGL_Ammo")
@@ -483,8 +487,8 @@ function SWEP:DrawHUD()
                     alpha = alpha,
                 }
 
-                if self:HasInfiniteAmmo() and !self:GetInUBGL() then
-                    wreserve.text = tostring(self:GetMaxClip1()) .. " |"
+                if tonumber(data.ammo) and tonumber(data.clip) and tonumber(data.clip) >= self:GetCapacity() and !self:GetInUBGL() then
+                    wreserve.text = tostring(data.ammo) .. " |"
                 end
 
                 if self:GetPrimaryAmmoType() <= 0 then
