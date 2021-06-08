@@ -30,6 +30,12 @@ SWEP.Breath_Intensity = 1
 SWEP.Breath_Rate = 1
 local coolswayCT = 0
 
+local lst = SysTime()
+local function scrunkly()
+    local ret = (SysTime() - (lst or SysTime())) * GetConVar("host_timescale"):GetFloat()
+    return ret
+end
+
 local function LerpC(t, a, b, powa)
     return a + (b - a) * math.pow(t, powa)
 end
@@ -38,7 +44,7 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     local VMPos, VMAng = self.VMPos, self.VMAng
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
     local VMPosOffset_Lerp, VMAngOffset_Lerp = self.VMPosOffset_Lerp, self.VMAngOffset_Lerp
-    local FT = (game.SinglePlayer() and FrameTime()) or RealFrameTime() * 0.5308
+    local FT = scrunkly()
     local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.1) or 1
     VMPos:Set(EyePos)
     VMAng:Set(EyeAng)
@@ -47,7 +53,7 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     VMPosOffset_Lerp.x = Lerp(8 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
     VMPosOffset_Lerp.y = Lerp(8 * FT, VMPosOffset_Lerp.y, VMPosOffset.y)
     VMAngOffset.x = math.Clamp(VMPosOffset.x * 8, -4, 4)
-    VMAngOffset.y = VMPosOffset.y * ((game.SinglePlayer() and 5) or -1)
+    VMAngOffset.y = VMPosOffset.y
     VMAngOffset.z = VMPosOffset.y * 0.5 + (VMPosOffset.x * -5)
     VMAngOffset_Lerp.x = LerpC(10 * FT, VMAngOffset_Lerp.x, VMAngOffset.x, 0.75)
     VMAngOffset_Lerp.y = LerpC(5 * FT, VMAngOffset_Lerp.y, VMAngOffset.y, 0.6)
@@ -78,7 +84,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     end
 
     local delta = math.abs(self.StepBob * 2 / (stepend) - 1)
-    local FT = (game.SinglePlayer() and FrameTime()) or RealFrameTime() * 2
+    local FT = FrameTime()
     local FTMult = 300 * FT
     local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.25) or 1
     local sprintmult = (self:GetState() == ArcCW.STATE_SPRINT and 2) or 1
@@ -138,22 +144,24 @@ function SWEP:Breath_Process(EyePos, EyeAng)
     VMPosOffset.y = (math.sin(CurTime() * 2.5 * self.Breath_Rate) * 0.025) * self.Breath_Intensity
     VMAngOffset.x = VMPosOffset.x * 1.5
     VMAngOffset.y = VMPosOffset.y * 2
+    VMAngOffset.z = VMPosOffset.y * VMPosOffset.x * -40
     VMPos:Add(VMAng:Up() * VMPosOffset.x)
     VMPos:Add(VMAng:Right() * VMPosOffset.y)
     VMAng:Add(VMAngOffset)
 end
 
-function SWEP:Look_Process(EyePos, EyeAng)
+function SWEP:Look_Process(EyePos, EyeAng, velocity)
     local VMPos, VMAng = self.VMPos, self.VMAng
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
-    local FT = (game.SinglePlayer() and FrameTime()) or RealFrameTime() * 0.5308
+    local FT = scrunkly()
     local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.25) or 1
     self.SmoothEyeAng = LerpAngle(0.05, self.SmoothEyeAng, EyeAng - self.LastEyeAng)
-    VMPosOffset.x = -self.SmoothEyeAng.x * -1 * sightedmult * lookxmult
-    VMPosOffset.y = self.SmoothEyeAng.y * 0.5 * sightedmult * lookymult
+    local xd, yd = (velocity.z/10), (velocity.y/200)
+    VMPosOffset.x = (-self.SmoothEyeAng.x) * -1 * sightedmult * lookxmult
+    VMPosOffset.y = (self.SmoothEyeAng.y) * 0.5 * sightedmult * lookymult
     VMAngOffset.x = VMPosOffset.x * 2.5
     VMAngOffset.y = VMPosOffset.y * 1.25
-    VMAngOffset.z = VMPosOffset.y * 2
+    VMAngOffset.z = VMPosOffset.x * 2 + VMPosOffset.y * 2
     self.VMLookLerp.y = Lerp(FT * 10, self.VMLookLerp.y, VMAngOffset.y * 1.5 + self.SmoothEyeAng.y)
     VMAng.y = VMAng.y - self.VMLookLerp.y
     VMPos:Add(VMAng:Up() * VMPosOffset.x)
@@ -167,7 +175,7 @@ function SWEP:GetVMPosition(EyePos, EyeAng)
     self:Move_Process(EyePos, EyeAng, velocity)
     self:Step_Process(EyePos, EyeAng, velocity)
     self:Breath_Process(EyePos, EyeAng)
-    self:Look_Process(EyePos, EyeAng)
+    self:Look_Process(EyePos, EyeAng, velocity)
     self.LastEyeAng = EyeAng
     self.LastEyePos = EyePos
     self.LastVelocity = velocity
@@ -191,7 +199,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     if !IsValid(owner) or !owner:Alive() then return end
     local proceduralRecoilMult = 1
     local SP = game.SinglePlayer()
-    local FT = RealFrameTime() * game.GetTimeScale()
+    local FT = scrunkly()
     local CT = CurTime()
     local UCT = UnPredictedCurTime()
     --local FT = FrameTime()
@@ -513,6 +521,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         pos = pos + attpos
     end
 
+    lst = SysTime()
     return pos, ang
 end
 

@@ -310,7 +310,7 @@ local lst = SysTime()
 
 function SWEP:ProcessRecoil()
     local owner = self:GetOwner()
-    local ft = SysTime() - (lst or SysTime())
+    local ft = (SysTime() - (lst or SysTime())) * GetConVar("host_timescale"):GetFloat()
     local newang = owner:EyeAngles()
     -- local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
     -- local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
