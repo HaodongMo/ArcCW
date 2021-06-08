@@ -706,7 +706,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         local hss2 = hss
 
         if !hs.HolosightFlare then
-            hss2 = hss2 * 0.75
+            hss2 = hss - 2
         end
 
         surface.DrawTexturedRect(x - (hss2 / 2), y - (hss2 / 2), hss2, hss2)
