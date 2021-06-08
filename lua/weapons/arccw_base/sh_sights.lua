@@ -473,11 +473,11 @@ function SWEP:SwitchActiveSights()
         self:MyEmitSound(asight2.SwitchToSound, 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
     end
 
-    if self:GetNextPrimaryFire() <= (CurTime() + self:GetSightTime()) then
-        self:SetNextPrimaryFire(CurTime() + self:GetSightTime())
-    end
+    -- if self:GetNextPrimaryFire() <= (CurTime() + self:GetSightTime()) then
+    --     self:SetNextPrimaryFire(CurTime() + self:GetSightTime())
+    -- end
 
-    self.LastEnterSightTime = CurTime()
+    -- self.LastEnterSightTime = CurTime()
 end
 
 function SWEP:GetActiveSights()
