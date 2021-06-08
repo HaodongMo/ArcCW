@@ -230,7 +230,8 @@ function SWEP:CalcView(ply, pos, ang, fov)
     end
 
     if GetConVar("arccw_shake"):GetBool() then
-        ang = ang + (AngleRand() * self.RecoilAmount * 0.008)
+        local de = (0.2 + (self:GetSightDelta()*0.8))
+        ang = ang + (AngleRand() * self.RecoilAmount * 0.006 * de)
     end
 
     ang = ang + (self.ViewPunchAngle * 10)
