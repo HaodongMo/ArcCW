@@ -684,17 +684,15 @@ function SWEP:GetDispersion()
     local sightdisp = self:GetBuff("SightsDispersion")
     if sights then hip = Lerp(delta, sightdisp, hipdisp) end
 
+    local speed = owner:GetAbsVelocity():Length()
+    local maxspeed = owner:GetWalkSpeed() * self:GetBuff("SpeedMult")
+    if sights then maxspeed = maxspeed * self:GetBuff("SightedSpeedMult") end
+    speed = math.Clamp(speed / maxspeed, 0, 2)
+
     if owner:OnGround() or owner:WaterLevel() > 0 or owner:GetMoveType() == MOVETYPE_NOCLIP then
-        local speed    = owner:GetAbsVelocity():Length()
-        local maxspeed = owner:GetWalkSpeed() * self:GetBuff("SpeedMult")
-
-        if sights then maxspeed = maxspeed * self:GetBuff("SightedSpeedMult") end
-
-        speed = math.Clamp(speed / maxspeed, 0, 2)
-
-        hip = hip + (speed * self:GetBuff("MoveDispersion"))
+        hip = hip + speed * self:GetBuff("MoveDispersion")
     else
-        hip = hip + self:GetBuff("JumpDispersion")
+        hip = hip + math.max(speed * self:GetBuff("MoveDispersion"), self:GetBuff("JumpDispersion"))
     end
 
     if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
