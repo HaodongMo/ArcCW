@@ -25,10 +25,17 @@ function ArcCW:IsPenetrating(ptr, ptrent)
         return !ptr.StartSolid or ptr.AllSolid
     elseif IsValid(ptrent) then
         local mins, maxs = ptrent:WorldSpaceAABB()
+        local wsc = ptrent:WorldSpaceCenter()
+        -- Expand the bounding box by a bit to account for hitboxes outside it
+        -- This is more consistent but less accurate
+        mins = mins + (mins - wsc) * 0.25
+        maxs = maxs + (maxs - wsc) * 0.25
         local withinbounding = ptr.HitPos:WithinAABox(mins, maxs)
-        if  GetConVar("developer"):GetInt() >= 2 and withinbounding then
+        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
             --debugoverlay.Box(Vector(0, 0, 0), mins, maxs, 5, Color(255, 255, 255, 50))
-            debugoverlay.Cross(ptr.HitPos, 2, 5, Color(255, 255, 0), true)
+            --debugoverlay.Cross(mins, 4, 5, Color(128, 0, 0), true)
+            --debugoverlay.Cross(maxs, 4, 5, Color(128, 0, 0), true)
+            debugoverlay.Cross(ptr.HitPos, withinbounding and 2 or 6, 5, withinbounding and Color(255, 255, 0) or Color(128, 255, 0), true)
         end
 
         if withinbounding then return true end
@@ -67,7 +74,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
     local trent = tr.Entity
 
     local penmult     = ArcCW.PenTable[tr.MatType] or 1
-    local pentracelen = 2
+    local pentracelen = 4 --2 originally, but this should be less costly
     local curr_ent    = trent
     local startpen = penleft
 
@@ -77,7 +84,6 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
     penmult = penmult * m_rand(0.9, 1.1) * m_rand(0.9, 1.1)
 
-    local dir    = (hitpos - startpos):GetNormalized()
     local endpos = hitpos
 
     local td  = {}
@@ -151,7 +157,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         end
         ]]
 
-        if GetConVar("developer"):GetBool() then
+        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
             local pdeltap = penleft / bullet.Penetration
             local colorlr = m_lerp(pdeltap, 0, 255)
 
@@ -230,13 +236,21 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
                     dmg:SetDamageType(bullet.DamageType)
                     dmg:SetDamage(bullet.Weapon:GetDamage(dist, true) * pdelta, true)
                 end
+
+                if GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+                    local e = endpos + dir * (btr.HitPos - endpos):Length()
+                    debugoverlay.Line(endpos, e, 10, Color(150, 150, 150), true)
+                    debugoverlay.Cross(e, 3, 10, alreadypenned[btr.Entity:EntIndex()] and Color(0, 128, 255) or Color(255, 128, 0), true)
+                    debugoverlay.Text(e, math.Round(penleft, 1) .. "mm", 10)
+                end
+                if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 and IsValid(btr.Entity) and !alreadypenned[btr.Entity:EntIndex()] then
+                    local str = string.format("%ddmg/%dm(%d%%)", dmg:GetDamage(), dist, math.Round((1 - bullet.Weapon:GetRangeFraction(dist)) * 100))
+                    debugoverlay.Text(btr.Entity:WorldSpaceCenter(), str, 5)
+                end
+
                 alreadypenned[btr.Entity:EntIndex()] = true
 
                 ArcCW:DoPenetration(btr, damage, bullet, penleft, false, alreadypenned)
-
-                if GetConVar("developer"):GetBool() then
-                    debugoverlay.Line(endpos, endpos + dir * (btr.HitPos - endpos):Length(), 10, Color(150, 150, 150), true)
-                end
 
                 -- if !game.SinglePlayer() and CLIENT then
                     local fx = EffectData()

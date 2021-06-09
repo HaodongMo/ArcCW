@@ -72,13 +72,13 @@ function SWEP:CanPrimaryAttack()
     return true
 end
 
-function SWEP:TakePrimaryAmmo( num )
-	if ( self:HasBottomlessClip() or self:Clip1() <= 0 ) then
-		if ( self:Ammo1() <= 0 ) then return end
+function SWEP:TakePrimaryAmmo(num)
+    if self:HasBottomlessClip() or self:Clip1() <= 0 then
+        if self:Ammo1() <= 0 then return end
         if self:HasInfiniteAmmo() then return end
-		self:GetOwner():RemoveAmmo( num, self:GetPrimaryAmmoType() )
-	return end
-	self:SetClip1( self:Clip1() - num )	
+        self:GetOwner():RemoveAmmo(num, self:GetPrimaryAmmoType())
+    return end
+    self:SetClip1(self:Clip1() - num)
 end
 
 function SWEP:PrimaryAttack()
@@ -134,10 +134,28 @@ function SWEP:PrimaryAttack()
     self.Primary.Automatic = true
 
     local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
+    local disp = self:GetDispersion() * ArcCW.MOAToAcc / 10
 
     dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
+    dir = dir + VectorRand() * disp
 
-    dir = dir + VectorRand() * self:GetDispersion() * ArcCW.MOAToAcc / 10
+    if GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
+        local dev_tr = util.TraceLine({
+            start = src,
+            endpos = src + owner:GetAimVector() * 33000,
+            mask = MASK_SHOT,
+            filter = {self, self:GetOwner()}
+        })
+        local dist = (dev_tr.HitPos - src):Length()
+        local r = dist / (1 / math.tan(disp)) -- had to google "trig cheat sheet to figure this one out"
+        local a = dev_tr.HitNormal:Angle()
+        local r_sqrt = r / math.sqrt(2)
+        debugoverlay.Line(dev_tr.HitPos - a:Up() * r, dev_tr.HitPos + a:Up() * r, 5)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r, dev_tr.HitPos + a:Right() * r, 5)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r_sqrt - a:Up() * r_sqrt, dev_tr.HitPos + a:Right() * r_sqrt + a:Up() * r_sqrt, 5)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r_sqrt + a:Up() * r_sqrt, dev_tr.HitPos + a:Right() * r_sqrt - a:Up() * r_sqrt, 5)
+        debugoverlay.Text(dev_tr.HitPos, math.Round(self:GetDispersion(), 1) .. "MOA Dispersion (" .. math.Round(disp, 3) .. "°)", 5)
+    end
 
     local delay = self:GetFiringDelay()
 
@@ -173,9 +191,9 @@ function SWEP:PrimaryAttack()
     bullet.Spread     = Vector(0, 0, 0) --Vector(spread, spread, spread)
     bullet.Damage     = 0
     bullet.Num        = num
-    
-    local sglove = math.ceil(num/4)
-    bullet.Force      = math.Clamp( ( (40/sglove) / ( (self:GetDamage(0, true) + self:GetDamage(math.huge, true)) / 2 ) ) * sglove, 0, 3 )
+
+    local sglove = math.ceil(num / 4)
+    bullet.Force      = math.Clamp( ( (40 / sglove) / ( (self:GetDamage(0, true) + self:GetDamage(math.huge, true)) / 2 ) ) * sglove, 0, 3 )
                         -- Overperforming weapons get the jerf, underperforming gets boost
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
@@ -190,10 +208,8 @@ function SWEP:PrimaryAttack()
         local dist = (hitpos - src):Length() * ArcCW.HUToM
         local pen  = self:GetBuff("Penetration")
 
-        if SERVER then
-            debugoverlay.Cross(hitpos, 5, 5, Color(255, 0, 0), true)
-        else
-            debugoverlay.Cross(hitpos, 5, 5, Color(0, 0, 255), true)
+        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+            debugoverlay.Cross(hitpos, 5, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
         end
 
         --[[if !game.SinglePlayer() and CLIENT and !(tracernum == 0 or clip % tracernum != 0) then
@@ -247,7 +263,7 @@ function SWEP:PrimaryAttack()
 
         if dmg:IsDamageType(DMG_BULLET) and !dmg:IsDamageType(DMG_AIRBOAT) and hit.tr.Entity and hit.tr.Entity:GetClass() == "npc_helicopter" then
             dmg:SetDamageType(dmg:GetDamageType() + DMG_AIRBOAT)
-            dmg:ScaleDamage(1/10) -- coostimizable?
+            dmg:ScaleDamage(1 / 10) -- coostimizable?
         end
 
         if dmgtable then
@@ -279,8 +295,9 @@ function SWEP:PrimaryAttack()
 
         if decal then util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), self:GetOwner()) end
 
-        if GetConVar("developer"):GetInt() >= 2 then
-            debugoverlay.Text(hitpos, string.format("%ddmg/%dm(%d%%)", dmg:GetDamage(), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100)), 5)
+        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
+            local str = string.format("%ddmg/%dm(%d%%)", dmg:GetDamage(), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100))
+            debugoverlay.Text(hitpos, str, 5)
         end
     end
 

@@ -8,8 +8,6 @@ local temp = 0
 local SolidBlack = Color(temp, temp, temp)
 -- don't fucking mess with the shadow, makes the menu hurt your goddamn eyes
 
-CreateConVar("arccw_dev_cust2beta", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, nil, 0, 1)
-
 local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
     local tw, th = surface.GetTextSize(txt)
 

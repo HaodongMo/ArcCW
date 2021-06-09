@@ -46,14 +46,8 @@ CreateConVar("arccw_mult_meleetime", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multi
 CreateConVar("arccw_mult_bottomlessclip", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Enable bottomless clip.", 0, 1)
 CreateConVar("arccw_mult_infiniteammo", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Enable infinite reserve ammo.", 0, 1)
 
-
 CreateConVar("arccw_mult_crouchdisp", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for hip dispersion while crouching.", 0)
 CreateConVar("arccw_mult_crouchrecoil", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for recoil while crouching.", 0)
-
-CreateConVar("arccw_reloadatts_mapcleanup", 0, 0, "Whether to reload ArcCW attachments on admin clean up.")
-CreateConVar("arccw_reloadatts_registerentities", 1, 0, "Register attachment entities. This may increase time to reload attachments.")
-CreateConVar("arccw_reloadatts_showignored", 0, 0, "Whether to include attachments set to Ignore.")
-CreateConVar("arccw_dev_debug", 0, 0, "Developer debug HUD showing cool time shit.")
 
 CreateConVar("arccw_override_crosshair_off", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Set to true to force everyone's crosshairs off.", 0, 1)
 CreateConVar("arccw_override_nearwall", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable barrel length and near-walling.", 0, 1)
@@ -97,3 +91,11 @@ CreateConVar("arccw_aimassist_distance", 1024, FCVAR_ARCHIVE + FCVAR_REPLICATED,
 CreateConVar("arccw_aimassist_intensity", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED, "How strong the assist is.", 0, 10)
 
 CreateConVar("arccw_malfunction", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 2)
+
+-- developer stuff
+CreateConVar("arccw_reloadatts_mapcleanup", 0, 0, "Whether to reload ArcCW attachments on admin clean up.")
+CreateConVar("arccw_reloadatts_registerentities", 1, 0, "Register attachment entities. This may increase time to reload attachments.")
+CreateConVar("arccw_reloadatts_showignored", 0, 0, "Whether to include attachments set to Ignore.")
+CreateConVar("arccw_dev_debug", 0, 0, "Developer debug HUD showing cool time shit.", 0, 1)
+CreateConVar("arccw_dev_shootinfo", 0, 0, "Show debug overlay firing information. Only works when developer is set to 1.", 0, 3)
+CreateConVar("arccw_dev_cust2beta", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Use the new beta customize hud.", 0, 1)
