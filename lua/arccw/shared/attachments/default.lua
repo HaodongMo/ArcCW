@@ -1,4 +1,5 @@
 att.PrintName = ""
+att.AbbrevName = "" -- Shown in lists, cust2 only
 att.Icon = nil
 att.Description = ""
 att.Desc_Pros = {}

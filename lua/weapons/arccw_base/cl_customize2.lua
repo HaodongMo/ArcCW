@@ -602,8 +602,10 @@ function SWEP:CreateCustomize2HUD()
                     buffer = amt_w + (ss * 6)
                 end
 
-                local txt = atttbl.PrintName or ""
-                txt = translate("name." .. self2.att) or translate(txt) or txt
+                local txt = translate("name." .. self2.att .. ".short") or atttbl.AbbrevName
+                if !txt then
+                    txt = translate("name." .. self2.att) or atttbl.PrintName
+                end
 
                 surface.SetTextColor(col2)
                 surface.SetTextPos(icon_h + ss * 4, ss * 2)
@@ -935,8 +937,10 @@ function SWEP:CreateCustomize2HUD()
                     buffer = amt_w + (ss * 6)
                 end
 
-                local txt = atttbl.PrintName or ""
-                txt = translate("name." .. self2.att) or translate(txt) or txt
+                local txt = translate("name." .. self2.att .. ".short") or atttbl.AbbrevName
+                if !txt then
+                    txt = translate("name." .. self2.att) or atttbl.PrintName
+                end
 
                 surface.SetTextColor(col2)
                 surface.SetTextPos(icon_h + ss * 4, ss * 2)
@@ -1044,7 +1048,10 @@ function SWEP:CreateCustomize2HUD()
                 local atttbl = ArcCW.AttachmentTable[installed or ""]
 
                 if atttbl then
-                    att_txt = translate("name." .. installed) or atttbl.PrintName
+                    att_txt = translate("name." .. installed .. ".short") or atttbl.AbbrevName
+                    if !att_txt then
+                        att_txt = translate("name." .. installed) or atttbl.PrintName
+                    end
                     att_icon = atttbl and atttbl.Icon
                     if !att_icon or att_icon:IsError() then att_icon = bird end
                 end
