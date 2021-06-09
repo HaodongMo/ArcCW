@@ -193,7 +193,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
     local dmgboth = att.Mult_DamageMin and att.Mult_Damage and att.Mult_DamageMin == att.Mult_Damage
 
     for i, stat in pairs(ArcCW.AutoStats) do
-        if !att[i] then continue end
+        if !att[i] or att[i .. "_SkipAS"] then continue end
 
         -- Legacy support: If "Increased/Decreased magazine capacity" line exists, don't do our autostats version
         if hasmaginfo and i == "Override_ClipSize" then continue end
