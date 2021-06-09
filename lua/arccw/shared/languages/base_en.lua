@@ -302,6 +302,9 @@ L["ui.nodata"] = "No Data"
 L["ui.createpreset"] = "Create..."
 L["ui.deletepreset"] = "Delete..."
 
+--2021-06-09 nice
+L["autostat.clipsize"] = "%d-Round magazine capacity"
+
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 Similarly, you can translate attachment and weapon names with ["name.class_name"]

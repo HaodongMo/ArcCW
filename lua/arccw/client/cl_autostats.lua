@@ -2,6 +2,7 @@ local tbl     = table
 local tbl_add = tbl.Add
 local tbl_ins = tbl.insert
 local tostr   = tostring
+local translate = ArcCW.GetTranslation
 
 -- ["buff"] = {"desc", string mode (mult, add, override, func), bool lowerbetter or function(val)}
 
@@ -53,8 +54,17 @@ ArcCW.AutoStats = {
     ["Mult_HeatDelayTime"]    = { "autostat.heatdelay",   "mult", true },
     ["Mult_MalfunctionMean"]  = { "autostat.malfunctionmean", "mult", false},
 
-    ["Override_Ammo"] = {"autostat.ammotype", "func", function(val)
-        return string.format(ArcCW.GetTranslation("autostat.ammotype"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
+    ["Override_Ammo"] = {"autostat.ammotype", "func", function(wep, val)
+        if IsValid(wep) and wep.Primary and wep.Primary.Ammo == val then return end
+        return string.format(translate("autostat.ammotype"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
+    end},
+    ["Override_ClipSize"] = {"autostat.clipsize", "func", function(wep, val)
+        local ogclip = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 0)
+        if ogclip < val then
+            return string.format(translate("autostat.clipsize"), val), "pros"
+        else
+            return string.format(translate("autostat.clipsize"), val), "cons"
+        end
     end},
 }
 
@@ -66,7 +76,7 @@ local function getsimpleamt(stat)
     end
 end
 
-local function stattext(i, k, dmgboth)
+local function stattext(wep, i, k, dmgboth)
     if !ArcCW.AutoStats[i] then return end
     if i == "Mult_DamageMin" and dmgboth then return end
 
@@ -93,12 +103,12 @@ local function stattext(i, k, dmgboth)
     elseif stat[2] == "override" and k == true then
         return str, tcon
     elseif stat[2] == "func" then
-        local a, b = stat[3](k)
+        local a, b = stat[3](wep, k)
         if a and b then return a, b end
     end
 end
 
-function ArcCW:GetProsCons(att, toggle)
+function ArcCW:GetProsCons(wep, att, toggle)
     local pros = {}
     local cons = {}
     local infos = {}
@@ -107,9 +117,19 @@ function ArcCW:GetProsCons(att, toggle)
     tbl_add(cons, att.Desc_Cons or {})
     tbl_add(infos, att.Desc_Neutrals or {})
 
-    -- Localize pro and con text
-    for i, v in pairs(pros) do pros[i] = ArcCW.TryTranslation(v) end
-    for i, v in pairs(cons) do cons[i] = ArcCW.TryTranslation(v) end
+    local override = hook.Run("ArcCW_PreAutoStats", pros, cons, infos)
+    if override then return pros, cons, infos end
+
+    -- Localize attachment-specific text
+    local hasmaginfo = false
+    for i, v in pairs(pros) do
+        if v == "pro.magcap" then hasmaginfo = true end
+        pros[i] = ArcCW.TryTranslation(v)
+    end
+    for i, v in pairs(cons) do
+        if v == "con.magcap" then hasmaginfo = true end
+        cons[i] = ArcCW.TryTranslation(v)
+    end
     for i, v in pairs(infos) do infos[i] = ArcCW.TryTranslation(v) end
 
     if !att.AutoStats then return pros, cons, infos end
@@ -121,7 +141,7 @@ function ArcCW:GetProsCons(att, toggle)
 
             local dmgboth = toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage
             for i, k in pairs(toggletbl) do
-                local txt, typ = stattext(i, k, dmgboth)
+                local txt, typ = stattext(wep, i, k, dmgboth)
                 if !txt then continue end
 
                 local stat = ArcCW.AutoStats[i]
@@ -175,7 +195,10 @@ function ArcCW:GetProsCons(att, toggle)
     for i, stat in pairs(ArcCW.AutoStats) do
         if !att[i] then continue end
 
-        local txt, typ = stattext(i, att[i], dmgboth)
+        -- Legacy support: If "Increased/Decreased magazine capacity" line exists, don't do our autostats version
+        if hasmaginfo and i == "Override_ClipSize" then continue end
+
+        local txt, typ = stattext(wep, i, att[i], dmgboth)
         if !txt then continue end
 
         if typ == "pros" then
@@ -215,6 +238,8 @@ function ArcCW:GetProsCons(att, toggle)
         end
         ]]
     end
+
+    hook.Run("ArcCW_PostAutoStats", pros, cons, infos)
 
     return pros, cons, infos
 end

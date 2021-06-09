@@ -771,7 +771,7 @@ function SWEP:CreateCustomizeHUD()
 
         local neutrals = atttbl.Desc_Neutrals or {}
 
-        local pros, cons = ArcCW:GetProsCons(atttbl, self.Attachments[slot].ToggleNum)
+        local pros, cons = ArcCW:GetProsCons(self, atttbl, self.Attachments[slot].ToggleNum)
 
         if (pros and #pros or 0) > 0 then
 

@@ -1386,8 +1386,8 @@ function SWEP:CreateCustomize2HUD()
         end
         scroll_bar_pros.btnGrip.Paint = PaintScrollBar
 
-        -- It's kind of weird to have some stats disappear depending on state
-        local pros, cons, infos = ArcCW:GetProsCons(atttbl) -- self.Attachments[slot].ToggleNum
+        -- Don't have stats disappear due to toggle state
+        local pros, cons, infos = ArcCW:GetProsCons(self, atttbl) -- self.Attachments[slot].ToggleNum
 
         pros = pros or {}
         cons = cons or {}
