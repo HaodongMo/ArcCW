@@ -265,9 +265,10 @@ function SWEP:CloseCustomizeHUD( hide )
     end
 end
 
-local defaultatticon = Material("arccw/hud/atts/default.png", "mips")
-local blockedatticon = Material("arccw/hud/atts/blocked.png", "mips")
+local defaultatticon = Material("arccw/hud/atts/default.png", "smooth mips")
+local blockedatticon = Material("arccw/hud/atts/blocked.png", "smooth mips")
 local activeslot = nil
+local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
 
 SWEP.InAttMenu = false
 
@@ -743,6 +744,7 @@ function SWEP:CreateCustomizeHUD()
             triv_pic:SetText("")
             triv_pic.Paint = function(span, w, h)
                 local img = atttbl.Icon or defaultatticon
+                if !img or img:IsError() then img = bird end
 
                 surface.SetDrawColor(fg_col)
                 surface.SetMaterial(img)
@@ -1146,8 +1148,14 @@ function SWEP:CreateCustomizeHUD()
 
                     -- surface.DrawText(txt)
 
+                    local icon = k.DefaultAttIcon or defaultatticon
+                    if atttbl then
+                        icon = atttbl.Icon
+                    end
+                    if (!icon or icon:IsError()) then icon = bird end
+
                     surface.SetDrawColor(Bfg_col)
-                    surface.SetMaterial(atttbl.Icon or k.DefaultAttIcon or defaultatticon)
+                    surface.SetMaterial(icon)
                     surface.DrawTexturedRect(h / 4, 0, h, h)
 
                     if blocked then
@@ -1263,6 +1271,7 @@ function SWEP:CreateCustomizeHUD()
 
                     if atttbl.Icon then
                         att_icon = atttbl.Icon
+                        if (!att_icon or att_icon:IsError()) then att_icon = bird end
                     end
                 end
             end
@@ -1298,6 +1307,7 @@ function SWEP:CreateCustomizeHUD()
 
                     if atttbl.Icon then
                         att_icon = atttbl.Icon
+                        if (!att_icon or att_icon:IsError()) then att_icon = bird end
                     end
                 end
 
