@@ -14,18 +14,8 @@ function ArcCW.Move(ply, mv, cmd)
     local basespd = (Vector(cmd:GetForwardMove(), cmd:GetUpMove(), cmd:GetSideMove())):Length()
     basespd = math.min(basespd, mv:GetMaxClientSpeed())
 
-    local shootmove = wpn:GetBuff("ShootSpeedMult")
-
-    local delta = 0 -- how close should we be to the shoot speed mult
+    local shotdelta = 0 -- how close should we be to the shoot speed mult
     local shottime = wpn:GetNextPrimaryFireSlowdown() - CurTime()
-
-    if shottime > 0 then -- apply full shoot move speed
-        delta = 1
-    else -- apply partial shoot move speed
-        local delay = wpn:GetFiringDelay()
-        local aftershottime = shottime / delay
-        delta = math.Clamp(aftershottime, 0, 1)
-    end
 
     local blocksprint = false
 
@@ -49,7 +39,17 @@ function ArcCW.Move(ply, mv, cmd)
         s = 0.0001
     end
 
-    s = s * Lerp(delta, 1, shootmove)
+    if shottime > 0 then
+        -- full slowdown for duration of firing
+        shotdelta = 1
+    else
+        -- recover from firing slowdown after shadow duration
+        local delay = wpn:GetFiringDelay()
+        local aftershottime = -shottime / delay
+        shotdelta = math.Clamp(1 - aftershottime, 0, 1)
+    end
+    local shootmove = math.Clamp(wpn:GetBuff("ShootSpeedMult"), 0.0001, 1)
+    s = s * Lerp(shotdelta, 1, shootmove)
 
     mv:SetMaxSpeed(basespd * s)
     mv:SetMaxClientSpeed(basespd * s)
