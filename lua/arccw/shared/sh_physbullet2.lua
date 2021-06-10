@@ -74,8 +74,8 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         bullet.DamageMin = bullet.DamageMin * GetConVar("arccw_mult_npcdamage"):GetFloat()
     end
 
-    if owner and owner:IsPlayer() and owner:GetVehicle() then
-        table.Add(bullet.Filter, {owner:GetVehicle()})
+    if SERVER and owner and owner:IsPlayer() then
+        table.Add(bullet.Filter, ArcCW:GetVehicleFilter(owner) or {})
     end
 
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then

@@ -69,6 +69,8 @@ CreateConVar("arccw_doorbust", 0, FCVAR_ARCHIVE, "Whether to allow door busting.
 CreateConVar("arccw_doorbust_threshold", 80, FCVAR_ARCHIVE, "The amount of damage needed to bust a normal sized door.")
 CreateConVar("arccw_doorbust_time", 180, FCVAR_ARCHIVE, "The amount of time to keep the door busted by.", 1)
 
+CreateConVar("arccw_driveby", 1, FCVAR_ARCHIVE, "Enable special checks that allow you to fire out of vehicles (assuming some vehicle weaponizer addon exists).", 0, 1)
+
 CreateConVar("arccw_clicktocycle", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether to make it so left clicking after shooting cycles instead of on mouse release.")
 CreateConVar("arccw_throwinertia", 1, FCVAR_ARCHIVE, "Set to make throwable equipment inherit the player's velocity.", 0, 1)
 

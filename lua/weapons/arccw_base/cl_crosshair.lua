@@ -82,7 +82,7 @@ function SWEP:DoDrawCrosshair(x, y)
 
     local sp
     if self:GetOwner():ShouldDrawLocalPlayer() then
-        local tr = util.GetPlayerTrace( self:GetOwner() )
+        local tr = util.GetPlayerTrace(self:GetOwner())
         local trace = util.TraceLine( tr )
 
         cam.Start3D()
@@ -102,17 +102,10 @@ function SWEP:DoDrawCrosshair(x, y)
     end
 
     aimtr.endpos = aimtr.start + (ply:GetAimVector() * 100000)
-    aimtr.filter = {self:GetOwner()}
+    aimtr.filter = {ply}
     aimtr.output = aimtr_result
 
-    local veh = self:GetOwner():GetVehicle()
-
-    if veh:IsValid() then
-        local va = veh:GetAngles()
-        -- va.p = -va.p * 2
-        aimtr.endpos = aimtr.start + (ply:EyeAngles() + va):Forward() * 100000
-        table.Add(aimtr.filter, {veh})
-    end
+    table.Add(aimtr.filter, ArcCW:GetVehicleFilter(ply) or {})
 
     util.TraceLine(aimtr)
 

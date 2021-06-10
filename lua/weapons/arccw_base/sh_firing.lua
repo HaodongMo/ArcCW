@@ -184,6 +184,9 @@ function SWEP:PrimaryAttack()
     local dmgtable = self.BodyDamageMults
     dmgtable = self:GetBuff_Override("Override_BodyDamageMults") or dmgtable
 
+    -- drive by is cool
+    src = ArcCW:GetVehicleFireTrace(self:GetOwner(), src, dir) or src
+
     local bullet      = {}
     bullet.Attacker   = owner
     bullet.Dir        = dir

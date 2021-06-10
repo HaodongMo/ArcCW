@@ -861,11 +861,15 @@ function SWEP:IsProne()
 end
 
 function SWEP:BarrelHitWall()
-    if self.BarrelLength != 0 and GetConVar("arccw_override_nearwall"):GetBool() then
+    if self.BarrelLength > 0 and GetConVar("arccw_override_nearwall"):GetBool() then
         local offset = self.BarrelOffsetHip
 
         if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
             return 0 -- Never block barrel in VR
+        end
+
+        if self:GetOwner():IsPlayer() and self:GetOwner():InVehicle() then
+            return 0
         end
 
         if self:GetState() == ArcCW.STATE_SIGHTS then
@@ -892,7 +896,7 @@ function SWEP:BarrelHitWall()
             mask = mask
         })
 
-        if tr.Hit and not tr.Entity.ArcCWProjectile then
+        if tr.Hit and !tr.Entity.ArcCWProjectile then
             local l = (tr.HitPos - src):Length()
             l = l
             return 1 - math.Clamp(l / (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength")), 0, 1)
