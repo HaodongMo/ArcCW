@@ -473,6 +473,7 @@ att.Mult_DamageNPC = 1 -- damage WHEN USED BY NPCS not when used against them
 att.Mult_Range = 1
 att.Mult_Penetration = 1
 att.Override_DamageType = nil
+att.Override_DamageTypeHandled = nil
 att.Override_ShootEntity = nil
 att.Mult_MuzzleVelocity = 1
 

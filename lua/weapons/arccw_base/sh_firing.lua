@@ -233,7 +233,7 @@ function SWEP:PrimaryAttack()
         hit.dmg     = dmg
         hit.range   = dist
         hit.damage  = self:GetDamage(dist, true) * mul
-        hit.dmgtype = self:GetBuff_Override("Override_DamageType") or self.DamageType
+        hit.dmgtype = self:GetBuff_Override("Override_DamageType", self.DamageType)
         hit.penleft = pen
 
         hit = self:GetBuff_Hook("Hook_BulletHit", hit)
@@ -242,29 +242,6 @@ function SWEP:PrimaryAttack()
 
         dmg:SetDamageType(hit.dmgtype)
         dmg:SetDamage(hit.damage)
-
-        local effect = self.ImpactEffect
-        local decal  = self.ImpactDecal
-
-        if dmg:IsDamageType(DMG_BURN) and hit.range <= self.Range then
-            dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
-
-            effect = "arccw_incendiaryround"
-            decal  = "FadingScorch"
-
-            if SERVER then
-                if vFireInstalled then
-                    CreateVFire(trent, hitpos, hitnormal, hit.damage * 0.02)
-                else
-                    trent:Ignite(1, 0)
-                end
-            end
-        end
-
-        if dmg:IsDamageType(DMG_BULLET) and !dmg:IsDamageType(DMG_AIRBOAT) and hit.tr.Entity and hit.tr.Entity:GetClass() == "npc_helicopter" then
-            dmg:SetDamageType(dmg:GetDamageType() + DMG_AIRBOAT)
-            dmg:ScaleDamage(1 / 10) -- coostimizable?
-        end
 
         if dmgtable then
             local hg = tr.HitGroup
@@ -277,17 +254,61 @@ function SWEP:PrimaryAttack()
             if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
         end
 
+        local effect = self:GetBuff_Override("Override_ImpactEffect", self.ImpactEffect)
+        local decal  = self:GetBuff_Override("Override_ImpactDecal", self.ImpactDecal)
+
+        -- Do our handling of damage types, if not ignored by the gun or some attachment
+        if !self:GetBuff_Override("Override_DamageTypeHandled", self.DamageTypeHandled) then
+            local _, maxrng = self:GetMinMaxRange()
+            -- ignite target
+            if dmg:IsDamageType(DMG_BURN) and hit.range <= maxrng then
+                dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
+
+                effect = "arccw_incendiaryround"
+                decal  = "FadingScorch"
+
+                if SERVER then
+                    if vFireInstalled then
+                        CreateVFire(trent, hitpos, hitnormal, hit.damage * 0.02)
+                    else
+                        trent:Ignite(1, 0)
+                    end
+                end
+            end
+            -- explode target
+            if dmg:IsDamageType(DMG_BLAST) then
+                if dmg:GetDamage() >= 200 then
+                    effect = "Explosion"
+                    decal  = "Scorch"
+                else
+                    effect = "arccw_incendiaryround"
+                    decal  = "FadingScorch"
+                end
+                dmg:ScaleDamage(0.5) -- half applied as explosion and half done to hit target
+                util.BlastDamageInfo(dmg, tr.HitPos, math.Clamp(dmg:GetDamage(), 48, 256))
+                dmg:SetDamageType(dmg:GetDamageType() - DMG_BLAST)
+            end
+            -- damage helicopters
+            if dmg:IsDamageType(DMG_BULLET) and !dmg:IsDamageType(DMG_AIRBOAT)
+                    and IsValid(hit.tr.Entity) and hit.tr.Entity:GetClass() == "npc_helicopter" then
+                dmg:SetDamageType(dmg:GetDamageType() + DMG_AIRBOAT)
+                dmg:ScaleDamage(1 / 10) -- coostimizable?
+            end
+            -- pure DMG_BUCKSHOT do not create blood decals, somehow
+            if dmg:GetDamageType() == DMG_BUCKSHOT then
+                dmg:SetDamageType(dmg:GetDamageType() + DMG_BULLET)
+            end
+        end
+
         if SERVER then self:TryBustDoor(trent, dmg) end
 
         self:DoPenetration(tr, hit.penleft, { [trent:EntIndex()] = true })
 
         effect = self:GetBuff_Override("Override_ImpactEffect") or effect
-
         if effect then
             local ed = EffectData()
             ed:SetOrigin(hitpos)
             ed:SetNormal(hitnormal)
-
             util.Effect(effect, ed)
         end
 
@@ -522,7 +543,7 @@ function SWEP:DoPrimaryFire(isent, data)
         if !self:GetOwner():IsPlayer() then
             clip = math.huge
         else
-            clip = self:Ammo1() 
+            clip = self:Ammo1()
         end
     end
     local owner = self:GetOwner()
@@ -559,12 +580,12 @@ function SWEP:DoPrimaryFire(isent, data)
         else
             if owner:IsPlayer() then
                 owner:LagCompensation(true)
-                if SERVER and !game.SinglePlayer() then SuppressHostEvents(owner) end
+                --if SERVER and !game.SinglePlayer() then SuppressHostEvents(owner) end
             end
-            owner:FireBullets(data)
+            owner:FireBullets(data, true)
             if owner:IsPlayer() then
                 owner:LagCompensation(false)
-                if SERVER and !game.SinglePlayer() then SuppressHostEvents(nil) end
+                --if SERVER and !game.SinglePlayer() then SuppressHostEvents(nil) end
             end
         end
     end

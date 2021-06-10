@@ -53,9 +53,11 @@ SWEP.RangeMin = 0 -- how far bullets will retain their maximum damage for
 SWEP.Range = 200 -- in METRES
 SWEP.Penetration = 4
 SWEP.DamageType = DMG_BULLET
+SWEP.DamageTypeHandled = false -- set to true to have the base not do anything with damage types
+-- this includes: igniting if type has DMG_BURN; adding DMG_AIRBOAT when hitting helicopter; adding DMG_BULLET to DMG_BUCKSHOT
+
 SWEP.ShootEntity = nil -- entity to fire, if any
-SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity
--- IN M/S
+SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity in m/s
 SWEP.PhysBulletMuzzleVelocity = nil -- override phys bullet muzzle velocity
 SWEP.PhysBulletDrag = 1
 SWEP.PhysBulletGravity = 1
