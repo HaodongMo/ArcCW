@@ -1,8 +1,8 @@
-# ArcCW - Arctic's Customizable Weaponry
+# ArcCW - Arctic's Customizable Weapons
 
 Welcome to the ArcCW GitHub page!
 
-You are free to contribute by sending pull requests.
+You are free to contribute by sending pull requests. For bug reports, please create an issue in this repo or reach out on Discord.
 
 ## Style Guide:
  - 4-space indents
@@ -13,7 +13,9 @@ You are free to contribute by sending pull requests.
  - Use fptje's Glualint -> https://fptje.github.io/glualint-web/ <- to detect other style issues. Basically I don't like when my glualint has lots of yellow squiggly lines on it.
 
 ## Additional Links
-We have a [Trello](https://trello.com/b/T4E9Fj8u/arccw-base) page.
+[Official Discord](https://discord.gg/gaHXusZ)
+
+[Feature Tracker (Trello)](https://trello.com/b/T4E9Fj8u/arccw-base)
 
 Weapon/attachment/translation author? Check these out for more info.
 - Refer to this for SWEP parameters: https://github.com/HaodongMo/ArcCW/blob/master/lua/weapons/arccw_base/shared.lua
