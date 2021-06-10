@@ -26,11 +26,11 @@ function SWEP:Think()
         end
     end
 
-    if CLIENT and (!game.SinglePlayer() and IsFirstTimePredicted() or true) then
-        if self:GetOwner() == LocalPlayer() and ArcCW.InvHUD and !ArcCW.Inv_Hidden and ArcCW.Inv_Fade == 0 then
-            ArcCW.InvHUD:Remove()
-            ArcCW.Inv_Fade = 0.01
-        end
+    if CLIENT and (!game.SinglePlayer() and IsFirstTimePredicted() or true)
+            and self:GetOwner() == LocalPlayer() and ArcCW.InvHUD
+            and !ArcCW.Inv_Hidden and ArcCW.Inv_Fade == 0 then
+        ArcCW.InvHUD:Remove()
+        ArcCW.Inv_Fade = 0.01
     end
 
     local vm = owner:GetViewModel()
@@ -300,7 +300,8 @@ function SWEP:Think()
     --end
 
     -- Only reset to idle if we don't need cycle. empty idle animation usually doesn't play nice
-    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle() and self:GetHolster_Time() == 0 and self:GetShotgunReloading() == 0 then
+    if self:GetNextIdle() != 0 and self:GetNextIdle() <= CurTime() and !self:GetNeedCycle()
+            and self:GetHolster_Time() == 0 and self:GetShotgunReloading() == 0 then
         self:SetNextIdle(0)
         self:PlayIdleAnimation(true)
     end

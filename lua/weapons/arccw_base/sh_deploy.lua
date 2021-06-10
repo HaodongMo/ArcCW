@@ -212,6 +212,7 @@ function SWEP:Initialize()
 end
 
 function SWEP:Holster(wep)
+    if !IsFirstTimePredicted() then return end
     if self:GetOwner():IsNPC() then return end
 
     if CLIENT and self:GetOwner() == LocalPlayer() and ArcCW.InvHUD then ArcCW.InvHUD:Remove() end
@@ -250,8 +251,8 @@ function SWEP:Holster(wep)
         local time = 0.25
         local anim = self:SelectAnimation("holster")
         if anim then
+            time = self:GetAnimKeyTime(anim)
             self:PlayAnimation(anim, self:GetBuff_Mult("Mult_DrawTime"), true, nil, nil, nil, true)
-            local time = self:GetAnimKeyTime(anim)
             self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         else
             self:ProceduralHolster()
@@ -288,8 +289,8 @@ function SWEP:FinishHolster()
                 vm:SetBodygroup(i, 0)
             end
             vm:SetSkin(0)
+            vm:SetPlaybackRate(1)
         end
-        vm:SetPlaybackRate(1)
 
         if self.Disposable and self:Clip1() == 0 and self:Ammo1() == 0 then
             self:GetOwner():StripWeapon(self:GetClass())
