@@ -6,7 +6,9 @@ function ArcCW:GetVehicleFilter(ply)
     local veh = ply:GetVehicle()
 
     if simfphys then
-        local car = ply:GetSimfphys()
+        -- gredwitch, why do you think it's a good idea to create the simfphys table yourself???
+        -- people might need to do dependency checks, you know
+        local car = ply.GetSimfphys and ply:GetSimfphys()
         if IsValid(car) then
             table.insert(tbl, car)
             if SERVER then
