@@ -1218,7 +1218,7 @@ function SWEP:CreateCustomize2HUD()
         local m_w = menu3_w * 0.75
         local leftbuffer = 0
 
-        if equipped and self.Attachments[slot].SlideAmount then
+        if equipped and self.Attachments[slot].SlideAmount and !atttbl.MountPositionOverride then
             local slider = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
 
             slider:SetSize(m_w * 2 / 3, rss * 10)
@@ -1255,7 +1255,7 @@ function SWEP:CreateCustomize2HUD()
 
                     if self.Attachments[slot].SlidePos != delta and self2.NextDrag <= CurTime() then
                         -- local amt = math.abs(self.Attachments[slot].SlidePos - delta)
-                        EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
+                        EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(90+(delta * 20), 90, 110))
                         self2.NextDrag = CurTime() + 0.05
                     end
 
