@@ -143,10 +143,12 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     if solid then return end
 
-    local width = m_rand(0.05, 0.1) * strength
+    local width = m_rand(0.05, 0.1) * strength * 1
 
     if (!behav or world) and hit then
         SetMat(lasermat)
+        local a = 200
+        DrawBeam(pos, btr.HitPos, width*0.3, 1, 0, Color(a, a, a, a))
         DrawBeam(pos, btr.HitPos, width, 1, 0, color)
     end
 
