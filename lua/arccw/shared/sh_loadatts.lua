@@ -27,7 +27,7 @@ function ArcCW.LoadAttachmentType(att)
         if genAttCvar:GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free then
             local attent = {}
             attent.Base = "arccw_att_base"
-            attent.Icon = att.Icon
+            attent.IconOverride = "!" .. att.Icon:GetName()
             attent.PrintName = att.PrintName or shortname
             attent.Spawnable = att.Spawnable or true
             attent.AdminOnly = att.AdminOnly or false
