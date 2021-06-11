@@ -6,7 +6,7 @@ ENT.PrintName                 = "Shotgun Ammo (Large)"
 ENT.Category                  = "ArcCW - Ammo"
 
 ENT.Spawnable                 = true
-ENT.Model                     = "models/items/arccw/shotgun_ammo.mdl"
+ENT.Model                     = "models/items/arccw/shotgun_ammo_closed.mdl"
 ENT.Scale = 1.5
 
 ENT.AmmoType = "buckshot"

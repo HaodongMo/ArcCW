@@ -7,7 +7,7 @@ ENT.PrintName                 = "Magnum Ammo (Large)"
 ENT.Category                  = "ArcCW - Ammo"
 
 ENT.Spawnable                 = true
-ENT.Model                     = "models/items/arccw/magnum_ammo.mdl"
+ENT.Model                     = "models/items/arccw/magnum_ammo_closed.mdl"
 
 ENT.AmmoType = "357"
 ENT.AmmoCount = 60
