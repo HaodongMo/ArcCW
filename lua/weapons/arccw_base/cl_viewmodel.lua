@@ -483,8 +483,10 @@ function SWEP:GetViewModelPosition(pos, ang)
     self.TheJ = {posa = actual.pos, anga = actual.ang}
 
     pos = pos + math.min(self.RecoilPunchBack, Lerp(self:GetSightDelta(), self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -oldang:Forward()
-    pos = pos + self.RecoilPunchSide * oldang:Right()
-    pos = pos + self.RecoilPunchUp * -oldang:Up()
+    if GetConVar("arccw_shake"):GetBool() then
+        pos = pos + self.RecoilPunchSide * oldang:Right()
+        pos = pos + self.RecoilPunchUp * -oldang:Up()
+    end
     ang:RotateAroundAxis(oldang:Right(), actual.ang.x + (math.Rand(0, 1) * 1 * self.RecoilAmount))
     ang:RotateAroundAxis(oldang:Up(), actual.ang.y + (math.Rand(-1, 1) * 1 * self.RecoilAmountSide))
     ang:RotateAroundAxis(oldang:Forward(), actual.ang.z)

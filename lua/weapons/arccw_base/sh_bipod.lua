@@ -77,7 +77,6 @@ end
 function SWEP:EnterBipod()
     if self:GetInBipod() then return end
     if !self:CanBipod() then return end
-    --if CurTime() < self:GetNextSecondaryFire() then return end
 
     if self.Animations.enter_bipod then
         self:PlayAnimation("enter_bipod")
@@ -90,8 +89,6 @@ function SWEP:EnterBipod()
     self:SetBipodPos(self:GetOwner():EyePos())
     self:SetBipodAngle(self:GetOwner():EyeAngles())
 
-    self:SetNextSecondaryFire(CurTime() + 0.075)
-
     if game.SinglePlayer() and CLIENT then return end
 
     self:MyEmitSound(self.EnterBipodSound)
@@ -100,7 +97,6 @@ end
 
 function SWEP:ExitBipod()
     if !self:GetInBipod() then return end
-    if CurTime() < self:GetNextSecondaryFire() then return end
 
     if self.Animations.exit_bipod then
         self:PlayAnimation("exit_bipod")
@@ -109,11 +105,6 @@ function SWEP:ExitBipod()
     if CLIENT and self:GetBuff_Override("LHIK") then
         self:DoLHIKAnimation("exit", 0.5)
     end
-
-    self:SetNextSecondaryFire(CurTime() + 0.075)
-
-    self:SetBipodPos(Vector(0, 0, 0))
-    self:SetBipodAngle(Angle(0, 0, 0))
 
     if game.SinglePlayer() and CLIENT then return end
 
