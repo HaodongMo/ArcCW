@@ -300,6 +300,36 @@ function SWEP:DrawHUD()
 
         surface.SetTextPos(ecksy, 26 * s*12)
         surface.DrawText("HOLSTER ENT")
+
+        -- lhik timeline
+        surface.SetTextColor(255, 255, 255, 255)
+        surface.SetFont("ArcCW_8")
+        surface.SetDrawColor(255, 255, 255, 11)
+        surface.DrawRect(s*8, s*8, ScrW() - (s*16), s*2)
+
+        local texy = math.Round(CurTime(),1)
+        local a, b = surface.GetTextSize(texy)
+        surface.SetTextPos((ScrW()/2) - (a/2), (s*16) - (b/2))
+        surface.DrawText(texy)
+
+        surface.SetDrawColor(255, 255, 255, 127)
+        if self.LHIKTimeline then for i, v in pairs(self.LHIKTimeline) do
+
+            local pox = ScrW()/2
+            local poy = (s*7)
+
+            local zo = s*0.01
+
+            local dist = self.LHIKStartTime + v.t
+
+            surface.DrawRect(pox + (dist*zo), poy, s*8, s*4)
+
+            texy = math.Round(dist,1)
+            a, b = surface.GetTextSize(texy)
+            surface.SetTextPos(pox + (dist*zo) - (a/2), (s*16) - (b/2) )
+            surface.DrawText(texy)
+        end end
+
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end
@@ -906,11 +936,15 @@ function SWEP:CustomAmmoDisplay()
 
     self.AmmoDisplay.Draw = true -- draw the display?
 
-    if self.Primary.ClipSize > 0 then
-        local plus = data.plus or 0
-        self.AmmoDisplay.PrimaryClip = data.clip + plus -- amount in clip
+    if self.Primary.ClipSize > 0 and tonumber(data.clip) then
+        local plus = tonumber(data.plus) or 0
+        self.AmmoDisplay.PrimaryClip = tonumber(data.clip) + plus -- amount in clip
+    end
+
+    if self.Primary.ClipSize > 0 and tonumber(data.ammo) then
         self.AmmoDisplay.PrimaryAmmo = tonumber(data.ammo) -- amount in reserve
     end
+
     if true then
         local ubglammo = self:GetBuff_Override("UBGL_Ammo")
         if !ubglammo then return end

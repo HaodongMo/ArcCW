@@ -76,8 +76,7 @@ function SWEP:ExitSprint()
     end
 end
 
-SWEP.LastEnterSightTime = 0
-SWEP.LastExitSightTime = 0
+-- defined above already?
 
 function SWEP:EnterSights()
     local asight = self:GetActiveSights()
@@ -98,7 +97,7 @@ function SWEP:EnterSights()
 
     self:MyEmitSound(asight.SwitchToSound or "", 75, math.Rand(95, 105), 0.5, CHAN_AUTO)
 
-    self.LastEnterSightTime = UnPredictedCurTime()
+    --self.LastEnterSightTime = UnPredictedCurTime()
 
     local anim = self:SelectAnimation("enter_sight")
     if anim then
@@ -132,7 +131,7 @@ function SWEP:ExitSights()
 
     self:MyEmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_AUTO)
 
-    self.LastExitSightTime = UnPredictedCurTime()
+    --self.LastExitSightTime = UnPredictedCurTime()
 
     local anim = self:SelectAnimation("exit_sight")
     if anim then
@@ -176,38 +175,14 @@ function SWEP:GetSprintDelta()
     return delta
 end
 
-function SWEP:GetSightDelta()
-    local lst = self.LastExitSightTime
-    local st = self:GetSightTime()
-    local minus = 0
-
+--[[function SWEP:GetSightDelta()
     local ct = UnPredictedCurTime()
-
     if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
         return 0 -- This ensures sights will always draw
     end
 
-    if self:GetState() == ArcCW.STATE_SIGHTS then
-        lst = self.LastEnterSightTime
-        minus = 1
-
-        if ct - lst >= st then
-            return 0
-        end
-    else
-        if ct - lst >= st then
-            return 1
-        end
-    end
-
-    local delta = minus - math.Clamp((ct - lst) / st, 0, 1)
-
-    delta = math.abs(delta)
-
-    --if delta > 0 and delta < 1 then print(delta, UnPredictedCurTime(), CurTime()) end
-
-    return delta
-end
+    return self.jogof
+end]]
 
 SWEP.SightTable = {}
 SWEP.SightMagnifications = {}
@@ -410,7 +385,8 @@ function SWEP:SetupActiveSights()
 
                 evpos = evpos * (k.VMScale or Vector(1, 1, 1))
 
-                if !s.IgnoreExtra then
+                --if !s.IgnoreExtra then
+                if true then -- Always ignore extra. Allow the sight creator to define the distance.
                     evpos = evpos + Vector(0, k.ExtraSightDist or self.ExtraSightDist or 0, 0)
                 end
 
@@ -505,9 +481,11 @@ function SWEP:TranslateFOV(fov)
     local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
+        local sgreloading = (self:GetShotgunReloading() == 2 or self:GetShotgunReloading() == 4)
         fov = 75
         app_vm = irons.ViewModelFOV or 45
-        div = math.max(irons.Magnification * (((self:GetShotgunReloading() == 2 or self:GetShotgunReloading() == 4) or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1), 1)
+        div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
+        div = math.max(div, 1)
     end
 
     -- something about this doesn't work in multiplayer
