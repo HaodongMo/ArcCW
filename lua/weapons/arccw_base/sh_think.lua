@@ -186,6 +186,8 @@ function SWEP:Think()
 
     end
 
+    self:SetSightDelta(math.Approach(self:GetSightDelta(), (self:GetState() == ArcCW.STATE_SIGHTS and 0 or 1), FrameTime()/self:GetSightTime()))
+
     if CLIENT and (game.SinglePlayer() and true or IsFirstTimePredicted()) then
         self:ProcessRecoil()
     end
@@ -328,7 +330,7 @@ function SWEP:ProcessRecoil()
     local rpu = self.RecoilPunchUp
 
     if rpb != 0 then
-        self.RecoilPunchBack = math.Approach(rpb, 0, ft * rpb * 2.5)
+        self.RecoilPunchBack = math.Approach(rpb, 0, ft * rpb * 10)
     end
 
     if rps != 0 then
