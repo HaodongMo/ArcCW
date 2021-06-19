@@ -386,7 +386,7 @@ function SWEP:SetupActiveSights()
                 evpos = evpos * (k.VMScale or Vector(1, 1, 1))
 
                 --if !s.IgnoreExtra then
-                if true then -- Always ignore extra. Allow the sight creator to define the distance.
+                if false then -- Always ignore extra. Allow the sight creator to define the distance.
                     evpos = evpos + Vector(0, k.ExtraSightDist or self.ExtraSightDist or 0, 0)
                 end
 
