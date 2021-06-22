@@ -47,6 +47,7 @@ end
 
 function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
+    if self:GetReloading() then ic = false end
 
     if ic then
         if (self:GetNextPrimaryFire() + 0.1) >= CurTime() then return end
@@ -221,6 +222,7 @@ function SWEP:ValidateAttachment(attname, attslot, i)
 end
 
 function SWEP:OpenCustomizeHUD()
+    if self:GetReloading() then return end
     if IsValid(ArcCW.InvHUD) then
         ArcCW.InvHUD:Show()
         -- ArcCW.InvHUD:RequestFocus()

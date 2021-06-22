@@ -21,8 +21,9 @@ end
 
 function SWEP:LoadPreset(filename)
     filename = filename or "autosave"
-    if !GetConVar("arccw_autosave"):GetBool() and filename == "autosave" then
-        return
+    if filename == "autosave" then
+        if self:GetNWBool("ArcCW_DisableAutosave", false) then return end
+        if !GetConVar("arccw_autosave"):GetBool() then return end
     end
 
     if filename != "autosave" then
