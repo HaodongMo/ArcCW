@@ -245,6 +245,9 @@ function SWEP:DrawHUD()
         surface.DrawOutlinedRect(ecksy, 26 * s*10, s*64, s*4, s/2)
         surface.DrawRect(ecksy, 26 * s*10+s*1, s*64*self:GetSightDelta(), s*4-s*2)
 
+        surface.DrawOutlinedRect(ecksy, 26 * s*10.25, s*64, s*4, s/2)
+        surface.DrawRect(ecksy, 26 * s*10.25+s*1, s*64*self:GetSprintDelta(), s*4-s*2)
+
         
         surface.SetTextPos(ecksy, 26 * s*11)
         surface.DrawText( mr(self:GetHolster_Time(), 1) )

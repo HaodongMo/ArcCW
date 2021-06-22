@@ -786,6 +786,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 5, "NextIdle")
     self:NetworkVar("Float", 6, "Holster_Time")
     self:NetworkVar("Float", 7, "SightDelta")
+    self:NetworkVar("Float", 8, "SprintDelta")
 
     self:NetworkVar("Vector", 0, "BipodPos")
 

@@ -110,14 +110,6 @@ function SWEP:Think()
         end
     end
 
-    if IsFirstTimePredicted() then
-        if self:InSprint() and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT) then
-            self:EnterSprint()
-        elseif !self:InSprint() and (self.Sprinted or self:GetState() == ArcCW.STATE_SPRINT) then
-            self:ExitSprint()
-        end
-    end
-
     if owner and owner:GetInfoNum("arccw_automaticreload", 0) == 1 and self:Clip1() == 0 and !self:GetReloading() and CurTime() > self:GetNextPrimaryFire() + 0.2 then
         self:Reload()
     end
@@ -186,7 +178,16 @@ function SWEP:Think()
 
     end
 
+    if (!game.SinglePlayer() and IsFirstTimePredicted()) or (game.SinglePlayer() and true) then 
+        if self:InSprint() and (self:GetState() != ArcCW.STATE_SPRINT) then
+            self:EnterSprint()
+        elseif !self:InSprint() and (self:GetState() == ArcCW.STATE_SPRINT) then
+            self:ExitSprint()
+        end
+    end
+
     self:SetSightDelta(math.Approach(self:GetSightDelta(), (self:GetState() == ArcCW.STATE_SIGHTS and 0 or 1), FrameTime()/self:GetSightTime()))
+    self:SetSprintDelta(math.Approach(self:GetSprintDelta(), (self:GetState() == ArcCW.STATE_SPRINT and 1 or 0), FrameTime()/self:GetSprintTime()))
 
     if CLIENT and (game.SinglePlayer() and true or IsFirstTimePredicted()) then
         self:ProcessRecoil()
