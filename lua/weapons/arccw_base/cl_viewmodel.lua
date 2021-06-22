@@ -333,6 +333,9 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos = f_lerp(sd, target.pos, aaaapos)
         target.ang = f_lerp(sd, target.ang, aaaaang)
 
+        target.sway = target.sway * f_lerp(sd, 1, 2)
+        target.bob = target.bob * f_lerp(sd, 1, 2)
+
         --[[if ang.p < -15 then
             target.ang.p = target.ang.p + ang.p + 15
         end
@@ -360,8 +363,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.evpos = f_lerp(delta, irons.EVPos or Vector(), Vector(0, 0, 0))
         target.evang = f_lerp(delta, irons.EVAng or Angle(), Angle(0, 0, 0))
         target.down = 0
-        target.sway = f_lerp(delta, 0.1, 1)
-        target.bob = f_lerp(delta, 0.1, 1)
+        target.sway = target.sway * f_lerp(delta, 0.1, 1)
+        target.bob = target.bob * f_lerp(delta, 0.1, 1)
 
         -- wtf is this?
         local sightroll = self:GetBuff_Override("Override_AddSightRoll")
