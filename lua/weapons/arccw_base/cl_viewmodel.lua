@@ -79,8 +79,10 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     local VMPosOffset_Lerp, VMAngOffset_Lerp = self.VMPosOffset_Lerp, self.VMAngOffset_Lerp
     velocity = math.min(velocity:Length(), 400)
 
-    if self:GetState() == ArcCW.STATE_SPRINT then
-        velocity = velocity * 1.25
+    if self:GetState() == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint") then
+        velocity = 0
+    else
+        velocity = velocity * Lerp(self:GetSprintDelta(), 1, 1.25)
     end
 
     local delta = math.abs(self.StepBob * 2 / (stepend) - 1)
@@ -102,9 +104,15 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     end
 
     if onground then
-        VMPosOffset.x = (math.sin(self.StepBob) * velocity * 0.000375 * sightedmult * swayxmult) * self.StepRandomX
-        VMPosOffset.y = (math.sin(self.StepBob * 0.5) * velocity * 0.0005 * sightedmult * sprintmult * swayymult) * self.StepRandomY
-        VMPosOffset.z = math.sin(self.StepBob * 0.75) * velocity * 0.002 * sightedmult * swayzmult
+        -- oh no it says sex tra
+        local sextra = Vector()
+        if (self:GetState() == ArcCW.STATE_SPRINT and !self:SelectAnimation("idle_sprint")) or true then
+            sextra = LerpVector(self:GetSprintDelta(), vector_origin, Vector(0.001, 0.0001, 0.005))
+        end
+
+        VMPosOffset.x = (math.sin(self.StepBob) * velocity * (0.000375 + sextra.x) * sightedmult * swayxmult) * self.StepRandomX
+        VMPosOffset.y = (math.sin(self.StepBob * 0.5) * velocity * (0.0005 + sextra.y) * sightedmult * sprintmult * swayymult) * self.StepRandomY
+        VMPosOffset.z = math.sin(self.StepBob * 0.75) * velocity * (0.002 + sextra.z) * sightedmult * swayzmult
     end
 
     VMPosOffset_Lerp.x = Lerp(16 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
@@ -307,26 +315,31 @@ function SWEP:GetViewModelPosition(pos, ang)
         if self.InAttMenu then
             target.ang = target.ang + Angle(0, -5, 0)
         end
-    elseif (sprinted and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint)) or holstered then
-        target.pos = Vector()
-        target.ang = Angle()
-        target.down = 1
-        target.sway = GetConVar("arccw_vm_sway_sprint"):GetInt()
-        target.bob = GetConVar("arccw_vm_bob_sprint"):GetInt()
+    end
+
+    -- Sprinting
+    do
         local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
         local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
-        target.pos:Set(holstered and (hpos or spos) or (spos or hpos))
-        target.pos = target.pos + Vector(vm_right, vm_forward, vm_up)
-        target.ang:Set(holstered and (hang or sang) or (sang or hang))
+        local aaaapos = holstered and (hpos or spos) or (spos or hpos)
+        local aaaaang = holstered and (hang or sang) or (sang or hang)
 
-        if ang.p < -15 then
+        local sd = (holstered and 1) or (!(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) and self:GetSprintDelta()) or 0
+        target.pos = f_lerp(sd, target.pos, aaaapos)
+        target.ang = f_lerp(sd, target.ang, aaaaang)
+
+        target.sway = target.sway * f_lerp(sd, 1, 2)
+        target.bob = target.bob * f_lerp(sd, 1, 2)
+
+        --[[if ang.p < -15 then
             target.ang.p = target.ang.p + ang.p + 15
         end
+        target.ang.p = m_clamp(target.ang.p, -80, 80)]]
+    end
 
-        target.ang.p = m_clamp(target.ang.p, -80, 80)
-    elseif sighted then
+    -- Sighting
+    do
         local delta = self:GetSightDelta()
-        -- delta = (4 * math.pow(delta - 0.5, 3)) + 0.5
         delta = math.pow(delta, 2)
         local irons = self:GetActiveSights()
         local im = irons.Midpoint
@@ -335,13 +348,20 @@ function SWEP:GetViewModelPosition(pos, ang)
         local joffset = (im and im.Pos or Vector(0, 30, -5)) * coolilove
         local jaffset = (im and im.Ang or Angle(0, 0, -45)) * coolilove
 
+        if !sighted then
+            joffset = Vector(1, 10, -2) * coolilove
+            jaffset = Angle(-5, 0, -15) * coolilove
+        end
+
         target.pos = f_lerp(delta, irons.Pos, target.pos + Vector(0, 0, -1)) + joffset
         target.ang = f_lerp(delta, irons.Ang, target.ang) + jaffset
         target.evpos = f_lerp(delta, irons.EVPos or Vector(), Vector(0, 0, 0))
         target.evang = f_lerp(delta, irons.EVAng or Angle(), Angle(0, 0, 0))
         target.down = 0
-        target.sway = 0.1
-        target.bob = 0.1
+        target.sway = target.sway * f_lerp(delta, 0.1, 1)
+        target.bob = target.bob * f_lerp(delta, 0.1, 1)
+
+        -- wtf is this?
         local sightroll = self:GetBuff_Override("Override_AddSightRoll")
 
         if sightroll then
@@ -349,11 +369,6 @@ function SWEP:GetViewModelPosition(pos, ang)
             target.ang:Set(irons.Ang)
             target.ang.r = sightroll
         end
-    elseif sprd > 0 and !self:GetBuff("ShootWhileSprint") then
-        local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
-        local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
-        target.pos = LerpVector(sprd, target.pos, spos or hpos)
-        target.ang = LerpAngle(sprd, target.ang, sang or hang)
     end
 
     local deg = self:BarrelHitWall()
@@ -599,16 +614,18 @@ function SWEP:PreDrawViewModel(vm)
 
     local asight = self:GetActiveSights()
 
-    if self:GetSightDelta() < 1 and asight.Holosight then
-        ArcCW:DrawPhysBullets()
-    end
+    if asight then
+        if self:GetSightDelta() < 1 and asight.Holosight then
+            ArcCW:DrawPhysBullets()
+        end
 
-    if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
-        self:FormCheapScope()
-    end
+        if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
+            self:FormCheapScope()
+        end
 
-    if self:GetSightDelta() < 1 and asight.ScopeTexture then
-        self:FormCheapScope()
+        if self:GetSightDelta() < 1 and asight.ScopeTexture then
+            self:FormCheapScope()
+        end
     end
 
     cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 1.5, 15000)

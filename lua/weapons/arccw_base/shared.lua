@@ -1,5 +1,8 @@
 AddCSLuaFile()
 
+-- For those who may find it useful...
+-- use WEAPONENTITY:SetNWBool("ArcCW_DisableAutosave", true) to tell the client to not load their autosaves.
+
 SWEP.Spawnable = false -- this obviously has to be set to true
 SWEP.AutoSpawnable = nil -- TTT weapon autospawn. ArcCW weapons automatically spawn in TTT as long as SWEP.Spawnable is set to true
 SWEP.Category = "ArcCW - Firearms" -- edit this if you like
@@ -786,6 +789,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 5, "NextIdle")
     self:NetworkVar("Float", 6, "Holster_Time")
     self:NetworkVar("Float", 7, "SightDelta")
+    self:NetworkVar("Float", 8, "SprintDelta")
 
     self:NetworkVar("Vector", 0, "BipodPos")
 

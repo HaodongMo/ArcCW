@@ -5,9 +5,6 @@ function SWEP:GetSightTime()
     return self:GetBuff("SightTime")
 end
 
-SWEP.LastEnterSprintTime = 0
-SWEP.LastExitSprintTime = 0
-
 function SWEP:EnterSprint()
     if engine.ActiveGamemode() == "terrortown" and !(TTT2 and self:GetOwner().isSprinting) then return end
     if self:GetState() == ArcCW.STATE_SPRINT then return end
@@ -28,8 +25,6 @@ function SWEP:EnterSprint()
     if !s and self:GetNextPrimaryFire() <= ct then
         self:SetNextPrimaryFire(ct)
     end
-
-    self.LastEnterSprintTime = ct
 
     local anim = self:SelectAnimation("enter_sprint")
     if anim and !s then
@@ -65,14 +60,12 @@ function SWEP:ExitSprint()
         self:EnterSights()
     end
 
-    self.LastExitSprintTime = ct - self:GetSprintTime() * delta
-
     local anim = self:SelectAnimation("exit_sprint")
     if anim and !s then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(ct + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     elseif !anim and !s then
-        self:SetReloading(ct + self:GetSprintTime() * delta)
+        self:SetReloading(UnPredictedCurTime() + self:GetSprintTime() * delta)
     end
 end
 
@@ -97,8 +90,6 @@ function SWEP:EnterSights()
 
     self:MyEmitSound(asight.SwitchToSound or "", 75, math.Rand(95, 105), 0.5, CHAN_AUTO)
 
-    --self.LastEnterSightTime = UnPredictedCurTime()
-
     local anim = self:SelectAnimation("enter_sight")
     if anim then
         self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
@@ -119,19 +110,13 @@ function SWEP:ExitSights()
 
     self:SetShouldHoldType()
 
-    -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
-
     self:MyEmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_AUTO)
 
     if self:InSprint() then
         self:EnterSprint()
     end
 
-    --if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
-
     self:MyEmitSound(asight.SwitchFromSound or "", 75, math.Rand(80, 90), 0.5, CHAN_AUTO)
-
-    --self.LastExitSightTime = UnPredictedCurTime()
 
     local anim = self:SelectAnimation("exit_sight")
     if anim then
@@ -144,45 +129,6 @@ end
 function SWEP:GetSprintTime()
     return self:GetSightTime()
 end
-
-function SWEP:GetSprintDelta()
-    local lst = self.LastExitSprintTime
-    local st = self:GetSprintTime()
-    local minus = 1
-
-    local ct = CurTime()
-
-    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
-        return 0 -- This ensures sights will always draw
-    end
-
-    if self:GetState() == ArcCW.STATE_SPRINT then
-        lst = self.LastEnterSprintTime
-        minus = 0
-        if ct - lst >= st then
-            return 1
-        end
-    else
-        if ct - lst >= st then
-            return 0
-        end
-    end
-
-    local delta = minus - math.Clamp((ct - lst) / st, 0, 1)
-
-    delta = math.abs(delta)
-
-    return delta
-end
-
---[[function SWEP:GetSightDelta()
-    local ct = UnPredictedCurTime()
-    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
-        return 0 -- This ensures sights will always draw
-    end
-
-    return self.jogof
-end]]
 
 SWEP.SightTable = {}
 SWEP.SightMagnifications = {}
@@ -448,12 +394,6 @@ function SWEP:SwitchActiveSights()
     if asight2.SwitchToSound then
         self:MyEmitSound(asight2.SwitchToSound, 75, math.Rand(95, 105), 0.5, CHAN_VOICE2)
     end
-
-    -- if self:GetNextPrimaryFire() <= (CurTime() + self:GetSightTime()) then
-    --     self:SetNextPrimaryFire(CurTime() + self:GetSightTime())
-    -- end
-
-    -- self.LastEnterSightTime = CurTime()
 end
 
 function SWEP:GetActiveSights()
