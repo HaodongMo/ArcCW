@@ -315,11 +315,6 @@ function SWEP:GetViewModelPosition(pos, ang)
         if self.InAttMenu then
             target.ang = target.ang + Angle(0, -5, 0)
         end
-    elseif sprd > 0 and !self:GetBuff("ShootWhileSprint") then
-        local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
-        local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
-        target.pos = LerpVector(sprd, target.pos, spos or hpos)
-        target.ang = LerpAngle(sprd, target.ang, sang or hang)
     end
 
     -- Sprinting
