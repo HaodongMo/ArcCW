@@ -109,6 +109,8 @@ function SWEP:DoLHIK()
     if !self.NoHideLeftHandInCustomization and !self:GetBuff_Override("Override_NoHideLeftHandInCustomization") then
         if self:GetState() == ArcCW.STATE_CUSTOMIZE and !ArcCW.Inv_Hidden then
             self.Customize_Hide = math.Approach(self.Customize_Hide, 1, FrameTime() / 0.25)
+        elseif self:GetState() == ArcCW.STATE_CUSTOMIZE and ArcCW.Inv_Hidden then
+            self.Customize_Hide = math.Approach(self.Customize_Hide, 1, FrameTime() / 0.25)
         else
             self.Customize_Hide = math.Approach(self.Customize_Hide, 0, FrameTime() / 0.25)
         end
