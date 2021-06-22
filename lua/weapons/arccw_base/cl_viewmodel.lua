@@ -599,16 +599,18 @@ function SWEP:PreDrawViewModel(vm)
 
     local asight = self:GetActiveSights()
 
-    if self:GetSightDelta() < 1 and asight.Holosight then
-        ArcCW:DrawPhysBullets()
-    end
+    if asight then
+        if self:GetSightDelta() < 1 and asight.Holosight then
+            ArcCW:DrawPhysBullets()
+        end
 
-    if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
-        self:FormCheapScope()
-    end
+        if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
+            self:FormCheapScope()
+        end
 
-    if self:GetSightDelta() < 1 and asight.ScopeTexture then
-        self:FormCheapScope()
+        if self:GetSightDelta() < 1 and asight.ScopeTexture then
+            self:FormCheapScope()
+        end
     end
 
     cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 1.5, 15000)
