@@ -233,7 +233,7 @@ function SWEP:DrawHUD()
 
         -- welcome to the bar
         surface.DrawOutlinedRect(ecksy, 26 * s*7.7, s*128, s*8, s)
-        surface.DrawRect(ecksy, 26 * s*7.7+s*2, s*128*proggers, s*8-s*4, s)
+        surface.DrawRect(ecksy, 26 * s*7.7+s*2, s*128*math.Clamp(proggers, 0, 1), s*8-s*4, s)
 
         surface.SetFont("ArcCW_20")
         surface.SetTextPos(ecksy, 26 * s*8.5)
