@@ -686,7 +686,7 @@ end
 SWEP.Bodygroups = {} -- [0] = 1, [1] = 0...
 -- SWEP.RegularClipSize = 0
 
-local searchdir = "weapons/tacint_base"
+local searchdir = "weapons/arccw_base"
 
 local function autoinclude(dir)
     local files, dirs = file.Find(searchdir .. "/*.lua", "LUA")
