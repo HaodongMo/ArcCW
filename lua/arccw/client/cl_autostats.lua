@@ -117,7 +117,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
     tbl_add(cons, att.Desc_Cons or {})
     tbl_add(infos, att.Desc_Neutrals or {})
 
-    local override = hook.Run("ArcCW_PreAutoStats", pros, cons, infos)
+    local override = hook.Run("ArcCW_PreAutoStats", wep, att, pros, cons, infos, toggle)
     if override then return pros, cons, infos end
 
     -- Localize attachment-specific text
@@ -239,7 +239,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
         ]]
     end
 
-    hook.Run("ArcCW_PostAutoStats", pros, cons, infos)
+    hook.Run("ArcCW_PostAutoStats", wep, att, pros, cons, infos, toggle)
 
     return pros, cons, infos
 end
