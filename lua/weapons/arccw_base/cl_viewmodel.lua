@@ -278,10 +278,9 @@ function SWEP:GetViewModelPosition(pos, ang)
         end
 
         local BEA = self:GetBipodAngle() - owner:EyeAngles()
-        local irons = self:GetActiveSights()
         local bpos = self:GetBuff_Override("Override_InBipodPos", self.InBipodPos)
-        target.pos = irons.Pos or target.pos
-        target.ang = irons.Ang or target.ang
+        target.pos = asight and asight.Pos or target.pos
+        target.ang = asight and asight.Ang or target.ang
         target.pos = target.pos + ((BEA):Right() * bpos.x * self.InBipodMult.x)
         target.pos = target.pos + ((BEA):Forward() * bpos.y * self.InBipodMult.y)
         target.pos = target.pos + ((BEA):Up() * bpos.z * self.InBipodMult.z)
@@ -338,13 +337,12 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     -- Sighting
-    do
-        local delta = self:GetSightDelta()
+    if asight then
+        local delta = sgtd
         delta = math.pow(delta, 2)
-        local irons = self:GetActiveSights()
-        local im = irons.Midpoint
+        local im = asight.Midpoint
 
-        local coolilove = delta * math.cos(delta*(math.pi/2))
+        local coolilove = delta * math.cos(delta * (math.pi / 2))
         local joffset = (im and im.Pos or Vector(0, 30, -5)) * coolilove
         local jaffset = (im and im.Ang or Angle(0, 0, -45)) * coolilove
 
@@ -353,10 +351,10 @@ function SWEP:GetViewModelPosition(pos, ang)
             jaffset = Angle(-5, 0, -15) * coolilove
         end
 
-        target.pos = f_lerp(delta, irons.Pos, target.pos + Vector(0, 0, -1)) + joffset
-        target.ang = f_lerp(delta, irons.Ang, target.ang) + jaffset
-        target.evpos = f_lerp(delta, irons.EVPos or Vector(), Vector(0, 0, 0))
-        target.evang = f_lerp(delta, irons.EVAng or Angle(), Angle(0, 0, 0))
+        target.pos = f_lerp(delta, asight.Pos, target.pos + Vector(0, 0, -1)) + joffset
+        target.ang = f_lerp(delta, asight.Ang, target.ang) + jaffset
+        target.evpos = f_lerp(delta, asight.EVPos or Vector(), Vector(0, 0, 0))
+        target.evang = f_lerp(delta, asight.EVAng or Angle(), Angle(0, 0, 0))
         target.down = 0
         target.sway = target.sway * f_lerp(delta, 0.1, 1)
         target.bob = target.bob * f_lerp(delta, 0.1, 1)
@@ -366,7 +364,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         if sightroll then
             target.ang = Angle()
-            target.ang:Set(irons.Ang)
+            target.ang:Set(asight.Ang)
             target.ang.r = sightroll
         end
     end
