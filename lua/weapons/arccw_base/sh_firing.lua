@@ -180,6 +180,10 @@ function SWEP:PrimaryAttack()
     if lastout >= clip then
         tracernum = 1
     end
+
+    local dmgtable = self.BodyDamageMults
+    dmgtable = self:GetBuff_Override("Override_BodyDamageMults") or dmgtable
+
     -- drive by is cool
     src = ArcCW:GetVehicleFireTrace(self:GetOwner(), src, dir) or src
 
@@ -242,16 +246,15 @@ function SWEP:PrimaryAttack()
         dmg:SetDamageType(hit.dmgtype)
         dmg:SetDamage(hit.damage)
 
-        local hg = tr.HitGroup
-        local dmgtable = self:GetBuff_Override("Override_BodyDamageMults", self.BodyDamageMults)
-        if dmgtable and dmgtable[hg] then
-            dmg:ScaleDamage(dmgtable[hg])
-        end
-
-        -- cancelling gmod's stupid default values
-        if GetConVar("arccw_bodydamagemult_cancel"):GetBool() then
+        if dmgtable then
+            local hg = tr.HitGroup
             local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
-            if gam[hg] then dmg:ScaleDamage(gam[hg]) end
+            if dmgtable[hg] then
+                dmg:ScaleDamage(dmgtable[hg])
+            end
+
+            -- cancelling gmod's stupid default values
+            if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
         end
 
         local effect = self:GetBuff_Override("Override_ImpactEffect", self.ImpactEffect)
