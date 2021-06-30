@@ -10,15 +10,15 @@ ArcCW.AutoStats = {
     -- Attachments
     ["MagExtender"]           = { "autostat.magextender", "override", false },
     ["MagReducer"]            = { "autostat.magreducer",  "override", true },
-    ["Bipod"]                 = { "autostat.bipod",       "override", false },
+    ["Bipod"]                 = { "autostat.bipod",       false, false },
     ["ScopeGlint"]            = { "autostat.glint",       "override", true },
     ["Silencer"]              = { "autostat.silencer",    "override", false },
     ["Override_NoRandSpread"] = { "autostat.norandspr",   "override", false },
     ["Override_CanFireUnderwater"] = { "autostat.underwater",   "override", false },
     ["Override_ShootWhileSprint"] = { "autostat.sprintshoot",   "override", false },
     -- Multipliers
-    ["Mult_BipodRecoil"]      = { "autostat.bipodrecoil", "mult", true },
-    ["Mult_BipodDispersion"]  = { "autostat.bipoddisp",   "mult", true },
+    ["Mult_BipodRecoil"]      = { "autostat.bipodrecoil", false, true },
+    ["Mult_BipodDispersion"]  = { "autostat.bipoddisp",   false, true },
     ["Mult_Damage"]           = { "autostat.damage",      "mult", false },
     ["Mult_DamageMin"]        = { "autostat.damagemin",   "mult", false },
     ["Mult_Range"]            = { "autostat.range",       "mult", false },
@@ -54,16 +54,27 @@ ArcCW.AutoStats = {
     ["Mult_HeatDelayTime"]    = { "autostat.heatdelay",   "mult", true },
     ["Mult_MalfunctionMean"]  = { "autostat.malfunctionmean", "mult", false},
 
-    ["Override_Ammo"] = {"autostat.ammotype", "func", function(wep, val)
-        if IsValid(wep) and wep.Primary and wep.Primary.Ammo == val then return end
+    ["Override_Ammo"] = {"autostat.ammotype", "func", function(wep, val, att)
+        -- have to use the weapons table here because Primary.Ammo *is* modified when attachments are used
+        if !IsValid(wep) or !weapons.Get(wep:GetClass()) or weapons.Get(wep:GetClass()).Primary.Ammo == val then return end
         return string.format(translate("autostat.ammotype"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
     end},
-    ["Override_ClipSize"] = {"autostat.clipsize", "func", function(wep, val)
+    ["Override_ClipSize"] = {"autostat.clipsize", "func", function(wep, val, att)
+        if !IsValid(wep) then return end
         local ogclip = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 0)
         if ogclip < val then
             return string.format(translate("autostat.clipsize"), val), "pros"
         else
             return string.format(translate("autostat.clipsize"), val), "cons"
+        end
+    end},
+    ["Bipod"] = {"autostat.bipod2", "func", function(wep, val, att)
+        if val then
+            local recoil = 100 - math.Round((att.Mult_BipodRecoil or (IsValid(wep) and wep.BipodRecoil) or 1) * 100)
+            local disp = 100 - math.Round((att.Mult_BipodDispersion or (IsValid(wep) and wep.BipodDispersion) or 1) * 100)
+            return string.format(translate("autostat.bipod2"), disp, recoil), "pros"
+        else
+            return translate("autostat.nobipod"), "cons"
         end
     end},
 }
@@ -76,7 +87,7 @@ local function getsimpleamt(stat)
     end
 end
 
-local function stattext(wep, i, k, dmgboth)
+local function stattext(wep, att, i, k, dmgboth)
     if !ArcCW.AutoStats[i] then return end
     if i == "Mult_DamageMin" and dmgboth then return end
 
@@ -103,7 +114,7 @@ local function stattext(wep, i, k, dmgboth)
     elseif stat[2] == "override" and k == true then
         return str, tcon
     elseif stat[2] == "func" then
-        local a, b = stat[3](wep, k)
+        local a, b = stat[3](wep, k, att)
         if a and b then return a, b end
     end
 end
@@ -141,7 +152,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
 
             local dmgboth = toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage
             for i, k in pairs(toggletbl) do
-                local txt, typ = stattext(wep, i, k, dmgboth)
+                local txt, typ = stattext(wep, toggletbl, i, k, dmgboth)
                 if !txt then continue end
 
                 local stat = ArcCW.AutoStats[i]
@@ -154,38 +165,6 @@ function ArcCW:GetProsCons(wep, att, toggle)
                 elseif typ == "infos" then
                     tbl_ins(infos, prefix .. txt)
                 end
-
-                --[[]
-                if !ArcCW.AutoStats[i] then continue end
-                if i == "Mult_DamageMin" and dmgboth then continue end
-                local stat = ArcCW.AutoStats[i]
-
-                local prefix = "[" .. (toggletbl.AutoStatName or toggletbl.PrintName or i) .. "] "
-                local txt = ""
-                local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
-
-                if i == "Mult_Damage" and dmgboth then
-                    str = ArcCW.GetTranslation("autostat.damageboth") or stat[1]
-                end
-
-                local tcon, tpro = st and cons or pros, st and pros or cons
-
-                if stat[2] == "mult" and k != 1 then
-                    local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
-
-                    txt = simple and getsimpleamt(k) or sign .. tostr(math.Round(percent * 100, 2)) .. "% "
-
-                    tbl_ins(k > 1 and tcon or tpro, prefix .. txt .. str)
-                elseif stat[2] == "add" and k != 0 then
-                    local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
-
-                    txt = simple and "+ " or sign .. tostr(state) .. " "
-
-                    tbl_ins(k > 1 and tpro or tcon, prefix .. txt .. str)
-                elseif stat[2] == "override" and k == true then
-                    tbl_ins(st and cons or pros, 1, prefix .. str)
-                end
-                ]]
             end
         end
     end
@@ -198,7 +177,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
         -- Legacy support: If "Increased/Decreased magazine capacity" line exists, don't do our autostats version
         if hasmaginfo and i == "Override_ClipSize" then continue end
 
-        local txt, typ = stattext(wep, i, att[i], dmgboth)
+        local txt, typ = stattext(wep, att, i, att[i], dmgboth)
         if !txt then continue end
 
         if typ == "pros" then
