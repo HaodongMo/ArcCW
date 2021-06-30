@@ -158,7 +158,6 @@ L["arccw.cvar.mult_sighttime"]            = "ADS Time"
 L["arccw.cvar.mult_defaultclip"]          = "Default Clip"
 L["arccw.cvar.mult_attchance"]            = "Random Att. Chance"
 L["arccw.cvar.mult_heat"]                 = "Heat Gain"
-L["arccw.cvar.mult_sway"]                 = "Aim Sway"
 L["arccw.cvar.mult_shootwhilesprinting"]  = "Shoot While Sprinting"
 -- ArcCW_Options_Atts
 L["arccw.attdesc1"]                       = "ArcCW supports attachment inventory style behaviour (Like ACT3) as well as attachment locking style behaviour (Like CW2.0) as well as giving everyone all attachments for free (Like TFA Base)."
@@ -328,13 +327,17 @@ L["arccw.cvar.mult_meleetime"] = "Melee Time"
 -- 2021-05-27
 L["arccw.cvar.ammonames"] = "Custom Ammo Names"
 L["arccw.cvar.ammonames.desc"] = "Replaces default ammo type names with custom ones that are a bit more realistic (such as Pulse Ammo to Rifle Ammo). Also replaces references everywhere else!"
-L["arccw.cvar.att_showground"]            = "Show Ground Attachments"
+L["arccw.cvar.att_showground"] = "Show Ground Attachments"
 
 -- 2021-06-02
 L["arccw.cvar.mult_bottomlessclip"] = "Bottomless Clip"
 L["arccw.cvar.mult_infiniteammo"] = "Infinite Ammo"
 
 -- 2021-06-07
+L["arccw.cvar.bodydamagecancel"] = "Cancel Body Damage"
+L["arccw.cvar.bodydamagecancel.desc"] = "When a weapon specifies limb damage modifiers, cancel Gmod's default multipliers. Disable when you have another mod that does this."
 
-L["#arccw.cvar.bodydamagecancel"] = "Cancel Body Damage"
-L["#arccw.cvar.bodydamagecancel.desc"] = "When a weapon specifies limb damage modifiers, cancel Gmod's default multipliers. Disable when you have another mod that does this."
+L["arccw.cvar.enable_sway"] = "Enable Sway"
+L["arccw.cvar.enable_sway.desc"] = "Most weapons do not specify a sway value. If you wish to give sway to all weapons, use the 'Add Sway' slider."
+L["arccw.cvar.add_sway"] = "Add Sway"
+L["arccw.cvar.mult_sway"]    = "Multiply Sway"

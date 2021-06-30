@@ -2,7 +2,7 @@ CreateConVar("arccw_enable_penetration", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, ""
 CreateConVar("arccw_enable_ricochet", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
 CreateConVar("arccw_enable_customization", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", -1, 1)
 CreateConVar("arccw_enable_dropping", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
-CreateConVar("arccw_enable_sway", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
+CreateConVar("arccw_enable_sway", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
 
 CreateConVar("arccw_bodydamagemult_cancel", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 1)
 
@@ -42,6 +42,8 @@ CreateConVar("arccw_mult_sway", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier
 CreateConVar("arccw_mult_malfunction", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how often malfunctions occur.", 0)
 CreateConVar("arccw_mult_meleedamage", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for melee damage.", 0)
 CreateConVar("arccw_mult_meleetime", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for melee speed.", 0)
+
+CreateConVar("arccw_add_sway", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Add this much sway to all weapons.", 0)
 
 CreateConVar("arccw_mult_bottomlessclip", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Enable bottomless clip.", 0, 1)
 CreateConVar("arccw_mult_infiniteammo", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Enable infinite reserve ammo.", 0, 1)

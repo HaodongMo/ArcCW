@@ -18,7 +18,9 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_MeleeTime"] = "arccw_mult_meleetime",
 }
 
-ArcCW.ConVar_BuffAdds = {}
+ArcCW.ConVar_BuffAdds = {
+    ["Add_Sway"] = "arccw_add_sway",
+}
 
 ArcCW.ConVar_BuffOverrides = {
     ["Override_ShootWhileSprint"] = "arccw_mult_shootwhilesprinting"
