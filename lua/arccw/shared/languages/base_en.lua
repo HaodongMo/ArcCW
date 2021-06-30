@@ -305,6 +305,10 @@ L["ui.deletepreset"] = "Delete..."
 --2021-06-09 nice
 L["autostat.clipsize"] = "%d-Round magazine capacity"
 
+--2021-06-30
+L["autostat.bipod2"] = "Allows bipod (-%d%% Dispersion, -%d%% Recoil)"
+L["autostat.nobipod"] = "Disables bipod"
+
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 Similarly, you can translate attachment and weapon names with ["name.class_name"]

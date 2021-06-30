@@ -195,10 +195,9 @@ SWEP.MoveDispersion = 150 -- inaccuracy added by moving. Applies in sights as we
 SWEP.SightsDispersion = 0 -- dispersion that remains even in sights
 SWEP.JumpDispersion = 300 -- dispersion penalty when in the air
 
--- Based off of CS+'s bipod
 SWEP.Bipod_Integral = false -- Integral bipod (ie, weapon model has one)
-SWEP.BipodDispersion = .1 -- Bipod dispersion for Integral bipods
-SWEP.BipodRecoil = 0.25 -- Bipod recoil for Integral bipods
+SWEP.BipodDispersion = 1 -- Bipod dispersion for Integral bipods
+SWEP.BipodRecoil = 1 -- Bipod recoil for Integral bipods
 
 SWEP.ShootWhileSprint = false
 
