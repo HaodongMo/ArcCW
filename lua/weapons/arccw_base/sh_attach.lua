@@ -874,12 +874,12 @@ function SWEP:RefreshBGs()
 
         if self.WMModel and self.WMModel:IsValid() then
             if self.MirrorVMWM and ele.VMSkin then
-                self.WMModel:SetColor(ele.VMColor)
-                self:SetColor(ele.VMColor)
+                self.WMModel:SetColor(ele.VMColor or color_white)
+                self:SetColor(ele.VMColor or color_white)
             end
             if ele.WMSkin then
-                self.WMModel:SetColor(ele.WMColor)
-                self:SetColor(ele.WMColor)
+                self.WMModel:SetColor(ele.WMColor or color_white)
+                self:SetColor(ele.WMColor or color_white)
             end
         end
 
