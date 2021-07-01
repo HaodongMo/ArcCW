@@ -115,12 +115,12 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
         VMPosOffset.z = math.sin(self.StepBob * 0.75) * velocity * (0.002 + sextra.z) * sightedmult * swayzmult
     end
 
-    VMPosOffset_Lerp.x = Lerp(16 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
+    VMPosOffset_Lerp.x = Lerp(32 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
     VMPosOffset_Lerp.y = Lerp(4 * FT, VMPosOffset_Lerp.y, VMPosOffset.y)
     VMPosOffset_Lerp.z = Lerp(2 * FT, VMPosOffset_Lerp.z, VMPosOffset.z)
     VMAngOffset.x = VMPosOffset_Lerp.x * 2
     VMAngOffset.y = VMPosOffset_Lerp.y * -7.5
-    VMAngOffset.z = VMPosOffset_Lerp.y * 5
+    VMAngOffset.z = VMPosOffset_Lerp.y * 10
     VMPos:Add(VMAng:Up() * VMPosOffset_Lerp.x)
     VMPos:Add(VMAng:Right() * VMPosOffset_Lerp.y)
     VMPos:Add(VMAng:Forward() * VMPosOffset_Lerp.z)
@@ -327,8 +327,10 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos = f_lerp(sd, target.pos, aaaapos)
         target.ang = f_lerp(sd, target.ang, aaaaang)
 
-        target.sway = target.sway * f_lerp(sd, 1, 2)
-        target.bob = target.bob * f_lerp(sd, 1, 2)
+        local fu_sprint = (self:GetState() == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint"))
+
+        target.sway = target.sway * f_lerp(sd, 1, fu_sprint and 0 or 2)
+        target.bob = target.bob * f_lerp(sd, 1, fu_sprint and 0 or 2)
 
         --[[if ang.p < -15 then
             target.ang.p = target.ang.p + ang.p + 15

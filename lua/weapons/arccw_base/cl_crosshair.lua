@@ -161,6 +161,7 @@ function SWEP:DoDrawCrosshair(x, y)
     cw = self
 
     gap = size
+    gap = gap * self:GetSightDelta()
 
     if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
         dot = false
