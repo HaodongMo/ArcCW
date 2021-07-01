@@ -461,7 +461,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         self.ViewModel_Hit = nvmh
     end
 
-    target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2)
+    target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2) * self.RecoilVMShake
     local speed = target.speed or 3
     -- For some reason, in multiplayer the sighting speed is twice as fast
     -- speed = 1 / self:GetSightTime() * speed * FT * (SP and 1 or 0.5)
@@ -493,15 +493,10 @@ function SWEP:GetViewModelPosition(pos, ang)
         pos:Set(npos)
         ang:Set(nang)
     end
-    self.TheJ = {posa = actual.pos, anga = actual.ang}
 
     pos = pos + math.min(self.RecoilPunchBack, Lerp(self:GetSightDelta(), self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -oldang:Forward()
-    if GetConVar("arccw_shake"):GetBool() then
-        pos = pos + self.RecoilPunchSide * oldang:Right()
-        pos = pos + self.RecoilPunchUp * -oldang:Up()
-    end
-    ang:RotateAroundAxis(oldang:Right(), actual.ang.x + (math.Rand(0, 1) * 1 * self.RecoilAmount))
-    ang:RotateAroundAxis(oldang:Up(), actual.ang.y + (math.Rand(-1, 1) * 1 * self.RecoilAmountSide))
+    ang:RotateAroundAxis(oldang:Right(), actual.ang.x)
+    ang:RotateAroundAxis(oldang:Up(), actual.ang.y)
     ang:RotateAroundAxis(oldang:Forward(), actual.ang.z)
     ang:RotateAroundAxis(oldang:Right(), actual.evang.x)
     ang:RotateAroundAxis(oldang:Up(), actual.evang.y)
