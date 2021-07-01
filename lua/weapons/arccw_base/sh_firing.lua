@@ -711,7 +711,7 @@ function SWEP:GetDispersion()
         hip = hip + math.max(speed * self:GetBuff("MoveDispersion"), self:GetBuff("JumpDispersion"))
     end
 
-    if self:InBipod() then hip = hip * ((self.BipodDispersion or 1) * self:GetBuff_Mult("Mult_BipodDispersion") or 0.1) end
+    if self:InBipod() then hip = hip * (self.BipodDispersion * self:GetBuff_Mult("Mult_BipodDispersion")) end
 
     if GetConVar("arccw_mult_crouchdisp"):GetFloat() != 1 and owner:OnGround() and owner:Crouching() then
         hip = hip * GetConVar("arccw_mult_crouchdisp"):GetFloat()
@@ -827,10 +827,7 @@ function SWEP:DoRecoil()
     local recu = 1
 
     if self:InBipod() then
-        local biprec = self.BipodRecoil
-        local bipmul = self:GetBuff_Mult("Mult_BipodRecoil")
-
-        local b = ((biprec or 1) * bipmul or 0.25)
+        local b = self.BipodRecoil * self:GetBuff_Mult("Mult_BipodRecoil")
 
         rmul = rmul * b
         recs = recs * b
