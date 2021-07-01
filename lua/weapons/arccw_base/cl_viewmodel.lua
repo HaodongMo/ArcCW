@@ -115,12 +115,12 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
         VMPosOffset.z = math.sin(self.StepBob * 0.75) * velocity * (0.002 + sextra.z) * sightedmult * swayzmult
     end
 
-    VMPosOffset_Lerp.x = Lerp(16 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
+    VMPosOffset_Lerp.x = Lerp(32 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
     VMPosOffset_Lerp.y = Lerp(4 * FT, VMPosOffset_Lerp.y, VMPosOffset.y)
     VMPosOffset_Lerp.z = Lerp(2 * FT, VMPosOffset_Lerp.z, VMPosOffset.z)
     VMAngOffset.x = VMPosOffset_Lerp.x * 2
     VMAngOffset.y = VMPosOffset_Lerp.y * -7.5
-    VMAngOffset.z = VMPosOffset_Lerp.y * 5
+    VMAngOffset.z = VMPosOffset_Lerp.y * 10
     VMPos:Add(VMAng:Up() * VMPosOffset_Lerp.x)
     VMPos:Add(VMAng:Right() * VMPosOffset_Lerp.y)
     VMPos:Add(VMAng:Forward() * VMPosOffset_Lerp.z)
@@ -327,8 +327,10 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos = f_lerp(sd, target.pos, aaaapos)
         target.ang = f_lerp(sd, target.ang, aaaaang)
 
-        target.sway = target.sway * f_lerp(sd, 1, 2)
-        target.bob = target.bob * f_lerp(sd, 1, 2)
+        local fu_sprint = (self:GetState() == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint"))
+
+        target.sway = target.sway * f_lerp(sd, 1, fu_sprint and 0 or 2)
+        target.bob = target.bob * f_lerp(sd, 1, fu_sprint and 0 or 2)
 
         --[[if ang.p < -15 then
             target.ang.p = target.ang.p + ang.p + 15
@@ -461,7 +463,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         self.ViewModel_Hit = nvmh
     end
 
-    target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2)
+    target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2) * self.RecoilVMShake
     local speed = target.speed or 3
     -- For some reason, in multiplayer the sighting speed is twice as fast
     -- speed = 1 / self:GetSightTime() * speed * FT * (SP and 1 or 0.5)
@@ -493,15 +495,10 @@ function SWEP:GetViewModelPosition(pos, ang)
         pos:Set(npos)
         ang:Set(nang)
     end
-    self.TheJ = {posa = actual.pos, anga = actual.ang}
 
     pos = pos + math.min(self.RecoilPunchBack, Lerp(self:GetSightDelta(), self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -oldang:Forward()
-    if GetConVar("arccw_shake"):GetBool() then
-        pos = pos + self.RecoilPunchSide * oldang:Right()
-        pos = pos + self.RecoilPunchUp * -oldang:Up()
-    end
-    ang:RotateAroundAxis(oldang:Right(), actual.ang.x + (math.Rand(0, 1) * 1 * self.RecoilAmount))
-    ang:RotateAroundAxis(oldang:Up(), actual.ang.y + (math.Rand(-1, 1) * 1 * self.RecoilAmountSide))
+    ang:RotateAroundAxis(oldang:Right(), actual.ang.x)
+    ang:RotateAroundAxis(oldang:Up(), actual.ang.y)
     ang:RotateAroundAxis(oldang:Forward(), actual.ang.z)
     ang:RotateAroundAxis(oldang:Right(), actual.evang.x)
     ang:RotateAroundAxis(oldang:Up(), actual.evang.y)

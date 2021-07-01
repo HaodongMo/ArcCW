@@ -463,6 +463,10 @@ function SWEP:DrawHUD()
                 MyDrawText(wammotype)
             end
 
+            if !fmbars then
+                apan_bg.y = apan_bg.y + ScreenScaleMulti(6)
+            end
+
             local wammo = {
                 x = apan_bg.x + apan_bg.w - airgap,
                 y = apan_bg.y - ScreenScaleMulti(4),
@@ -531,7 +535,7 @@ function SWEP:DrawHUD()
 
             local wmode = {
                 x = apan_bg.x + apan_bg.w - airgap,
-                y = wammo.y + wammo.h,
+                y = wammo.y + wammo.h + ScreenScaleMulti(6),
                 font = "ArcCW_12",
                 text = data.mode,
                 col = col2,
@@ -539,8 +543,8 @@ function SWEP:DrawHUD()
                 shadow = true,
                 alpha = alpha,
             }
-            if fmbars then
-                wmode.y = wammo.y + wammo.h + ScreenScaleMulti(6)
+            if !fmbars then
+                wmode.y = wmode.y - ScreenScaleMulti(6)
             end
             MyDrawText(wmode)
 

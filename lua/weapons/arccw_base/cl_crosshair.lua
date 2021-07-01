@@ -116,7 +116,7 @@ function SWEP:DoDrawCrosshair(x, y)
     sp.x = w2s.x sp.y = w2s.y
     x, y = sp.x, sp.y
 
-    local st = self:GetSightTime() / 4
+    local st = self:GetSightTime() / 2
 
     if self:ShouldDrawCrosshair() then
         delta = math.Approach(delta, 1, FrameTime() * 1 / st)
@@ -161,6 +161,7 @@ function SWEP:DoDrawCrosshair(x, y)
     cw = self
 
     gap = size
+    gap = gap * delta
 
     if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
         dot = false

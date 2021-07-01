@@ -932,8 +932,7 @@ function SWEP:GetRangeFraction(range)
     if range < min then
         return 0
     else
-        range = range - min
-        return math.Clamp(range / max, 0, 1)
+        return math.Clamp((range - min) / (max - min), 0, 1)
     end
 end
 
