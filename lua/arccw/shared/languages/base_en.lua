@@ -222,10 +222,10 @@ L["incompatible.never.confirm"] = "You have chosen to never show incompatiblity 
 
 -- 2020-12-11
 L["hud.hp"] = "HP: " -- Used in default HUD
-L["fcg.safe"] = "SAFE"
-L["fcg.semi"] = "SEMI"
-L["fcg.auto"] = "AUTO"
-L["fcg.burst"] = "%dBST"
+L["fcg.safe"] = "Safety"
+L["fcg.semi"] = "Semi-auto"
+L["fcg.auto"] = "Automatic"
+L["fcg.burst"] = "%d-round burst"
 L["fcg.ubgl"] = "UBGL"
 
 -- 2021-01-14
@@ -299,15 +299,27 @@ L["ammo.smg1_grenade"] = "Rifle Grenades"
 
 --2021-05-31
 L["ui.nodata"] = "No Data"
-L["ui.createpreset"] = "Create..."
-L["ui.deletepreset"] = "Delete..."
+L["ui.createpreset"] = "Create"
+L["ui.deletepreset"] = "Delete"
 
 --2021-06-09 nice
-L["autostat.clipsize"] = "%d-Round magazine capacity"
+L["autostat.clipsize"] = "%d-round magazine capacity"
 
 --2021-06-30
 L["autostat.bipod2"] = "Allows bipod (-%d%% Dispersion, -%d%% Recoil)"
 L["autostat.nobipod"] = "Disables bipod"
+
+--2021-07-01
+L["fcg.safe2"] = "Lowered"
+L["fcg.dact"] = "Double-action"
+L["fcg.sact"] = "Single-action"
+L["fcg.bolt"] = "Bolt-action"
+L["fcg.pump"] = "Pump-action"
+L["fcg.lever"] = "Lever-action"
+L["fcg.manual"] = "Manual-action"
+L["fcg.break"] = "Break-action"
+--L["fcg.sngl"] = "Single" should we? idk
+--L["fcg.both"] = "Both"
 
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
