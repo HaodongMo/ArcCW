@@ -60,6 +60,7 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     VMAngOffset_Lerp.z = Lerp(25 * FT, VMAngOffset_Lerp.z, VMAngOffset.z)
     VMPos:Add(VMAng:Up() * VMPosOffset_Lerp.x)
     VMPos:Add(VMAng:Right() * VMPosOffset_Lerp.y)
+	VMAngOffset_Lerp:Normalize()
     VMAng:Add(VMAngOffset_Lerp)
 end
 
