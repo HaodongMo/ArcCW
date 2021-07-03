@@ -195,12 +195,14 @@ hook.Add("TTTSettingsTabs", "ArcCW_TTT", function(dtabs)
     panellist:AddItem(dgui)
 
 
-    if LocalPlayer():IsAdmin() then
+    -- Can't rely on LocalPlayer() being valid now
+    -- TTT2 generates tabs before menu opens
+    --if LocalPlayer():IsAdmin() then
         local dgui2 = vgui.Create("DForm", panellist)
         dgui2:SetName("#arccw.menus.ttt_server")
         ArcCW.GeneratePanelElements(dgui2, TTTPanel)
         panellist:AddItem(dgui2)
-    end
+    --end
 
     for menu, data in SortedPairs(ArcCW.ClientMenus) do
         local form = vgui.Create("DForm", panellist)
