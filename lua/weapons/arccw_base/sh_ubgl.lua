@@ -1,6 +1,9 @@
 
 function SWEP:SelectUBGL()
     if !self:GetBuff_Override("UBGL") then return end
+    if self:GetReloading() then return end
+    if self:GetNextPrimaryFire() > CurTime() then return end
+    if self:GetNextSecondaryFire() > CurTime() then return end
 
     self:SetInUBGL(true)
 
@@ -31,6 +34,10 @@ end
 
 function SWEP:DeselectUBGL()
     if !self:GetInUBGL() then return end
+    if self:GetReloading() then return end
+    if self:GetNextPrimaryFire() > CurTime() then return end
+    if self:GetNextSecondaryFire() > CurTime() then return end
+
     self:SetInUBGL(false)
 
     if !IsFirstTimePredicted() then return end
