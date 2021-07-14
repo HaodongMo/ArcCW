@@ -20,27 +20,21 @@ function SWEP:CanBipod()
 
     if self.CachedCanBipodTime >= CurTime() then return self.CachedCanBipod end
 
-    -- local bip = self:GetInBipod()
-
-    local maxs = Vector(2, 2, 2)
-    local mins = Vector(-2, -2, -2)
-
     local pos = self:GetOwner():EyePos()
     local angle = self:GetOwner():EyeAngles()
-
     if self:GetOwner():GetVelocity():Length() > 0 then
         return false
     end
 
     local rangemult = 2
-
     if self:IsProne() then
-        rangemult = 2.5
+        rangemult = rangemult * 1.25
     end
+    rangemult = rangemult * self:GetBuff_Mult("Mult_BipodRange")
 
     local tr = util.TraceLine({
         start = pos,
-        endpos = pos + (angle:Forward() * 48 * rangemult),
+        endpos = pos + (angle:Forward() * 24 * rangemult),
         filter = self:GetOwner(),
         mask = MASK_PLAYERSOLID
     })
@@ -49,10 +43,10 @@ function SWEP:CanBipod()
         return false
     end
 
-    maxs = Vector(8, 8, 0)
-    mins = Vector(-8, -8, -16)
+    local maxs = Vector(8, 8, 0)
+    local mins = Vector(-8, -8, -16)
 
-    angle.p = angle.p + 15
+    angle.p = angle.p + 20
 
     tr = util.TraceHull({
         start = pos,
