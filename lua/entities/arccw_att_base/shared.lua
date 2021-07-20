@@ -12,7 +12,7 @@ ENT.Category              = "ArcCW - Attachments"
 
 AddCSLuaFile()
 
-ENT.GiveAttachments = {} -- table of all the attachments to give, and in what quantity. {{["id"] = int quantity}}
+ENT.GiveAttachments = nil -- table of all the attachments to give, and in what quantity. {{["id"] = int quantity}}
 
 ENT.SoundImpact = "weapon.ImpactSoft"
 ENT.Model = ""

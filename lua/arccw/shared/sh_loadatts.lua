@@ -105,6 +105,11 @@ local function ArcCW_LoadAtts()
     for k, v in pairs(file.Find("arccw/shared/attachments/*", "LUA")) do
         if !pcall(function() ArcCW_LoadAtt(v) end) then
             print("!!!! Attachment " .. v .. " has errors!")
+            -- Create a stub attachment to prevent customization UI freaking out
+            ArcCW.AttachmentTable[shortname] = {
+                PrintName = shortname or "ERROR",
+                Description = "This attachment failed to load!\nIts file path is: " .. v
+            }
         end
     end
 
