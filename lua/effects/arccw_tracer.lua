@@ -35,8 +35,9 @@ function EFFECT:Init(data)
     if speed > 0 then
         self.Speed = speed
     end
-
-    if IsValid(wep) and wep.GetBuff_Override then
+    
+    local profile = 0
+    if wep.GetBuff_Override then
         profile = wep:GetBuff_Override("Override_PhysTracerProfile", wep.PhysTracerProfile) or 0
     end
 
@@ -47,7 +48,7 @@ function EFFECT:Init(data)
 
     self.StartPos = start
     self.EndPos = hit
-    self.Color = ArcCW.BulletProfiles[(profile + 1) or 1] or ArcCW.BulletProfiles[1]
+    self.Color = ArcCW.BulletProfiles[profile + 1] or ArcCW.BulletProfiles[1]
 
     -- print(profile)
 end
