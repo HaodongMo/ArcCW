@@ -60,6 +60,11 @@ end
 
 hook.Add("SetupMove", "ArcCW_SetupMove", ArcCW.Move)
 
+local limy_p = 75
+local limy_n = -75
+local limp_p = 30
+local limp_n = -30
+
 function ArcCW.CreateMove(cmd)
     local ply = LocalPlayer()
     local wpn = ply:GetActiveWeapon()
@@ -77,11 +82,6 @@ function ArcCW.CreateMove(cmd)
 
         local dy = math.AngleDifference(ang.y, bipang.y)
         local dp = math.AngleDifference(ang.p, bipang.p)
-
-        local limy_p = 75
-        local limy_n = -75
-        local limp_p = 30
-        local limp_n = -30
 
         if dy > limy_p then
             ang.y = bipang.y + limy_p
