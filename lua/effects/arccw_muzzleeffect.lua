@@ -30,13 +30,14 @@ function EFFECT:Init(data)
     local att = data:GetAttachment() or 1
 
     local wm = false
-
-    if (LocalPlayer():ShouldDrawLocalPlayer() or wpn.Owner != LocalPlayer()) and !wpn.AlwaysWM then
+	
+	local Owner = wpn:GetOwner()
+    if (LocalPlayer():ShouldDrawLocalPlayer() or Owner != LocalPlayer()) and !wpn.AlwaysWM then
         wm = true
         att = 1
     end
 
-    if wpn.Owner != LocalPlayer() and !GetConVar("arccw_muzzleeffects"):GetBool() then
+    if Owner != LocalPlayer() and !GetConVar("arccw_muzzleeffects"):GetBool() then
         return
     end
 
@@ -87,7 +88,7 @@ function EFFECT:Init(data)
             light.b = clr.b
             light.Brightness = 2
             light.Decay = 2500
-            light.Size = wpn.Owner == LocalPlayer() and 256 or 128
+            light.Size = Owner == LocalPlayer() and 256 or 128
             light.DieTime = CurTime() + 0.1
         end
     end

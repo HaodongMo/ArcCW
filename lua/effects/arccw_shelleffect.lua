@@ -24,12 +24,13 @@ function EFFECT:Init(data)
     end
 
     if !IsValid(ent) then self:Remove() return end
-
-    if ent.Owner != LocalPlayer() then
+	
+	local Owner = ent:GetOwner()
+    if Owner != LocalPlayer() then
         mdl = ent.WMModel or ent
     end
 
-    if ent.Owner != LocalPlayer() then
+    if Owner != LocalPlayer() then
         if !GetConVar("arccw_shelleffects"):GetBool() then self:Remove() return end
     end
 
@@ -94,8 +95,8 @@ function EFFECT:Init(data)
 
     local plyvel = Vector(0, 0, 0)
 
-    if IsValid(ent.Owner) then
-        plyvel = ent.Owner:GetAbsVelocity()
+    if IsValid(Owner) then
+        plyvel = Owner:GetAbsVelocity()
     end
 
 

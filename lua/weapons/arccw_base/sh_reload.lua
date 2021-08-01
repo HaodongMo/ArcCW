@@ -40,7 +40,7 @@ function SWEP:Reload()
 
     -- DEBUG
     --[[]
-    local vm = self.Owner:GetViewModel()
+    local vm = self:GetOwner():GetViewModel()
     vm:SendViewModelMatchingSequence(vm:LookupSequence("reload"))
     print("reload", CurTime())
     if SERVER then
