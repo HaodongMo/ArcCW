@@ -52,6 +52,7 @@ local ClientPanel = {
     { type = "b", text = "#arccw.cvar.glare", var = "arccw_glare" },
     { type = "c", text = "#arccw.cvar.glare.desc" },
     { type = "b", text = "#arccw.cvar.shake", var = "arccw_shake" },
+    { type = "b", text = "#arccw.cvar.shakevm", var = "arccw_shakevm" },
     { type = "c", text = "#arccw.cvar.shake_info" },
     { type = "b", text = "#arccw.cvar.aimassist", var = "arccw_aimassist_cl" },
     { type = "c", text = "#arccw.cvar.aimassist_cl.desc" },

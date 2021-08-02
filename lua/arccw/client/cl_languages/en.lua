@@ -72,6 +72,7 @@ L["arccw.cvar.embracetradition.desc"]     = "Use the classic bulky customization
 L["arccw.cvar.glare"]                     = "Scope Glare"
 L["arccw.cvar.glare.desc"]                = "Glare visible on your scope lens when aiming."
 L["arccw.cvar.shake"]                     = "Screen Shake"
+L["arccw.cvar.shakevm"]                   = "Viewmodel Shake"
 L["arccw.cvar.shake_info"]                = "Aggressive snap when you shoot a weapon."
 L["arccw.cvar.2d3d"]                      = "Floating Help Text"
 L["arccw.cvar.2d3d_info"]                 = "Text that floats over dropped weapons."

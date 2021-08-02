@@ -84,7 +84,9 @@ function SWEP:Think()
 
     if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 then
         if self:GetBurstCount() > 0 then
-            self:PrimaryAttack()
+            if (SERVER and game.SinglePlayer()) then
+                self:PrimaryAttack()
+            end
         end
 
         if self:GetBurstCount() == self:GetBurstLength() then

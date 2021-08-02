@@ -195,8 +195,8 @@ function SWEP:PrimaryAttack()
     bullet.Damage     = 0
     bullet.Num        = num
 
-    local sglove = math.ceil(num / 4)
-    bullet.Force      = math.Clamp( ( (40 / sglove) / ( (self:GetDamage(0, true) + self:GetDamage(math.huge, true)) / 2 ) ) * sglove, 0, 3 )
+    local sglove = math.ceil(num / 3)
+    bullet.Force      = math.Clamp( ( (50 / sglove) / ( (self:GetDamage(0, true) + self:GetDamage(math.huge, true)) / 2 ) ) * sglove, 1, 3 )
                         -- Overperforming weapons get the jerf, underperforming gets boost
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo

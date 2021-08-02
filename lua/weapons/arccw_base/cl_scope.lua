@@ -229,7 +229,7 @@ function SWEP:CalcView(ply, pos, ang, fov)
         self:CoolView(ply, pos, ang, fov)
     end
 
-    if GetConVar("arccw_shake"):GetBool() then
+    if GetConVar("arccw_shake"):GetBool() and !engine.IsRecordingDemo() then
         local de = (0.2 + (self:GetSightDelta()*0.8))
         ang = ang + (AngleRand() * self.RecoilAmount * 0.006 * de)
     end

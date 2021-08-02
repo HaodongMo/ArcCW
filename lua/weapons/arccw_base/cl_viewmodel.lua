@@ -45,16 +45,18 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
     local VMPosOffset_Lerp, VMAngOffset_Lerp = self.VMPosOffset_Lerp, self.VMAngOffset_Lerp
     local FT = scrunkly()
-    local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.1) or 1
+    local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.05) or 1
+    local sg = self:GetSightDelta()
     VMPos:Set(EyePos)
     VMAng:Set(EyeAng)
-    VMPosOffset.x = self:GetOwner():GetVelocity().z * 0.0015 * sightedmult
+    VMPosOffset.x = self:GetOwner():GetVelocity().z * 0.0025 * sightedmult
+    VMPosOffset.x = VMPosOffset.x + (velocity.x * 0.001 * sg)
     VMPosOffset.y = math.Clamp(velocity.y * -0.004, -1, 1) * sightedmult
     VMPosOffset_Lerp.x = Lerp(8 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
     VMPosOffset_Lerp.y = Lerp(8 * FT, VMPosOffset_Lerp.y, VMPosOffset.y)
     VMAngOffset.x = math.Clamp(VMPosOffset.x * 8, -4, 4)
     VMAngOffset.y = VMPosOffset.y
-    VMAngOffset.z = VMPosOffset.y * 0.5 + (VMPosOffset.x * -5)
+    VMAngOffset.z = VMPosOffset.y * 0.5 + (VMPosOffset.x * -5) + (velocity.x * -0.005 * sg)
     VMAngOffset_Lerp.x = LerpC(10 * FT, VMAngOffset_Lerp.x, VMAngOffset.x, 0.75)
     VMAngOffset_Lerp.y = LerpC(5 * FT, VMAngOffset_Lerp.y, VMAngOffset.y, 0.6)
     VMAngOffset_Lerp.z = Lerp(25 * FT, VMAngOffset_Lerp.z, VMAngOffset.z)
@@ -166,12 +168,12 @@ function SWEP:Look_Process(EyePos, EyeAng, velocity)
     local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.25) or 1
     self.SmoothEyeAng = LerpAngle(0.05, self.SmoothEyeAng, EyeAng - self.LastEyeAng)
     local xd, yd = (velocity.z/10), (velocity.y/200)
-    VMPosOffset.x = (-self.SmoothEyeAng.x) * -1 * sightedmult * lookxmult
+    VMPosOffset.x = (-self.SmoothEyeAng.x) * -0.5 * sightedmult * lookxmult
     VMPosOffset.y = (self.SmoothEyeAng.y) * 0.5 * sightedmult * lookymult
-    VMAngOffset.x = VMPosOffset.x * 2.5
-    VMAngOffset.y = VMPosOffset.y * 1.25
-    VMAngOffset.z = VMPosOffset.x * 2 + VMPosOffset.y * 2
-    self.VMLookLerp.y = Lerp(FT * 10, self.VMLookLerp.y, VMAngOffset.y * 1.5 + self.SmoothEyeAng.y)
+    VMAngOffset.x = VMPosOffset.x * 0.75
+    VMAngOffset.y = VMPosOffset.y * 2.5
+    VMAngOffset.z = (VMPosOffset.x * 2) + (VMPosOffset.y * -2)
+    self.VMLookLerp.y = Lerp(FT * 10, self.VMLookLerp.y, VMAngOffset.y * -1.5 + self.SmoothEyeAng.y)
     VMAng.y = VMAng.y - self.VMLookLerp.y
     VMPos:Add(VMAng:Up() * VMPosOffset.x)
     VMPos:Add(VMAng:Right() * VMPosOffset.y)
@@ -464,7 +466,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         self.ViewModel_Hit = nvmh
     end
 
-    target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2) * self.RecoilVMShake
+    if GetConVar("arccw_shakevm"):GetBool() and !engine.IsRecordingDemo() then target.pos = target.pos + (VectorRand() * self.RecoilAmount * 0.2) * self.RecoilVMShake end
     local speed = target.speed or 3
     -- For some reason, in multiplayer the sighting speed is twice as fast
     -- speed = 1 / self:GetSightTime() * speed * FT * (SP and 1 or 0.5)
