@@ -374,7 +374,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         end
     end
 
-    local deg = self:BarrelHitWall()
+    --[[local deg = self:BarrelHitWall()
 
     if deg > 0 then
         target.pos = LerpVector(deg, target.pos, self.HolsterPos)
@@ -382,7 +382,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.down = 2
         target.sway = 2
         target.bob = 2
-    end
+    end]]
 
     if !isangle(target.ang) then
         target.ang = Angle(target.ang)
