@@ -9,7 +9,7 @@ function SWEP:MyEmitSound(fsound, level, pitch, vol, chan, useWorld)
 
     if fsound and fsound != "" then
         if useWorld then
-            sound.Play(fsound, self.Owner:GetShootPos(), level, pitch, vol)
+            sound.Play(fsound, self:GetOwner():GetShootPos(), level, pitch, vol)
         else
             self:EmitSound(fsound, level, pitch, vol, chan or CHAN_AUTO)
         end
