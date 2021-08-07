@@ -484,7 +484,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
     local distancesound = self.DistantShootSound
 
     if suppressed then
-        distancesound = nil
+        distancesound = self.DistantShootSoundSilenced
     end
 
     distancesound = self:GetBuff_Hook("Hook_GetDistantShootSound", distancesound)
