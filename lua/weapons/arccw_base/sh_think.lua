@@ -397,8 +397,8 @@ function SWEP:DoTriggerDelay()
         if anim then
             self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
             --self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim))
-        else
-            self:PlayIdleAnimation(true)
+        --else
+        --    self:PlayIdleAnimation(true)
         end
         self.LastTriggerTime = 0
         self.LastTriggerDuration = 0
