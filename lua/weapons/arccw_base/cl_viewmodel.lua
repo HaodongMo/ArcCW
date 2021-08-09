@@ -206,6 +206,8 @@ end
 SWEP.TheJ = {posa = Vector(), anga = Angle()}
 
 function SWEP:GetViewModelPosition(pos, ang)
+    if GetConVar("arccw_dev_benchgun"):GetBool() then return Vector(0, 0, 0), Angle(0, 0, 0) end
+
     local owner = self:GetOwner()
     if !IsValid(owner) or !owner:Alive() then return end
     local proceduralRecoilMult = 1

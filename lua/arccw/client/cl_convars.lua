@@ -1,5 +1,3 @@
-local NewConv = CreateClientConVar
-
 --[[
     ClientConVars table doc:
     name = data:
@@ -121,11 +119,13 @@ ArcCW.ClientConVars = {
 
     ["arccw_aimassist_cl"]            = { def = 0, usri = true },
 
+    ["arccw_dev_benchgun"]            = { def = 0},
+
     ["arccw_dev_removeonclose"]       = { def = 0, desc = "Remove the hud when closing instead of fading out, allowing easy reloading of the hud." },
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do
-    NewConv(name, data.def, true, data.usri or false, data.desc, data.min, data.max)
+    CreateClientConVar(name, data.def, true, data.usri or false, data.desc, data.min, data.max)
 end
 
 -- CreateClientConVar("arccw_quicknade", KEY_G)
