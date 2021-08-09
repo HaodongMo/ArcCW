@@ -166,6 +166,8 @@ function SWEP:DoMalfunction()
         self.ShotsSinceMalfunction = 0
         self.NextMalfunction = nil
 
+        self:SetBurstCount(0)
+
         return true
     else
         self.ShotsSinceMalfunction = (self.ShotsSinceMalfunction or 0) + 1
