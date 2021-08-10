@@ -419,7 +419,7 @@ function SWEP:GetCapacity()
 
     clip = ret or clip
 
-    clip = math.Clamp(clip, 0, math.huge)
+    clip = math.Clamp(math.Round(clip), 0, math.huge)
 
     self.Primary.ClipSize = clip
 
