@@ -321,6 +321,9 @@ L["fcg.break"] = "Break-action"
 --L["fcg.sngl"] = "Single" should we? idk
 --L["fcg.both"] = "Both"
 
+--2021-08-11
+L["autostat.clipsize.mod"] = "Magazine capacity" -- used for Add_ClipSize and Mult_ClipSize
+
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 Similarly, you can translate attachment and weapon names with ["name.class_name"]

@@ -53,6 +53,8 @@ ArcCW.AutoStats = {
     ["Mult_FixTime"]          = { "autostat.heatfix",     "mult", true },
     ["Mult_HeatDelayTime"]    = { "autostat.heatdelay",   "mult", true },
     ["Mult_MalfunctionMean"]  = { "autostat.malfunctionmean", "mult", false},
+    ["Add_ClipSize"]          = { "autostat.clipsize.mod",    "add", false},
+    ["Mult_ClipSize"]         = { "autostat.clipsize.mod",    "mult", false},
 
     ["Override_Ammo"] = {"autostat.ammotype", "func", function(wep, val, att)
         -- have to use the weapons table here because Primary.Ammo *is* modified when attachments are used
