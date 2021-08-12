@@ -51,10 +51,12 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     VMAng:Set(EyeAng)
     VMPosOffset.x = self:GetOwner():GetVelocity().z * 0.0025 * sightedmult
     VMPosOffset.x = VMPosOffset.x + (velocity.x * 0.001 * sg)
-    VMPosOffset.y = math.Clamp(velocity.y * -0.004, -1, 1) * sightedmult
+    VMPosOffset.y = math.Clamp(velocity.y * -0.002, -1, 1) * sightedmult
+    VMPosOffset.z = math.Clamp(VMPosOffset.x * -4, -4, 4)
     VMPosOffset_Lerp.x = Lerp(8 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
     VMPosOffset_Lerp.y = Lerp(8 * FT, VMPosOffset_Lerp.y, VMPosOffset.y)
-    VMAngOffset.x = math.Clamp(VMPosOffset.x * 8, -4, 4)
+    VMPosOffset_Lerp.z = Lerp(8 * FT, VMPosOffset_Lerp.z, VMPosOffset.z)
+    --VMAngOffset.x = math.Clamp(VMPosOffset.x * 8, -4, 4)
     VMAngOffset.y = VMPosOffset.y
     VMAngOffset.z = VMPosOffset.y * 0.5 + (VMPosOffset.x * -5) + (velocity.x * -0.005 * sg)
     VMAngOffset_Lerp.x = LerpC(10 * FT, VMAngOffset_Lerp.x, VMAngOffset.x, 0.75)
@@ -62,6 +64,7 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     VMAngOffset_Lerp.z = Lerp(25 * FT, VMAngOffset_Lerp.z, VMAngOffset.z)
     VMPos:Add(VMAng:Up() * VMPosOffset_Lerp.x)
     VMPos:Add(VMAng:Right() * VMPosOffset_Lerp.y)
+    VMPos:Add(VMAng:Forward() * VMPosOffset_Lerp.z)
     VMAngOffset_Lerp:Normalize()
     VMAng:Add(VMAngOffset_Lerp)
 end
@@ -110,7 +113,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
         -- oh no it says sex tra
         local sextra = Vector()
         if (self:GetState() == ArcCW.STATE_SPRINT and !self:SelectAnimation("idle_sprint")) or true then
-            sextra = LerpVector(self:GetSprintDelta(), vector_origin, Vector(0.001, 0.0001, 0.005))
+            sextra = LerpVector(self:GetSprintDelta(), vector_origin, Vector(0.0002, 0.001, 0.005))
         end
 
         VMPosOffset.x = (math.sin(self.StepBob) * velocity * (0.000375 + sextra.x) * sightedmult * swayxmult) * self.StepRandomX
