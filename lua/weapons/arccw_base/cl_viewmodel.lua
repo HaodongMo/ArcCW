@@ -350,12 +350,12 @@ function SWEP:GetViewModelPosition(pos, ang)
         local im = asight.Midpoint
 
         local coolilove = delta * math.cos(delta * (math.pi / 2))
-        local joffset = (im and im.Pos or Vector(0, 30, -5)) * coolilove
+        local joffset = (im and im.Pos or Vector(0, 20, -4)) * coolilove
         local jaffset = (im and im.Ang or Angle(0, 0, -45)) * coolilove
 
         if !sighted then
-            joffset = Vector(1, 10, -2) * coolilove
-            jaffset = Angle(-5, 0, -15) * coolilove
+            joffset = Vector(1, 5, -1) * coolilove
+            jaffset = Angle(-5, 0, -10) * coolilove
         end
 
         target.pos = f_lerp(delta, asight.Pos, target.pos + Vector(0, 0, -1)) + joffset
