@@ -52,7 +52,7 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     VMPosOffset.x = self:GetOwner():GetVelocity().z * 0.0025 * sightedmult
     VMPosOffset.x = VMPosOffset.x + (velocity.x * 0.001 * sg)
     VMPosOffset.y = math.Clamp(velocity.y * -0.002, -1, 1) * sightedmult
-    VMPosOffset.z = math.Clamp(VMPosOffset.x * -4, -4, 4)
+    VMPosOffset.z = math.Clamp(VMPosOffset.x * -2, -4, 4)
     VMPosOffset_Lerp.x = Lerp(8 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
     VMPosOffset_Lerp.y = Lerp(8 * FT, VMPosOffset_Lerp.y, VMPosOffset.y)
     VMPosOffset_Lerp.z = Lerp(8 * FT, VMPosOffset_Lerp.z, VMPosOffset.z)
