@@ -8,6 +8,7 @@ ArcCW.ConVar_BuffMults = {
     ["Mult_HipDispersion"] = "arccw_mult_hipfire",
     ["Mult_ReloadTime"] = "arccw_mult_reloadtime",
     ["Mult_SightTime"] = "arccw_mult_sighttime",
+    ["Mult_RPM"] = "arccw_mult_rpm",
     ["Mult_Range"] = "arccw_mult_range",
     ["Mult_Recoil"] = "arccw_mult_recoil",
     ["Mult_MoveDispersion"] = "arccw_mult_movedisp",

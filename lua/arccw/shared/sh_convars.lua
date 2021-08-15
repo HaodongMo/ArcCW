@@ -28,6 +28,7 @@ CreateConVar("arccw_mult_npcdamage", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multi
 CreateConVar("arccw_mult_hipfire", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for hip fire spread for ArcCW.")
 CreateConVar("arccw_mult_reloadtime", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how long ArcCW weapons take to reload.", 0.01)
 CreateConVar("arccw_mult_sighttime", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how long ArcCW weapons take to enter sights.", 0.1)
+CreateConVar("arccw_mult_rpm", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how fast ArcCW weapons fire. May be disastrous on performance.", 0.01)
 CreateConVar("arccw_mult_range", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for range of all ArcCW weapons.")
 CreateConVar("arccw_mult_recoil", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for recoil of all ArcCW weapons.")
 CreateConVar("arccw_mult_accuracy", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for mechanical inprecision of ArcCW weapons.")
