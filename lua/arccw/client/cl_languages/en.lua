@@ -345,4 +345,4 @@ L["arccw.cvar.mult_sway"]    = "Multiply Sway"
 
 -- 2021-08-15
 L["arccw.cvar.mult_rpm"] = "Fire Rate"
-L["arccw.cvar.mult_rpm.desc"] = "May be disastrous on performance."
+L["arccw.cvar.mult_rpm.desc"] = "May be disastrous on performance. May also be a ton of fun."
