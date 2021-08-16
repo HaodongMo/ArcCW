@@ -422,10 +422,13 @@ function SWEP:TranslateFOV(fov)
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         local sgreloading = (self:GetShotgunReloading() == 2 or self:GetShotgunReloading() == 4)
-        fov = 75
+        local delta = self:GetSightDelta()
+        delta = math.pow(delta, 2)
+        fov = math.Clamp(( (75*(1-delta)) + (GetConVar("fov_desired"):GetInt()*delta) ), 75, 100)
         app_vm = irons.ViewModelFOV or 45
         div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
         div = math.max(div, 1)
+        div = (1 * (1-delta)) + div*delta
     end
 
     -- something about this doesn't work in multiplayer
