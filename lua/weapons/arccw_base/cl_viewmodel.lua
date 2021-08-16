@@ -209,7 +209,20 @@ end
 SWEP.TheJ = {posa = Vector(), anga = Angle()}
 
 function SWEP:GetViewModelPosition(pos, ang)
-    if GetConVar("arccw_dev_benchgun"):GetBool() then return Vector(0, 0, 0), Angle(0, 0, 0) end
+    if GetConVar("arccw_dev_benchgun"):GetBool() then
+        if GetConVar("arccw_dev_benchgun_custom"):GetString() then
+            local bgc = GetConVar("arccw_dev_benchgun_custom"):GetString()
+            if string.Left(bgc, 6) != "setpos" then return Vector(0, 0, 0), Angle(0, 0, 0) end
+
+            bgc = string.TrimLeft(bgc, "setpos ")
+            bgc = string.Replace(bgc, ";setang", "")
+            bgc = string.Explode(" ", bgc)
+
+            return Vector(bgc[1], bgc[2], bgc[3]), Angle(bgc[4], bgc[5], bgc[6])
+        else
+            return Vector(0, 0, 0), Angle(0, 0, 0)
+        end
+    end
 
     local owner = self:GetOwner()
     if !IsValid(owner) or !owner:Alive() then return end

@@ -119,7 +119,8 @@ ArcCW.ClientConVars = {
 
     ["arccw_aimassist_cl"]            = { def = 0, usri = true },
 
-    ["arccw_dev_benchgun"]            = { def = 0},
+    ["arccw_dev_benchgun"]            = { def = 0 },
+    ["arccw_dev_benchgun_custom"]     = { def = "" },
 
     ["arccw_dev_removeonclose"]       = { def = 0, desc = "Remove the hud when closing instead of fading out, allowing easy reloading of the hud." },
 }

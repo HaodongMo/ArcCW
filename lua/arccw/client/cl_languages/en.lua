@@ -346,3 +346,9 @@ L["arccw.cvar.mult_sway"]    = "Multiply Sway"
 -- 2021-08-15
 L["arccw.cvar.mult_rpm"] = "Fire Rate"
 L["arccw.cvar.mult_rpm.desc"] = "May be disastrous on performance. May also be a ton of fun."
+
+-- 2021-08-16
+L["arccw.cvar.dev_benchgun"] = "Benchgun"
+L["arccw.cvar.dev_benchgun.desc"] = "Places the viewmodel in a stationary position, usually at world origin."
+L["arccw.cvar.dev_benchgun_custom"] = "Benchgun Custom"
+L["arccw.cvar.dev_benchgun_custom.desc"] = "Custom location to place the viewmodel at. Use getpos and place the result here.\nExample:\nsetpos 61 -397 -63;setang 0 96 0"
