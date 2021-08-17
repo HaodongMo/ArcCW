@@ -529,6 +529,12 @@ function SWEP:GetActiveElements(recache)
             table.Add(eles, atttbl.ActivateElements)
         end
 
+        local num = i.ToggleNum or 1
+        if atttbl.ToggleStats and atttbl.ToggleStats[num] and (atttbl.ToggleStats[num]["ActivateElements"] != nil) then
+            table.Add(eles, atttbl.ToggleStats[num]["ActivateElements"])
+            --atttbl.ToggleStats[num][buff]
+        end
+
         local slots = atttbl.Slot
 
         if isstring(slots) then
