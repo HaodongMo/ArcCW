@@ -5,7 +5,7 @@ local clump_inner = Material("arccw/hud/clump_inner.png", "mips smooth")
 local clump_outer = Material("arccw/hud/clump_outer.png", "mips smooth")
 local aimtr_result = {}
 local aimtr = {}
-
+local square_mat = Material("color")
 
 function SWEP:ShouldDrawCrosshair()
     if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
@@ -41,6 +41,7 @@ function SWEP:DoDrawCrosshair(x, y)
     local prong_len = GetConVar("arccw_crosshair_length"):GetFloat()
     local prong_wid = GetConVar("arccw_crosshair_thickness"):GetFloat()
     local prong_out = GetConVar("arccw_crosshair_outline"):GetInt()
+    local prong_tilt = GetConVar("arccw_crosshair_tilt"):GetBool()
 
     local clr = Color(GetConVar("arccw_crosshair_clr_r"):GetInt(),
             GetConVar("arccw_crosshair_clr_g"):GetInt(),
@@ -124,28 +125,18 @@ function SWEP:DoDrawCrosshair(x, y)
         delta = math.Approach(delta, 0, FrameTime() * 1 / st)
     end
 
-    if GetConVar("arccw_crosshair_equip"):GetBool() and self:GetBuff("ShootEntity", true) then
-        gap = gap * 1.5
-        prong = ScreenScale(prong_wid)
-        p_w = ScreenScale(prong_wid)
-        p_w2 = p_w + prong_out
-    end
-
-    if GetConVar("arccw_crosshair_equip"):GetBool() and self.PrimaryBash then
-        gap = gap * 2
+    if GetConVar("arccw_crosshair_equip"):GetBool() and (self:GetBuff("ShootEntity", true) or self.PrimaryBash) then
         prong = ScreenScale(prong_wid)
         p_w = ScreenScale(prong_wid)
         p_w2 = p_w + prong_out
     end
 
     if prong_dot then
-
         surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
         surface.DrawRect(x - p_w2 / 2, y - p_w2 / 2, p_w2, p_w2)
 
         surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
         surface.DrawRect(x - p_w / 2, y - p_w / 2, p_w, p_w)
-
     end
 
     local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
@@ -163,8 +154,6 @@ function SWEP:DoDrawCrosshair(x, y)
     gap = gap * delta
 
     if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
-        prong_dot = false
-        gap = gap * 2.5
         prong = ScreenScale(prong_wid)
         p_w = ScreenScale(prong_len)
         p_w2 = p_w + prong_out
@@ -172,40 +161,66 @@ function SWEP:DoDrawCrosshair(x, y)
 
     local prong2 = prong + prong_out
 
-    surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
-
-    if prong_left then
-        surface.DrawRect(x - gap - prong2 + prong_out / 2, y - p_w2 / 2, prong2, p_w2)
-    end
-
-    if prong_right then
-        surface.DrawRect(x + gap - prong_out / 2, y - p_w2 / 2, prong2, p_w2)
-    end
-
-    if prong_top then
-    surface.DrawRect(x - p_w2 / 2, y - gap - prong2 + prong_out / 2, p_w2, prong2)
-    end
-
-    if prong_down then
-        surface.DrawRect(x - p_w2 / 2, y + gap - prong_out / 2, p_w2, prong2)
-    end
-
-    surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
-
-    if prong_left then
-        surface.DrawRect(x - gap - prong, y - p_w / 2, prong, p_w)
-    end
-
-    if prong_right then
-        surface.DrawRect(x + gap, y - p_w / 2, prong, p_w)
-    end
-
-    if prong_top then
-    surface.DrawRect(x - p_w / 2, y - gap - prong, p_w, prong)
-    end
-
-    if prong_down then
-        surface.DrawRect(x - p_w / 2, y + gap, p_w, prong)
+    if prong_tilt then
+        local dist = gap / 1.414 + prong / 1.414 / 2
+        surface.SetMaterial(square_mat)
+        -- Shade
+        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+        if prong_left and prong_top then
+            surface.DrawTexturedRectRotated(x - dist, y - dist, prong2, p_w2, -45)
+            surface.DrawTexturedRectRotated(x + dist, y - dist, prong2, p_w2, 45)
+        elseif prong_left or prong_top then
+            surface.DrawRect(x - p_w2 / 2, y - gap - prong2 + prong_out / 2, p_w2, prong2)
+        end
+        if prong_right and prong_down then
+            surface.DrawTexturedRectRotated(x + dist, y + dist, prong2, p_w2, -45)
+            surface.DrawTexturedRectRotated(x - dist, y + dist, prong2, p_w2, 45)
+        elseif prong_right or prong_down then
+            surface.DrawRect(x - p_w2 / 2, y + gap - prong_out / 2, p_w2, prong2)
+        end
+        -- Fill
+        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
+        if prong_left and prong_top then
+            surface.DrawTexturedRectRotated(x - dist, y - dist, prong, p_w, -45)
+            surface.DrawTexturedRectRotated(x + dist, y - dist, prong, p_w, 45)
+        elseif prong_left or prong_top then
+            surface.DrawRect(x - p_w / 2, y - gap - prong, p_w, prong)
+        end
+        if prong_right and prong_down then
+            surface.DrawTexturedRectRotated(x + dist, y + dist, prong, p_w, -45)
+            surface.DrawTexturedRectRotated(x - dist, y + dist, prong, p_w, 45)
+        elseif prong_right or prong_down then
+            surface.DrawRect(x - p_w / 2, y + gap, p_w, prong)
+        end
+    else
+        -- Shade
+        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+        if prong_left then
+            surface.DrawRect(x - gap - prong2 + prong_out / 2, y - p_w2 / 2, prong2, p_w2)
+        end
+        if prong_right then
+            surface.DrawRect(x + gap - prong_out / 2, y - p_w2 / 2, prong2, p_w2)
+        end
+        if prong_top then
+            surface.DrawRect(x - p_w2 / 2, y - gap - prong2 + prong_out / 2, p_w2, prong2)
+        end
+        if prong_down then
+            surface.DrawRect(x - p_w2 / 2, y + gap - prong_out / 2, p_w2, prong2)
+        end
+        -- Fill
+        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
+        if prong_left then
+            surface.DrawRect(x - gap - prong, y - p_w / 2, prong, p_w)
+        end
+        if prong_right then
+            surface.DrawRect(x + gap, y - p_w / 2, prong, p_w)
+        end
+        if prong_top then
+            surface.DrawRect(x - p_w / 2, y - gap - prong, p_w, prong)
+        end
+        if prong_down then
+            surface.DrawRect(x - p_w / 2, y + gap, p_w, prong)
+        end
     end
 
     if GetConVar("arccw_crosshair_clump"):GetBool() and (GetConVar("arccw_crosshair_clump_always"):GetBool() or num > 1) then

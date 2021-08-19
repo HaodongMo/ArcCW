@@ -37,6 +37,7 @@ ArcCW.ClientConVars = {
     ["arccw_crosshair_prong_left"]    = { def =  1 },
     ["arccw_crosshair_prong_right"]   = { def =  1 },
     ["arccw_crosshair_prong_bottom"]  = { def =  1 },
+    ["arccw_crosshair_tilt"]    = { def =  0 },
 
     ["arccw_attinv_simpleproscons"]   = { def =  0 },
     ["arccw_attinv_onlyinspect"]      = { def =  0 },
