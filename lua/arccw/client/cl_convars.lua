@@ -32,7 +32,11 @@ ArcCW.ClientConVars = {
     ["arccw_crosshair_shotgun"]       = { def =  1 },
     ["arccw_crosshair_equip"]         = { def =  1 },
     ["arccw_crosshair_aa"]            = { def =  1 },
-    ["arccw_crosshair_trueaim"]            = { def =  0 },
+    ["arccw_crosshair_trueaim"]       = { def =  0 },
+    ["arccw_crosshair_prong_top"]     = { def =  1 },
+    ["arccw_crosshair_prong_left"]    = { def =  1 },
+    ["arccw_crosshair_prong_right"]   = { def =  1 },
+    ["arccw_crosshair_prong_bottom"]  = { def =  1 },
 
     ["arccw_attinv_simpleproscons"]   = { def =  0 },
     ["arccw_attinv_onlyinspect"]      = { def =  0 },

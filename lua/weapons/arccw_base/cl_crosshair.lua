@@ -27,16 +27,16 @@ function SWEP:ShouldDrawCrosshair()
     return true
 end
 
-
 function SWEP:DoDrawCrosshair(x, y)
     local ply = LocalPlayer()
     local pos = ply:EyePos()
     local ang = ply:EyeAngles() - self:GetOurViewPunchAngles()
-    local dot = true
-    local prong_top = true
-    local prong_left = true
-    local prong_right = true
-    local prong_down = true
+
+    local prong_dot = GetConVar("arccw_crosshair_dot"):GetBool()
+    local prong_top = GetConVar("arccw_crosshair_prong_top"):GetBool()
+    local prong_left = GetConVar("arccw_crosshair_prong_left"):GetBool()
+    local prong_right = GetConVar("arccw_crosshair_prong_right"):GetBool()
+    local prong_down = GetConVar("arccw_crosshair_prong_bottom"):GetBool()
 
     local prong_len = GetConVar("arccw_crosshair_length"):GetFloat()
     local prong_wid = GetConVar("arccw_crosshair_thickness"):GetFloat()
@@ -132,14 +132,13 @@ function SWEP:DoDrawCrosshair(x, y)
     end
 
     if GetConVar("arccw_crosshair_equip"):GetBool() and self.PrimaryBash then
-        dot = false
         gap = gap * 2
         prong = ScreenScale(prong_wid)
         p_w = ScreenScale(prong_wid)
         p_w2 = p_w + prong_out
     end
 
-    if GetConVar("arccw_crosshair_dot"):GetBool() and dot then
+    if prong_dot then
 
         surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
         surface.DrawRect(x - p_w2 / 2, y - p_w2 / 2, p_w2, p_w2)
@@ -164,7 +163,7 @@ function SWEP:DoDrawCrosshair(x, y)
     gap = gap * delta
 
     if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
-        dot = false
+        prong_dot = false
         gap = gap * 2.5
         prong = ScreenScale(prong_wid)
         p_w = ScreenScale(prong_len)

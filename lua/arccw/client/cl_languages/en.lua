@@ -352,3 +352,9 @@ L["arccw.cvar.dev_benchgun"] = "Benchgun"
 L["arccw.cvar.dev_benchgun.desc"] = "Places the viewmodel in a stationary position, usually at world origin."
 L["arccw.cvar.dev_benchgun_custom"] = "Benchgun Custom"
 L["arccw.cvar.dev_benchgun_custom.desc"] = "Custom location to place the viewmodel at. Use getpos and place the result here.\nExample:\nsetpos 61 -397 -63;setang 0 96 0"
+
+-- 2021-08-18
+L["arccw.cvar.crosshair_prong_top"] = "Show Top Prong"
+L["arccw.cvar.crosshair_prong_left"] = "Show Left Prong"
+L["arccw.cvar.crosshair_prong_right"] = "Show Right Prong"
+L["arccw.cvar.crosshair_prong_bottom"] = "Show Bottom Prong"

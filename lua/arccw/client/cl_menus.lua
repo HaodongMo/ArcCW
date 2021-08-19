@@ -173,6 +173,10 @@ local CrosshairPanel = {
     { type = "f", text = "#arccw.cvar.crosshair_outline", var = "arccw_crosshair_outline", min = 0, max = 4 },
     { type = "m", text = "#arccw.cvar.crosshair_outline_clr", r = "arccw_crosshair_outline_r", g = "arccw_crosshair_outline_g", b = "arccw_crosshair_outline_b", a = "arccw_crosshair_outline_a" },
     { type = "m", text = "#arccw.cvar.scope_clr", r = "arccw_scope_r", g = "arccw_scope_g", b = "arccw_scope_b" },
+    { type = "b", text = "#arccw.cvar.crosshair_prong_top", var = "arccw_crosshair_prong_top" },
+    { type = "b", text = "#arccw.cvar.crosshair_prong_left", var = "arccw_crosshair_prong_left" },
+    { type = "b", text = "#arccw.cvar.crosshair_prong_right", var = "arccw_crosshair_prong_right" },
+    { type = "b", text = "#arccw.cvar.crosshair_prong_bottom", var = "arccw_crosshair_prong_bottom" },
 }
 
 local BindsPanel = {
