@@ -162,33 +162,36 @@ function SWEP:DoDrawCrosshair(x, y)
     local prong2 = prong + prong_out
 
     if prong_tilt then
-        local dist = gap / 1.414 + prong / 1.414 / 2
+        local angle = (prong_left and prong_top and prong_right and prong_down) and 45 or 30
+        local rad = math.rad(angle)
+        local dx = gap * math.cos(rad) + prong * math.cos(rad) / 2
+        local dy = gap * math.sin(rad) + prong * math.sin(rad) / 2
         surface.SetMaterial(square_mat)
         -- Shade
         surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
         if prong_left and prong_top then
-            surface.DrawTexturedRectRotated(x - dist, y - dist, prong2, p_w2, -45)
-            surface.DrawTexturedRectRotated(x + dist, y - dist, prong2, p_w2, 45)
+            surface.DrawTexturedRectRotated(x - dx, y - dy, prong2, p_w2, -angle)
+            surface.DrawTexturedRectRotated(x + dx, y - dy, prong2, p_w2, angle)
         elseif prong_left or prong_top then
             surface.DrawRect(x - p_w2 / 2, y - gap - prong2 + prong_out / 2, p_w2, prong2)
         end
         if prong_right and prong_down then
-            surface.DrawTexturedRectRotated(x + dist, y + dist, prong2, p_w2, -45)
-            surface.DrawTexturedRectRotated(x - dist, y + dist, prong2, p_w2, 45)
+            surface.DrawTexturedRectRotated(x + dx, y + dy, prong2, p_w2, -angle)
+            surface.DrawTexturedRectRotated(x - dx, y + dy, prong2, p_w2, angle)
         elseif prong_right or prong_down then
             surface.DrawRect(x - p_w2 / 2, y + gap - prong_out / 2, p_w2, prong2)
         end
         -- Fill
         surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
         if prong_left and prong_top then
-            surface.DrawTexturedRectRotated(x - dist, y - dist, prong, p_w, -45)
-            surface.DrawTexturedRectRotated(x + dist, y - dist, prong, p_w, 45)
+            surface.DrawTexturedRectRotated(x - dx, y - dy, prong, p_w, -angle)
+            surface.DrawTexturedRectRotated(x + dx, y - dy, prong, p_w, angle)
         elseif prong_left or prong_top then
             surface.DrawRect(x - p_w / 2, y - gap - prong, p_w, prong)
         end
         if prong_right and prong_down then
-            surface.DrawTexturedRectRotated(x + dist, y + dist, prong, p_w, -45)
-            surface.DrawTexturedRectRotated(x - dist, y + dist, prong, p_w, 45)
+            surface.DrawTexturedRectRotated(x + dx, y + dy, prong, p_w, -angle)
+            surface.DrawTexturedRectRotated(x - dx, y + dy, prong, p_w, angle)
         elseif prong_right or prong_down then
             surface.DrawRect(x - p_w / 2, y + gap, p_w, prong)
         end
