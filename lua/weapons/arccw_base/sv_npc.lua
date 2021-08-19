@@ -39,15 +39,14 @@ function SWEP:AssignRandomAttToSlot(slot)
     if slot.DoNotRandomize then return end
     if slot.Installed then return end
 
-    local atts = ArcCW:GetAttsForSlot(slot.Slot, self, true)
-    if #atts <= 0 then return end
-
-    slot.Installed = table.Random(atts)
+    local att = ArcCW:RollRandomAttachment(true, self, slot)
+    if !att then return end
+    slot.Installed = att
 
     local atttbl = ArcCW.AttachmentTable[slot.Installed]
 
-    if !ArcCW:SlotAcceptsAtt(slot.Slot, self, slot.Installed) then return end
-    if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
+    --if !ArcCW:SlotAcceptsAtt(slot.Slot, self, slot.Installed) then return end
+    --if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then return end
 
     if atttbl.MountPositionOverride then
         slot.SlidePos = atttbl.MountPositionOverride
@@ -87,9 +86,6 @@ function SWEP:NPC_SetupAttachments()
             s = table.Random(ss) or i
         end
         if !self.Attachments[s] then s = i end
-
-        local atts = ArcCW:GetAttsForSlot(self.Attachments[s].Slot, self)
-        if #atts <= 0 then continue end
 
         chance = chance - chancestep
 

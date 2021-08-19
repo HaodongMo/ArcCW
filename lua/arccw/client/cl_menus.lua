@@ -250,6 +250,7 @@ local AttsPanel = {
     { type = "b", text = "#arccw.cvar.attinv_lockmode", var = "arccw_attinv_lockmode", sv = true },
     { type = "o", text = "#arccw.cvar.attinv_loseondie", var = "arccw_attinv_loseondie", sv = true,
             choices = {[0] = "#arccw.combobox.disabled", [1] = "#arccw.cvar.attinv_loseondie.1", [2] = "#arccw.cvar.attinv_loseondie.2"}},
+    { type = "i", text = "#arccw.cvar.attinv_giveonspawn", var = "arccw_attinv_giveonspawn", min = 0, max = 100, sv = true },
     { type = "i", text = "#arccw.cvar.atts_pickx", var = "arccw_atts_pickx", min = 0, max = 10, sv = true },
     { type = "c", text = "#arccw.cvar.atts_pickx.desc", sv = true },
     { type = "b", text = "#arccw.cvar.enable_dropping", var = "arccw_enable_dropping", sv = true },

@@ -97,6 +97,9 @@ CreateConVar("arccw_aimassist_intensity", 0.5, FCVAR_ARCHIVE + FCVAR_REPLICATED,
 
 CreateConVar("arccw_malfunction", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 2)
 
+CreateConVar("arccw_attinv_giveonspawn", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Give this many random attachments to players on spawn.", 0)
+
+
 -- developer stuff
 CreateConVar("arccw_reloadatts_mapcleanup", 0, 0, "Whether to reload ArcCW attachments on admin clean up.")
 CreateConVar("arccw_reloadatts_registerentities", 1, 0, "Register attachment entities. This may increase time to reload attachments.")

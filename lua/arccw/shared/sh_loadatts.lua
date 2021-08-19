@@ -6,6 +6,8 @@ ArcCW.AttachmentBlacklistTable = {}
 ArcCW.NumAttachments = 1
 ArcCW.GenerateAttEntities = true
 
+ArcCW.AttachmentCachedLists = {}
+
 local shortname = ""
 local genAttCvar = GetConVar("arccw_reloadatts_registerentities")
 
@@ -101,6 +103,7 @@ local function ArcCW_LoadAtts()
     ArcCW.AttachmentSlotTable = {}
     ArcCW.NumAttachments = 1
     ArcCW.AttachmentBits = nil
+    ArcCW.AttachmentCachedLists = {}
 
     for k, v in pairs(file.Find("arccw/shared/attachments/*", "LUA")) do
         if !pcall(function() ArcCW_LoadAtt(v) end) then
