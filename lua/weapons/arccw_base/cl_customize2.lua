@@ -162,9 +162,12 @@ function SWEP:CreateCustomize2HUD()
     local col_block = Color(50, 0, 0, 175)
     local col_block_txt = Color(175, 10, 10, 255)
 
+    local col_unowned = col_block
+    local col_unowned_txt = col_block_txt
+
     if GetConVar("arccw_attinv_darkunowned"):GetBool() then
-        col_block = Color(0, 0, 0, 100)
-        col_block_txt = Color(10, 10, 10, 255)
+        col_unowned = Color(0, 0, 0, 150)
+        col_unowned_txt = Color(150, 150, 150, 255)
     end
 
     local col_bad = Color(255, 50, 50, 255)
@@ -256,12 +259,15 @@ function SWEP:CreateCustomize2HUD()
         col_shadow = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 255))
         col_button = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 175))
 
+        col_block = Color(50, 0, 0, 175 * ArcCW.Inv_Fade)
+        col_block_txt = Color(175, 10, 10, Lerp(ArcCW.Inv_Fade, 0, 255))
+
         if GetConVar("arccw_attinv_darkunowned"):GetBool() then
-            col_block = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 100))
-            col_block_txt = Color(10, 10, 10, Lerp(ArcCW.Inv_Fade, 0, 255))
+            col_unowned = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 150))
+            col_unowned_txt = Color(150, 150, 150, Lerp(ArcCW.Inv_Fade, 0, 255))
         else
-            col_block = Color(50, 0, 0, 175 * ArcCW.Inv_Fade)
-            col_block_txt = Color(175, 10, 10, Lerp(ArcCW.Inv_Fade, 0, 255))
+            col_unowned = col_block
+            col_unowned_txt = col_block_txt
         end
 
         --col_bad = Color(255, 50, 50, 255 * ArcCW.Inv_Fade)
@@ -866,7 +872,7 @@ function SWEP:CreateCustomize2HUD()
                 local col = col_button
                 local col2 = col_fg
 
-                local atttbl = ArcCW.AttachmentTable[self2.att or ""]
+                local atttbl = ArcCW.AttachmentTable[self2.att or ""] or {}
 
                 local _, _, blocked, showqty = self:ValidateAttachment(att.att, nil, att.slot)
 
@@ -889,9 +895,12 @@ function SWEP:CreateCustomize2HUD()
 
                 local owned = ArcCW:PlayerGetAtts(self:GetOwner(), att.att) > 0
 
-                if blocked or (!owned and installed != self2.att) then
+                if blocked then
                     col = col_block
                     col2 = col_block_txt
+                elseif !owned and installed != self2.att then
+                    col = col_unowned
+                    col2 = col_unowned_txt
                 end
 
                 if !owned and installed != self2.att then
