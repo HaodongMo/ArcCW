@@ -53,6 +53,7 @@ function ArcCW.Move(ply, mv, cmd)
 
     mv:SetMaxSpeed(basespd * s)
     mv:SetMaxClientSpeed(basespd * s)
+    ply.ArcCW_LastTickSpeedMult = s -- in case other addons need it
 end
 
 hook.Add("SetupMove", "ArcCW_SetupMove", ArcCW.Move)
