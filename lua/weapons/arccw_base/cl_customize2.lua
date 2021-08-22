@@ -2217,17 +2217,18 @@ function SWEP:CreateCustomize2HUD()
 
                 arpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
             elseif self:GetCurrentFiremode().Mode == 1 then
-                arpm = math.min(400, (60 / self:GetFiringDelay()))
+                arpm = math.min(400, 60 / self:GetFiringDelay())
             end
             aars = aars * arpm
 
-            
+            --[[
             if self:GetCurrentFiremode().Mode == 1 or self:GetIsManualAction() then
-                disclaimers = disclaimers .. " " .. arpm .. "rpm"
+                disclaimers = disclaimers .. " " .. arpm .. translate("unit.rpm")
             end
+            ]]
 
             table.insert(infos, {
-                title = "Fesiug's Recoil Score (lower is better)",
+                title = translate("trivia.recoilscore"),
                 value = math.Round(aars),
                 unit = " points" .. disclaimers,
             })
