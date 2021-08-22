@@ -73,6 +73,7 @@ ArcCW.ClientConVars = {
     ["arccw_hud_3dfun_ammotype"]      = { def =  0 },
     ["arccw_hud_forceshow"]           = { def =  0 },
     ["arccw_hud_fcgbars"]             = { def =  1, desc = "Draw firemode bars on ammo HUD." },
+    ["arccw_hud_fcgabbrev"]           = { def =  0, desc = "Use shortened firemode names."},
     ["arccw_hud_minimal"]             = { def =  1, desc = "Backup HUD if we cannot draw the ammo HUD." },
     ["arccw_hud_embracetradition"]    = { def =  0, desc = "Use the classic customization HUD." },
     ["arccw_hud_deadzone_x"]          = { def =  0 },

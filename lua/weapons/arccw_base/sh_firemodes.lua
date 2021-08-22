@@ -99,20 +99,21 @@ end
 function SWEP:GetFiremodeName()
     if self:GetBuff_Hook("Hook_FiremodeName") then return self:GetBuff_Hook("Hook_FiremodeName") end
 
+    local abbrev = GetConVar("arccw_hud_fcgabbrev"):GetBool() and ".abbrev" or ""
+
     if self:GetInUBGL() then
-        return self:GetBuff_Override("UBGL_PrintName") and self:GetBuff_Override("UBGL_PrintName") or ArcCW.GetTranslation("fcg.ubgl")
+        return self:GetBuff_Override("UBGL_PrintName") and self:GetBuff_Override("UBGL_PrintName") or ArcCW.GetTranslation("fcg.ubgl" .. abbrev)
     end
 
     local fm = self:GetCurrentFiremode()
 
-    if fm.PrintName then return ArcCW.GetTranslation("fcg." .. string.lower(fm.PrintName)) or ArcCW.TryTranslation(fm.PrintName) end
+    if fm.PrintName then return ArcCW.GetTranslation("fcg." .. string.lower(fm.PrintName) .. abbrev) or ArcCW.TryTranslation(fm.PrintName) end
 
     local mode = fm.Mode
-
-    if mode == 0 then return ArcCW.GetTranslation("fcg.safe") end
-    if mode == 1 then return ArcCW.GetTranslation("fcg.semi") end
-    if mode >= 2 then return ArcCW.GetTranslation("fcg.auto") end
-    if mode < 0 then return string.format(ArcCW.GetTranslation("fcg.burst"), tostring(-mode)) end
+    if mode == 0 then return ArcCW.GetTranslation("fcg.safe" .. abbrev) end
+    if mode == 1 then return ArcCW.GetTranslation("fcg.semi" .. abbrev) end
+    if mode >= 2 then return ArcCW.GetTranslation("fcg.auto" .. abbrev) end
+    if mode < 0 then return string.format(ArcCW.GetTranslation("fcg.burst" .. abbrev), tostring(-mode)) end
 end
 
 function SWEP:GetFiremodeBars()
