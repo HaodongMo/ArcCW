@@ -628,7 +628,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
             local cpos = self:GetOwner():EyePos() + ((EyeAngles() + (self:GetOurViewPunchAngles() * 0.5)):Forward() * 2048)
 
-            cpos:Rotate(Angle(0, -ArcCW.StrafeTilt(self), 0))
+            --cpos:Rotate(Angle(0, -ArcCW.StrafeTilt(self), 0))
 
             local ts = cpos:ToScreen()
 

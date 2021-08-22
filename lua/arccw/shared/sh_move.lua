@@ -53,9 +53,6 @@ function ArcCW.Move(ply, mv, cmd)
 
     mv:SetMaxSpeed(basespd * s)
     mv:SetMaxClientSpeed(basespd * s)
-
-    wpn.StrafeSpeed = math.Clamp(mv:GetSideSpeed(), -1, 1)
-
 end
 
 hook.Add("SetupMove", "ArcCW_SetupMove", ArcCW.Move)
@@ -201,14 +198,3 @@ function ArcCW.StartCommand(ply, ucmd)
 end
 
 hook.Add("StartCommand", "ArcCW_StartCommand", ArcCW.StartCommand)
-
-function ArcCW.StrafeTilt(wep)
-    if GetConVar("arccw_strafetilt"):GetBool() then
-        local tilt = wep.StrafeSpeed or 0
-        if wep:GetState() == ArcCW.STATE_SIGHTS and wep:GetActiveSights().Holosight then
-            tilt = tilt * (wep:GetBuff("MoveDispersion") / 360 / 60) * 2
-        end
-        return tilt
-    end
-    return 0
-end

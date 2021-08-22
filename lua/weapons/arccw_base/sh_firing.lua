@@ -136,7 +136,7 @@ function SWEP:PrimaryAttack()
     local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
     local disp = self:GetDispersion() * ArcCW.MOAToAcc / 10
 
-    dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
+    --dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
     dir = dir + VectorRand() * disp
 
     if GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
