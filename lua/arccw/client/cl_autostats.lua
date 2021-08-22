@@ -97,13 +97,13 @@ local function stattext(wep, att, i, k, dmgboth)
     local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
 
     local txt = ""
-    local str, st = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
+    local str, eval = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
 
     if i == "Mult_Damage" and dmgboth then
         str = ArcCW.GetTranslation("autostat.damageboth") or stat[1]
     end
 
-    local tcon, tpro = st and "cons" or "pros", st and "pros" or "cons"
+    local tcon, tpro = eval and "cons" or "pros", eval and "pros" or "cons"
 
     if stat[2] == "mult" and k != 1 then
         local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
@@ -112,7 +112,7 @@ local function stattext(wep, att, i, k, dmgboth)
     elseif stat[2] == "add" and k != 0 then
         local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
         txt = simple and "+ " or sign .. tostr(state) .. " "
-        return txt .. str, k > 1 and tpro or tcon
+        return txt .. str, k > 1 and tcon or tpro
     elseif stat[2] == "override" and k == true then
         return str, tcon
     elseif stat[2] == "func" then
