@@ -2104,7 +2104,7 @@ function SWEP:CreateCustomize2HUD()
 
             local function RangeText(range)
                 local metres = tostring(math.Round(range)) .. "m"
-                local hu = tostring(math.Round(range / ArcCW.HUToM)) .. "HU"
+                local hu = tostring(math.Round(range / ArcCW.HUToM / 100) * 100) .. "HU"
 
                 return metres, hu
             end
@@ -2362,8 +2362,8 @@ function SWEP:CreateCustomize2HUD()
             local s = w / 2
             local s2 = ss * 10
 
-            local range_1_txt = tostring(range_1) .. "m / " .. tostring(math.Round(range_1 / ArcCW.HUToM)) .. "HU"
-            local range_3_txt = tostring(range_3) .. "m / " .. tostring(math.Round(range_3 / ArcCW.HUToM)) .. "HU"
+            local range_1_txt = tostring(range_1) .. "m / " .. tostring(math.Round(range_1 / ArcCW.HUToM / 100) * 100) .. "HU"
+            local range_3_txt = tostring(range_3) .. "m / " .. tostring(math.Round(range_3 / ArcCW.HUToM / 100) * 100) .. "HU"
 
             local col_bullseye = Color(200, 200, 200, Lerp(ArcCW.Inv_Fade, 0, 100))
 
