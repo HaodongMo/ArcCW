@@ -310,6 +310,22 @@ L["autostat.bipod2"] = "Allows bipod (-%d%% Dispersion, -%d%% Recoil)"
 L["autostat.nobipod"] = "Disables bipod"
 
 --2021-07-01
+L["fcg.safe2"] = "Lowered"
+L["fcg.dact"] = "Double-action"
+L["fcg.sact"] = "Single-action"
+L["fcg.bolt"] = "Bolt-action"
+L["fcg.pump"] = "Pump-action"
+L["fcg.lever"] = "Lever-action"
+L["fcg.manual"] = "Manual-action"
+L["fcg.break"] = "Break-action"
+--L["fcg.sngl"] = "Single" should we? idk
+--L["fcg.both"] = "Both"
+
+--2021-08-11
+L["autostat.clipsize.mod"] = "Magazine capacity" -- used for Add_ClipSize and Mult_ClipSize
+
+--2021-08-22
+L["trivia.recoilscore"] = "Recoil Score (Lower is better)"
 L["fcg.safe.abbrev"] = "SAFE"
 L["fcg.semi.abbrev"] = "SEMI"
 L["fcg.auto.abbrev"] = "AUTO"
@@ -325,20 +341,6 @@ L["fcg.manual.abbrev"] = "MANUAL"
 L["fcg.break.abbrev"] = "BREAK"
 L["fcg.sngl"] = "SNGL"
 L["fcg.both"] = "BOTH"
-
---2021-08-11
-L["autostat.clipsize.mod"] = "Magazine capacity" -- used for Add_ClipSize and Mult_ClipSize
-
---2021-08-22
-L["trivia.recoilscore"] = "Recoil Score (Lower is better)"
-L["fcg.safe2"] = "Lowered"
-L["fcg.dact"] = "Double-action"
-L["fcg.sact"] = "Single-action"
-L["fcg.bolt"] = "Bolt-action"
-L["fcg.pump"] = "Pump-action"
-L["fcg.lever"] = "Lever-action"
-L["fcg.manual"] = "Manual-action"
-L["fcg.break"] = "Break-action"
 
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
