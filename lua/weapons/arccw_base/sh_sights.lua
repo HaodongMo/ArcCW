@@ -411,7 +411,7 @@ end
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
 
-    if GetConVar("arccw_dev_benchgun"):GetBool() then self.CurrentFOV = fov self.CurrentViewModelFOV = fov return fov end
+    if CLIENT and GetConVar("arccw_dev_benchgun"):GetBool() then self.CurrentFOV = fov self.CurrentViewModelFOV = fov return fov end
     --if !irons then return end
     --if !irons.Magnification then return fov end
     --if irons.Magnification == 1 then return fov end
