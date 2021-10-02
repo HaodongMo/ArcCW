@@ -345,6 +345,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local aaaaang = holstered and (hang or sang) or (sang or hang)
 
         local sd = (holstered and 1) or (!(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) and self:GetSprintDelta()) or 0
+        sd = math.pow(math.sin(sd*math.pi*0.5), 2)
         target.pos = f_lerp(sd, target.pos, aaaapos)
         target.ang = f_lerp(sd, target.ang, aaaaang)
 
@@ -362,11 +363,11 @@ function SWEP:GetViewModelPosition(pos, ang)
     -- Sighting
     if asight then
         local delta = sgtd
-        delta = math.pow(delta, 2)
+        delta = math.pow(math.sin(delta*math.pi*0.5), math.pi)
         local im = asight.Midpoint
 
-        local coolilove = delta * math.cos(delta * (math.pi / 2))
-        local joffset = (im and im.Pos or Vector(0, 20, -4)) * coolilove
+        local coolilove = delta * math.cos(delta * math.pi * 0.5)
+        local joffset = (im and im.Pos or Vector(0, 15, -4)) * coolilove
         local jaffset = (im and im.Ang or Angle(0, 0, -45)) * coolilove
 
         if !sighted then
@@ -392,6 +393,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         end
     end
 
+    -- busts shit
     --[[local deg = self:BarrelHitWall()
 
     if deg > 0 then

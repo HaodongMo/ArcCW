@@ -277,7 +277,7 @@ SWEP.IronSightStruct = {
     Pos = Vector(-8.728, -13.702, 4.014),
     Ang = Angle(-1.397, -0.341, -2.602),
     Midpoint = { -- Where the gun should be at the middle of it's irons
-        Pos = Vector(0, 20, -4),
+        Pos = Vector(0, 15, -4),
         Ang = Angle(0, 0, -45),
     },
     Magnification = 1,
