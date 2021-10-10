@@ -360,3 +360,6 @@ L["arccw.cvar.crosshair_prong_right"] = "Show Right Prong"
 L["arccw.cvar.crosshair_prong_bottom"] = "Show Bottom Prong"
 L["arccw.cvar.crosshair_tilt"] = "Tilted Crosshair"
 L["arccw.cvar.attinv_giveonspawn"] = "Give Atts. On Spawn"
+
+-- 2021-10-10
+L["arccw.cvar.hud_fcgabbrev"] = "Abbreviate Firemode Names"

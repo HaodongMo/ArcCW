@@ -146,6 +146,7 @@ local HudPanel = {
     { type = "b", text = "#arccw.cvar.hud_3dfun_lite", var = "arccw_hud_3dfun_lite" },
     { type = "c", text = "#arccw.cvar.hud_3dfun_lite.desc" },
     { type = "b", text = "#arccw.cvar.hud_fcgbars", var = "arccw_hud_fcgbars" },
+    { type = "b", text = "#arccw.cvar.hud_fcgabbrev", var = "arccw_hud_fcgabbrev" },
     { type = "b", text = "#arccw.cvar.hud_3dfun_ammotype", var = "arccw_hud_3dfun_ammotype" },
     { type = "c", text = "#arccw.cvar.hud_3dfun_ammotype.desc" },
 

@@ -107,7 +107,10 @@ function SWEP:GetFiremodeName()
 
     local fm = self:GetCurrentFiremode()
 
-    if fm.PrintName then return ArcCW.GetTranslation("fcg." .. string.lower(fm.PrintName) .. abbrev) or ArcCW.TryTranslation(fm.PrintName) end
+    if fm.PrintName then
+        local phrase = ArcCW.GetPhraseFromString(fm.PrintName)
+        return phrase and ArcCW.GetTranslation(phrase .. abbrev) or ArcCW.TryTranslation(fm.PrintName)
+    end
 
     local mode = fm.Mode
     if mode == 0 then return ArcCW.GetTranslation("fcg.safe" .. abbrev) end
