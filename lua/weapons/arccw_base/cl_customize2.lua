@@ -132,6 +132,9 @@ local pickx_full = Material("arccw/hud/pickx_filled.png", "mips smooth")
 
 local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
 
+local iconlock = Material("arccw/hud/locked_32.png", "mips smooth")
+local iconunlock = Material("arccw/hud/unlocked_32.png", "mips smooth")
+
 -- 1: Customize
 -- 2: Presets
 -- 3: Inventory
@@ -1297,7 +1300,7 @@ function SWEP:CreateCustomize2HUD()
         if equipped and atttbl.ToggleStats then
             local toggle = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
 
-            toggle:SetSize(m_w * 1 / 3, rss * 10)
+            toggle:SetSize(m_w * 1 / 3 - rss * 2, rss * 10)
             toggle:SetPos(leftbuffer + (ss * 4), rss * 16 + rss * 24 + ss * 128 - (rss * 10))
             toggle:SetText("")
             toggle.OnMousePressed = function(self2, kc)
@@ -1337,6 +1340,33 @@ function SWEP:CreateCustomize2HUD()
                 surface.SetTextColor(col2)
                 surface.SetTextPos((w - tw) / 2, (h - th) / 2)
                 surface.DrawText(txt)
+            end
+
+            local togglelock = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
+            togglelock:SetSize(rss * 10, rss * 10)
+            togglelock:SetPos(leftbuffer + (ss * 4) + m_w * 1 / 3, rss * 16 + rss * 24 + ss * 128 - (rss * 10))
+            togglelock:SetText("")
+            togglelock.OnMousePressed = function(self2, kc)
+                self.Attachments[slot].ToggleLock = !self.Attachments[slot].ToggleLock
+                if self.Attachments[slot].ToggleLock then
+                    self:EmitSound("weapons/arccw/dragatt.wav", 0, 150)
+                else
+                    self:EmitSound("weapons/arccw/dragatt.wav", 0, 80)
+                end
+            end
+            togglelock.Paint = function(self2, w, h)
+                local col = col_button
+                local col2 = col_fg
+
+                if self2:IsHovered() or ArcCW.Inv_SelectedInfo == self2.Val then
+                    col = col_fg_tr
+                    col2 = col_shadow
+                end
+
+                draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+                surface.SetDrawColor(col2.r, col2.g, col2.b)
+                surface.SetMaterial(self.Attachments[slot].ToggleLock and iconlock or iconunlock)
+                surface.DrawTexturedRect(4, 4, w - 8, h - 8)
             end
 
             bottombuffer = rss * 10
