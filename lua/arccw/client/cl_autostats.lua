@@ -112,7 +112,7 @@ local function stattext(wep, att, i, k, dmgboth)
     elseif stat[2] == "add" and k != 0 then
         local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
         txt = simple and "+ " or sign .. tostr(state) .. " "
-        return txt .. str, k > 1 and tcon or tpro
+        return txt .. str, k > 0 and tcon or tpro
     elseif stat[2] == "override" and k == true then
         return str, tcon
     elseif stat[2] == "func" then
