@@ -149,23 +149,41 @@ function ArcCW:GetProsCons(wep, att, toggle)
 
     -- Process togglable stats
     if att.ToggleStats then
-        local toggletbl = att.ToggleStats[toggle or 1]
-        if toggletbl and !toggletbl.NoAutoStats then
+        --local toggletbl = att.ToggleStats[toggle or 1]
+        for ti, toggletbl in pairs(att.ToggleStats) do
+            -- show the first stat block (unless NoAutoStats), and all blocks with AutoStats
+            if toggletbl.AutoStats or (ti == (toggle or 1) and !toggletbl.NoAutoStats) then
+                local dmgboth = toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage
+                for i, k in pairs(toggletbl) do
 
-            local dmgboth = toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage
-            for i, k in pairs(toggletbl) do
-                local txt, typ = stattext(wep, toggletbl, i, k, dmgboth)
-                if !txt then continue end
+                    local stat = ArcCW.AutoStats[i]
+                    if !stat then continue end
 
-                local stat = ArcCW.AutoStats[i]
-                local prefix = (stat[2] == "override" and k == true) and "" or ("[" .. (toggletbl.AutoStatName or toggletbl.PrintName or i) .. "] ")
+                    local val = k
+                    --[[]
+                    -- makes the stat show as a sum and not an additional modifier
+                    -- feels more confusing though
+                    if att[i] then
+                        if stat[2] == "add" then
+                            val = val + att[i]
+                        elseif stat[2] == "mult" then
+                            val = val * att[i]
+                        end
+                    end
+                    ]]
 
-                if typ == "pros" then
-                    tbl_ins(pros, prefix .. txt)
-                elseif typ == "cons" then
-                    tbl_ins(cons, prefix .. txt)
-                elseif typ == "infos" then
-                    tbl_ins(infos, prefix .. txt)
+                    local txt, typ = stattext(wep, toggletbl, i, val, dmgboth)
+                    if !txt then continue end
+
+                    local prefix = (stat[2] == "override" and k == true) and "" or ("[" .. (toggletbl.AutoStatName or toggletbl.PrintName or ti) .. "] ")
+
+                    if typ == "pros" then
+                        tbl_ins(pros, prefix .. txt)
+                    elseif typ == "cons" then
+                        tbl_ins(cons, prefix .. txt)
+                    elseif typ == "infos" then
+                        tbl_ins(infos, prefix .. txt)
+                    end
                 end
             end
         end

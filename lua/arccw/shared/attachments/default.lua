@@ -31,6 +31,7 @@ att.ToggleStats = {
     -- {
     --     PrintName = "Red",
     --     AutoStatName = "On",
+    --     NoAutoStat = false,
     --     Laser = true,
     --     LaserColor = Color(255, 0, 0),
     --     Mult_HipDispersion = 0.75,
@@ -46,7 +47,7 @@ att.ToggleStats = {
     -- },
     -- {
     --     PrintName = "Blue",
-    --     NoAutoStats = true,
+    --     AutoStats = true,
     --     Laser = true,
     --     LaserColor = Color(0, 0, 255),
     --     Mult_HipDispersion = 0.75,
