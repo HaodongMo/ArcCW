@@ -607,3 +607,4 @@ att.Mult_CycleTime = 1
 
 att.AttachSound = nil
 att.DetachSound = nil
+att.ToggleSound = nil

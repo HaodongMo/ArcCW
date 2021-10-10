@@ -1292,8 +1292,8 @@ function SWEP:ToggleSlot(slot, num, silent, back)
 
     self:RefreshBGs()
 
-    if !silent and self:GetBuff_Stat("ToggleSound", slot) != false then
-        surface.PlaySound(self:GetBuff_Stat("ToggleSound", slot) or "weapons/arccw/firemode.wav")
+    if CLIENT and !silent and self:GetBuff_Stat("ToggleSound", slot) != false then
+        surface.PlaySound(self:GetBuff_Stat("ToggleSound", slot) or (atttbl.ToggleStats[slot] or {}).ToggleSound or "weapons/arccw/firemode.wav")
     end
 end
 

@@ -71,16 +71,17 @@ local debounce = 0
 local function ToggleAtts(wep)
     if debounce > CurTime() then return end -- ugly hack for double trigger
     debounce = CurTime() + 0.1
-    local used = false
+    local sounds = {}
     for k, v in pairs(wep.Attachments) do
         local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
-        if atttbl and atttbl.ToggleStats then
-            used = true
+        if atttbl and atttbl.ToggleStats and not atttbl.ToggleLock then
+            if atttbl.ToggleSound then sounds[atttbl.ToggleSound] = true
+            else sounds["weapons/arccw/firemode.wav"] = true end
             wep:ToggleSlot(k, nil, true)
         end
     end
-    if used then
-        EmitSound("weapons/arccw/firemode.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.random(90, 110))
+    for snd, _ in pairs(sounds) do
+        surface.PlaySound(snd)
     end
 end
 
