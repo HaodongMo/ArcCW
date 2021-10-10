@@ -154,12 +154,9 @@ function ArcCW:GetProsCons(wep, att, toggle)
             -- show the first stat block (unless NoAutoStats), and all blocks with AutoStats
             if toggletbl.AutoStats or (ti == (toggle or 1) and !toggletbl.NoAutoStats) then
                 local dmgboth = toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage
-                for i, k in pairs(toggletbl) do
-
-                    local stat = ArcCW.AutoStats[i]
-                    if !stat then continue end
-
-                    local val = k
+                for i, stat in pairs(ArcCW.AutoStats) do
+                    if !toggletbl[i] or toggletbl[i .. "_SkipAS"] then continue end
+                    local val = toggletbl[i]
                     --[[]
                     -- makes the stat show as a sum and not an additional modifier
                     -- feels more confusing though
