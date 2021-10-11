@@ -28,7 +28,6 @@ SWEP.Velocity_Lerp = Vector()
 SWEP.VelocityLastDiff = 0
 SWEP.Breath_Intensity = 1
 SWEP.Breath_Rate = 1
-local coolswayCT = 0
 
 local lst = SysTime()
 local function scrunkly()
@@ -72,13 +71,6 @@ end
 local stepend = math.pi * 4
 
 function SWEP:Step_Process(EyePos, EyeAng, velocity)
-    local CT = CurTime()
-
-    if CT > coolswayCT then
-        coolswayCT = CT
-    else
-        return
-    end
 
     local VMPos, VMAng = self.VMPos, self.VMAng
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
@@ -91,13 +83,13 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
         velocity = velocity * Lerp(self:GetSprintDelta(), 1, 1.25)
     end
 
-    local delta = math.abs(self.StepBob * 2 / (stepend) - 1)
-    local FT = FrameTime()
+    local delta = math.abs(self.StepBob * 2 / stepend - 1)
+    local FT = scrunkly() --FrameTime()
     local FTMult = 300 * FT
     local sightedmult = (self:GetState() == ArcCW.STATE_SIGHTS and 0.25) or 1
     local sprintmult = (self:GetState() == ArcCW.STATE_SPRINT and 2) or 1
     local onground = self:GetOwner():OnGround()
-    self.StepBob = self.StepBob + (velocity * 0.00015 + (math.pow(delta, 0.01) * 0.03)) * swayspeed * (FTMult)
+    self.StepBob = self.StepBob + (velocity * 0.00015 + (math.pow(delta, 0.01) * 0.03)) * swayspeed * FTMult
 
     if self.StepBob >= stepend then
         self.StepBob = 0
@@ -139,7 +131,7 @@ function SWEP:Breath_Health()
     local health = owner:Health()
     local maxhealth = owner:GetMaxHealth()
     self.Breath_Intensity = math.Clamp(maxhealth / health, 0, 2)
-    self.Breath_Rate = math.Clamp(((maxhealth * 0.5) / health), 1, 1.5)
+    self.Breath_Rate = math.Clamp((maxhealth * 0.5) / health, 1, 1.5)
 end
 
 function SWEP:Breath_StateMult()
@@ -226,12 +218,9 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     local owner = self:GetOwner()
     if !IsValid(owner) or !owner:Alive() then return end
-    local proceduralRecoilMult = 1
     local SP = game.SinglePlayer()
     local FT = scrunkly()
     local CT = CurTime()
-    local UCT = UnPredictedCurTime()
-    --local FT = FrameTime()
     local TargetTick = (1 / FT) / 66.66
 
     if TargetTick < 1 then
@@ -245,7 +234,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local state = self:GetState()
     local sgtd = self:GetSightDelta()
     local sprd = self:GetSprintDelta()
-    --print(sgtd)
+
     oldpos:Set(pos)
     oldang:Set(ang)
     ang = ang - self:GetOurViewPunchAngles()
@@ -345,7 +334,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local aaaaang = holstered and (hang or sang) or (sang or hang)
 
         local sd = (holstered and 1) or (!(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) and self:GetSprintDelta()) or 0
-        sd = math.pow(math.sin(sd*math.pi*0.5), 2)
+        sd = math.pow(math.sin(sd * math.pi * 0.5), 2)
         target.pos = f_lerp(sd, target.pos, aaaapos)
         target.ang = f_lerp(sd, target.ang, aaaaang)
 
@@ -363,7 +352,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     -- Sighting
     if asight then
         local delta = sgtd
-        delta = math.pow(math.sin(delta*math.pi*0.5), math.pi)
+        delta = math.pow(math.sin(delta * math.pi * 0.5), math.pi)
         local im = asight.Midpoint
 
         local coolilove = delta * math.cos(delta * math.pi * 0.5)
@@ -613,7 +602,7 @@ function SWEP:ShouldCheapScope()
     if !self:GetConVar("arccw_cheapscopes"):GetBool() then return end
 end
 
-local lst = SysTime()
+local lst2 = SysTime()
 function SWEP:PreDrawViewModel(vm)
     if ArcCW.VM_OverDraw then return end
     if !vm then return end
@@ -623,8 +612,8 @@ function SWEP:PreDrawViewModel(vm)
     end
 
     if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
-        local fps = 1 / (SysTime()-lst)
-        lst = SysTime()
+        local fps = 1 / (SysTime() - lst2)
+        lst2 = SysTime()
         local lowfps = fps <= 45
         GetConVar("arccw_cheapscopes"):SetBool(lowfps)
         GetConVar("arccw_cheapscopesautoconfig"):SetBool(false)
