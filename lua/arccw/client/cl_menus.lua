@@ -319,7 +319,7 @@ local MultsPanel = {
             choices = {[0] = "#arccw.cvar.malfunction.0", [1] = "#arccw.cvar.malfunction.1", [2] = "#arccw.cvar.malfunction.2"}},
 
     { type = "b", text = "#arccw.cvar.mult_bottomlessclip",  var = "arccw_mult_bottomlessclip", sv = true },
-    { type = "c", text = "Bottomless Clip is currently unfinished and will just give you a bunch of ammo if you change attachments with it on." },
+    --{ type = "c", text = "Bottomless Clip is currently unfinished and will just give you a bunch of ammo if you change attachments with it on." },
     { type = "b", text = "#arccw.cvar.mult_infiniteammo",    var = "arccw_mult_infiniteammo", sv = true },
 
     { type = "b", text = "#arccw.cvar.enable_sway",          var = "arccw_enable_sway", sv = true },
