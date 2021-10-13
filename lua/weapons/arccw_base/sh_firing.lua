@@ -641,7 +641,8 @@ function SWEP:GetShootSrc()
     end
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
-        offset = self:GetBuff_Override("Override_BarrelOffsetSighted") or self.BarrelOffsetSighted or offset
+        --offset = self:GetBuff_Override("Override_BarrelOffsetSighted") or self.BarrelOffsetSighted or offset
+        offset = LerpVector(self:GetSightDelta(), offset, self:GetBuff_Override("Override_BarrelOffsetSighted", self.BarrelOffsetSighted) or offset)
     end
 
     local src = owner:EyePos()
