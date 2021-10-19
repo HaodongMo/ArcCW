@@ -123,9 +123,9 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
 
     -- Language string(s)
     if CLIENT then
-        LANG.AddToLanguage("English", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
-        LANG.AddToLanguage("English", "search_dmg_nervegas", "Their face looks pale. It must have been some sort of nerve gas.")
-        LANG.AddToLanguage("English", "ammo_smg1_grenade", "Rifle Grenades")
+        LANG.AddToLanguage("en", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
+        LANG.AddToLanguage("en", "search_dmg_nervegas", "Their face looks pale. It must have been some sort of nerve gas.")
+        LANG.AddToLanguage("en", "ammo_smg1_grenade", "Rifle Grenades")
     end
 end)
 

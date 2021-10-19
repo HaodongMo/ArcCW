@@ -319,7 +319,11 @@ function SWEP:ProceduralHolster()
 end
 
 function SWEP:WepSwitchCleanup()
-    timer.Simple(0, function() if IsValid(self) then table.Empty(self.EventTable) end end)
+    if game.SinglePlayer() then
+        table.Empty(self.EventTable)
+    else
+        timer.Simple(0, function() if IsValid(self) then table.Empty(self.EventTable) end end)
+    end
     self.InProcDraw = false
     self.InProcHolster = false
 end
