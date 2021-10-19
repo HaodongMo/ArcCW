@@ -360,7 +360,7 @@ local NPCsPanel = {
     { type = "b", text = "NPC Attachments", var = "arccw_npc_atts", sv = true },
 }
 
-local function networktheconvar(convar, value, p)
+function ArcCW.NetworkConvar(convar, value, p)
     if !LocalPlayer():IsAdmin() then return end
     if (p.TickCreated or 0) == UnPredictedCurTime() then return end
     if value == true or value == false then
@@ -435,11 +435,11 @@ function ArcCW.GeneratePanelElements(panel, table)
             p.TickCreated = UnPredictedCurTime()
             if data.type == "b" then
                 p.OnChange = function(self, bval)
-                    networktheconvar(data.var, bval, self)
+                    ArcCW.NetworkConvar(data.var, bval, self)
                 end
             elseif data.type == "i" or data.type == "f" or data.type == "m" or data.type == "t" then
                 p.OnValueChanged = function(self, bval)
-                    networktheconvar(data.var, bval, self)
+                    ArcCW.NetworkConvar(data.var, bval, self)
                 end
             end
         end
@@ -669,19 +669,19 @@ function ArcCW_Options_Binds(panel)
 end
 
 ArcCW.ClientMenus = {
-    ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client },
-    ["ArcCW_Options_Bullet"]    = { text = "#arccw.menus.bullet", func = ArcCW_Options_Bullet },
-    ["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf", func = ArcCW_Options_Perf },
-    ["ArcCW_Options_Viewmodel"] = { text = "#arccw.menus.vmodel", func = ArcCW_Options_Viewmodel },
-    ["ArcCW_Options_HUD"]       = { text = "#arccw.menus.hud",    func = ArcCW_Options_HUD },
-    ["ArcCW_Options_Crosshair"] = { text = "#arccw.menus.xhair",  func = ArcCW_Options_Crosshair },
-    ["ArcCW_Options_Server"]    = { text = "#arccw.menus.server", func = ArcCW_Options_Server },
-    ["ArcCW_Options_Ammo"]      = { text = "#arccw.menus.ammo",   func = ArcCW_Options_Ammo },
-    ["ArcCW_Options_Atts"]      = { text = "#arccw.menus.atts",   func = ArcCW_Options_Atts },
-    ["ArcCW_Options_Mults"]     = { text = "#arccw.menus.mults",  func = ArcCW_Options_Mults },
-    ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",   func = ArcCW_Options_Dev },
-    ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",   func = ArcCW_Options_NPC },
-    ["ArcCW_Options_Binds"]    = { text = "#arccw.menus.binds", func = ArcCW_Options_Binds },
+    ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client, tbl = ClientPanel },
+    ["ArcCW_Options_Bullet"]    = { text = "#arccw.menus.bullet", func = ArcCW_Options_Bullet, tbl = BulletPanel },
+    ["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf", func = ArcCW_Options_Perf, tbl = PerformancePanel },
+    ["ArcCW_Options_Viewmodel"] = { text = "#arccw.menus.vmodel", func = ArcCW_Options_Viewmodel, tbl = ViewmodelPanel },
+    ["ArcCW_Options_HUD"]       = { text = "#arccw.menus.hud",    func = ArcCW_Options_HUD, tbl = HudPanel },
+    ["ArcCW_Options_Crosshair"] = { text = "#arccw.menus.xhair",  func = ArcCW_Options_Crosshair, tbl = CrosshairPanel },
+    ["ArcCW_Options_Server"]    = { text = "#arccw.menus.server", func = ArcCW_Options_Server, tbl = ServerPanel },
+    ["ArcCW_Options_Ammo"]      = { text = "#arccw.menus.ammo",   func = ArcCW_Options_Ammo, tbl = AmmoPanel },
+    ["ArcCW_Options_Atts"]      = { text = "#arccw.menus.atts",   func = ArcCW_Options_Atts, tbl = AttsPanel },
+    ["ArcCW_Options_Mults"]     = { text = "#arccw.menus.mults",  func = ArcCW_Options_Mults, tbl = MultsPanel },
+    ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",   func = ArcCW_Options_Dev, tbl = DevPanel },
+    ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",   func = ArcCW_Options_NPC, tbl = NPCsPanel },
+    ["ArcCW_Options_Binds"]    = { text = "#arccw.menus.binds", func = ArcCW_Options_Binds, tbl = BindsPanel },
 }
 
 hook.Add("PopulateToolMenu", "ArcCW_Options", function()

@@ -104,14 +104,23 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         local path = "arccw/weaponicons/" .. class
         local path2 = "arccw/ttticons/" .. class .. ".png"
         local path3 = "vgui/ttt/" .. class
-        local mat2 = Material(path2)
+        local path4 = "entities/" .. class .. ".png"
 
-        if !mat2:IsError() then
+        if !Material(path2):IsError() then
+            -- TTT icon (png)
             wep.Icon = path2
         elseif !Material(path3):IsError() then
+            -- TTT icon (vtf)
             wep.Icon = path3
+        elseif !Material(path4):IsError() then
+            -- Entity spawn icon
+            wep.Icon = path4
         elseif !Material(path):IsError() then
+            -- Kill icon
             wep.Icon = path
+        else
+            -- fallback: display _something_
+            wep.Icon = "arccw/hud/arccw_bird.png"
         end
 
     end
