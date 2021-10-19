@@ -1,16 +1,15 @@
-ArcCW.TTTAmmo_To_Ent = {
+ArcCW.TTTAmmoToEntity = {
     ["pistol"] = "item_ammo_pistol_ttt",
     ["smg1"] = "item_ammo_smg1_ttt",
     ["AlyxGun"] = "item_ammo_revolver_ttt",
     ["357"] = "item_ammo_357_ttt",
     ["buckshot"] = "item_box_buckshot_ttt"
 }
-ArcCW.Ammo_To_TTTAmmo = {
+ArcCW.AmmoToTTT = {
     ["357"] = "AlyxGun",
     ["SniperPenetratedRound"] = "357",
     ["ar2"] = "smg1",
 }
-
 ArcCW.TTTAmmo_To_ClipMax = {
     ["357"] = 20,
     ["smg1"] = 60,
@@ -18,11 +17,10 @@ ArcCW.TTTAmmo_To_ClipMax = {
     ["alyxgun"] = 36,
     ["buckshot"] = 24
 }
-
 -- translate TTT weapons to HL2 weapons, in order to recognize NPC weapon replacements.
 ArcCW.TTTReplaceTable = {
     ["weapon_ttt_glock"] = "weapon_pistol",
-    ["weapon_zm_mac10"] = "weapon_smg1",
+    ["weapon_zm_mac10"] = "weapon_ar2",
     ["weapon_ttt_m16"] = "weapon_smg1",
     ["weapon_zm_pistol"] = "weapon_pistol",
     ["weapon_zm_revolver"] = "weapon_357",
@@ -67,11 +65,11 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
             --print("\t- Accepted")
         end
 
-        if ArcCW.Ammo_To_TTTAmmo[wep.Primary.Ammo] then
-            wep.Primary.Ammo = ArcCW.Ammo_To_TTTAmmo[wep.Primary.Ammo]
+        if ArcCW.AmmoToTTT[wep.Primary.Ammo] then
+            wep.Primary.Ammo = ArcCW.AmmoToTTT[wep.Primary.Ammo]
         end
 
-        wep.AmmoEnt = ArcCW.TTTAmmo_To_Ent[wep.Primary.Ammo] or ""
+        wep.AmmoEnt = ArcCW.TTTAmmoToEntity[wep.Primary.Ammo] or ""
         -- You can tell how desperate I am in blocking the base from spawning
         wep.AutoSpawnable = (wep.AutoSpawnable == nil and true) or wep.AutoSpawnable
         wep.AllowDrop = wep.AllowDrop or true
@@ -85,16 +83,12 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
             elseif wep.Slot == 0 then
                 -- melee weapons
                 wep.Slot = 6
-                wep.Kind = WEAPON_EQUIP1
+                wep.Kind = WEAPON_MELEE or WEAPON_EQUIP1
             elseif wep.Slot == 1 then
                 -- sidearms
                 wep.Kind = WEAPON_PISTOL
-            elseif wep.Slot == 2 or wep.Slot == 3 then
-                -- primaries
-                wep.Slot = 2
-                wep.Kind = WEAPON_HEAVY
             else
-                -- weird slots, let's assume they're a main weapon
+                -- other weapons are considered primary
                 wep.Slot = 2
                 wep.Kind = WEAPON_HEAVY
             end
@@ -125,10 +119,12 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
 
     end
 
+    --[[]
     local pistol_ammo = (scripted_ents.GetStored("arccw_ammo_pistol") or {}).t
     if pistol_ammo then
         pistol_ammo.AmmoCount = 30
     end
+    ]]
 
     -- Language string(s)
     if CLIENT then
@@ -158,7 +154,7 @@ hook.Add("DoPlayerDeath", "ArcCW_DetectiveSeeAtts", function(ply, attacker, dmgi
 end)
 
 hook.Add("ArcCW_OnAttLoad", "ArcCW_TTT", function(att)
-    if att.Override_Ammo and ArcCW.Ammo_To_TTTAmmo[att.Override_Ammo] then
-        att.Override_Ammo = ArcCW.Ammo_To_TTTAmmo[att.Override_Ammo]
+    if att.Override_Ammo and ArcCW.AmmoToTTT[att.Override_Ammo] then
+        att.Override_Ammo = ArcCW.AmmoToTTT[att.Override_Ammo]
     end
 end)
