@@ -94,7 +94,7 @@ function SWEP:GetHUDData()
     end
 
     if self:HasInfiniteAmmo() then
-        data.ammo = self:GetCapacity()
+        data.ammo = "∞"
     end
 
     if self:GetInUBGL() then
