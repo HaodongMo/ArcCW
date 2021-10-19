@@ -39,8 +39,8 @@ function SWEP:Deploy()
 
     self:SetBurstCount(0)
 
-    self:CallOnClient("FuckingKillMe")
-    self:FuckingKillMe()
+    self:CallOnClient("WepSwitchCleanup")
+    self:WepSwitchCleanup()
     -- Don't play anim if in vehicle. This can be caused by HL2 level changes
 
     if !self:GetOwner():InVehicle() then
@@ -223,8 +223,8 @@ function SWEP:Holster(wep)
         return
     end
 
-    self:CallOnClient("FuckingKillMe")
-    self:FuckingKillMe()
+    self:CallOnClient("WepSwitchCleanup")
+    self:WepSwitchCleanup()
 
     if wep == self then self:Deploy() return false end
     if self:GetHolster_Time() > CurTime() then return false end
@@ -318,8 +318,8 @@ function SWEP:ProceduralHolster()
     self.ProcHolsterTime = CurTime()
 end
 
-function SWEP:FuckingKillMe()
-    table.Empty(self.EventTable)
+function SWEP:WepSwitchCleanup()
+    timer.Simple(0, function() if IsValid(self) then table.Empty(self.EventTable) end end)
     self.InProcDraw = false
     self.InProcHolster = false
 end

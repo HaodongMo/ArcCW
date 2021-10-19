@@ -196,7 +196,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         local dur = vm:SequenceDuration()
         vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
         self.LastAnimStartTime = ct
-        self.LastAnimFinishTime = ct + (dur)
+        self.LastAnimFinishTime = ct + dur
     end
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment -- why is this here if we just... do cool stuff elsewhere?
