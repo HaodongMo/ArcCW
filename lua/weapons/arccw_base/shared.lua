@@ -104,6 +104,11 @@ SWEP.ReducedClipSize = 10
 SWEP.ForceDefaultClip = nil
 SWEP.ForceDefaultAmmo = nil
 
+-- The amount of rounds to load in the chamber when the gun is non-empty or empty
+-- Defaults to ChamberSize and 0. Don't change unless you have a good reason
+SWEP.ChamberLoadNonEmpty = nil
+SWEP.ChamberLoadEmpty = nil
+
 SWEP.AmmoPerShot = 1
 SWEP.InfiniteAmmo = false -- weapon can reload for free
 SWEP.BottomlessClip = false -- weapon never has to reload
@@ -640,6 +645,7 @@ SWEP.Animations = {
     --     ProcHolster = false, -- procedural holster weapon, THEN play animation
     --     LastClip1OutTime = 0, -- when should the belt visually replenish on a belt fed
     --     MinProgress = 0, -- how much time in seconds must pass before the animation can be cancelled
+    --     ForceEmpty = false, -- Used by empty shotgun reloads that load rounds to force consider the weapon to still be empty.
     -- }
 }
 

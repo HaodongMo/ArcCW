@@ -111,6 +111,9 @@ function SWEP:Reload()
         if self.Animations.sgreload_start_empty and empty then
             anim = "sgreload_start_empty"
             empty = false
+            if (self.Animations.sgreload_start_empty or {}).ForceEmpty == true then
+                empty = true
+            end
 
             insertcount = (self.Animations.sgreload_start_empty or {}).RestoreAmmo or 1
         else
@@ -176,7 +179,7 @@ end
 
 function SWEP:ReloadTimed()
     -- yeah my function names are COOL and QUIRKY and you can't say a DAMN thing about it.
-    self:RestoreAmmo((self:GetMagUpCount() != 0 and self:GetMagUpCount()))
+    self:RestoreAmmo(self:GetMagUpCount() != 0 and self:GetMagUpCount())
     self:SetMagUpCount(0)
     self:SetLastLoad(self:Clip1())
     self:SetNthReload(self:GetNthReload() + 1)
@@ -218,7 +221,7 @@ function SWEP:RestoreAmmo(count)
     local load = math.Clamp(self:Clip1() + count, 0, reserve)
     load = math.Clamp(load, 0, clip + chamber)
     reserve = reserve - load
-    
+
     if !self:HasInfiniteAmmo() then
         self:GetOwner():SetAmmo(reserve, self.Primary.Ammo, true)
     end
@@ -324,7 +327,9 @@ function SWEP:ReloadInsert(empty)
     -- if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     if !empty and !self:GetNeedCycle() then
-        total = total + (self:GetChamberSize())
+        total = total + (self:GetBuff("ChamberLoadNonEmpty", true) or self:GetChamberSize())
+    else
+        total = total + (self:GetBuff("ChamberLoadEmpty", true) or 0)
     end
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
