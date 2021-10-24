@@ -246,6 +246,7 @@ function SWEP:DoLHIK()
         end
     end
 
+	if delta != 1 then return end
     if justhide then
         for _, bone in pairs(ArcCW.LHIKBones) do
             local vmbone = vm:LookupBone(bone)
@@ -295,6 +296,7 @@ function SWEP:DoLHIK()
 
     local cf_deltapos = Vector(0, 0, 0)
     local cf = 0
+
 
     for _, bone in pairs(ArcCW.LHIKBones) do
         local vmbone = vm:LookupBone(bone)

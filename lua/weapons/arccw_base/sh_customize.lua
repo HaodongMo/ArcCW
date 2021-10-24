@@ -227,7 +227,8 @@ function SWEP:OpenCustomizeHUD()
         ArcCW.InvHUD:Show()
         -- ArcCW.InvHUD:RequestFocus()
     else
-        if GetConVar("arccw_dev_cust2beta"):GetBool() then self:CreateCustomize2HUD() else self:CreateCustomizeHUD() end
+        --if GetConVar("arccw_dev_cust2beta"):GetBool() then self:CreateCustomize2HUD() else self:CreateCustomizeHUD() end
+		self:CreateCustomize2HUD()
         gui.SetMousePos(ScrW() / 2, ScrH() / 2)
     end
 
@@ -240,7 +241,8 @@ end
 
 function SWEP:CloseCustomizeHUD( hide )
     if IsValid(ArcCW.InvHUD) then
-        if !GetConVar("arccw_dev_cust2beta"):GetBool() then
+        --if !GetConVar("arccw_dev_cust2beta"):GetBool() then
+		if false then
             ArcCW.InvHUD:Hide()
             ArcCW.InvHUD:Clear()
             if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then

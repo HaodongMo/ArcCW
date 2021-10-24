@@ -223,7 +223,7 @@ function ArcCW_Regen(full)
     end
 end
 
-cvars.AddChangeCallback("arccw_dev_cust2beta",  function() ArcCW_Regen(true) end)
+--cvars.AddChangeCallback("arccw_dev_cust2beta",  function() ArcCW_Regen(true) end)
 cvars.AddChangeCallback("arccw_hud_deadzone_x", function() ArcCW_Regen(true) end)
 cvars.AddChangeCallback("arccw_hud_deadzone_y", function() ArcCW_Regen(true) end)
 cvars.AddChangeCallback("arccw_hud_size",       function() ArcCW_Regen(true) end)
