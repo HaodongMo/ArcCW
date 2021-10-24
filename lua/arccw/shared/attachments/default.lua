@@ -504,6 +504,7 @@ att.Hook_Overheat = function(wep, heat) end
 att.Hook_PostOverheat = function(wep) end
 -- Return true to not do animation/heat locking
 att.Hook_OnOverheat = function(wep) end
+att.HeatOverflow = nil
 
 -- malfunction related buffs
 att.Override_Malfunction = nil

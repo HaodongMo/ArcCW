@@ -317,6 +317,7 @@ SWEP.HeatDissipation = 2 -- rounds' worth of heat lost per second
 SWEP.HeatLockout = false -- overheating means you cannot fire until heat has been fully depleted
 SWEP.HeatDelayTime = 0.5
 SWEP.HeatFix = false -- when the "fix" animation is played, all heat is restored.
+SWEP.HeatOverflow = nil -- if true, heat is allowed to exceed capacity (this only applies when the default overheat handling is overridden)
 
 -- If Malfunction is enabled, the gun has a random chance to be jammed
 -- after the gun is jammed, it won't fire unless reload is pressed, which plays the "unjam" animation

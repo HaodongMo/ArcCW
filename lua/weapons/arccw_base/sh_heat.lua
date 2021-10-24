@@ -29,11 +29,13 @@ function SWEP:AddHeat(a)
     end
     if overheat then
         self.Heat = math.min(self.Heat, max)
-        if self.HeatFix or self:GetBuff_Override("Override_HeatFix") then
+        if self:GetBuff_Override("Override_HeatFix", self.HeatFix) then
             self.NextHeatDissipateTime = CurTime() + self:GetAnimKeyTime(anim) * mult
-        elseif self.HeatLockout or self:GetBuff_Override("Override_HeatLockout") then
+        elseif self:GetBuff_Override("Override_HeatLockout", self.HeatLockout) then
             self.NextHeatDissipateTime = CurTime() + (self:GetAnimKeyTime(anim) or 1) * mult
         end
+    elseif !self:GetBuff_Override("Override_HeatOverflow", self.HeatOverflow) then
+        self.Heat = math.min(self.Heat, max)
     end
 
     if single and CLIENT then return end
