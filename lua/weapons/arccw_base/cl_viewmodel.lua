@@ -335,8 +335,21 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         local sd = (holstered and 1) or (!(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) and self:GetSprintDelta()) or 0
         sd = math.pow(math.sin(sd * math.pi * 0.5), 2)
-        target.pos = f_lerp(sd, target.pos, aaaapos)
-        target.ang = f_lerp(sd, target.ang, aaaaang)
+
+        local delta = sd
+        delta = math.pow(math.sin(delta * math.pi * 0.5), math.pi)
+        local coolilove = delta * math.cos(delta * math.pi * 0.5)
+        local joffset = (Vector(-2, 5, 2)) * coolilove
+        local jaffset = (Angle(-15, -15, 0)) * coolilove
+
+        if self:GetState() != ArcCW.STATE_SPRINT then
+            joffset = Vector(0, 7, 3) * coolilove
+            jaffset = Angle(-15, 15, -22) * coolilove
+        end
+
+
+        target.pos = f_lerp(sd, target.pos, aaaapos) + joffset
+        target.ang = f_lerp(sd, target.ang, aaaaang) + jaffset
 
         local fu_sprint = (self:GetState() == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint"))
 
