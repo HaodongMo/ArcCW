@@ -114,15 +114,6 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
 
     if wep.RejectAttachments and wep.RejectAttachments[att] then return false end
 
-    if wep and atttbl.Hook_Compatible then
-        local compat = atttbl.Hook_Compatible(wep, {slot = slot, att = att})
-        if compat == true then
-            return true
-        elseif compat == false then
-            return false
-        end
-    end
-
     if isstring(atttbl.Slot) then
         if !slots[atttbl.Slot] then return false end
     elseif istable(atttbl.Slot) then
@@ -136,6 +127,15 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
         end
 
         if !yeah then
+            return false
+        end
+    end
+
+    if wep and atttbl.Hook_Compatible then
+        local compat = atttbl.Hook_Compatible(wep, {slot = slot, att = att})
+        if compat == true then
+            return true
+        elseif compat == false then
             return false
         end
     end
