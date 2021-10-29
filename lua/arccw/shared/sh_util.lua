@@ -4,6 +4,5 @@ function ArcCW.SetBodyGroups(mdl, bodygroups)
     local len = string.len(bodygroups or "")
     for i = 10, len - 1 do
         mdl:SetBodygroup(i, tonumber(string.sub(bodygroups, i + 1, i + 2)))
-        print(i, tonumber(string.sub(bodygroups, i + 1, i + 2)))
     end
 end
