@@ -90,7 +90,8 @@ function SWEP:AddElement(elementname, wm)
         model:DrawShadow(true)
         model.Weapon = self
         model:SetSkin(i.ModelSkin or 0)
-        model:SetBodyGroups(i.ModelBodygroups or "")
+        --model:SetBodyGroups(i.ModelBodygroups or "")
+        ArcCW.SetBodyGroups(model, i.ModelBodygroups or "")
         model:EnableMatrix("RenderMultiply", scale)
         model:SetupBones()
         element.Model = model
@@ -265,7 +266,8 @@ function SWEP:SetupModel(wm)
         model:SetPredictable(false)
         model.Weapon = self
         model:SetSkin(self.DefaultWMSkin or 0)
-        model:SetBodyGroups(self.DefaultWMBodygroups or "")
+        --model:SetBodyGroups(self.DefaultWMBodygroups or "")
+        ArcCW.SetBodyGroups(model, self.DefaultWMBodygroups or "")
         ScaleModel(model, vscale)
         model:SetupBones()
         local element = {}

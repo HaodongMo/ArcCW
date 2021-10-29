@@ -798,7 +798,7 @@ function SWEP:RefreshBGs()
     end
 
     if vm and vm:IsValid() then
-        vm:SetBodyGroups(self.DefaultBodygroups)
+        ArcCW.SetBodyGroups(vm, self.DefaultBodygroups)
         vm:SetMaterial(vmm)
         vm:SetColor(vmc)
         vm:SetSkin(vms)
@@ -815,11 +815,8 @@ function SWEP:RefreshBGs()
     self:SetSkin(wms)
 
     if self.WMModel and self.WMModel:IsValid() then
-        if self.MirrorVMWM then
-            self.WMModel:SetBodyGroups(self.DefaultBodygroups)
-        else
-            self.WMModel:SetBodyGroups(self.DefaultWMBodygroups)
-        end
+        ArcCW.SetBodyGroups(self.WMModel, self.MirrorVMWM and self.DefaultBodygroups or self.DefaultWMBodygroups)
+
         self.WMModel:SetMaterial(wmm)
         self.WMModel:SetColor(wmc)
         self.WMModel:SetSkin(wms)
