@@ -1300,7 +1300,7 @@ function SWEP:AdjustAtts()
     if SERVER then
         local cs = self:GetCapacity() + self:GetChamberSize()
 
-        if self:Clip1() > cs then
+        if self:Clip1() > cs and self:Clip1() != ArcCW.BottomlessMagicNumber then
             local diff = self:Clip1() - cs
             self:SetClip1(cs)
 

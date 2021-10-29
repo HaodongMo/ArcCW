@@ -85,16 +85,15 @@ function SWEP:GetHUDData()
         data.ammo = "-"
     end
 
+    if self:HasInfiniteAmmo() then
+        data.ammo = "∞"
+    end
     if self:HasBottomlessClip() then
         data.clip = data.ammo
         data.ammo = "-"
         if self:HasInfiniteAmmo() then
             data.clip = "∞"
         end
-    end
-
-    if self:HasInfiniteAmmo() then
-        data.ammo = "∞"
     end
 
     if self:GetInUBGL() then
@@ -915,6 +914,8 @@ function SWEP:DrawHUD()
 
     if clipdiff == 1 then
         vclip = self:Clip1()
+    elseif self:Clip1() == ArcCW.BottomlessMagicNumber then
+        clipdiff = 0
     end
 
     vclip = math.Approach(vclip, self:Clip1(), FrameTime() * 30 * clipdiff)

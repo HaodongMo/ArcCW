@@ -290,8 +290,11 @@ function SWEP:Think()
         self:SetMagUpIn( 0 )
     end
 
-    if self:HasBottomlessClip() and self:Clip1() >= 0 then
+    if self:HasBottomlessClip() and self:Clip1() != ArcCW.BottomlessMagicNumber then
         self:Unload()
+        self:SetClip1(ArcCW.BottomlessMagicNumber)
+    elseif !self:HasBottomlessClip() and self:Clip1() == ArcCW.BottomlessMagicNumber then
+        self:SetClip1(0)
     end
 
     self:GetBuff_Hook("Hook_Think")

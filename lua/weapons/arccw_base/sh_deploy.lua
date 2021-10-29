@@ -111,8 +111,8 @@ function SWEP:InitialDefaultClip()
     if engine.ActiveGamemode() == "darkrp" then return end -- DarkRP is god's second biggest mistake after gmod
 
     if self:GetOwner() and self:GetOwner():IsPlayer() then
-        if self:HasBottomlessClip() and self:Clip1() > 0 then
-            self:SetClip1(0)
+        if self:HasBottomlessClip() then
+            self:SetClip1(1)
         end
         if self.ForceDefaultAmmo then
             self:GetOwner():GiveAmmo(self.ForceDefaultAmmo, self.Primary.Ammo)

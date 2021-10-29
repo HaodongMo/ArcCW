@@ -52,8 +52,6 @@ function SWEP:Reload()
     if self.Throwing then return end
     if self.PrimaryBash then return end
 
-    if self:HasBottomlessClip() then return end
-
     -- with the lite 3D HUD, you may want to check your ammo without reloading
     local Lite3DHUD = self:GetOwner():GetInfo("arccw_hud_3dfun") == "1"
     if self:GetOwner():KeyDown(IN_WALK) and Lite3DHUD then
@@ -69,6 +67,8 @@ function SWEP:Reload()
     end
 
     if !self:GetMalfunctionJam() and self:Ammo1() <= 0 and !self:HasInfiniteAmmo() then return end
+
+    if self:HasBottomlessClip() then return end
 
     if self:GetBuff_Hook("Hook_PreReload") then return end
 
@@ -187,7 +187,7 @@ end
 
 function SWEP:Unload()
     if !self:GetOwner():IsPlayer() then return end
-    if SERVER then
+    if SERVER and self:Clip1() != ArcCW.BottomlessMagicNumber then
         self:GetOwner():GiveAmmo(self:Clip1(), self.Primary.Ammo or "", true)
     end
     self:SetClip1(0)
