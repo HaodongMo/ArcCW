@@ -633,15 +633,16 @@ function SWEP:GetShootSrc()
     if owner:IsNPC() then return owner:GetShootPos() end
 
     local dir    = owner:EyeAngles()
-    local offset = self:GetBuff_Override("Override_BarrelOffsetHip") or self.BarrelOffsetHip
+    local offset = Vector(0, 0, 0)
 
     if self:GetOwner():Crouching() then
         offset = self:GetBuff_Override("Override_BarrelOffsetCrouch") or self.BarrelOffsetCrouch or offset
     end
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
-        --offset = self:GetBuff_Override("Override_BarrelOffsetSighted") or self.BarrelOffsetSighted or offset
         offset = LerpVector(self:GetSightDelta(), offset, self:GetBuff_Override("Override_BarrelOffsetSighted", self.BarrelOffsetSighted) or offset)
+    else
+        offset = LerpVector(1 - self:GetSightDelta(), offset, self:GetBuff_Override("Override_BarrelOffsetHip", self.BarrelOffsetHip) or offset)
     end
 
     local src = owner:EyePos()
