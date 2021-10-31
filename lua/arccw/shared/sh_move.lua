@@ -19,8 +19,8 @@ function ArcCW.Move(ply, mv, cmd)
 
     local blocksprint = false
 
-    if wpn:GetState() == ArcCW.STATE_SIGHTS or
-        wpn:GetState() == ArcCW.STATE_CUSTOMIZE then
+    if wpn:GetNWState() == ArcCW.STATE_SIGHTS or
+        wpn:GetNWState() == ArcCW.STATE_CUSTOMIZE then
         blocksprint = true
         s = s * math.Clamp(wpn:GetBuff("SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1)
     elseif shottime > 0 then

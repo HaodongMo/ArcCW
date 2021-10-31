@@ -3,8 +3,6 @@ if CLIENT then
 end
 
 local lastUBGL = 0
-local LastAttack2 = false
-
 function SWEP:Think()
     if IsValid(self:GetOwner()) and self:GetClass() == "arccw_base" then
         self:Remove()
@@ -83,10 +81,8 @@ function SWEP:Think()
     end
 
     if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 then
-        if self:GetBurstCount() > 0 then
-            if (game.SinglePlayer() and SERVER) or (!game.SinglePlayer() and true) then
-                self:PrimaryAttack()
-            end
+        if self:GetBurstCount() > 0 and ((game.SinglePlayer() and SERVER) or (!game.SinglePlayer() and true)) then
+            self:PrimaryAttack()
         end
 
         if self:GetBurstCount() == self:GetBurstLength() then
@@ -180,7 +176,7 @@ function SWEP:Think()
 
     end
 
-    if (!game.SinglePlayer() and IsFirstTimePredicted()) or (game.SinglePlayer() and true) then 
+    if (!game.SinglePlayer() and IsFirstTimePredicted()) or (game.SinglePlayer() and true) then
         if self:InSprint() and (self:GetState() != ArcCW.STATE_SPRINT) then
             self:EnterSprint()
         elseif !self:InSprint() and (self:GetState() == ArcCW.STATE_SPRINT) then
@@ -188,10 +184,12 @@ function SWEP:Think()
         end
     end
 
-    self:SetSightDelta(math.Approach(self:GetSightDelta(), (self:GetState() == ArcCW.STATE_SIGHTS and 0 or 1), FrameTime()/self:GetSightTime()))
-    self:SetSprintDelta(math.Approach(self:GetSprintDelta(), (self:GetState() == ArcCW.STATE_SPRINT and 1 or 0), FrameTime()/self:GetSprintTime()))
+    if game.SinglePlayer() or IsFirstTimePredicted() then
+        self:SetSightDelta(math.Approach(self:GetSightDelta(), self:GetState() == ArcCW.STATE_SIGHTS and 0 or 1, FrameTime() / self:GetSightTime()))
+        self:SetSprintDelta(math.Approach(self:GetSprintDelta(), self:GetState() == ArcCW.STATE_SPRINT and 1 or 0, FrameTime() / self:GetSprintTime()))
+    end
 
-    if CLIENT and (game.SinglePlayer() and true or IsFirstTimePredicted()) then
+    if CLIENT and (game.SinglePlayer() or IsFirstTimePredicted()) then
         self:ProcessRecoil()
     end
 

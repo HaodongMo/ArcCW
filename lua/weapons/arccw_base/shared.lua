@@ -754,8 +754,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 4, "NextPrimaryFireSlowdown")
     self:NetworkVar("Float", 5, "NextIdle")
     self:NetworkVar("Float", 6, "Holster_Time")
-    self:NetworkVar("Float", 7, "SightDelta")
-    self:NetworkVar("Float", 8, "SprintDelta")
+    self:NetworkVar("Float", 7, "NWSightDelta")
+    self:NetworkVar("Float", 8, "NWSprintDelta")
 
     self:NetworkVar("Vector", 0, "BipodPos")
 
@@ -877,4 +877,26 @@ function SWEP:BarrelHitWall()
     else
         return 0
     end
+end
+
+SWEP.CL_SightDelta = 0
+function SWEP:SetSightDelta(d)
+    if !game.SinglePlayer() and CLIENT then self.CL_SightDelta = d end
+    self:SetNWSightDelta(d)
+end
+
+function SWEP:GetSightDelta()
+    if !game.SinglePlayer() and CLIENT then return self.CL_SightDelta end
+    return self:GetNWSightDelta()
+end
+
+SWEP.CL_SprintDelta = 0
+function SWEP:SetSprintDelta(d)
+    if !game.SinglePlayer() and CLIENT then self.CL_SprintDelta = d end
+    self:SetNWSprintDelta(d)
+end
+
+function SWEP:GetSprintDelta()
+    if !game.SinglePlayer() and CLIENT then return self.CL_SprintDelta end
+    return self:GetNWSprintDelta()
 end

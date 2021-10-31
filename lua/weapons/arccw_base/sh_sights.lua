@@ -38,7 +38,7 @@ end
 function SWEP:ExitSprint()
     if self:GetState() == ArcCW.STATE_IDLE then return end
 
-    local delta = self:GetSprintDelta()
+    local delta = self:GetNWSprintDelta()
     local ct = CurTime()
 
     self:SetState(ArcCW.STATE_IDLE)

@@ -19,10 +19,10 @@ function SWEP:ShouldDrawCrosshair()
         return false
     end
 
-    if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return false end
+    if self:GetNWState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return false end
     if self:GetCurrentFiremode().Mode == 0 then return false end
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return false end
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE then return false end
+    if self:GetNWState() == ArcCW.STATE_CUSTOMIZE then return false end
 
     return true
 end
