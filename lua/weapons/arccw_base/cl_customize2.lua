@@ -242,7 +242,7 @@ function SWEP:CreateCustomize2HUD()
             return
         end
 
-        if self:GetReloading() then
+        if self:GetReloading() and !GetConVar("arccw_reloadincust"):GetBool() then
             ArcCW.InvHUD:Remove()
             return
         end

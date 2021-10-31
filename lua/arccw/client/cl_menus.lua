@@ -222,6 +222,8 @@ local ServerPanel = {
     { type = "b", text = "#arccw.cvar.doorbust", var = "arccw_doorbust", sv = true },
     { type = "f", text = "#arccw.cvar.weakensounds", var = "arccw_weakensounds", min = -20, max = 30, sv = true},
     { type = "c", text = "#arccw.cvar.weakensounds.desc" },
+    { type = "b", text = "#arccw.cvar.reloadincust", var = "arccw_reloadincust", sv = true },
+    { type = "c", text = "#arccw.cvar.reloadincust.desc" },
     { type = "b", text = "#arccw.cvar.aimassist", var = "arccw_aimassist", sv = true },
     { type = "c", text = "#arccw.cvar.aimassist.desc" },
     { type = "b", text = "#arccw.cvar.aimassist_head", var = "arccw_aimassist_head", sv = true },

@@ -363,3 +363,7 @@ L["arccw.cvar.attinv_giveonspawn"] = "Give Atts. On Spawn"
 
 -- 2021-10-10
 L["arccw.cvar.hud_fcgabbrev"] = "Abbreviate Firemode Names"
+
+-- 2021-10-31
+L["arccw.cvar.reloadincust"] = "Reloading In Customize Menu"
+L["arccw.cvar.reloadincust.desc"] = "May allow players to cheese reload times by swapping magazine attachments.\nWill also disable left hand lowering in the customize menu."
