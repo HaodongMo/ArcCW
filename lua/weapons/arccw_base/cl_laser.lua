@@ -67,6 +67,11 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     if !IsValid(model) then return end
 
+    local disttoeye = self:GetPos():DistToSqr(EyePos())
+    local visibility = (GetConVar("arccw_visibility"):GetInt() < 0) and math.pow(5000, 2) or math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
+
+    if disttoeye >= visibility then return end
+
     local att = model:LookupAttachment(laser.LaserBone or "laser")
 
     att = att == 0 and model:LookupAttachment("muzzle") or att

@@ -87,14 +87,32 @@ local function ArcCW_SendBlacklist(ply)
     end
 end
 
-local function ArcCW_LoadAtt(v)
-    att = {}
-    shortname = string.sub(v, 1, -5)
 
-    include("arccw/shared/attachments/" .. v)
-    AddCSLuaFile("arccw/shared/attachments/" .. v)
+local attachments_path = "arccw/shared/attachments/"
+
+local function ArcCW_LoadAtt(att_file)
+    att = {}
+    shortname = string.sub(att_file, 1, -5)
+
+    include(att_file)
+    AddCSLuaFile(att_file)
 
     ArcCW.LoadAttachmentType(att)
+end
+
+local function ArcCW_LoadFolder(folder)
+    folder = folder and (attachments_path .. folder .. "/") or attachments_path
+    print(folder)
+    for k, v in pairs(file.Find(folder .. "*", "LUA")) do
+        if !pcall(function() ArcCW_LoadAtt(folder .. v) end) then
+            print("!!!! Attachment " .. v .. " has errors!")
+            -- Create a stub attachment to prevent customization UI freaking out
+            ArcCW.AttachmentTable[shortname] = {
+                PrintName = shortname or "ERROR",
+                Description = "This attachment failed to load!\nIts file path is: " .. v
+            }
+        end
+    end
 end
 
 local function ArcCW_LoadAtts()
@@ -105,14 +123,12 @@ local function ArcCW_LoadAtts()
     ArcCW.AttachmentBits = nil
     ArcCW.AttachmentCachedLists = {}
 
-    for k, v in pairs(file.Find("arccw/shared/attachments/*", "LUA")) do
-        if !pcall(function() ArcCW_LoadAtt(v) end) then
-            print("!!!! Attachment " .. v .. " has errors!")
-            -- Create a stub attachment to prevent customization UI freaking out
-            ArcCW.AttachmentTable[shortname] = {
-                PrintName = shortname or "ERROR",
-                Description = "This attachment failed to load!\nIts file path is: " .. v
-            }
+    local files, folders = file.Find(attachments_path .. "/*", "LUA")
+
+    ArcCW_LoadFolder()
+    if folders then
+        for _, folder in pairs(folders) do
+            ArcCW_LoadFolder(folder)
         end
     end
 
