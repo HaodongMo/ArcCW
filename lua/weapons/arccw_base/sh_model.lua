@@ -672,9 +672,10 @@ end
 function SWEP:DrawCustomModel(wm,origin,angle)
     if ArcCW.VM_OverDraw then return end
     local disttoeye = self:GetPos():DistToSqr(EyePos())
-    local visibility = math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
+    local arccw_visibility = GetConVar("arccw_visibility") or -1
+    local visibility = arccw_visibility * arccw_visibility
     local always = false
-    if GetConVar("arccw_visibility"):GetInt() < 0 then
+    if arccw_visibility < 0 then
         always = true
     end
     local models = self.VM
