@@ -68,7 +68,8 @@ function SWEP:DrawLaser(laser, model, color, world)
     if !IsValid(model) then return end
 
     local disttoeye = self:GetPos():DistToSqr(EyePos())
-    local visibility = (GetConVar("arccw_visibility"):GetInt() < 0) and math.pow(5000, 2) or math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
+    local arccw_visibility = GetConVar("arccw_visibility") or -1
+    local visibility = (arccw_visibility < 0) and 5000*5000 or arccw_visibility * arccw_visibility
 
     if disttoeye >= visibility then return end
 
