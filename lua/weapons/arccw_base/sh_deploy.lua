@@ -89,7 +89,7 @@ function SWEP:Deploy()
 
     if SERVER then
         self:SetupShields()
-        self:NetworkWeapon()
+        if !ARCCW_DEFER_NETWORKING then self:NetworkWeapon() end
     end
 
     -- self:RefreshBGs()
@@ -207,6 +207,8 @@ function SWEP:Initialize()
     if engine.ActiveGamemode() == "terrortown" then
         self:TTT_Init()
     end
+
+    hook.Run("ArcCW_WeaponInit", self)
 
     self:AdjustAtts()
 end
