@@ -684,9 +684,7 @@ end
 
 function SWEP:NetworkWeapon(sendto)
     net.Start("arccw_networkatts")
-
-    --net.WriteEntity(self) -- self entity
-    net.WriteUInt(self:EntIndex(), 14)
+    net.WriteEntity(self) -- self entity
 
     net.WriteUInt(table.Count(self.Attachments), 8)
 
@@ -698,7 +696,6 @@ function SWEP:NetworkWeapon(sendto)
 
         net.WriteUInt(id, ArcCW.GetBitNecessity())
 
-        net.WriteBool(i.SlideAmount)
         if i.SlideAmount then
             net.WriteFloat(i.SlidePos or 0.5)
         end
@@ -1102,12 +1099,15 @@ function SWEP:Attach(slot, attname, silent, noadjust)
 
     ArcCW:PlayerTakeAtt(self:GetOwner(), attname)
 
+    --[[]
     local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
     local fmi = self:GetFireMode()
 
     if fmi > table.Count(fmt) then
         self:SetFireMode(1)
     end
+    ]]
+    self:SetFireMode(1)
 
     --self.UnReady = false
 
