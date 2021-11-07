@@ -98,6 +98,7 @@ end
 
 function SWEP:SavePreset(filename)
     filename = filename or "autosave"
+    if filename == "autosave" and !GetConVar("arccw_attinv_free"):GetBool() then return end
 
     local str = ""
     for i, k in pairs(self.Attachments) do
