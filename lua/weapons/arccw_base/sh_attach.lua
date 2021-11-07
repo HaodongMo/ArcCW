@@ -684,7 +684,9 @@ end
 
 function SWEP:NetworkWeapon(sendto)
     net.Start("arccw_networkatts")
-    net.WriteEntity(self) -- self entity
+
+    --net.WriteEntity(self) -- self entity
+    net.WriteUInt(self:EntIndex(), 14)
 
     net.WriteUInt(table.Count(self.Attachments), 8)
 
@@ -696,6 +698,7 @@ function SWEP:NetworkWeapon(sendto)
 
         net.WriteUInt(id, ArcCW.GetBitNecessity())
 
+        net.WriteBool(i.SlideAmount)
         if i.SlideAmount then
             net.WriteFloat(i.SlidePos or 0.5)
         end

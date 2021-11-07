@@ -252,6 +252,66 @@ local function postsetup(wpn)
 end
 
 net.Receive("arccw_networkatts", function(len, ply)
+    local entindex = net.ReadUInt(14)
+
+    local attnum = net.ReadUInt(8)
+    local atts = {}
+    for i = 1, attnum do
+        local attid = net.ReadUInt(ArcCW.GetBitNecessity())
+
+        if attid == 0 then
+            continue
+        end
+        local att = ArcCW.AttachmentIDTable[attid]
+        atts[i] = {Installed = att}
+        if net.ReadBool() then
+            atts[i].SlidePos = net.ReadFloat()
+        end
+        if ArcCW.AttachmentTable[att].ToggleStats then
+            atts[i].ToggleNum = net.ReadUInt(8)
+        end
+    end
+
+    -- Busy wait until the entity is valid on client
+    local ind = "arccw_" .. entindex
+    timer.Create(ind, 0, 10000, function()
+        local wpn = Entity(entindex)
+        print(wpn)
+        if IsValid(wpn) then
+            wpn.Attachments = wpn.Attachments or {}
+            wpn.SubSlotCount = 0
+
+            for i = 1, attnum do
+                wpn.Attachments[i] = wpn.Attachments[i] or {}
+
+                if !atts[i] then
+                    if !istable(wpn.Attachments[i]) then continue end
+                    wpn.Attachments[i].Installed = nil
+                    continue
+                end
+
+                local att = atts[i].Installed
+                wpn.Attachments[i].Installed = att
+
+                if atts[i].SlideAmount != nil then
+                    wpn.Attachments[i].SlidePos = atts[i].SlideAmount
+                end
+
+                if atts[i].ToggleNum != nil then
+                    wpn.Attachments[i].ToggleNum = atts[i].ToggleNum
+                end
+
+                wpn:AddSubSlot(i, att)
+            end
+
+            wpn.CertainAboutAtts = true
+
+            postsetup(wpn)
+            timer.Remove(ind)
+        end
+    end)
+
+    --[[]
     local wpn = net.ReadEntity()
     if !IsValid(wpn) then return end
     if !wpn.ArcCW then return end
@@ -288,6 +348,7 @@ net.Receive("arccw_networkatts", function(len, ply)
     wpn.CertainAboutAtts = true
 
     postsetup(wpn)
+    ]]
 end)
 
 net.Receive("arccw_sendattinv", function(len, ply)
