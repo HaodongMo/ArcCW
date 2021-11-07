@@ -102,7 +102,6 @@ end
 
 local function ArcCW_LoadFolder(folder)
     folder = folder and (attachments_path .. folder .. "/") or attachments_path
-    print(folder)
     for k, v in pairs(file.Find(folder .. "*", "LUA")) do
         if !pcall(function() ArcCW_LoadAtt(folder .. v) end) then
             print("!!!! Attachment " .. v .. " has errors!")
@@ -123,9 +122,8 @@ local function ArcCW_LoadAtts()
     ArcCW.AttachmentBits = nil
     ArcCW.AttachmentCachedLists = {}
 
-    local files, folders = file.Find(attachments_path .. "/*", "LUA")
-
     ArcCW_LoadFolder()
+    local _, folders = file.Find(attachments_path .. "/*", "LUA")
     if folders then
         for _, folder in pairs(folders) do
             ArcCW_LoadFolder(folder)
