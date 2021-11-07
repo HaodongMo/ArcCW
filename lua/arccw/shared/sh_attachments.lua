@@ -276,7 +276,6 @@ net.Receive("arccw_networkatts", function(len, ply)
     local ind = "arccw_" .. entindex
     timer.Create(ind, 0, 10000, function()
         local wpn = Entity(entindex)
-        print(wpn)
         if IsValid(wpn) then
             wpn.Attachments = wpn.Attachments or {}
             wpn.SubSlotCount = 0
