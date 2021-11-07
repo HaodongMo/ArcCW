@@ -92,7 +92,9 @@ local attachments_path = "arccw/shared/attachments/"
 
 local function ArcCW_LoadAtt(att_file)
     att = {}
-    shortname = string.sub(att_file, 1, -5)
+    --shortname = string.sub(att_file, 1, -5)
+    local s = string.Explode("/", att_file)
+    shortname = string.sub(s[#s], 1, -5)
 
     include(att_file)
     AddCSLuaFile(att_file)
