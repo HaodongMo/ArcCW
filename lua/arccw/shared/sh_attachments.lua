@@ -361,8 +361,6 @@ net.Receive("arccw_rqwpnnet", function(len, ply)
 
     if !wpn.ArcCW then return end
 
-    -- in singleplayer the message arrives before atts are adjusted
-    if game.SinglePlayer() then wpn:AdjustAtts() end
     wpn:RecalcAllBuffs()
     wpn:NetworkWeapon()
 end)
