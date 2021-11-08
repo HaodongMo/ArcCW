@@ -195,7 +195,7 @@ function SWEP:PrimaryAttack()
     bullet.Num        = num
 
     local sglove = math.ceil(num / 3)
-    bullet.Force      = math.Clamp( ( (50 / sglove) / ( (self:GetDamage(0, true) + self:GetDamage(math.huge, true)) / 2 ) ) * sglove, 1, 3 )
+    bullet.Force      = math.Clamp( ( (50 / sglove) / ( (self:GetBuff("Damage") + self:GetBuff("DamageMin")) / (self:GetBuff("Num") * 2) ) ) * sglove, 1, 3 )
                         -- Overperforming weapons get the jerf, underperforming gets boost
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
@@ -706,9 +706,9 @@ function SWEP:GetDispersion()
     if sights then maxspeed = maxspeed * self:GetBuff("SightedSpeedMult") end
     speed = math.Clamp(speed / maxspeed, 0, 2)
 
-    if owner:OnGround() or owner:WaterLevel() > 0 or owner:GetMoveType() == MOVETYPE_NOCLIP then
+    if owner:OnGround() or owner:WaterLevel() > 0 and owner:GetMoveType() != MOVETYPE_NOCLIP then
         hip = hip + speed * self:GetBuff("MoveDispersion")
-    else
+    elseif owner:GetMoveType() != MOVETYPE_NOCLIP then
         hip = hip + math.max(speed * self:GetBuff("MoveDispersion"), self:GetBuff("JumpDispersion"))
     end
 
