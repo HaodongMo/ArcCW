@@ -197,7 +197,8 @@ function SWEP:DrawFlashlightsWM()
 
         if !k.WElement then continue end
         local model = k.WElement.Model
-
+        if !IsValid(model) then return end
+        
         local pos, ang, dir
 
         if !model then
