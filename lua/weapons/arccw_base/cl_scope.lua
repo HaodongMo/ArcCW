@@ -57,8 +57,10 @@ function SWEP:Scroll(var)
 
 end
 
-SWEP.ViewPunchAngle = Angle(0, 0, 0)
-SWEP.ViewPunchVelocity = Angle(0, 0, 0)
+local ang0 = Angle(0, 0, 0)
+
+SWEP.ViewPunchAngle = Angle(ang0)
+SWEP.ViewPunchVelocity = Angle(ang0)
 
 function SWEP:OurViewPunch(angle)
     self.ViewPunchVelocity = self.ViewPunchVelocity + angle
@@ -132,17 +134,17 @@ function SWEP:DoOurViewPunch()
         self.ViewPunchAngle = vpa
         self.ViewPunchVelocity = vpv
     else
-        self.ViewPunchAngle = Angle(0, 0, 0)
-        self.ViewPunchVelocity = Angle(0, 0, 0)
+        self.ViewPunchAngle = Angle(ang0)
+        self.ViewPunchVelocity = Angle(ang0)
     end
 end
 
 -- viewbob during reload and firing shake
-SWEP.ProceduralViewOffset = Angle(0, 0, 0)
+SWEP.ProceduralViewOffset = Angle(ang0)
 local procedural_spdlimit = 5
 local oldangtmp
 local mzang_fixed,mzang_fixed_last
-local mzang_velocity = Angle()
+local mzang_velocity = Angle(ang0)
 local progress = 0
 local targint,targbool
 

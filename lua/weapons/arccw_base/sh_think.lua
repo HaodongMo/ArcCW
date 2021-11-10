@@ -2,6 +2,10 @@ if CLIENT then
     ArcCW.LastWeapon = nil
 end
 
+local vec1 = Vector(1, 1, 1)
+local vec0 = vec1 * 0
+local ang0 = Angle(0, 0, 0)
+
 local lastUBGL = 0
 function SWEP:Think()
     if IsValid(self:GetOwner()) and self:GetClass() == "arccw_base" then
@@ -194,8 +198,6 @@ function SWEP:Think()
     end
 
     if CLIENT and IsValid(vm) then
-        local vec1 = Vector(1, 1, 1)
-        local vec0 = vec1 * 0
 
         for i = 1, vm:GetBoneCount() do
             vm:ManipulateBoneScale(i, vec1)
@@ -319,7 +321,7 @@ function SWEP:ProcessRecoil()
     -- local r = self.RecoilAmount -- self:GetNWFloat("recoil", 0)
     -- local rs = self.RecoilAmountSide -- self:GetNWFloat("recoilside", 0)
 
-    local ra = Angle(0, 0, 0)
+    local ra = Angle(ang0)
 
     ra = ra + (self:GetBuff_Override("Override_RecoilDirection", self.RecoilDirection) * self.RecoilAmount * 0.5)
     ra = ra + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * self.RecoilAmountSide * 0.5)
