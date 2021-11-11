@@ -3,7 +3,7 @@ SWEP.ClientFreeAimAng = Angle(ang0)
 
 function SWEP:ShouldFreeAim()
     if self:GetOwner():IsNPC() then return false end
-    if (GetConVar("arccw_freeaim"):GetInt() == 0 or self:GetBuff_Mult("NeverFreeAim", self.NeverFreeAim)) and !self:GetBuff_Mult("AlwaysFreeAim", self.AlwaysFreeAim) then return false end
+    if (GetConVar("arccw_freeaim"):GetInt() == 0 or self:GetBuff_Override("NeverFreeAim", self.NeverFreeAim))  and !self:GetBuff_Override("AlwaysFreeAim", self.AlwaysFreeAim) then return false end
     return true
 end
 
