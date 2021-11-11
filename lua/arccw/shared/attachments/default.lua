@@ -609,3 +609,10 @@ att.Mult_CycleTime = 1
 att.AttachSound = nil
 att.DetachSound = nil
 att.ToggleSound = nil
+
+-- free aim related buffs
+att.Override_FreeAimAngle = nil
+att.Mult_FreeAimAngle = nil
+att.Add_FreeAimAngle = nil
+att.Override_NeverFreeAim = nil
+att.Override_AlwaysFreeAim = nil

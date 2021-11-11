@@ -30,7 +30,7 @@ end
 function SWEP:DoDrawCrosshair(x, y)
     local ply = LocalPlayer()
     local pos = ply:EyePos()
-    local ang = ply:EyeAngles() - self:GetOurViewPunchAngles()
+    local ang = ply:EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
 
     local prong_dot = GetConVar("arccw_crosshair_dot"):GetBool()
     local prong_top = GetConVar("arccw_crosshair_prong_top"):GetBool()
@@ -102,7 +102,7 @@ function SWEP:DoDrawCrosshair(x, y)
         aimtr.start = pos
     end
 
-    aimtr.endpos = aimtr.start + (ply:GetAimVector() * 100000)
+    aimtr.endpos = aimtr.start + ((ply:EyeAngles() + self:GetFreeAimOffset()):Forward() * 100000)
     aimtr.filter = {ply}
     aimtr.output = aimtr_result
 

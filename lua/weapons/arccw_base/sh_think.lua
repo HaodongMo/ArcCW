@@ -251,6 +251,8 @@ function SWEP:Think()
 
     self:DoHeat()
 
+    self:ThinkFreeAim()
+
     -- if CLIENT then
         -- if !IsValid(ArcCW.InvHUD) then
         --     gui.EnableScreenClicker(false)

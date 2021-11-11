@@ -309,6 +309,11 @@ SWEP.ProceduralIronFire = false
 SWEP.SightTime = 0.33
 SWEP.SprintTime = 0
 
+-- Override free aim convar and variable
+SWEP.FreeAimAngle = nil -- defaults to HipDispersion / 80. overwrite here
+SWEP.NeverFreeAim = nil
+SWEP.AlwaysFreeAim = nil
+
 -- If Jamming is enabled, a heat meter will gradually build up until it reaches HeatCapacity.
 -- Once that happens, the gun will overheat, playing an animation. If HeatLockout is true, it cannot be fired until heat is 0 again.
 SWEP.Jamming = false
@@ -760,6 +765,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Vector", 0, "BipodPos")
 
     self:NetworkVar("Angle", 0, "BipodAngle")
+    self:NetworkVar("Angle", 1, "FreeAimAngle")
+    self:NetworkVar("Angle", 2, "LastAimAngle")
 
     self:NetworkVar("Entity", 0, "Holster_Entity")
 end

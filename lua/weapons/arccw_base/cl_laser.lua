@@ -11,13 +11,15 @@ local lasermat = Material("arccw/laser")
 local flaremat = Material("effects/whiteflare")
 local delta    = 1
 
-function SWEP:DoLaser(world)
+function SWEP:DoLaser(world, nocontext)
     world = world or false
 
-    if world then
-        cam.Start3D()
-    else
-        cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV)
+    if !nocontext then
+        if world then
+            cam.Start3D()
+        else
+            cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV)
+        end
     end
 
     for slot, k in pairs(self.Attachments) do
@@ -52,7 +54,9 @@ function SWEP:DoLaser(world)
         end
     end
 
-    cam.End3D()
+    if !nocontext then
+        cam.End3D()
+    end
 end
 
 function SWEP:DrawLaser(laser, model, color, world)
@@ -80,7 +84,7 @@ function SWEP:DrawLaser(laser, model, color, world)
 
     if att == 0 then
         pos = model:GetPos()
-        ang = owner:EyeAngles()
+        ang = owner:EyeAngles() + self:GetFreeAimOffset()
         dir = ang:Forward()
     else
         local attdata  = model:GetAttachment(att)
@@ -95,7 +99,7 @@ function SWEP:DrawLaser(laser, model, color, world)
 
         dir = ang:Forward()
 
-        local eyeang   = self:GetOwner():EyeAngles() - self:GetOurViewPunchAngles()
+        local eyeang   = self:GetOwner():EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
         local canlaser = self:GetCurrentFiremode().Mode != 0 and !self:GetReloading() and self:BarrelHitWall() <= 0
 
         delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
@@ -117,7 +121,7 @@ function SWEP:DrawLaser(laser, model, color, world)
         -- local cheap = GetConVar("arccw_cheapscopes"):GetBool()
         local punch = self:GetOurViewPunchAngles()
 
-        ang = self:GetOwner():EyeAngles() - punch
+        ang = self:GetOwner():EyeAngles() - punch + self:GetFreeAimOffset()
 
         tracepos = EyePos() - Vector(0, 0, 1)
         pos, dir = tracepos, ang:Forward()
@@ -144,7 +148,7 @@ function SWEP:DrawLaser(laser, model, color, world)
     local strength = laser.LaserStrength or 1
     local laserpos = solid and tr.StartPos or hitpos
 
-    laserpos = laserpos - (EyeAngles():Forward())
+    laserpos = laserpos - ((EyeAngles() + self:GetFreeAimOffset()):Forward())
 
     if solid then return end
 
@@ -153,7 +157,7 @@ function SWEP:DrawLaser(laser, model, color, world)
     if (!behav or world) and hit then
         SetMat(lasermat)
         local a = 200
-        DrawBeam(pos, btr.HitPos, width*0.3, 1, 0, Color(a, a, a, a))
+        DrawBeam(pos, btr.HitPos, width * 0.3, 1, 0, Color(a, a, a, a))
         DrawBeam(pos, btr.HitPos, width, 1, 0, color)
     end
 

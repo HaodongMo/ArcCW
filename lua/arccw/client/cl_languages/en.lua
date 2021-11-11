@@ -367,3 +367,8 @@ L["arccw.cvar.hud_fcgabbrev"] = "Abbreviate Firemode Names"
 -- 2021-10-31
 L["arccw.cvar.reloadincust"] = "Reloading In Customize Menu"
 L["arccw.cvar.reloadincust.desc"] = "May allow players to cheese reload times by swapping magazine attachments.\nWill also disable left hand lowering in the customize menu."
+
+-- 2021-11-11
+L["arccw.cvar.freeaim"] = "Free Aim"
+L["arccw.cvar.freeaim.1"] = "1 - Enabled"
+L["arccw.cvar.freeaim.2"] = "2 - No Dispersion Tweak"

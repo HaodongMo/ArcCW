@@ -410,6 +410,9 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.ang = Angle(target.ang)
     end
 
+    target.ang.y = target.ang.y + (self:GetFreeAimOffset().y * 0.5)
+    target.ang.p = target.ang.p - (self:GetFreeAimOffset().p * 0.5)
+
     if self.InProcDraw then
         self.InProcHolster = false
         local delta = m_clamp((CT - self.ProcDrawTime) / (0.25 * self:GetBuff_Mult("Mult_DrawTime")), 0, 1)
@@ -652,6 +655,10 @@ function SWEP:PreDrawViewModel(vm)
     cam.IgnoreZ(true)
     self:DrawCustomModel(false)
     self:DoLHIK()
+
+    if !ArcCW.Overdraw then
+        self:DoLaser(false, true)
+    end
 end
 
 function SWEP:PostDrawViewModel()
@@ -664,7 +671,7 @@ function SWEP:PostDrawViewModel()
     if ArcCW.Overdraw then
         ArcCW.Overdraw = false
     else
-        self:DoLaser()
+        --self:DoLaser()
         self:DoHolosight()
     end
 

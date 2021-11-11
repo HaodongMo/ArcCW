@@ -107,7 +107,7 @@ function SWEP:PrimaryAttack()
         return
     end
 
-    local dir = owner:GetAimVector()
+    local dir = (owner:EyeAngles() + self:GetFreeAimOffset()):Forward() --owner:GetAimVector()
     local src = self:GetShootSrc()
 
     if bit.band(util.PointContents(src), CONTENTS_WATER) == CONTENTS_WATER and !(self.CanFireUnderwater or self:GetBuff_Override("Override_CanFireUnderwater")) then
@@ -689,7 +689,6 @@ end
 
 function SWEP:GetDispersion()
     local owner = self:GetOwner()
-    local delta = self:GetNWSightDelta()
 
     if vrmod and vrmod.IsPlayerInVR(owner) then return 0 end
 
@@ -699,7 +698,7 @@ function SWEP:GetDispersion()
     local hip = hipdisp
 
     local sightdisp = self:GetBuff("SightsDispersion")
-    if sights then hip = Lerp(delta, sightdisp, hipdisp) end
+    if sights then hip = Lerp(self:GetNWSightDelta(), sightdisp, hipdisp) end
 
     local speed = owner:GetAbsVelocity():Length()
     local maxspeed = owner:GetWalkSpeed() * self:GetBuff("SpeedMult")
@@ -716,6 +715,10 @@ function SWEP:GetDispersion()
 
     if GetConVar("arccw_mult_crouchdisp"):GetFloat() != 1 and owner:OnGround() and owner:Crouching() then
         hip = hip * GetConVar("arccw_mult_crouchdisp"):GetFloat()
+    end
+
+    if GetConVar("arccw_freeaim"):GetInt() == 1 and !sights then
+        hip = hip ^ 0.9
     end
 
     --local t = hook.Run("ArcCW_ModDispersion", self, {dispersion = hip})
@@ -849,6 +852,8 @@ function SWEP:DoRecoil()
     punch = punch + (self:GetBuff_Override("Override_RecoilDirectionSide", self.RecoilDirectionSide) * math.max(self.RecoilSide, 0.25) * irec * recv * rmul)
     punch = punch + Angle(0, 0, 90) * math.Rand(-1, 1) * math.Clamp(self.Recoil, 0.25, 1) * recv * rmul * 0.01
     punch = punch * (self.RecoilPunch or 1) * self:GetBuff_Mult("Mult_RecoilPunch")
+
+    self:SetFreeAimAngle(self:GetFreeAimAngle() - punch)
 
     if CLIENT then self:OurViewPunch(punch) end
 

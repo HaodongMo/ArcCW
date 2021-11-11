@@ -1,3 +1,5 @@
+local ang0 = Angle(0, 0, 0)
+
 function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
         return
@@ -34,6 +36,9 @@ function SWEP:Deploy()
     self:SetShotgunReloading(0)
     self:SetHolster_Time(0)
     self:SetHolster_Entity(NULL)
+
+    self:SetFreeAimAngle(ang0)
+    self:SetLastAimAngle(ang0)
 
     self.LHIKAnimation = nil
 
