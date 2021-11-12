@@ -2216,19 +2216,19 @@ function SWEP:CreateCustomize2HUD()
 
             table.insert(infos, {
                 title = translate("trivia.muzzlevel"),
-                value = self:GetMuzzleVelocity() * ArcCW.HUToM,
+                value = math.Round(self:GetMuzzleVelocity() * ArcCW.HUToM),
                 unit = translate("unit.mps"),
             })
 
             table.insert(infos, {
                 title = translate("trivia.recoil"),
-                value = math.Truncate(self.Recoil * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_Recoil"), 1),
+                value = math.Round(self.Recoil * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_Recoil"), 1),
                 unit = translate("unit.lbfps"),
             })
 
             table.insert(infos, {
                 title = translate("trivia.recoilside"),
-                value = math.Truncate(self.RecoilSide * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_RecoilSide"), 1),
+                value = math.Round(self.RecoilSide * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_RecoilSide"), 1),
                 unit = translate("unit.lbfps"),
             })
 
