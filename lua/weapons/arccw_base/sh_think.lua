@@ -84,12 +84,13 @@ function SWEP:Think()
         self:DoTriggerDelay()
     end
 
-    if self:GetCurrentFiremode().RunawayBurst and self:Clip1() > 0 then
+    if self:GetCurrentFiremode().RunawayBurst then
+
         if self:GetBurstCount() > 0 and ((game.SinglePlayer() and SERVER) or (!game.SinglePlayer() and true)) then
             self:PrimaryAttack()
         end
 
-        if self:GetBurstCount() == self:GetBurstLength() then
+        if self:Clip1() < self:GetBuff("AmmoPerShot") or self:GetBurstCount() == self:GetBurstLength() then
             self:SetBurstCount(0)
             if !self:GetCurrentFiremode().AutoBurst then
                 self.Primary.Automatic = false
