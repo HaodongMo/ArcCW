@@ -662,8 +662,9 @@ function SWEP:GetWeaponFlags()
     for id, i in pairs(self.Attachments) do
         if !i.Installed then continue end
 
-        if self:GetBuff_Stat("GivesFlags", id) then
-            table.Add(flags, self:GetBuff_Stat("GivesFlags", id))
+        local buff = self:GetBuff_Stat("GivesFlags", id)
+        if buff then
+            table.Add(flags, buff)
         end
 
         if i.GivesFlags then
@@ -1362,16 +1363,20 @@ function SWEP:AdjustAtts()
         self:Unload()
     end
 
+    -- Recalculate active elements soodependencies aren't fucked
+    self.ActiveElementCache = nil
+
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
         local ok = true
+
         if !ArcCW:SlotAcceptsAtt(k.Slot, self, k.Installed) then ok = false end
-        if !self:CheckFlags(k.ExcludeFlags, k.RequireFlags) then ok = false end
+        if ok and !self:CheckFlags(k.ExcludeFlags, k.RequireFlags) then ok = false end
 
         local atttbl = ArcCW.AttachmentTable[k.Installed]
 
         if !atttbl then continue end
-        if !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then ok = false end
+        if ok and !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then print(k.Installed, table.ToString(atttbl.RequireFlags)) ok = false end
 
         if !ok then
             self:Detach(i, true)
