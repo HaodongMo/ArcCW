@@ -1376,7 +1376,7 @@ function SWEP:AdjustAtts()
         local atttbl = ArcCW.AttachmentTable[k.Installed]
 
         if !atttbl then continue end
-        if ok and !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then print(k.Installed, table.ToString(atttbl.RequireFlags)) ok = false end
+        if ok and !self:CheckFlags(atttbl.ExcludeFlags, atttbl.RequireFlags) then ok = false end
 
         if !ok then
             self:Detach(i, true)
