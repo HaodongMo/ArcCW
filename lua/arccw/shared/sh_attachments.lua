@@ -8,7 +8,7 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     local ret = hook.Run("ArcCW_PlayerCanAttach", ply, wep, attname, slot, detach)
 
     -- Followed by convar
-    if ret == nil and GetConVar("arccw_enable_customization"):GetInt() < 0 then return false end
+    if ret == nil and GetConVar("arccw_enable_customization"):GetInt() <= 0 then return false end
 
     if ret == nil and engine.ActiveGamemode() == "terrortown" then
         local mode = GetConVar("arccw_ttt_customizemode"):GetInt()
