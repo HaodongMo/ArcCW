@@ -32,6 +32,8 @@ function SWEP:DoDrawCrosshair(x, y)
     local pos = ply:EyePos()
     local ang = ply:EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
 
+    local static = GetConVar("arccw_crosshair_static"):GetBool()
+
     local prong_dot = GetConVar("arccw_crosshair_dot"):GetBool()
     local prong_top = GetConVar("arccw_crosshair_prong_top"):GetBool()
     local prong_left = GetConVar("arccw_crosshair_prong_left"):GetBool()
@@ -71,7 +73,7 @@ function SWEP:DoDrawCrosshair(x, y)
             GetConVar("arccw_crosshair_outline_a"):GetInt())
 
     local gap = ScreenScale(24)
-            * (GetConVar("arccw_crosshair_static"):GetBool() and 0.25 or math.Clamp(self:GetDispersion() / 1000, 0.1, 100))
+            * (static and 0.25 or math.Clamp(self:GetDispersion() / 1000, 0.1, 100))
             * GetConVar("arccw_crosshair_gap"):GetFloat()
     gap = gap + ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1)
 
@@ -151,7 +153,7 @@ function SWEP:DoDrawCrosshair(x, y)
     cw = self
 
     gap = size
-    gap = gap * delta
+    if !static then gap = gap * delta end
 
     if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
         prong = ScreenScale(prong_wid)
