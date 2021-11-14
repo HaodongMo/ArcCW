@@ -226,6 +226,7 @@ att.MagExtender = false
 att.MagReducer = false
 att.OverrideClipSize = nil
 att.Add_ClipSize = 0
+att.BaseClipSize = nil -- currently only used to make autostats treat this as the "base" clip size for pros/cons
 
 att.Override_FuseTime = nil
 

@@ -63,7 +63,7 @@ ArcCW.AutoStats = {
     end},
     ["Override_ClipSize"] = {"autostat.clipsize", "func", function(wep, val, att)
         if !IsValid(wep) then return end
-        local ogclip = (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 0)
+        local ogclip = wep:GetBuff_Override("BaseClipSize") or (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 0)
         if ogclip < val then
             return string.format(translate("autostat.clipsize"), val), "pros"
         else
