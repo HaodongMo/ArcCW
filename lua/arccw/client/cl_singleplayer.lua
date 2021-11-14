@@ -39,6 +39,9 @@ net.Receive("arccw_sp_health", function(len, ply)
     ent.ArcCWCLHealth = 0
 end)
 
+local clr_b = Color(160, 190, 255)
+local clr_r = Color(255, 190, 190)
+
 concommand.Add("arccw_listvmanims", function()
     local wep = LocalPlayer():GetActiveWeapon()
 
@@ -51,9 +54,9 @@ concommand.Add("arccw_listvmanims", function()
     local alist = vm:GetSequenceList()
 
     for i = 0, #alist do
-        MsgC(Color(160, 190, 255), i, " --- ")
-        MsgC(Color(255, 255, 255), "\t", alist[i], "\n     [")
-        MsgC(Color(255, 230, 230), "\t", vm:SequenceDuration(i), "\n")
+        MsgC(clr_b, i, " --- ")
+        MsgC(color_white, "\t", alist[i], "\n     [")
+        MsgC(clr_r, "\t", vm:SequenceDuration(i), "\n")
     end
 end)
 
@@ -83,9 +86,9 @@ concommand.Add("arccw_listvmatts", function()
     local alist = vm:GetAttachments()
 
     for i = 1, #alist do
-        MsgC(Color(160, 190, 255), i, " --- ")
-        MsgC(Color(255, 255, 255), "\tindex : ", alist[i].id, "\n     [")
-        MsgC(Color(255, 190, 190), "\tname: ", alist[i].name, "\n")
+        MsgC(clr_b, i, " --- ")
+        MsgC(color_white, "\tindex : ", alist[i].id, "\n     [")
+        MsgC(clr_r, "\tname: ", alist[i].name, "\n")
     end
 end)
 
@@ -102,15 +105,16 @@ concommand.Add("arccw_listvmbgs", function()
 
     for i = 1, #alist do
         local alistsm = alist[i].submodels
-        MsgC(Color(160, 190, 255), i, " --- ")
-        MsgC(Color(255, 255, 255), "\tid: ", alist[i].id, "\n     [")
-        MsgC(Color(255, 190, 190), "\tname: ", alist[i].name, "\n")
-        MsgC(Color(255, 190, 190), "\tnum: ", alist[i].num, "\n")
+        local active = vm:GetBodygroup(alist[i].id)
+        MsgC(clr_b, i, " --- ")
+        MsgC(color_white, "\tid: ", alist[i].id, "\n     [")
+        MsgC(clr_r, "\tname: ", alist[i].name, "\n")
+        MsgC(clr_r, "\tnum: ", alist[i].num, "\n")
         if alistsm then
-            MsgC(Color(255, 190, 190), "\tsubmodels:\n")
-            for i = 0, #alistsm do
-                MsgC(Color(160, 190, 255), "\t" .. i, " --- ")
-                MsgC(Color(255, 190, 190), alistsm[i], "\n")
+            MsgC(clr_r, "\tsubmodels:\n")
+            for j = 0, #alistsm do
+                MsgC(active == j and color_white or clr_b, "\t" .. j, " --- ")
+                MsgC(active == j and color_white or clr_r, alistsm[j], "\n")
             end
         end
     end
