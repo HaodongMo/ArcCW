@@ -430,7 +430,6 @@ function SWEP:TranslateFOV(fov)
         app_vm = irons.ViewModelFOV or 45
         div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
         div = math.max(div, 1)
-        div = (1 * (1-delta)) + div*delta
     end
 
     -- something about this doesn't work in multiplayer
