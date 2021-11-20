@@ -1850,6 +1850,14 @@ function SWEP:CreateCustomize2HUD()
         ArcCW.InvHUD_Menu3:Clear()
         ArcCW.InvHUD_FormWeaponName()
 
+
+        local function RangeText(range)
+            local metres = tostring(math.Round(range)) .. "m"
+            local hu = tostring(math.Round(range / ArcCW.HUToM / 100) * 100) .. "HU"
+
+            return metres, hu
+        end
+
         local info = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
         info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
         info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
@@ -1861,12 +1869,11 @@ function SWEP:CreateCustomize2HUD()
             local rpm = math.Round(60 / self:GetFiringDelay())
 
             if self:GetIsManualAction() then
+
                 local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
                 local firedelay = self.Animations[fireanim].MinProgress or 0
                 rpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
-            end
 
-            if self:GetIsManualAction() then
                 table.insert(infos, {
                     title = translate("trivia.firerate"),
                     value = "~" .. tostring(rpm),
@@ -1882,7 +1889,7 @@ function SWEP:CreateCustomize2HUD()
                 if mode.Mode < 0 then
                     table.insert(infos, {
                         title = translate("trivia.firerate_burst"),
-                        value = tostring( math.Round( 60/(self:GetFiringDelay()+((mode.PostBurstDelay or 0)/-mode.Mode)) ) ),
+                        value = tostring( math.Round( 60 / (self:GetFiringDelay() + ((mode.PostBurstDelay or 0) / -mode.Mode)) ) ),
                         unit = translate("unit.rpm"),
                     })
                 end
@@ -2051,15 +2058,17 @@ function SWEP:CreateCustomize2HUD()
             local dmgmax = self:GetDamage(0)
             local dmgmin = self:GetDamage(math.huge)
 
-            --local mran = (self.RangeMin or 0) * self:GetBuff_Mult("Mult_RangeMin")
-            --local sran = self.Range * self:GetBuff_Mult("Mult_Range")
             local mran, sran = self:GetMinMaxRange()
 
             local scale = math.ceil((math.max(dmgmax, dmgmin) + 10) / 25) * 25
-            local hscale = math.ceil(math.max(mran, sran) / 100) * 100
+            local hscale = math.ceil(math.max(mran, sran) / 150) * 150
 
             scale = math.max(scale, 75)
-            hscale = math.max(hscale, 100)
+            hscale = math.max(hscale, 150)
+
+            local wmin = mran / hscale * w
+            local wmax = math.min(sran / hscale * w, w - ss * 32)
+            if sran == hscale then wmax = w end
 
             draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
 
@@ -2072,11 +2081,8 @@ function SWEP:CreateCustomize2HUD()
             -- segment 2: slope
             local x_2 = 0
             local y_2 = y_1
-            if mran > 0 then
-                x_2 = w * 1 / 3
-            end
             -- segment 3: maximum range
-            local x_3 = w * 2 / 3
+            local x_3 = wmax
             local y_3 = h - (dmgmin / scale * h)
             y_3 = math.Clamp(y_3, ss * 16, h - (ss * 16))
 
@@ -2086,6 +2092,8 @@ function SWEP:CreateCustomize2HUD()
             if sran == mran then
                 x_2 = w / 2
                 x_3 = w / 2
+            elseif mran > 0 then
+                x_2 = wmin -- w * 1 / 3
             end
 
             local col_vline = LerpColor(0.5, col_fg, Color(0, 0, 0, 0))
@@ -2132,62 +2140,90 @@ function SWEP:CreateCustomize2HUD()
             surface.SetTextColor(col_fg)
             surface.SetFont("ArcCWC2_8")
 
-            local function RangeText(range)
-                local metres = tostring(math.Round(range)) .. "m"
-                local hu = tostring(math.Round(range / ArcCW.HUToM / 100) * 100) .. "HU"
-
-                return metres, hu
-            end
-
-            if dmgmax != dmgmin then
-                local m_1, hu_1 = RangeText(0)
-
-                surface.SetTextPos(ss * 2, h - rss * 16)
-                surface.DrawText(m_1)
-                surface.SetTextPos(ss * 2, h - rss * 10)
-                surface.DrawText(hu_1)
-            end
-
             local drawndmg = false
+            if dmgmax != dmgmin then
 
-            if dmgmax != dmgmin and mran > 0 then
-                local dmg = tostring(math.Round(dmgmax))
-                local tw = surface.GetTextSize(dmg)
-                surface.SetTextPos(x_2 - (tw / 2), ss * 1)
-                surface.DrawText(dmg)
+                if mran == 0 or wmin > ss * 24 then
+                    local m_1, hu_1 = RangeText(0)
 
-                local m_2, hu_2 = RangeText(mran)
+                    surface.SetTextPos(ss * 2, h - rss * 16)
+                    surface.DrawText(m_1)
+                    surface.SetTextPos(ss * 2, h - rss * 10)
+                    surface.DrawText(hu_1)
+                end
 
-                surface.SetTextPos(x_2, h - rss * 16)
-                surface.DrawText(m_2)
-                surface.SetTextPos(x_2, h - rss * 10)
-                surface.DrawText(hu_2)
+                if sran != hscale and w - wmax > ss * 40 then
+                    local m_1x, hu_1x = RangeText(hscale)
+                    local w_m, _ = surface.GetTextSize(m_1x)
+                    local w_hu, _ = surface.GetTextSize(hu_1x)
 
-                local dmgt = tostring("DMG")
-                local twt = surface.GetTextSize(dmgt)
-                surface.SetTextPos(x_2 - (twt / 2), ss * 8)
-                surface.DrawText(dmgt)
+                    surface.SetTextPos(w - w_m - ss * 2, h - rss * 16)
+                    surface.DrawText(m_1x)
+                    surface.SetTextPos(w - w_hu - ss * 2, h - rss * 10)
+                    surface.DrawText(hu_1x)
+                end
 
-                drawndmg = true
-            end
+                if mran > 0 then
+                    local dmg = tostring(math.Round(dmgmax))
+                    local tw = surface.GetTextSize(dmg)
+                    surface.SetTextPos(x_2 - (tw / 2), ss * 1)
+                    surface.DrawText(dmg)
 
-            if dmgmax != dmgmin and sran != mran then
-                local dmg = tostring(math.Round(dmgmin))
-                local tw = surface.GetTextSize(dmg)
-                surface.SetTextPos(x_3 - (tw / 2), ss * 1)
-                surface.DrawText(dmg)
+                    local m_2, hu_2 = RangeText(mran)
 
-                local m_3, hu_3 = RangeText(sran)
+                    surface.SetTextPos(x_2, h - rss * 16)
+                    surface.DrawText(m_2)
+                    surface.SetTextPos(x_2, h - rss * 10)
+                    surface.DrawText(hu_2)
 
-                surface.SetTextPos(x_3, h - rss * 16)
-                surface.DrawText(m_3)
-                surface.SetTextPos(x_3, h - rss * 10)
-                surface.DrawText(hu_3)
+                    local dmgt = tostring("DMG")
+                    local twt = surface.GetTextSize(dmgt)
+                    surface.SetTextPos(x_2 - (twt / 2), ss * 8)
+                    surface.DrawText(dmgt)
 
-                local dmgt = tostring("DMG")
-                local twt = surface.GetTextSize(dmgt)
-                surface.SetTextPos(x_3 - (twt / 2), ss * 8)
-                surface.DrawText(dmgt)
+                    drawndmg = true
+                end
+
+                if sran == hscale then
+                    -- draw max damage at edge
+                    local dmg = tostring(math.Round(dmgmin))
+                    local tw = surface.GetTextSize(dmg)
+                    surface.SetTextPos(w - ss * 2 - tw, ss * 1)
+                    surface.DrawText(dmg)
+
+                    local m_3, hu_3 = RangeText(sran)
+                    local w_m, _ = surface.GetTextSize(m_3)
+                    local w_hu, _ = surface.GetTextSize(hu_3)
+
+                    surface.SetTextPos(w - ss * 2 - w_m, h - rss * 16)
+                    surface.DrawText(m_3)
+                    surface.SetTextPos(w - ss * 2 - w_hu, h - rss * 10)
+                    surface.DrawText(hu_3)
+
+                    local dmgt = tostring("DMG")
+                    local twt = surface.GetTextSize(dmgt)
+                    surface.SetTextPos(w - ss * 2 - twt, ss * 8)
+                    surface.DrawText(dmgt)
+
+                elseif sran != mran then
+                    -- draw max damage centered
+                    local dmg = tostring(math.Round(dmgmin))
+                    local tw = surface.GetTextSize(dmg)
+                    surface.SetTextPos(x_3 - (tw / 2), ss * 1)
+                    surface.DrawText(dmg)
+
+                    local m_3, hu_3 = RangeText(sran)
+
+                    surface.SetTextPos(x_3, h - rss * 16)
+                    surface.DrawText(m_3)
+                    surface.SetTextPos(x_3, h - rss * 10)
+                    surface.DrawText(hu_3)
+
+                    local dmgt = tostring("DMG")
+                    local twt = surface.GetTextSize(dmgt)
+                    surface.SetTextPos(x_3 - (twt / 2), ss * 8)
+                    surface.DrawText(dmgt)
+                end
             end
 
             if !drawndmg then
