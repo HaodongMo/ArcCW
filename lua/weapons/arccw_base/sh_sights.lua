@@ -1,6 +1,11 @@
 SWEP.Sighted = false
 SWEP.Sprinted = false
 
+local function linearlerp(a, b, c)
+	return b + (c - b) * a
+end
+
+
 function SWEP:GetSightTime()
     return self:GetBuff("SightTime")
 end
@@ -408,16 +413,19 @@ function SWEP:GetActiveSights()
     end
 end
 
+SWEP.LastTranslateFOV = 0
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
 
     if CLIENT and GetConVar("arccw_dev_benchgun"):GetBool() then self.CurrentFOV = fov self.CurrentViewModelFOV = fov return fov end
-    --if !irons then return end
-    --if !irons.Magnification then return fov end
-    --if irons.Magnification == 1 then return fov end
 
     self.ApproachFOV = self.ApproachFOV or fov
     self.CurrentFOV = self.CurrentFOV or fov
+
+    -- Only update every tick (this function is probably called multiple times per tick)
+    if self.LastTranslateFOV == UnPredictedCurTime() then return self.CurrentFOV end
+    local timed = UnPredictedCurTime() - self.LastTranslateFOV
+    self.LastTranslateFOV = UnPredictedCurTime()
 
     local div = 1
     local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
@@ -426,32 +434,21 @@ function SWEP:TranslateFOV(fov)
         local sgreloading = (self:GetShotgunReloading() == 2 or self:GetShotgunReloading() == 4)
         local delta = self:GetSightDelta()
         delta = math.pow(delta, 2)
-        if CLIENT then fov = math.Clamp(( (75*(1-delta)) + (GetConVar("fov_desired"):GetInt()*delta) ), 75, 100) end
+        if CLIENT then fov = math.Clamp( (75 * (1 - delta)) + (GetConVar("fov_desired"):GetInt() * delta), 75, 100) end
         app_vm = irons.ViewModelFOV or 45
         div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
         div = math.max(div, 1)
     end
 
-    -- something about this doesn't work in multiplayer
-    -- if game.SinglePlayer() then self.CurrentFOV = self.CurrentFOV + (self.RecoilAmount * -0.1 * self:GetSightDelta()) end
-    -- it also fucking sucks
-
     self.ApproachFOV = fov / div
 
-    self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, FrameTime() * (self.CurrentFOV - self.ApproachFOV))
+    -- magic number? multiplier of 10 seems similar to previous behavior
+    self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, timed * 10 * (self.CurrentFOV - self.ApproachFOV))
 
     self.CurrentViewModelFOV = self.CurrentViewModelFOV or self.ViewModelFOV
-    self.CurrentViewModelFOV = math.Approach(self.CurrentViewModelFOV, app_vm, FrameTime() * (self.CurrentViewModelFOV - app_vm))
+    self.CurrentViewModelFOV = math.Approach(self.CurrentViewModelFOV, app_vm, timed * 10 * (self.CurrentViewModelFOV - app_vm))
 
-    -- DOES A WEIRD SNAPPY THING WHEN YOU ENTER IRONSIGHTS
-    -- DOES A WEIRD SNAPPY THING WHEN YOU ENTER IRONSIGHTS
-    --[[if CLIENT and self:GetState() != ArcCW.STATE_SIGHTS and math.abs(GetConVar("fov_desired"):GetFloat() - self.CurrentFOV) > 0.0001 then
-        -- This mainly exists to handle suitzoom, as you can now hold USE to use it
-        self.CurrentViewModelFOV = app_vm * (self.CurrentFOV / GetConVar("fov_desired"):GetFloat())
-    end]]
     return self.CurrentFOV
-
-    -- return 90
 end
 
 function SWEP:SetShouldHoldType()
