@@ -202,7 +202,11 @@ function SWEP:RestoreAmmo(count)
     count = count or (clip + chamber)
 
     local reserve = (self:HasInfiniteAmmo() and math.huge or self:Ammo1())
-    reserve = reserve + self:Clip1()
+
+    local dumpclip = self:GetBuff_Hook("Hook_ReloadDumpClip")
+    if !dumpclip then
+        reserve = reserve + self:Clip1()
+    end
 
     local load = math.Clamp(self:Clip1() + count, 0, reserve)
     load = math.Clamp(load, 0, clip + chamber)
