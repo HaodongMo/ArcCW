@@ -58,6 +58,12 @@ function SWEP:Reload()
 
     if self:GetBuff_Hook("Hook_PreReload") then return end
 
+    -- if we must dump our clip when reloading, our reserve ammo should be more than our clip
+    local dumpclip = self:GetBuff_Hook("Hook_ReloadDumpClip")
+    if dumpclip and !self:HasInfiniteAmmo() and self:Clip1() >= self:Ammo1() then
+        return
+    end
+
     self.LastClip1 = self:Clip1()
 
     local reserve = self:Ammo1()
