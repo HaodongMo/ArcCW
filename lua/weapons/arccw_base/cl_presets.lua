@@ -26,10 +26,6 @@ function SWEP:LoadPreset(filename)
         if !GetConVar("arccw_autosave"):GetBool() then return end
     end
 
-    if filename != "autosave" then
-        surface.PlaySound("weapons/arccw/install.wav")
-    end
-
     filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. filename .. ".txt"
 
     if !file.Exists(filename, "DATA") then return end
@@ -45,14 +41,14 @@ function SWEP:LoadPreset(filename)
         if !line then continue end
         presetTbl[i] = string.Trim(line, "\n")
         -- Do not attempt to recreate a preset if it's not possible
-        if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end
+        --if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end
     end
 
     for i = 1, table.Count(self.Attachments) do
         local att = presetTbl[i]
         if !att then continue end
 
-        if !att then continue end
+        if ArcCW:PlayerGetAtts(self:GetOwner(), att) == 0 then continue end
         if !self.Attachments[i] then continue end
 
         -- detect commas
@@ -92,6 +88,11 @@ function SWEP:LoadPreset(filename)
     self:SendAllDetails()
 
     f:Close()
+
+
+    if filename != "autosave" then
+        surface.PlaySound("weapons/arccw/install.wav")
+    end
 
     self:SavePreset()
 end
