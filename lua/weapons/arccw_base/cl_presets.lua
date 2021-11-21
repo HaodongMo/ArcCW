@@ -26,6 +26,10 @@ function SWEP:LoadPreset(filename)
         if !GetConVar("arccw_autosave"):GetBool() then return end
     end
 
+    if filename != "autosave" then
+        surface.PlaySound("weapons/arccw/install.wav")
+    end
+
     filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. filename .. ".txt"
 
     if !file.Exists(filename, "DATA") then return end
@@ -88,11 +92,6 @@ function SWEP:LoadPreset(filename)
     self:SendAllDetails()
 
     f:Close()
-
-
-    if filename != "autosave" then
-        surface.PlaySound("weapons/arccw/install.wav")
-    end
 
     self:SavePreset()
 end
