@@ -2164,9 +2164,14 @@ function SWEP:CreateCustomize2HUD()
                 end
 
                 if mran > 0 then
+                    -- min damage
                     local dmg = tostring(math.Round(dmgmax))
                     local tw = surface.GetTextSize(dmg)
-                    surface.SetTextPos(x_2 - (tw / 2), ss * 1)
+                    if wmin < tw then
+                        surface.SetTextPos(x_2 + ss * 1, ss * 1)
+                    else
+                        surface.SetTextPos(x_2 - (tw / 2), ss * 1)
+                    end
                     surface.DrawText(dmg)
 
                     local m_2, hu_2 = RangeText(mran)
@@ -2178,7 +2183,12 @@ function SWEP:CreateCustomize2HUD()
 
                     local dmgt = tostring("DMG")
                     local twt = surface.GetTextSize(dmgt)
-                    surface.SetTextPos(x_2 - (twt / 2), ss * 8)
+
+                    if wmin < tw then
+                        surface.SetTextPos(x_2 + ss * 1, ss * 8)
+                    else
+                        surface.SetTextPos(x_2 - (twt / 2), ss * 8)
+                    end
                     surface.DrawText(dmgt)
 
                     drawndmg = true
