@@ -536,6 +536,7 @@ SWEP.Attachments = {}
 --     ExcludeFlags = {}, -- if the weapon has this flag, hide this slot
 --     RequireFlags = {}, -- if the weapon does not have all these flags, hide this slot
 --     GivesFlags = {} -- give these slots if something is installed here
+--     DefaultFlags = {} -- give these slots UNLESS something is installed here
 --     HideIfBlocked = false, -- If flag requirements are not met, do not show the attachment at all
 -- }
 

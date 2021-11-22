@@ -660,7 +660,12 @@ function SWEP:GetWeaponFlags()
     local flags = {}
 
     for id, i in pairs(self.Attachments) do
-        if !i.Installed then continue end
+        if !i.Installed then
+            if i.DefaultFlags then
+                table.Add(flags, i.DefaultFlags)
+            end
+            continue
+        end
 
         local buff = self:GetBuff_Stat("GivesFlags", id)
         if buff then
@@ -670,6 +675,8 @@ function SWEP:GetWeaponFlags()
         if i.GivesFlags then
             table.Add(flags, i.GivesFlags)
         end
+
+
 
         table.Add(flags, i.Installed)
     end
