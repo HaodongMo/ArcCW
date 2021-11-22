@@ -676,7 +676,9 @@ function SWEP:GetWeaponFlags()
             table.Add(flags, i.GivesFlags)
         end
 
-
+        local extras = {}
+        self:GetBuff_Hook("Hook_ExtraFlags", extras)
+        table.Add(flags, extras)
 
         table.Add(flags, i.Installed)
     end

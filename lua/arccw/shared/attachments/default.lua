@@ -75,6 +75,9 @@ att.GivesFlags = {}
 att.RequireFlags = {}
 att.ExcludeFlags = {}
 
+-- any strings present in data will be added to weapon flags
+att.Hook_ExtraFlags = function(wep, data) end
+
 -- Do not use right now.
 att.SubSlots = {
     {
