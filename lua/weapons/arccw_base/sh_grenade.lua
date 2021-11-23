@@ -72,8 +72,8 @@ function SWEP:Throw()
         if self:Clip1() == 0 and self:Ammo1() >= 1 and !self.Singleton then
             self:SetClip1(1)
             self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
-        else
-            self:GetOwner():StripWeapon(self:GetClass())
+        elseif !self.Disposable then
+                self:GetOwner():StripWeapon(self:GetClass())
         end
     end)
     self:SetTimer(self:GetAnimKeyTime("throw"), function()
