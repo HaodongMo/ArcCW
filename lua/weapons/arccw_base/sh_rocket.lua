@@ -23,12 +23,23 @@ function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
     rocket:SetPos(src)
 
     rocket:SetOwner(self:GetOwner())
-    
+
     rocket.Inflictor = self
 
-    rocket.Damage = self.Damage * math.Rand(1 - self.DamageRand, 1 + self.DamageRand)
+    local randfactor = self:GetBuff("DamageRand")
+    local mul = 1
+    if randfactor > 0 then
+        mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
+    end
+    rocket.Damage = self:GetBuff("Damage") * mul
+
     if self.BlastRadius then
-        rocket.BlastRadius = self.BlastRadius * math.Rand(1 - (self.BlastRadiusRand or 0), 1 + (self.BlastRadiusRand or 0))
+        local r_randfactor = self:GetBuff("DamageRand")
+        local r_mul = 1
+        if r_randfactor > 0 then
+            r_mul = r_mul * math.Rand(1 - r_randfactor, 1 + r_randfactor)
+        end
+        rocket.BlastRadius = self:GetBuff("BlastRadius") * r_mul
     end
 
     local RealVelocity = (!dontinheritvel and self:GetOwner():GetAbsVelocity() or Vector(0, 0, 0)) + ang:Forward() * vel / ArcCW.HUToM
