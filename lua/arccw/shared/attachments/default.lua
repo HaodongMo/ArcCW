@@ -499,6 +499,10 @@ att.Add_MeleeRange = 0
 att.Mult_MeleeAttackTime = 1
 att.Override_MeleeDamageType = nil
 
+att.Override_Lunge = nil
+att.Add_LungeLength = 0
+att.Mult_LungeLength = 1
+
 -- jam/heat related buffs
 att.Override_Jamming = nil
 att.Mult_HeatCapacity = 1

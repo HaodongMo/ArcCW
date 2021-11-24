@@ -36,6 +36,28 @@ function SWEP:CanBackstab(melee2, ent)
     return false
 end
 
+function SWEP:DoLunge(melee2)
+    local var = self:GetBuff_Override("Override_Lunge", self.Lunge)
+    if var == false or var == nil and self.PrimaryBash then return end
+    if !self:GetOwner():IsPlayer() or self:GetOwner():Crouching() then return end
+
+    local reach = 32 + self:GetBuff_Add("Add_MeleeRange") + (melee2 and self.Melee2Range or self.MeleeRange)
+    local tr = self:GetOwner():GetEyeTrace()
+    local tgt = tr.Entity
+
+    if IsValid(tgt) and (tgt:IsPlayer() or tgt:IsNPC()) then
+
+        local dist = (tr.HitPos - tr.StartPos):Length()
+
+        if dist > reach and dist < reach + self:GetBuff("LungeLength") then
+            local dir = tr.Normal
+            dir.z = math.min(dir.z, 0)
+            dir:Normalize()
+            self:GetOwner():SetVelocity(dir * (self:GetOwner():IsOnGround() and 5 or 2.5) * dist)
+        end
+    end
+end
+
 function SWEP:Bash(melee2)
     melee2 = melee2 or false
     if self:GetState() == ArcCW.STATE_SIGHTS
@@ -57,6 +79,8 @@ function SWEP:Bash(melee2)
     if melee2 then
         mt = self.Melee2Time * mult
     end
+
+    mt = mt * self:GetBuff_Mult("Mult_MeleeWaitTime")
 
     local bashanim = "bash"
     local canbackstab = self:CanBackstab(melee2)
@@ -80,7 +104,7 @@ function SWEP:Bash(melee2)
     if CLIENT then
         self:OurViewPunch(-self.BashPrepareAng * 0.05)
     end
-    self:SetNextPrimaryFire(CurTime() + mt)
+    self:SetNextPrimaryFire(CurTime() + mt )
 
     if melee2 then
         if self.HoldtypeActive == "pistol" or self.HoldtypeActive == "revolver" then
@@ -115,6 +139,8 @@ function SWEP:Bash(melee2)
 
         self:MeleeAttack(melee2)
     end)
+
+    self:DoLunge()
 end
 
 function SWEP:MeleeAttack(melee2)

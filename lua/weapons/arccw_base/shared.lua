@@ -359,6 +359,9 @@ SWEP.ShieldProps = nil
 SWEP.CanBash = true
 SWEP.PrimaryBash = false -- primary attack triggers melee attack
 
+SWEP.Lunge = nil -- Whether to allow the bash/melee to lunge a short distance
+SWEP.LungeLength = 64 -- Maximum distance for lunging
+
 SWEP.MeleeDamage = 25
 SWEP.MeleeRange = 16
 SWEP.MeleeDamageType = DMG_CLUB
