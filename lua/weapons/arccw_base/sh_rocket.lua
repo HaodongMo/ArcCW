@@ -3,7 +3,7 @@ function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
 
     local rocket = ents.Create(ent)
 
-    ang = ang or self:GetOwner():EyeAngles()
+    ang = ang or (self:GetOwner():EyeAngles() + self:GetFreeAimOffset())
 
     local src = self:GetShootSrc()
 

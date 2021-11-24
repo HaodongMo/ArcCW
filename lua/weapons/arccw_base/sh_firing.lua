@@ -354,27 +354,28 @@ function SWEP:PrimaryAttack()
                 local offset  = self:GetShotgunSpreadOffset(n)
                 local calcoff = dispers and (offset * self:GetDispersion() * ArcCW.MOAToAcc / 10) or (offset + extraspread)
 
-                local ang = owner:EyeAngles()
-                ang:RotateAroundAxis(owner:EyeAngles():Right(), -1 * calcoff.p)
-                ang:RotateAroundAxis(owner:EyeAngles():Up(), calcoff.y)
-                ang:RotateAroundAxis(owner:EyeAngles():Forward(), calcoff.r)
+                local ang = owner:EyeAngles() + self:GetFreeAimOffset()
+                local ang2 = Angle(ang)
+                ang2:RotateAroundAxis(ang:Right(), -1 * calcoff.p)
+                ang2:RotateAroundAxis(ang:Up(), calcoff.y)
+                ang2:RotateAroundAxis(ang:Forward(), calcoff.r)
 
                 if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
-                    ang = ang + AngleRand() * spread / 5
+                    ang2 = ang2 + AngleRand() * spread / 5
                 end
 
                 if shootent then
-                    projectiledata.ang = ang
+                    projectiledata.ang = ang2
 
                     self:DoPrimaryFire(true, projectiledata)
                 else
-                    bullet.Dir = ang:Forward()
+                    bullet.Dir = ang2:Forward()
 
                     self:DoPrimaryFire(false, bullet)
                 end
             end
         elseif shootent then
-            local ang = owner:EyeAngles()
+            local ang = owner:EyeAngles() + self:GetFreeAimOffset()
 
             if !self:GetBuff_Override("Override_NoRandSpread") then
                 ang = (dir + VectorRand() * spread / 5):Angle()
