@@ -372,3 +372,7 @@ L["arccw.cvar.reloadincust.desc"] = "May allow players to cheese reload times by
 L["arccw.cvar.freeaim"] = "Free Aim"
 L["arccw.cvar.freeaim.1"] = "1 - Enabled"
 L["arccw.cvar.freeaim.2"] = "2 - No Dispersion Tweak"
+
+-- 2021-11-24
+L["arccw.cvar.override_lunge_off"] = "Disable Melee Lunging"
+L["arccw.cvar.override_lunge_off.desc"] = "Bashing with a weapon can allow you to dash a short distance if there is a target in front. This option disables that momentum for all weapons."
