@@ -250,10 +250,10 @@ function SWEP:PrimaryAttack()
             local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
             if dmgtable[hg] then
                 dmg:ScaleDamage(dmgtable[hg])
-            end
 
-            -- cancelling gmod's stupid default values
-            if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
+                -- cancelling gmod's stupid default values (but only if we have a multiplier)
+                if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
+            end
         end
 
         local effect = self:GetBuff_Override("Override_ImpactEffect", self.ImpactEffect)
