@@ -38,7 +38,7 @@ SWEP.LastAnimStartTime = 0
 SWEP.LastAnimFinishTime = 0
 
 function SWEP:PlayAnimationEZ(key, mult, ignorereload)
-    self:PlayAnimation(key, mult, true, 0, false, false, ignorereload, false)
+    return self:PlayAnimation(key, mult, true, 0, false, false, ignorereload, false)
 end
 
 function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorereload, absolute)
@@ -188,6 +188,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end
 
     if !(game.SinglePlayer() and CLIENT) then
+        self.EventTable = {}
         self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
     end
 
