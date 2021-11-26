@@ -551,7 +551,7 @@ function SWEP:DrawHUD()
             if self:GetMalfunctionJam() then
                 local col = Color(255, 0, 32)
 
-                local wheat = {
+                local wheat = { --cheeeeerios
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 1 ),
                     font = "ArcCW_12",
@@ -591,7 +591,7 @@ function SWEP:DrawHUD()
                     text = data.heat_name .. " " .. tostring(math.floor(100 * data.heat_level / data.heat_maxlevel)) .. "%",
                     col = colheat1,
                     align = 1,
-                    shadow = true,
+                    shadow = false,
                     alpha = alpha,
                 }
                 if fmbars then
