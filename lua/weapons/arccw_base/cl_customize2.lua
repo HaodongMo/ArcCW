@@ -1,3 +1,38 @@
+local translate = ArcCW.GetTranslation
+local try_translate = ArcCW.TryTranslation
+local defaultatticon = Material("arccw/hud/atts/default.png", "mips smooth")
+local blockedatticon = Material("arccw/hud/atts/blocked.png", "mips smooth")
+
+local bullseye = Material("arccw/hud/bullseye.png", "mips smooth")
+local mat_hit = Material("arccw/hud/hit.png", "mips smooth")
+local mat_hit_dot = Material("arccw/hud/hit_dot.png", "mips smooth")
+
+local pickx_empty = Material("arccw/hud/pickx_empty.png", "mips smooth")
+local pickx_full = Material("arccw/hud/pickx_filled.png", "mips smooth")
+
+local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
+
+local iconlock = Material("arccw/hud/locked_32.png", "mips smooth")
+local iconunlock = Material("arccw/hud/unlocked_32.png", "mips smooth")
+
+local col_fg = Color(255, 255, 255, 255)
+local col_fg_tr = Color(255, 255, 255, 100)
+local col_shadow = Color(0, 0, 0, 255)
+local col_button = Color(0, 0, 0, 175)
+local col_button_hv = Color(75, 75, 75, 175)
+
+local col_block = Color(50, 0, 0, 175)
+local col_block_txt = Color(175, 10, 10, 255)
+
+local col_bad = Color(255, 50, 50, 255)
+local col_good = Color(100, 255, 100, 255)
+local col_info = Color(150, 150, 255, 255)
+
+local col_unowned = col_block
+local col_unowned_txt = col_block_txt
+
+local ss, rss, thicc
+
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end
@@ -226,39 +261,6 @@ function SWEP:GetSlotInstalled(i)
     return installed
 end
 
-local translate = ArcCW.GetTranslation
-local try_translate = ArcCW.TryTranslation
-local defaultatticon = Material("arccw/hud/atts/default.png", "mips smooth")
-local blockedatticon = Material("arccw/hud/atts/blocked.png", "mips smooth")
-
-local bullseye = Material("arccw/hud/bullseye.png", "mips smooth")
-local mat_hit = Material("arccw/hud/hit.png", "mips smooth")
-local mat_hit_dot = Material("arccw/hud/hit_dot.png", "mips smooth")
-
-local pickx_empty = Material("arccw/hud/pickx_empty.png", "mips smooth")
-local pickx_full = Material("arccw/hud/pickx_filled.png", "mips smooth")
-
-local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
-
-local iconlock = Material("arccw/hud/locked_32.png", "mips smooth")
-local iconunlock = Material("arccw/hud/unlocked_32.png", "mips smooth")
-
-local col_fg = Color(255, 255, 255, 255)
-local col_fg_tr = Color(255, 255, 255, 100)
-local col_shadow = Color(0, 0, 0, 255)
-local col_button = Color(0, 0, 0, 175)
-local col_button_hv = Color(75, 75, 75, 175)
-
-local col_block = Color(50, 0, 0, 175)
-local col_block_txt = Color(175, 10, 10, 255)
-
-local col_bad = Color(255, 50, 50, 255)
-local col_good = Color(100, 255, 100, 255)
-local col_info = Color(150, 150, 255, 255)
-
-local col_unowned = col_block
-local col_unowned_txt = col_block_txt
-
 -- 1: Customize
 -- 2: Presets
 -- 3: Inventory
@@ -309,9 +311,9 @@ function SWEP:CreateCustomize2HUD()
     local scrwmult = GetConVar("arccw_hud_deadzone_x"):GetFloat() * scrw
     local scrhmult = GetConVar("arccw_hud_deadzone_y"):GetFloat() * scrh
 
-    local ss = ArcCW.AugmentedScreenScale(1)
-    local rss = ss -- REAL SCREEN SCALE
-    local thicc = math.ceil(ss * 2)
+    ss = ArcCW.AugmentedScreenScale(1)
+    rss = ss -- REAL SCREEN SCALE
+    thicc = math.ceil(ss * 2)
 
     scrw, scrh = scrw - scrwmult, scrh - scrhmult
 
