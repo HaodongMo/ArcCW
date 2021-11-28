@@ -415,7 +415,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     if self.InProcDraw then
         self.InProcHolster = false
-        local delta = m_clamp((CT - self.ProcDrawTime) / (0.25 * self:GetBuff_Mult("Mult_DrawTime")), 0, 1)
+        local delta = m_clamp((CT - self.ProcDrawTime) / (0.5 * self:GetBuff_Mult("Mult_DrawTime")), 0, 1)
         target.pos = LerpVector(delta, Vector(0, 0, -5), target.pos)
         target.ang = LerpAngle(delta, Angle(-70, 30, 0), target.ang)
         target.down = target.down

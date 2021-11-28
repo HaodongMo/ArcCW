@@ -56,16 +56,14 @@ function SWEP:Deploy()
 
         if self.Animations[r_anim] and self.UnReady then
             self:PlayAnimation(r_anim, 1, true, 0, false)
-
-            self:SetReloading(CurTime() + self:GetAnimKeyTime(r_anim, true))
-
             prd = self.Animations[r_anim].ProcDraw
+
+            self:SetReloading(CurTime() + ( prd and 0.5 or self:GetAnimKeyTime(r_anim, true) ) )
         elseif self.Animations[d_anim] then
             self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false)
-
-            self:SetReloading(CurTime() + (self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime")))
-
             prd = self.Animations[d_anim].ProcDraw
+
+            self:SetReloading(CurTime() + ( prd and 0.5 or (self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime")) ) )
         end
 
         if prd or (!self.Animations[r_anim] and !self.Animations[d_anim]) then
