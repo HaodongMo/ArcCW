@@ -244,7 +244,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
                     debugoverlay.Text(e, math.Round(penleft, 1) .. "mm", 10)
                 end
                 if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 and IsValid(btr.Entity) and !alreadypenned[btr.Entity:EntIndex()] then
-                    local str = string.format("%ddmg/%dm(%d%%)", dmg:GetDamage(), dist, math.Round((1 - bullet.Weapon:GetRangeFraction(dist)) * 100))
+                    local str = string.format("%ddmg/%dm(%d%%)", math.floor(bullet.Weapon:GetDamage(dist)), dist, math.Round((1 - bullet.Weapon:GetRangeFraction(dist)) * 100))
                     debugoverlay.Text(btr.Entity:WorldSpaceCenter(), str, 5)
                 end
 

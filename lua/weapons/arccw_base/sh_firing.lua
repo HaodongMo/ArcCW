@@ -323,7 +323,7 @@ function SWEP:PrimaryAttack()
         if decal then util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), self:GetOwner()) end
 
         if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
-            local str = string.format("%ddmg/%dm(%d%%)", math.floor(dmg:GetDamage()), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100))
+            local str = string.format("%ddmg/%dm(%d%%)", math.floor(self:GetDamage(dist)), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100))
             debugoverlay.Text(hitpos, str, 5)
         end
     end

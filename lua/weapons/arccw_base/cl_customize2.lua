@@ -179,7 +179,7 @@ local function shotstokill(mult, dmgmin, dmgmax, mran, sran)
     local result = {}
 
     for i = 1, 7 do
-        local req_damage = 100 / mult / i -- target damage to kill in i shots
+        local req_damage = math.ceil(100 / mult / i) -- target damage to kill in i shots
         if req_damage > dmgmin and req_damage > dmgmax then
             -- cannot reach target damage ever
             result[i] = -1
