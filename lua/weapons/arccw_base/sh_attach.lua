@@ -59,6 +59,7 @@ function SWEP:RecalcAllBuffs()
     if CLIENT then
         self.Infos_Stats = nil
         self.Infos_Ballistics = nil
+        self.Infos_Breakpoints = nil
     end
 end
 

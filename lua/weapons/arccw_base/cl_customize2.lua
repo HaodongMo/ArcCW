@@ -1,7 +1,59 @@
-
-
 local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+end
+
+local function LerpColor(d, col1, col2)
+    local r = Lerp(d, col1.r, col2.r)
+    local g = Lerp(d, col1.g, col2.g)
+    local b = Lerp(d, col1.b, col2.b)
+    local a = Lerp(d, col1.a, col2.a)
+    return Color(r, g, b, a)
+end
+
+local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
+    local tw, th = surface.GetTextSize(txt)
+
+    span.TextRot = span.TextRot or {}
+
+    if tw > maxw then
+        local realx, realy = span:LocalToScreen(x, y)
+        render.SetScissorRect(realx, realy, realx + maxw, realy + (th * 2), true)
+
+        span.TextRot[txt] = span.TextRot[txt] or 0
+
+        if !only then
+            span.StartTextRot = span.StartTextRot or CurTime()
+            span.TextRotState = span.TextRotState or 0 -- 0: start, 1: moving, 2: end
+            if span.TextRotState == 0 then
+                span.TextRot[txt] = 0
+                if span.StartTextRot < CurTime() - 2 then
+                    span.TextRotState = 1
+                end
+            elseif span.TextRotState == 1 then
+                span.TextRot[txt] = span.TextRot[txt] + (FrameTime() * ScreenScaleMulti(16))
+                if span.TextRot[txt] >= (tw - maxw) + ScreenScaleMulti(8) then
+                    span.StartTextRot = CurTime()
+                    span.TextRotState = 2
+                end
+            elseif span.TextRotState == 2 then
+                if span.StartTextRot < CurTime() - 2 then
+                    span.TextRotState = 3
+                    span.StartTextRot = CurTime()
+                end
+            elseif span.TextRotState == 3 then
+                span.TextRot[txt] = span.TextRot[txt] - (FrameTime() * ScreenScaleMulti(16))
+                if span.TextRot[txt] <= 0 then
+                    span.StartTextRot = CurTime()
+                    span.TextRotState = 0
+                end
+            end
+        end
+        surface.SetTextPos(tx - span.TextRot[txt], ty)
+        surface.DrawText(txt)
+        render.SetScissorRect(0, 0, 0, 0, false)
+    else
+        surface.DrawText(txt)
+    end
 end
 
 local function multlinetext(text, maxw, font)
@@ -85,6 +137,68 @@ local function RangeText(range)
     return metres, hu
 end
 
+local function shotstokill(mult, dmgmin, dmgmax, mran, sran)
+
+    -- for i, return range where i * damage == 100
+    -- return -1 if can't kill with i shots, math.huge if can kill at any range
+    local result = {}
+
+    for i = 1, 7 do
+        local req_damage = 100 / mult / i -- target damage to kill in i shots
+        if req_damage > dmgmin and req_damage > dmgmax then
+            -- cannot reach target damage ever
+            result[i] = -1
+        elseif req_damage <= dmgmin and req_damage <= dmgmax then
+            -- will always exceed target damage
+            result[i] = math.huge
+        elseif dmgmin < dmgmax then
+            -- damage decays over range
+            local frac = 1 - math.Clamp((req_damage - dmgmin) / (dmgmax - dmgmin), 0, 1)
+            result[i] = mran + frac * sran
+        else
+            -- damage increases over range
+            local frac = 1 - math.Clamp((req_damage - dmgmax) / (dmgmin - dmgmax), 0, 1)
+            result[i] = mran + frac * sran
+        end
+    end
+    return result
+end
+
+local function linepaintfunc(self2, w, h)
+    surface.SetDrawColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
+    surface.SetMaterial(pickx_full)
+
+    local imsize = h * 0.45
+
+    surface.DrawTexturedRect((h - imsize) / 2, ((h - imsize) / 2) + (ss * 2), imsize, imsize)
+
+    local tp = h + (ss * 2)
+
+    surface.SetFont("ArcCWC2_10_Glow")
+    surface.SetTextColor(col_shadow)
+    surface.SetTextPos(tp, 0)
+    DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
+
+    surface.SetFont("ArcCWC2_10")
+    surface.SetTextColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
+    surface.SetTextPos(tp, 0)
+    DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
+end
+
+local function headpaintfunc(self2, w, h)
+    local tp = 0
+
+    surface.SetFont("ArcCWC2_8_Glow")
+    surface.SetTextColor(col_shadow)
+    surface.SetTextPos(tp, 0)
+    DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
+
+    surface.SetFont("ArcCWC2_8")
+    surface.SetTextColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
+    surface.SetTextPos(tp, 0)
+    DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
+end
+
 function SWEP:ShowInventoryButton()
     if GetConVar("arccw_attinv_free"):GetBool() then return false end
     --if GetConVar("arccw_attinv_lockmode"):GetBool() then return false end
@@ -112,60 +226,6 @@ function SWEP:GetSlotInstalled(i)
     return installed
 end
 
-local function LerpColor(d, col1, col2)
-    local r = Lerp(d, col1.r, col2.r)
-    local g = Lerp(d, col1.g, col2.g)
-    local b = Lerp(d, col1.b, col2.b)
-    local a = Lerp(d, col1.a, col2.a)
-    return Color(r, g, b, a)
-end
-
-local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
-    local tw, th = surface.GetTextSize(txt)
-
-    span.TextRot = span.TextRot or {}
-
-    if tw > maxw then
-        local realx, realy = span:LocalToScreen(x, y)
-        render.SetScissorRect(realx, realy, realx + maxw, realy + (th * 2), true)
-
-        span.TextRot[txt] = span.TextRot[txt] or 0
-
-        if !only then
-            span.StartTextRot = span.StartTextRot or CurTime()
-            span.TextRotState = span.TextRotState or 0 -- 0: start, 1: moving, 2: end
-            if span.TextRotState == 0 then
-                span.TextRot[txt] = 0
-                if span.StartTextRot < CurTime() - 2 then
-                    span.TextRotState = 1
-                end
-            elseif span.TextRotState == 1 then
-                span.TextRot[txt] = span.TextRot[txt] + (FrameTime() * ScreenScaleMulti(16))
-                if span.TextRot[txt] >= (tw - maxw) + ScreenScaleMulti(8) then
-                    span.StartTextRot = CurTime()
-                    span.TextRotState = 2
-                end
-            elseif span.TextRotState == 2 then
-                if span.StartTextRot < CurTime() - 2 then
-                    span.TextRotState = 3
-                    span.StartTextRot = CurTime()
-                end
-            elseif span.TextRotState == 3 then
-                span.TextRot[txt] = span.TextRot[txt] - (FrameTime() * ScreenScaleMulti(16))
-                if span.TextRot[txt] <= 0 then
-                    span.StartTextRot = CurTime()
-                    span.TextRotState = 0
-                end
-            end
-        end
-        surface.SetTextPos(tx - span.TextRot[txt], ty)
-        surface.DrawText(txt)
-        render.SetScissorRect(0, 0, 0, 0, false)
-    else
-        surface.DrawText(txt)
-    end
-end
-
 local translate = ArcCW.GetTranslation
 local try_translate = ArcCW.TryTranslation
 local defaultatticon = Material("arccw/hud/atts/default.png", "mips smooth")
@@ -182,6 +242,22 @@ local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
 
 local iconlock = Material("arccw/hud/locked_32.png", "mips smooth")
 local iconunlock = Material("arccw/hud/unlocked_32.png", "mips smooth")
+
+local col_fg = Color(255, 255, 255, 255)
+local col_fg_tr = Color(255, 255, 255, 100)
+local col_shadow = Color(0, 0, 0, 255)
+local col_button = Color(0, 0, 0, 175)
+local col_button_hv = Color(75, 75, 75, 175)
+
+local col_block = Color(50, 0, 0, 175)
+local col_block_txt = Color(175, 10, 10, 255)
+
+local col_bad = Color(255, 50, 50, 255)
+local col_good = Color(100, 255, 100, 255)
+local col_info = Color(150, 150, 255, 255)
+
+local col_unowned = col_block
+local col_unowned_txt = col_block_txt
 
 -- 1: Customize
 -- 2: Presets
@@ -204,26 +280,20 @@ ArcCW.Inv_ShownAtt = nil
 ArcCW.Inv_Hidden = false
 
 function SWEP:CreateCustomize2HUD()
-    local col_fg = Color(255, 255, 255, 255)
-    local col_fg_tr = Color(255, 255, 255, 100)
-    local col_shadow = Color(0, 0, 0, 255)
-    local col_button = Color(0, 0, 0, 175)
-    local col_button_hv = Color(75, 75, 75, 175)
 
-    local col_block = Color(50, 0, 0, 175)
-    local col_block_txt = Color(175, 10, 10, 255)
+    local cvar_reloadincust = GetConVar("arccw_reloadincust")
+    local cvar_cust_sounds = GetConVar("arccw_cust_sounds")
+    local cvar_darkunowned = GetConVar("arccw_attinv_darkunowned")
+    local cvar_lockmode = GetConVar("arccw_attinv_lockmode")
+    local cvar_truenames = GetConVar("arccw_truenames")
 
-    local col_unowned = col_block
-    local col_unowned_txt = col_block_txt
-
-    if GetConVar("arccw_attinv_darkunowned"):GetBool() then
+    if cvar_darkunowned:GetBool() then
         col_unowned = Color(0, 0, 0, 150)
         col_unowned_txt = Color(150, 150, 150, 255)
+    else
+        col_unowned = col_block
+        col_unowned_txt = col_block_txt
     end
-
-    local col_bad = Color(255, 50, 50, 255)
-    local col_good = Color(100, 255, 100, 255)
-    local col_info = Color(150, 150, 255, 255)
 
     ArcCW.Inv_ShownAtt = nil
 
@@ -241,6 +311,7 @@ function SWEP:CreateCustomize2HUD()
 
     local ss = ArcCW.AugmentedScreenScale(1)
     local rss = ss -- REAL SCREEN SCALE
+    local thicc = math.ceil(ss * 2)
 
     scrw, scrh = scrw - scrwmult, scrh - scrhmult
 
@@ -290,7 +361,7 @@ function SWEP:CreateCustomize2HUD()
             return
         end
 
-        if self:GetReloading() and !GetConVar("arccw_reloadincust"):GetBool() then
+        if self:GetReloading() and !cvar_reloadincust:GetBool() then
             ArcCW.InvHUD:Remove()
             return
         end
@@ -313,7 +384,7 @@ function SWEP:CreateCustomize2HUD()
         col_block = Color(50, 0, 0, 175 * ArcCW.Inv_Fade)
         col_block_txt = Color(175, 10, 10, Lerp(ArcCW.Inv_Fade, 0, 255))
 
-        if GetConVar("arccw_attinv_darkunowned"):GetBool() then
+        if cvar_darkunowned:GetBool() then
             col_unowned = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 150))
             col_unowned_txt = Color(150, 150, 150, Lerp(ArcCW.Inv_Fade, 0, 255))
         else
@@ -563,7 +634,7 @@ function SWEP:CreateCustomize2HUD()
         local str = nil
         if #atts == 0 then
             str = translate("ui.noatts")
-        elseif GetConVar("arccw_attinv_lockmode"):GetBool() then
+        elseif cvar_lockmode:GetBool() then
             str = translate("ui.lockinv")
         end
 
@@ -602,7 +673,7 @@ function SWEP:CreateCustomize2HUD()
             button:DockMargin(0, smallgap, 0, 0)
             button:Dock(TOP)
             button.DoClick = function(self2, clr, btn)
-                if GetConVar("arccw_attinv_lockmode"):GetBool() then return end
+                if cvar_lockmode:GetBool() then return end
 
                 surface.PlaySound("weapons/arccw/uninstall.wav")
 
@@ -639,7 +710,7 @@ function SWEP:CreateCustomize2HUD()
                 local icon_h = h
                 local buffer = 0
 
-                if !GetConVar("arccw_attinv_lockmode"):GetBool() then
+                if !cvar_lockmode:GetBool() then
                     local amt = ArcCW:PlayerGetAtts(self:GetOwner(), self2.att) or 0
                     amt = math.min(amt, 99)
                     local amttxt = tostring(amt)
@@ -1061,7 +1132,7 @@ function SWEP:CreateCustomize2HUD()
                     self.Inv_SelectedSlot = nil
                     ArcCW.InvHUD_Menu2:Clear()
                     clearrightpanel()
-                    if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/close.wav") end
+                    if cvar_cust_sounds:GetBool() then surface.PlaySound("weapons/arccw/close.wav") end
                 else
                     local aslot = self.Attachments[i]
 
@@ -1069,7 +1140,7 @@ function SWEP:CreateCustomize2HUD()
                         self.Inv_SelectedSlot = self2.attindex
                         ArcCW.InvHUD_FormAttachmentSelect()
                         ArcCW.InvHUD_FormAttachmentStats(self2.attindex, self2.attindex, true)
-                        if GetConVar("arccw_cust_sounds"):GetBool() then surface.PlaySound("weapons/arccw/open.wav") end
+                        if cvar_cust_sounds:GetBool() then surface.PlaySound("weapons/arccw/open.wav") end
                     end
                 end
             end
@@ -1506,41 +1577,6 @@ function SWEP:CreateCustomize2HUD()
         end
         p_w = (pan_pros and pan_cons) and (menu3_w / 2) or p_w
 
-        local function linepaintfunc(self2, w, h)
-            surface.SetDrawColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
-            surface.SetMaterial(pickx_full)
-
-            local imsize = h * 0.45
-
-            surface.DrawTexturedRect((h - imsize) / 2, ((h - imsize) / 2) + (ss * 2), imsize, imsize)
-
-            local tp = h + (ss * 2)
-
-            surface.SetFont("ArcCWC2_10_Glow")
-            surface.SetTextColor(col_shadow)
-            surface.SetTextPos(tp, 0)
-            DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
-
-            surface.SetFont("ArcCWC2_10")
-            surface.SetTextColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
-            surface.SetTextPos(tp, 0)
-            DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
-        end
-
-        local function headpaintfunc(self2, w, h)
-            local tp = 0
-
-            surface.SetFont("ArcCWC2_8_Glow")
-            surface.SetTextColor(col_shadow)
-            surface.SetTextPos(tp, 0)
-            DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp)
-
-            surface.SetFont("ArcCWC2_8")
-            surface.SetTextColor(Color(self2.Color.r, self2.Color.g, self2.Color.b, self2.Color.a * ArcCW.Inv_Fade))
-            surface.SetTextPos(tp, 0)
-            DrawTextRot(self2, self2.Text, tp, 0, tp, 0, self2:GetWide() - tp, true)
-        end
-
         if #pros > 0 then
             local pan_head = vgui.Create("DPanel", pan_pros)
             pan_head:SetTall(rss * 8)
@@ -1679,7 +1715,7 @@ function SWEP:CreateCustomize2HUD()
         weapon_title:SetPos(0, 0)
         weapon_title.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-            local name = translate("name." .. self:GetClass() .. (GetConVar("arccw_truenames"):GetBool() and ".true" or "")) or translate(self.PrintName) or self.PrintName
+            local name = translate("name." .. self:GetClass() .. (cvar_truenames:GetBool() and ".true" or "")) or translate(self.PrintName) or self.PrintName
 
             surface.SetFont("ArcCWC2_32")
             local tw = surface.GetTextSize(name)
@@ -1899,6 +1935,8 @@ function SWEP:CreateCustomize2HUD()
         ArcCW.InvHUD_FormWeaponName()
 
         self.Infos_Stats = nil
+        self.Infos_Breakpoints = nil
+        local stats_breakpoint = false
 
         local info = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
         info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
@@ -2081,17 +2119,29 @@ function SWEP:CreateCustomize2HUD()
             end
         end
 
-        local rangegraph = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
+        local stk_min, stk_max, stk_count = 1, 7, 7
+
+        local rangegraph = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
         rangegraph:SetSize(ss * 200, ss * 110)
         rangegraph:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32)
+        rangegraph:SetText("")
+        rangegraph.DoClick = function(self2)
+            stats_breakpoint = !stats_breakpoint
+        end
         rangegraph.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
+
+            local col = col_button
+            if self2:IsHovered() then
+                col = col_button_hv
+            end
+            draw.RoundedBox(cornerrad, 0, 0, w, h, col)
+
             if self.PrimaryBash or
                 self.ShootEntity or
                 self:GetBuff_Override("Override_ShootEntity") or
                 self.NoRangeGraph
             then
-                draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
 
                 local txt = translate("ui.nodata")
 
@@ -2103,10 +2153,189 @@ function SWEP:CreateCustomize2HUD()
 
                 return
             end
+
             local dmgmax = self:GetDamage(0)
             local dmgmin = self:GetDamage(math.huge)
 
             local mran, sran = self:GetMinMaxRange()
+
+            if stats_breakpoint then
+
+                if !self.Infos_Breakpoints then
+                    self.Infos_Breakpoints = {}
+
+                    local our = self:GetBuff_Override("Override_BodyDamageMults", self.BodyDamageMults)
+                    local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
+                    if our and GetConVar("arccw_bodydamagemult_cancel"):GetBool() then
+                        gam = {}
+                    elseif !our then
+                        our = {}
+                    end
+
+                    -- Head
+                    table.insert(self.Infos_Breakpoints, {"ui.hitgroup.head", shotstokill((our[HITGROUP_HEAD] or 1) / (gam[HITGROUP_HEAD] or 1), dmgmin, dmgmax, mran, sran)})
+
+                    -- Torso
+                    -- separates into Chest and Stomach if they have different values
+                    local m_chest = (our[HITGROUP_CHEST] or 1) / (gam[HITGROUP_CHEST] or 1)
+                    local m_stomach = (our[HITGROUP_STOMACH] or 1) / (gam[HITGROUP_STOMACH] or 1)
+                    if m_chest == m_stomach then
+                        table.insert(self.Infos_Breakpoints, {"ui.hitgroup.torso", shotstokill(m_chest, dmgmin, dmgmax, mran, sran)})
+                    else
+                        table.insert(self.Infos_Breakpoints, {"ui.hitgroup.chest", shotstokill(m_chest, dmgmin, dmgmax, mran, sran)})
+                        table.insert(self.Infos_Breakpoints, {"ui.hitgroup.stomach", shotstokill(m_stomach, dmgmin, dmgmax, mran, sran)})
+                    end
+
+                    -- Arms and Legs
+                    -- if two limbs have different multipliers (why???), use the smaller one
+                    local m_arms = math.min((our[HITGROUP_LEFTARM] or 1) / (gam[HITGROUP_LEFTARM] or 1), (our[HITGROUP_RIGHTARM] or 1) / (gam[HITGROUP_RIGHTARM] or 1))
+                    table.insert(self.Infos_Breakpoints, {"ui.hitgroup.arms", shotstokill(m_arms, dmgmin, dmgmax, mran, sran)})
+                    local m_legs = math.min((our[HITGROUP_LEFTLEG] or 1) / (gam[HITGROUP_LEFTLEG] or 1), (our[HITGROUP_RIGHTLEG] or 1) / (gam[HITGROUP_RIGHTLEG] or 1))
+                    table.insert(self.Infos_Breakpoints, {"ui.hitgroup.legs", shotstokill(m_legs, dmgmin, dmgmax, mran, sran)})
+
+                    -- Trim table values that are all -1 or math.huge on either end
+                    stk_min, stk_max = 1, 7
+                    local stk_min_n, stk_min_y = true, true
+                    for i = 1, 7 do
+                        if stk_min_y or stk_min_n then
+                            stk_min = i
+                        else
+                            break
+                        end
+                        for j = 1, #self.Infos_Breakpoints do
+                            if stk_min_n and self.Infos_Breakpoints[j][2][i] != -1 then
+                                stk_min_n = false
+                            elseif stk_min_y and self.Infos_Breakpoints[j][2][i] != math.huge then
+                                stk_min_y = false
+                            end
+                            if !stk_min_y and !stk_min_n then break end
+                        end
+                    end
+
+                    local stk_max_n, stk_max_y = true, true
+                    for i = 7, 1, -1 do
+                        if stk_max_y or stk_max_n then
+                            stk_max = i
+                        else
+                            break
+                        end
+                        for j = 1, #self.Infos_Breakpoints do
+                            if stk_max_n and self.Infos_Breakpoints[j][2][i] != -1 then
+                                stk_max_n = false
+                            elseif stk_max_y and self.Infos_Breakpoints[j][2][i] != math.huge then
+                                stk_max_y = false
+                            end
+                            if !stk_max_y and !stk_max_n then break end
+                        end
+                    end
+
+                    stk_count = stk_max - stk_min + 1
+
+                    print(dmgmax .. "-" .. dmgmin .. "DMG; range " .. mran .. "/" .. sran)
+                    print("table size: " .. stk_min .. "-" .. stk_max)
+                    PrintTable(self.Infos_Breakpoints)
+                end
+
+                local header_w = ss * 48
+                local column_w = (w - header_w) / stk_count
+                local header_h = ss * 16
+                local column_h = (h - header_h) / #self.Infos_Breakpoints
+
+                -- header texts
+                surface.SetTextColor(col_fg)
+                surface.SetFont("ArcCWC2_8")
+
+                local hg_t = translate("ui.hitgroup")
+                local _, hg_h = surface.GetTextSize(hg_t)
+                surface.SetTextPos(ss, header_h - (thicc / 2) - hg_h)
+                surface.DrawText(hg_t)
+
+                local stk_t = translate("ui.shotstokill")
+                local stk_w, _ = surface.GetTextSize(stk_t)
+                surface.SetTextPos(header_w - (thicc / 2) - stk_w, 0)
+                surface.DrawText(stk_t)
+
+                -- vertical dividers
+                surface.SetDrawColor(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 255))
+                surface.SetFont("ArcCWC2_16")
+                for i = 1, stk_count do
+                    surface.DrawLine(header_w + i * column_w, 0, header_w + i * column_w, header_h)
+
+                    local num_t = tostring(i + stk_min - 1)
+                    local num_w, num_h = surface.GetTextSize(num_t)
+                    surface.SetTextPos(header_w + (i - 0.5) * column_w - num_w / 2, header_h / 2 - num_h / 2)
+                    surface.DrawText(num_t)
+                end
+
+                -- table info
+                surface.SetFont("ArcCWC2_8")
+                for i, tbl in ipairs(self.Infos_Breakpoints) do
+                    local row_t = translate(tbl[1])
+                    local row_w, row_h = surface.GetTextSize(row_t)
+                    surface.SetTextPos(header_w / 2 - row_w / 2, header_h + column_h * (i - 0.5) - row_h / 2)
+                    surface.DrawText(row_t)
+
+                    for j = 1, stk_count do
+                        local val = tbl[2][j + stk_min - 1]
+                        local mat, siz
+                        if val == -1 then
+                            --ran_t = "⨯"
+                            siz = ss * 8
+                            mat = mat_hit
+                            surface.SetDrawColor(col_bad.r, col_bad.g, col_bad.b, Lerp(ArcCW.Inv_Fade, 0, 255))
+                        elseif val == math.huge then
+                            --ran_t = "⚫"
+                            siz = ss * 16
+                            mat = mat_hit_dot
+                            surface.SetDrawColor(col_good.r, col_good.g, col_good.b, Lerp(ArcCW.Inv_Fade, 0, 255))
+                        else
+                            local ran_t = math.floor(val) .. "m"
+                            local ran_w, ran_h = surface.GetTextSize(ran_t)
+                            surface.SetTextPos(header_w + (j - 0.5) * column_w - ran_w / 2, header_h + column_h * (i - 0.5) - ran_h / 2)
+                            surface.DrawText(ran_t)
+                        end
+
+                        if mat then
+                            surface.SetMaterial(mat)
+                            surface.DrawTexturedRect(header_w + (j - 0.5) * column_w - siz / 2, header_h + column_h * (i - 0.5) - siz / 2, siz, siz)
+                        end
+                    end
+                end
+
+
+                for i = 1, thicc do
+                    local meth = ((thicc - i) / thicc)
+                    surface.SetDrawColor(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 127 * meth))
+
+                    local of
+                    if i == 1 then
+                        surface.SetDrawColor(col_fg)
+                        of = 0
+                    elseif (i % 2 == 0) then
+                        -- even
+                        of = -1 * i / 2
+                    else
+                        -- odd
+                        of = 1 * i / 2
+                    end
+
+                    -- first vertical
+                    surface.DrawLine(header_w + of, 0, header_w + of, h)
+
+                    -- first horizontal
+                    surface.DrawLine(0, header_h + of, w, header_h + of)
+
+                    -- diagonal header
+                    --surface.DrawLine(0, of, header_w, header_h + of)
+
+                    -- horizontal dividers
+                    for j = 1, #self.Infos_Breakpoints - 1 do
+                        surface.DrawLine(0, header_h + column_h * j + of, w, header_h + column_h * j + of)
+                    end
+                end
+
+                return
+            end
 
             local scale = math.ceil((math.max(dmgmax, dmgmin) + 10) / 25) * 25
             local hscale = math.ceil(math.max(mran, sran) / 150) * 150
@@ -2117,10 +2346,6 @@ function SWEP:CreateCustomize2HUD()
             local wmin = mran / hscale * w
             local wmax = math.min(sran / hscale * w, w - ss * 32)
             if sran == hscale then wmax = w end
-
-            draw.RoundedBox(cornerrad, 0, 0, w, h, col_button)
-
-            local thicc = math.ceil(ss * 2)
 
             -- segment 1: minimum range
             local x_1 = 0

@@ -4,12 +4,15 @@ local function ScreenScaleMulti(input)
     return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
 end
 
+local cvar_deadzonex, cvar_deadzoney
 local function CopeX()
-    return GetConVar("arccw_hud_deadzone_x"):GetFloat() * ScrW()/2
+    if !cvar_deadzonex then cvar_deadzonex = GetConVar("arccw_hud_deadzone_x") end
+    return cvar_deadzonex:GetFloat() * ScrW() / 2
 end
 
 local function CopeY()
-    return GetConVar("arccw_hud_deadzone_y"):GetFloat() * ScrH()/2
+    if !cvar_deadzoney then cvar_deadzoney = GetConVar("arccw_hud_deadzone_y") end
+    return cvar_deadzoney:GetFloat() * ScrH() / 2
 end
 
 local function MyDrawText(tbl)

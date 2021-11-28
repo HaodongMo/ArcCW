@@ -355,6 +355,17 @@ STL["break-action"] = "fcg.break"
 --STL["single"] = "fcg.sngl"
 --STL["both"] = "fcg.both"
 
+-- 2021-11-27
+L["ui.hitgroup"] = "Hitgroup"
+L["ui.shotstokill"] = "Shots to kill"
+L["ui.hitgroup.head"] = "Head"
+L["ui.hitgroup.torso"] = "Torso" -- chest+stomach when they're the same
+L["ui.hitgroup.chest"] = "Chest"
+L["ui.hitgroup.stomach"] = "Stomach"
+L["ui.hitgroup.arms"] = "Arms"
+L["ui.hitgroup.legs"] = "Legs"
+
+
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 Similarly, you can translate attachment and weapon names with ["name.class_name"]
