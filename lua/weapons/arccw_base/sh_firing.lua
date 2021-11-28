@@ -142,7 +142,7 @@ function SWEP:PrimaryAttack()
     --dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
     dir = dir + VectorRand() * disp
 
-    if CLIENT and GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
+    if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
         local dev_tr = util.TraceLine({
             start = src,
             endpos = src + owner:GetAimVector() * 33000,
@@ -322,7 +322,7 @@ function SWEP:PrimaryAttack()
 
         if decal then util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), self:GetOwner()) end
 
-        if CLIENT and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
+        if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
             local str = string.format("%ddmg/%dm(%d%%)", math.floor(dmg:GetDamage()), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100))
             debugoverlay.Text(hitpos, str, 5)
         end
