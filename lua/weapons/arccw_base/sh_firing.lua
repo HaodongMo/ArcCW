@@ -142,7 +142,7 @@ function SWEP:PrimaryAttack()
     --dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
     dir = dir + VectorRand() * disp
 
-    if GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
+    if CLIENT and GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
         local dev_tr = util.TraceLine({
             start = src,
             endpos = src + owner:GetAimVector() * 33000,
@@ -151,13 +151,13 @@ function SWEP:PrimaryAttack()
         })
         local dist = (dev_tr.HitPos - src):Length()
         local r = dist / (1 / math.tan(disp)) -- had to google "trig cheat sheet to figure this one out"
-        local a = dev_tr.HitNormal:Angle()
+        local a = owner:GetAimVector():Angle()
         local r_sqrt = r / math.sqrt(2)
-        debugoverlay.Line(dev_tr.HitPos - a:Up() * r, dev_tr.HitPos + a:Up() * r, 5)
-        debugoverlay.Line(dev_tr.HitPos - a:Right() * r, dev_tr.HitPos + a:Right() * r, 5)
-        debugoverlay.Line(dev_tr.HitPos - a:Right() * r_sqrt - a:Up() * r_sqrt, dev_tr.HitPos + a:Right() * r_sqrt + a:Up() * r_sqrt, 5)
-        debugoverlay.Line(dev_tr.HitPos - a:Right() * r_sqrt + a:Up() * r_sqrt, dev_tr.HitPos + a:Right() * r_sqrt - a:Up() * r_sqrt, 5)
-        debugoverlay.Text(dev_tr.HitPos, math.Round(self:GetDispersion(), 1) .. "MOA Dispersion (" .. math.Round(disp, 3) .. "°)", 5)
+        debugoverlay.Line(dev_tr.HitPos - a:Up() * r, dev_tr.HitPos + a:Up() * r, 5, color_white, true)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r, dev_tr.HitPos + a:Right() * r, 5, color_white, true)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r_sqrt - a:Up() * r_sqrt, dev_tr.HitPos + a:Right() * r_sqrt + a:Up() * r_sqrt, 5, color_white, true)
+        debugoverlay.Line(dev_tr.HitPos - a:Right() * r_sqrt + a:Up() * r_sqrt, dev_tr.HitPos + a:Right() * r_sqrt - a:Up() * r_sqrt, 5, color_white, true)
+        debugoverlay.Text(dev_tr.HitPos, math.Round(self:GetDispersion(), 1) .. "MOA (" .. math.Round(disp, 3) .. "°)", 5)
     end
 
     local delay = self:GetFiringDelay()
@@ -214,7 +214,7 @@ function SWEP:PrimaryAttack()
         local dist = (hitpos - src):Length() * ArcCW.HUToM
         local pen  = self:GetBuff("Penetration")
 
-        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
             debugoverlay.Cross(hitpos, 5, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
         end
 
@@ -322,8 +322,8 @@ function SWEP:PrimaryAttack()
 
         if decal then util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), self:GetOwner()) end
 
-        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
-            local str = string.format("%ddmg/%dm(%d%%)", dmg:GetDamage(), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100))
+        if CLIENT and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
+            local str = string.format("%ddmg/%dm(%d%%)", math.floor(dmg:GetDamage()), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100))
             debugoverlay.Text(hitpos, str, 5)
         end
     end

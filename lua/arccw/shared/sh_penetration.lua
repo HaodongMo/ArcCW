@@ -31,7 +31,7 @@ function ArcCW:IsPenetrating(ptr, ptrent)
         mins = mins + (mins - wsc) * 0.25
         maxs = maxs + (maxs - wsc) * 0.25
         local withinbounding = ptr.HitPos:WithinAABox(mins, maxs)
-        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+        if CLIENT and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
             --debugoverlay.Box(Vector(0, 0, 0), mins, maxs, 5, Color(255, 255, 255, 50))
             --debugoverlay.Cross(mins, 4, 5, Color(128, 0, 0), true)
             --debugoverlay.Cross(maxs, 4, 5, Color(128, 0, 0), true)
@@ -157,7 +157,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         end
         ]]
 
-        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+        if CLIENT and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
             local pdeltap = penleft / bullet.Penetration
             local colorlr = m_lerp(pdeltap, 0, 255)
 
@@ -237,13 +237,13 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
                     dmg:SetDamage(bullet.Weapon:GetDamage(dist, true) * pdelta, true)
                 end
 
-                if GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+                if CLIENT and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
                     local e = endpos + dir * (btr.HitPos - endpos):Length()
                     debugoverlay.Line(endpos, e, 10, Color(150, 150, 150), true)
                     debugoverlay.Cross(e, 3, 10, alreadypenned[btr.Entity:EntIndex()] and Color(0, 128, 255) or Color(255, 128, 0), true)
                     debugoverlay.Text(e, math.Round(penleft, 1) .. "mm", 10)
                 end
-                if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 and IsValid(btr.Entity) and !alreadypenned[btr.Entity:EntIndex()] then
+                if CLIENT and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 and IsValid(btr.Entity) and !alreadypenned[btr.Entity:EntIndex()] then
                     local str = string.format("%ddmg/%dm(%d%%)", dmg:GetDamage(), dist, math.Round((1 - bullet.Weapon:GetRangeFraction(dist)) * 100))
                     debugoverlay.Text(btr.Entity:WorldSpaceCenter(), str, 5)
                 end
