@@ -2155,6 +2155,17 @@ function SWEP:CreateCustomize2HUD()
                 surface.DrawText(txt)
 
                 return
+            elseif self:GetBuff("Num") <= 0 then
+
+                local txt = translate("ui.nonum")
+
+                surface.SetTextColor(col_fg)
+                surface.SetFont("ArcCWC2_12")
+                local tw, th = surface.GetTextSize(txt)
+                surface.SetTextPos((w - tw) / 2, (h - th) / 2)
+                surface.DrawText(txt)
+
+                return
             end
 
             local dmgmax = self:GetDamage(0)
