@@ -177,11 +177,12 @@ function SWEP:PrimaryAttack()
 
     num = num + self:GetBuff_Add("Add_Num")
 
-    local tracernum = self:GetBuff_Override("Override_TracerNum") or self.TracerNum
-    local lastout = self:GetBuff_Override("Override_TracerFinalMag") or self.TracerFinalMag
-
+    local tracer = self:GetBuff_Override("Override_Tracer", self.Tracer)
+    local tracernum = self:GetBuff_Override("Override_TracerNum", self.TracerNum)
+    local lastout = self:GetBuff_Override("Override_TracerFinalMag", self.TracerFinalMag)
     if lastout >= clip then
         tracernum = 1
+        tracer = self:GetBuff_Override("Override_TracerFinal", self.TracerFinal) or self:GetBuff_Override("Override_Tracer", self.Tracer)
     end
 
     local dmgtable = self.BodyDamageMults
@@ -203,9 +204,9 @@ function SWEP:PrimaryAttack()
                         -- Overperforming weapons get the jerf, underperforming gets boost
     bullet.Distance   = 33000
     bullet.AmmoType   = self.Primary.Ammo
-    bullet.HullSize   = (self:GetBuff_Override("Override_HullSize") or self.HullSize or 0) + self:GetBuff_Add("Add_HullSize")
+    bullet.HullSize   = self:GetBuff("HullSize")
     bullet.Tracer     = tracernum or 0
-    bullet.TracerName = self:GetBuff_Override("Override_Tracer") or self.Tracer
+    bullet.TracerName = tracer
     bullet.Weapon     = self
     bullet.Callback   = function(att, tr, dmg)
         local hitpos, hitnormal = tr.HitPos, tr.HitNormal
