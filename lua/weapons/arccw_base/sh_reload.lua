@@ -21,6 +21,9 @@ end
 
 function SWEP:Reload()
 
+    if IsValid(self:GetHolster_Entity()) then return end
+    if self:GetHolster_Time() > 0 then return end
+
     if self:GetOwner():IsNPC() then
         return
     end

@@ -4,6 +4,10 @@ function SWEP:CanPrimaryAttack()
     -- Should we not fire? But first.
     if self:GetBuff_Hook("Hook_ShouldNotFireFirst") then return end
 
+    -- We're holstering
+    if IsValid(self:GetHolster_Entity()) then return end
+    if self:GetHolster_Time() > 0 then return end
+
     -- Inoperable
     if self:GetReloading() then return end
 
