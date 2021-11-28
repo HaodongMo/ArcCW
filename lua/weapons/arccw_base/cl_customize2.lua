@@ -1334,8 +1334,8 @@ function SWEP:CreateCustomize2HUD()
         end
 
         local scroll = vgui.Create("DScrollPanel", ArcCW.InvHUD_Menu3)
-        scroll:SetSize(menu3_w - airgap_x, ss * 128)
-        scroll:SetPos(0, rss * 32 + ss * 16)
+        --scroll:SetSize(menu3_w - airgap_x, ss * 128)
+        --scroll:SetPos(0, rss * 32 + ss * 16)
 
         local scroll_bar = scroll:GetVBar()
         scroll_bar.Paint = function() end
@@ -1415,7 +1415,7 @@ function SWEP:CreateCustomize2HUD()
             end
 
             leftbuffer = m_w * 2 / 3
-            bottombuffer = rss * 10
+            bottombuffer = bottombuffer + rss * 10
         end
 
         if equipped and atttbl.ToggleStats then
@@ -1490,9 +1490,10 @@ function SWEP:CreateCustomize2HUD()
                 surface.DrawTexturedRect(4, 4, w - 8, h - 8)
             end
 
-            bottombuffer = rss * 10
+            bottombuffer = bottombuffer + rss * 10
         end
 
+        scroll:SetPos(0, rss * 32 + ss * 16 + bottombuffer)
         scroll:SetSize(menu3_w - airgap_x, ss * 128 - bottombuffer)
 
         local multiline = {}
