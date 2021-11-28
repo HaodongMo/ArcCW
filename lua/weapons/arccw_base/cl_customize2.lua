@@ -2122,6 +2122,7 @@ function SWEP:CreateCustomize2HUD()
         end
 
         local stk_min, stk_max, stk_count = 1, 7, 7
+        local stk_num = self:GetBuff("Num")
 
         local rangegraph = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
         rangegraph:SetSize(ss * 200, ss * 110)
@@ -2232,10 +2233,11 @@ function SWEP:CreateCustomize2HUD()
                     end
 
                     stk_count = stk_max - stk_min + 1
+                    stk_num = self:GetBuff("Num")
 
-                    print(dmgmax .. "-" .. dmgmin .. "DMG; range " .. mran .. "/" .. sran)
-                    print("table size: " .. stk_min .. "-" .. stk_max)
-                    PrintTable(self.Infos_Breakpoints)
+                    --print(dmgmax .. "-" .. dmgmin .. "DMG; range " .. mran .. "/" .. sran)
+                    --print("table size: " .. stk_min .. "-" .. stk_max)
+                    --PrintTable(self.Infos_Breakpoints)
                 end
 
                 local header_w = ss * 48
@@ -2258,15 +2260,24 @@ function SWEP:CreateCustomize2HUD()
                 surface.DrawText(stk_t)
 
                 -- vertical dividers
+                local cnt_t = stk_num > 1 and ("×" .. stk_num) or ""
+                surface.SetFont("ArcCWC2_8")
+                local cnt_w, cnt_h = surface.GetTextSize(cnt_t)
+
                 surface.SetDrawColor(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 255))
-                surface.SetFont("ArcCWC2_16")
                 for i = 1, stk_count do
                     surface.DrawLine(header_w + i * column_w, 0, header_w + i * column_w, header_h)
-
+                    surface.SetFont("ArcCWC2_16")
                     local num_t = tostring(i + stk_min - 1)
                     local num_w, num_h = surface.GetTextSize(num_t)
-                    surface.SetTextPos(header_w + (i - 0.5) * column_w - num_w / 2, header_h / 2 - num_h / 2)
+                    surface.SetTextPos(header_w + (i - 0.5) * column_w - num_w / 2 - cnt_w / 2, header_h / 2 - num_h / 2)
                     surface.DrawText(num_t)
+
+                    if stk_num > 1 then
+                        surface.SetFont("ArcCWC2_8")
+                        surface.SetTextPos(header_w + (i - 0.5) * column_w + num_w / 2 - cnt_w / 2, header_h / 2 - num_h / 2 + cnt_h / 2)
+                        surface.DrawText(cnt_t)
+                    end
                 end
 
                 -- table info
