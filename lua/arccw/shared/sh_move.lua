@@ -6,7 +6,7 @@ function ArcCW.Move(ply, mv, cmd)
 
     local s = 1
 
-    local sm = math.Clamp(wpn.SpeedMult * wpn:GetBuff_Mult("Mult_SpeedMult") * wpn:GetBuff_Mult("Mult_MoveSpeed"), 0, 1)
+    local sm = Lerp( GetConVar("arccw_mult_movespeed"):GetFloat(), 1, math.Clamp(wpn.SpeedMult * wpn:GetBuff_Mult("Mult_SpeedMult") * wpn:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) )
 
     -- look, basically I made a bit of an oopsy and uh this is the best way to fix that
     s = s * sm
@@ -22,7 +22,7 @@ function ArcCW.Move(ply, mv, cmd)
     if wpn:GetNWState() == ArcCW.STATE_SIGHTS or
         wpn:GetNWState() == ArcCW.STATE_CUSTOMIZE then
         blocksprint = true
-        s = s * math.Clamp(wpn:GetBuff("SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1)
+        s = s * Lerp( GetConVar("arccw_mult_movespeedads"):GetFloat() * (1-wpn:GetSightDelta()), 1, math.Clamp(wpn:GetBuff("SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) )
     elseif shottime > 0 then
         blocksprint = true
 
@@ -48,7 +48,7 @@ function ArcCW.Move(ply, mv, cmd)
         local aftershottime = -shottime / delay
         shotdelta = math.Clamp(1 - aftershottime, 0, 1)
     end
-    local shootmove = math.Clamp(wpn:GetBuff("ShootSpeedMult"), 0.0001, 1)
+    local shootmove = Lerp( GetConVar("arccw_mult_movespeedfire"):GetFloat(), 1, math.Clamp(wpn:GetBuff("ShootSpeedMult"), 0.0001, 1) )
     s = s * Lerp(shotdelta, 1, shootmove)
 
     mv:SetMaxSpeed(basespd * s)

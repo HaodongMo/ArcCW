@@ -376,3 +376,8 @@ L["arccw.cvar.freeaim.2"] = "2 - No Dispersion Tweak"
 -- 2021-11-24
 L["arccw.cvar.override_lunge_off"] = "Disable Melee Lunging"
 L["arccw.cvar.override_lunge_off.desc"] = "Bashing with a weapon can allow you to dash a short distance if there is a target in front. This option disables that momentum for all weapons."
+
+-- 2021-11-27
+L["arccw.cvar.mult_movespeed"] = "Speed"
+L["arccw.cvar.mult_movespeedads"] = "Speed in ADS"
+L["arccw.cvar.mult_movespeedfire"] = "Speed while firing"
