@@ -37,6 +37,54 @@ local function multlinetext(text, maxw, font)
     return content
 end
 
+-- given fov and distance solve apparent size
+local function solvetriangle(angle, dist)
+    local a = angle / 2
+    local b = dist
+    return b * math.tan(a) * 2
+end
+
+local hits_1 = {}
+local hits_3 = {}
+
+local function rollhit(radius)
+    local anglerand = math.Rand(0, 360)
+    local dist = math.Rand(0, radius)
+
+    local hit_x = math.sin(anglerand) * dist
+    local hit_y = math.cos(anglerand) * dist
+
+    return {x = hit_x, y = hit_y}
+end
+
+local function rollallhits(self, range_3, range_1)
+
+    hits_1 = {}
+    hits_3 = {}
+
+    local ang = self:GetBuff("AccuracyMOA") / 60
+
+    local radius_1 = solvetriangle(ang, range_1 * ArcCW.HUToM)
+    local radius_3 = solvetriangle(ang, range_3 * ArcCW.HUToM)
+
+    local hitcount = math.Clamp(math.max(math.Round(self:GetCapacity() / 4), math.Round(self:GetBuff("Num") * 2)), 10, 20)
+
+    for i = 1, hitcount do
+        table.insert(hits_1, rollhit(radius_1))
+    end
+
+    for i = 1, hitcount do
+        table.insert(hits_3, rollhit(radius_3))
+    end
+end
+
+local function RangeText(range)
+    local metres = tostring(math.Round(range)) .. "m"
+    local hu = tostring(math.Round(range / ArcCW.HUToM / 100) * 100) .. "HU"
+
+    return metres, hu
+end
+
 function SWEP:ShowInventoryButton()
     if GetConVar("arccw_attinv_free"):GetBool() then return false end
     --if GetConVar("arccw_attinv_lockmode"):GetBool() then return false end
@@ -1850,141 +1898,141 @@ function SWEP:CreateCustomize2HUD()
         ArcCW.InvHUD_Menu3:Clear()
         ArcCW.InvHUD_FormWeaponName()
 
-
-        local function RangeText(range)
-            local metres = tostring(math.Round(range)) .. "m"
-            local hu = tostring(math.Round(range / ArcCW.HUToM / 100) * 100) .. "HU"
-
-            return metres, hu
-        end
+        self.Infos_Stats = nil
 
         local info = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
         info:SetSize(menu3_w - airgap_x, menu3_h - ss * 110 - rss * 48 - ss * 32)
         info:SetPos(0, rss * 48 + ss * 32 + ss * 110)
         info.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-            local infos = self.Infos_Stats or {}
+            --local infos = self.Infos_Stats or {}
 
-            -- rpm
-            local rpm = math.Round(60 / self:GetFiringDelay())
+            if !self.Infos_Stats then
 
-            if self:GetIsManualAction() then
+                self.Infos_Stats = {}
 
-                local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
-                local firedelay = self.Animations[fireanim].MinProgress or 0
-                rpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
+                -- rpm
+                local rpm = math.Round(60 / self:GetFiringDelay())
 
-                table.insert(infos, {
-                    title = translate("trivia.firerate"),
-                    value = "~" .. tostring(rpm),
-                    unit = translate("unit.rpm"),
-                })
-            elseif !self.PrimaryBash and !self.Throwing then
-                table.insert(infos, {
-                    title = translate("trivia.firerate"),
-                    value = tostring(rpm),
-                    unit = translate("unit.rpm"),
-                })
-                local mode = self:GetCurrentFiremode()
-                if mode.Mode < 0 then
-                    table.insert(infos, {
-                        title = translate("trivia.firerate_burst"),
-                        value = tostring( math.Round( 60 / (self:GetFiringDelay() + ((mode.PostBurstDelay or 0) / -mode.Mode)) ) ),
+                if self:GetIsManualAction() then
+
+                    local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+                    local firedelay = self.Animations[fireanim].MinProgress or 0
+                    rpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
+
+                    table.insert(self.Infos_Stats, {
+                        title = translate("trivia.firerate"),
+                        value = "~" .. tostring(rpm),
                         unit = translate("unit.rpm"),
                     })
+                elseif !self.PrimaryBash and !self.Throwing then
+                    table.insert(self.Infos_Stats, {
+                        title = translate("trivia.firerate"),
+                        value = tostring(rpm),
+                        unit = translate("unit.rpm"),
+                    })
+                    local mode = self:GetCurrentFiremode()
+                    if mode.Mode < 0 then
+                        table.insert(self.Infos_Stats, {
+                            title = translate("trivia.firerate_burst"),
+                            value = tostring( math.Round( 60 / (self:GetFiringDelay() + ((mode.PostBurstDelay or 0) / -mode.Mode)) ) ),
+                            unit = translate("unit.rpm"),
+                        })
+                    end
                 end
-            end
 
-            -- precision
-            local precision = math.Round(self:GetBuff("AccuracyMOA"), 1)
+                -- precision
+                local precision = math.Round(self:GetBuff("AccuracyMOA"), 1)
 
-            if !self.PrimaryBash and !self.Throwing then
-                table.insert(infos, {
-                    title = translate("trivia.precision"),
-                    value = precision,
-                    unit = translate("unit.moa"),
-                })
-            end
-
-            -- ammo type
-            local ammo = string.lower(self:GetBuff_Override("Override_Ammo", self.Primary.Ammo))
-            if (ammo or "") != "" and ammo != "none" then
-                local ammotype = ArcCW.TranslateAmmo(ammo) --language.GetPhrase(self.Primary.Ammo .. "_ammo")
-                if ammotype then
-                    table.insert(infos, {
-                        title = translate("trivia.ammo"),
-                        value = ammotype,
-                        --unit = " (" .. ammo .. ")",
+                if !self.PrimaryBash and !self.Throwing then
+                    table.insert(self.Infos_Stats, {
+                        title = translate("trivia.precision"),
+                        value = precision,
+                        unit = translate("unit.moa"),
                     })
                 end
-            end
 
-            -- penetration
-            local shootent = self:GetBuff("ShootEntity", true)
+                -- ammo type
+                local ammo = string.lower(self:GetBuff_Override("Override_Ammo", self.Primary.Ammo))
+                if (ammo or "") != "" and ammo != "none" then
+                    local ammotype = ArcCW.TranslateAmmo(ammo) --language.GetPhrase(self.Primary.Ammo .. "_ammo")
+                    if ammotype then
+                        table.insert(self.Infos_Stats, {
+                            title = translate("trivia.ammo"),
+                            value = ammotype,
+                            --unit = " (" .. ammo .. ")",
+                        })
+                    end
+                end
 
-            if !self.PrimaryBash and !shootent then
-                local pen  = self:GetBuff("Penetration")
-                table.insert(infos, {
-                    title = translate("trivia.penetration"),
-                    value = pen,
-                    unit = translate("unit.mm"),
-                })
-            end
+                -- penetration
+                local shootent = self:GetBuff("ShootEntity", true)
 
-            -- noise
-            local noise = self:GetBuff("ShootVol")
-
-            if !self.PrimaryBash and !self.Throwing then
-                table.insert(infos, {
-                    title = translate("trivia.noise"),
-                    value = math.Round(noise, 1),
-                    unit = translate("unit.db"),
-                })
-            end
-
-            if self.Throwing then
-                local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
-                if ft and ft > 0 then
-                    table.insert(infos, {
-                        title = translate("trivia.fusetime"),
-                        value = tostring(math.Round(ft, 1)),
-                        unit = "s"
+                if !self.PrimaryBash and !shootent then
+                    local pen  = self:GetBuff("Penetration")
+                    table.insert(self.Infos_Stats, {
+                        title = translate("trivia.penetration"),
+                        value = pen,
+                        unit = translate("unit.mm"),
                     })
                 end
-            end
 
-            if self.PrimaryBash then
-                local meleedelay = self.MeleeTime * self:GetBuff_Mult("Mult_MeleeTime")
-                table.insert(infos, {
-                    title = translate("trivia.attackspersecond"),
-                    value = tostring(math.Round(1 / meleedelay, 1)),
-                    unit = translate("unit.aps")
-                })
+                -- noise
+                local noise = self:GetBuff("ShootVol")
 
-                local meleerange = self:GetBuff("MeleeRange")
-                table.insert(infos, {
-                    title = translate("trivia.range"),
-                    value = tostring(math.Round(meleerange * ArcCW.HUToM)),
-                    unit = "m"
-                })
-
-                local dmg = self.MeleeDamage * self:GetBuff_Mult("Mult_MeleeDamage")
-                table.insert(infos, {
-                    title = translate("trivia.damage"),
-                    value = dmg,
-                })
-
-                local dmgtype = self:GetBuff_Override("Override_MeleeDamageType") or self.MeleeDamageType
-
-                if ArcCW.MeleeDamageTypes[dmgtype or ""] then
-                    table.insert(infos, {
-                        title = translate("trivia.meleedamagetype"),
-                        value = translate(ArcCW.MeleeDamageTypes[dmgtype]),
+                if !self.PrimaryBash and !self.Throwing then
+                    table.insert(self.Infos_Stats, {
+                        title = translate("trivia.noise"),
+                        value = math.Round(noise, 1),
+                        unit = translate("unit.db"),
                     })
                 end
+
+                if self.Throwing then
+                    local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+                    if ft and ft > 0 then
+                        table.insert(self.Infos_Stats, {
+                            title = translate("trivia.fusetime"),
+                            value = tostring(math.Round(ft, 1)),
+                            unit = "s"
+                        })
+                    end
+                end
+
+                if self.PrimaryBash then
+                    local meleedelay = self.MeleeTime * self:GetBuff_Mult("Mult_MeleeTime")
+                    table.insert(self.Infos_Stats, {
+                        title = translate("trivia.attackspersecond"),
+                        value = tostring(math.Round(1 / meleedelay, 1)),
+                        unit = translate("unit.aps")
+                    })
+
+                    local meleerange = self:GetBuff("MeleeRange")
+                    table.insert(self.Infos_Stats, {
+                        title = translate("trivia.range"),
+                        value = tostring(math.Round(meleerange * ArcCW.HUToM)),
+                        unit = "m"
+                    })
+
+                    local dmg = self.MeleeDamage * self:GetBuff_Mult("Mult_MeleeDamage")
+                    table.insert(self.Infos_Stats, {
+                        title = translate("trivia.damage"),
+                        value = dmg,
+                    })
+
+                    local dmgtype = self:GetBuff_Override("Override_MeleeDamageType") or self.MeleeDamageType
+
+                    if ArcCW.MeleeDamageTypes[dmgtype or ""] then
+                        table.insert(self.Infos_Stats, {
+                            title = translate("trivia.meleedamagetype"),
+                            value = translate(ArcCW.MeleeDamageTypes[dmgtype]),
+                        })
+                    end
+                end
+
             end
 
-            for i, triv in pairs(infos) do
+            for i, triv in pairs(self.Infos_Stats) do
                 triv.unit = triv.unit or ""
                 local i_2 = i - 1
                 surface.SetFont("ArcCWC2_8")
@@ -2253,63 +2301,70 @@ function SWEP:CreateCustomize2HUD()
         ArcCW.InvHUD_Menu3:Clear()
         ArcCW.InvHUD_FormWeaponName()
 
+        self.Infos_Ballistics = nil
+
         local info = vgui.Create("DPanel", ArcCW.InvHUD_Menu3)
         info:SetSize(menu3_w - airgap_x, menu3_h - (ss * 110) - (ss * 70) - rss * 48 - ss * 32)
         info:SetPos(0, rss * 48 + ss * 32 + (ss * 110) + (ss * 70))
         info.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-            local infos = self.Infos_Stats or {}
 
-            table.insert(infos, {
-                title = translate("trivia.muzzlevel"),
-                value = math.Round(self:GetMuzzleVelocity() * ArcCW.HUToM),
-                unit = translate("unit.mps"),
-            })
+            if !self.Infos_Ballistics then
 
-            table.insert(infos, {
-                title = translate("trivia.recoil"),
-                value = math.Round(self.Recoil * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_Recoil"), 1),
-                unit = translate("unit.lbfps"),
-            })
+                self.Infos_Ballistics = {}
 
-            table.insert(infos, {
-                title = translate("trivia.recoilside"),
-                value = math.Round(self.RecoilSide * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_RecoilSide"), 1),
-                unit = translate("unit.lbfps"),
-            })
+                table.insert(self.Infos_Ballistics, {
+                    title = translate("trivia.muzzlevel"),
+                    value = math.Round(self:GetMuzzleVelocity() * ArcCW.HUToM),
+                    unit = translate("unit.mps"),
+                })
 
-            -- arccw_approved_recoil_score
-            local aars = 0
-            local disclaimers = ""
+                table.insert(self.Infos_Ballistics, {
+                    title = translate("trivia.recoil"),
+                    value = math.Round(self.Recoil * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_Recoil"), 1),
+                    unit = translate("unit.lbfps"),
+                })
 
-            aars = aars + (self.Recoil + self:GetBuff_Add("Add_Recoil")) * self:GetBuff_Mult("Mult_Recoil")
-            aars = aars + (self.RecoilSide + self:GetBuff_Add("Add_RecoilSide")) * self:GetBuff_Mult("Mult_RecoilSide") * 0.5
+                table.insert(self.Infos_Ballistics, {
+                    title = translate("trivia.recoilside"),
+                    value = math.Round(self.RecoilSide * ArcCW.RecoilUnit * self:GetBuff_Mult("Mult_RecoilSide"), 1),
+                    unit = translate("unit.lbfps"),
+                })
 
-            local arpm = (60 / self:GetFiringDelay())
+                -- arccw_approved_recoil_score
+                local aars = 0
+                local disclaimers = ""
 
-            if self:GetIsManualAction() then
-                local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
-                local firedelay = self.Animations[fireanim].MinProgress or 0
+                aars = aars + (self.Recoil + self:GetBuff_Add("Add_Recoil")) * self:GetBuff_Mult("Mult_Recoil")
+                aars = aars + (self.RecoilSide + self:GetBuff_Add("Add_RecoilSide")) * self:GetBuff_Mult("Mult_RecoilSide") * 0.5
 
-                arpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
-            elseif self:GetCurrentFiremode().Mode == 1 then
-                arpm = math.min(400, 60 / self:GetFiringDelay())
+                local arpm = (60 / self:GetFiringDelay())
+
+                if self:GetIsManualAction() then
+                    local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
+                    local firedelay = self.Animations[fireanim].MinProgress or 0
+
+                    arpm = math.Round(60 / ((firedelay + self:GetAnimKeyTime("cycle", true)) * self:GetBuff_Mult("Mult_CycleTime")))
+                elseif self:GetCurrentFiremode().Mode == 1 then
+                    arpm = math.min(400, 60 / self:GetFiringDelay())
+                end
+                aars = aars * arpm
+
+                --[[
+                if self:GetCurrentFiremode().Mode == 1 or self:GetIsManualAction() then
+                    disclaimers = disclaimers .. " " .. arpm .. translate("unit.rpm")
+                end
+                ]]
+
+                table.insert(self.Infos_Ballistics, {
+                    title = translate("trivia.recoilscore"),
+                    value = math.Round(aars),
+                    unit = " points" .. disclaimers,
+                })
+
             end
-            aars = aars * arpm
 
-            --[[
-            if self:GetCurrentFiremode().Mode == 1 or self:GetIsManualAction() then
-                disclaimers = disclaimers .. " " .. arpm .. translate("unit.rpm")
-            end
-            ]]
-
-            table.insert(infos, {
-                title = translate("trivia.recoilscore"),
-                value = math.Round(aars),
-                unit = " points" .. disclaimers,
-            })
-
-            for i, triv in pairs(infos) do
+            for i, triv in pairs(self.Infos_Ballistics) do
                 triv.unit = triv.unit or ""
                 local i_2 = i - 1
                 surface.SetFont("ArcCWC2_8")
@@ -2365,52 +2420,14 @@ function SWEP:CreateCustomize2HUD()
             range_1 = range_3 * 0.5
         end
 
-        -- given fov and distance solve apparent size
-        local function solvetriangle(angle, dist)
-            local a = angle / 2
-            local b = dist
-            return b * math.tan(a) * 2
-        end
-
-        local hits_1 = {}
-        local hits_3 = {}
-
-        local function rollhit(radius)
-            local anglerand = math.Rand(0, 360)
-            local dist = math.Rand(0, radius)
-
-            local hit_x = math.sin(anglerand) * dist
-            local hit_y = math.cos(anglerand) * dist
-
-            return {x = hit_x, y = hit_y}
-        end
-
-        local function rollallhits()
-            local ang = self:GetBuff("AccuracyMOA") / 60
-
-            local radius_1 = solvetriangle(ang, range_1 * ArcCW.HUToM)
-            local radius_3 = solvetriangle(ang, range_3 * ArcCW.HUToM)
-
-            local hitcount = math.Clamp(math.max(math.Round(self:GetCapacity() / 4), math.Round(self:GetBuff("Num") * 2)), 10, 20)
-
-            for i = 1, hitcount do
-                table.insert(hits_1, rollhit(radius_1))
-            end
-
-            for i = 1, hitcount do
-                table.insert(hits_3, rollhit(radius_3))
-            end
-        end
-
-        rollallhits()
+        rollallhits(self, range_3, range_1)
 
         local ballisticchart = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
         ballisticchart:SetSize(ss * 200, ss * 110)
         ballisticchart:SetPos(menu3_w - ss * 200 - airgap_x, rss * 48 + ss * 32)
         ballisticchart:SetText("")
         ballisticchart.DoClick = function(self2)
-            ArcCW.InvHUD_FormWeaponBallistics()
-            ArcCW.Inv_SelectedInfo = 3
+            rollallhits(self, range_3, range_1)
         end
         ballisticchart.Paint = function(self2, w, h)
             if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end

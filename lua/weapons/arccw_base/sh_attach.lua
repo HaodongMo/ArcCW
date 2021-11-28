@@ -54,6 +54,12 @@ function SWEP:RecalcAllBuffs()
     self.AttCache_Hooks = {}
 
     self.NextMalfunction = nil
+
+    -- for the customization page
+    if CLIENT then
+        self.Infos_Stats = nil
+        self.Infos_Ballistics = nil
+    end
 end
 
 function SWEP:GetIsShotgun()
