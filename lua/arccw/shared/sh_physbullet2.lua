@@ -10,7 +10,14 @@ ArcCW.BulletProfiles = {
     [6] = Color(255, 0, 255),
     [7] = Color(0, 255, 255),
     [8] = Color(0, 0, 0),
+    [9] = Color(255, 255, 255),
 }
+
+function ArcCW:AddBulletProfile(clr)
+    if #ArcCW.BulletProfiles >= 64 then return nil end
+    local i = table.insert(ArcCW.BulletProfiles, clr)
+    return i
+end
 
 function ArcCW:SendBullet(bullet, attacker)
     net.Start("arccw_sendbullet", true)
@@ -19,7 +26,7 @@ function ArcCW:SendBullet(bullet, attacker)
     net.WriteFloat(bullet.Vel:Length())
     net.WriteFloat(bullet.Drag)
     net.WriteFloat(bullet.Gravity)
-    net.WriteUInt((bullet.Profile - 1) or 1, 3)
+    net.WriteUInt((bullet.Profile or 1) - 1, 6)
     net.WriteBool(bullet.PhysBulletImpact)
     net.WriteEntity(bullet.Weapon)
 
@@ -62,7 +69,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Damaged = {},
         Burrowing = false,
         Dead = false,
-        Profile = prof or wep:GetBuff_Override("Override_PhysTracerProfile") or wep.PhysTracerProfile or 0
+        Profile = prof or wep:GetBuff_Override("Override_PhysTracerProfile", wep.PhysTracerProfile) or 1
     }
 
     table.Add(bullet.Filter, wep.Shields or {})
@@ -110,7 +117,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
     local vel = net.ReadFloat()
     local drag = net.ReadFloat()
     local grav = net.ReadFloat()
-    local profile = net.ReadUInt(3) + 1
+    local profile = net.ReadUInt(6) + 1
     local impact = net.ReadBool()
     local weapon = net.ReadEntity()
     local ent = nil
@@ -452,7 +459,7 @@ function ArcCW:DrawPhysBullets()
 
         size = math.pow(size, Lerp(delta, 1, 2))
 
-        local pro = (i.Profile + 1) or 1
+        local pro = (i.Profile or 0) + 1
 
         if pro == 8 then continue end
 
