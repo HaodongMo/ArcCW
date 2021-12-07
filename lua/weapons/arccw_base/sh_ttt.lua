@@ -112,7 +112,7 @@ function SWEP:TTT_Init()
 
     if self.ForgetDefaultBehavior then return end
 
-    self.Primary.ClipMax = ArcCW.TTTAmmo_To_ClipMax[self.Primary.Ammo] or self.RegularClipSize * 2 or self.Primary.ClipSize * 2
+    self.Primary.ClipMax = ArcCW.TTTAmmoToClipMax[self.Primary.Ammo] or self.RegularClipSize * 2 or self.Primary.ClipSize * 2
 
     -- This will overwrite mag reducers, so give it a bit of time
     timer.Simple(0.1, function()

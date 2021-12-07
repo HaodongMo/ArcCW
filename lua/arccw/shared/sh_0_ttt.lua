@@ -10,7 +10,7 @@ ArcCW.AmmoToTTT = {
     ["SniperPenetratedRound"] = "357",
     ["ar2"] = "smg1",
 }
-ArcCW.TTTAmmo_To_ClipMax = {
+ArcCW.TTTAmmoToClipMax = {
     ["357"] = 20,
     ["smg1"] = 60,
     ["pistol"] = 60,
