@@ -352,8 +352,8 @@ function SWEP:FormRTScope()
     local rt = {
         w = rtsize,
         h = rtsize,
-        angles = LocalPlayer():EyeAngles() + (self:GetOurViewPunchAngles() * 0.5),
-        origin = LocalPlayer():EyePos(),
+        angles = EyeAngles() + (self:GetOurViewPunchAngles() * 0.5),
+        origin = EyePos(),
         drawviewmodel = false,
         fov = self:GetOwner():GetFOV() / mag / 1.2,
     }
@@ -577,11 +577,11 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     local pos2 = pos + (dir * -8)
 
-    local a = pos:ToScreen()
+    local a = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or pos:ToScreen()
     local x = a.x
     local y = a.y
 
-    local a2 = pos2:ToScreen()
+    local a2 = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or pos2:ToScreen()
     local x2 = a2.x
     local y2 = a2.y
 
@@ -630,7 +630,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
             --cpos:Rotate(Angle(0, -ArcCW.StrafeTilt(self), 0))
 
-            local ts = cpos:ToScreen()
+            local ts = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or cpos:ToScreen()
 
             local sx = ts.x - (sw / 2) - off_x
             local sy = ts.y - (sh / 2) - off_y
