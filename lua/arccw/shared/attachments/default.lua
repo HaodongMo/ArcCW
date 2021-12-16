@@ -329,6 +329,9 @@ att.Hook_PreDoEffects = function(wep, fx) end
 -- data = {slot = string or table, att = string}
 att.Hook_Compatible = function(wep, data) end
 
+-- called before the bullet is made.
+att.Hook_PostFireBullets = function(wep) end
+
 -- hook that lets you change the values of the bullet before it's fired.
 att.Hook_FireBullets = function(wep, bullettable) end
 
