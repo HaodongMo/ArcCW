@@ -129,6 +129,8 @@ function SWEP:PrimaryAttack()
     if mal == true then
         return
     end
+    
+    self:GetBuff_Hook("Hook_PreFireBullets")
 
     local desync = GetConVar("arccw_desync"):GetBool()
     local desyncnum = (desync and math.random()) or 0
