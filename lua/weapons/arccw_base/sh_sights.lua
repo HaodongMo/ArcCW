@@ -364,6 +364,17 @@ function SWEP:SetupActiveSights()
     end
 
     if kbi then
+        local extra = self.ExtraIrons
+        if extra then
+            for _, t in pairs(extra) do
+                if bif then
+                    table.insert(sighttable, 1, t)
+                else
+                    table.insert(sighttable, t)
+                end
+            end
+        end
+
         local t = table.Copy(self:GetBuff_Override("Override_IronSightStruct") or self.IronSightStruct)
         if bif then
             table.insert(sighttable, 1, t)
@@ -460,8 +471,8 @@ function SWEP:SetShouldHoldType()
     if self:GetState() == ArcCW.STATE_SIGHTS then
         self:SetHoldType(self:GetBuff_Override("Override_HoldtypeSights") or self.HoldtypeSights)
     elseif self:GetState() == ArcCW.STATE_SPRINT then
-        if (self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then
-            self:SetHoldType(self:GetBuff_Override("Override_HoldtypeActive") or self.HoldtypeActive)
+        if (self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint)) then
+            self:SetHoldType(self:GetBuff_Override("Override_HoldtypeSprintShoot", self.HoldtypeSprintShoot) or self:GetBuff_Override("Override_HoldtypeActive", self.HoldtypeActive))
         else
             self:SetHoldType(self:GetBuff_Override("Override_HoldtypeHolstered") or self.HoldtypeHolstered)
         end

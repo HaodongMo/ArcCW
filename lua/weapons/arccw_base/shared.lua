@@ -294,6 +294,10 @@ SWEP.IronSightStruct = {
     CrosshairInSights = false,
 }
 
+-- Works identically to AdditionalSights in attachments
+-- KeepBaseIrons and BaseIronsFirst also affect this
+SWEP.ExtraIrons = nil
+
 -- add lasers to your weapon without attachments
 SWEP.Lasers = nil
 -- {
@@ -339,11 +343,12 @@ SWEP.HoldtypeHolstered = "passive"
 SWEP.HoldtypeActive = "shotgun"
 SWEP.HoldtypeSights = "smg"
 SWEP.HoldtypeCustomize = "slam"
+SWEP.HoldtypeSprintShoot = nil
 SWEP.HoldtypeNPC = nil
 
 SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 
-SWEP.GuaranteeLaser = false -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
+SWEP.GuaranteeLaser = true -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
 
 SWEP.ShieldProps = nil
 -- {
