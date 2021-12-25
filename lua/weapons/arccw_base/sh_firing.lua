@@ -85,6 +85,17 @@ function SWEP:TakePrimaryAmmo(num)
     self:SetClip1(self:Clip1() - num)
 end
 
+function SWEP:ApplyRandomSpread(dir, spread)
+    local radius = math.Rand(0, 1)
+    local theta = math.Rand(0, math.rad(360))
+    local bulletang = dir:Angle()
+    local forward, right, up = bulletang:Forward(), bulletang:Right(), bulletang:Up()
+    local x = radius * math.sin(theta)
+    local y = radius * math.cos(theta)
+
+    dir:Set(dir + right * spread * x + up * spread * y)
+end
+
 function SWEP:PrimaryAttack()
     local owner = self:GetOwner()
 
@@ -129,7 +140,7 @@ function SWEP:PrimaryAttack()
     if mal == true then
         return
     end
-    
+
     self:GetBuff_Hook("Hook_PreFireBullets")
 
     local desync = GetConVar("arccw_desync"):GetBool()
@@ -142,7 +153,9 @@ function SWEP:PrimaryAttack()
     local disp = self:GetDispersion() * ArcCW.MOAToAcc / 10
 
     --dir:Rotate(Angle(0, ArcCW.StrafeTilt(self), 0))
-    dir = dir + VectorRand() * disp
+    --dir = dir + VectorRand() * disp
+
+    self:ApplyRandomSpread(dir, disp)
 
     if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
         local dev_tr = util.TraceLine({
@@ -385,7 +398,11 @@ function SWEP:PrimaryAttack()
             local ang = owner:EyeAngles() + self:GetFreeAimOffset()
 
             if !self:GetBuff_Override("Override_NoRandSpread") then
-                ang = (dir + VectorRand() * spread / 5):Angle()
+               -- ang = (dir + VectorRand() * spread / 5):Angle()
+
+                local newdir = Vector(dir)
+                self:ApplyRandomSpread(newdir, spread / 5)
+                ang = newdir:Angle()
             end
 
             projectiledata.ang = ang
@@ -399,7 +416,8 @@ function SWEP:PrimaryAttack()
             bullet.Num = 1
             math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
             if !self:GetBuff_Override("Override_NoRandSpread") then
-                bullet.Dir = dir + VectorRand() * spread
+                self:ApplyRandomSpread(dir, spread)
+                bullet.Dir = dir
             end
             bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
 
