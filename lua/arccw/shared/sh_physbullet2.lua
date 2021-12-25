@@ -97,7 +97,9 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     if owner:IsPlayer() and SERVER then
         --local ping = owner:Ping() / 1000
         --ping = math.Clamp(ping, 0, 0.5)
-        local latency = engine.TickCount() - owner:GetCurrentCommand():TickCount()
+
+        -- local latency = util.TimeToTicks((owner:Ping() / 1000) * 0.5)
+        local latency = math.floor(engine.TickCount() - owner:GetCurrentCommand():TickCount()) -- FIXME: this math.floor does nothing
         local timestep = engine.TickInterval()
 
         while latency > 0 do
@@ -245,8 +247,10 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
         if SERVER then
             debugoverlay.Line(oldpos, tr.HitPos, 5, Color(100,100,255), true)
+            debugoverlay.Cross(tr.HitPos, 16, 0.05, Color(100, 100, 255), true)
         else
             debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,200,100), true)
+            debugoverlay.Cross(tr.HitPos, 16, 0.05, Color(255, 200, 100), true)
         end
 
         if tr.HitSky then
