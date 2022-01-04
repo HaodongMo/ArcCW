@@ -99,7 +99,7 @@ function SWEP:DrawLaser(laser, model, color, world)
 
         dir = ang:Forward()
 
-        local eyeang   = self:GetOwner():EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
+        local eyeang   = EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
         local canlaser = self:GetCurrentFiremode().Mode != 0 and !self:GetReloading() and self:BarrelHitWall() <= 0
 
         delta = Lerp(0, delta, canlaser and self:GetSightDelta() or 1)
@@ -121,7 +121,7 @@ function SWEP:DrawLaser(laser, model, color, world)
         -- local cheap = GetConVar("arccw_cheapscopes"):GetBool()
         local punch = self:GetOurViewPunchAngles()
 
-        ang = self:GetOwner():EyeAngles() - punch + self:GetFreeAimOffset()
+        ang = EyeAngles() - punch + self:GetFreeAimOffset()
 
         tracepos = EyePos() - Vector(0, 0, 1)
         pos, dir = tracepos, ang:Forward()
