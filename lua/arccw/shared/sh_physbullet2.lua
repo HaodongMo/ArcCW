@@ -12,6 +12,7 @@ ArcCW.BulletProfiles = {
     [8] = Color(0, 0, 0),
     [9] = Color(255, 255, 255),
 }
+local vector_down = Vector(0, 0, 1)
 
 function ArcCW:AddBulletProfile(clr)
     if #ArcCW.BulletProfiles >= 64 then return nil end
@@ -91,19 +92,29 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
 
     table.insert(ArcCW.PhysBullets, bullet)
 
-    if wep:GetOwner():IsPlayer() and SERVER then
-        local ping = wep:GetOwner():Ping() / 1000
-        ping = math.Clamp(ping, 0, 0.5)
+    -- TODO: This is still bad but unless we can access FLOW_OUTGOING from inside INetChannelInfo I can't think of any better way to do this.
+    local owner = wep:GetOwner()
+    if owner:IsPlayer() and SERVER then
+        --local ping = owner:Ping() / 1000
+        --ping = math.Clamp(ping, 0, 0.5)
+
+        -- local latency = util.TimeToTicks((owner:Ping() / 1000) * 0.5)
+        local latency = math.floor(engine.TickCount() - owner:GetCurrentCommand():TickCount()) -- FIXME: this math.floor does nothing
         local timestep = engine.TickInterval()
 
-        while ping > 0 do
-            ArcCW:ProgressPhysBullet(bullet, math.min(timestep, ping))
-            ping = ping - timestep
+        while latency > 0 do
+            ArcCW:ProgressPhysBullet(bullet, timestep)
+            latency = latency - 1
         end
+
+        -- while ping > 0 do
+        --     ArcCW:ProgressPhysBullet(bullet, timestep)
+        --     ping = ping - timestep
+        -- end
     end
 
     if SERVER then
-        ArcCW:ProgressPhysBullet(bullet, FrameTime())
+        -- ArcCW:ProgressPhysBullet(bullet, engine.TickInterval())
 
         ArcCW:SendBullet(bullet, wep:GetOwner())
     end
@@ -154,8 +165,11 @@ end
 
 function ArcCW:DoPhysBullets()
     local new = {}
+    local deltatime = engine.TickInterval()
+
     for _, i in pairs(ArcCW.PhysBullets) do
-        ArcCW:ProgressPhysBullet(i, FrameTime())
+
+        ArcCW:ProgressPhysBullet(i, deltatime)
 
         if !i.Dead then
             table.insert(new, i)
@@ -165,7 +179,7 @@ function ArcCW:DoPhysBullets()
     ArcCW.PhysBullets = new
 end
 
-hook.Add("Think", "ArcCW_DoPhysBullets", ArcCW.DoPhysBullets)
+hook.Add("Tick", "ArcCW_DoPhysBullets", ArcCW.DoPhysBullets)
 
 local function indim(vec, maxdim)
     if math.abs(vec.x) > maxdim or math.abs(vec.y) > maxdim or math.abs(vec.z) > maxdim then
@@ -175,9 +189,9 @@ local function indim(vec, maxdim)
     end
 end
 
+local ArcCW_BulletGravity = GetConVar("arccw_bullet_gravity")
+local ArcCW_BulletDrag = GetConVar("arccw_bullet_drag")
 function ArcCW:ProgressPhysBullet(bullet, timestep)
-    timestep = timestep or FrameTime()
-
     if bullet.Dead then return end
 
     local oldpos = bullet.Pos
@@ -185,7 +199,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
     local dir = bullet.Vel:GetNormalized()
     local spd = bullet.Vel:Length() * timestep
     local drag = bullet.Drag * spd * spd * (1 / 150000)
-    local gravity = timestep * GetConVar("arccw_bullet_gravity"):GetFloat() * (bullet.Gravity or 1)
+    local gravity = timestep * ArcCW_BulletGravity:GetFloat() * (bullet.Gravity or 1)
 
     local attacker = bullet.Attacker
 
@@ -198,13 +212,13 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         drag = drag * 3
     end
 
-    drag = drag * GetConVar("arccw_bullet_drag"):GetFloat()
+    drag = drag * ArcCW_BulletDrag:GetFloat()
 
     if spd <= 0.001 then bullet.Dead = true return end
 
     local newpos = oldpos + (oldvel * timestep)
     local newvel = oldvel - (dir * drag)
-    newvel = newvel - (Vector(0, 0, 1) * gravity)
+    newvel = newvel - (vector_down * gravity)
 
     if bullet.Imaginary then
         -- the bullet has exited the map, but will continue being visible.
@@ -233,8 +247,10 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
         if SERVER then
             debugoverlay.Line(oldpos, tr.HitPos, 5, Color(100,100,255), true)
+            debugoverlay.Cross(tr.HitPos, 16, 0.05, Color(100, 100, 255), true)
         else
             debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,200,100), true)
+            debugoverlay.Cross(tr.HitPos, 16, 0.05, Color(255, 200, 100), true)
         end
 
         if tr.HitSky then
