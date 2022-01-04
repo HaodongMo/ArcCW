@@ -4,6 +4,8 @@ Welcome to the ArcCW GitHub page!
 
 You are free to contribute by sending pull requests. For bug reports, please create an issue in this repo or reach out on Discord.
 
+[Read the wiki!](https://github.com/HaodongMo/ArcCW/wiki)
+
 ## Style Guide:
  - 4-space indents
  - "!" and "!=", not "not" and "~="
