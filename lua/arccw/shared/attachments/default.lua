@@ -1,12 +1,20 @@
+
+/*
+
+    Take a look at
+    https://github.com/HaodongMo/ArcCW/wiki/Attachment-Parameters
+    for descriptions on these
+
+*/
+
 att.PrintName = ""
 att.AbbrevName = "" -- Shown in lists, cust2 only
 att.Icon = nil
 att.Description = ""
 att.Desc_Pros = {}
 att.Desc_Cons = {}
+att.Desc_Neutrals = {}
 att.Slot = ""
-att.TargetSpecificWeapon = "" -- ALWAYS make this attachment available on a specific weapon
-att.TargetSpecificSlot = 0 -- on this specific slot
 
 att.SortOrder = 0
 
@@ -118,7 +126,6 @@ att.OffsetAng = Angle(0, 0, 0)
 att.ModelIsShield = false
 att.ShieldResistance = nil -- amount of penetration to get through one unit of shield
 att.ShieldBone = "ValveBiped.Bip01_R_Hand"
-att.DrawFunc = function(self, element, wm) end
 
 att.Charm = false
 att.CharmBone = "Charm"
