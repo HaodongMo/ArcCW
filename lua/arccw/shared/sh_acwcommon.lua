@@ -58,9 +58,10 @@ ArcCW.TinyShellSoundsTable = {
 }
 
 ArcCW.ShotgunShellSoundsTable = {
-    "weapons/fx/tink/shotgun_shell1.wav",
-    "weapons/fx/tink/shotgun_shell2.wav",
-    "weapons/fx/tink/shotgun_shell3.wav"
+    "weapons/arccw/casings/casing_12ga_1.wav",
+    "weapons/arccw/casings/casing_12ga_2.wav",
+    "weapons/arccw/casings/casing_12ga_3.wav",
+    "weapons/arccw/casings/casing_12ga_4.wav"
 }
 
 ArcCW.RicochetSounds = {
