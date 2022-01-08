@@ -417,7 +417,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         hs = asight.HolosightData
     end
 
-    if self:GetState() != ArcCW.STATE_SIGHTS then return end
+    if delta > 0.6 then return end
 
     if !hs then return end
 
