@@ -348,13 +348,30 @@ function SWEP:FormRTScope()
 
     ArcCW.Overdraw = true
     ArcCW.LaserBehavior = true
+    ArcCW.VMInRT = true 
+
+    local rtangles, rtpos, rtdrawvm
+
+    if GetConVar("arccw_drawbarrel"):GetBool() then 
+        rtangles = self.VMAng - self.VMAngOffset - (self:GetOurViewPunchAngles()*mag*0.1)
+        rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z*10 
+        rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y*10
+
+        rtpos = self.VMPos + self.VMAng:Forward()*(asight.EVPos.y+5)
+
+        rtdrawvm = true
+    else
+        rtangles = EyeAngles()
+        rtpos = EyePos()
+        rtdrawvm = false 
+    end
 
     local rt = {
         w = rtsize,
         h = rtsize,
-        angles = EyeAngles() + (self:GetOurViewPunchAngles() * 0.5),
-        origin = EyePos(),
-        drawviewmodel = false,
+        angles = rtangles,
+        origin = rtpos,
+        drawviewmodel = rtdrawvm,
         fov = self:GetOwner():GetFOV() / mag / 1.2,
     }
 
@@ -377,6 +394,7 @@ function SWEP:FormRTScope()
 
     ArcCW.Overdraw = false
     ArcCW.LaserBehavior = false
+    ArcCW.VMInRT = false 
 
     render.PopRenderTarget()
 

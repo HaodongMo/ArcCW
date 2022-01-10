@@ -651,7 +651,15 @@ function SWEP:PreDrawViewModel(vm)
         end
     end
 
-    cam.Start3D(EyePos(), EyeAngles(), self.CurrentViewModelFOV or self.ViewModelFOV, nil, nil, nil, nil, 1.5, 15000)
+    local coolFOV = self.CurrentViewModelFOV or self.ViewModelFOV
+
+    if ArcCW.VMInRT then
+        local mag = asight.ScopeMagnification
+        coolFOV = self.ViewModelFOV - mag * 4
+        ArcCW.VMInRT = false
+    end
+
+    cam.Start3D(EyePos(), EyeAngles(), coolFOV, nil, nil, nil, nil, 1.5, 15000)
     cam.IgnoreZ(true)
     self:DrawCustomModel(false)
     self:DoLHIK()
