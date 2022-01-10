@@ -550,7 +550,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     pos = LerpVector(delta, EyePos(), pos)
 
-    local eyeangs = self:GetOwner():EyeAngles() + (self:GetOurViewPunchAngles() * 0.5)
+    local eyeangs = self:GetOwner():EyeAngles() - self:GetOurViewPunchAngles()*hsmag*0.1
 
     -- local vm = hsm or hsp
 
@@ -578,8 +578,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     local pos2 = pos + (dir * -8)
 
     local a = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or pos:ToScreen()
-    local x = a.x
-    local y = a.y
+    local x = a.x - (self.VMAngOffset.y - self.VMPosOffset_Lerp.y*10) * (hsmag*1.5)^2
+    local y = a.y + (self.VMAngOffset.x*5 + self.VMPosOffset_Lerp.z*10) * (hsmag*1.5)^2
 
     local a2 = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or pos2:ToScreen()
     local x2 = a2.x
