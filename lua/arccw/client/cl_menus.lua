@@ -89,6 +89,7 @@ local PerformancePanel = {
 local ViewmodelPanel = {
     { type = "b", text = "#arccw.cvar.vm_coolsway", var = "arccw_vm_coolsway" },
     { type = "b", text = "#arccw.cvar.vm_coolview", var = "arccw_vm_coolview" },
+    { type = "b", text = "#arccw.cvar.drawbarrel", var = "arccw_drawbarrel" },
     { type = "f", text = "#arccw.cvar.vm_sway_sprint", var = "arccw_vm_sway_sprint", min = 0, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_bob_sprint", var = "arccw_vm_bob_sprint", min = 0, max = 5 },
     { type = "h", text = "" },

@@ -95,6 +95,8 @@ ArcCW.ClientConVars = {
 
     ["arccw_adjustsensthreshold"]     = { def =  0 },
 
+    ["arccw_drawbarrel"]              = { def =  1 },
+
     ["arccw_glare"]                   = { def =  1 },
     ["arccw_autosave"]                = { def =  1 },
 

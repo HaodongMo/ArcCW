@@ -104,6 +104,7 @@ L["arccw.cvar.visibility.desc"]           = "Attachments will not render past th
 -- ArcCW_Options_Viewmodel
 L["arccw.cvar.vm_coolsway"]               = "Custom Swaying"
 L["arccw.cvar.vm_coolview"]               = "Custom Camera Movement"
+L["arccw.cvar.drawbarrel"]                = "Draw weapon barrel in RT scopes (experemental)"
 L["arccw.cvar.vm_right"]                  = "Viewmodel Right"
 L["arccw.cvar.vm_forward"]                = "Viewmodel Forward"
 L["arccw.cvar.vm_up"]                     = "Viewmodel Up"
