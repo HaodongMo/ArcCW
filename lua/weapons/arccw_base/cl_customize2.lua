@@ -325,7 +325,7 @@ function SWEP:CreateCustomize2HUD()
     local smallgap = ss * 4
 
     local top_zone = ss * 24
-    local bottom_zone = ss * 68
+    local bottom_zone = ss * 32
 
     local cornerrad = ss * 4
 
