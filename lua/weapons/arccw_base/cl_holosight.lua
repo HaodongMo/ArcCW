@@ -357,8 +357,7 @@ function SWEP:FormRTScope()
         rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z*10 
         rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y*10
 
-        rtpos = self.VMPos + self.VMAng:Forward()*(asight.EVPos.y+5)
-
+        rtpos = self.VMPos + self.VMAng:Forward()*(asight.EVPos.y+4+asight.ScopeMagnificationMax/3) -- cool ?
         rtdrawvm = true
     else
         rtangles = EyeAngles()
