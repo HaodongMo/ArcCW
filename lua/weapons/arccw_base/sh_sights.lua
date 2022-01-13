@@ -336,8 +336,7 @@ function SWEP:SetupActiveSights()
 
                 evpos = evpos * (k.VMScale or Vector(1, 1, 1))
 
-                --if !s.IgnoreExtra then
-                if false then -- Always ignore extra. Allow the sight creator to define the distance.
+                if atttbl.Holosight and !atttbl.HolosightMagnification then
                     evpos = evpos + Vector(0, k.ExtraSightDist or self.ExtraSightDist or 0, 0)
                 end
 
