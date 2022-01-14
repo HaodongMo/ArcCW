@@ -655,7 +655,7 @@ function SWEP:PreDrawViewModel(vm)
 
     if ArcCW.VMInRT then
         local mag = asight.ScopeMagnification
-        coolFOV = self.ViewModelFOV - mag * 4
+        coolFOV = self.ViewModelFOV - mag * 4 - (GetConVar("arccw_vm_add_ads"):GetFloat()*3 or 0)
         ArcCW.VMInRT = false
     end
 

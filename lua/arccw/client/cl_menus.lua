@@ -89,7 +89,6 @@ local PerformancePanel = {
 local ViewmodelPanel = {
     { type = "b", text = "#arccw.cvar.vm_coolsway", var = "arccw_vm_coolsway" },
     { type = "b", text = "#arccw.cvar.vm_coolview", var = "arccw_vm_coolview" },
-    { type = "b", text = "#arccw.cvar.drawbarrel", var = "arccw_drawbarrel" },
     { type = "f", text = "#arccw.cvar.vm_sway_sprint", var = "arccw_vm_sway_sprint", min = 0, max = 5 },
     { type = "f", text = "#arccw.cvar.vm_bob_sprint", var = "arccw_vm_bob_sprint", min = 0, max = 5 },
     { type = "h", text = "" },
@@ -179,7 +178,6 @@ local CrosshairPanel = {
     { type = "m", text = "#arccw.cvar.crosshair_clr", r = "arccw_crosshair_clr_r", g = "arccw_crosshair_clr_g", b = "arccw_crosshair_clr_b", a = "arccw_crosshair_clr_a" },
     { type = "f", text = "#arccw.cvar.crosshair_outline", var = "arccw_crosshair_outline", min = 0, max = 4 },
     { type = "m", text = "#arccw.cvar.crosshair_outline_clr", r = "arccw_crosshair_outline_r", g = "arccw_crosshair_outline_g", b = "arccw_crosshair_outline_b", a = "arccw_crosshair_outline_a" },
-    { type = "m", text = "#arccw.cvar.scope_clr", r = "arccw_scope_r", g = "arccw_scope_g", b = "arccw_scope_b" },
 }
 
 local BindsPanel = {
@@ -296,6 +294,22 @@ local DevPanel = {
     { type = "h", text = "#arccw.cvar.dev_reloadlangs.desc" },
     { type = "p", text = "#arccw.cvar.dev_spawnmenureload", func = function() RunConsoleCommand("spawnmenu_reload") end },
     { type = "h", text = "#arccw.cvar.dev_spawnmenureload.desc" },
+}
+
+
+local ScopesPanel = {
+    { type = "h", text = "#arccw.clientcfg" },
+    
+    { type = "b", text = "#arccw.cvar.cheapscopes", var = "arccw_cheapscopes" },
+    { type = "c", text = "#arccw.cvar.cheapscopesv2.desc" },
+    { type = "f", text = "#arccw.cvar.cheapscopesv2_ratio", var = "arccw_cheapscopesv2_ratio", min = 0, max = 1},
+    { type = "c", text = "#arccw.cvar.cheapscopesv2_ratio.desc" },
+
+    { type = "b", text = "#arccw.cvar.drawbarrel", var = "arccw_drawbarrel" },
+    { type = "f", text = "#arccw.cvar.vm_addads", var = "arccw_vm_add_ads", min = -0.5, max = 9 },
+    -- { type = "b", text = "#arccw.cvar.scopepp", var = "arccw_scopepp" },
+    
+    { type = "m", text = "#arccw.cvar.scope_clr", r = "arccw_scope_r", g = "arccw_scope_g", b = "arccw_scope_b" },
 }
 
 local MultsPanel = {
@@ -683,6 +697,10 @@ function ArcCW_Options_Binds(panel)
     ArcCW.GeneratePanelElements(panel, BindsPanel)
 end
 
+function ArcCW_Options_Scopes(panel)
+    ArcCW.GeneratePanelElements(panel, ScopesPanel)
+end
+
 ArcCW.ClientMenus = {
     ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client, tbl = ClientPanel },
     ["ArcCW_Options_Bullet"]    = { text = "#arccw.menus.bullet", func = ArcCW_Options_Bullet, tbl = BulletPanel },
@@ -697,6 +715,7 @@ ArcCW.ClientMenus = {
     ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",   func = ArcCW_Options_Dev, tbl = DevPanel },
     ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",   func = ArcCW_Options_NPC, tbl = NPCsPanel },
     ["ArcCW_Options_Binds"]    = { text = "#arccw.menus.binds", func = ArcCW_Options_Binds, tbl = BindsPanel },
+    ["ArcCW_Options_Scopes"]    = { text = "#arccw.menus.scopes", func = ArcCW_Options_Scopes, tbl = ScopesPanel },
 }
 
 hook.Add("PopulateToolMenu", "ArcCW_Options", function()

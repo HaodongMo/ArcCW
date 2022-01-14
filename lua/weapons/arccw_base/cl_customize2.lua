@@ -1399,6 +1399,7 @@ function SWEP:CreateCustomize2HUD()
                     if !input.IsMouseDown(MOUSE_LEFT) then
                         self2.Dragging = false
 
+                        self:SetupActiveSights()
                         self:SendDetail_SlidePos(slot)
                         self:SavePreset("autosave")
                     end

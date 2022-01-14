@@ -70,6 +70,8 @@ local colormod = Material("pp/colour")
 -- local warp = Material("models/props_c17/fisheyelens2")
 local coldtime = 30
 
+local additionalFOVconvar = GetConVar("arccw_vm_add_ads")
+
 -- shamelessly robbed from Jackarunda
 local function IsWHOT(ent)
     if !ent:IsValid() then return false end
@@ -371,7 +373,7 @@ function SWEP:FormRTScope()
         angles = rtangles,
         origin = rtpos,
         drawviewmodel = rtdrawvm,
-        fov = self:GetOwner():GetFOV() / mag / 1.2,
+        fov = self:GetOwner():GetFOV() / mag / 1.2 - (additionalFOVconvar:GetFloat() or 0) / 4,
     }
 
     rtsize = ScrH()
@@ -475,9 +477,14 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     end
 
-    local size = hs.HolosightSize or 1
-
     local hsmag = asight.ScopeMagnification or 1
+
+    local size = hs.HolosightSize or 1
+    
+    local addconvar = asight.MagnifiedOptic and (additionalFOVconvar:GetFloat() or 0) or 0
+
+    size = size + addconvar + (addconvar>5.5 and (addconvar-5.5)*2 or 0)
+
 
     -- if asight.NightVision then
 
@@ -635,8 +642,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
             screen = rtmat_cheap
 
-            local ssmag = hsmag
-
+            local ssmag = 1+GetConVar("arccw_cheapscopesv2_ratio"):GetFloat()*hsmag + (additionalFOVconvar:GetFloat() or 0)/20 -- idk why 20 
             local sw = ScrW() * ssmag
             local sh = ScrH() * ssmag
 

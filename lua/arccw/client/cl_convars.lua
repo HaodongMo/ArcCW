@@ -51,6 +51,8 @@ ArcCW.ClientConVars = {
     ["arccw_ammonames"]               = { def =  0 },
 
     ["arccw_cheapscopes"]             = { def =  1 },
+    ["arccw_cheapscopesv2_ratio"]     = { def =  0.05 },
+    ["arccw_scopepp"]                 = { def =  1 },
     ["arccw_cheapscopesautoconfig"]   = { def =  0 },
 
     --["arccw_flatscopes"]              = { def = 0 },
@@ -104,6 +106,7 @@ ArcCW.ClientConVars = {
     ["arccw_vm_up"]                   = { def =  0 },
     ["arccw_vm_forward"]              = { def =  0 },
     ["arccw_vm_fov"]                  = { def =  0, usri = true },
+    ["arccw_vm_add_ads"]              = { def =  0},
     ["arccw_vm_sway_sprint"]          = { def =  3 },
     ["arccw_vm_bob_sprint"]           = { def =  3 },
     ["arccw_vm_coolsway"]             = { def =  1 },

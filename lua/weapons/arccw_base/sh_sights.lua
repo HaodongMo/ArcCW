@@ -441,16 +441,31 @@ function SWEP:TranslateFOV(fov)
     local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
+        local asight = self:GetActiveSights()
+        local mag = asight and asight.ScopeMagnification or 1
+
         local sgreloading = (self:GetShotgunReloading() == 2 or self:GetShotgunReloading() == 4)
         local delta = self:GetSightDelta()
         delta = math.pow(delta, 2)
-        if CLIENT then fov = math.Clamp( (75 * (1 - delta)) + (GetConVar("fov_desired"):GetInt() * delta), 75, 100) end
+
+        if CLIENT then
+            if GetConVar("arccw_cheapscopes"):GetBool() then
+                fov = 75 / (mag/(1+GetConVar("arccw_cheapscopesv2_ratio"):GetFloat()*mag) + (GetConVar("arccw_vm_add_ads"):GetFloat() or 0)/3)
+            else
+                fov = math.Clamp( (75 * (1 - delta)) + (GetConVar("fov_desired"):GetInt() * delta), 75, 100)
+            end
+        end
+
         app_vm = irons.ViewModelFOV or 45
-        div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
-        div = math.max(div, 1)
+        
+        app_vm = app_vm - (asight.MagnifiedOptic and (GetConVar("arccw_vm_add_ads"):GetFloat() or 0)*3 or 0)    
+
+        -- div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
+        -- div = math.max(div, 1)
     end
 
-    self.ApproachFOV = fov / div
+    -- self.ApproachFOV = fov / div
+    self.ApproachFOV = fov
 
     -- magic number? multiplier of 10 seems similar to previous behavior
     self.CurrentFOV = math.Approach(self.CurrentFOV, self.ApproachFOV, timed * 10 * (self.CurrentFOV - self.ApproachFOV))
