@@ -367,13 +367,15 @@ function SWEP:FormRTScope()
         rtdrawvm = false 
     end
 
+    local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
+
     local rt = {
         w = rtsize,
         h = rtsize,
         angles = rtangles,
         origin = rtpos,
         drawviewmodel = rtdrawvm,
-        fov = self:GetOwner():GetFOV() / mag / 1.2 - (additionalFOVconvar:GetFloat() or 0) / 4,
+        fov = self:GetOwner():GetFOV() / mag / 1.2 - (addads or 0) / 4,
     }
 
     rtsize = ScrH()
@@ -481,7 +483,9 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     local size = hs.HolosightSize or 1
     
-    local addconvar = asight.MagnifiedOptic and (additionalFOVconvar:GetFloat() or 0) or 0
+    local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
+
+    local addconvar = asight.MagnifiedOptic and (addads or 0) or 0
 
     size = size + addconvar + (addconvar>5.5 and (addconvar-5.5)*2 or 0)
 
@@ -642,7 +646,10 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
             screen = rtmat_cheap
 
-            local ssmag = 1+GetConVar("arccw_cheapscopesv2_ratio"):GetFloat()*hsmag + (additionalFOVconvar:GetFloat() or 0)/20 -- idk why 20 
+            local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
+            local csratio = math.Clamp(GetConVar("arccw_cheapscopesv2_ratio"):GetFloat(), 0, 1)
+
+            local ssmag = 1+csratio*hsmag + (addads or 0)/20 -- idk why 20 
             local sw = ScrW() * ssmag
             local sh = ScrH() * ssmag
 
