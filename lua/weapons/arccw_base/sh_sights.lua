@@ -449,7 +449,7 @@ function SWEP:TranslateFOV(fov)
         delta = math.pow(delta, 2)
 
         if CLIENT then
-            if GetConVar("arccw_cheapscopes"):GetBool() then
+            if GetConVar("arccw_cheapscopes"):GetBool() and mag>1 then
                 fov = 75 / (mag/(1+GetConVar("arccw_cheapscopesv2_ratio"):GetFloat()*mag) + (GetConVar("arccw_vm_add_ads"):GetFloat() or 0)/3)
             else
                 fov = math.Clamp( (75 * (1 - delta)) + (GetConVar("fov_desired"):GetInt() * delta), 75, 100)

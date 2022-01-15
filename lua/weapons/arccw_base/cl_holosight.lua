@@ -655,8 +655,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
             local ts = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or cpos:ToScreen()
 
-            local sx = ts.x - (sw / 2) - off_x
-            local sy = ts.y - (sh / 2) - off_y
+            local sx = ts.x - (sw / 2) - off_x - (self.VMAngOffset.y - self.VMPosOffset_Lerp.y*15) * (hsmag*1)^2
+            local sy = ts.y - (sh / 2) - off_y + (self.VMAngOffset.x*5 + self.VMPosOffset_Lerp.z*15) * (hsmag*1)^2
 
             render.SetMaterial(black)
             render.DrawScreenQuad()
