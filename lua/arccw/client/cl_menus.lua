@@ -307,7 +307,9 @@ local ScopesPanel = {
 
     { type = "b", text = "#arccw.cvar.drawbarrel", var = "arccw_drawbarrel" },
     { type = "f", text = "#arccw.cvar.vm_addads", var = "arccw_vm_add_ads", min = -0.5, max = 9 },
-    -- { type = "b", text = "#arccw.cvar.scopepp", var = "arccw_scopepp" },
+    { type = "b", text = "#arccw.cvar.scopepp", var = "arccw_scopepp" },
+    { type = "b", text = "#arccw.cvar.scopepp_refract", var = "arccw_scopepp_refract" },
+    { type = "f", text = "#arccw.cvar.scopepp_refract_ratio", var = "arccw_scopepp_refract_ratio", min = -1, max = 2 },
     
     { type = "m", text = "#arccw.cvar.scope_clr", r = "arccw_scope_r", g = "arccw_scope_g", b = "arccw_scope_b" },
 }

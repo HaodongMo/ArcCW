@@ -72,6 +72,18 @@ local coldtime = 30
 
 local additionalFOVconvar = GetConVar("arccw_vm_add_ads")
 
+local matRefract = Material("pp/arccw/refract_rt")
+local matRefract_cheap = Material("pp/arccw/refract_cs") -- cheap scopes stretches square overlays so i need to make it 16x9
+
+matRefract:SetTexture("$fbtexture", render.GetScreenEffectTexture())
+matRefract_cheap:SetTexture("$fbtexture", render.GetScreenEffectTexture())
+
+local pp_ca_base, pp_ca_r, pp_ca_g, pp_ca_b = Material("pp/arccw/ca_base"), Material("pp/arccw/ca_r"), Material("pp/arccw/ca_g"), Material("pp/arccw/ca_b")
+
+pp_ca_r:SetTexture("$basetexture", render.GetScreenEffectTexture())
+pp_ca_g:SetTexture("$basetexture", render.GetScreenEffectTexture())
+pp_ca_b:SetTexture("$basetexture", render.GetScreenEffectTexture())
+
 -- shamelessly robbed from Jackarunda
 local function IsWHOT(ent)
     if !ent:IsValid() then return false end
@@ -304,17 +316,69 @@ function SWEP:FormNightVision(tex)
     colormod:SetTexture("$fbtexture", orig)
 end
 
+local pp_cc_tab = {
+	[ "$pp_colour_brightness" ] = 0,
+	[ "$pp_colour_contrast" ] = 1,
+	[ "$pp_colour_colour" ] = 1,
+}
+
+function SWEP:FormPP(tex)
+	if !render.SupportsPixelShaders_2_0() then return end
+
+    local cs = GetConVar("arccw_cheapscopes"):GetBool()
+
+    if GetConVar("arccw_scopepp_refract"):GetBool() then
+        local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
+        local refractratio = GetConVar("arccw_scopepp_refract_ratio"):GetFloat() or 0
+        local refractamount = (-0.6 + addads/30) * refractratio
+        local refract = cs and matRefract_cheap or matRefract
+
+        refract:SetFloat( "$refractamount", refractamount )
+
+
+        if !cs then render.PushRenderTarget(tex) end
+
+            render.CopyRenderTargetToTexture(render.GetScreenEffectTexture())
+
+            if GetConVar("arccw_scopepp"):GetBool() then
+                render.SetMaterial( pp_ca_base )
+                render.DrawScreenQuad()
+                render.SetMaterial( pp_ca_r )
+                render.DrawScreenQuad()
+                render.SetMaterial( pp_ca_g )
+                render.DrawScreenQuad()
+                render.SetMaterial( pp_ca_b )
+                render.DrawScreenQuad()
+
+                -- Color modify
+                DrawColorModify( pp_cc_tab )
+
+                -- Sharpen
+                -- DrawSharpen(-0.5, 5) -- dont work for some reason
+            end
+            
+            render.SetMaterial(refract)
+            render.DrawScreenQuad()
+
+        if !cs then render.PopRenderTarget() end
+    end
+
+end
+
 function SWEP:FormCheapScope()
     local screen = render.GetRenderTarget()
 
     render.CopyTexture( screen, rtmat_spare )
 
     render.PushRenderTarget(screen)
-        cam.Start3D(EyePos(), EyeAngles(), nil, nil, nil, nil, nil, 0, nil)
+    cam.Start3D(EyePos(), EyeAngles(), nil, nil, nil, nil, nil, 0, nil)
         ArcCW.LaserBehavior = true
         self:DoLaser(false)
         ArcCW.LaserBehavior = false
-        cam.End3D()
+    cam.End3D()
+
+    self:FormPP(screen)
+
     render.PopRenderTarget()
 
     -- so, in order to avoid the fact that copying RTs doesn't transfer depth buffer data, we just take the screen texture and...
@@ -359,7 +423,7 @@ function SWEP:FormRTScope()
         rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z*10 
         rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y*10
 
-        rtpos = self.VMPos + self.VMAng:Forward()*(asight.EVPos.y + 4 + (asight.ScopeMagnificationMax and asight.ScopeMagnificationMax/3 or asight.HolosightData.HolosightMagnification/3)) -- eh
+        rtpos = self.VMPos + self.VMAng:Forward()*(asight.EVPos.y + 5 + (asight.ScopeMagnificationMax and asight.ScopeMagnificationMax/3 or asight.HolosightData.HolosightMagnification/3)) -- eh
         rtdrawvm = true
     else
         rtangles = EyeAngles()
@@ -399,6 +463,8 @@ function SWEP:FormRTScope()
     ArcCW.LaserBehavior = false
     ArcCW.VMInRT = false 
 
+    self:FormPP(rtmat)
+    
     render.PopRenderTarget()
 
     cam.End3D()
@@ -441,6 +507,13 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     if self:GetState() != ArcCW.STATE_SIGHTS and delta > 0.5 then return end
 
     if !hs then return end
+
+    if delta!=0 and GetConVar("arccw_scopepp"):GetBool() then 
+        pp_ca_r:SetVector("$color2", Vector(1-delta, 0, 0))
+        pp_ca_g:SetVector("$color2", Vector(0, 1-delta, 0))
+        pp_ca_b:SetVector("$color2", Vector(0, 0, 1-delta))
+        pp_ca_base:SetFloat("$alpha", 1-delta)
+    end
 
     local hsc = Color(255, 255, 255)
 
@@ -787,3 +860,39 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     end
 end
+
+
+--           I wanted to make here procedural normal map for refract using rt but steamsnooze
+
+
+-- local TEX_SIZE = 512
+
+-- local tex = GetRenderTarget( "ExampleRT", TEX_SIZE, TEX_SIZE )
+
+-- local txBackground = surface.GetTextureID( "pp/arccw/lense_nrm2" )
+-- local myMat = CreateMaterial( "ExampleRTMat3", "UnlitGeneric", {
+-- 	["$basetexture"] = tex:GetName() -- Make the material use our render target texture
+-- } )
+
+-- hook.Add( "HUDPaint", "DrawExampleMat", function()
+    -- render.PushRenderTarget( tex )
+    -- cam.Start2D()
+    
+    --     surface.SetDrawColor( 128,128,255 )
+    --     surface.DrawRect(0,0,TEX_SIZE, TEX_SIZE)
+    --     surface.SetDrawColor( color_white )
+    --     surface.SetTexture( txBackground )
+        -- local joke = math.sin(CurTime()*5)/4
+
+    --     surface.DrawTexturedRect( TEX_SIZE/4-joke/2, TEX_SIZE/4-joke/2, TEX_SIZE/2+joke, TEX_SIZE/2+joke )
+    
+    -- cam.End2D()
+    -- render.PopRenderTarget()
+	-- surface.SetDrawColor( color_white )
+	-- surface.SetMaterial( myMat )
+	-- surface.DrawTexturedRect( 25, 25, TEX_SIZE, TEX_SIZE )
+    -- print()
+
+
+
+-- end )
