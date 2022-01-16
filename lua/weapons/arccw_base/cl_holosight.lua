@@ -78,6 +78,11 @@ local matRefract_cheap = Material("pp/arccw/refract_cs") -- cheap scopes stretch
 matRefract:SetTexture("$fbtexture", render.GetScreenEffectTexture())
 matRefract_cheap:SetTexture("$fbtexture", render.GetScreenEffectTexture())
 
+timer.Simple(10, function() -- i really dont know what the fucking problem with cheap scopes they dont want to set texture as not cheap ones
+    matRefract_cheap:SetTexture("$fbtexture", render.GetScreenEffectTexture())
+    matRefract:SetTexture("$fbtexture", render.GetScreenEffectTexture()) -- not cheap scope here why not
+end)
+
 local pp_ca_base, pp_ca_r, pp_ca_g, pp_ca_b = Material("pp/arccw/ca_base"), Material("pp/arccw/ca_r"), Material("pp/arccw/ca_g"), Material("pp/arccw/ca_b")
 
 pp_ca_r:SetTexture("$basetexture", render.GetScreenEffectTexture())
@@ -317,48 +322,53 @@ function SWEP:FormNightVision(tex)
 end
 
 local pp_cc_tab = {
-	[ "$pp_colour_brightness" ] = 0,
-	[ "$pp_colour_contrast" ] = 1,
+	[ "$pp_colour_brightness" ] = 0,   -- why nothing works hh
+	[ "$pp_colour_contrast" ] = 0.9,    -- but same time chroma dont work without calling it
 	[ "$pp_colour_colour" ] = 1,
 }
 
 function SWEP:FormPP(tex)
 	if !render.SupportsPixelShaders_2_0() then return end
 
+    local asight = self:GetActiveSights()
+
     local cs = GetConVar("arccw_cheapscopes"):GetBool()
-
-    if GetConVar("arccw_scopepp_refract"):GetBool() then
-        local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
-        local refractratio = GetConVar("arccw_scopepp_refract_ratio"):GetFloat() or 0
-        local refractamount = (-0.6 + addads/30) * refractratio
-        local refract = cs and matRefract_cheap or matRefract
-
-        refract:SetFloat( "$refractamount", refractamount )
+    local refract = GetConVar("arccw_scopepp_refract"):GetBool() and !asight.Thermal -- refract does not affect thermal stencils
+    local pp = GetConVar("arccw_scopepp"):GetBool()
 
 
+    if refract or pp then
         if !cs then render.PushRenderTarget(tex) end
+        render.CopyRenderTargetToTexture(render.GetScreenEffectTexture())
 
-            render.CopyRenderTargetToTexture(render.GetScreenEffectTexture())
-
-            if GetConVar("arccw_scopepp"):GetBool() then
-                render.SetMaterial( pp_ca_base )
-                render.DrawScreenQuad()
-                render.SetMaterial( pp_ca_r )
-                render.DrawScreenQuad()
-                render.SetMaterial( pp_ca_g )
-                render.DrawScreenQuad()
-                render.SetMaterial( pp_ca_b )
-                render.DrawScreenQuad()
+        if pp then
+            render.SetMaterial( pp_ca_base )
+            render.DrawScreenQuad()
+            render.SetMaterial( pp_ca_r )
+            render.DrawScreenQuad()
+            render.SetMaterial( pp_ca_g )
+            render.DrawScreenQuad()
+            render.SetMaterial( pp_ca_b )
+            render.DrawScreenQuad()
 
                 -- Color modify
-                DrawColorModify( pp_cc_tab )
 
+            DrawColorModify( pp_cc_tab )
                 -- Sharpen
-                -- DrawSharpen(-0.5, 5) -- dont work for some reason
-            end
-            
-            render.SetMaterial(refract)
+            -- DrawSharpen(-0.5, 5) -- dont work for some reason
+        end
+
+        if refract then 
+            local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
+            local refractratio = GetConVar("arccw_scopepp_refract_ratio"):GetFloat() or 0
+            local refractamount = (-0.6 + addads/30) * refractratio
+            local refractmat = cs and matRefract_cheap or matRefract
+    
+            refractmat:SetFloat( "$refractamount", refractamount )
+
+            render.SetMaterial(refractmat)
             render.DrawScreenQuad()
+        end
 
         if !cs then render.PopRenderTarget() end
     end
