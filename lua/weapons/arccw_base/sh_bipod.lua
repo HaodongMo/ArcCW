@@ -19,7 +19,7 @@ function SWEP:CanBipod()
     if !(self:GetBuff_Override("Bipod") or self.Bipod_Integral) then return false end
 
     if self:GetOwner():InVehicle() then return false end
-    
+
     if self.CachedCanBipodTime >= CurTime() then return self.CachedCanBipod end
 
     local pos = self:GetOwner():EyePos()
