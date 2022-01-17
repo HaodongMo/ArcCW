@@ -70,9 +70,9 @@ function SWEP:CanBipod()
     end
 end
 
-function SWEP:EnterBipod()
-    if self:GetInBipod() then return end
-    if !self:CanBipod() then return end
+function SWEP:EnterBipod(sp)
+    if !sp and self:GetInBipod() then return end
+    if !sp and !self:CanBipod() then return end
 
     if self.Animations.enter_bipod then
         self:PlayAnimation("enter_bipod", nil, nil, 0, true)
@@ -94,8 +94,8 @@ function SWEP:EnterBipod()
     self:SetInBipod(true)
 end
 
-function SWEP:ExitBipod()
-    if !self:GetInBipod() then return end
+function SWEP:ExitBipod(sp)
+    if !sp and !self:GetInBipod() then return end
 
     if self.Animations.exit_bipod then
         self:PlayAnimation("exit_bipod", nil, nil, 0, true)

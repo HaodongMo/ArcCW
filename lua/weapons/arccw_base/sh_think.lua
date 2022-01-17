@@ -75,8 +75,10 @@ function SWEP:Think()
     if IsFirstTimePredicted() and self:GetNextPrimaryFire() < CurTime() and owner:KeyReleased(IN_USE) then
         if self:InBipod() then
             self:ExitBipod()
+            if game.SinglePlayer() then self:CallOnClient("ExitBipod", "true") end
         else
             self:EnterBipod()
+            if game.SinglePlayer() then self:CallOnClient("EnterBipod", "true") end
         end
     end
 
