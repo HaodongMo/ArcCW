@@ -115,7 +115,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         seq = anim.RareSource
     end
     seq = self:GetBuff_Hook("Hook_TranslateSequence", seq)
-    
+
     if istable(seq) then
         seq["BaseClass"] = nil
         seq = seq[math.Round(util.SharedRandom("randomseq" .. CurTime(), 1, #seq))]
@@ -198,6 +198,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         vm:SetPlaybackRate(math.Clamp(dur / (ttime + startfrom), -4, 12))
         self.LastAnimStartTime = ct
         self.LastAnimFinishTime = ct + dur
+        self.LastAnimKey = key
     end
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment -- why is this here if we just... do cool stuff elsewhere?
@@ -240,6 +241,11 @@ function SWEP:PlayIdleAnimation(pred)
     else
         ianim = ianim or "idle"
     end
+
+    if self.LastAnimKey ~= ianim then
+        ianim = self:GetBuff_Hook("Hook_IdleReset", ianim) or ianim
+    end
+
     self:PlayAnimation(ianim, 1, pred, nil, nil, nil, true)
 end
 
@@ -268,7 +274,7 @@ function SWEP:GetAnimKeyTime(key, min)
         if !tseq then return 1 end
         tseq = vm:LookupSequence(tseq)
 
-		-- to hell with it, just spits wrong on draw sometimes
+        -- to hell with it, just spits wrong on draw sometimes
         t = vm:SequenceDuration(tseq) or 1
     end
 

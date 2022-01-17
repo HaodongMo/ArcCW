@@ -379,6 +379,10 @@ att.Hook_TranslateAnimation = function(wep, anim) end
 -- seq and return can either be string or table
 att.Hook_TranslateSequence = function(wep, seq) end
 
+-- called when the vm is about to play an idle animation
+-- return a value to override ianim
+att.Hook_IdleReset = function(wep, ianim) end
+
 -- allows any sound to be translated to any other
 att.Hook_TranslateSound = function(wep, soundname) end
 

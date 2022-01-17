@@ -75,11 +75,14 @@ function SWEP:EnterBipod()
     if !self:CanBipod() then return end
 
     if self.Animations.enter_bipod then
-        self:PlayAnimation("enter_bipod")
+        self:PlayAnimation("enter_bipod", nil, nil, 0, true)
+    else
+        -- Block actions for a tiny bit even if there is no animation
+        self:SetNextPrimaryFire(CurTime() + 0.25)
     end
 
     if CLIENT and self:GetBuff_Override("LHIK") then
-        self:DoLHIKAnimation("enter", 0.5)
+        self:DoLHIKAnimation("enter", 0.25)
     end
 
     self:SetBipodPos(self:GetOwner():EyePos())
@@ -95,7 +98,9 @@ function SWEP:ExitBipod()
     if !self:GetInBipod() then return end
 
     if self.Animations.exit_bipod then
-        self:PlayAnimation("exit_bipod")
+        self:PlayAnimation("exit_bipod", nil, nil, 0, true)
+    else
+        self:SetNextPrimaryFire(CurTime() + 0.25)
     end
 
     if CLIENT and self:GetBuff_Override("LHIK") then

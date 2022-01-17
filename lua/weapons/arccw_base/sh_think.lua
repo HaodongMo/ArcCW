@@ -72,7 +72,7 @@ function SWEP:Think()
         end
     end
 
-    if IsFirstTimePredicted() and owner:KeyReleased(IN_USE) then
+    if IsFirstTimePredicted() and self:GetNextPrimaryFire() < CurTime() and owner:KeyReleased(IN_USE) then
         if self:InBipod() then
             self:ExitBipod()
         else
