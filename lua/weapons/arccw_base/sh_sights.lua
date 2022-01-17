@@ -242,7 +242,7 @@ function SWEP:SetupActiveSights()
                     end
 
                     -- Refer to sh_model Line 837
-                    if ((ele.AttPosMods or {})[k.Slot] or {}).SlideAmount then
+                    if ((ele.AttPosMods or {})[i] or {}).SlideAmount then
                         slidemod = ele.AttPosMods[i].SlideAmount
                     end
                 end
