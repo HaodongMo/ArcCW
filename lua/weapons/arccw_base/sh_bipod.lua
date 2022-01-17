@@ -74,6 +74,8 @@ function SWEP:EnterBipod(sp)
     if !sp and self:GetInBipod() then return end
     if !sp and !self:CanBipod() then return end
 
+    if SERVER and game.SinglePlayer() then self:CallOnClient("EnterBipod", "true") end
+
     if self.Animations.enter_bipod then
         self:PlayAnimation("enter_bipod", nil, nil, 0, true)
     else
@@ -96,6 +98,8 @@ end
 
 function SWEP:ExitBipod(sp)
     if !sp and !self:GetInBipod() then return end
+
+    if SERVER and game.SinglePlayer() then self:CallOnClient("ExitBipod", "true") end
 
     if self.Animations.exit_bipod then
         self:PlayAnimation("exit_bipod", nil, nil, 0, true)
