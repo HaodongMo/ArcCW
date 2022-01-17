@@ -170,12 +170,12 @@ SWEP.Firemodes = {
     -- {
     --     Mode = 1,
     --     CustomBars = "---_#!",
---[[ 
+--[[
                 Custom bar setup
         Colored variants        Classic
         'a' Filled              '-' Filled
         'b' Outline             '_' Outline
-        'd' CLR w Outline       '!' Red w Outline        
+        'd' CLR w Outline       '!' Red w Outline
                     '#' Empty
 ]]
     --     PrintName = "PUMP",
@@ -293,6 +293,9 @@ SWEP.IronSightStruct = {
     ScrollFunc = ArcCW.SCROLL_NONE,
     CrosshairInSights = false,
 }
+
+SWEP.LaserOffsetAngle = nil -- adjusts the offset angle of lasers
+SWEP.LaserIronsAngle = nil -- additional offset when using ironsights only
 
 -- Works identically to AdditionalSights in attachments
 -- KeepBaseIrons and BaseIronsFirst also affect this

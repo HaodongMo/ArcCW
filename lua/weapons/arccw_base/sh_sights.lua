@@ -365,7 +365,9 @@ function SWEP:SetupActiveSights()
     if kbi then
         local extra = self.ExtraIrons
         if extra then
-            for _, t in pairs(extra) do
+            for _, ot in pairs(extra) do
+                local t = table.Copy(ot)
+                t.IronSight = true
                 if bif then
                     table.insert(sighttable, 1, t)
                 else
@@ -375,6 +377,7 @@ function SWEP:SetupActiveSights()
         end
 
         local t = table.Copy(self:GetBuff_Override("Override_IronSightStruct") or self.IronSightStruct)
+        t.IronSight = true
         if bif then
             table.insert(sighttable, 1, t)
         else

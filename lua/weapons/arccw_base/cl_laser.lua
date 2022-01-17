@@ -97,6 +97,18 @@ function SWEP:DrawLaser(laser, model, color, world)
     else
         ang:RotateAroundAxis(ang:Up(), 90)
 
+        if self.LaserOffsetAngle then
+            ang:RotateAroundAxis(ang:Right(), self.LaserOffsetAngle[1])
+            ang:RotateAroundAxis(ang:Up(), self.LaserOffsetAngle[2])
+            ang:RotateAroundAxis(ang:Forward(), self.LaserOffsetAngle[3])
+        end
+        if self.LaserIronsAngle and self:GetActiveSights().IronSight then
+            local d = 1 - self:GetSightDelta()
+            ang:RotateAroundAxis(ang:Right(), d * self.LaserIronsAngle[1])
+            ang:RotateAroundAxis(ang:Up(), d * self.LaserIronsAngle[2])
+            ang:RotateAroundAxis(ang:Forward(), d * self.LaserIronsAngle[3])
+        end
+
         dir = ang:Forward()
 
         local eyeang   = EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
