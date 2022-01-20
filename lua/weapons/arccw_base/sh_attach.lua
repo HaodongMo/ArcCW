@@ -1379,7 +1379,7 @@ function SWEP:AdjustAtts()
         self:Unload()
     end
 
-    -- Recalculate active elements soodependencies aren't fucked
+    -- Recalculate active elements so dependencies aren't fucked
     self.ActiveElementCache = nil
 
     for i, k in pairs(self.Attachments) do

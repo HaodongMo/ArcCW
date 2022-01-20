@@ -24,18 +24,14 @@ function EFFECT:Init(data)
     end
 
     if !IsValid(ent) then self:Remove() return end
-	
-	local Owner = ent:GetOwner()
-    if Owner != LocalPlayer() then
+
+    local owner = ent:GetOwner()
+    if owner != LocalPlayer() then
         mdl = ent.WMModel or ent
     end
 
-    if Owner != LocalPlayer() then
-        if !GetConVar("arccw_shelleffects"):GetBool() then self:Remove() return end
-    end
-
-    if !mdl or !IsValid(mdl) then self:Remove() return end
-
+    if owner != LocalPlayer() and !GetConVar("arccw_shelleffects"):GetBool() then self:Remove() return end
+    if !IsValid(mdl) then self:Remove() return end
     if !mdl:GetAttachment(att) then self:Remove() return end
 
     local origin, ang = mdl:GetAttachment(att).Pos, mdl:GetAttachment(att).Ang
@@ -71,7 +67,6 @@ function EFFECT:Init(data)
                 self.Sounds = ArcCW.ShellSoundsTable
             end
         end
-        
     end
 
     self:SetPos(origin)
@@ -95,8 +90,8 @@ function EFFECT:Init(data)
 
     local plyvel = Vector(0, 0, 0)
 
-    if IsValid(Owner) then
-        plyvel = Owner:GetAbsVelocity()
+    if IsValid(owner) then
+        plyvel = owner:GetAbsVelocity()
     end
 
 
@@ -147,10 +142,10 @@ end
 
 function EFFECT:Think()
     if (self.SpawnTime + self.ShellTime) <= CurTime() then
-		if !IsValid(self) then return end
+        if !IsValid(self) then return end
         self:SetRenderFX( kRenderFxFadeFast )
         if (self.SpawnTime + self.ShellTime + 1) <= CurTime() then
-			if !IsValid(self:GetPhysicsObject()) then return end
+            if !IsValid(self:GetPhysicsObject()) then return end
             self:GetPhysicsObject():EnableMotion(false)
             if (self.SpawnTime + self.ShellTime + 1.5) <= CurTime() then
                 self:Remove()

@@ -322,13 +322,13 @@ function SWEP:FormNightVision(tex)
 end
 
 local pp_cc_tab = {
-	[ "$pp_colour_brightness" ] = 0,   -- why nothing works hh
-	[ "$pp_colour_contrast" ] = 0.9,    -- but same time chroma dont work without calling it
-	[ "$pp_colour_colour" ] = 1,
+    [ "$pp_colour_brightness" ] = 0,   -- why nothing works hh
+    [ "$pp_colour_contrast" ] = 0.9,    -- but same time chroma dont work without calling it
+    [ "$pp_colour_colour" ] = 1,
 }
 
 function SWEP:FormPP(tex)
-	if !render.SupportsPixelShaders_2_0() then return end
+    if !render.SupportsPixelShaders_2_0() then return end
 
     local asight = self:GetActiveSights()
 
@@ -358,12 +358,12 @@ function SWEP:FormPP(tex)
             -- DrawSharpen(-0.5, 5) -- dont work for some reason
         end
 
-        if refract then 
+        if refract then
             local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
             local refractratio = GetConVar("arccw_scopepp_refract_ratio"):GetFloat() or 0
-            local refractamount = (-0.6 + addads/30) * refractratio
+            local refractamount = (-0.6 + addads / 30) * refractratio
             local refractmat = cs and matRefract_cheap or matRefract
-    
+
             refractmat:SetFloat( "$refractamount", refractamount )
 
             render.SetMaterial(refractmat)
@@ -424,21 +424,21 @@ function SWEP:FormRTScope()
 
     ArcCW.Overdraw = true
     ArcCW.LaserBehavior = true
-    ArcCW.VMInRT = true 
+    ArcCW.VMInRT = true
 
     local rtangles, rtpos, rtdrawvm
 
-    if GetConVar("arccw_drawbarrel"):GetBool() then 
-        rtangles = self.VMAng - self.VMAngOffset - (self:GetOurViewPunchAngles()*mag*0.1)
-        rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z*10 
-        rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y*10
+    if GetConVar("arccw_drawbarrel"):GetBool() then
+        rtangles = self.VMAng - self.VMAngOffset - (self:GetOurViewPunchAngles() * mag * 0.1)
+        rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z * 10
+        rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y * 10
 
-        rtpos = self.VMPos + self.VMAng:Forward()*(asight.EVPos.y + 5 + (asight.ScopeMagnificationMax and asight.ScopeMagnificationMax/3 or asight.HolosightData.HolosightMagnification/3)) -- eh
+        rtpos = self.VMPos + self.VMAng:Forward() * (asight.EVPos.y + 5 + (asight.ScopeMagnificationMax and asight.ScopeMagnificationMax / 3 or asight.HolosightData.HolosightMagnification / 3)) -- eh
         rtdrawvm = true
     else
         rtangles = EyeAngles()
         rtpos = EyePos()
-        rtdrawvm = false 
+        rtdrawvm = false
     end
 
     local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
@@ -471,10 +471,10 @@ function SWEP:FormRTScope()
 
     ArcCW.Overdraw = false
     ArcCW.LaserBehavior = false
-    ArcCW.VMInRT = false 
+    ArcCW.VMInRT = false
 
     self:FormPP(rtmat)
-    
+
     render.PopRenderTarget()
 
     cam.End3D()
@@ -518,7 +518,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     if !hs then return end
 
-    if delta!=0 and GetConVar("arccw_scopepp"):GetBool() then 
+    if delta != 0 and GetConVar("arccw_scopepp"):GetBool() then
         pp_ca_r:SetVector("$color2", Vector(1-delta, 0, 0))
         pp_ca_g:SetVector("$color2", Vector(0, 1-delta, 0))
         pp_ca_b:SetVector("$color2", Vector(0, 0, 1-delta))
@@ -565,12 +565,12 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     local hsmag = asight.ScopeMagnification or 1
 
     local size = hs.HolosightSize or 1
-    
+
     local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
 
     local addconvar = asight.MagnifiedOptic and (addads or 0) or 0
 
-    size = size + addconvar + (addconvar>5.5 and (addconvar-5.5)*2 or 0)
+    size = size + addconvar + (addconvar > 5.5 and (addconvar-5.5) * 2 or 0)
 
 
     -- if asight.NightVision then
@@ -689,8 +689,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     local pos2 = pos + (dir * -8)
 
     local a = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or pos:ToScreen()
-    local x = a.x - (self.VMAngOffset.y - self.VMPosOffset_Lerp.y*10) * (hsmag*1.5)^2
-    local y = a.y + (self.VMAngOffset.x*5 + self.VMPosOffset_Lerp.z*10) * (hsmag*1.5)^2
+    local x = a.x - (self.VMAngOffset.y - self.VMPosOffset_Lerp.y * 10) * (hsmag * 1.5) ^ 2
+    local y = a.y + (self.VMAngOffset.x * 5 + self.VMPosOffset_Lerp.z * 10) * (hsmag * 1.5) ^ 2
 
     local a2 = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or pos2:ToScreen()
     local x2 = a2.x
@@ -732,7 +732,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
             local csratio = math.Clamp(GetConVar("arccw_cheapscopesv2_ratio"):GetFloat(), 0, 1)
 
-            local ssmag = 1+csratio*hsmag + (addads or 0)/20 -- idk why 20 
+            local ssmag = 1 + csratio * hsmag + (addads or 0) / 20 -- idk why 20
             local sw = ScrW() * ssmag
             local sh = ScrH() * ssmag
 
@@ -745,8 +745,8 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
             local ts = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or cpos:ToScreen()
 
-            local sx = ts.x - (sw / 2) - off_x - (self.VMAngOffset.y - self.VMPosOffset_Lerp.y*15) * (hsmag*1)^2
-            local sy = ts.y - (sh / 2) - off_y + (self.VMAngOffset.x*5 + self.VMPosOffset_Lerp.z*15) * (hsmag*1)^2
+            local sx = ts.x - (sw / 2) - off_x - (self.VMAngOffset.y - self.VMPosOffset_Lerp.y * 15) * (hsmag * 1) ^ 2
+            local sy = ts.y - (sh / 2) - off_y + (self.VMAngOffset.x * 5 + self.VMPosOffset_Lerp.z * 15) * (hsmag * 1) ^ 2
 
             render.SetMaterial(black)
             render.DrawScreenQuad()
@@ -887,7 +887,7 @@ end
 -- hook.Add( "HUDPaint", "DrawExampleMat", function()
     -- render.PushRenderTarget( tex )
     -- cam.Start2D()
-    
+
     --     surface.SetDrawColor( 128,128,255 )
     --     surface.DrawRect(0,0,TEX_SIZE, TEX_SIZE)
     --     surface.SetDrawColor( color_white )
@@ -895,12 +895,12 @@ end
         -- local joke = math.sin(CurTime()*5)/4
 
     --     surface.DrawTexturedRect( TEX_SIZE/4-joke/2, TEX_SIZE/4-joke/2, TEX_SIZE/2+joke, TEX_SIZE/2+joke )
-    
+
     -- cam.End2D()
     -- render.PopRenderTarget()
-	-- surface.SetDrawColor( color_white )
-	-- surface.SetMaterial( myMat )
-	-- surface.DrawTexturedRect( 25, 25, TEX_SIZE, TEX_SIZE )
+    -- surface.SetDrawColor( color_white )
+    -- surface.SetMaterial( myMat )
+    -- surface.DrawTexturedRect( 25, 25, TEX_SIZE, TEX_SIZE )
     -- print()
 
 

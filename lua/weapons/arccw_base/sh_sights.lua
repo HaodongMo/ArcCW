@@ -463,8 +463,8 @@ function SWEP:TranslateFOV(fov)
         end
 
         app_vm = irons.ViewModelFOV or 45
-        
-        app_vm = app_vm - (asight.MagnifiedOptic and (addads or 0)*3 or 0)    
+
+        app_vm = app_vm - (asight.MagnifiedOptic and (addads or 0) * 3 or 0)
 
         -- div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
         -- div = math.max(div, 1)
