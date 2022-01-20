@@ -63,11 +63,9 @@ local rtmat = GetRenderTarget("arccw_rtmat", rtsize, rtsize, false)
 local rtmat_cheap = GetRenderTarget("arccw_rtmat_cheap", ScrW(), ScrH(), false)
 local rtmat_spare = GetRenderTarget("arccw_rtmat_spare", ScrW(), ScrH(), false)
 
--- local shadow = Material("arccw/hud/scopes/shadow.png")
 
 local thermal = Material("models/debug/debugwhite")
 local colormod = Material("pp/colour")
--- local warp = Material("models/props_c17/fisheyelens2")
 local coldtime = 30
 
 local additionalFOVconvar = GetConVar("arccw_vm_add_ads")
@@ -88,6 +86,21 @@ local pp_ca_base, pp_ca_r, pp_ca_g, pp_ca_b = Material("pp/arccw/ca_base"), Mate
 pp_ca_r:SetTexture("$basetexture", render.GetScreenEffectTexture())
 pp_ca_g:SetTexture("$basetexture", render.GetScreenEffectTexture())
 pp_ca_b:SetTexture("$basetexture", render.GetScreenEffectTexture())
+
+local greenColor = Color(0, 255, 0)  -- optimized +10000fps
+local whiteColor = Color(255, 255, 255)
+local blackColor = Color(0, 0, 0)
+
+local function DrawTexturedRectRotatedPoint( x, y, w, h, rot, x0, y0 ) -- stolen from gmod wiki 
+	local c = math.cos( math.rad( rot ) )
+	local s = math.sin( math.rad( rot ) )
+	
+	local newx = y0 * s - x0 * c
+	local newy = y0 * c + x0 * s
+	
+	surface.DrawTexturedRectRotated( x + newx, y + newy, w, h, rot )	
+end
+
 
 -- shamelessly robbed from Jackarunda
 local function IsWHOT(ent)
@@ -133,8 +146,8 @@ function SWEP:FormThermalImaging(tex)
 
     local asight = self:GetActiveSights()
 
-    local nvsc = asight.ThermalScopeColor or Color(255, 255, 255)
-    local tvsc = asight.ThermalHighlightColor or Color(255, 255, 255)
+    local nvsc = asight.ThermalScopeColor or whiteColor 
+    local tvsc = asight.ThermalHighlightColor or whiteColor 
 
     local tab = ents.GetAll()
 
@@ -203,7 +216,7 @@ function SWEP:FormThermalImaging(tex)
     render.SetStencilCompareFunction(STENCIL_EQUAL)
 
     if asight.ThermalScopeSimple then
-        surface.SetDrawColor(Color(255, 255, 255))
+        surface.SetDrawColor(255, 255, 255, 255)
         surface.DrawRect(0, 0, ScrW(), ScrH())
     end
 
@@ -279,6 +292,7 @@ function SWEP:FormThermalImaging(tex)
     render.PopRenderTarget()
 end
 
+
 function SWEP:FormNightVision(tex)
     local asight = self:GetActiveSights()
 
@@ -288,7 +302,7 @@ function SWEP:FormNightVision(tex)
 
     render.PushRenderTarget(tex)
 
-    local nvsc = asight.NVScopeColor or Color(0, 255, 0)
+    local nvsc = asight.NVScopeColor or greenColor
 
     if !asight.NVFullColor then
         DrawColorModify({
@@ -428,7 +442,7 @@ function SWEP:FormRTScope()
 
     local rtangles, rtpos, rtdrawvm
 
-    if GetConVar("arccw_drawbarrel"):GetBool() then
+    if GetConVar("arccw_drawbarrel"):GetBool() and GetConVar("arccw_vm_coolsway"):GetBool() and asight.Slot and asight.Slot == 1 then -- slot check to ignore integrated
         rtangles = self.VMAng - self.VMAngOffset - (self:GetOurViewPunchAngles() * mag * 0.1)
         rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z * 10
         rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y * 10
@@ -460,7 +474,7 @@ function SWEP:FormRTScope()
 
     render.PushRenderTarget(rtmat, 0, 0, rtsize, rtsize)
 
-    render.ClearRenderTarget(rt, Color(0, 0, 0))
+    render.ClearRenderTarget(rt, blackColor)
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         render.RenderView(rt)
@@ -499,7 +513,7 @@ hook.Add("RenderScene", "ArcCW", function()
 end)
 
 local black = Material("arccw/hud/black.png")
-local defaultdot = Material("arccw/hud/scopes/dot.png")
+local defaultdot = Material("arccw/hud/hit_dot.png")
 
 function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     -- holosight structure
@@ -525,7 +539,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         pp_ca_base:SetFloat("$alpha", 1-delta)
     end
 
-    local hsc = Color(255, 255, 255)
+    local hsc = whiteColor
 
     if hs.Colorable then
         hsc.r = GetConVar("arccw_scope_r"):GetInt()
@@ -693,11 +707,9 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     local y = a.y + (self.VMAngOffset.x * 5 + self.VMPosOffset_Lerp.z * 10) * (hsmag * 1.5) ^ 2
 
     local a2 = self:GetOwner():InVehicle() and {x = ScrW() / 2, y = ScrH() / 2} or pos2:ToScreen()
-    local x2 = a2.x
-    local y2 = a2.y
 
-    local off_x = x2 - (ScrW() / 2)
-    local off_y = y2 - (ScrH() / 2)
+    local off_x = a2.x - (ScrW() / 2)
+    local off_y = a2.y - (ScrH() / 2)
 
     --pos = pos + Vector(ArcCW.StrafeTilt(self), 0, 0)
 
@@ -767,13 +779,6 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             render.DrawTextureToScreenRect(screen, sx, sy, sw, sh)
 
         end
-
-        -- warp:SetFloat("$refractamount", -0.015)
-        -- render.UpdateRefractTexture()
-        -- render.SetMaterial(warp)
-        -- render.DrawScreenQuad()
-
-        -- render.SetScissorRect( sx2, sy2, sx2 + sw2, sy2 + sh2, false )
     end
 
     -- cam.Start3D()
@@ -815,15 +820,16 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
                     -- AYE, UR ACTIVE ANG BEIN TWISTED DUNT GIVE AUH SHET
 
     surface.SetMaterial(hs.HolosightReticle or defaultdot)
-    surface.SetDrawColor(hsc or Color(255, 255, 255))
-    surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
-    --surface.DrawTexturedRectRotated(x, y, hss, hss, -thej.r or 0)
+    surface.SetDrawColor(hsc or 255, 255, 255)
+    -- surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
+
+    DrawTexturedRectRotatedPoint(x, y, hss, hss, -(self.VMAngOffset.r+self.VMAngOffset_Lerp.r+self:GetOurViewPunchAngles().r)*5 , 0, 0)
 
     if !hs.HolosightNoFlare then
         render.SetStencilPassOperation(STENCIL_KEEP)
         render.SetStencilReferenceValue(ref - 1)
         surface.SetMaterial(hs.HolosightFlare or hs.HolosightReticle or defaultdot)
-        surface.SetDrawColor(Color(255, 255, 255, 150))
+        surface.SetDrawColor(255, 255, 255, 150)
 
         local hss2 = hss
 
@@ -902,7 +908,7 @@ end
     -- surface.SetMaterial( myMat )
     -- surface.DrawTexturedRect( 25, 25, TEX_SIZE, TEX_SIZE )
     -- print()
-
-
+    -- DrawTexturedRectRotatedPoint(250+250/2,250+250/2,250,250,(CurTime()%360)*50,0,0)
+    -- surface.DrawRect(250,250,250,250)
 
 -- end )
