@@ -53,7 +53,7 @@ ArcCW.ClientConVars = {
     ["arccw_cheapscopes"]             = { def =  1 },
     ["arccw_cheapscopesv2_ratio"]     = { def =  0.05 },
     ["arccw_scopepp"]                 = { def =  1 },
-    ["arccw_scopepp_refract"]         = { def =  0 },
+    ["arccw_scopepp_refract"]         = { def =  1 },
     ["arccw_scopepp_refract_ratio"]   = { def =  0.75 },
 
     ["arccw_cheapscopesautoconfig"]   = { def =  0 }, -- what this for
