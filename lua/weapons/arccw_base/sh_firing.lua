@@ -314,8 +314,18 @@ function SWEP:PrimaryAttack()
             if dmg:IsDamageType(DMG_BULLET) and !dmg:IsDamageType(DMG_AIRBOAT)
                     and IsValid(hit.tr.Entity) and hit.tr.Entity:GetClass() == "npc_helicopter" then
                 dmg:SetDamageType(dmg:GetDamageType() + DMG_AIRBOAT)
-                dmg:ScaleDamage(1 / 10) -- coostimizable?
+                dmg:ScaleDamage(0.1) -- coostimizable?
+            elseif dmg:GetDamageType() != DMG_BLAST and IsValid(hit.tr.Entity) and hit.tr.Entity:GetClass() == "npc_combinegunship" then
+                dmg:SetDamageType(DMG_BLAST)
+                dmg:ScaleDamage(0.05)
+                -- there is a damage threshold of 50 for damaging gunships
+                if dmg:GetDamage() < 50 and dmg:GetDamage() / 200 >= math.random() then
+                    dmg:SetDamage(50)
+                end
             end
+
+            print(dmg:GetDamage(), hit.tr.Entity)
+
             -- pure DMG_BUCKSHOT do not create blood decals, somehow
             if dmg:GetDamageType() == DMG_BUCKSHOT then
                 dmg:SetDamageType(dmg:GetDamageType() + DMG_BULLET)
