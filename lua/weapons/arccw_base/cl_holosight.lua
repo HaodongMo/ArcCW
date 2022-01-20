@@ -428,7 +428,7 @@ function SWEP:FormRTScope()
 
     local rtangles, rtpos, rtdrawvm
 
-    if GetConVar("arccw_drawbarrel"):GetBool() then 
+    if GetConVar("arccw_drawbarrel"):GetBool() and asight.Slot and asight.Slot == 1 then -- slot check to ignore integrated
         rtangles = self.VMAng - self.VMAngOffset - (self:GetOurViewPunchAngles()*mag*0.1)
         rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z*10 
         rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y*10
