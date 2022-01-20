@@ -823,7 +823,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     surface.SetDrawColor(hsc or 255, 255, 255)
     -- surface.DrawTexturedRect(x - (hss / 2), y - (hss / 2), hss, hss)
 
-    DrawTexturedRectRotatedPoint(x, y, hss, hss, -self.VMAngOffset.r*3-self.VMAngOffset_Lerp.r*10 , 0, 0)
+    DrawTexturedRectRotatedPoint(x, y, hss, hss, -(self.VMAngOffset.r+self.VMAngOffset_Lerp.r+self:GetOurViewPunchAngles().r)*5 , 0, 0)
 
     if !hs.HolosightNoFlare then
         render.SetStencilPassOperation(STENCIL_KEEP)
