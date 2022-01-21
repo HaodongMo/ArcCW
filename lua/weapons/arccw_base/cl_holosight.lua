@@ -336,9 +336,15 @@ function SWEP:FormNightVision(tex)
 end
 
 local pp_cc_tab = {
-    [ "$pp_colour_brightness" ] = 0,   -- why nothing works hh
-    [ "$pp_colour_contrast" ] = 0.9,    -- but same time chroma dont work without calling it
-    [ "$pp_colour_colour" ] = 1,
+    ["$pp_colour_addr"] = 0,
+    ["$pp_colour_addg"] = 0,
+    ["$pp_colour_addb"] = 0,
+    ["$pp_colour_brightness"] = 0, -- why nothing works hh
+    ["$pp_colour_contrast"] = 0.9,  -- but same time chroma dont work without calling it
+    ["$pp_colour_colour"] = 1,
+    ["$pp_colour_mulr"] = 0,
+    ["$pp_colour_mulg"] = 0,
+    ["$pp_colour_mulb"] = 0
 }
 
 function SWEP:FormPP(tex)
