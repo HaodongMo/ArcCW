@@ -63,6 +63,8 @@ function EFFECT:Init(data)
                 self.Sounds = ArcCW.TinyShellSoundsTable
             elseif t == game.GetAmmoID("pistol") or t == game.GetAmmoID("357") or t == game.GetAmmoID("AlyxGun") then
                 self.Sounds = ArcCW.PistolShellSoundsTable
+            elseif t == game.GetAmmoID("ar2") then
+                self.Sounds = ArcCW.MediumShellSoundsTable
             else
                 self.Sounds = ArcCW.ShellSoundsTable
             end

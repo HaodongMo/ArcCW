@@ -36,7 +36,10 @@ ArcCW.ShellSoundsTable = {
     "weapons/arccw/casings/casing_556_1.wav",
     "weapons/arccw/casings/casing_556_2.wav",
     "weapons/arccw/casings/casing_556_3.wav",
-    "weapons/arccw/casings/casing_556_4.wav",
+    "weapons/arccw/casings/casing_556_4.wav"
+}
+
+ArcCW.MediumShellSoundsTable = {
     "weapons/arccw/casings/casing_308_1.wav",
     "weapons/arccw/casings/casing_308_2.wav",
     "weapons/arccw/casings/casing_308_3.wav",
