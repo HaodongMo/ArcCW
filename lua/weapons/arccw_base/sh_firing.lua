@@ -324,8 +324,6 @@ function SWEP:PrimaryAttack()
                 end
             end
 
-            print(dmg:GetDamage(), hit.tr.Entity)
-
             -- pure DMG_BUCKSHOT do not create blood decals, somehow
             if dmg:GetDamageType() == DMG_BUCKSHOT then
                 dmg:SetDamageType(dmg:GetDamageType() + DMG_BULLET)
