@@ -58,8 +58,8 @@ end
 
 hook.Add("SetupMove", "ArcCW_SetupMove", ArcCW.Move)
 
-local limy_p = 75
-local limy_n = -75
+local limy_p = 45
+local limy_n = -45
 local limp_p = 30
 local limp_n = -30
 
@@ -69,11 +69,13 @@ function ArcCW.CreateMove(cmd)
 
     if !wpn.ArcCW then return end
 
-    if wpn:GetInBipod() then
+    if wpn:GetInBipod() and wpn:GetBipodAngle() then
+        --[[]
         if !wpn:GetBipodAngle() then
             wpn:SetBipodPos(wpn:GetOwner():EyePos())
             wpn:SetBipodAngle(wpn:GetOwner():EyeAngles())
         end
+        ]]
 
         local bipang = wpn:GetBipodAngle()
         local ang = cmd:GetViewAngles()
