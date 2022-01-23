@@ -451,8 +451,8 @@ function SWEP:TranslateFOV(fov)
         local delta = self:GetSightDelta()
         delta = math.pow(delta, 2)
 
-        local addads = math.Clamp(GetConVar("arccw_vm_add_ads"):GetFloat(), -2, 14)
-        local csratio = math.Clamp(GetConVar("arccw_cheapscopesv2_ratio"):GetFloat(), 0, 1)
+        local addads = math.Clamp((GetConVar("arccw_vm_add_ads"):GetFloat() or 0), -2, 14)
+        local csratio = math.Clamp((GetConVar("arccw_cheapscopesv2_ratio"):GetFloat() or 0), 0, 1)
 
         if CLIENT then
             if GetConVar("arccw_cheapscopes"):GetBool() and mag>1 then
