@@ -76,7 +76,7 @@ local matRefract_cheap = Material("pp/arccw/refract_cs") -- cheap scopes stretch
 matRefract:SetTexture("$fbtexture", render.GetScreenEffectTexture())
 matRefract_cheap:SetTexture("$fbtexture", render.GetScreenEffectTexture())
 
-timer.Simple(10, function() -- i really dont know what the fucking problem with cheap scopes they dont want to set texture as not cheap ones
+timer.Create("ihategmod", 5, 0, function() -- i really dont know what the fucking problem with cheap scopes they dont want to set texture as not cheap ones
     matRefract_cheap:SetTexture("$fbtexture", render.GetScreenEffectTexture())
     matRefract:SetTexture("$fbtexture", render.GetScreenEffectTexture()) -- not cheap scope here why not
 end)

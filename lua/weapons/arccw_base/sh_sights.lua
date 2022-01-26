@@ -451,20 +451,20 @@ function SWEP:TranslateFOV(fov)
         local delta = self:GetSightDelta()
         delta = math.pow(delta, 2)
 
-        local addads = math.Clamp((GetConVar("arccw_vm_add_ads"):GetFloat() or 0), -2, 14)
-        local csratio = math.Clamp((GetConVar("arccw_cheapscopesv2_ratio"):GetFloat() or 0), 0, 1)
-
         if CLIENT then
+            local addads = math.Clamp((GetConVar("arccw_vm_add_ads"):GetFloat() or 0), -2, 14)
+            local csratio = math.Clamp((GetConVar("arccw_cheapscopesv2_ratio"):GetFloat() or 0), 0, 1)
+
             if GetConVar("arccw_cheapscopes"):GetBool() and mag>1 then
                 fov = 75 / (mag/(1+csratio*mag) + (addads or 0)/3)
             else
                 fov = math.Clamp( (75 * (1 - delta)) + (GetConVar("fov_desired"):GetInt() * delta), 75, 100)
             end
+
+            app_vm = irons.ViewModelFOV or 45
+
+            app_vm = app_vm - (asight.MagnifiedOptic and (addads or 0) * 3 or 0)
         end
-
-        app_vm = irons.ViewModelFOV or 45
-
-        app_vm = app_vm - (asight.MagnifiedOptic and (addads or 0) * 3 or 0)
 
         -- div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
         -- div = math.max(div, 1)
