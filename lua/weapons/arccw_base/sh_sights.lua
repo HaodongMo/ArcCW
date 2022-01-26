@@ -32,7 +32,7 @@ function SWEP:EnterSprint()
     end
 
     local anim = self:SelectAnimation("enter_sprint")
-    if anim and !s then
+    if anim and !s and self:GetNextSecondaryFire() <= ct then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         --self:SetReloading(ct + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     --elseif !anim and !s then -- Not needed because ExitSprint handles it properly
@@ -66,7 +66,7 @@ function SWEP:ExitSprint()
     end
 
     local anim = self:SelectAnimation("exit_sprint")
-    if anim and !s then
+    if anim and !s and self:GetNextSecondaryFire() <= ct then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
         self:SetReloading(ct + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
     elseif !anim and !s then
