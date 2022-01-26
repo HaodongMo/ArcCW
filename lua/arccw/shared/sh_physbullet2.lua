@@ -73,6 +73,10 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Profile = prof or wep:GetBuff_Override("Override_PhysTracerProfile", wep.PhysTracerProfile) or 1
     }
 
+    bullet = wep:GetBuff_Hook("Hook_ModifyPhysBullet", bullet)
+    
+    if !bullet then return end
+    
     table.Add(bullet.Filter, wep.Shields or {})
 
     local owner = wep:GetOwner()
