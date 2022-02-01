@@ -996,7 +996,7 @@ function SWEP:RefreshBGs()
         end
     end
 
-    if vm and vm:IsValid() then
+    if IsValid(vm) then
         for i = 0, (vm:GetNumBodyGroups()) do
             if self.Bodygroups[i] then
                 vm:SetBodygroup(i, self.Bodygroups[i])
@@ -1004,8 +1004,8 @@ function SWEP:RefreshBGs()
         end
 
         self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae, wm = false})
+        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae, wm = true})
     end
-    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae, wm = true})
 end
 
 function SWEP:GetPickX()
