@@ -289,6 +289,12 @@ function SWEP:FormThermalImaging(tex)
 
     cam.End3D()
 
+    if GetConVar("arccw_scopepp"):GetBool() then
+        -- DrawMotionBlur(0.45,1,1/45) -- i cant fucking understand why motionblur fucks render target
+        DrawBloom(0,0.3,5,5,3,0.5,1,1,1)
+        DrawSharpen(0.5,1.65)
+    end
+    
     render.PopRenderTarget()
 end
 
@@ -352,8 +358,10 @@ function SWEP:FormPP(tex)
 
     local asight = self:GetActiveSights()
 
+    if asight.Thermal then return end -- eyah
+
     local cs = GetConVar("arccw_cheapscopes"):GetBool()
-    local refract = GetConVar("arccw_scopepp_refract"):GetBool() and !asight.Thermal -- refract does not affect thermal stencils
+    local refract = GetConVar("arccw_scopepp_refract"):GetBool()
     local pp = GetConVar("arccw_scopepp"):GetBool()
 
 
@@ -370,12 +378,11 @@ function SWEP:FormPP(tex)
             render.DrawScreenQuad()
             render.SetMaterial( pp_ca_b )
             render.DrawScreenQuad()
-
                 -- Color modify
 
             DrawColorModify( pp_cc_tab )
                 -- Sharpen
-            -- DrawSharpen(-0.5, 5) -- dont work for some reason
+            DrawSharpen(-0.1, 5) -- dont work for some reason
         end
 
         if refract then
@@ -392,7 +399,6 @@ function SWEP:FormPP(tex)
 
         if !cs then render.PopRenderTarget() end
     end
-
 end
 
 function SWEP:FormCheapScope()
