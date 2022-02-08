@@ -48,7 +48,7 @@ function SWEP:Move_Process(EyePos, EyeAng, velocity)
     local sg = self:GetSightDelta()
     VMPos:Set(EyePos)
     VMAng:Set(EyeAng)
-    VMPosOffset.x = self:GetOwner():GetVelocity().z * 0.0025 * sightedmult
+    VMPosOffset.x = math.Clamp(velocity.z * 0.0025, -1, 1) * sightedmult
     VMPosOffset.x = VMPosOffset.x + (velocity.x * 0.001 * sg)
     VMPosOffset.y = math.Clamp(velocity.y * -0.002, -1, 1) * sightedmult
     VMPosOffset.z = math.Clamp(VMPosOffset.x * -2, -4, 4)
@@ -331,9 +331,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     -- Sprinting
+    local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
+    local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
     do
-        local hpos, spos = self:GetBuff("HolsterPos", true), self:GetBuff("SprintPos", true)
-        local hang, sang = self:GetBuff("HolsterAng", true), self:GetBuff("SprintAng", true)
         local aaaapos = holstered and (hpos or spos) or (spos or hpos)
         local aaaaang = holstered and (hang or sang) or (sang or hang)
 
@@ -399,16 +399,14 @@ function SWEP:GetViewModelPosition(pos, ang)
         end
     end
 
-    -- busts shit
-    --[[local deg = self:BarrelHitWall()
-
+    local deg = self:BarrelHitWall() * sgtd
     if deg > 0 then
-        target.pos = LerpVector(deg, target.pos, self.HolsterPos)
-        target.ang = LerpAngle(deg, target.ang, self.HolsterAng)
-        target.down = 2
+        target.pos = LerpVector(deg, target.pos, hpos)
+        target.ang = LerpAngle(deg, target.ang, hang)
+        target.down = 2 * sgtd
         target.sway = 2
         target.bob = 2
-    end]]
+    end
 
     if !isangle(target.ang) then
         target.ang = Angle(target.ang)
