@@ -2,7 +2,7 @@ SWEP.Sighted = false
 SWEP.Sprinted = false
 
 local function linearlerp(a, b, c)
-	return b + (c - b) * a
+    return b + (c - b) * a
 end
 
 
@@ -452,11 +452,11 @@ function SWEP:TranslateFOV(fov)
         delta = math.pow(delta, 2)
 
         if CLIENT then
-            local addads = math.Clamp((GetConVar("arccw_vm_add_ads"):GetFloat() or 0), -2, 14)
-            local csratio = math.Clamp((GetConVar("arccw_cheapscopesv2_ratio"):GetFloat() or 0), 0, 1)
+            local addads = math.Clamp(GetConVar("arccw_vm_add_ads"):GetFloat() or 0, -2, 14)
+            local csratio = math.Clamp(GetConVar("arccw_cheapscopesv2_ratio"):GetFloat() or 0, 0, 1)
 
-            if GetConVar("arccw_cheapscopes"):GetBool() and mag>1 then
-                fov = 75 / (mag/(1+csratio*mag) + (addads or 0)/3)
+            if GetConVar("arccw_cheapscopes"):GetBool() and mag > 1 then
+                fov = 75 / (mag / (1 + csratio * mag) + (addads or 0) / 3)
             else
                 fov = math.Clamp( (75 * (1 - delta)) + (GetConVar("fov_desired"):GetInt() * delta), 75, 100)
             end

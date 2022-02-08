@@ -91,14 +91,14 @@ local greenColor = Color(0, 255, 0)  -- optimized +10000fps
 local whiteColor = Color(255, 255, 255)
 local blackColor = Color(0, 0, 0)
 
-local function DrawTexturedRectRotatedPoint( x, y, w, h, rot, x0, y0 ) -- stolen from gmod wiki 
-	local c = math.cos( math.rad( rot ) )
-	local s = math.sin( math.rad( rot ) )
-	
-	local newx = y0 * s - x0 * c
-	local newy = y0 * c + x0 * s
-	
-	surface.DrawTexturedRectRotated( x + newx, y + newy, w, h, rot )	
+local function DrawTexturedRectRotatedPoint( x, y, w, h, rot, x0, y0 ) -- stolen from gmod wiki
+    local c = math.cos( math.rad( rot ) )
+    local s = math.sin( math.rad( rot ) )
+
+    local newx = y0 * s - x0 * c
+    local newy = y0 * c + x0 * s
+
+    surface.DrawTexturedRectRotated( x + newx, y + newy, w, h, rot )
 end
 
 
@@ -146,8 +146,8 @@ function SWEP:FormThermalImaging(tex)
 
     local asight = self:GetActiveSights()
 
-    local nvsc = asight.ThermalScopeColor or whiteColor 
-    local tvsc = asight.ThermalHighlightColor or whiteColor 
+    local nvsc = asight.ThermalScopeColor or whiteColor
+    local tvsc = asight.ThermalHighlightColor or whiteColor
 
     local tab = ents.GetAll()
 
@@ -294,10 +294,9 @@ function SWEP:FormThermalImaging(tex)
         DrawBloom(0,0.3,5,5,3,0.5,1,1,1)
         DrawSharpen(0.5,1.65)
     end
-    
+
     render.PopRenderTarget()
 end
-
 
 function SWEP:FormNightVision(tex)
     local asight = self:GetActiveSights()
@@ -687,7 +686,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     pos = LerpVector(delta, EyePos(), pos)
 
-    local eyeangs = self:GetOwner():EyeAngles() - self:GetOurViewPunchAngles()*hsmag*0.1
+    local eyeangs = self:GetOwner():EyeAngles() - self:GetOurViewPunchAngles() * hsmag * 0.1
 
     -- local vm = hsm or hsp
 
