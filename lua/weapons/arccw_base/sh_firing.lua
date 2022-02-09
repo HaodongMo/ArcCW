@@ -261,6 +261,7 @@ function SWEP:PrimaryAttack()
         hit = self:GetBuff_Hook("Hook_BulletHit", hit)
 
         if !hit then return end
+        self:GetBuff_Hook("Hook_PostBulletHit", hit)
 
         dmg:SetDamageType(hit.dmgtype)
         dmg:SetDamage(hit.damage)
