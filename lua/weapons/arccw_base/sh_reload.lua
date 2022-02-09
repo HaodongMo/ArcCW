@@ -94,6 +94,8 @@ function SWEP:Reload()
     if shouldhybridreload then
         shouldshotgunreload = self:Clip1() != 0
     end
+    
+    if shouldshotgunreload and self:GetShotgunReloading() > 0 then return end
 
     local mult = self:GetBuff_Mult("Mult_ReloadTime")
 
