@@ -390,3 +390,6 @@ L["arccw.cvar.override_lunge_off.desc"] = "Bashing with a weapon can allow you t
 L["arccw.cvar.mult_movespeed"] = "Speed"
 L["arccw.cvar.mult_movespeedads"] = "Speed in ADS"
 L["arccw.cvar.mult_movespeedfire"] = "Speed while firing"
+
+-- 2022-02-14
+L["arccw.cvar.vm_nearwall"] = "Near-wall Movement"

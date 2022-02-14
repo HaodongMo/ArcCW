@@ -5,7 +5,6 @@ local function linearlerp(a, b, c)
     return b + (c - b) * a
 end
 
-
 function SWEP:GetSightTime()
     return self:GetBuff("SightTime")
 end
@@ -435,21 +434,18 @@ function SWEP:TranslateFOV(fov)
     self.ApproachFOV = self.ApproachFOV or fov
     self.CurrentFOV = self.CurrentFOV or fov
 
-    -- Only update every tick (this function is probably called multiple times per tick)
+    -- Only update every tick (this function is called multiple times per tick)
     if self.LastTranslateFOV == UnPredictedCurTime() then return self.CurrentFOV end
     local timed = UnPredictedCurTime() - self.LastTranslateFOV
     self.LastTranslateFOV = UnPredictedCurTime()
 
-    local div = 1
     local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         local asight = self:GetActiveSights()
         local mag = asight and asight.ScopeMagnification or 1
 
-        local sgreloading = (self:GetShotgunReloading() == 2 or self:GetShotgunReloading() == 4)
-        local delta = self:GetSightDelta()
-        delta = math.pow(delta, 2)
+        local delta = math.pow(self:GetSightDelta(), 2)
 
         if CLIENT then
             local addads = math.Clamp(GetConVar("arccw_vm_add_ads"):GetFloat() or 0, -2, 14)
@@ -465,12 +461,8 @@ function SWEP:TranslateFOV(fov)
 
             app_vm = app_vm - (asight.MagnifiedOptic and (addads or 0) * 3 or 0)
         end
-
-        -- div = irons.Magnification * ((sgreloading or self:GetReloadingREAL() - self.ReloadInSights_CloseIn > CurTime()) and self.ReloadInSights_FOVMult or 1)
-        -- div = math.max(div, 1)
     end
 
-    -- self.ApproachFOV = fov / div
     self.ApproachFOV = fov
 
     -- magic number? multiplier of 10 seems similar to previous behavior

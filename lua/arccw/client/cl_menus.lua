@@ -108,6 +108,7 @@ local ViewmodelPanel = {
     { type = "h", text = "" },
     { type = "c", text = "#arccw.cvar.vm_viewwarn" },
     { type = "f", text = "#arccw.cvar.vm_coolviewmult", var = "arccw_vm_coolview_mult", min = -5, max = 5 },
+    { type = "b", text = "#arccw.cvar.vm_nearwall", var = "arccw_vm_nearwall" },
 }
 
 local HudPanel = {

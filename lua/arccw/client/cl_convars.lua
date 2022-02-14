@@ -122,6 +122,7 @@ ArcCW.ClientConVars = {
     ["arccw_vm_sway_zmult"]           = { def =  1 },
 
     ["arccw_vm_sway_speedmult"]       = { def =  1 },
+    ["arccw_vm_nearwall"]             = { def =  1 },
 
     ["arccw_toggleads"]               = { def = 0, usri = true },
     ["arccw_altubglkey"]              = { def = 0, usri = true },

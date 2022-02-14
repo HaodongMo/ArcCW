@@ -400,7 +400,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     local deg = self:BarrelHitWall() * sgtd
-    if deg > 0 then
+    if deg > 0 and GetConVar("arccw_vm_nearwall"):GetBool() then
         target.pos = LerpVector(deg, target.pos, hpos)
         target.ang = LerpAngle(deg, target.ang, hang)
         target.down = 2 * sgtd

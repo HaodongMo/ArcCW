@@ -850,20 +850,32 @@ function SWEP:IsProne()
     end
 end
 
+-- BarrelHitWall is known to cause viewmodel flickering on certain (which) playermodels? (a270cc9)
+-- If this occurs again *please* write down which model
+local hitwallcache
 function SWEP:BarrelHitWall()
-    if self.BarrelLength > 0 and GetConVar("arccw_override_nearwall"):GetBool() then
-        local offset = self.BarrelOffsetHip
 
-        if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
-            return 0 -- Never block barrel in VR
-        end
+    local len = self:GetBuff("BarrelLength")
+    if len == 0 or !GetConVar("arccw_override_nearwall"):GetBool() then
+        return 0
+    end
 
-        if self:GetOwner():IsPlayer() and self:GetOwner():InVehicle() then
-            return 0
-        end
+    -- Never block barrel in VR
+    if vrmod and vrmod.IsPlayerInVR(self:GetOwner()) then
+        return 0
+    end
+
+    -- Don't block barrel in vehicle
+    if self:GetOwner():IsPlayer() and self:GetOwner():InVehicle() then
+        return 0
+    end
+
+    if !hitwallcache or hitwallcache[1] ~= CurTime() then
+
+        local offset = self:GetBuff("BarrelOffsetHip")
 
         if self:GetState() == ArcCW.STATE_SIGHTS then
-            offset = self.BarrelOffsetSighted
+            offset = LerpVector(self:GetSightDelta(), self:GetBuff("BarrelOffsetSighted"), offset)
         end
 
         local dir = self:GetOwner():EyeAngles()
@@ -873,29 +885,28 @@ function SWEP:BarrelHitWall()
         src = src + dir:Forward() * offset[2]
         src = src + dir:Up() * offset[3]
 
-        local mask = MASK_SOLID
-
         local filter = {self:GetOwner()}
 
         table.Add(filter, self.Shields)
 
         local tr = util.TraceLine({
             start = src,
-            endpos = src + (dir:Forward() * (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength"))),
+            endpos = src + (dir:Forward() * len),
             filter = filter,
-            mask = mask
+            mask = MASK_SOLID
         })
 
         if tr.Hit and !tr.Entity.ArcCWProjectile then
-            local l = (tr.HitPos - src):Length()
-            l = l
-            return 1 - math.Clamp(l / (self.BarrelLength + self:GetBuff_Add("Add_BarrelLength")), 0, 1)
+            --local l = (tr.HitPos - src):Length()
+            --hitwallcache = {math.Clamp(1 - l / len, 0, 1), CurTime()}
+            hitwallcache = {1 - tr.Fraction, CurTime()}
         else
-            return 0
+            hitwallcache = {0, CurTime()}
         end
-    else
-        return 0
     end
+
+    return hitwallcache[1] or 0
+
 end
 
 SWEP.CL_SightDelta = 0
