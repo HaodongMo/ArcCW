@@ -458,7 +458,7 @@ function SWEP:FormRTScope()
         rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z * 10
         rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y * 10
 
-        rtpos = self.VMPos + self.VMAng:Forward() * (asight.EVPos.y + 5 + (asight.ScopeMagnificationMax and asight.ScopeMagnificationMax / 3 or asight.HolosightData.HolosightMagnification / 3)) -- eh
+        rtpos = self.VMPos + self.VMAng:Forward() * (asight.EVPos.y + 7 + (asight.ScopeMagnificationMax and asight.ScopeMagnificationMax / 3 or asight.HolosightData.HolosightMagnification / 3)) -- eh
         rtdrawvm = true
     else
         rtangles = EyeAngles()
@@ -550,7 +550,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         pp_ca_base:SetFloat("$alpha", 1-delta)
     end
 
-    local hsc = whiteColor
+    local hsc = Color(255, 255, 255) -- putting here global or white local SOMEHOW FUCKS IT EVEN GLOBAL BEING FUCKED WTF I HATE
 
     if hs.Colorable then
         hsc.r = GetConVar("arccw_scope_r"):GetInt()
