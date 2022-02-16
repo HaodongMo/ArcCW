@@ -748,6 +748,10 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
         -- render.SetScissorRect( sx2, sy2, sx2 + sw2, sy2 + sh2, true )
 
+        if render.GetHDREnabled() and delta < 0.07 then
+            render.SetToneMappingScaleLinear(Vector(1,1,1)) -- hdr fix
+        end
+
         if GetConVar("arccw_cheapscopes"):GetBool() then
 
             screen = rtmat_cheap
