@@ -394,3 +394,6 @@ L["arccw.cvar.mult_movespeedfire"] = "Speed while firing"
 
 -- 2022-02-14
 L["arccw.cvar.vm_nearwall"] = "Near-wall Movement"
+
+
+L["arccw.cvar.nohl2flash"] = "Toggle attachments modes through flashlight bind"

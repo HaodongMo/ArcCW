@@ -183,6 +183,7 @@ local CrosshairPanel = {
 
 local BindsPanel = {
     { type = "h", text = "#arccw.bindhelp" },
+    { type = "b", text = "#arccw.cvar.nohl2flash", var = "arccw_nohl2flash" },
     { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
     { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
     { type = "b", text = "#arccw.cvar.altsafety", var = "arccw_altsafety" },

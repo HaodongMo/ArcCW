@@ -1080,6 +1080,8 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     if atttbl.ToggleStats then
         attslot.ToggleNum = 1
     end
+    
+    attslot.ToggleLock = atttbl.ToggleLockDefault or false  
 
     if CLIENT then
         -- we are asking to attach something

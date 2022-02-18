@@ -35,6 +35,8 @@ att.NotForNPCs = false
 att.AddPrefix = ""
 att.AddSuffix = ""
 
+att.ToggleLockDefault = false -- if true then lock attachment from switching stats through bind (use on stocks/colored stuff) 
+
 att.ToggleStats = {
     -- {
     --     PrintName = "Red",

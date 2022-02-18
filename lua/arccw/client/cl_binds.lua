@@ -70,7 +70,7 @@ end
 local debounce = 0
 local function ToggleAtts(wep)
     if debounce > CurTime() then return end -- ugly hack for double trigger
-    debounce = CurTime() + 0.1
+    debounce = CurTime() + 0.15
     local sounds = {}
     for k, v in pairs(wep.Attachments) do
         local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
@@ -93,6 +93,14 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
     if !wep.ArcCW then return end
 
     local block = false
+
+    if GetConVar("arccw_nohl2flash"):GetBool() and bind == "impulse 100" then
+        ToggleAtts(wep)
+
+        if ply:FlashlightIsOn() then return false end -- if hl2 flahslight is on we will turn it off as expected
+        
+        return true -- we dont want hl2 flashlight
+     end
 
     local alt
     bind, alt = ArcCW_TranslateBindToEffect(bind)

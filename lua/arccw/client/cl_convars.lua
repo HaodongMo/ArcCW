@@ -133,6 +133,8 @@ ArcCW.ClientConVars = {
     ["arccw_altsafety"]               = { def = 0, usri = true },
     ["arccw_automaticreload"]         = { def = 0, usri = true },
 
+    ["arccw_nohl2flash"]              = { def = 0, usri = true },
+
     ["arccw_aimassist_cl"]            = { def = 0, usri = true },
 
     ["arccw_dev_benchgun"]            = { def = 0 },
