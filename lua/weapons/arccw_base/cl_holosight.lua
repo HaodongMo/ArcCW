@@ -289,10 +289,11 @@ function SWEP:FormThermalImaging(tex)
 
     cam.End3D()
 
-    if GetConVar("arccw_scopepp"):GetBool() then
-        -- DrawMotionBlur(0.45,1,1/45) -- i cant fucking understand why motionblur fucks render target
-        DrawBloom(0,0.3,5,5,3,0.5,1,1,1)
+    if GetConVar("arccw_thermalpp"):GetBool() then
         DrawSharpen(0.5,1.65)
+        DrawBloom(0,0.3,5,5,3,0.5,1,1,1)
+        DrawMotionBlur(0.45,1,1/45) -- upd i changed order and it fucking worked lmao     //////i cant fucking understand why motionblur fucks render target
+
     end
 
     render.PopRenderTarget()
