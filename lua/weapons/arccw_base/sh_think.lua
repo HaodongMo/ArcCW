@@ -369,6 +369,7 @@ function SWEP:InSprint()
     if !owner:KeyDown(IN_SPEED) then return false end
     if curspeed < Lerp(0.5, walkspeed, sprintspeed) then return false end
     if !owner:OnGround() then return false end
+    if owner:Crouching() then return false end
 
     return true
 end
