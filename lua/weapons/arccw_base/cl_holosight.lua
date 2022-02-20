@@ -82,10 +82,15 @@ timer.Create("ihategmod", 5, 0, function() -- i really dont know what the fuckin
 end)
 
 local pp_ca_base, pp_ca_r, pp_ca_g, pp_ca_b = Material("pp/arccw/ca_base"), Material("pp/arccw/ca_r"), Material("pp/arccw/ca_g"), Material("pp/arccw/ca_b")
+local pp_ca_r_thermal, pp_ca_g_thermal, pp_ca_b_thermal = Material("pp/arccw/ca_r_thermal"), Material("pp/arccw/ca_g_thermal"), Material("pp/arccw/ca_b_thermal")
 
 pp_ca_r:SetTexture("$basetexture", render.GetScreenEffectTexture())
 pp_ca_g:SetTexture("$basetexture", render.GetScreenEffectTexture())
 pp_ca_b:SetTexture("$basetexture", render.GetScreenEffectTexture())
+
+pp_ca_r_thermal:SetTexture("$basetexture", render.GetScreenEffectTexture())
+pp_ca_g_thermal:SetTexture("$basetexture", render.GetScreenEffectTexture())
+pp_ca_b_thermal:SetTexture("$basetexture", render.GetScreenEffectTexture())
 
 local greenColor = Color(0, 255, 0)  -- optimized +10000fps
 local whiteColor = Color(255, 255, 255)
@@ -106,7 +111,7 @@ end
 local function IsWHOT(ent)
     if !ent:IsValid() then return false end
     if (ent:IsWorld()) then return false end
-    if (ent.Health and (ent:Health() <= 0)) then return false end
+    -- if (ent.Health and (ent:Health() <= 0)) then return false end
     if ent:IsOnFire() then return true end
     if ent:IsPlayer() then
         if ent.ArcticMedShots_ActiveEffects and ent.ArcticMedShots_ActiveEffects["coldblooded"] then
@@ -119,11 +124,13 @@ local function IsWHOT(ent)
     if (ent:IsNPC()) then
         if ent.ArcCWCLHealth and ent.ArcCWCLHealth <= 0 then return false end
         if (ent.Health and (ent:Health() > 0)) then return true end
-    elseif (ent:IsRagdoll()) then
-        local Time = CurTime()
-        if !ent.ArcCW_ColdTime then ent.ArcCW_ColdTime = Time + coldtime end
-        return ent.ArcCW_ColdTime > Time
-    elseif (ent:IsVehicle()) then
+    end
+    if ent:IsRagdoll() then
+        -- if !ent.ArcCW_ColdTime then ent.ArcCW_ColdTime = CurTime() + 5 end -- can't make it work
+        -- return ent.ArcCW_ColdTime > CurTime()
+        return true
+    end
+    if (ent:IsVehicle()) then
         return ent:GetVelocity():Length() >= 100
     end
     return false
@@ -264,6 +271,22 @@ function SWEP:FormThermalImaging(tex)
                 ["$pp_colour_mulb"] = 0
             })
         end
+        
+        if GetConVar("arccw_thermalpp"):GetBool() and GetConVar("arccw_scopepp"):GetBool() then
+            -- chromatic abberation
+            
+            render.CopyRenderTargetToTexture(render.GetScreenEffectTexture())
+
+            render.SetMaterial( pp_ca_base )
+            render.DrawScreenQuad()
+            render.SetMaterial( pp_ca_r_thermal )
+            render.DrawScreenQuad()
+            render.SetMaterial( pp_ca_g_thermal )
+            render.DrawScreenQuad()
+            render.SetMaterial( pp_ca_b_thermal )
+            render.DrawScreenQuad()
+            -- pasted here cause otherwise either target colors will get fucked either pp either motion blur
+        end
 
         DrawColorModify({
             ["$pp_colour_addr"] = nvsc.r - 255,
@@ -274,7 +297,7 @@ function SWEP:FormThermalImaging(tex)
             -- ["$pp_colour_addb"] = 0,
             ["$pp_colour_brightness"] = asight.Brightness or 0.1,
             ["$pp_colour_contrast"] = asight.Contrast or 0.5,
-            ["$pp_colour_colour"] = 1,
+            ["$pp_colour_colour"] = asight.Colormult or 1,
             ["$pp_colour_mulr"] = 0,
             ["$pp_colour_mulg"] = 0,
             ["$pp_colour_mulb"] = 0
@@ -288,12 +311,13 @@ function SWEP:FormThermalImaging(tex)
     colormod:SetTexture("$fbtexture", render.GetScreenEffectTexture())
 
     cam.End3D()
-
+    
     if GetConVar("arccw_thermalpp"):GetBool() then
-        DrawSharpen(0.5,1.65)
-        DrawBloom(0,0.3,5,5,3,0.5,1,1,1)
-        DrawMotionBlur(0.45,1,1/45) -- upd i changed order and it fucking worked lmao     //////i cant fucking understand why motionblur fucks render target
+        if !render.SupportsPixelShaders_2_0() then return end
 
+        DrawSharpen(0.3,0.9)
+        DrawBloom(0,0.3,5,5,3,0.5,1,1,1)
+        DrawMotionBlur(0.7,1,1/(asight.FPSLock or 45)) -- upd i changed order and it fucking worked lmao     //////i cant fucking understand why motionblur fucks render target
     end
 
     render.PopRenderTarget()
@@ -482,7 +506,9 @@ function SWEP:FormRTScope()
 
     if ScrH() > ScrW() then rtsize = ScrW() end
 
-    rtmat = GetRenderTarget("arccw_rtmat", rtsize, rtsize, false)
+    local rtres = asight.ForceLowRes and ScrH()*0.6 or ScrH() -- we can emit low res lcd displays for scopes
+    
+    rtmat = GetRenderTarget("arccw_rtmat"..rtres, rtres, rtres, false)
 
     render.PushRenderTarget(rtmat, 0, 0, rtsize, rtsize)
 
