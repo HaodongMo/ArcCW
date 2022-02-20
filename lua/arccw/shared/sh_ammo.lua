@@ -34,58 +34,55 @@ function ArcCW:AddGrenadeAmmo()
     -- ConVar value is not guarenteed in multiplayer at Initialize
     -- Will cause inconsistent server/client ammo types if enabled
     --if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
-    for i, k in pairs(weapons.GetList()) do
-        local class = k.ClassName
-        local wpntbl = weapons.Get(class)
+        for i, k in pairs(weapons.GetList()) do
+            local class = k.ClassName
+            local wpntbl = weapons.Get(class)
 
-        if (wpntbl.Throwing or wpntbl.Disposable) and not wpntbl.Singleton and not wpntbl.DoNotEquipmentAmmo then
-            -- local ammoid = game.GetAmmoID(class)
-            -- if ammoid == -1 then
-            -- if ammo type does not exist, build it
-            game.AddAmmoType({
-                name = class,
-            })
+            if (wpntbl.Throwing or wpntbl.Disposable) and !wpntbl.Singleton and !wpntbl.DoNotEquipmentAmmo then
+                local ammoid = game.GetAmmoID(class)
 
-            print("ArcCW adding ammo type " .. class)
+                if ammoid == -1 then
+                    -- if ammo type does not exist, build it
+                    game.AddAmmoType({
+                        name = class,
+                    })
+                    print("ArcCW adding ammo type " .. class)
+                    if CLIENT then
+                        language.Add(class .. "_ammo", wpntbl.PrintName)
+                    end
+                end
 
-            if CLIENT then
-                language.Add(class .. "_ammo", wpntbl.PrintName)
+                k.Primary.Ammo = class
+                k.OldAmmo = class
             end
-
-            k.Primary.Ammo = class
-            k.OldAmmo = class
         end
-    end
     --end
 end
 
 hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", ArcCW.AddGrenadeAmmo)
 
 if SERVER then
-    hook.Add("OnEntityCreated", "ArcCW_AmmoReplacement", function(ent)
+
+    hook.Add( "OnEntityCreated", "ArcCW_AmmoReplacement", function(ent)
         if GetConVar("arccw_ammo_replace"):GetBool() and ArcCW.AmmoEntToArcCW[ent:GetClass()] then
             timer.Simple(0, function()
-                if not IsValid(ent) then return end
+                if !IsValid(ent) then return end
                 local ammoent = ents.Create(ArcCW.AmmoEntToArcCW[ent:GetClass()])
                 ammoent:SetPos(ent:GetPos())
                 ammoent:SetAngles(ent:GetAngles())
                 ammoent:Spawn()
                 SafeRemoveEntityDelayed(ent, 0) -- remove next tick
-
                 if engine.ActiveGamemode() == "terrortown" then
                     -- Setting owner prevents pickup
                     if IsValid(ent:GetOwner()) then
                         ammoent:SetOwner(ent:GetOwner())
-
                         timer.Simple(2, function()
                             if IsValid(ammoent) then ammoent:SetOwner(nil) end
                         end)
                         ammoent.AmmoCount = ent.AmmoAmount
                     end
-
                     -- Dropped ammo may have less rounds than usual
                     ammoent.AmmoCount = ent.AmmoAmount or ammoent.AmmoCount
-
                     if ent:GetClass() == "item_ammo_pistol_ttt" and ent.AmmoCount == 20 then
                         -- Extremely ugly hack: TTT pistol ammo only gives 20 rounds but we want it to be 30
                         -- Because most SMGs use pistol ammo (unlike vanilla TTT) and it runs out quickly
