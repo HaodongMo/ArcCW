@@ -138,6 +138,8 @@ function SWEP:PrimaryAttack()
     -- Try malfunctioning
     local mal = self:DoMalfunction()
     if mal == true then
+        local anim = "fire_jammed"
+        self:PlayAnimation(anim, 1, true, 0, true)
         return
     end
 
