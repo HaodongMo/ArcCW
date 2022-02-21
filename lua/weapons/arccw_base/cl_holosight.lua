@@ -191,7 +191,7 @@ function SWEP:FormThermalImaging(tex)
 
     for _, v in pairs(tab) do
 
-        if !IsWHOT(v) then continue end
+        if !IsWHOT(v, self) then continue end
 
         local Br = 0.9
         if v.ArcCW_ColdTime then
