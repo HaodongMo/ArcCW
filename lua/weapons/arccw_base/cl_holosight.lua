@@ -108,32 +108,40 @@ end
 
 
 -- shamelessly robbed from Jackarunda
-local function IsWHOT(ent)
+local function IsWHOT(ent, wep)
+    local isHot = false;
+    
     if !ent:IsValid() then return false end
     if (ent:IsWorld()) then return false end
     -- if (ent.Health and (ent:Health() <= 0)) then return false end
-    if ent:IsOnFire() then return true end
+    if ent:IsOnFire() then isHot = true end
     if ent:IsPlayer() then
-        if ent.ArcticMedShots_ActiveEffects and ent.ArcticMedShots_ActiveEffects["coldblooded"] then
-            return false
+        if ent.ArcticMedShots_ActiveEffects and !ent.ArcticMedShots_ActiveEffects["coldblooded"] then
+            isHot = true
         end
-
-        return true
     end
-    if ent:IsNextBot() then return true end
+    if ent:IsNextBot() then isHot = true end
     if (ent:IsNPC()) then
-        if ent.ArcCWCLHealth and ent.ArcCWCLHealth <= 0 then return false end
-        if (ent.Health and (ent:Health() > 0)) then return true end
+        if ent.ArcCWCLHealth and ent.ArcCWCLHealth > 0 then isHot = true end
+        if (ent.Health and (ent:Health() > 0)) then isHot = true end
     end
     if ent:IsRagdoll() then
         -- if !ent.ArcCW_ColdTime then ent.ArcCW_ColdTime = CurTime() + 5 end -- can't make it work
         -- return ent.ArcCW_ColdTime > CurTime()
-        return true
+        isHot = true
     end
     if (ent:IsVehicle()) then
-        return ent:GetVelocity():Length() >= 100
+        isHot = ent:GetVelocity():Length() >= 100
     end
-    return false
+    
+    local data = {
+        isHot = isHot,
+        ent = ent
+    }
+    
+    wep:GetBuff_Hook("Hook_IsWHOT", data)
+    
+    return data.isHot
 end
 
 function SWEP:FormThermalImaging(tex)
