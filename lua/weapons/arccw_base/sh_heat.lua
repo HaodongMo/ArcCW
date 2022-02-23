@@ -143,6 +143,8 @@ function SWEP:DoMalfunction()
 
     local ret = self:GetBuff_Hook("Hook_Malfunction", count, true)
     if ret != nil then return ret end
+    
+    if self:Clip1() <= 1 then return false end
 
     --print(mean, var, count, self.NextMalfunction)
     if count >= self.NextMalfunction + mean then
@@ -186,10 +188,11 @@ function SWEP:MalfunctionClear()
     local anim = self:GetMalfunctionAnimation()
     if anim then
         self:PlayAnimation(anim, self:GetBuff_Mult("Mult_MalfunctionFixTime"), true, 0, true)
-        local wait = self:GetAnimKeyTime(anim)
+        local wait = self:GetAnimKeyTime(anim) - 0.01
         self:SetTimer(wait,
         function()
             self:SetMalfunctionJam(false)
+            self:PlayIdleAnimation(true)
         end)
         return true
     else
