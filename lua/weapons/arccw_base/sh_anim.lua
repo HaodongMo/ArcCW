@@ -13,12 +13,16 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_sight"
     end
 
-    if self:GetNWState() == ArcCW.STATE_SPRINT and self.Animations[anim .. "_sprint"] then
+    if self:GetNWState() == ArcCW.STATE_SPRINT and self.Animations[anim .. "_sprint"] and not self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint) then
         anim = anim .. "_sprint"
     end
 
     if self:InBipod() and self.Animations[anim .. "_bipod"] then
         anim = anim .. "_bipod"
+    end
+
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE and self.Animations[anim .. "_inspect"] then
+        anim = anim .. "_inspect"
     end
 
     if self:Clip1() == 0 and self.Animations[anim .. "_empty"] then
@@ -212,24 +216,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
 end
 
 function SWEP:PlayIdleAnimation(pred)
-    local ianim
-    local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
-    if self:GetState() == ArcCW.STATE_SPRINT and !s then
-        ianim = self:SelectAnimation("idle_sprint") or ianim
-    end
-
-    if self:InBipod() then
-        ianim = self:SelectAnimation("idle_bipod") or ianim
-    end
-
-    if (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
-        ianim = self:SelectAnimation("idle_sight") or self:SelectAnimation("idle_sights") or ianim
-    end
-
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
-        ianim = self:SelectAnimation("idle_inspect") or ianim
-    end
-
+    local ianim = self:SelectAnimation("idle")
     -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
     if self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL()
             and self.Animations.idle_ubgl_empty and self:Clip2() <= 0 then

@@ -189,11 +189,11 @@ local function shotstokill(mult, dmgmin, dmgmax, mran, sran)
         elseif dmgmin < dmgmax then
             -- damage decays over range
             local frac = 1 - math.Clamp((req_damage - dmgmin) / (dmgmax - dmgmin), 0, 1)
-            result[i] = mran + frac * sran
+            result[i] = mran + frac * (sran - mran)
         else
             -- damage increases over range
-            local frac = 1 - math.Clamp((req_damage - dmgmax) / (dmgmin - dmgmax), 0, 1)
-            result[i] = mran + frac * sran
+            local frac = math.Clamp((req_damage - dmgmax) / (dmgmin - dmgmax), 0, 1)
+            result[i] = mran + frac * (sran - mran)
         end
     end
     return result

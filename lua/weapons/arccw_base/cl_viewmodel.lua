@@ -77,7 +77,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     local VMPosOffset_Lerp, VMAngOffset_Lerp = self.VMPosOffset_Lerp, self.VMAngOffset_Lerp
     velocity = math.min(velocity:Length(), 400)
 
-    if self:GetState() == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint") then
+    if self:GetState() == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint") and not self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint) then
         velocity = 0
     else
         velocity = velocity * Lerp(self:GetSprintDelta(), 1, 1.25)
@@ -399,14 +399,15 @@ function SWEP:GetViewModelPosition(pos, ang)
         end
     end
 
-    local deg = self:BarrelHitWall() * sgtd
+    -- still busts shit
+    --[[local deg = self:BarrelHitWall() * sgtd
     if deg > 0 and GetConVar("arccw_vm_nearwall"):GetBool() then
         target.pos = LerpVector(deg, target.pos, hpos)
         target.ang = LerpAngle(deg, target.ang, hang)
         target.down = 2 * sgtd
         target.sway = 2
         target.bob = 2
-    end
+    end]]
 
     if !isangle(target.ang) then
         target.ang = Angle(target.ang)

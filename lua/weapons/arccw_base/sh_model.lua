@@ -799,15 +799,16 @@ function SWEP:DrawCustomModel(wm,origin,angle)
 
             if !boneindex then continue end
 
-            -- bpos, bang = vm:GetBonePosition(boneindex)
-
-            -- if bpos == vm:GetPos() then
+            if wm then
+                bpos, bang = vm:GetBonePosition(boneindex)
+            else
                 local bonemat = vm:GetBoneMatrix(boneindex)
+
                 if bonemat then
                     bpos = bonemat:GetTranslation()
                     bang = bonemat:GetAngles()
                 end
-            -- end
+            end
 
             if custompos and (!self.MirrorVMWM or (self.MirrorVMWM and k.Model:GetModel() == self.ViewModel) ) then
                 bpos = origin
