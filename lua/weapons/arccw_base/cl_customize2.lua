@@ -1831,7 +1831,7 @@ function SWEP:CreateCustomize2HUD()
         info.Paint = function(self2, w, h)
             local infos = self.Infos_Trivia or {}
 
-            local year = self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year
+            local year = try_translate(self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year)
 
             if year then
                 if isnumber(year) and year < 0 then
