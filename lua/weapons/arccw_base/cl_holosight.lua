@@ -107,32 +107,28 @@ local function DrawTexturedRectRotatedPoint( x, y, w, h, rot, x0, y0 ) -- stolen
 end
 
 
--- shamelessly robbed from Jackarunda
 local function IsWHOT(ent)
-    if !ent:IsValid() then return false end
-    if (ent:IsWorld()) then return false end
-    -- if (ent.Health and (ent:Health() <= 0)) then return false end
-    if ent:IsOnFire() then return true end
-    if ent:IsPlayer() then
-        if ent.ArcticMedShots_ActiveEffects and ent.ArcticMedShots_ActiveEffects["coldblooded"] then
-            return false
-        end
+    if !ent:IsValid() or ent:IsWorld() then return false end
 
+    if ent:IsPlayer() then -- balling
+        if ent.ArcticMedShots_ActiveEffects and ent.ArcticMedShots_ActiveEffects["coldblooded"] or ent:Health() <= 0 then return false end -- arc stims
         return true
     end
-    if ent:IsNextBot() then return true end
-    if (ent:IsNPC()) then
-        if ent.ArcCWCLHealth and ent.ArcCWCLHealth <= 0 then return false end
-        if (ent.Health and (ent:Health() > 0)) then return true end
-    end
-    if ent:IsRagdoll() then
-        -- if !ent.ArcCW_ColdTime then ent.ArcCW_ColdTime = CurTime() + 5 end -- can't make it work
-        -- return ent.ArcCW_ColdTime > CurTime()
+
+    if ent:IsNPC() or ent:IsNextBot() then -- npcs
+        if ent.ArcCWCLHealth and ent.ArcCWCLHealth <= 0 or ent:Health() <= 0 then return false end
         return true
     end
-    if (ent:IsVehicle()) then
-        return ent:GetVelocity():Length() >= 100
+
+    if ent:IsRagdoll() then -- ragdolling
+        if !ent.ArcCW_ColdTime then ent.ArcCW_ColdTime = CurTime() + coldtime end
+        return ent.ArcCW_ColdTime > CurTime()
     end
+
+    if ent:IsVehicle() or ent:IsOnFire() or ent.ArcCW_Hot or ent:IsScripted() and !ent:GetOwner():IsValid() then -- vroom vroom + :fire: + ents but not guns (guns on ground will be fine)
+        return true
+    end
+
     return false
 end
 
@@ -185,30 +181,13 @@ function SWEP:FormThermalImaging(tex)
 
         if !IsWHOT(v) then continue end
 
-        local Br = 0.9
-        if v.ArcCW_ColdTime then
-            Br = (0.75 * v.ArcCW_ColdTime - CurTime()) / coldtime
-        end
+        if !asight.ThermalScopeSimple then
+            render.SetBlend(0.5)
+            render.SuppressEngineLighting(true)
 
-        if v:IsVehicle() then
-            Br = math.Clamp(v:GetVelocity():Length() / 400, 0, 1)
-        end
-
-        if Br > 0 then
-
-            if !asight.ThermalScopeSimple then
-                render.SetBlend(0.5)
-                render.SuppressEngineLighting(true)
-
-                Br = Br * 250
-
-                -- render.MaterialOverride(thermal)
-
-                render.SetColorModulation(Br, Br, Br)
-            end
+            render.SetColorModulation(250, 250, 250)
 
             v:DrawModel()
-
         end
     end
 

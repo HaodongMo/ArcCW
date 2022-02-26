@@ -325,7 +325,7 @@ function SWEP:CreateCustomize2HUD()
     local smallgap = ss * 4
 
     local top_zone = ss * 24
-    local bottom_zone = ss * 32
+    local bottom_zone = ss * 40
 
     local cornerrad = ss * 4
 
@@ -1220,7 +1220,7 @@ function SWEP:CreateCustomize2HUD()
             local d = 0.5
             local diff = CurTime() - (ArcCW.Inv_LastPickXBlock or 0 + d)
             if diff > 0 then
-                col_fg_pick = Color(255, 255 * diff / d, 255 * diff / d)
+                col_fg_pick = Color(255, 255 * diff / d, 255 * diff / d, 255*ArcCW.Inv_Fade)
             end
 
             if pickx_amount == 0 then return end
