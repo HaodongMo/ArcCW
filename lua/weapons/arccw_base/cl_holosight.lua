@@ -125,7 +125,7 @@ local function IsWHOT(ent)
         return ent.ArcCW_ColdTime > CurTime()
     end
 
-    if ent:IsVehicle() or ent:IsOnFire() or ent:IsScripted() and !ent:GetOwner():IsValid() then -- vroom vroom + :fire: + ents but not guns (guns on ground will be fine)
+    if ent:IsVehicle() or ent:IsOnFire() or ent.ArcCW_Hot or ent:IsScripted() and !ent:GetOwner():IsValid() then -- vroom vroom + :fire: + ents but not guns (guns on ground will be fine)
         return true
     end
 
