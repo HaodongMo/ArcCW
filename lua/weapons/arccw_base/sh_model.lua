@@ -87,7 +87,7 @@ function SWEP:AddElement(elementname, wm)
         scale:Scale(i.Scale or Vector(1, 1, 1))
 
         model:SetNoDraw(ArcCW.NoDraw)
-        model:DrawShadow(true)
+        model:DrawShadow(false)
         model.Weapon = self
         model:SetSkin(i.ModelSkin or 0)
         --model:SetBodyGroups(i.ModelBodygroups or "")
@@ -262,7 +262,7 @@ function SWEP:SetupModel(wm)
         if !IsValid(model) then return end
 
         model:SetNoDraw(ArcCW.NoDraw)
-        model:DrawShadow(true)
+        model:DrawShadow(false)
         model:SetPredictable(false)
         model.Weapon = self
         model:SetSkin(self.DefaultWMSkin or 0)
@@ -394,7 +394,7 @@ function SWEP:SetupModel(wm)
         scale = scale * vscale
 
         model:SetNoDraw(ArcCW.NoDraw)
-        model:DrawShadow(true)
+        model:DrawShadow(false)
         model:SetPredictable(false)
         model.Weapon = self
         model:SetSkin(self:GetBuff_Stat("ModelSkin", i) or 0)
@@ -455,7 +455,7 @@ function SWEP:SetupModel(wm)
 
             if IsValid(charmmodel) then
                 charmmodel:SetNoDraw(ArcCW.NoDraw)
-                charmmodel:DrawShadow(true)
+                charmmodel:DrawShadow(false)
                 charmmodel:SetupBones()
                 ScaleModel(charmmodel, charmscale)
                 charmmodel:SetSkin(atttbl.CharmSkin or 0)
@@ -501,7 +501,7 @@ function SWEP:SetupModel(wm)
 
             local hspelement = {}
             hspmodel:SetNoDraw(true)
-            hspmodel:DrawShadow(true)
+            hspmodel:DrawShadow(false)
             hspmodel:SetPredictable(false)
             hspmodel.Weapon = self
 
@@ -555,7 +555,7 @@ function SWEP:SetupModel(wm)
 
             local hspelement = {}
             hspmodel:SetNoDraw(true)
-            hspmodel:DrawShadow(true)
+            hspmodel:DrawShadow(false)
             hspmodel:SetPredictable(false)
             ScaleModel(hspmodel, scale)
             hspmodel.Weapon = self
@@ -596,7 +596,7 @@ function SWEP:SetupModel(wm)
 
         local hspelement = {}
         hspmodel:SetNoDraw(true)
-        hspmodel:DrawShadow(true)
+        hspmodel:DrawShadow(false)
         hspmodel:SetPredictable(false)
         hspmodel.Weapon = self
 
@@ -696,6 +696,8 @@ function SWEP:DrawCustomModel(wm,origin,angle)
     local vscale = 1
 
     if wm then
+        if !always and disttoeye >= visibility*2 then return end
+
         if !self.WM then
             self:SetupModel(wm)
         end
