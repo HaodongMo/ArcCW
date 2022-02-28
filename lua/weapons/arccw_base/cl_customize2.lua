@@ -1831,7 +1831,7 @@ function SWEP:CreateCustomize2HUD()
         info.Paint = function(self2, w, h)
             local infos = self.Infos_Trivia or {}
 
-            local year = self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year
+            local year = try_translate(self:GetBuff_Override("Override_Trivia_Year") or self.Trivia_Year)
 
             if year then
                 if isnumber(year) and year < 0 then
@@ -1848,7 +1848,7 @@ function SWEP:CreateCustomize2HUD()
                 end
             end
 
-            local mech = self:GetBuff_Override("Override_Trivia_Mechanism") or self.Trivia_Mechanism
+            local mech = try_translate(self:GetBuff_Override("Override_Trivia_Mechanism") or self.Trivia_Mechanism)
 
             if mech then
                 table.insert(infos, {
@@ -1857,7 +1857,7 @@ function SWEP:CreateCustomize2HUD()
                 })
             end
 
-            local country = self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country
+            local country = try_translate(self:GetBuff_Override("Override_Trivia_Country") or self.Trivia_Country)
 
             if country then
                 table.insert(infos, {
@@ -1866,7 +1866,7 @@ function SWEP:CreateCustomize2HUD()
                 })
             end
 
-            local manufacturer = self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer
+            local manufacturer = try_translate(self:GetBuff_Override("Override_Trivia_Manufacturer") or self.Trivia_Manufacturer)
 
             if manufacturer then
                 table.insert(infos, {
@@ -1875,7 +1875,7 @@ function SWEP:CreateCustomize2HUD()
                 })
             end
 
-            local calibre = self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre
+            local calibre = try_translate(self:GetBuff_Override("Override_Trivia_Calibre") or self.Trivia_Calibre)
 
             if calibre then
                 table.insert(infos, {
