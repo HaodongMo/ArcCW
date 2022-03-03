@@ -34,3 +34,5 @@ util.AddNetworkString("arccw_networksound")
 util.AddNetworkString("arccw_togglenum")
 
 util.AddNetworkString("arccw_networktpanim")
+
+util.AddNetworkString("arccw_randomizemyatts")

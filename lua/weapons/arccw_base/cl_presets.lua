@@ -16,6 +16,13 @@ function SWEP:GetPresets()
 
     local files = file.Find(path, "DATA")
 
+    files[0] = "Default9999"
+    files[#files+1] = "Random9999"
+
+    if !file.Exists(ArcCW.PresetPath .. "default.txt", "DATA") then
+        file.Write(ArcCW.PresetPath .. "default.txt", "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n") -- :trollscream:
+    end 
+
     return files
 end
 
@@ -32,9 +39,13 @@ function SWEP:LoadPreset(filename)
 
     filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. filename .. ".txt"
 
-    if !file.Exists(filename, "DATA") then return end
+    local defpreset = string.GetFileFromFilename(filename) == "Default.txt"
+    local randpreset = string.GetFileFromFilename(filename) == "Random.txt"
 
-    local f = file.Open(filename, "r", "DATA")
+    if !file.Exists(filename, "DATA") and !defpreset and !randpreset then return end
+    
+    local f = (defpreset or randpreset) and file.Open(ArcCW.PresetPath .. "default.txt", "r", "DATA") or file.Open(filename, "r", "DATA")
+
     if !f then return end
 
     local presetTbl = {}
@@ -44,6 +55,7 @@ function SWEP:LoadPreset(filename)
         local line = f:ReadLine()
         if !line then continue end
         presetTbl[i] = string.Trim(line, "\n")
+
         -- Do not attempt to recreate a preset if it's not possible
         --if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end
     end
@@ -87,6 +99,11 @@ function SWEP:LoadPreset(filename)
         if mag != -1 then
             self.SightMagnifications[i] = mag
         end
+    end
+
+    if randpreset then
+        net.Start("arccw_randomizemyatts")
+        net.SendToServer()
     end
 
     self:SendAllDetails()

@@ -486,4 +486,48 @@ function ArcCW:PlayerSendAttInv(ply)
     net.Send(ply)
 end
 
+net.Receive("arccw_randomizemyatts", function(len, ply)
+    local wpn = ply:GetActiveWeapon()
+    if !wpn.ArcCW then return end
+
+    local pick = wpn:GetPickX()
+    
+    local chance = 25 * GetConVar("arccw_mult_attchance"):GetFloat()
+    local chancestep = 0
+    
+    if pick > 0 then
+        chancestep = chance / pick
+    else
+        pick = 1000
+    end
+    
+    local n = 0
+    
+    for i, slot in pairs(wpn.Attachments) do
+        if n > pick then continue end
+        if !wpn:CheckFlags(slot.ExcludeFlags, slot.RequireFlags) then continue end
+        if math.Rand(0, 100) > (chance * (slot.RandomChance or 1)) then continue end
+    
+        if slot.Hidden then continue end
+    
+        local s = i
+    
+        if slot.MergeSlots then
+            local ss = {i}
+            table.Add(ss, slot.MergeSlots)
+
+            s = table.Random(ss) or i
+        end
+        if !wpn.Attachments[s] then s = i end
+
+        chance = chance - chancestep
+
+        wpn:AssignRandomAttToSlot(wpn.Attachments[s])
+
+        n = n + 1
+    end
+
+    ArcCW:PlayerSendAttInv(ply)
+end)
+
 end
