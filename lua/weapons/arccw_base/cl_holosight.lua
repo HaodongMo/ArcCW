@@ -533,7 +533,7 @@ hook.Add("RenderScene", "ArcCW", function()
     local wpn = LocalPlayer():GetActiveWeapon()
 
     if !wpn.ArcCW then return end
-    if wpn:GetActiveSights().Thermal then
+    if wpn:GetActiveSights() and wpn:GetActiveSights().Thermal then
         if (wpn:GetActiveSights().fpsdelay or 0)  > CurTime() then return end
     end
     wpn:FormRTScope()
