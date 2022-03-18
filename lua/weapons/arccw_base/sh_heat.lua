@@ -101,9 +101,11 @@ function SWEP:GetMalfunctionAnimation()
     return anim
 end
 
-function SWEP:DoMalfunction()
+function SWEP:DoMalfunction(post)
 
     if !self:MalfunctionEnabled() then return false end
+    local shouldpost = self:GetBuff_Override("Override_MalfunctionPostFire", self.MalfunctionPostFire)
+    if post != shouldpost then return false end
 
     -- Auto calculated malfunction mean
     if self.MalfunctionMean == nil then

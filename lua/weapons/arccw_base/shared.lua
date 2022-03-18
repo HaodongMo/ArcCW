@@ -337,6 +337,7 @@ SWEP.HeatOverflow = nil -- if true, heat is allowed to exceed capacity (this onl
 SWEP.Malfunction = false
 SWEP.MalfunctionJam = true -- After a malfunction happens, the gun will dryfire until reload is pressed. If unset, instead plays animation right after.
 SWEP.MalfunctionTakeRound = true -- When malfunctioning, a bullet is consumed.
+SWEP.MalfunctionPostFire = false -- If set, jam will occur after firing the round successfully.
 SWEP.MalfunctionWait = 0.5 -- The amount of time to wait before playing malfunction animation (or can reload)
 SWEP.MalfunctionMean = nil -- The mean number of shots between malfunctions, will be autocalculated if nil
 SWEP.MalfunctionVariance = 0.25 -- The fraction of mean for variance. e.g. 0.2 means 20% variance
