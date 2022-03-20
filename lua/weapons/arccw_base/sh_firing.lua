@@ -136,7 +136,7 @@ function SWEP:PrimaryAttack()
     end
 
     -- Try malfunctioning
-    local mal = self:DoMalfunction()
+    local mal = self:DoMalfunction(false)
     if mal == true then
         local anim = "fire_jammed"
         self:PlayAnimation(anim, 1, true, 0, true)
@@ -471,6 +471,12 @@ function SWEP:PrimaryAttack()
     self:ApplyAttachmentShootDamage()
 
     self:AddHeat(1)
+
+    mal = self:DoMalfunction(true)
+    if mal == true then
+        local anim = "fire_jammed"
+        self:PlayAnimation(anim, 1, true, 0, true)
+    end
 
     self:GetBuff_Hook("Hook_PostFireBullets")
 

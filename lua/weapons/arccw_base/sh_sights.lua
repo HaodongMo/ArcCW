@@ -246,7 +246,7 @@ function SWEP:SetupActiveSights()
                     end
                 end
 
-                offset = vmelemod or attslot.Offset.vpos
+                offset = vmelemod or attslot.Offset.vpos or Vector()
 
                 if slidemod or attslot.SlideAmount then
                     offset = LerpVector(delta, (slidemod or attslot.SlideAmount).vmin, (slidemod or attslot.SlideAmount).vmax)

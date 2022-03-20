@@ -296,7 +296,13 @@ function SWEP:FormThermalImaging(tex)
 
         DrawSharpen(0.3,0.9)
         DrawBloom(0,0.3,5,5,3,0.5,1,1,1)
-        DrawMotionBlur(0.7,1,1/(asight.FPSLock or 45)) -- upd i changed order and it fucking worked lmao     //////i cant fucking understand why motionblur fucks render target
+        -- DrawMotionBlur(0.7,1,1/(asight.FPSLock or 45)) -- upd i changed order and it fucking worked lmao     //////i cant fucking understand why motionblur fucks render target
+        
+        -- now it not work w t f
+        -- i made an integrated render delay 
+        -- it way better for optimization
+
+        asight.fpsdelay = CurTime() + 1/(asight.FPSLock or 45)
     end
 
     render.PopRenderTarget()
@@ -519,13 +525,17 @@ function SWEP:FormRTScope()
     end
 end
 
+-- local fpsdelay = CurTime()
+
 hook.Add("RenderScene", "ArcCW", function()
     if GetConVar("arccw_cheapscopes"):GetBool() then return end
 
     local wpn = LocalPlayer():GetActiveWeapon()
 
     if !wpn.ArcCW then return end
-
+    if wpn:GetActiveSights() and wpn:GetActiveSights().Thermal then
+        if (wpn:GetActiveSights().fpsdelay or 0)  > CurTime() then return end
+    end
     wpn:FormRTScope()
 end)
 
