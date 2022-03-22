@@ -279,3 +279,146 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
     end
 end
+
+function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
+    local wep = phys and bullet.Weapon or bullet
+    local hitpos, hitnormal = tr.HitPos, tr.HitNormal
+    local trent = tr.Entity
+
+    local dist = (phys and bullet.Travelled or (hitpos - tr.StartPos):Length() ) * ArcCW.HUToM
+    local pen  = phys and bullet.Penleft or wep:GetBuff("Penetration")
+
+    if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
+        debugoverlay.Cross(hitpos, 5, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
+    end
+
+    local randfactor = IsValid(wep) and wep:GetBuff("DamageRand") or 0
+    local mul = 1
+    if randfactor > 0 then
+        mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
+    end
+
+    local delta = phys and math.Clamp(bullet.Travelled / (bullet.Range / ArcCW.HUToM), 0, 1) or wep:GetRangeFraction(dist)
+    local calc_damage = (phys and Lerp(delta, bullet.DamageMax, bullet.DamageMin) or wep:GetDamage(dist, true)) * mul
+    local dmgtyp = phys and bullet.DamageType or wep:GetBuff_Override("Override_DamageType", wep.DamageType)
+
+    local hit   = {}
+    hit.att     = att
+    hit.tr      = tr
+    hit.dmg     = dmg
+    hit.range   = dist
+    hit.damage  = calc_damage
+    hit.dmgtype = dmgtyp
+    hit.penleft = pen
+
+    if IsValid(wep) then
+        hit = wep:GetBuff_Hook("Hook_BulletHit", hit)
+
+        if !hit then return end
+    end
+
+    if phys and bullet.Damaged[tr.Entity:EntIndex()] then
+        dmg:SetDamage(0)
+    else
+        dmg:SetDamageType(hit.dmgtype)
+        dmg:SetDamage(hit.damage)
+    end
+
+    if dmgtable then
+        local hg = tr.HitGroup
+        local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
+        if dmgtable[hg] then
+            dmg:ScaleDamage(dmgtable[hg])
+
+            -- cancelling gmod's stupid default values (but only if we have a multiplier)
+            if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
+        end
+    end
+
+    local effect = phys and bullet.ImpactEffect or wep:GetBuff_Override("Override_ImpactEffect", wep.ImpactEffect)
+    local decal  = phys and bullet.ImpactDecal or wep:GetBuff_Override("Override_ImpactDecal", wep.ImpactDecal)
+
+    -- Do our handling of damage types, if not ignored by the gun or some attachment
+    if !wep:GetBuff_Override("Override_DamageTypeHandled", wep.DamageTypeHandled) then
+        local _, maxrng = wep:GetMinMaxRange()
+        -- ignite target
+        if dmg:IsDamageType(DMG_BURN) and hit.range <= maxrng then
+            dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
+
+            effect = "arccw_incendiaryround"
+            decal  = "FadingScorch"
+
+            if SERVER then
+                if vFireInstalled then
+                    CreateVFire(trent, hitpos, hitnormal, hit.damage * 0.02)
+                else
+                    trent:Ignite(1, 0)
+                end
+            end
+        end
+        -- explode target
+        if dmg:IsDamageType(DMG_BLAST) then
+            if dmg:GetDamage() >= 200 then
+                effect = "Explosion"
+                decal  = "Scorch"
+            else
+                effect = "arccw_incendiaryround"
+                decal  = "FadingScorch"
+            end
+            dmg:ScaleDamage(0.5) -- half applied as explosion and half done to hit target
+            util.BlastDamageInfo(dmg, tr.HitPos, math.Clamp(dmg:GetDamage(), 48, 256))
+            dmg:SetDamageType(dmg:GetDamageType() - DMG_BLAST)
+        end
+        -- damage helicopters
+        if dmg:IsDamageType(DMG_BULLET) and !dmg:IsDamageType(DMG_AIRBOAT)
+                and IsValid(hit.tr.Entity) and hit.tr.Entity:GetClass() == "npc_helicopter" then
+            dmg:SetDamageType(dmg:GetDamageType() + DMG_AIRBOAT)
+            dmg:ScaleDamage(0.1) -- coostimizable?
+        elseif dmg:GetDamageType() != DMG_BLAST and IsValid(hit.tr.Entity) and hit.tr.Entity:GetClass() == "npc_combinegunship" then
+            dmg:SetDamageType(DMG_BLAST)
+            dmg:ScaleDamage(0.05)
+            -- there is a damage threshold of 50 for damaging gunships
+            if dmg:GetDamage() < 50 and dmg:GetDamage() / 200 >= math.random() then
+                dmg:SetDamage(50)
+            end
+        end
+
+        -- pure DMG_BUCKSHOT do not create blood decals, somehow
+        if dmg:GetDamageType() == DMG_BUCKSHOT then
+            dmg:SetDamageType(dmg:GetDamageType() + DMG_BULLET)
+        end
+    end
+
+    if SERVER then wep:TryBustDoor(trent, dmg) end
+
+    -- INCONSISTENCY: For physbullet, the entire bullet is copied; hitscan bullets reset some attributes in SWEP:DoPenetration (most notably damage)
+    -- For now, we just reset some changes as a temporary workaround
+    if phys then
+        bullet.Damage = calc_damage
+        bullet.DamageType = dmgtyp
+        ArcCW:DoPenetration(tr, hit.damage, bullet, bullet.Penleft, true, bullet.Damaged)
+    else
+        wep:DoPenetration(tr, hit.penleft, { [trent:EntIndex()] = true })
+    end
+
+    if effect then
+        local ed = EffectData()
+        ed:SetOrigin(hitpos)
+        ed:SetNormal(hitnormal)
+        util.Effect(effect, ed)
+    end
+
+    if decal then
+        util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), wep:GetOwner())
+    end
+
+    if (CLIENT or game.SinglePlayer()) and (!phys or SERVER) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
+        local str = string.format("%ddmg/%dm(%d%%)", math.floor(dmg:GetDamage()), dist, math.Round((1 - delta) * 100))
+        debugoverlay.Text(hitpos, str, 10)
+        print(str)
+    end
+
+    if IsValid(wep) then
+        wep:GetBuff_Hook("Hook_PostBulletHit", hit)
+    end
+end

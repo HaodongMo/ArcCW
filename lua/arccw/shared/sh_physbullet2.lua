@@ -323,10 +323,14 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                         Damage = 0,
                         IgnoreEntity = bullet.Attacker,
                         Callback = function(catt, ctr, cdmg)
+                            ArcCW:BulletCallback(catt, ctr, cdmg, bullet, true)
+                        end
+                        --[[]
+                        Callback = function(catt, ctr, cdmg)
                             local hit   = {}
                             hit.att     = catt
                             hit.tr      = ctr
-                            hit.dmg     = cdmg
+                            hit.dmg     = cdmg -- what is the point of this variable?
                             hit.range   = bullet.Travelled
                             hit.damage  = dmg
                             hit.dmgtype = bullet.DamageType
@@ -387,6 +391,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
 
                             ArcCW:DoPenetration(ctr, dmg, bullet, bullet.Penleft, true, bullet.Damaged)
                         end
+                        ]]
                     }, true)
                 end
                 bullet.Damaged[eid] = true

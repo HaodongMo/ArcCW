@@ -225,6 +225,10 @@ function SWEP:PrimaryAttack()
     bullet.Tracer     = tracernum or 0
     bullet.TracerName = tracer
     bullet.Weapon     = self
+    bullet.Callback = function(att, tr, dmg)
+        ArcCW:BulletCallback(att, tr, dmg, self)
+    end
+    --[[]
     bullet.Callback   = function(att, tr, dmg)
         local hitpos, hitnormal = tr.HitPos, tr.HitNormal
         local trent = tr.Entity
@@ -235,15 +239,6 @@ function SWEP:PrimaryAttack()
         if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
             debugoverlay.Cross(hitpos, 5, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
         end
-
-        --[[if !game.SinglePlayer() and CLIENT and !(tracernum == 0 or clip % tracernum != 0) then
-            local fx = EffectData()
-            fx:SetStart(self:GetTracerOrigin())
-            fx:SetOrigin(tr.HitPos)
-            fx:SetScale(5000)
-            fx:SetEntity(self)
-            util.Effect(bullet.TracerName or "tracer", fx)
-        end]]
 
         local randfactor = self:GetBuff("DamageRand")
         local mul = 1
@@ -354,6 +349,7 @@ function SWEP:PrimaryAttack()
             debugoverlay.Text(hitpos, str, 5)
         end
     end
+    ]]
 
     local shootent = self:GetBuff("ShootEntity", true) --self:GetBuff_Override("Override_ShootEntity", self.ShootEntity)
     local shpatt   = self:GetBuff_Override("Override_ShotgunSpreadPattern", self.ShotgunSpreadPattern)
