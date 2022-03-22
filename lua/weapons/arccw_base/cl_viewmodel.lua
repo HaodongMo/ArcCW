@@ -77,7 +77,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     local VMPosOffset_Lerp, VMAngOffset_Lerp = self.VMPosOffset_Lerp, self.VMAngOffset_Lerp
     velocity = math.min(velocity:Length(), 400)
 
-    if self:GetState() == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint") and not self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint) then
+    if self:GetState() == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint") and not self:GetReloading() and not self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint) then
         velocity = 0
     else
         velocity = velocity * Lerp(self:GetSprintDelta(), 1, 1.25)
