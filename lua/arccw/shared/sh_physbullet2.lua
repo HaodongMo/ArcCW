@@ -336,6 +336,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                                 hit = bullet.Weapon:GetBuff_Hook("Hook_BulletHit", hit)
 
                                 if !hit then return end
+                                bullet.Weapon:GetBuff_Hook("Hook_PostBulletHit", hit)
                             end
 
                             if bullet.Damaged[ctr.Entity:EntIndex()] then
