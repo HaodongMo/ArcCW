@@ -384,7 +384,7 @@ function SWEP:GetBuff_Mult(buff)
     if MODIFIED_CACHE and !self.ModifiedCache[buff] then
         if !ArcCW.BuffStack then
             ArcCW.BuffStack = true
-            mult = (self:GetBuff_Hook("M_Hook_" .. buff, {buff = buff}) or {}).mult or mult
+            mult = (self:GetBuff_Hook("M_Hook_" .. buff, {buff = buff, mult = 1}) or {}).mult or mult
             ArcCW.BuffStack = false
         end
         if ArcCW.ConVar_BuffMults[buff] then
@@ -483,7 +483,7 @@ function SWEP:GetBuff_Add(buff)
     if MODIFIED_CACHE and !self.ModifiedCache[buff] then
         if !ArcCW.BuffStack then
             ArcCW.BuffStack = true
-            add = (self:GetBuff_Hook("A_Hook_" .. buff, data) or {}).add or add
+            add = (self:GetBuff_Hook("A_Hook_" .. buff, {buff = buff, add = 0}) or {}).add or add
             ArcCW.BuffStack = false
         end
         if ArcCW.ConVar_BuffAdds[buff] then
@@ -1466,14 +1466,13 @@ function SWEP:AdjustAtts()
 
         -- Cache all possible value modifiers
         for var, v in pairs(atttbl) do
+            self.ModifiedCache[var] = true
             if var == "ToggleStats" or var == "Override_Firemodes" then
                 for _, v2 in pairs(v) do
                     for var2, _ in pairs(v2) do
                         self.ModifiedCache[var2] = true
                     end
                 end
-            else
-                self.ModifiedCache[var] = true
             end
         end
     end
@@ -1487,14 +1486,13 @@ function SWEP:AdjustAtts()
     -- In theory, there shouldn't be modifier values on the weapon table itself
     -- Not supporting them might break things, however
     for var, v in pairs(self:GetTable()) do
+        self.ModifiedCache[var] = true
         if var == "Firemodes" then
             for _, v2 in pairs(v) do
                 for var2, _ in pairs(v2) do
                     self.ModifiedCache[var2] = true
                 end
             end
-        else
-            self.ModifiedCache[var] = true
         end
     end
 
