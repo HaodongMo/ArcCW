@@ -39,8 +39,13 @@ SWEP.TickCache_Tick_Mults = {}
 
 SWEP.AttCache_Hooks = {}
 
+-- debug: enable/disable experimental modified cache feature
+local MODIFIED_CACHE = false
+-- print if a variable presumed to never change actually changes (this also happens right after attaching/detaching)
+-- only works if MODIFIED_CACHE is false
+local VERIFY_MODIFIED_CACHE = true
+
 -- Conditions not listed are are presumed to never change; this is done for optimization purposes
-local USE_MODIFIED_CACHE = true
 SWEP.ModifiedCache = {}
 
 function SWEP:RecalcAllBuffs()
@@ -211,7 +216,7 @@ function SWEP:GetBuff_Hook(buff, data, defaultnil)
 end
 
 function SWEP:GetBuff_Override(buff, default)
-    if USE_MODIFIED_CACHE and !self.ModifiedCache[buff] then
+    if MODIFIED_CACHE and !self.ModifiedCache[buff] then
         -- ArcCW.ConVar_BuffOverrides[buff] isn't actually implemented??
         return default
     end
@@ -330,6 +335,10 @@ function SWEP:GetBuff_Override(buff, default)
 
     self.TickCache_Overrides[buff] = {current, winningslot}
 
+    if VERIFY_MODIFIED_CACHE and !self.ModifiedCache[buff] and current != nil then
+        print("ArcCW: Presumed non-changing buff '" .. buff .. "' is modified (" .. tostring(current) .. ")!")
+    end
+
     -- Because fuck me I fucking suck at this
     if buff == "Override_ShootWhileSprint" and GetConVar("arccw_mult_shootwhilesprinting"):GetBool() then
         current = true
@@ -362,7 +371,7 @@ function SWEP:GetBuff_Mult(buff)
 
     local mult = 1
 
-    if USE_MODIFIED_CACHE and !self.ModifiedCache[buff] then
+    if MODIFIED_CACHE and !self.ModifiedCache[buff] then
         if ArcCW.ConVar_BuffMults[buff] then
             mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
         end
@@ -427,6 +436,10 @@ function SWEP:GetBuff_Mult(buff)
 
     self.TickCache_Mults[buff] = mult
 
+    if VERIFY_MODIFIED_CACHE and !self.ModifiedCache[buff] and mult != 1 then
+        print("ArcCW: Presumed non-changing buff '" .. buff .. "' is modified (" .. tostring(mult) .. ")!")
+    end
+
     if ArcCW.ConVar_BuffMults[buff] then
         mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
     end
@@ -452,7 +465,7 @@ end
 function SWEP:GetBuff_Add(buff)
     local add = 0
 
-    if USE_MODIFIED_CACHE and !self.ModifiedCache[buff] then
+    if MODIFIED_CACHE and !self.ModifiedCache[buff] then
         if ArcCW.ConVar_BuffAdds[buff] then
             add = add + GetConVar(ArcCW.ConVar_BuffAdds[buff]):GetFloat()
         end
@@ -513,6 +526,10 @@ function SWEP:GetBuff_Add(buff)
     end
 
     self.TickCache_Adds[buff] = add
+
+    if VERIFY_MODIFIED_CACHE and !self.ModifiedCache[buff] and add != 0 then
+        print("ArcCW: Presumed non-changing buff '" .. buff .. "' is modified (" .. tostring(add) .. ")!")
+    end
 
     if ArcCW.ConVar_BuffAdds[buff] then
         add = add + GetConVar(ArcCW.ConVar_BuffAdds[buff]):GetFloat()
@@ -1438,6 +1455,12 @@ function SWEP:AdjustAtts()
             else
                 self.ModifiedCache[var] = true
             end
+        end
+    end
+
+    for _, e in pairs(self.AttachmentElements) do
+        for var, v in pairs(e) do
+            self.ModifiedCache[var] = true
         end
     end
 
