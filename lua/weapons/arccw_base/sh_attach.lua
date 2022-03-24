@@ -1382,68 +1382,6 @@ end
 function SWEP:AdjustAtts()
     self:RecalcAllBuffs()
 
-    if SERVER then
-        local cs = self:GetCapacity() + self:GetChamberSize()
-
-        if self:Clip1() > cs and self:Clip1() != ArcCW.BottomlessMagicNumber then
-            local diff = self:Clip1() - cs
-            self:SetClip1(cs)
-
-            if self:GetOwner():IsValid() and !self:GetOwner():IsNPC() then
-                self:GetOwner():GiveAmmo(diff, self.Primary.Ammo, true)
-            end
-        end
-    else
-        local se = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
-        if se then
-            local path = "arccw/weaponicons/" .. self:GetClass()
-            local mat = Material(path)
-
-            if !mat:IsError() then
-                local tex = mat:GetTexture("$basetexture")
-                local texpath = tex:GetName()
-
-                killicon.Add(se, texpath, Color(255, 255, 255))
-            end
-        end
-    end
-
-    if self:GetBuff_Override("UBGL_Capacity") then
-        self.Secondary.ClipSize = self:GetBuff_Override("UBGL_Capacity")
-        if GetConVar("arccw_atts_ubglautoload"):GetBool() then
-            self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
-        end
-    else
-        self.Secondary.ClipSize = -1
-    end
-
-    if self:GetBuff_Override("UBGL_Ammo") then
-        self.Secondary.Ammo = self:GetBuff_Override("UBGL_Ammo")
-    else
-        self.Secondary.Ammo = "none"
-    end
-
-    self:RebuildSubSlots()
-
-    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
-
-    fmt["BaseClass"] = nil
-
-    local fmi = self:GetFireMode()
-
-    if !fmt[fmi] then fmi = 1 end
-
-    self:SetFireMode(fmi)
-
-    local wpn = weapons.Get(self:GetClass())
-
-    local ammo = self:GetBuff_Override("Override_Ammo") or wpn.Primary.Ammo
-    local oldammo = self.OldAmmo or self.Primary.Ammo
-
-    if ammo != oldammo then
-        self:Unload()
-    end
-
     -- Recalculate active elements so dependencies aren't fucked
     self.ActiveElementCache = nil
 
@@ -1502,6 +1440,68 @@ function SWEP:AdjustAtts()
         end
     end
     ]]
+
+    if SERVER then
+        local cs = self:GetCapacity() + self:GetChamberSize()
+
+        if self:Clip1() > cs and self:Clip1() != ArcCW.BottomlessMagicNumber then
+            local diff = self:Clip1() - cs
+            self:SetClip1(cs)
+
+            if self:GetOwner():IsValid() and !self:GetOwner():IsNPC() then
+                self:GetOwner():GiveAmmo(diff, self.Primary.Ammo, true)
+            end
+        end
+    else
+        local se = self:GetBuff_Override("Override_ShootEntity") or self.ShootEntity
+        if se then
+            local path = "arccw/weaponicons/" .. self:GetClass()
+            local mat = Material(path)
+
+            if !mat:IsError() then
+                local tex = mat:GetTexture("$basetexture")
+                local texpath = tex:GetName()
+
+                killicon.Add(se, texpath, Color(255, 255, 255))
+            end
+        end
+    end
+
+    if self:GetBuff_Override("UBGL_Capacity") then
+        self.Secondary.ClipSize = self:GetBuff_Override("UBGL_Capacity")
+        if GetConVar("arccw_atts_ubglautoload"):GetBool() then
+            self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
+        end
+    else
+        self.Secondary.ClipSize = -1
+    end
+
+    if self:GetBuff_Override("UBGL_Ammo") then
+        self.Secondary.Ammo = self:GetBuff_Override("UBGL_Ammo")
+    else
+        self.Secondary.Ammo = "none"
+    end
+
+    self:RebuildSubSlots()
+
+    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
+
+    fmt["BaseClass"] = nil
+
+    local fmi = self:GetFireMode()
+
+    if !fmt[fmi] then fmi = 1 end
+
+    self:SetFireMode(fmi)
+
+    local wpn = weapons.Get(self:GetClass())
+
+    local ammo = self:GetBuff_Override("Override_Ammo", wpn.Primary.Ammo)
+    local oldammo = self.OldAmmo or self.Primary.Ammo
+
+    if ammo != oldammo then
+        self:Unload()
+    end
 
     -- if CLIENT and self:GetOwner():GetViewModel() then
     --     self:PlayAnimation("idle")
