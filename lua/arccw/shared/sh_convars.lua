@@ -112,4 +112,5 @@ CreateConVar("arccw_reloadatts_registerentities", 1, 0, "Register attachment ent
 CreateConVar("arccw_reloadatts_showignored", 0, 0, "Whether to include attachments set to Ignore.")
 CreateConVar("arccw_dev_debug", 0, 0, "Developer debug HUD showing cool time shit.", 0, 1)
 CreateConVar("arccw_dev_shootinfo", 0, 0, "Show debug overlay firing information. Only works when developer is set to 1.", 0, 3)
+CreateConVar("arccw_dev_alwaysready", 0, 0, "Always draw using the ready animation.", 0, 1)
 --CreateConVar("arccw_dev_cust2beta", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Use the new beta customize hud.", 0, 1)

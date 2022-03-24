@@ -1,4 +1,5 @@
 local ang0 = Angle(0, 0, 0)
+local dev_alwaysready = GetConVar("arccw_dev_alwaysready")
 
 function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
@@ -54,7 +55,7 @@ function SWEP:Deploy()
         local r_anim = self:SelectAnimation("ready")
         local d_anim = self:SelectAnimation("draw")
 
-        if self.Animations[r_anim] and self.UnReady then
+        if self.Animations[r_anim] and ( dev_alwaysready:GetBool() or self.UnReady ) then
             self:PlayAnimation(r_anim, 1, true, 0, false)
             prd = self.Animations[r_anim].ProcDraw
 

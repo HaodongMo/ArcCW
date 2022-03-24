@@ -394,6 +394,10 @@ L["arccw.cvar.mult_movespeedfire"] = "Speed while firing"
 
 -- 2022-02-14
 L["arccw.cvar.vm_nearwall"] = "Near-wall Movement"
-
-
 L["arccw.cvar.nohl2flash"] = "Toggle attachments modes through flashlight bind"
+
+-- 2022-03-24
+L["arccw.cvar.dev_alwaysready"] = "Always Use Ready Animation"
+L["arccw.cvar.dev_alwaysready.desc"] = "Always use the ready animation while drawing when available."
+
+

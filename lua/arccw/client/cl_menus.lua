@@ -283,6 +283,8 @@ local DevPanel = {
     { type = "c", text = "#arccw.cvar.dev_debug.desc" },
     --{ type = "b", text = "Customization Menu Overhaul beta", var = "arccw_dev_cust2beta", sv = true },
     --{ type = "c", text = "Enable the customization menu overhaul. Remove this convar when we done doe" },
+    { type = "b", text = "#arccw.cvar.dev_alwaysready", var = "arccw_dev_alwaysready", sv = true },
+    { type = "c", text = "#arccw.cvar.dev_alwaysready.desc" },
     { type = "b", text = "#arccw.cvar.dev_benchgun", var = "arccw_dev_benchgun", sv = true },
     { type = "c", text = "#arccw.cvar.dev_benchgun.desc" },
     { type = "t", text = "#arccw.cvar.dev_benchgun_custom", var = "arccw_dev_benchgun_custom", sv = true },
