@@ -42,7 +42,7 @@ function SWEP:CanBipod()
     })
 
     if tr.Hit then -- check for stuff in front of us
-        return false, tr -- bad idea???
+        return false
     end
 
     local maxs = Vector(8, 8, 0)
@@ -62,21 +62,20 @@ function SWEP:CanBipod()
     self.CachedCanBipodTime = CurTime()
 
     if tr.Hit then
-        self.CachedCanBipod = true
-
-        local tr2 = util.TraceHull({
+        local tr2 = util.TraceLine({
             start = tr.HitPos,
-            endpos = tr.HitPos + Vector(0, 0, -16),
+            endpos = tr.HitPos + Vector(0, 0, -24),
             filter = self:GetOwner(),
-            maxs = Vector(8, 8, 1),
-            mins = Vector(-8, -8, 0),
             mask = MASK_PLAYERSOLID
         })
-        return true, tr2
-    else
-        self.CachedCanBipod = false
-        return false
+        if tr2.Hit then
+            self.CachedCanBipod = true
+            return true, tr2
+        end
     end
+
+    self.CachedCanBipod = false
+    return false
 end
 
 function SWEP:EnterBipod(sp)
@@ -97,17 +96,14 @@ function SWEP:EnterBipod(sp)
         self:DoLHIKAnimation("enter", 0.25)
     end
 
-    local bipodang = tr.HitNormal:Angle()
-    bipodang:RotateAroundAxis(self:GetOwner():EyeAngles():Right(), 90)
+    local bipodang = tr.HitNormal:Cross(self:GetOwner():EyeAngles():Right()):Angle()
 
-    --[[]
     debugoverlay.Axis(tr.HitPos, tr.HitNormal:Angle(), 16, 5, true)
     debugoverlay.Line(tr.HitPos, tr.HitPos + bipodang:Forward() * 32, 5, color_white, true)
     debugoverlay.Line(tr.HitPos, tr.HitPos + self:GetOwner():EyeAngles():Forward() * 32, 5, Color(255, 255, 0), true)
-    ]]
 
     self:SetBipodPos(self:GetOwner():EyePos())
-    self:SetBipodAngle(bipodang) --self:GetOwner():EyeAngles()
+    self:SetBipodAngle(bipodang)
     self.BipodStartAngle = self:GetOwner():EyeAngles()
 
     if game.SinglePlayer() and CLIENT then return end
