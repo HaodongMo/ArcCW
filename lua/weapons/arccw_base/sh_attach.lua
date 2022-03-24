@@ -40,6 +40,7 @@ SWEP.TickCache_Tick_Mults = {}
 SWEP.AttCache_Hooks = {}
 
 -- Conditions not listed are are presumed to never change; this is done for optimization purposes
+local USE_MODIFIED_CACHE = true
 SWEP.ModifiedCache = {}
 
 function SWEP:RecalcAllBuffs()
@@ -210,7 +211,10 @@ function SWEP:GetBuff_Hook(buff, data, defaultnil)
 end
 
 function SWEP:GetBuff_Override(buff, default)
-    if !self.ModifiedCache[buff] then return default end
+    if USE_MODIFIED_CACHE and !self.ModifiedCache[buff] then
+        -- ArcCW.ConVar_BuffOverrides[buff] isn't actually implemented??
+        return default
+    end
 
     local level = 0
     local current = nil
@@ -355,9 +359,15 @@ function SWEP:GetBuff_Override(buff, default)
 end
 
 function SWEP:GetBuff_Mult(buff)
-    if !self.ModifiedCache[buff] then return 1 end
 
     local mult = 1
+
+    if USE_MODIFIED_CACHE and !self.ModifiedCache[buff] then
+        if ArcCW.ConVar_BuffMults[buff] then
+            mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+        end
+        return mult
+    end
 
     if self.TickCache_Mults[buff] then
         mult = self.TickCache_Mults[buff]
@@ -440,9 +450,14 @@ function SWEP:GetBuff_Mult(buff)
 end
 
 function SWEP:GetBuff_Add(buff)
-    if !self.ModifiedCache[buff] then return 0 end
-
     local add = 0
+
+    if USE_MODIFIED_CACHE and !self.ModifiedCache[buff] then
+        if ArcCW.ConVar_BuffAdds[buff] then
+            add = add + GetConVar(ArcCW.ConVar_BuffAdds[buff]):GetFloat()
+        end
+        return add
+    end
 
     if self.TickCache_Adds[buff] then
         add = self.TickCache_Adds[buff]
