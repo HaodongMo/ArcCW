@@ -39,6 +39,9 @@ SWEP.TickCache_Tick_Mults = {}
 
 SWEP.AttCache_Hooks = {}
 
+-- Conditions not listed are are presumed to never change; this is done for optimization purposes
+SWEP.ModifiedCache = {}
+
 function SWEP:RecalcAllBuffs()
     self.TickCache_Overrides = {}
     self.TickCache_Adds = {}
@@ -61,6 +64,8 @@ function SWEP:RecalcAllBuffs()
         self.Infos_Ballistics = nil
         self.Infos_Breakpoints = nil
     end
+
+    self.ModifiedCache = {}
 end
 
 function SWEP:GetIsShotgun()
@@ -205,6 +210,8 @@ function SWEP:GetBuff_Hook(buff, data, defaultnil)
 end
 
 function SWEP:GetBuff_Override(buff, default)
+    if !self.ModifiedCache[buff] then return default end
+
     local level = 0
     local current = nil
     local winningslot = nil
@@ -348,6 +355,8 @@ function SWEP:GetBuff_Override(buff, default)
 end
 
 function SWEP:GetBuff_Mult(buff)
+    if !self.ModifiedCache[buff] then return 1 end
+
     local mult = 1
 
     if self.TickCache_Mults[buff] then
@@ -431,6 +440,8 @@ function SWEP:GetBuff_Mult(buff)
 end
 
 function SWEP:GetBuff_Add(buff)
+    if !self.ModifiedCache[buff] then return 0 end
+
     local add = 0
 
     if self.TickCache_Adds[buff] then
@@ -1080,8 +1091,8 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     if atttbl.ToggleStats then
         attslot.ToggleNum = 1
     end
-    
-    attslot.ToggleLock = atttbl.ToggleLockDefault or false  
+
+    attslot.ToggleLock = atttbl.ToggleLockDefault or false
 
     if CLIENT then
         -- we are asking to attach something
@@ -1398,6 +1409,34 @@ function SWEP:AdjustAtts()
 
         if !ok then
             self:Detach(i, true)
+            continue
+        end
+
+        -- Cache all possible value modifiers
+        for var, v in pairs(atttbl) do
+            if var == "ToggleStats" or var == "Override_Firemodes" then
+                for _, v2 in pairs(v) do
+                    for var2, _ in pairs(v2) do
+                        self.ModifiedCache[var2] = true
+                    end
+                end
+            else
+                self.ModifiedCache[var] = true
+            end
+        end
+    end
+
+    -- In theory, there shouldn't be modifier values on the weapon table itself
+    -- Not supporting them might break things, however
+    for var, v in pairs(self:GetTable()) do
+        if var == "Firemodes" then
+            for _, v2 in pairs(v) do
+                for var2, _ in pairs(v2) do
+                    self.ModifiedCache[var2] = true
+                end
+            end
+        else
+            self.ModifiedCache[var] = true
         end
     end
 
