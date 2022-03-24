@@ -15,6 +15,7 @@ end
 SWEP.CachedCanBipod = true
 SWEP.CachedCanBipodTime = 0
 
+local dist = 24
 function SWEP:CanBipod()
     if !(self:GetBuff_Override("Bipod") or self.Bipod_Integral) then return false end
 
@@ -36,7 +37,7 @@ function SWEP:CanBipod()
 
     local tr = util.TraceLine({
         start = pos,
-        endpos = pos + (angle:Forward() * 24 * rangemult),
+        endpos = pos + (angle:Forward() * dist * rangemult),
         filter = self:GetOwner(),
         mask = MASK_PLAYERSOLID
     })
@@ -45,14 +46,14 @@ function SWEP:CanBipod()
         return false
     end
 
-    local maxs = Vector(8, 8, 0)
-    local mins = Vector(-8, -8, -16)
+    local maxs = Vector(8, 8, 16)
+    local mins = Vector(-8, -8, 0)
 
-    angle.p = angle.p + 20
+    angle.p = angle.p + 45
 
     tr = util.TraceHull({
         start = pos,
-        endpos = pos + (angle:Forward() * 24 * rangemult),
+        endpos = pos + (angle:Forward() * dist * rangemult),
         filter = self:GetOwner(),
         maxs = maxs,
         mins = mins,
@@ -62,10 +63,12 @@ function SWEP:CanBipod()
     self.CachedCanBipodTime = CurTime()
 
     if tr.Hit then
-        local tr2 = util.TraceLine({
+        local tr2 = util.TraceHull({
             start = tr.HitPos,
             endpos = tr.HitPos + Vector(0, 0, -24),
             filter = self:GetOwner(),
+            maxs = maxs,
+            mins = mins,
             mask = MASK_PLAYERSOLID
         })
         if tr2.Hit then
