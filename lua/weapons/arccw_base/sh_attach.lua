@@ -1483,8 +1483,14 @@ function SWEP:AdjustAtts()
         end
     end
 
-    -- In theory, there shouldn't be modifier values on the weapon table itself
-    -- Not supporting them might break things, however
+    for _, e in pairs(self.Firemodes) do
+        for var, v in pairs(e) do
+            self.ModifiedCache[var] = true
+        end
+    end
+
+    -- In theory, there shouldn't be modifier values on the weapon table itself (beyond attachment elements and firemodes)
+    --[[]
     for var, v in pairs(self:GetTable()) do
         self.ModifiedCache[var] = true
         if var == "Firemodes" then
@@ -1495,6 +1501,7 @@ function SWEP:AdjustAtts()
             end
         end
     end
+    ]]
 
     -- if CLIENT and self:GetOwner():GetViewModel() then
     --     self:PlayAnimation("idle")
