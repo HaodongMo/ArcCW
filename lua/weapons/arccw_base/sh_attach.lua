@@ -40,7 +40,7 @@ SWEP.TickCache_Tick_Mults = {}
 SWEP.AttCache_Hooks = {}
 
 -- debug: enable/disable experimental modified cache feature
-local MODIFIED_CACHE = false
+local MODIFIED_CACHE = true
 -- print if a variable presumed to never change actually changes (this also happens right after attaching/detaching)
 -- only works if MODIFIED_CACHE is false
 local VERIFY_MODIFIED_CACHE = true
@@ -216,14 +216,24 @@ function SWEP:GetBuff_Hook(buff, data, defaultnil)
 end
 
 function SWEP:GetBuff_Override(buff, default)
-    if MODIFIED_CACHE and !self.ModifiedCache[buff] then
-        -- ArcCW.ConVar_BuffOverrides[buff] isn't actually implemented??
-        return default
-    end
 
     local level = 0
     local current = nil
     local winningslot = nil
+
+    if MODIFIED_CACHE and !self.ModifiedCache[buff] then
+        -- ArcCW.ConVar_BuffOverrides[buff] isn't actually implemented??
+
+        if !ArcCW.BuffStack then
+            ArcCW.BuffStack = true
+            local out = (self:GetBuff_Hook("O_Hook_" .. buff, {buff = buff}) or {})
+            current = out.current or current
+            winningslot = out.winningslot or winningslot
+            ArcCW.BuffStack = false
+        end
+
+        return current or default, winningslot
+    end
 
     if self.TickCache_Overrides[buff] then
         current = self.TickCache_Overrides[buff][1]
@@ -372,6 +382,11 @@ function SWEP:GetBuff_Mult(buff)
     local mult = 1
 
     if MODIFIED_CACHE and !self.ModifiedCache[buff] then
+        if !ArcCW.BuffStack then
+            ArcCW.BuffStack = true
+            mult = (self:GetBuff_Hook("M_Hook_" .. buff, {buff = buff}) or {}).mult or mult
+            ArcCW.BuffStack = false
+        end
         if ArcCW.ConVar_BuffMults[buff] then
             mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
         end
@@ -466,6 +481,11 @@ function SWEP:GetBuff_Add(buff)
     local add = 0
 
     if MODIFIED_CACHE and !self.ModifiedCache[buff] then
+        if !ArcCW.BuffStack then
+            ArcCW.BuffStack = true
+            add = (self:GetBuff_Hook("A_Hook_" .. buff, data) or {}).add or add
+            ArcCW.BuffStack = false
+        end
         if ArcCW.ConVar_BuffAdds[buff] then
             add = add + GetConVar(ArcCW.ConVar_BuffAdds[buff]):GetFloat()
         end
