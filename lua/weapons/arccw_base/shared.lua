@@ -851,8 +851,7 @@ function SWEP:IsProne()
     end
 end
 
--- BarrelHitWall is known to cause viewmodel flickering on certain (which) playermodels? (a270cc9)
--- If this occurs again *please* write down which model
+-- BarrelHitWall is known to cause viewmodel flickering on certain playermodels if called during VM position function (a270cc9)
 local hitwallcache
 function SWEP:BarrelHitWall()
 
@@ -881,10 +880,14 @@ function SWEP:BarrelHitWall()
 
         local dir = self:GetOwner():EyeAngles()
         local src = self:GetOwner():EyePos()
+        local r, f, u = dir:Right(), dir:Forward(), dir:Up()
 
-        src = src + dir:Right() * offset[1]
-        src = src + dir:Forward() * offset[2]
-        src = src + dir:Up() * offset[3]
+        for i = 1, 3 do
+            src[i] = src[i]
+                    + r[i] * offset[1]
+                    + f[i] * offset[2]
+                    + u[i] * offset[3]
+        end
 
         local filter = {self:GetOwner()}
 
@@ -892,7 +895,7 @@ function SWEP:BarrelHitWall()
 
         local tr = util.TraceLine({
             start = src,
-            endpos = src + (dir:Forward() * len),
+            endpos = src + (f * len),
             filter = filter,
             mask = MASK_SOLID
         })
@@ -907,7 +910,10 @@ function SWEP:BarrelHitWall()
     end
 
     return hitwallcache[1] or 0
+end
 
+function SWEP:GetBarrelNearWall()
+    return hitwallcache and hitwallcache[1] or 0
 end
 
 SWEP.CL_SightDelta = 0
