@@ -68,16 +68,22 @@ local function ApproachMod(usrobj, to, dlt)
     usrobj[3] = m_appor(usrobj[3], to[3], dlt)
 end
 
-local function LerpMod(usrobj, to, dlt)
+local function LerpMod(usrobj, to, dlt, clamp_ang)
     usrobj[1] = f_lerp(dlt, usrobj[1], to[1])
     usrobj[2] = f_lerp(dlt, usrobj[2], to[2])
     usrobj[3] = f_lerp(dlt, usrobj[3], to[3])
+    if clamp_ang then
+        for i = 1, 3 do usrobj[i] = math.NormalizeAngle(usrobj[i]) end
+    end
 end
 
-local function LerpMod2(from, usrobj, dlt)
+local function LerpMod2(from, usrobj, dlt, clamp_ang)
     usrobj[1] = f_lerp(dlt, from[1], usrobj[1])
     usrobj[2] = f_lerp(dlt, from[2], usrobj[2])
     usrobj[3] = f_lerp(dlt, from[3], usrobj[3])
+    if clamp_ang then
+        for i = 1, 3 do usrobj[i] = math.NormalizeAngle(usrobj[i]) end
+    end
 end
 
 -- debug for testing garbage count
@@ -273,7 +279,8 @@ end
 SWEP.TheJ = {posa = Vector(), anga = Angle()}
 
 local actual
-local target = {}
+local target = {pos = Vector(), ang = Angle()}
+local oldpos, oldang = Vector(), Angle()
 function SWEP:GetViewModelPosition(pos, ang)
     if GetConVar("arccw_dev_benchgun"):GetBool() then
         if GetConVar("arccw_dev_benchgun_custom"):GetString() then
@@ -318,6 +325,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         sighted = state == ArcCW.STATE_SIGHTS
     end
 
+    oldpos:Set(pos)
+    oldang:Set(ang)
     ang:Sub(self:GetOurViewPunchAngles())
 
     actual = self.ActualVMData or {
@@ -330,8 +339,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         evang = Angle(),
     }
 
-    target.pos = self:GetBuff_Override("Override_ActivePos", self.ActivePos)
-    target.ang = self:GetBuff_Override("Override_ActiveAng", self.ActiveAng)
+    target.pos:Set(self:GetBuff_Override("Override_ActivePos", self.ActivePos))
+    target.ang:Set(self:GetBuff_Override("Override_ActiveAng", self.ActiveAng))
     target.down = 1
     target.sway = 2
     target.bob = 2
@@ -339,20 +348,15 @@ function SWEP:GetViewModelPosition(pos, ang)
     stopwatch("set")
 
     if self:GetReloading() then
-        target.pos = self:GetBuff_Override("Override_ReloadPos", self.ReloadPos) or target.pos
-        target.ang = self:GetBuff_Override("Override_ReloadAng", self.ReloadAng) or target.ang
+        target.pos:Set(self:GetBuff_Override("Override_ReloadPos", self.ReloadPos) or target.pos)
+        target.ang:Set(self:GetBuff_Override("Override_ReloadAng", self.ReloadAng) or target.ang)
     end
 
     if owner:Crouching() or owner:KeyDown(IN_DUCK) then
         target.down = 0
 
-        if self:GetBuff("CrouchPos", true) then
-            target.pos = self.CrouchPos
-        end
-
-        if self:GetBuff("CrouchAng", true) then
-            target.ang = self.CrouchAng
-        end
+        target.pos:Set(self:GetBuff("CrouchPos", true) or target.pos)
+        target.ang:Set(self:GetBuff("CrouchAng", true) or target.ang)
     end
 
     if self:InBipod() and self:GetBipodAngle() then
@@ -361,25 +365,17 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.ang = asight and asight.Ang or target.ang
 
         local BEA = (self.BipodStartAngle or self:GetBipodAngle()) - owner:EyeAngles()
-        target.pos = target.pos
-                + (BEA:Right() * bpos.x * self.InBipodMult.x)
-                + (BEA:Forward() * bpos.y * self.InBipodMult.y)
-                + (BEA:Up() * bpos.z * self.InBipodMult.z)
+        target.pos.x = target.pos.x + (BEA:Right() * bpos.x * self.InBipodMult.x)
+        target.pos.y = target.pos.y + (BEA:Forward() * bpos.y * self.InBipodMult.y)
+        target.pos.z = target.pos.z + (BEA:Up() * bpos.z * self.InBipodMult.z)
         target.sway = 0.2
     end
 
     stopwatch("reload, crouch, bipod")
 
-    -- We have to do this, or else the original value on the weapon will be modified!
-    -- Past here, we use functions that change target.pos and target.ang freely
-    target.pos = Vector(target.pos)
-    target.ang = Angle(target.ang)
-
     target.pos.x = target.pos.x + GetConVar("arccw_vm_right"):GetFloat()
     target.pos.y = target.pos.y + GetConVar("arccw_vm_forward"):GetFloat()
     target.pos.z = target.pos.z + GetConVar("arccw_vm_up"):GetFloat()
-
-    stopwatch("duplicate target pos/ang")
 
     if state == ArcCW.STATE_CUSTOMIZE then
         target.down = 1
@@ -388,8 +384,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         local mx, my = input.GetCursorPos()
         mx = 2 * mx / ScrW()
         my = 2 * my / ScrH()
-        target.pos:Set(self:GetBuff("CustomizePos", true) or vector_origin)
-        target.ang:Set(self:GetBuff("CustomizeAng", true) or angle_zero)
+        target.pos:Set(self:GetBuff_Override("Override_CustomizePos", self.CustomizePos))
+        target.ang:Set(self:GetBuff_Override("Override_CustomizeAng", self.CustomizeAng))
         target.pos.x = target.pos.x + mx
         target.pos.z = target.pos.z + my
         target.ang.y = target.ang.y + my * 2
@@ -424,9 +420,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         end
 
         LerpMod(target.pos, aaaapos, sd)
-        LerpMod(target.ang, aaaaang, sd)
-        --target.pos:Add(joffset)
-        --target.ang:Add(jaffset)
+        LerpMod(target.ang, aaaaang, sd, true)
         for i = 1, 3 do
             target.pos[i] = target.pos[i] + joffset[i] * coolilove
             target.ang[i] = target.ang[i] + jaffset[i] * coolilove
@@ -542,6 +536,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         end
     end
 
+
     stopwatch("proc")
 
     local vmhit = self.ViewModel_Hit
@@ -570,9 +565,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     local speed = 15 * FT * (game.SinglePlayer() and 1 or 2)
 
     LerpMod(actual.pos, target.pos, speed)
-    LerpMod(actual.ang, target.ang, speed)
+    LerpMod(actual.ang, target.ang, speed, true)
     LerpMod(actual.evpos, target.evpos or vector_origin, speed)
-    LerpMod(actual.evang, target.evang or angle_zero, speed)
+    LerpMod(actual.evang, target.evang or angle_zero, speed, true)
     actual.down = f_lerp(speed, actual.down, target.down)
     actual.sway = f_lerp(speed, actual.sway, target.sway)
     actual.bob = f_lerp(speed, actual.bob, target.bob)
@@ -587,8 +582,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     self.SwayScale = (coolsway and 0) or actual.sway
     self.BobScale = (coolsway and 0) or actual.bob
 
-    local old_r, old_f, old_u = ang:Right(), ang:Forward(), ang:Up()
-
     if coolsway then
         swayxmult = GetConVar("arccw_vm_sway_zmult"):GetFloat() or 1
         swayymult = GetConVar("arccw_vm_sway_xmult"):GetFloat() or 1
@@ -597,12 +590,15 @@ function SWEP:GetViewModelPosition(pos, ang)
         lookxmult = GetConVar("arccw_vm_look_xmult"):GetFloat() or 1
         lookymult = GetConVar("arccw_vm_look_ymult"):GetFloat() or 1
         stopwatch("before vmposition")
-        local npos, nang = self:GetVMPosition(pos, ang)
+        local npos, nang = self:GetVMPosition(oldpos, oldang)
         pos:Set(npos)
         ang:Set(nang)
     end
 
-    pos:Add(math.min(self.RecoilPunchBack, Lerp(sgtd, self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -old_f)
+    local old_r, old_f, old_u = oldang:Right(), oldang:Forward(), oldang:Up()
+    local new_r, new_f, new_u = ang:Right(), ang:Forward(), ang:Up()
+
+    pos:Add(math.min(self.RecoilPunchBack, Lerp(sgtd, self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -new_f)
     ang:RotateAroundAxis(old_r, actual.ang.x)
     ang:RotateAroundAxis(old_u, actual.ang.y)
     ang:RotateAroundAxis(old_f, actual.ang.z)
@@ -612,9 +608,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos:Add(old_r * actual.evpos.x)
     pos:Add(old_f * actual.evpos.y)
     pos:Add(old_u * actual.evpos.z)
-    pos:Add(actual.pos.x * ang:Right())
-    pos:Add(actual.pos.y * ang:Forward())
-    pos:Add(actual.pos.z * ang:Up())
+    pos:Add(actual.pos.x * new_r)
+    pos:Add(actual.pos.y * new_f)
+    pos:Add(actual.pos.z * new_u)
     pos.z = pos.z - actual.down
     -- if asight and asight.Holosight then ang = ang - self:GetOurViewPunchAngles() end
     ang:Add(self:GetOurViewPunchAngles() * Lerp(sgtd, 1, -1))
