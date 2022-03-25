@@ -339,36 +339,33 @@ function SWEP:GetViewModelPosition(pos, ang)
         evang = Angle(),
     }
 
-    target.pos:Set(self:GetBuff_Override("Override_ActivePos", self.ActivePos))
-    target.ang:Set(self:GetBuff_Override("Override_ActiveAng", self.ActiveAng))
+    local apos, aang = self:GetBuff_Override("Override_ActivePos", self.ActivePos), self:GetBuff_Override("Override_ActiveAng", self.ActiveAng)
     target.down = 1
     target.sway = 2
     target.bob = 2
 
     stopwatch("set")
 
-    if self:GetReloading() then
-        target.pos:Set(self:GetBuff_Override("Override_ReloadPos", self.ReloadPos) or target.pos)
-        target.ang:Set(self:GetBuff_Override("Override_ReloadAng", self.ReloadAng) or target.ang)
-    end
-
-    if owner:Crouching() or owner:KeyDown(IN_DUCK) then
-        target.down = 0
-
-        target.pos:Set(self:GetBuff("CrouchPos", true) or target.pos)
-        target.ang:Set(self:GetBuff("CrouchAng", true) or target.ang)
-    end
-
     if self:InBipod() and self:GetBipodAngle() then
         local bpos = self:GetBuff_Override("Override_InBipodPos", self.InBipodPos)
-        target.pos = asight and asight.Pos or target.pos
-        target.ang = asight and asight.Ang or target.ang
+        target.pos:Set(asight and asight.Pos or apos)
+        target.ang:Set(asight and asight.Ang or aang)
 
         local BEA = (self.BipodStartAngle or self:GetBipodAngle()) - owner:EyeAngles()
-        target.pos.x = target.pos.x + (BEA:Right() * bpos.x * self.InBipodMult.x)
-        target.pos.y = target.pos.y + (BEA:Forward() * bpos.y * self.InBipodMult.y)
-        target.pos.z = target.pos.z + (BEA:Up() * bpos.z * self.InBipodMult.z)
+        target.pos:Add(BEA:Right() * bpos.x * self.InBipodMult.x)
+        target.pos:Add(BEA:Forward() * bpos.y * self.InBipodMult.y)
+        target.pos:Add(BEA:Up() * bpos.z * self.InBipodMult.z)
         target.sway = 0.2
+    elseif owner:Crouching() or owner:KeyDown(IN_DUCK) then
+        target.down = 0
+        target.pos:Set(self:GetBuff("CrouchPos", true) or target.pos)
+        target.ang:Set(self:GetBuff("CrouchAng", true) or target.ang)
+    elseif self:GetReloading() then
+        target.pos:Set(self:GetBuff_Override("Override_ReloadPos", self.ReloadPos) or apos)
+        target.ang:Set(self:GetBuff_Override("Override_ReloadAng", self.ReloadAng) or aang)
+    else
+        target.pos:Set(apos)
+        target.ang:Set(aang)
     end
 
     stopwatch("reload, crouch, bipod")
