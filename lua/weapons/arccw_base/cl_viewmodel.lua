@@ -596,15 +596,15 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     local old_r, old_f, old_u = oldang:Right(), oldang:Forward(), oldang:Up()
-    local new_r, new_f, new_u = ang:Right(), ang:Forward(), ang:Up()
-
-    pos:Add(math.min(self.RecoilPunchBack, Lerp(sgtd, self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -new_f)
+    pos:Add(math.min(self.RecoilPunchBack, Lerp(sgtd, self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -old_f)
     ang:RotateAroundAxis(old_r, actual.ang.x)
     ang:RotateAroundAxis(old_u, actual.ang.y)
     ang:RotateAroundAxis(old_f, actual.ang.z)
     ang:RotateAroundAxis(old_r, actual.evang.x)
     ang:RotateAroundAxis(old_u, actual.evang.y)
     ang:RotateAroundAxis(old_f, actual.evang.z)
+
+    local new_r, new_f, new_u = ang:Right(), ang:Forward(), ang:Up()
     pos:Add(old_r * actual.evpos.x)
     pos:Add(old_f * actual.evpos.y)
     pos:Add(old_u * actual.evpos.z)
@@ -612,14 +612,12 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos:Add(actual.pos.y * new_f)
     pos:Add(actual.pos.z * new_u)
     pos.z = pos.z - actual.down
-    -- if asight and asight.Holosight then ang = ang - self:GetOurViewPunchAngles() end
+
     ang:Add(self:GetOurViewPunchAngles() * Lerp(sgtd, 1, -1))
-    -- if IsFirstTimePredicted() then
     self.ActualVMData = actual
 
     stopwatch("apply actual")
 
-    -- end
     if gunbone then
         local magnitude = Lerp(sgtd, 0.1, 1)
         local lhik_model = self.Attachments[gbslot].VElement.Model
