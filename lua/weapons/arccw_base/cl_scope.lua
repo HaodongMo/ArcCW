@@ -63,17 +63,14 @@ SWEP.ViewPunchAngle = Angle(ang0)
 SWEP.ViewPunchVelocity = Angle(ang0)
 
 function SWEP:OurViewPunch(angle)
-    self.ViewPunchVelocity = self.ViewPunchVelocity + angle
-
-    local ang = self.ViewPunchVelocity
-
-    ang[1] = math.Clamp(ang[1], -180, 180)
-    ang[2] = math.Clamp(ang[2], -180, 180)
-    ang[3] = math.Clamp(ang[3], -180, 180)
+    self.ViewPunchVelocity:Add(angle)
+    for i = 1, 3 do self.ViewPunchVelocity[i] = math.Clamp(self.ViewPunchVelocity[i], -180, 180) end
 end
 
 function SWEP:GetOurViewPunchAngles()
-    return (self.ViewPunchAngle * 10) + self:GetOwner():GetViewPunchAngles()
+    local a = self:GetOwner():GetViewPunchAngles()
+    for i = 1, 3 do a[i] = a[i] + self.ViewPunchAngle[i] * 10 end
+    return a
 end
 
 local function lensqr(ang)
