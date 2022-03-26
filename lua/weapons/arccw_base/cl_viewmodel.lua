@@ -358,11 +358,11 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.sway = 0.2
     elseif owner:Crouching() or owner:KeyDown(IN_DUCK) then
         target.down = 0
-        target.pos:Set(self:GetBuff("CrouchPos", true) or target.pos)
-        target.ang:Set(self:GetBuff("CrouchAng", true) or target.ang)
+        target.pos:Set(self:GetBuff("CrouchPos", true) or apos)
+        target.ang:Set(self:GetBuff("CrouchAng", true) or aang)
     elseif self:GetReloading() then
-        target.pos:Set(self:GetBuff_Override("Override_ReloadPos", self.ReloadPos) or apos)
-        target.ang:Set(self:GetBuff_Override("Override_ReloadAng", self.ReloadAng) or aang)
+        target.pos:Set(self:GetBuff("ReloadPos", true) or apos)
+        target.ang:Set(self:GetBuff("ReloadAng", true) or aang)
     else
         target.pos:Set(apos)
         target.ang:Set(aang)
