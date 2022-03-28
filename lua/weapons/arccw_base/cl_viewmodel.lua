@@ -157,14 +157,13 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     local VMPos, VMAng = self.VMPos, self.VMAng
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
     local VMPosOffset_Lerp = self.VMPosOffset_Lerp
-    velocity = math.min(velocity:Length(), 400)
     local state = self:GetState()
     local sprd = self:GetSprintDelta()
 
     if state == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint") and !self:GetReloading() and !self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint) then
         velocity = 0
     else
-        velocity = velocity * Lerp(sprd, 1, 1.25)
+        velocity = math.min(velocity:Length(), 400) * Lerp(sprd, 1, 1.25)
     end
 
     local delta = math.abs(self.StepBob * 2 / stepend - 1)
@@ -280,7 +279,6 @@ SWEP.TheJ = {posa = Vector(), anga = Angle()}
 
 local actual
 local target = {pos = Vector(), ang = Angle()}
-local oldpos, oldang = Vector(), Angle()
 function SWEP:GetViewModelPosition(pos, ang)
     if GetConVar("arccw_dev_benchgun"):GetBool() then
         if GetConVar("arccw_dev_benchgun_custom"):GetString() then
@@ -325,6 +323,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         sighted = state == ArcCW.STATE_SIGHTS
     end
 
+    local oldpos, oldang = Vector(), Angle()
     oldpos:Set(pos)
     oldang:Set(ang)
     ang:Sub(self:GetOurViewPunchAngles())
@@ -465,7 +464,6 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     stopwatch("sight")
 
-
     local deg = self:GetBarrelNearWall()
     if deg > 0 and GetConVar("arccw_vm_nearwall"):GetBool() then
         LerpMod(target.pos, hpos, deg)
@@ -527,7 +525,6 @@ function SWEP:GetViewModelPosition(pos, ang)
             self.InProcBash = false
         end
     end
-
 
     stopwatch("proc")
 
@@ -597,12 +594,18 @@ function SWEP:GetViewModelPosition(pos, ang)
     ang:RotateAroundAxis(old_f, actual.evang.z)
 
     local new_r, new_f, new_u = ang:Right(), ang:Forward(), ang:Up()
-    pos:Add(old_r * actual.evpos.x)
-    pos:Add(old_f * actual.evpos.y)
-    pos:Add(old_u * actual.evpos.z)
-    pos:Add(actual.pos.x * new_r)
-    pos:Add(actual.pos.y * new_f)
-    pos:Add(actual.pos.z * new_u)
+    old_r:Mul(actual.evpos.x)
+    old_f:Mul(actual.evpos.y)
+    old_u:Mul(actual.evpos.z)
+    pos:Add(old_r)
+    pos:Add(old_f)
+    pos:Add(old_u)
+    new_r:Mul(actual.pos.x)
+    new_f:Mul(actual.pos.y)
+    new_u:Mul(actual.pos.z)
+    pos:Add(new_r)
+    pos:Add(new_f)
+    pos:Add(new_u)
     pos.z = pos.z - actual.down
 
     ang:Add(self:GetOurViewPunchAngles() * Lerp(sgtd, 1, -1))
@@ -724,7 +727,7 @@ function SWEP:PreDrawViewModel(vm)
 
     if ArcCW.VMInRT then
         local mag = asight.ScopeMagnification
-        coolFOV = self.ViewModelFOV - mag * 4 - (GetConVar("arccw_vm_add_ads"):GetFloat()*3 or 0)
+        coolFOV = self.ViewModelFOV - mag * 4 - (GetConVar("arccw_vm_add_ads"):GetFloat() * 3 or 0)
         ArcCW.VMInRT = false
     end
 
