@@ -71,7 +71,8 @@ function SWEP:RecalcAllBuffs()
         self.Infos_Breakpoints = nil
     end
 
-    self.ModifiedCache = {}
+    -- this function is not always called right before AdjustAtts
+    --self.ModifiedCache = {}
 end
 
 function SWEP:GetIsShotgun()
@@ -1384,6 +1385,8 @@ function SWEP:AdjustAtts()
 
     -- Recalculate active elements so dependencies aren't fucked
     self.ActiveElementCache = nil
+
+    self.ModifiedCache = {}
 
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
