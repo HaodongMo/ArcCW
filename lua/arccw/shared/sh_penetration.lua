@@ -22,35 +22,35 @@ end
 
 function ArcCW:IsPenetrating(ptr, ptrent)
     if ptrent:IsWorld() then
-        return !ptr.StartSolid or ptr.AllSolid
+        return ptr.Contents != CONTENTS_EMPTY
     elseif IsValid(ptrent) then
-        local mins, maxs = ptrent:WorldSpaceAABB()
-        local wsc = ptrent:WorldSpaceCenter()
-        -- Expand the bounding box by a bit to account for hitboxes outside it
-        -- This is more consistent but less accurate
-        mins = mins + (mins - wsc) * 0.25
-        maxs = maxs + (maxs - wsc) * 0.25
-        local withinbounding = ptr.HitPos:WithinAABox(mins, maxs)
-        if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
-            --debugoverlay.Box(Vector(0, 0, 0), mins, maxs, 5, Color(255, 255, 255, 50))
-            --debugoverlay.Cross(mins, 4, 5, Color(128, 0, 0), true)
-            --debugoverlay.Cross(maxs, 4, 5, Color(128, 0, 0), true)
-            debugoverlay.Cross(ptr.HitPos, withinbounding and 2 or 6, 5, withinbounding and Color(255, 255, 0) or Color(128, 255, 0), true)
-        end
 
-        if withinbounding then return true end
-        --[[]
-        -- Check whether the point is inside the hitbox
-        -- Requires some math that I can't be bothered to solve
+        local withinbounding = false
+
         if ptr.HitBox > 0 then
-            local mins2, maxs2 = ptrent:GetHitBoxBounds(ptr.HitBox, ptr.HitGroup)
-            local bonepos, boneang = ptrent:GetBonePosition(ptrent:GetHitBoxBone(ptr.HitBox, ptrent:GetHitboxSet()))
+            -- If we hit a hitbox, compare against that hitbox only
+            local hboxset = ptrent:GetHitboxSet()
+            local mins2, maxs2 = ptrent:GetHitBoxBounds(ptr.HitBox, hboxset)
+            local bonepos, boneang = ptrent:GetBonePosition(ptrent:GetHitBoxBone(ptr.HitBox, hboxset))
+
+            local lpos = WorldToLocal(ptr.HitPos, ptr.HitNormal:Angle(), vector_origin, angle_zero)
+
+            withinbounding = lpos:WithinAABox(mins2, maxs2)
             if GetConVar("developer"):GetBool() then
                 debugoverlay.BoxAngles(bonepos, mins2, maxs2, boneang, 5, Color(255, 255, 255, 50))
                 debugoverlay.Axis(bonepos, boneang, 16, 5, true)
             end
+        elseif util.PointContents(ptr.HitPos) != CONTENTS_EMPTY then
+            -- Otherwise default to rotated OBB
+            local mins, maxs = ptrent:OBBMins(), ptrent:OBBMaxs()
+            withinbounding = ptrent:WorldToLocal(ptr.HitPos):WithinAABox(mins, maxs)
+            if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+                debugoverlay.BoxAngles(ptrent:GetPos(), mins, maxs, ptrent:GetAngles(), 5, Color(255, 255, 255, 10))
+                debugoverlay.Cross(ptr.HitPos, withinbounding and 4 or 6, 5, withinbounding and Color(255, 255, 0) or Color(128, 255, 0), true)
+            end
         end
-        ]]
+
+        return withinbounding
     end
     return false
 end
@@ -74,7 +74,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
     local trent = tr.Entity
 
     local penmult     = ArcCW.PenTable[tr.MatType] or 1
-    local pentracelen = 4 --2 originally, but this should be less costly
+    local pentracelen = 4
     local curr_ent    = trent
     local startpen = penleft
 
@@ -167,11 +167,17 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         endpos = endpos + (dir * pentracelen)
 
         dir = dir + (VectorRand() * 0.025 * penmult)
-
     end
 
     if penleft > 0 then
         if (dir:Length() == 0) then return end
+
+        -- Recover penetration lost from extra distance in the trace
+        --penleft = penleft + ptr.Fraction * pentracelen / penmult
+
+        if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+            debugoverlay.Text(endpos + Vector(0, 0, 2), "(" .. math.Round(penleft, 2) .. "mm)", 5)
+        end
 
         local pdelta = penleft / bullet.Penetration
 
@@ -289,7 +295,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
     local pen  = phys and bullet.Penleft or wep:GetBuff("Penetration")
 
     if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
-        debugoverlay.Cross(hitpos, 5, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
+        debugoverlay.Cross(hitpos, 1, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
     end
 
     local randfactor = IsValid(wep) and wep:GetBuff("DamageRand") or 0
