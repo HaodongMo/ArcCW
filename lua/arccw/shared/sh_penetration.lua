@@ -2,6 +2,10 @@ local mth      = math
 local m_rand   = mth.Rand
 local m_lerp   = Lerp
 
+local function draw_debug()
+    return (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2
+end
+
 function ArcCW:GetRicochetChance(penleft, tr)
     if !GetConVar("arccw_enable_ricochet"):GetBool() then return 0 end
     local degree = tr.HitNormal:Dot((tr.StartPos - tr.HitPos):GetNormalized())
@@ -30,25 +34,28 @@ function ArcCW:IsPenetrating(ptr, ptrent)
         if ptr.HitBox > 0 then
             -- If we hit a hitbox, compare against that hitbox only
             local hboxset = ptrent:GetHitboxSet()
-            local mins2, maxs2 = ptrent:GetHitBoxBounds(ptr.HitBox, hboxset)
+            local mins, maxs = ptrent:GetHitBoxBounds(ptr.HitBox, hboxset)
             local bonepos, boneang = ptrent:GetBonePosition(ptrent:GetHitBoxBone(ptr.HitBox, hboxset))
+            mins = mins * 1.1
+            maxs = maxs * 1.1
+            local lpos = WorldToLocal(ptr.HitPos, ptr.HitNormal:Angle(), bonepos, boneang)
 
-            local lpos = WorldToLocal(ptr.HitPos, ptr.HitNormal:Angle(), vector_origin, angle_zero)
-
-            withinbounding = lpos:WithinAABox(mins2, maxs2)
-            if GetConVar("developer"):GetBool() then
-                debugoverlay.BoxAngles(bonepos, mins2, maxs2, boneang, 5, Color(255, 255, 255, 50))
-                debugoverlay.Axis(bonepos, boneang, 16, 5, true)
+            withinbounding = lpos:WithinAABox(mins, maxs)
+            if draw_debug() then
+                debugoverlay.BoxAngles(bonepos, mins, maxs, boneang, 5, Color(255, 255, 255, 10))
             end
         elseif util.PointContents(ptr.HitPos) != CONTENTS_EMPTY then
             -- Otherwise default to rotated OBB
             local mins, maxs = ptrent:OBBMins(), ptrent:OBBMaxs()
             withinbounding = ptrent:WorldToLocal(ptr.HitPos):WithinAABox(mins, maxs)
-            if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+            if draw_debug() then
                 debugoverlay.BoxAngles(ptrent:GetPos(), mins, maxs, ptrent:GetAngles(), 5, Color(255, 255, 255, 10))
-                debugoverlay.Cross(ptr.HitPos, withinbounding and 4 or 6, 5, withinbounding and Color(255, 255, 0) or Color(128, 255, 0), true)
             end
         end
+        if draw_debug() then
+            debugoverlay.Cross(ptr.HitPos, withinbounding and 4 or 6, 5, withinbounding and Color(255, 255, 0) or Color(128, 255, 0), true)
+        end
+
 
         return withinbounding
     end
@@ -157,7 +164,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         end
         ]]
 
-        if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+        if draw_debug() then
             local pdeltap = penleft / bullet.Penetration
             local colorlr = m_lerp(pdeltap, 0, 255)
 
@@ -175,7 +182,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         -- Recover penetration lost from extra distance in the trace
         --penleft = penleft + ptr.Fraction * pentracelen / penmult
 
-        if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+        if draw_debug() then
             debugoverlay.Text(endpos + Vector(0, 0, 2), "(" .. math.Round(penleft, 2) .. "mm)", 5)
         end
 
@@ -243,7 +250,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
                     dmg:SetDamage(bullet.Weapon:GetDamage(dist, true) * pdelta, true)
                 end
 
-                if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2 then
+                if draw_debug() then
                     local e = endpos + dir * (btr.HitPos - endpos):Length()
                     debugoverlay.Line(endpos, e, 10, Color(150, 150, 150), true)
                     debugoverlay.Cross(e, 3, 10, alreadypenned[btr.Entity:EntIndex()] and Color(0, 128, 255) or Color(255, 128, 0), true)
