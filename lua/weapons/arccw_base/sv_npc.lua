@@ -16,14 +16,10 @@ function SWEP:NPC_Initialize()
 
     -- print(self:Clip1())
 
-    local range = self.Range
+    local range = self:GetBuff("Range") / ArcCW.HUToM
 
-    range = range / ArcCW.HUToM
-
-    range = range * 2
-
-    if self.DamageMin > self.Damage then
-        range = 15000
+    if self:GetBuff("DamageMin") >= self:GetBuff("Damage") or (self:GetBuff_Override("Override_ManualAction") or self.ManualAction) and self:GetBuff("Num") == 1 then
+        range = math.max(range, 10000) * 2
     end
 
     range = math.Clamp(range, 2048, 36000)
@@ -130,7 +126,7 @@ function SWEP:NPC_Shoot()
     local delay = self:GetFiringDelay()
 
     if (self:GetBuff_Override("Override_ManualAction") or self.ManualAction) then
-        delay = (self.Animations.cycle.Time or 1) * self:GetBuff_Mult("Mult_CycleSpeed") or delay
+        delay = self:GetAnimKeyTime("cycle", true) * self:GetBuff("CycleTime")
     end
 
     local num = self:GetBuff_Override("Override_Num")
@@ -297,17 +293,20 @@ function SWEP:GetNPCBulletSpread(prof)
     mode = mode.Mode
 
     if mode < 0 then
-        return 10 / (prof + 1)
-    elseif mode == 0 then
-        return 20 / (prof + 1)
+        return 15 / (prof + 1)
     elseif mode == 1 then
         if math.Rand(0, 100) < (prof + 5) * 5 then
-            return 10 / (prof + 1)
+            return 5 / (prof + 1)
         else
-            return 50 / (prof + 1)
+            return 30 / (prof + 1)
         end
-    elseif mode >= 2 then
-        return 20 / (prof + 1)
+    elseif mode > 1 then
+        if math.Rand(0, 100) < (prof + 5) * 2 then
+            return 15 / (prof + 1)
+        else
+            return (20 + self:GetBuff("Recoil") * 10) / (prof + 1)
+        end
+
     end
 
     return 15
@@ -319,12 +318,10 @@ function SWEP:GetNPCBurstSettings()
 
     local delay = self:GetFiringDelay()
 
-    self:SetNextPrimaryFire(CurTime() + delay)
-
     if !mode then return 1, 1, delay end
 
     if self.ManualAction or self:GetBuff_Override("Override_ManualAction") then
-        return 0, 1, delay + self:GetAnimKeyTime("cycle", true)
+        return 1, 1, self:GetAnimKeyTime("cycle") * self:GetBuff("CycleTime")
     end
 
     if mode < 0 then
@@ -332,7 +329,8 @@ function SWEP:GetNPCBurstSettings()
     elseif mode == 0 then
         return 0, 0, delay
     elseif mode == 1 then
-        return 0, 1, delay + math.Rand(0.3, 0.6)
+        local c = self:GetCapacity()
+        return math.ceil(c * 0.075), math.floor(c * math.Rand(0.15, 0.3)), delay + math.Rand(0.2, 0.4)
     elseif mode >= 2 then
         if self:GetCurrentFiremode().RunawayBurst then
             return self:Clip1(), self:Clip1(), delay
@@ -343,16 +341,23 @@ function SWEP:GetNPCBurstSettings()
 end
 
 function SWEP:GetNPCRestTimes()
+    local mode = self:GetCurrentFiremode()
+    mode = mode.Mode
     local postburst = self:GetCurrentFiremode().PostBurstDelay or 0
-    local m = 1 * self:GetBuff_Mult("Mult_Recoil")
-    local rs = 1 * self:GetBuff_Mult("Mult_RecoilSide")
+    local m = self:GetBuff("Recoil")
+    local rs = self:GetBuff("RecoilSide")
 
-    local o = 1
+    if !mode then return 0.3, 0.6 end
 
-    o = o + (m * rs * 0.5)
-    o = o + postburst * self:GetBuff_Mult("Mult_PostBurstDelay") + self:GetBuff_Add("Add_PostBurstDelay")
+    local o = m * 0.3 + rs * 0.15
+    if self.ManualAction or self:GetBuff_Override("Override_ManualAction") then
+        local cycle = self:GetAnimKeyTime("cycle") * self:GetBuff("CycleTime")
+        return cycle + 0.1 * o, cycle + 0.2 * o
+    elseif mode < 0 then
+        o = o * 0.5 + postburst * self:GetBuff("PostBurstDelay")
+    end
 
-    return 0.2 * o, 0.6 * o
+    return 0.4 * o, 0.6 * o
 end
 
 function SWEP:CanBePickedUpByNPCs()
