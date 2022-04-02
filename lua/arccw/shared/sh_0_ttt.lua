@@ -46,23 +46,11 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         local weap = weapons.Get(wep.ClassName)
         if weap then
             if !weap.ArcCW then
-                --print(weap.ClassName)
-                --print("\t- No ArcCW")
                 continue
             end
             if weap.ArcCW and !weap.Spawnable then
-                --[[]
-                if weap.AutoSpawnable then
-                    --print(weap.ClassName)
-                    --print("\t- Not spawnable but AutoSpawnable so alright")
-                end
-                ]]
-                --print(weap.ClassName)
-                --print("\t- Not spawnable, ignored")
                 continue
             end
-            --print(wep.ClassName)
-            --print("\t- Accepted")
         end
 
         if ArcCW.AmmoToTTT[wep.Primary.Ammo] then
@@ -128,9 +116,10 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
 
     -- Language string(s)
     if CLIENT then
-        LANG.AddToLanguage("en", "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
-        LANG.AddToLanguage("en", "search_dmg_nervegas", "Their face looks pale. It must have been some sort of nerve gas.")
-        LANG.AddToLanguage("en", "ammo_smg1_grenade", "Rifle Grenades")
+        local lang = TTT2 and "en" or "english"
+        LANG.AddToLanguage(lang, "search_dmg_buckshot", "This person was blasted to pieces by buckshot.")
+        LANG.AddToLanguage(lang, "search_dmg_nervegas", "Their face looks pale. It must have been some sort of nerve gas.")
+        LANG.AddToLanguage(lang, "ammo_smg1_grenade", "Rifle Grenades")
     end
 end)
 

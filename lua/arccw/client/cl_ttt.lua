@@ -335,15 +335,28 @@ function ArcCW.TTT2_PopulateSettings(parent, title, tbl)
     end
 end
 
+-- In almost all cases TTT2 lang names are identical to ISO 639-1; except for simplified / traditional Chinese
+local ttt_langtranslate = {
+    ["zh-cn"] = "zh_hans", -- i find it funny the original ttt's lang name for this is "simpchinese". haha simp
+    ["zh-tw"] = "zh_tw",
+}
+
+-- This is only necessary in TTT2, where we use its interface for convars
 function ArcCW.TTT2_LoadClientLangs()
+    if !TTT2 then return end
     local files = file.Find("arccw/client/cl_languages/*", "LUA")
     for _, v in pairs(files) do
         local exp = string.Explode("_", string.lower(string.Replace(v, ".lua", "")))
+
+        local lang = exp[#exp]
+        lang = ttt_langtranslate[lang] or lang
+
         include("arccw/client/cl_languages/" .. v)
         for phrase, str in pairs(L) do
-            LANG.AddToLanguage(exp[#exp], phrase, str)
+            LANG.AddToLanguage(lang, phrase, str)
         end
-        print("Loaded ArcCW cl_language file " .. v .. " with " .. table.Count(L) .. " strings.")
+        print("Loaded ArcCW cl_language file " .. v .. " with " .. table.Count(L) .. " strings for TTT2.")
+        L = nil
     end
 end
 hook.Add("PostGamemodeLoaded", "ArcCW_TTT2_Localization", ArcCW.TTT2_LoadClientLangs)
