@@ -30,12 +30,12 @@ function ArcCW:IsPenetrating(ptr, ptrent)
     elseif IsValid(ptrent) then
 
         local withinbounding = false
-
-        if ptr.HitBox > 0 then
+        local hboxset = ptrent:GetHitboxSet()
+        local hitbone = ptrent:GetHitBoxBone(ptr.HitBox, hboxset)
+        if hitbone then
             -- If we hit a hitbox, compare against that hitbox only
-            local hboxset = ptrent:GetHitboxSet()
             local mins, maxs = ptrent:GetHitBoxBounds(ptr.HitBox, hboxset)
-            local bonepos, boneang = ptrent:GetBonePosition(ptrent:GetHitBoxBone(ptr.HitBox, hboxset))
+            local bonepos, boneang = ptrent:GetBonePosition(hitbone)
             mins = mins * 1.1
             maxs = maxs * 1.1
             local lpos = WorldToLocal(ptr.HitPos, ptr.HitNormal:Angle(), bonepos, boneang)
