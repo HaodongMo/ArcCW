@@ -1740,7 +1740,7 @@ function SWEP:CreateCustomizeHUD()
             },
             {translate("stat.damage"), translate("stat.damage.tooltip"),
                 function()
-                    local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
+                    local curNum = self:GetBuff("Num")
                     local orig = math.Round(self.Damage * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
                     local cur = math.Round(self:GetDamage(0) / curNum * GetConVar("arccw_mult_damage"):GetFloat()) .. (curNum != 1 and ("×" .. curNum) or "")
                     return orig, cur
@@ -1753,7 +1753,7 @@ function SWEP:CreateCustomizeHUD()
             },
             {translate("stat.damagemin"), translate("stat.damagemin.tooltip"),
                 function()
-                    local curNum = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
+                    local curNum = self:GetBuff("Num")
                     local orig = math.Round(self.DamageMin * GetConVar("arccw_mult_damage"):GetFloat()) .. (self.Num != 1 and ("×" .. self.Num) or "")
                     local cur = math.Round(self:GetDamage(self.Range) / curNum * GetConVar("arccw_mult_damage"):GetFloat()) .. (curNum != 1 and ("×" .. curNum) or "")
                     return orig, cur

@@ -592,6 +592,8 @@ att.Override_ShootWhileSprint = nil
 
 att.Mult_RPM = 1
 
+att.Add_Num = nil
+att.Mult_Num = nil
 att.Override_Num = nil
 
 att.Mult_AccuracyMOA = 1

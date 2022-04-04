@@ -190,7 +190,7 @@ function SWEP:PrimaryAttack()
     self:SetNextPrimaryFire(curatt + delay)
     self:SetNextPrimaryFireSlowdown(curatt + delay) -- shadow for ONLY fire time
 
-    local num = self:GetBuff_Override("Override_Num") or self.Num
+    local num = self:GetBuff("Num")
 
     num = num + self:GetBuff_Add("Add_Num")
 
@@ -984,17 +984,26 @@ end
 function SWEP:GetDamage(range, pellet)
     local ovr = self:GetBuff_Override("Override_Num")
     local add = self:GetBuff_Add("Add_Num")
+    local mul = self:GetBuff_Mult("Mult_Num")
 
     local num = self.Num
-    local nbr = (ovr or num) + add
-    local mul = 1
+    local nbr = (ovr or num) * mul + add
+    local factor = 1
 
-    mul = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num != nbr) and (num / nbr)) or 1
+    -- Total damage should be unchanged regardless of whether the weapon originally fired 1 pellet or > 1
+    -- If pellet is set, we return per-pellet damage instead of total damage
+    if pellet and num == 1 then
+        factor = 1 / ((ovr or 1) * mul + add)
+    elseif num != nbr then
+        factor = num / nbr
+    end
 
-    if !pellet then mul = mul * nbr end
+    --factor = ((pellet and num == 1) and (1 / ((ovr or 1) + add))) or ((num != nbr) and (num / nbr)) or 1
 
-    local dmgmax = self:GetBuff("Damage") * mul
-    local dmgmin = self:GetBuff("DamageMin") * mul
+    if !pellet then factor = factor * nbr end
+
+    local dmgmax = self:GetBuff("Damage") * factor
+    local dmgmin = self:GetBuff("DamageMin") * factor
     local delta = self:GetRangeFraction(range)
 
     local lerped = Lerp(delta, dmgmax, dmgmin)

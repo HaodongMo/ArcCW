@@ -43,7 +43,7 @@ end
 
 function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
     local pbi = wep:GetBuff_Override("Override_PhysBulletImpact")
-    local num = wep:GetBuff_Override("Override_Num") or wep.Num
+    local num = wep:GetBuff("Num")
     local bullet = {
         DamageMax = wep:GetDamage(0) / num,
         DamageMin = wep:GetDamage(math.huge) / num,

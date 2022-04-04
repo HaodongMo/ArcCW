@@ -129,13 +129,7 @@ function SWEP:NPC_Shoot()
         delay = self:GetAnimKeyTime("cycle", true) * self:GetBuff("CycleTime")
     end
 
-    local num = self:GetBuff_Override("Override_Num")
-
-    if !num then
-        num = self.Num
-    end
-
-    num = num + self:GetBuff_Add("Add_Num")
+    local num = self:GetBuff("Num")
 
     if num > 0 then
         local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")

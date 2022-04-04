@@ -141,7 +141,7 @@ function SWEP:DoDrawCrosshair(x, y)
         surface.DrawRect(x - p_w / 2, y - p_w / 2, p_w, p_w)
     end
 
-    local num = (self:GetBuff_Override("Override_Num") or self.Num) + self:GetBuff_Add("Add_Num")
+    local num = self:GetBuff("Num")
 
     size = math.Approach(size, gap, FrameTime() * 32 * gap)
 
