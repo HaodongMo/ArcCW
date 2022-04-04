@@ -313,7 +313,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
 
     local delta = phys and math.Clamp(bullet.Travelled / (bullet.Range / ArcCW.HUToM), 0, 1) or wep:GetRangeFraction(dist)
     local calc_damage = (phys and Lerp(delta, bullet.DamageMax, bullet.DamageMin) or wep:GetDamage(dist, true)) * mul
-    local dmgtyp = phys and bullet.DamageType or wep:GetBuff_Override("Override_DamageType", wep.DamageType)
+    local dmgtyp = phys and bullet.DamageType or (IsValid(wep) and wep:GetBuff_Override("Override_DamageType", wep.DamageType)) or DMG_BULLET
 
     local hit   = {}
     hit.att     = att
@@ -348,11 +348,11 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
         end
     end
 
-    local effect = phys and bullet.ImpactEffect or wep:GetBuff_Override("Override_ImpactEffect", wep.ImpactEffect)
-    local decal  = phys and bullet.ImpactDecal or wep:GetBuff_Override("Override_ImpactDecal", wep.ImpactDecal)
+    local effect = phys and bullet.ImpactEffect or (IsValid(wep) and wep:GetBuff_Override("Override_ImpactEffect", wep.ImpactEffect))
+    local decal  = phys and bullet.ImpactDecal or (IsValid(wep) and wep:GetBuff_Override("Override_ImpactDecal", wep.ImpactDecal))
 
     -- Do our handling of damage types, if not ignored by the gun or some attachment
-    if !wep:GetBuff_Override("Override_DamageTypeHandled", wep.DamageTypeHandled) then
+    if IsValid(wep) and !wep:GetBuff_Override("Override_DamageTypeHandled", wep.DamageTypeHandled) then
         local _, maxrng = wep:GetMinMaxRange()
         -- ignite target
         if dmg:IsDamageType(DMG_BURN) and hit.range <= maxrng then
