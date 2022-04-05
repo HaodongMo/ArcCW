@@ -402,7 +402,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
         end
     end
 
-    if SERVER then wep:TryBustDoor(trent, dmg) end
+    if SERVER and IsValid(wep) then wep:TryBustDoor(trent, dmg) end
 
     -- INCONSISTENCY: For physbullet, the entire bullet is copied; hitscan bullets reset some attributes in SWEP:DoPenetration (most notably damage)
     -- For now, we just reset some changes as a temporary workaround
