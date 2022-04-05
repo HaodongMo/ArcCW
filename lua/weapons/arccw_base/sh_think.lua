@@ -300,6 +300,12 @@ function SWEP:Think()
         self:SetClip1(0)
     end
 
+    -- Performing traces in rendering contexts seem to cause flickering with c_hands that have QC attachments(?)
+    -- Since we need to run the trace every tick anyways, do it here instead
+    if CLIENT then
+        self:BarrelHitWall()
+    end
+
     self:GetBuff_Hook("Hook_Think")
 
     -- Running this only serverside in SP breaks animation processing and causes CheckpointAnimation to !reset.

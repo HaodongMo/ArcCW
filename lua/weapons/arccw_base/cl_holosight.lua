@@ -250,10 +250,10 @@ function SWEP:FormThermalImaging(tex)
                 ["$pp_colour_mulb"] = 0
             })
         end
-        
+
         if GetConVar("arccw_thermalpp"):GetBool() and GetConVar("arccw_scopepp"):GetBool() then
             -- chromatic abberation
-            
+
             render.CopyRenderTargetToTexture(render.GetScreenEffectTexture())
 
             render.SetMaterial( pp_ca_base )
@@ -290,16 +290,16 @@ function SWEP:FormThermalImaging(tex)
     colormod:SetTexture("$fbtexture", render.GetScreenEffectTexture())
 
     cam.End3D()
-    
+
     if GetConVar("arccw_thermalpp"):GetBool() then
         if !render.SupportsPixelShaders_2_0() then return end
 
         DrawSharpen(0.3,0.9)
         DrawBloom(0,0.3,5,5,3,0.5,1,1,1)
         -- DrawMotionBlur(0.7,1,1/(asight.FPSLock or 45)) -- upd i changed order and it fucking worked lmao     //////i cant fucking understand why motionblur fucks render target
-        
+
         -- now it not work w t f
-        -- i made an integrated render delay 
+        -- i made an integrated render delay
         -- it way better for optimization
 
         asight.fpsdelay = CurTime() + 1/(asight.FPSLock or 45)
@@ -492,7 +492,7 @@ function SWEP:FormRTScope()
     if ScrH() > ScrW() then rtsize = ScrW() end
 
     local rtres = asight.ForceLowRes and ScrH()*0.6 or ScrH() -- we can emit low res lcd displays for scopes
-    
+
     rtmat = GetRenderTarget("arccw_rtmat"..rtres, rtres, rtres, false)
 
     render.PushRenderTarget(rtmat, 0, 0, rtsize, rtsize)
@@ -555,7 +555,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
         hs = asight.HolosightData
     end
 
-    if self:GetState() != ArcCW.STATE_SIGHTS and delta > 0.5 then return end
+    if self:GetState() != ArcCW.STATE_SIGHTS and delta > 0.5 or self:GetBarrelNearWall() > 0 then return end
 
     if !hs then return end
 

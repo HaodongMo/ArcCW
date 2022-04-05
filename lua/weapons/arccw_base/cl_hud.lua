@@ -250,11 +250,11 @@ function SWEP:DrawHUD()
         surface.DrawOutlinedRect(ecksy, 26 * s*10.25, s*64, s*4, s/2)
         surface.DrawRect(ecksy, 26 * s*10.25+s*1, s*64*self:GetSprintDelta(), s*4-s*2)
 
-        
-        surface.SetTextPos(ecksy, 26 * s*11)
+
+        surface.SetTextPos(ecksy, 26 * s * 11)
         surface.DrawText( mr(self:GetHolster_Time(), 1) )
 
-        surface.SetTextPos(ecksy, 26 * s*12)
+        surface.SetTextPos(ecksy, 26 * s * 12)
         surface.DrawText( tostring(self:GetHolster_Entity()) )
 
         -- Labels
@@ -262,16 +262,16 @@ function SWEP:DrawHUD()
         surface.SetFont("ArcCW_8")
 
         if reloadtime then
-            surface.SetTextPos(ecksy, 26 * s*1)
+            surface.SetTextPos(ecksy, 26 * s * 1)
             surface.DrawText("RELOAD")
 
-            surface.SetTextPos(ecksy- s*36, s*26 * 1.33)
+            surface.SetTextPos(ecksy- s * 36, s * 26 * 1.33)
             surface.DrawText("FULL")
 
-            surface.SetTextPos(ecksy- s*36, s*26 * 2.33)
+            surface.SetTextPos(ecksy- s * 36, s * 26 * 2.33)
             surface.DrawText("MAGIN")
 
-            surface.SetTextPos(ecksy- s*36, s*26 * 3.33)
+            surface.SetTextPos(ecksy- s * 36, s * 26 * 3.33)
             surface.DrawText("MAG LOAD")
         end
 
@@ -368,7 +368,7 @@ function SWEP:DrawHUD()
         local curInfo = {
             ammo = data.ammo,
             clip = data.clip,
-            plus = data.plus,
+            plus = data.plus or "0", -- data.plus is nil when it doesnt exist
             ammotype = data.ammotype,
             firemode = data.mode,
             heat = data.heat_level,

@@ -204,7 +204,9 @@ function SWEP:Initialize()
 
     self.Attachments["BaseClass"] = nil
 
-    self:SetHoldType(self.HoldtypeActive)
+    if !self:GetOwner():IsNPC() then
+        self:SetHoldType(self.HoldtypeActive)
+    end
 
     local og = weapons.Get(self:GetClass())
 

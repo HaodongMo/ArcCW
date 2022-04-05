@@ -480,6 +480,11 @@ function SWEP:SetShouldHoldType()
         return
     end
 
+    if IsValid(self:GetOwner()) and self:GetOwner():IsNPC() and self.HoldtypeNPC then
+        self:SetHoldType(self.HoldtypeNPC)
+        return
+    end
+
     if self:GetState() == ArcCW.STATE_SIGHTS then
         self:SetHoldType(self:GetBuff_Override("Override_HoldtypeSights") or self.HoldtypeSights)
     elseif self:GetState() == ArcCW.STATE_SPRINT then
