@@ -80,23 +80,13 @@ function SWEP:GetHUDData()
         data.clip = self:GetCapacity()
     end
 
+    local infammo, btmless = self:HasInfiniteAmmo(), self:HasBottomlessClip()
+
     if self.PrimaryBash or self:Clip1() == -1 or self:GetCapacity() == 0 or self.Primary.ClipSize == -1 then
         data.clip = "-"
     end
-
     if self.PrimaryBash then
         data.ammo = "-"
-    end
-
-    if self:HasInfiniteAmmo() then
-        data.ammo = "∞"
-    end
-    if self:HasBottomlessClip() then
-        data.clip = data.ammo
-        data.ammo = "-"
-        if self:HasInfiniteAmmo() then
-            data.clip = "∞"
-        end
     end
 
     if self:GetInUBGL() then
@@ -108,11 +98,19 @@ function SWEP:GetHUDData()
         end
 
         data.plus = nil
-    end
+    else
+        if infammo then
+            data.ammo = btmless and data.ammo or "-"
+        end
+        if btmless then
+            data.clip = infammo and "∞" or data.ammo
+            data.ammo = "-"
+        end
 
-    local ubglammo = self:GetBuff_Override("UBGL_Ammo")
-    if ubglammo and !self:GetInUBGL() then
-        data.ubgl = self:Clip2() + self:GetOwner():GetAmmoCount(ubglammo)
+        local ubglammo = self:GetBuff_Override("UBGL_Ammo")
+        if ubglammo then
+            data.ubgl = self:Clip2() + self:GetOwner():GetAmmoCount(ubglammo)
+        end
     end
 
     data = self:GetBuff_Hook("Hook_GetHUDData", data) or data
@@ -452,7 +450,7 @@ function SWEP:DrawHUD()
                 apan_bg.y = apan_bg.y + ScreenScaleMulti(6)
             end
 
-            if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() or self:HasBottomlessClip() and !self:HasInfiniteAmmo() then
+            if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() then
                 local wammotype = {
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = apan_bg.y - ScreenScaleMulti(10),
