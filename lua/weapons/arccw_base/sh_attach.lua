@@ -1370,11 +1370,13 @@ function SWEP:ToggleSlot(slot, num, silent, back)
 end
 
 function SWEP:AdjustAtts()
+
+    local old_inf = self:HasInfiniteAmmo()
+
     self:RecalcAllBuffs()
 
     -- Recalculate active elements so dependencies aren't fucked
     self.ActiveElementCache = nil
-
     self.ModifiedCache = {}
 
     for i, k in pairs(self.Attachments) do
@@ -1488,10 +1490,14 @@ function SWEP:AdjustAtts()
 
     local wpn = weapons.Get(self:GetClass())
 
+    local new_inf = self:HasInfiniteAmmo()
+
     local ammo = self:GetBuff_Override("Override_Ammo", wpn.Primary.Ammo)
     local oldammo = self.OldAmmo or self.Primary.Ammo
 
-    if ammo != oldammo then
+    if old_inf and !new_inf then
+        self:SetClip1(0)
+    elseif (!old_inf and new_inf) or ammo != oldammo then
         self:Unload()
     end
 

@@ -198,7 +198,7 @@ end
 
 function SWEP:HasInfiniteAmmo()
     if GetConVar("arccw_mult_infiniteammo"):GetBool() then return true end
-    if self.InfiniteAmmo or self:GetBuff_Override("Override_InfiniteAmmo") then return true end
+    if self:GetBuff_Override("Override_InfiniteAmmo", self.InfiniteAmmo) then return true end
     return false
 end
 
