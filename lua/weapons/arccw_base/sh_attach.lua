@@ -1495,7 +1495,7 @@ function SWEP:AdjustAtts()
     local ammo = self:GetBuff_Override("Override_Ammo", wpn.Primary.Ammo)
     local oldammo = self.OldAmmo or self.Primary.Ammo
 
-    if old_inf and !new_inf then
+    if old_inf then
         self:SetClip1(0)
     elseif (!old_inf and new_inf) or ammo != oldammo then
         self:Unload()
