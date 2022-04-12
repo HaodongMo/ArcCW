@@ -62,6 +62,7 @@ local ClientPanel = {
     { type = "c", text = "#arccw.cvar.language_info" },
     { type = "b", text = "#arccw.cvar.ammonames", var = "arccw_ammonames" },
     { type = "c", text = "#arccw.cvar.ammonames.desc" },
+    { type = "b", text = "#arccw.cvar.noinspect", var = "arccw_noinspect" },
 }
 
 local PerformancePanel = {

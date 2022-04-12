@@ -1,5 +1,7 @@
 SWEP.Cam_Offset_Ang = Angle(0, 0, 0)
 
+local noinspect = GetConVar("arccw_noinspect")
+
 function SWEP:SelectAnimation(anim)
     if self:GetNWState() == ArcCW.STATE_SIGHTS and self.Animations[anim .. "_iron"] then
         anim = anim .. "_iron"
@@ -21,7 +23,7 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_bipod"
     end
 
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE and self.Animations[anim .. "_inspect"] then
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE and self.Animations[anim .. "_inspect"] and noinspect and !noinspect:GetBool() then
         anim = anim .. "_inspect"
     end
 

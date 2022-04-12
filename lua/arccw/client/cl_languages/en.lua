@@ -400,4 +400,6 @@ L["arccw.cvar.nohl2flash"] = "Toggle attachments modes through flashlight bind"
 L["arccw.cvar.dev_alwaysready"] = "Always Use Ready Animation"
 L["arccw.cvar.dev_alwaysready.desc"] = "Always use the ready animation while drawing when available."
 
+L["arccw.cvar.noinspect"] = "Disable inspect animations"
+
 
