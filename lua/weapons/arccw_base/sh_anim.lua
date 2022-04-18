@@ -57,7 +57,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     absolute = absolute or false
     if !key then return end
 
-    local ct = CurTime() --pred and CurTime() or UnPredictedCurTime()
+    local ct = UnPredictedCurTime() --pred and CurTime() or UnPredictedCurTime()
 
     if self:GetReloading() and !ignorereload then return end
 
@@ -214,7 +214,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         self.Cam_Offset_Ang = Angle(ang)
     end
 
-    self:SetNextIdle(CurTime() + ttime)
+    self:SetNextIdle(UnPredictedCurTime() + ttime)
 end
 
 function SWEP:PlayIdleAnimation(pred)
