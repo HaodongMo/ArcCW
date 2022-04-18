@@ -138,7 +138,7 @@ function SWEP:DoLHIK()
 
         for i, k in pairs(tl) do
             if !k or !k.t then continue end
-            if k.t + self.LHIKStartTime > CurTime() then
+            if k.t + self.LHIKStartTime > UnPredictedCurTime() then
                 next_stage_index = i
                 break
             end
@@ -158,7 +158,7 @@ function SWEP:DoLHIK()
             next_stage = {t = self.LHIKEndTime, lhik = self.LHIKTimeline[#self.LHIKTimeline].lhik}
         end
 
-        local local_time = CurTime() - self.LHIKStartTime
+        local local_time = UnPredictedCurTime() - self.LHIKStartTime
 
         local delta_time = next_stage.t - stage.t
         delta_time = (local_time - stage.t) / delta_time
