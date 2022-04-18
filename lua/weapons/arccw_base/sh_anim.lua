@@ -23,7 +23,7 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_bipod"
     end
 
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE and self.Animations[anim .. "_inspect"] and noinspect and !noinspect:GetBool() then
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE and self.Animations[anim .. "_inspect"] and (noinspect and !noinspect:GetBool()) then
         anim = anim .. "_inspect"
     end
 
