@@ -45,7 +45,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
         end
     end
 
-    if !lhik_model then return false end
+    if !IsValid(lhik_model) then return false end
 
     local seq = lhik_model:LookupSequence(key)
 
