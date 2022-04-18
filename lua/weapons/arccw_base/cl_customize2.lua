@@ -57,28 +57,29 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
         span.TextRot[txt] = span.TextRot[txt] or 0
 
         if !only then
-            span.StartTextRot = span.StartTextRot or CurTime()
+            local UPCT = UnPredictedCurTime()
+            span.StartTextRot = span.StartTextRot or UPCT
             span.TextRotState = span.TextRotState or 0 -- 0: start, 1: moving, 2: end
             if span.TextRotState == 0 then
                 span.TextRot[txt] = 0
-                if span.StartTextRot < CurTime() - 2 then
+                if span.StartTextRot < UPCT - 2 then
                     span.TextRotState = 1
                 end
             elseif span.TextRotState == 1 then
                 span.TextRot[txt] = span.TextRot[txt] + (FrameTime() * ScreenScaleMulti(16))
                 if span.TextRot[txt] >= (tw - maxw) + ScreenScaleMulti(8) then
-                    span.StartTextRot = CurTime()
+                    span.StartTextRot = UPCT
                     span.TextRotState = 2
                 end
             elseif span.TextRotState == 2 then
-                if span.StartTextRot < CurTime() - 2 then
+                if span.StartTextRot < UPCT - 2 then
                     span.TextRotState = 3
-                    span.StartTextRot = CurTime()
+                    span.StartTextRot = UPCT
                 end
             elseif span.TextRotState == 3 then
                 span.TextRot[txt] = span.TextRot[txt] - (FrameTime() * ScreenScaleMulti(16))
                 if span.TextRot[txt] <= 0 then
-                    span.StartTextRot = CurTime()
+                    span.StartTextRot = UPCT
                     span.TextRotState = 0
                 end
             end
@@ -977,7 +978,7 @@ function SWEP:CreateCustomize2HUD()
                         ArcCW.Inv_ShownAtt = nil -- Force a regen on the panel so we can see toggle/slider options
                         ArcCW.InvHUD_FormAttachmentStats(self2.att, self2.attslot, true)
                     elseif self:CountAttachments() >= self:GetPickX() then
-                        ArcCW.Inv_LastPickXBlock = CurTime()
+                        ArcCW.Inv_LastPickXBlock = UnPredictedCurTime()
                     end
                 else
                     if CLIENT then surface.PlaySound("items/medshotno1.wav") end
@@ -1218,7 +1219,7 @@ function SWEP:CreateCustomize2HUD()
 
             local col_fg_pick = col_fg
             local d = 0.5
-            local diff = CurTime() - (ArcCW.Inv_LastPickXBlock or 0 + d)
+            local diff = UnPredictedCurTime() - (ArcCW.Inv_LastPickXBlock or 0 + d)
             if diff > 0 then
                 col_fg_pick = Color(255, 255 * diff / d, 255 * diff / d, 255*ArcCW.Inv_Fade)
             end
@@ -1386,10 +1387,10 @@ function SWEP:CreateCustomize2HUD()
 
                     delta = math.Clamp(delta, 0, 1)
 
-                    if self.Attachments[slot].SlidePos != delta and self2.NextDrag <= CurTime() then
+                    if self.Attachments[slot].SlidePos != delta and self2.NextDrag <= UnPredictedCurTime() then
                         -- local amt = math.abs(self.Attachments[slot].SlidePos - delta)
                         EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(90+(delta * 20), 90, 110))
-                        self2.NextDrag = CurTime() + 0.05
+                        self2.NextDrag = UnPredictedCurTime() + 0.05
                     end
 
                     self.Attachments[slot].SlidePos = delta

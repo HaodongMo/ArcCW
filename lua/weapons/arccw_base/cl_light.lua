@@ -286,7 +286,7 @@ function SWEP:DrawFlashlightsWM()
             dl.brightness = Lerp(delta, atttbl.FlashlightBrightness or 2, 0)
             -- print(z / maxz)
             dl.Decay = 1000 / 1
-            dl.dietime = CurTime() + 0.1
+            dl.dietime = UnPredictedCurTime() + 0.1
             dl.size = xfov * 5
         end
     end
