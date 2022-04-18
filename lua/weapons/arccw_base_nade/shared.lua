@@ -18,6 +18,9 @@ SWEP.MuzzleVelocityAlt = nil -- Throwing with alt-fire will use this velocity if
 SWEP.PullPinTime = 0.25
 SWEP.FuseTime = 3.5
 
+SWEP.CookPrimFire = true
+SWEP.CookAltFire = true
+
 SWEP.ChamberSize = 0
 
 SWEP.HoldtypeHolstered = "normal"

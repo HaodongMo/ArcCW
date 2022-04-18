@@ -19,10 +19,14 @@ function SWEP:PreThrow()
 
     self:SetNextPrimaryFire(CurTime() + self.PullPinTime)
 
-    self:SetGrenadePrimed(true)
-
     self.GrenadePrimeTime = CurTime()
     self.GrenadePrimeAlt = self:GetOwner():KeyDown(IN_ATTACK2)
+
+    self:SetGrenadePrimed(true)
+
+    if (!self.GrenadePrimeAlt and self:GetBuff("CookPrimFire",true)) or (self.GrenadePrimeAlt and self:GetBuff("CookAltFire",true)) then
+        self.isCooked = true
+    end
 
     self:GetBuff_Hook("Hook_PreThrow")
 end
@@ -30,11 +34,15 @@ end
 function SWEP:Throw()
     if self:GetNextPrimaryFire() > CurTime() then return end
 
+    local isCooked = self.isCooked
     self:SetGrenadePrimed(false)
+    self.isCooked = nil
+
+    print(isCooked)
 
     self:PlayAnimation("throw", 1, false, 0, true)
 
-    local heldtime = (CurTime() - self.GrenadePrimeTime)
+    local heldtime = isCooked and (CurTime() - self.GrenadePrimeTime) or 0
 
     local windup = heldtime / 0.5
 
