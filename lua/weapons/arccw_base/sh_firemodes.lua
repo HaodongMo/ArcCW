@@ -6,6 +6,8 @@ function SWEP:ChangeFiremode(pred)
 
     if table.Count(fmt) == 1 then return end
 
+    if self:GetGrenadePrimed() then return end
+    
     local fmi = self:GetFireMode()
     local lastfmi = fmi
 
