@@ -23,9 +23,7 @@ function SWEP:PreThrow()
     self.GrenadePrimeAlt = self:GetOwner():KeyDown(IN_ATTACK2)
     self:SetGrenadePrimed(true)
 
-    if (!self.GrenadePrimeAlt and self:GetBuff("CookPrimFire",true)) or (self.GrenadePrimeAlt and self:GetBuff("CookAltFire",true)) then
-        self.isCooked = true
-    end
+    self.isCooked = (!self.GrenadePrimeAlt and self:GetBuff("CookPrimFire",true)) or (self.GrenadePrimeAlt and self:GetBuff("CookAltFire",true)) or nil
 
     self:GetBuff_Hook("Hook_PreThrow")
 end
