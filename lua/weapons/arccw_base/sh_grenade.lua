@@ -93,3 +93,25 @@ function SWEP:Throw()
 
     self:GetBuff_Hook("Hook_PostThrow")
 end
+
+function SWEP:GrenadeDrop()
+    local rocket = self:FireRocket(self.ShootEntity, 0)
+
+    if IsValid(rocket) then
+        local phys = rocket:GetPhysicsObject()
+
+        if GetConVar("arccw_throwinertia"):GetBool() then
+            phys:AddVelocity(self:GetOwner():GetVelocity())
+        end
+
+        local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
+
+        if ft then
+            if self.isCooked then
+                rocket.FuseTime = ft - (CurTime() - self.GrenadePrimeTime)
+            else
+                rocket.FuseTime = ft
+            end
+        end
+    end
+end

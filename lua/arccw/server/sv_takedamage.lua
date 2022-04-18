@@ -16,3 +16,12 @@ hook.Add("EntityTakeDamage", "ArcCW_DoAttDMG", function(ent, dmg)
 
     wpn:SendAttHP()
 end)
+
+hook.Add("DoPlayerDeath","ArcCW_GrenadeDrop",function(ply)
+    local wep = ply:GetActiveWeapon()
+    if !(wep.ArcCW and wep.Throwing) then return end
+
+    if wep:GetGrenadePrimed() then
+        wep:GrenadeDrop()
+    end
+end)
