@@ -58,11 +58,11 @@ function SWEP:Think()
         self:SetNeedCycle(false)
     end
 
-    if self:GetGrenadePrimed() and !owner:KeyDown(IN_ATTACK) and (!game.SinglePlayer() or SERVER) then
+    if self:GetGrenadePrimed() and !(owner:KeyDown(IN_ATTACK) or owner:KeyDown(IN_ATTACK2)) and (!game.SinglePlayer() or SERVER) then
         self:Throw()
     end
 
-    if self:GetGrenadePrimed() and self.GrenadePrimeTime > 0 then
+    if self:GetGrenadePrimed() and self.GrenadePrimeTime > 0 and self.isCooked then
         local heldtime = (CurTime() - self.GrenadePrimeTime)
 
         local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
