@@ -352,7 +352,7 @@ SWEP.HoldtypeNPC = nil
 
 SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2
 
-SWEP.GuaranteeLaser = true -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
+SWEP.GuaranteeLaser = false -- GUARANTEE that the laser position will be accurate, so don't bother with sighted correction
 
 SWEP.ShieldProps = nil
 -- {
