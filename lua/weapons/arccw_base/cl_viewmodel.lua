@@ -228,8 +228,8 @@ function SWEP:Breath_Process(EyePos, EyeAng)
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
     self:Breath_Health()
     self:Breath_StateMult()
-    VMPosOffset.x = (math.sin(UnPredictedCurTime() * 2 * self.Breath_Rate) * 0.1) * self.Breath_Intensity
-    VMPosOffset.y = (math.sin(UnPredictedCurTime() * 2.5 * self.Breath_Rate) * 0.025) * self.Breath_Intensity
+    VMPosOffset.x = (math.sin(CurTime() * 2 * self.Breath_Rate) * 0.1) * self.Breath_Intensity
+    VMPosOffset.y = (math.sin(CurTime() * 2.5 * self.Breath_Rate) * 0.025) * self.Breath_Intensity
     VMAngOffset.x = VMPosOffset.x * 1.5
     VMAngOffset.y = VMPosOffset.y * 2
     VMAngOffset.z = VMPosOffset.y * VMPosOffset.x * -40
@@ -300,7 +300,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local owner = self:GetOwner()
     if !IsValid(owner) or !owner:Alive() then return end
     local FT = scrunkly()
-    local CT = UnPredictedCurTime()
+    local CT = CurTime()
     local TargetTick = (1 / FT) / 66.66
 
     if TargetTick < 1 then

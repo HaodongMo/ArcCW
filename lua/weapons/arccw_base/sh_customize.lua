@@ -16,25 +16,24 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
         render.SetScissorRect(realx, realy, realx + maxw, realy + (th * 2), true)
 
         if !only then
-            local UPCT = UnPredictedCurTime()
             span.TextRot = span.TextRot or 0
-            span.StartTextRot = span.StartTextRot or UPCT
+            span.StartTextRot = span.StartTextRot or CurTime()
             span.TextRotState = span.TextRotState or 0 -- 0: start, 1: moving, 2: end
             if span.TextRotState == 0 then
                 span.TextRot = 0
-                if span.StartTextRot < UPCT - 2 then
+                if span.StartTextRot < CurTime() - 2 then
                     span.TextRotState = 1
                 end
             elseif span.TextRotState == 1 then
                 span.TextRot = span.TextRot + (FrameTime() * ScreenScaleMulti(16))
                 if span.TextRot >= (tw - maxw) + ScreenScaleMulti(8) then
-                    span.StartTextRot = UPCT
+                    span.StartTextRot = CurTime()
                     span.TextRotState = 2
                 end
             elseif span.TextRotState == 2 then
-                if span.StartTextRot < UPCT - 2 then
+                if span.StartTextRot < CurTime() - 2 then
                     span.TextRotState = 0
-                    span.StartTextRot = UPCT
+                    span.StartTextRot = CurTime()
                 end
             end
         end
@@ -585,11 +584,11 @@ function SWEP:CreateCustomizeHUD()
 
         if attslider:GetDragging() and activeslot then
             local delta = attslider:GetSlideX()
-            if lastslidepos != delta and lastsoundtime <= UnPredictedCurTime() then
+            if lastslidepos != delta and lastsoundtime <= CurTime() then
 
                 EmitSound("weapons/arccw/dragatt.wav", EyePos(), -2, CHAN_ITEM, 1,75, 0, math.Clamp(delta * 200, 90, 110))
 
-                lastsoundtime = UnPredictedCurTime() + 0.05
+                lastsoundtime = CurTime() + 0.05
             end
 
             self.Attachments[activeslot].SlidePos = delta
@@ -1211,7 +1210,7 @@ function SWEP:CreateCustomizeHUD()
                     surface.PlaySound("weapons/arccw/open.wav")
 
                     span.TextRot = 0
-                    span.StartTextRot = UnPredictedCurTime()
+                    span.StartTextRot = CurTime()
                     span.TextRotState = 0
 
                     if self.Attachments[span.AttIndex].Installed then
