@@ -763,7 +763,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 3, "InUBGL")
     self:NetworkVar("Bool", 4, "InCustomize")
     self:NetworkVar("Bool", 5, "GrenadePrimed")
-    self:NetworkVar("Bool", 6, "MalfunctionJam")
+    self:NetworkVar("Bool", 6, "NWMalfunctionJam")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
@@ -936,4 +936,15 @@ end
 function SWEP:GetSprintDelta()
     if !game.SinglePlayer() and CLIENT then return self.CL_SprintDelta end
     return self:GetNWSprintDelta()
+end
+
+SWEP.CL_MalfunctionJam = false
+function SWEP:SetMalfunctionJam(d)
+    if !game.SinglePlayer() and CLIENT then self.CL_MalfunctionJam = tobool(d) end
+    self:SetNWMalfunctionJam(d)
+end
+
+function SWEP:GetMalfunctionJam()
+    if !game.SinglePlayer() and CLIENT then return self.CL_MalfunctionJam end
+    return self:GetNWMalfunctionJam()
 end

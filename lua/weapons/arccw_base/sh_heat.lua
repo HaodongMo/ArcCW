@@ -103,6 +103,7 @@ end
 
 function SWEP:DoMalfunction(post)
 
+    if !IsFirstTimePredicted() then return end
     if !self:MalfunctionEnabled() then return false end
     local shouldpost = self:GetBuff_Override("Override_MalfunctionPostFire", self.MalfunctionPostFire)
     if post != shouldpost then return false end
@@ -140,12 +141,12 @@ function SWEP:DoMalfunction(post)
 
     if !self.NextMalfunction then
         math.randomseed(math.Round(util.SharedRandom(count, -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)))
-        self.NextMalfunction = math.sqrt(-2 * var * math.log(math.random())) * math.cos(2 * math.pi * math.random())
+        self.NextMalfunction = math.ceil(math.sqrt(-2 * var * math.log(math.random())) * math.cos(2 * math.pi * math.random()))
     end
 
     local ret = self:GetBuff_Hook("Hook_Malfunction", count, true)
     if ret != nil then return ret end
-    
+
     if self:Clip1() <= 1 then return false end
 
     --print(mean, var, count, self.NextMalfunction)
