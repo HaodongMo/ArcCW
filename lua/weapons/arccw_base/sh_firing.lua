@@ -179,7 +179,7 @@ function SWEP:PrimaryAttack()
 
     local delay = self:GetFiringDelay()
 
-    local curtime = UnPredictedCurTime()
+    local curtime = CurTime()
     local curatt = self:GetNextPrimaryFire()
     local diff = curtime - curatt
 
