@@ -52,6 +52,7 @@ function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
     if self:GetReloading() then ic = false end
 
+    noinspect = noinspect or GetConVar("arccw_noinspect")
     if ic then
         if (self:GetNextPrimaryFire() + 0.1) >= CurTime() then return end
 
@@ -59,7 +60,6 @@ function SWEP:ToggleCustomizeHUD(ic)
         self:ExitSights()
         self:SetShouldHoldType()
         self:ExitBipod()
-        
         if noinspect and !noinspect:GetBool() then
             self:PlayAnimation(self:SelectAnimation("enter_inspect"), nil, true, nil, nil, true, false)
         end
