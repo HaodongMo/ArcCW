@@ -768,7 +768,7 @@ function SWEP:GetDispersion()
 end
 
 function SWEP:DoShellEject(atti)
-    local eff = self:GetBuff_Override("Override_ShellEffect") or "arccw_shelleffect"
+    local eff = self:GetBuff_Override("Override_ShellEffect") or self.ShellEffect or "arccw_shelleffect"
 
     if eff == "NONE" then return end
 
