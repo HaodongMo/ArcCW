@@ -54,7 +54,6 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Mults = {}
     self.TickCache_Hooks = {}
     self.TickCache_IsShotgun = nil
-    self.TickCache_IsShotgun = self:GetIsShotgun()
 
     self.TickCache_Tick_Overrides = {}
     self.TickCache_Tick_Adds = {}
@@ -76,15 +75,17 @@ function SWEP:RecalcAllBuffs()
 end
 
 function SWEP:GetIsShotgun()
-    if self.TickCache_IsShotgun then return self.TickCache_IsShotgun end
+    if self.TickCache_IsShotgun == nil then
+        --local shotgun = self:GetBuff("IsShotgun", true)
+        if shotgun != nil then
+            self.TickCache_IsShotgun = shotgun
+        end
 
-    local shotgun = self:GetBuff("IsShotgun", true)
-    if shotgun != nil then return shotgun end
+        local num = self.Num
+        if self.TickCache_IsShotgun == nil and num > 1 then self.TickCache_IsShotgun = true end
+    end
 
-    local num = self.Num
-    if num > 1 then return true end
-
-    return self.IsShotgun
+    return self.TickCache_IsShotgun
 end
 
 function SWEP:GetIsManualAction()
@@ -1179,7 +1180,6 @@ function SWEP:Attach(slot, attname, silent, noadjust)
         self:SetFireMode(1)
     end
     ]]
-    self:SetFireMode(1)
 
     --self.UnReady = false
 
@@ -1370,13 +1370,13 @@ function SWEP:ToggleSlot(slot, num, silent, back)
 end
 
 function SWEP:AdjustAtts()
-
     local old_inf = self:HasInfiniteAmmo()
 
     self:RecalcAllBuffs()
 
     -- Recalculate active elements so dependencies aren't fucked
     self.ActiveElementCache = nil
+    self:GetActiveElements(true)
     self.ModifiedCache = {}
 
     for i, k in pairs(self.Attachments) do
@@ -1421,20 +1421,6 @@ function SWEP:AdjustAtts()
         end
     end
 
-    -- In theory, there shouldn't be modifier values on the weapon table itself (beyond attachment elements and firemodes)
-    --[[]
-    for var, v in pairs(self:GetTable()) do
-        self.ModifiedCache[var] = true
-        if var == "Firemodes" then
-            for _, v2 in pairs(v) do
-                for var2, _ in pairs(v2) do
-                    self.ModifiedCache[var2] = true
-                end
-            end
-        end
-    end
-    ]]
-
     if SERVER then
         local cs = self:GetCapacity() + self:GetChamberSize()
 
@@ -1478,15 +1464,11 @@ function SWEP:AdjustAtts()
 
     self:RebuildSubSlots()
 
-    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
-
+    local fmt = self:GetBuff_Override("Override_Firemodes", self.Firemodes)
     fmt["BaseClass"] = nil
 
     local fmi = self:GetFireMode()
-
-    if !fmt[fmi] then fmi = 1 end
-
-    self:SetFireMode(fmi)
+    if !fmt[fmi] then self:SetFireMode(1) end
 
     local wpn = weapons.Get(self:GetClass())
 

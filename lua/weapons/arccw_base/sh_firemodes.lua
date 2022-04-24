@@ -1,13 +1,11 @@
 function SWEP:ChangeFiremode(pred)
     pred = pred or true
-    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
-
+    local fmt = self:GetBuff_Override("Override_Firemodes", self.Firemodes)
     fmt["BaseClass"] = nil
 
     if table.Count(fmt) == 1 then return end
 
     if self:GetGrenadePrimed() then return end
-    
     local fmi = self:GetFireMode()
     local lastfmi = fmi
 
@@ -50,6 +48,7 @@ function SWEP:ChangeFiremode(pred)
         if !IsValid(self) then timer.Remove(id) return end
         if self:GetFireMode() == fmi then
             self:RecalcAllBuffs()
+            self:GetActiveElements(true)
             timer.Remove(id)
         end
     end)
@@ -89,7 +88,7 @@ function SWEP:ChangeFiremode(pred)
 end
 
 function SWEP:GetCurrentFiremode()
-    local fmt = self:GetBuff_Override("Override_Firemodes") or self.Firemodes
+    local fmt = self:GetBuff_Override("Override_Firemodes", self.Firemodes)
 
     if self:GetFireMode() > table.Count(fmt) then
         self:SetFireMode(1)
