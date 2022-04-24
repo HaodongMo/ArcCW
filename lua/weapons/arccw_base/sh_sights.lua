@@ -425,11 +425,19 @@ function SWEP:GetActiveSights()
     end
 end
 
+local function ScaleFOVByWidthRatio( fovDegrees, ratio )
+	local halfAngleRadians = fovDegrees * ( 0.5 * math.pi / 180 )
+	local t = math.tan( halfAngleRadians )
+	t = t * ratio
+	local retDegrees = ( 180 / math.pi ) * math.atan( t )
+	return retDegrees * 2
+end
+
 SWEP.LastTranslateFOV = 0
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
 
-    if CLIENT and GetConVar("arccw_dev_benchgun"):GetBool() then self.CurrentFOV = fov self.CurrentViewModelFOV = fov return fov end
+    if CLIENT and GetConVar("arccw_dev_benchgun"):GetBool() then local fov2 = ScaleFOVByWidthRatio(fov, (ScrW()/ScrH())/(4/3)) self.CurrentFOV = fov self.CurrentViewModelFOV = fov2 return fov end
 
     self.ApproachFOV = self.ApproachFOV or fov
     self.CurrentFOV = self.CurrentFOV or fov
