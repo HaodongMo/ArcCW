@@ -425,7 +425,7 @@ function SWEP:GetActiveSights()
     end
 end
 
-local function ScaleFOVByWidthRatio( fovDegrees, ratio )
+local function SWEP:ScaleFOVByWidthRatio( fovDegrees, ratio )
 	local halfAngleRadians = fovDegrees * ( 0.5 * math.pi / 180 )
 	local t = math.tan( halfAngleRadians )
 	t = t * ratio
@@ -433,11 +433,15 @@ local function ScaleFOVByWidthRatio( fovDegrees, ratio )
 	return retDegrees * 2
 end
 
+function SWEP:QuickFOVix( fov )
+    return self:ScaleFOVByWidthRatio( fov, (ScrW and ScrW() or 4)/(ScrH and ScrH() or 3)/(4/3) )
+end
+
 SWEP.LastTranslateFOV = 0
 function SWEP:TranslateFOV(fov)
     local irons = self:GetActiveSights()
 
-    if CLIENT and GetConVar("arccw_dev_benchgun"):GetBool() then local fov2 = ScaleFOVByWidthRatio(fov, (ScrW()/ScrH())/(4/3)) self.CurrentFOV = fov self.CurrentViewModelFOV = fov2 return fov end
+    if CLIENT and GetConVar("arccw_dev_benchgun"):GetBool() then self.CurrentFOV = fov self.CurrentViewModelFOV = fov return fov end
 
     self.ApproachFOV = self.ApproachFOV or fov
     self.CurrentFOV = self.CurrentFOV or fov
@@ -447,7 +451,7 @@ function SWEP:TranslateFOV(fov)
     local timed = UnPredictedCurTime() - self.LastTranslateFOV
     self.LastTranslateFOV = UnPredictedCurTime()
 
-    local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0) + 10
+    local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0)
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         local asight = self:GetActiveSights()
