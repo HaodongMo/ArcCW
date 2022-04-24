@@ -18,7 +18,7 @@ function SWEP:DoLaser(world, nocontext)
         if world then
             cam.Start3D()
         else
-            cam.Start3D(EyePos(), EyeAngles(), self:QuickFOVix(self.CurrentViewModelFOV)
+            cam.Start3D(EyePos(), EyeAngles(), self:QuickFOVix(self.CurrentViewModelFOV))
         end
     end
 
