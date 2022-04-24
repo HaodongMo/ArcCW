@@ -425,7 +425,7 @@ function SWEP:GetActiveSights()
     end
 end
 
-local function SWEP:ScaleFOVByWidthRatio( fovDegrees, ratio )
+local function ScaleFOVByWidthRatio( fovDegrees, ratio )
 	local halfAngleRadians = fovDegrees * ( 0.5 * math.pi / 180 )
 	local t = math.tan( halfAngleRadians )
 	t = t * ratio
