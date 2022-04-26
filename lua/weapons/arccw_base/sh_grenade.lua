@@ -1,27 +1,31 @@
 SWEP.GrenadePrimeTime = 0
 
 function SWEP:PreThrow()
-    if self:Clip1() == 0 then
-        if self:Ammo1() == 0 then
-            return
-        else
-            self:SetClip1(1)
-            self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
+
+    local bot, inf = self:HasBottomlessClip(), self:HasInfiniteAmmo()
+    local aps = self:GetBuff("AmmoPerShot")
+
+    if !inf and (bot and self:Ammo1() or self:Clip1()) < aps then
+        if self:Ammo1() == 0 and self:Clip1() == 0 and !self:GetBuff_Override("Override_KeepIfEmpty", self.KeepIfEmpty) then
+            self:GetOwner():StripWeapon(self:GetClass())
         end
+        return
     end
+
     if self:GetGrenadePrimed() then return end
 
     if engine.ActiveGamemode() == "terrortown" and GetRoundState() == ROUND_PREP and GetConVar("ttt_no_nade_throw_during_prep"):GetBool() then
         return
     end
 
-    self:PlayAnimation("pre_throw", 1, false, 0, true)
-
     self:SetNextPrimaryFire(CurTime() + self.PullPinTime)
 
     self.GrenadePrimeTime = CurTime()
     self.GrenadePrimeAlt = self:GetOwner():KeyDown(IN_ATTACK2)
     self:SetGrenadePrimed(true)
+
+    local anim = self.GrenadePrimeAlt and self:SelectAnimation("pre_throw_alt") or self:SelectAnimation("pre_throw")
+    self:PlayAnimation(anim, 1, false, 0, true)
 
     self.isCooked = (!self.GrenadePrimeAlt and self:GetBuff("CookPrimFire",true)) or (self.GrenadePrimeAlt and self:GetBuff("CookAltFire",true)) or nil
 
@@ -35,20 +39,24 @@ function SWEP:Throw()
     self:SetGrenadePrimed(false)
     self.isCooked = nil
 
-    self:PlayAnimation("throw", 1, false, 0, true)
+    local anim = self.GrenadePrimeAlt and self:SelectAnimation("throw_alt") or self:SelectAnimation("throw")
+    self:PlayAnimation(anim, 1, false, 0, true)
 
     local heldtime = CurTime() - self.GrenadePrimeTime
 
-    local windup = heldtime / 0.5
-
-    windup = math.Clamp(windup, 0, 1)
-
-    local mv = self:GetBuff("MuzzleVelocity") * ArcCW.HUToM
-    local force = Lerp(windup, mv * 0.25, mv)
+    local mv = 0
 
     if self.GrenadePrimeAlt and self:GetBuff("MuzzleVelocityAlt", true) then
-        force = self:GetBuff("MuzzleVelocityAlt") * ArcCW.HUToM
+        mv = self:GetBuff("MuzzleVelocityAlt")
+    else
+        mv = self:GetBuff("MuzzleVelocity")
+        local chg = self:GetBuff("WindupTime")
+        if chg > 0 then
+            mv = Lerp(math.Clamp(heldtime / chg, 0, 1), mv * self:GetBuff("WindupMinimum"), mv)
+        end
     end
+
+    local force = mv * ArcCW.HUToM
 
     self:SetTimer(0.25, function()
 
@@ -74,16 +82,23 @@ function SWEP:Throw()
 
         phys:AddAngleVelocity( Vector(0, 750, 0) )
 
-        self:TakePrimaryAmmo(1)
+        if !self:HasInfiniteAmmo() then
+            local aps = self:GetBuff("AmmoPerShot")
+            local a1 = self:Ammo1()
+            if self:HasBottomlessClip() or a1 >= aps then
+                self:TakePrimaryAmmo(aps)
+            elseif a1 < aps then
+                self:SetClip1(math.min(self:GetCapacity() + self:GetChamberSize(), self:Clip1() + a1))
+                self:TakePrimaryAmmo(a1)
+            end
 
-        if self:Clip1() == 0 and self:Ammo1() >= 1 and !self.Singleton then
-            self:SetClip1(1)
-            self:GetOwner():SetAmmo(self:Ammo1() - 1, self.Primary.Ammo)
-        else
-            self:GetOwner():StripWeapon(self:GetClass())
+            if (self.Singleton or self:Ammo1() == 0) and !self:GetBuff_Override("Override_KeepIfEmpty", self.KeepIfEmpty) then
+                self:GetOwner():StripWeapon(self:GetClass())
+                return
+            end
         end
     end)
-    self:SetTimer(self:GetAnimKeyTime("throw"), function()
+    self:SetTimer(self:GetAnimKeyTime(anim), function()
         if !self:IsValid() then return end
         self:PlayAnimation("draw")
     end)

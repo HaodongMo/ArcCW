@@ -101,6 +101,7 @@ function SWEP:GetHUDData()
     else
         if infammo then
             data.ammo = btmless and data.ammo or "-"
+            data.clip = self.Throwing and "∞" or data.clip
         end
         if btmless then
             data.clip = infammo and "∞" or data.ammo
@@ -143,192 +144,195 @@ local armor_shad = Material("arccw/hud/armor_shadow.png", "mips smooth")
 local ubgl_mat = Material("arccw/hud/ubgl.png", "smooth")
 local bipod_mat = Material("arccw/hud/bipod.png", "smooth")
 
-function SWEP:DrawHUD()
-    -- DEBUG PANEL
-    if GetConVar("arccw_dev_debug"):GetBool() then
-        local reloadtime = self:GetReloadTime()
-        local s = ScreenScaleMulti(1)
-        local thestate = self:GetState()
-        local ecksy = s* 64
+local function debug_panel(self)
+    local reloadtime = self:GetReloadTime()
+    local s = ScreenScaleMulti(1)
+    local thestate = self:GetState()
+    local ecksy = s* 64
 
-        if thestate == ArcCW.STATE_CUSTOMIZE then
-            ecksy = s* 256
-        end
+    if thestate == ArcCW.STATE_CUSTOMIZE then
+        ecksy = s* 256
+    end
 
-        surface.SetFont("ArcCW_26")
-        surface.SetTextColor(255, 255, 255, 255)
-        surface.SetDrawColor(0, 0, 0, 63)
+    surface.SetFont("ArcCW_26")
+    surface.SetTextColor(255, 255, 255, 255)
+    surface.SetDrawColor(0, 0, 0, 63)
 
-        -- it's for contrast, i promise
-        surface.SetMaterial(bird)
-        surface.DrawTexturedRect(ecksy - s-400, s-320, s*512, s*512)
+    -- it's for contrast, i promise
+    surface.SetMaterial(bird)
+    surface.DrawTexturedRect(ecksy - s-400, s-320, s*512, s*512)
 
-        surface.SetDrawColor(255, 255, 255, 255)
-        if reloadtime then
-            surface.SetTextPos(ecksy, 26 * s*1)
-            surface.DrawText(reloadtime[1])
+    surface.SetDrawColor(255, 255, 255, 255)
+    if reloadtime then
+        surface.SetTextPos(ecksy, 26 * s*1)
+        surface.DrawText(reloadtime[1])
 
-            surface.SetTextPos(ecksy, 26 * s*2)
-            surface.DrawText(reloadtime[2])
+        surface.SetTextPos(ecksy, 26 * s*2)
+        surface.DrawText(reloadtime[2])
 
-            surface.SetTextPos(ecksy, 26 * s*3)
-            if self:GetMagUpIn()-CurTime() > 0 then
-                surface.SetTextColor(255, 127, 127, 255)
-            end
-            surface.DrawText( mr( math.max( self:GetMagUpIn() - CurTime(), 0 ), 2) )
-        else
-            surface.SetFont("ArcCW_20")
-            surface.SetTextPos(ecksy, 26 * s*2)
-            surface.DrawText("NO RELOAD ANIMATION")
-
-            surface.SetFont("ArcCW_12")
-            surface.SetTextPos(ecksy, 26 * s*2.66)
-            surface.DrawText("not a mag fed one, at least...")
-        end
-        surface.SetFont("ArcCW_26")
-        surface.SetTextColor(255, 255, 255, 255)
-
-        if self:GetReloadingREAL()-CurTime() > 0 then
+        surface.SetTextPos(ecksy, 26 * s*3)
+        if self:GetMagUpIn()-CurTime() > 0 then
             surface.SetTextColor(255, 127, 127, 255)
         end
-        surface.SetTextPos(ecksy, 26 * s*4)
-        surface.DrawText( mr( math.max( self:GetReloadingREAL() - CurTime(), 0 ), 2 ) )
-        surface.SetTextColor(255, 255, 255, 255)
-
-        if self:GetWeaponOpDelay()-CurTime() > 0 then
-            surface.SetTextColor(255, 127, 127, 255)
-        end
-        surface.SetTextPos(ecksy, 26 * s*5)
-        surface.DrawText( mr( math.max( self:GetWeaponOpDelay() - CurTime(), 0 ), 2 ) )
-        surface.SetTextColor(255, 255, 255, 255)
-
-        if self:GetNextPrimaryFire() - CurTime() > 0 then
-            surface.SetTextColor(255, 127, 127, 255)
-        end
-        surface.SetTextPos(ecksy, 26 * s*6)
-        surface.DrawText( mr( math.max( self:GetNextPrimaryFire()*1000 - CurTime()*1000, 0 ), 0 ) .. "ms" )
-        surface.SetTextColor(255, 255, 255, 255)
-
-        local seq = self:GetSequenceInfo( self:GetOwner():GetViewModel():GetSequence() )
-        local seq2 = self:GetOwner():GetViewModel():GetSequence()
-        local seq3 = self:GetOwner():GetViewModel()
+        surface.DrawText( mr( math.max( self:GetMagUpIn() - CurTime(), 0 ), 2) )
+    else
         surface.SetFont("ArcCW_20")
-        surface.SetTextPos(ecksy, 26 * s*7)
-        surface.DrawText( seq2 .. ", " .. seq.label )
+        surface.SetTextPos(ecksy, 26 * s*2)
+        surface.DrawText("NO RELOAD ANIMATION")
 
-        local proggers = 1 - ( self.LastAnimFinishTime - CurTime() ) / seq3:SequenceDuration()
-
-        surface.SetTextPos(ecksy, 26 * s*8)
         surface.SetFont("ArcCW_12")
-        surface.DrawText( mr( seq3:SequenceDuration()*proggers, 2 ) )
+        surface.SetTextPos(ecksy, 26 * s*2.66)
+        surface.DrawText("not a mag fed one, at least...")
+    end
+    surface.SetFont("ArcCW_26")
+    surface.SetTextColor(255, 255, 255, 255)
 
-        surface.SetTextPos(ecksy + s*30, 26 * s*8)
-        surface.DrawText( "-" )
+    if self:GetReloadingREAL()-CurTime() > 0 then
+        surface.SetTextColor(255, 127, 127, 255)
+    end
+    surface.SetTextPos(ecksy, 26 * s*4)
+    surface.DrawText( mr( math.max( self:GetReloadingREAL() - CurTime(), 0 ), 2 ) )
+    surface.SetTextColor(255, 255, 255, 255)
 
-        surface.SetTextPos(ecksy + s*48, 26 * s*8)
-        surface.DrawText( mr( self:SequenceDuration( seq2 ), 2 ) )
+    if self:GetWeaponOpDelay()-CurTime() > 0 then
+        surface.SetTextColor(255, 127, 127, 255)
+    end
+    surface.SetTextPos(ecksy, 26 * s*5)
+    surface.DrawText( mr( math.max( self:GetWeaponOpDelay() - CurTime(), 0 ), 2 ) )
+    surface.SetTextColor(255, 255, 255, 255)
 
-        surface.SetTextPos(ecksy + s*132, 26 * s*7.6)
-        surface.DrawText( mr(proggers*100) .. "%" )
+    if self:GetNextPrimaryFire() - CurTime() > 0 then
+        surface.SetTextColor(255, 127, 127, 255)
+    end
+    surface.SetTextPos(ecksy, 26 * s*6)
+    surface.DrawText( mr( math.max( self:GetNextPrimaryFire()*1000 - CurTime()*1000, 0 ), 0 ) .. "ms" )
+    surface.SetTextColor(255, 255, 255, 255)
 
-        -- welcome to the bar
-        surface.DrawOutlinedRect(ecksy, 26 * s*7.7, s*128, s*8, s)
-        surface.DrawRect(ecksy, 26 * s*7.7+s*2, s*128*math.Clamp(proggers, 0, 1), s*8-s*4, s)
+    local seq = self:GetSequenceInfo( self:GetOwner():GetViewModel():GetSequence() )
+    local seq2 = self:GetOwner():GetViewModel():GetSequence()
+    local seq3 = self:GetOwner():GetViewModel()
+    surface.SetFont("ArcCW_20")
+    surface.SetTextPos(ecksy, 26 * s*7)
+    surface.DrawText( seq2 .. ", " .. seq.label )
 
-        surface.SetFont("ArcCW_20")
-        surface.SetTextPos(ecksy, 26 * s*8.5)
-        surface.DrawText( t_states[thestate] )
+    local proggers = 1 - ( self.LastAnimFinishTime - CurTime() ) / seq3:SequenceDuration()
 
-        surface.SetTextPos(ecksy, 26 * s*9.25)
-        surface.DrawText( mr(self:GetSightDelta()*100) .. "%" )
+    surface.SetTextPos(ecksy, 26 * s*8)
+    surface.SetFont("ArcCW_12")
+    surface.DrawText( mr( seq3:SequenceDuration()*proggers, 2 ) )
 
-        surface.DrawOutlinedRect(ecksy, 26 * s*10, s*64, s*4, s/2)
-        surface.DrawRect(ecksy, 26 * s*10+s*1, s*64*self:GetSightDelta(), s*4-s*2)
+    surface.SetTextPos(ecksy + s*30, 26 * s*8)
+    surface.DrawText( "-" )
 
-        surface.DrawOutlinedRect(ecksy, 26 * s*10.25, s*64, s*4, s/2)
-        surface.DrawRect(ecksy, 26 * s*10.25+s*1, s*64*self:GetSprintDelta(), s*4-s*2)
+    surface.SetTextPos(ecksy + s*48, 26 * s*8)
+    surface.DrawText( mr( self:SequenceDuration( seq2 ), 2 ) )
+
+    surface.SetTextPos(ecksy + s*132, 26 * s*7.6)
+    surface.DrawText( mr(proggers*100) .. "%" )
+
+    -- welcome to the bar
+    surface.DrawOutlinedRect(ecksy, 26 * s*7.7, s*128, s*8, s)
+    surface.DrawRect(ecksy, 26 * s*7.7+s*2, s*128*math.Clamp(proggers, 0, 1), s*8-s*4, s)
+
+    surface.SetFont("ArcCW_20")
+    surface.SetTextPos(ecksy, 26 * s*8.5)
+    surface.DrawText( t_states[thestate] )
+
+    surface.SetTextPos(ecksy, 26 * s*9.25)
+    surface.DrawText( mr(self:GetSightDelta()*100) .. "%" )
+
+    surface.DrawOutlinedRect(ecksy, 26 * s*10, s*64, s*4, s/2)
+    surface.DrawRect(ecksy, 26 * s*10+s*1, s*64*self:GetSightDelta(), s*4-s*2)
+
+    surface.DrawOutlinedRect(ecksy, 26 * s*10.25, s*64, s*4, s/2)
+    surface.DrawRect(ecksy, 26 * s*10.25+s*1, s*64*self:GetSprintDelta(), s*4-s*2)
 
 
-        surface.SetTextPos(ecksy, 26 * s * 11)
-        surface.DrawText( mr(self:GetHolster_Time(), 1) )
+    surface.SetTextPos(ecksy, 26 * s * 11)
+    surface.DrawText( mr(self:GetHolster_Time(), 1) )
 
-        surface.SetTextPos(ecksy, 26 * s * 12)
-        surface.DrawText( tostring(self:GetHolster_Entity()) )
+    surface.SetTextPos(ecksy, 26 * s * 12)
+    surface.DrawText( tostring(self:GetHolster_Entity()) )
 
-        -- Labels
-        surface.SetTextColor(255, 255, 255, 255)
-        surface.SetFont("ArcCW_8")
+    -- Labels
+    surface.SetTextColor(255, 255, 255, 255)
+    surface.SetFont("ArcCW_8")
 
-        if reloadtime then
-            surface.SetTextPos(ecksy, 26 * s * 1)
-            surface.DrawText("RELOAD")
+    if reloadtime then
+        surface.SetTextPos(ecksy, 26 * s * 1)
+        surface.DrawText("RELOAD")
 
-            surface.SetTextPos(ecksy- s * 36, s * 26 * 1.33)
-            surface.DrawText("FULL")
+        surface.SetTextPos(ecksy- s * 36, s * 26 * 1.33)
+        surface.DrawText("FULL")
 
-            surface.SetTextPos(ecksy- s * 36, s * 26 * 2.33)
-            surface.DrawText("MAGIN")
+        surface.SetTextPos(ecksy- s * 36, s * 26 * 2.33)
+        surface.DrawText("MAGIN")
 
-            surface.SetTextPos(ecksy- s * 36, s * 26 * 3.33)
-            surface.DrawText("MAG LOAD")
-        end
+        surface.SetTextPos(ecksy- s * 36, s * 26 * 3.33)
+        surface.DrawText("MAG LOAD")
+    end
 
-        surface.SetTextPos(ecksy, 26 * s*4)
-        surface.DrawText("RELOAD DELAY")
+    surface.SetTextPos(ecksy, 26 * s*4)
+    surface.DrawText("RELOAD DELAY")
 
-        surface.SetTextPos(ecksy, 26 * s*5)
-        surface.DrawText("WEAPON OPERATION DELAY")
+    surface.SetTextPos(ecksy, 26 * s*5)
+    surface.DrawText("WEAPON OPERATION DELAY")
 
-        surface.SetTextPos(ecksy, 26 * s*6)
-        surface.DrawText("NEXT PRIMARY FIRE")
+    surface.SetTextPos(ecksy, 26 * s*6)
+    surface.DrawText("NEXT PRIMARY FIRE")
 
-        surface.SetTextPos(ecksy, 26 * s*7)
-        surface.DrawText("CURRENT ANIMATION")
+    surface.SetTextPos(ecksy, 26 * s*7)
+    surface.DrawText("CURRENT ANIMATION")
 
-        surface.SetTextPos(ecksy, 26 * s*8.5)
-        surface.DrawText("WEAPON STATE")
+    surface.SetTextPos(ecksy, 26 * s*8.5)
+    surface.DrawText("WEAPON STATE")
 
-        surface.SetTextPos(ecksy, 26 * s*9.25)
-        surface.DrawText("SIGHT DELTA")
+    surface.SetTextPos(ecksy, 26 * s*9.25)
+    surface.DrawText("SIGHT DELTA")
 
-        surface.SetTextPos(ecksy, 26 * s*11)
-        surface.DrawText("HOLSTER TIME")
+    surface.SetTextPos(ecksy, 26 * s*11)
+    surface.DrawText("HOLSTER TIME")
 
-        surface.SetTextPos(ecksy, 26 * s*12)
-        surface.DrawText("HOLSTER ENT")
+    surface.SetTextPos(ecksy, 26 * s*12)
+    surface.DrawText("HOLSTER ENT")
 
-        -- lhik timeline
-        surface.SetTextColor(255, 255, 255, 255)
-        surface.SetFont("ArcCW_8")
-        surface.SetDrawColor(255, 255, 255, 11)
-        surface.DrawRect(s*8, s*8, ScrW() - (s*16), s*2)
+    -- lhik timeline
+    surface.SetTextColor(255, 255, 255, 255)
+    surface.SetFont("ArcCW_8")
+    surface.SetDrawColor(255, 255, 255, 11)
+    surface.DrawRect(s*8, s*8, ScrW() - (s*16), s*2)
 
-        local texy = math.Round(CurTime(),1)
-        local a, b = surface.GetTextSize(texy)
-        surface.SetTextPos((ScrW()/2) - (a/2), (s*16) - (b/2))
+    local texy = math.Round(CurTime(),1)
+    local a, b = surface.GetTextSize(texy)
+    surface.SetTextPos((ScrW()/2) - (a/2), (s*16) - (b/2))
+    surface.DrawText(texy)
+
+    surface.SetDrawColor(255, 255, 255, 127)
+    if self.LHIKTimeline then for i, v in pairs(self.LHIKTimeline) do
+
+        local pox = ScrW()/2
+        local poy = (s*7)
+
+        local zo = s*0.01
+
+        local dist = self.LHIKStartTime + v.t
+
+        surface.DrawRect(pox + (dist*zo), poy, s*8, s*4)
+
+        texy = math.Round(dist,1)
+        a, b = surface.GetTextSize(texy)
+        surface.SetTextPos(pox + (dist*zo) - (a/2), (s*16) - (b/2) )
         surface.DrawText(texy)
+    end end
+end
 
-        surface.SetDrawColor(255, 255, 255, 127)
-        if self.LHIKTimeline then for i, v in pairs(self.LHIKTimeline) do
-
-            local pox = ScrW()/2
-            local poy = (s*7)
-
-            local zo = s*0.01
-
-            local dist = self.LHIKStartTime + v.t
-
-            surface.DrawRect(pox + (dist*zo), poy, s*8, s*4)
-
-            texy = math.Round(dist,1)
-            a, b = surface.GetTextSize(texy)
-            surface.SetTextPos(pox + (dist*zo) - (a/2), (s*16) - (b/2) )
-            surface.DrawText(texy)
-        end end
-
+function SWEP:DrawHUD()
+    if GetConVar("arccw_dev_debug"):GetBool() then
+        debug_panel(self)
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end
+
     if self:GetState() != ArcCW.STATE_CUSTOMIZE then
         self:GetBuff_Hook("Hook_DrawHUD")
     end
@@ -351,7 +355,7 @@ function SWEP:DrawHUD()
     end
 
     local curTime = CurTime()
-    local mode = self:GetFiremodeName()
+    --local mode = self:GetFiremodeName()
 
     local muzz = self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1
 

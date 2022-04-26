@@ -18,6 +18,9 @@ SWEP.MuzzleVelocityAlt = nil -- Throwing with alt-fire will use this velocity if
 SWEP.PullPinTime = 0.25
 SWEP.FuseTime = 3.5
 
+SWEP.WindupTime = 0.5 -- Time to reach max velocity (does not apply for altfire)
+SWEP.WindupMinimum = 0.25 -- Velocity fraction if released without windup
+
 SWEP.CookPrimFire = true
 SWEP.CookAltFire = true
 
@@ -28,6 +31,9 @@ SWEP.HoldtypeActive = "grenade"
 
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.Ammo = "grenade"
+
+-- By default, grenades with no ammo will be stripped. Set true to prevent
+SWEP.KeepIfEmpty = false
 
 SWEP.Animations = {
     -- ["draw"] = {

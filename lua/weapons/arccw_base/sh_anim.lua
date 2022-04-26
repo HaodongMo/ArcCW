@@ -220,8 +220,8 @@ end
 function SWEP:PlayIdleAnimation(pred)
     local ianim = self:SelectAnimation("idle")
     if self:GetGrenadePrimed() then
-        -- ianim = self.GrenadePrimeAlt and self:SelectAnimation("pre_throw_hold_alt") or self:SelectAnimation("pre_throw_hold")
-        ianim = self:SelectAnimation("pre_throw_hold")
+        ianim = self.GrenadePrimeAlt and self:SelectAnimation("pre_throw_hold_alt") or self:SelectAnimation("pre_throw_hold")
+        --ianim = self:SelectAnimation("pre_throw_hold")
     end
 
     -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
