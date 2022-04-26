@@ -234,19 +234,17 @@ end
 SWEP.LastClipOutTime = 0
 
 function SWEP:GetVisualBullets()
-    local reserve = self:Ammo1()
-    local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
-    local abouttoload = math.Clamp(self:GetCapacity() + chamber, 0, reserve + self:Clip1())
     local h = self:GetBuff_Hook("Hook_GetVisualBullets")
-
     if h then return h end
+
     if self.LastClipOutTime > CurTime() then
         return self.LastClip1_B or self:Clip1()
     else
         self.LastClip1_B = self:Clip1()
 
         if self:GetReloading() and !(self.ShotgunReload or (self.HybridReload and self:Clip1() == 0)) then
-            return abouttoload
+            local reserve = self:HasInfiniteAmmo() and math.huge or self:Ammo1()
+            return math.Clamp(self:Clip1() + reserve, 0, self:GetCapacity() + self:GetChamberSize())
         else
             return self:Clip1()
         end
