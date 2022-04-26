@@ -21,13 +21,14 @@ function SWEP:PreThrow()
     self:SetNextPrimaryFire(CurTime() + self.PullPinTime)
 
     self.GrenadePrimeTime = CurTime()
-    self.GrenadePrimeAlt = self:GetOwner():KeyDown(IN_ATTACK2)
+    local alt = self:GetOwner():KeyDown(IN_ATTACK2)
+    self:SetGrenadeAlt(alt)
     self:SetGrenadePrimed(true)
 
-    local anim = self.GrenadePrimeAlt and self:SelectAnimation("pre_throw_alt") or self:SelectAnimation("pre_throw")
+    local anim = alt and self:SelectAnimation("pre_throw_alt") or self:SelectAnimation("pre_throw")
     self:PlayAnimation(anim, 1, false, 0, true)
 
-    self.isCooked = (!self.GrenadePrimeAlt and self:GetBuff("CookPrimFire",true)) or (self.GrenadePrimeAlt and self:GetBuff("CookAltFire",true)) or nil
+    self.isCooked = (!alt and self:GetBuff("CookPrimFire", true)) or (alt and self:GetBuff("CookAltFire", true)) or nil
 
     self:GetBuff_Hook("Hook_PreThrow")
 end
@@ -39,14 +40,16 @@ function SWEP:Throw()
     self:SetGrenadePrimed(false)
     self.isCooked = nil
 
-    local anim = self.GrenadePrimeAlt and self:SelectAnimation("throw_alt") or self:SelectAnimation("throw")
+    local alt = self:GetGrenadeAlt()
+
+    local anim = alt and self:SelectAnimation("throw_alt") or self:SelectAnimation("throw")
     self:PlayAnimation(anim, 1, false, 0, true)
 
     local heldtime = CurTime() - self.GrenadePrimeTime
 
     local mv = 0
 
-    if self.GrenadePrimeAlt and self:GetBuff("MuzzleVelocityAlt", true) then
+    if alt and self:GetBuff("MuzzleVelocityAlt", true) then
         mv = self:GetBuff("MuzzleVelocityAlt")
     else
         mv = self:GetBuff("MuzzleVelocity")
@@ -104,12 +107,12 @@ function SWEP:Throw()
     end)
 
     self:SetNextPrimaryFire(CurTime() + 1)
-    self.GrenadePrimeAlt = nil
+    self:SetGrenadeAlt(false)
 
     self:GetBuff_Hook("Hook_PostThrow")
 end
 
-function SWEP:GrenadeDrop()
+function SWEP:GrenadeDrop(doammo)
     local rocket = self:FireRocket(self.ShootEntity, 0)
 
     if IsValid(rocket) then
@@ -128,5 +131,26 @@ function SWEP:GrenadeDrop()
                 rocket.FuseTime = ft
             end
         end
+    end
+
+    if doammo then
+        if !self:HasInfiniteAmmo() then
+            local aps = self:GetBuff("AmmoPerShot")
+            local a1 = self:Ammo1()
+            if self:HasBottomlessClip() or a1 >= aps then
+                self:TakePrimaryAmmo(aps)
+            elseif a1 < aps then
+                self:SetClip1(math.min(self:GetCapacity() + self:GetChamberSize(), self:Clip1() + a1))
+                self:TakePrimaryAmmo(a1)
+            end
+
+            if (self.Singleton or self:Ammo1() == 0) and !self:GetBuff_Override("Override_KeepIfEmpty", self.KeepIfEmpty) then
+                self:GetOwner():StripWeapon(self:GetClass())
+                return
+            end
+        end
+
+        self:SetNextPrimaryFire(CurTime() + 1)
+        self:SetGrenadePrimed(false)
     end
 end

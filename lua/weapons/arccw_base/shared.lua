@@ -948,3 +948,14 @@ function SWEP:GetMalfunctionJam()
     if !game.SinglePlayer() and CLIENT then return self.CL_MalfunctionJam end
     return self:GetNWMalfunctionJam()
 end
+
+-- DIRTY OPTIMIZATION TRICK: NeedCycle is reused for grenades!
+function SWEP:SetGrenadeAlt(d)
+    if !self.Throwing then return end
+    self:SetNeedCycle(d)
+end
+
+function SWEP:GetGrenadeAlt()
+    if !self.Throwing then return false end
+    return self:GetNeedCycle()
+end

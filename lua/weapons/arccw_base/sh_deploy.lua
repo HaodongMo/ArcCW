@@ -237,6 +237,10 @@ function SWEP:Holster(wep)
         return
     end
 
+    if self:GetGrenadePrimed() then
+        self:GrenadeDrop(true)
+    end
+
     self:WepSwitchCleanup()
     if game.SinglePlayer() then self:CallOnClient("WepSwitchCleanup") end
 
