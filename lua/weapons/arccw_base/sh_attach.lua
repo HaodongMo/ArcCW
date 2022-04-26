@@ -76,7 +76,7 @@ end
 
 function SWEP:GetIsShotgun()
     if self.TickCache_IsShotgun == nil then
-        local shotgun = self:GetBuff_Override("Override_IsShotgun", true)
+        local shotgun = self:GetBuff_Override("Override_IsShotgun")
         if shotgun != nil then
             self.TickCache_IsShotgun = shotgun
         end
