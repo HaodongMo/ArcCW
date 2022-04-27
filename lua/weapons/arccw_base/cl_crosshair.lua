@@ -249,12 +249,12 @@ function SWEP:DoDrawCrosshair(x, y)
             surface.SetMaterial(clump_outer)
 
             for i=1, prong_out do
-                surface.DrawCircle(x-0.5, y-0.5, acc + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+                surface.DrawCircle(x-1, y-0, acc + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
             end
-            surface.DrawCircle(x-0.5, y-0.5, acc, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+            surface.DrawCircle(x-1, y-0, acc, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
         end
 
-        surface.DrawCircle(x-0.5, y-0.5, acc, clr.r, clr.g, clr.b, clr.a * delta)
+        surface.DrawCircle(x-1, y-0, acc, clr.r, clr.g, clr.b, clr.a * delta)
     end
 
     return true
