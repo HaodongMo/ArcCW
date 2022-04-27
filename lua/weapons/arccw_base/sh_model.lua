@@ -981,22 +981,20 @@ function SWEP:GetFromReference(boneid)
     local pos = self:GetOwner():EyePos()
     local ang = self:GetOwner():EyeAngles()
 
+    local seq = "idle"
+    seq = self:GetBuff_Override("Override_AutosolveSourceSeq") or self.AutosolveSourceSeq or seq
+    ArcCW.ReferenceModel:ResetSequence(seq)
+
     ArcCW.ReferenceModel:SetPos(pos)
     ArcCW.ReferenceModel:SetAngles(ang)
     ArcCW.ReferenceModel:SetNoDraw(true)
     ArcCW.ReferenceModel:SetupBones()
 
-    local seq = "idle"
-
-    seq = self.AutosolveSourceSeq or seq
-
     local ma = ArcCW.ReferenceModel:GetBoneMatrix(boneid)
-
     local bpos, bang = ma:GetTranslation(), ma:GetAngles()
 
-    -- SafeRemoveEntity(ArcCW.ReferenceModel)
-
     bpos, bang = WorldToLocal(pos, ang, bpos, bang)
+    print(bpos, bang)
 
     self.ReferencePosCache[boneid] = {Pos = bpos, Ang = bang}
 

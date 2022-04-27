@@ -59,6 +59,8 @@ function SWEP:RecalcAllBuffs()
     self.TickCache_Tick_Adds = {}
     self.TickCache_Tick_Mults = {}
 
+    self.ReferencePosCache = {}
+
     self.AttCache_Hooks = {}
 
     self.NextMalfunction = nil
