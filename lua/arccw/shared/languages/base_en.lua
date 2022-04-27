@@ -210,6 +210,9 @@ L["pro.ubsg"] = "Selectable underbarrel shotgun"
 L["con.obstruction"] = "May obstruct sights"
 L["autostat.underwater"] = "Shoot underwater"
 L["autostat.sprintshoot"] = "Shoot while sprinting"
+L["con.beam"] = "Visible laser beam"
+L["con.light"] = "Visible flashlight beam"
+L["con.noscope"] = "No point of aim"
 
 -- Incompatibility Menu
 L["incompatible.title"] = "ArcCW: INCOMPATIBLE ADDONS"
