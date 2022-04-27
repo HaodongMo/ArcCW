@@ -1,6 +1,5 @@
 local delta = 0
 local size = 0
-local cw = nil
 local clump_inner = Material("arccw/hud/clump_inner.png", "mips smooth")
 local clump_outer = Material("arccw/hud/clump_outer.png", "mips smooth")
 local aimtr_result = {}
@@ -25,6 +24,28 @@ function SWEP:ShouldDrawCrosshair()
     if self:GetNWState() == ArcCW.STATE_CUSTOMIZE then return false end
 
     return true
+end
+
+local cr_main = Color( 0, 255, 0 )
+local cr_shad = Color( 0, 0, 0, 127 )
+
+local gaA = 0
+local gaD = 0
+
+function SWEP:GetFOVAcc()
+	cam.Start3D()
+		local lool = ( EyePos() + ( EyeAngles():Forward() ) + ( (ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")) * EyeAngles():Up() ) ):ToScreen()
+		local lool2 = ( EyePos() + ( EyeAngles():Forward() ) + ( (self:GetDispersion() * ArcCW.MOAToAcc / 10) * EyeAngles():Up() ) ):ToScreen()
+	cam.End3D()
+
+	local gau = 0
+	gau = ( (ScrH()/2) - lool.y )
+	gaA = math.Approach(gaA, gau, (ScrH()/2)*FrameTime())
+	gau = 0
+	gau = ( (ScrH()/2) - lool2.y )
+	gaD = math.Approach(gaD, gau, (ScrH()/2)*FrameTime())
+
+	return gaA, gaD
 end
 
 function SWEP:DoDrawCrosshair(x, y)
@@ -72,16 +93,14 @@ function SWEP:DoDrawCrosshair(x, y)
             GetConVar("arccw_crosshair_outline_b"):GetInt(),
             GetConVar("arccw_crosshair_outline_a"):GetInt())
 
-    local gap = ScreenScale(24)
-            * (static and 0.25 or math.Clamp(self:GetDispersion() / 1000, 0.1, 100))
-            * GetConVar("arccw_crosshair_gap"):GetFloat()
-    gap = gap + ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1)
+    local gA, gD = self:GetFOVAcc()
+    local gap = (static and 8 or gD) * GetConVar("arccw_crosshair_gap"):GetFloat()
+
+    gap = gap + ( ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1) )
 
     local prong = ScreenScale(prong_len)
     local p_w = ScreenScale(prong_wid)
     local p_w2 = p_w + prong_out
-
-    cw = cw or self
 
     local sp
     if self:GetOwner():ShouldDrawLocalPlayer() then
@@ -90,6 +109,8 @@ function SWEP:DoDrawCrosshair(x, y)
 
         cam.Start3D()
         local coords = trace.HitPos:ToScreen()
+        coords.x = math.Round(coords.x)
+        coords.y = math.Round(coords.y)
         cam.End3D()
         sp = { visible = true, x = coords.x, y = coords.y }
     end
@@ -114,6 +135,8 @@ function SWEP:DoDrawCrosshair(x, y)
 
     cam.Start3D()
     local w2s = aimtr_result.HitPos:ToScreen()
+    w2s.x = math.Round(w2s.x)
+    w2s.y = math.Round(w2s.y)
     cam.End3D()
 
     sp.x = w2s.x sp.y = w2s.y
@@ -141,20 +164,12 @@ function SWEP:DoDrawCrosshair(x, y)
         surface.DrawRect(x - p_w / 2, y - p_w / 2, p_w, p_w)
     end
 
-    local num = self:GetBuff("Num")
 
     size = math.Approach(size, gap, FrameTime() * 32 * gap)
-
-    if cw != self then
-        delta = 0
-        size = gap
-    end
-
-    cw = self
-
     gap = size
     if !static then gap = gap * delta end
 
+    local num = self:GetBuff("Num")
     if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
         prong = ScreenScale(prong_wid)
         p_w = ScreenScale(prong_len)
@@ -162,7 +177,6 @@ function SWEP:DoDrawCrosshair(x, y)
     end
 
     local prong2 = prong + prong_out
-
     if prong_tilt then
         local angle = (prong_left and prong_top and prong_right and prong_down) and 45 or 30
         local rad = math.rad(angle)
@@ -229,20 +243,17 @@ function SWEP:DoDrawCrosshair(x, y)
     end
 
     if GetConVar("arccw_crosshair_clump"):GetBool() and (GetConVar("arccw_crosshair_clump_always"):GetBool() or num > 1) then
-        local spread = ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")
-        local clumpSize = math.Clamp(2048 * spread, 8, 1024)
-
         if GetConVar("arccw_crosshair_clump_outline"):GetBool() then
-            surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
             surface.SetMaterial(clump_outer)
-            surface.DrawTexturedRect(x - clumpSize / 2, y - clumpSize / 2, clumpSize, clumpSize)
+
+            for i=1, prong_out do
+                surface.DrawCircle(x, y, gA + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+            end
+                surface.DrawCircle(x, y, gA, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
         end
 
-        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
-        surface.SetMaterial(clump_inner)
-        surface.DrawTexturedRect(x - clumpSize / 2, y - clumpSize / 2, clumpSize, clumpSize)
+        surface.DrawCircle(x, y, gA, clr.r, clr.g, clr.b, clr.a * delta)
     end
-
 
     return true
 end
