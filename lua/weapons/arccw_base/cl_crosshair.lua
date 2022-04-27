@@ -243,16 +243,17 @@ function SWEP:DoDrawCrosshair(x, y)
     end
 
     if GetConVar("arccw_crosshair_clump"):GetBool() and (GetConVar("arccw_crosshair_clump_always"):GetBool() or num > 1) then
+        local acc = math.max(1, gA)
         if GetConVar("arccw_crosshair_clump_outline"):GetBool() then
             surface.SetMaterial(clump_outer)
 
             for i=1, prong_out do
-                surface.DrawCircle(x, y, gA + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+                surface.DrawCircle(x, y, acc + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
             end
-                surface.DrawCircle(x, y, gA, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+            surface.DrawCircle(x, y, acc, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
         end
 
-        surface.DrawCircle(x, y, gA, clr.r, clr.g, clr.b, clr.a * delta)
+        surface.DrawCircle(x, y, acc, clr.r, clr.g, clr.b, clr.a * delta)
     end
 
     return true
