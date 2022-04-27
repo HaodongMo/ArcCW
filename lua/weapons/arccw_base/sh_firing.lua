@@ -265,7 +265,7 @@ function SWEP:PrimaryAttack()
                 ang2:RotateAroundAxis(ang:Up(), calcoff.y)
                 ang2:RotateAroundAxis(ang:Forward(), calcoff.r)
 
-                if !self:GetBuff_Override("Override_NoRandSpread") then -- Needs testing
+                if !self:GetBuff_Override("Override_NoRandSpread", self.NoRandSpread) then -- Needs testing
                     ang2 = ang2 + AngleRand() * spread / 5
                 end
 
@@ -282,7 +282,7 @@ function SWEP:PrimaryAttack()
         elseif shootent then
             local ang = owner:EyeAngles() + self:GetFreeAimOffset()
 
-            if !self:GetBuff_Override("Override_NoRandSpread") then
+            if !self:GetBuff_Override("Override_NoRandSpread", self.NoRandSpread) then
                -- ang = (dir + VectorRand() * spread / 5):Angle()
 
                 local newdir = Vector(dir)
@@ -301,7 +301,7 @@ function SWEP:PrimaryAttack()
             bullet.Num = 1
             local dirry = Vector(dir.x, dir.y, dir.z)
             math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
-            if !self:GetBuff_Override("Override_NoRandSpread") then
+            if !self:GetBuff_Override("Override_NoRandSpread", self.NoRandSpread) then
                 self:ApplyRandomSpread(dirry, spread)
                 bullet.Dir = dirry
             end

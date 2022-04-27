@@ -159,6 +159,7 @@ SWEP.ShotgunSpreadPatternOverrun = nil
 -- if two then the first two
 -- in case of overrun pellets will start looping, preferably with the second one, so use that for the loopables
 -- precision will still be applied
+SWEP.NoRandSpread = false
 
 SWEP.RecoilDirection = Angle(1, 0, 0)
 SWEP.RecoilDirectionSide = Angle(0, 1, 0)
