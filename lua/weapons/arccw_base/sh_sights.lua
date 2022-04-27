@@ -452,6 +452,9 @@ function SWEP:TranslateFOV(fov)
     self.LastTranslateFOV = UnPredictedCurTime()
 
     local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0)
+    if CLIENT then
+        app_vm = app_vm * (LocalPlayer():GetFOV()/GetConVar("fov_desired"):GetInt())
+    end
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
         local asight = self:GetActiveSights()
