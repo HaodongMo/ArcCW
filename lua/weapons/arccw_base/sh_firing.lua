@@ -85,7 +85,7 @@ function SWEP:TakePrimaryAmmo(num)
     self:SetClip1(self:Clip1() - num)
 end
 
-function SWEP:ApplyRandomSpread(dir, spread, retur)
+function SWEP:ApplyRandomSpread(dir, spread)
     local radius = math.Rand(0, 1)
     local theta = math.Rand(0, math.rad(360))
     local bulletang = dir:Angle()
@@ -93,11 +93,7 @@ function SWEP:ApplyRandomSpread(dir, spread, retur)
     local x = radius * math.sin(theta)
     local y = radius * math.cos(theta)
 
-    if retur then
-        return (dir + right * spread * x + up * spread * y)
-    else
-        dir:Set(dir + right * spread * x + up * spread * y)
-    end
+    dir:Set(dir + right * spread * x + up * spread * y)
 end
 
 function SWEP:PrimaryAttack()
