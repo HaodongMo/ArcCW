@@ -168,6 +168,7 @@ function SWEP:DoDrawCrosshair(x, y)
     size = math.Approach(size, gap, FrameTime() * 32 * gap)
     gap = size
     if !static then gap = gap * delta end
+    gap = math.max(4, gap)
 
     local num = self:GetBuff("Num")
     if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
@@ -248,12 +249,12 @@ function SWEP:DoDrawCrosshair(x, y)
             surface.SetMaterial(clump_outer)
 
             for i=1, prong_out do
-                surface.DrawCircle(x, y, acc + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+                surface.DrawCircle(x-0.5, y-0.5, acc + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
             end
-            surface.DrawCircle(x, y, acc, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+            surface.DrawCircle(x-0.5, y-0.5, acc, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
         end
 
-        surface.DrawCircle(x, y, acc, clr.r, clr.g, clr.b, clr.a * delta)
+        surface.DrawCircle(x-0.5, y-0.5, acc, clr.r, clr.g, clr.b, clr.a * delta)
     end
 
     return true
