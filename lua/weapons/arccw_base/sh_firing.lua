@@ -85,7 +85,7 @@ function SWEP:TakePrimaryAmmo(num)
     self:SetClip1(self:Clip1() - num)
 end
 
-function SWEP:ApplyRandomSpread(dir, spread)
+function SWEP:ApplyRandomSpread(dir, spread, retur)
     local radius = math.Rand(0, 1)
     local theta = math.Rand(0, math.rad(360))
     local bulletang = dir:Angle()
@@ -93,7 +93,11 @@ function SWEP:ApplyRandomSpread(dir, spread)
     local x = radius * math.sin(theta)
     local y = radius * math.cos(theta)
 
-    dir:Set(dir + right * spread * x + up * spread * y)
+    if retur then
+        return (dir + right * spread * x + up * spread * y)
+    else
+        dir:Set(dir + right * spread * x + up * spread * y)
+    end
 end
 
 function SWEP:PrimaryAttack()
@@ -228,128 +232,6 @@ function SWEP:PrimaryAttack()
     bullet.Callback = function(att, tr, dmg)
         ArcCW:BulletCallback(att, tr, dmg, self)
     end
-    --[[]
-    bullet.Callback   = function(att, tr, dmg)
-        local hitpos, hitnormal = tr.HitPos, tr.HitNormal
-        local trent = tr.Entity
-
-        local dist = (hitpos - src):Length() * ArcCW.HUToM
-        local pen  = self:GetBuff("Penetration")
-
-        if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
-            debugoverlay.Cross(hitpos, 5, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
-        end
-
-        local randfactor = self:GetBuff("DamageRand")
-        local mul = 1
-        if randfactor > 0 then
-            mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
-        end
-
-        local hit   = {}
-        hit.att     = att
-        hit.tr      = tr
-        hit.dmg     = dmg
-        hit.range   = dist
-        hit.damage  = self:GetDamage(dist, true) * mul
-        hit.dmgtype = self:GetBuff_Override("Override_DamageType", self.DamageType)
-        hit.penleft = pen
-
-        hit = self:GetBuff_Hook("Hook_BulletHit", hit)
-
-        if !hit then return end
-        self:GetBuff_Hook("Hook_PostBulletHit", hit)
-
-        dmg:SetDamageType(hit.dmgtype)
-        dmg:SetDamage(hit.damage)
-
-        if dmgtable then
-            local hg = tr.HitGroup
-            local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
-            if dmgtable[hg] then
-                dmg:ScaleDamage(dmgtable[hg])
-
-                -- cancelling gmod's stupid default values (but only if we have a multiplier)
-                if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
-            end
-        end
-
-        local effect = self:GetBuff_Override("Override_ImpactEffect", self.ImpactEffect)
-        local decal  = self:GetBuff_Override("Override_ImpactDecal", self.ImpactDecal)
-
-        -- Do our handling of damage types, if not ignored by the gun or some attachment
-        if !self:GetBuff_Override("Override_DamageTypeHandled", self.DamageTypeHandled) then
-            local _, maxrng = self:GetMinMaxRange()
-            -- ignite target
-            if dmg:IsDamageType(DMG_BURN) and hit.range <= maxrng then
-                dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
-
-                effect = "arccw_incendiaryround"
-                decal  = "FadingScorch"
-
-                if SERVER then
-                    if vFireInstalled then
-                        CreateVFire(trent, hitpos, hitnormal, hit.damage * 0.02)
-                    else
-                        trent:Ignite(1, 0)
-                    end
-                end
-            end
-            -- explode target
-            if dmg:IsDamageType(DMG_BLAST) then
-                if dmg:GetDamage() >= 200 then
-                    effect = "Explosion"
-                    decal  = "Scorch"
-                else
-                    effect = "arccw_incendiaryround"
-                    decal  = "FadingScorch"
-                end
-                dmg:ScaleDamage(0.5) -- half applied as explosion and half done to hit target
-                util.BlastDamageInfo(dmg, tr.HitPos, math.Clamp(dmg:GetDamage(), 48, 256))
-                dmg:SetDamageType(dmg:GetDamageType() - DMG_BLAST)
-            end
-            -- damage helicopters
-            if dmg:IsDamageType(DMG_BULLET) and !dmg:IsDamageType(DMG_AIRBOAT)
-                    and IsValid(hit.tr.Entity) and hit.tr.Entity:GetClass() == "npc_helicopter" then
-                dmg:SetDamageType(dmg:GetDamageType() + DMG_AIRBOAT)
-                dmg:ScaleDamage(0.1) -- coostimizable?
-            elseif dmg:GetDamageType() != DMG_BLAST and IsValid(hit.tr.Entity) and hit.tr.Entity:GetClass() == "npc_combinegunship" then
-                dmg:SetDamageType(DMG_BLAST)
-                dmg:ScaleDamage(0.05)
-                -- there is a damage threshold of 50 for damaging gunships
-                if dmg:GetDamage() < 50 and dmg:GetDamage() / 200 >= math.random() then
-                    dmg:SetDamage(50)
-                end
-            end
-
-            -- pure DMG_BUCKSHOT do not create blood decals, somehow
-            if dmg:GetDamageType() == DMG_BUCKSHOT then
-                dmg:SetDamageType(dmg:GetDamageType() + DMG_BULLET)
-            end
-        end
-
-        if SERVER then self:TryBustDoor(trent, dmg) end
-
-        self:DoPenetration(tr, hit.penleft, { [trent:EntIndex()] = true })
-
-        effect = self:GetBuff_Override("Override_ImpactEffect") or effect
-        if effect then
-            local ed = EffectData()
-            ed:SetOrigin(hitpos)
-            ed:SetNormal(hitnormal)
-            util.Effect(effect, ed)
-        end
-
-        decal = self:GetBuff_Override("Override_ImpactDecal") or decal
-
-        if decal then util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), self:GetOwner()) end
-
-        if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
-            local str = string.format("%ddmg/%dm(%d%%)", math.floor(self:GetDamage(dist)), dist, math.Round((1 - self:GetRangeFraction(dist)) * 100))
-            debugoverlay.Text(hitpos, str, 5)
-        end
-    end
-    ]]
 
     local shootent = self:GetBuff("ShootEntity", true) --self:GetBuff_Override("Override_ShootEntity", self.ShootEntity)
     local shpatt   = self:GetBuff_Override("Override_ShotgunSpreadPattern", self.ShotgunSpreadPattern)
@@ -421,10 +303,11 @@ function SWEP:PrimaryAttack()
 
         for n = 1, bullet.Num do
             bullet.Num = 1
+            local dirry = Vector(dir.x, dir.y, dir.z)
             math.randomseed(math.Round(util.SharedRandom(n, -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
             if !self:GetBuff_Override("Override_NoRandSpread") then
-                self:ApplyRandomSpread(dir, spread)
-                bullet.Dir = dir
+                self:ApplyRandomSpread(dirry, spread)
+                bullet.Dir = dirry
             end
             bullet = self:GetBuff_Hook("Hook_FireBullets", bullet) or bullet
 
