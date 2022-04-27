@@ -8,59 +8,59 @@ local translate = ArcCW.GetTranslation
 
 ArcCW.AutoStats = {
     -- Attachments
-    ["MagExtender"]           = { "autostat.magextender", "override", false },
-    ["MagReducer"]            = { "autostat.magreducer",  "override", true },
-    ["Bipod"]                 = { "autostat.bipod",       false, false },
-    ["ScopeGlint"]            = { "autostat.glint",       "override", true },
-    ["Silencer"]              = { "autostat.silencer",    "override", false },
-    ["Override_NoRandSpread"] = { "autostat.norandspr",   "override", false },
-    ["Override_CanFireUnderwater"] = { "autostat.underwater",   "override", false },
-    ["Override_ShootWhileSprint"] = { "autostat.sprintshoot",   "override", false },
+    ["MagExtender"]           = { "autostat.magextender", "override", false,       pr = 317 },
+    ["MagReducer"]            = { "autostat.magreducer",  "override", true,        pr = 316 },
+    ["Bipod"]                 = { "autostat.bipod",       false, false,            pr = 313 },
+    ["ScopeGlint"]            = { "autostat.glint",       "override", true,        pr = 255 },
+    ["Silencer"]              = { "autostat.silencer",    "override", false,       pr = 254 },
+    ["Override_NoRandSpread"] = { "autostat.norandspr",   "override", false,       pr = 253 },
+    ["Override_CanFireUnderwater"] = { "autostat.underwater",   "override", false, pr = 252 },
+    ["Override_ShootWhileSprint"] = { "autostat.sprintshoot",   "override", false, pr = 251 },
     -- Multipliers
-    ["Mult_BipodRecoil"]      = { "autostat.bipodrecoil", false, true },
-    ["Mult_BipodDispersion"]  = { "autostat.bipoddisp",   false, true },
-    ["Mult_Damage"]           = { "autostat.damage",      "mult", false },
-    ["Mult_DamageMin"]        = { "autostat.damagemin",   "mult", false },
-    ["Mult_Range"]            = { "autostat.range",       "mult", false },
-    ["Mult_RangeMin"]         = { "autostat.rangemin",    "mult", false },
-    ["Mult_Penetration"]      = { "autostat.penetration", "mult", false },
-    ["Mult_MuzzleVelocity"]   = { "autostat.muzzlevel",   "mult", false },
-    ["Mult_MeleeTime"]        = { "autostat.meleetime",   "mult", true },
-    ["Mult_MeleeDamage"]      = { "autostat.meleedamage", "mult", false },
-    ["Add_MeleeRange"]        = { "autostat.meleerange",  false,  false },
-    ["Mult_Recoil"]           = { "autostat.recoil",      "mult", true },
-    ["Mult_RecoilSide"]       = { "autostat.recoilside",  "mult", true },
-    ["Mult_RPM"]              = { "autostat.firerate",    "mult", false },
-    ["Mult_AccuracyMOA"]      = { "autostat.precision",   "mult", true },
-    ["Mult_HipDispersion"]    = { "autostat.hipdisp",     "mult", true },
-    ["Mult_SightsDispersion"] = { "autostat.sightdisp",   "mult", true },
-    ["Mult_MoveDispersion"]   = { "autostat.movedisp",    "mult", true },
-    ["Mult_JumpDispersion"]   = { "autostat.jumpdisp",    "mult", true },
-    ["Mult_ShootVol"]         = { "autostat.shootvol",    "mult", true },
-    ["Mult_SpeedMult"]        = { "autostat.speedmult",   "mult", false },
-    ["Mult_MoveSpeed"]        = { "autostat.speedmult",   "mult", false },
-    ["Mult_SightedSpeedMult"] = { "autostat.sightspeed",  "mult", false },
-    ["Mult_SightedMoveSpeed"] = { "autostat.sightspeed",  "mult", false },
-    ["Mult_ShootSpeedMult"]   = { "autostat.shootspeed",  "mult", false },
-    ["Mult_ReloadTime"]       = { "autostat.reloadtime",  "mult", true },
-    ["Add_BarrelLength"]      = { "autostat.barrellength","add",  true },
-    ["Mult_DrawTime"]         = { "autostat.drawtime",    "mult", true },
-    ["Mult_SightTime"]        = { "autostat.sighttime",   "mult", true },
-    ["Mult_CycleTime"]        = { "autostat.cycletime",   "mult", true },
-    ["Mult_Sway"]             = { "autostat.sway",        "mult",  true },
-    ["Mult_HeatCapacity"]     = { "autostat.heatcap",     "mult", false },
-    ["Mult_HeatDissipation"]  = { "autostat.heatdrain",   "mult", false },
-    ["Mult_FixTime"]          = { "autostat.heatfix",     "mult", true },
-    ["Mult_HeatDelayTime"]    = { "autostat.heatdelay",   "mult", true },
-    ["Mult_MalfunctionMean"]  = { "autostat.malfunctionmean", "mult", false},
-    ["Add_ClipSize"]          = { "autostat.clipsize.mod",    "add", false},
-    ["Mult_ClipSize"]         = { "autostat.clipsize.mod",    "mult", false},
+    ["Mult_BipodRecoil"]      = { "autostat.bipodrecoil", false, true,             pr = 312 },
+    ["Mult_BipodDispersion"]  = { "autostat.bipoddisp",   false, true,             pr = 311 },
+    ["Mult_Damage"]           = { "autostat.damage",      "mult", false,           pr = 215 },
+    ["Mult_DamageMin"]        = { "autostat.damagemin",   "mult", false,           pr = 214 },
+    ["Mult_Range"]            = { "autostat.range",       "mult", false,           pr = 185 },
+    ["Mult_RangeMin"]         = { "autostat.rangemin",    "mult", false,           pr = 184 },
+    ["Mult_Penetration"]      = { "autostat.penetration", "mult", false,           pr = 213 },
+    ["Mult_MuzzleVelocity"]   = { "autostat.muzzlevel",   "mult", false,           pr = 212 },
+    ["Mult_MeleeTime"]        = { "autostat.meleetime",   "mult", true,            pr = 145 },
+    ["Mult_MeleeDamage"]      = { "autostat.meleedamage", "mult", false,           pr = 144 },
+    ["Add_MeleeRange"]        = { "autostat.meleerange",  false,  false,           pr = 143 },
+    ["Mult_Recoil"]           = { "autostat.recoil",      "mult", true,            pr = 195 },
+    ["Mult_RecoilSide"]       = { "autostat.recoilside",  "mult", true,            pr = 194 },
+    ["Mult_RPM"]              = { "autostat.firerate",    "mult", false,           pr = 216 },
+    ["Mult_AccuracyMOA"]      = { "autostat.precision",   "mult", true,            pr = 186 },
+    ["Mult_HipDispersion"]    = { "autostat.hipdisp",     "mult", true,            pr = 155 },
+    ["Mult_SightsDispersion"] = { "autostat.sightdisp",   "mult", true,            pr = 154 },
+    ["Mult_MoveDispersion"]   = { "autostat.movedisp",    "mult", true,            pr = 153 },
+    ["Mult_JumpDispersion"]   = { "autostat.jumpdisp",    "mult", true,            pr = 152 },
+    ["Mult_ShootVol"]         = { "autostat.shootvol",    "mult", true,            pr = 115 },
+    ["Mult_SpeedMult"]        = { "autostat.speedmult",   "mult", false,           pr = 114 },
+    ["Mult_MoveSpeed"]        = { "autostat.speedmult",   "mult", false,           pr = 105 },
+    ["Mult_SightedSpeedMult"] = { "autostat.sightspeed",  "mult", false,           pr = 104 },
+    ["Mult_SightedMoveSpeed"] = { "autostat.sightspeed",  "mult", false,           pr = 103 },
+    ["Mult_ShootSpeedMult"]   = { "autostat.shootspeed",  "mult", false,           pr = 102 },
+    ["Mult_ReloadTime"]       = { "autostat.reloadtime",  "mult", true,            pr = 125 },
+    ["Add_BarrelLength"]      = { "autostat.barrellength","add",  true,            pr = 15 },
+    ["Mult_DrawTime"]         = { "autostat.drawtime",    "mult", true,            pr = 14 },
+    ["Mult_SightTime"]        = { "autostat.sighttime",   "mult", true,            pr = 13 },
+    ["Mult_CycleTime"]        = { "autostat.cycletime",   "mult", true,            pr = 12 },
+    ["Mult_Sway"]             = { "autostat.sway",        "mult",  true,           pr = 11 },
+    ["Mult_HeatCapacity"]     = { "autostat.heatcap",     "mult", false,           pr = 10 },
+    ["Mult_HeatDissipation"]  = { "autostat.heatdrain",   "mult", false,           pr = 9 },
+    ["Mult_FixTime"]          = { "autostat.heatfix",     "mult", true,            pr = 8 },
+    ["Mult_HeatDelayTime"]    = { "autostat.heatdelay",   "mult", true,            pr = 7 },
+    ["Mult_MalfunctionMean"]  = { "autostat.malfunctionmean", "mult", false,       pr = 6 },
+    ["Add_ClipSize"]          = { "autostat.clipsize.mod",    "add", false,         pr = 315 },
+    ["Mult_ClipSize"]         = { "autostat.clipsize.mod",    "mult", false,        pr = 314 },
 
     ["Override_Ammo"] = {"autostat.ammotype", "func", function(wep, val, att)
         -- have to use the weapons table here because Primary.Ammo *is* modified when attachments are used
         if !IsValid(wep) or !weapons.Get(wep:GetClass()) or weapons.Get(wep:GetClass()).Primary.Ammo == val then return end
         return string.format(translate("autostat.ammotype"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
-    end},
+    end, pr = 316},
     ["Override_ClipSize"] = {"autostat.clipsize", "func", function(wep, val, att)
         if !IsValid(wep) then return end
         local ogclip = wep:GetBuff_Override("BaseClipSize") or (wep.RegularClipSize or (wep.Primary and wep.Primary.ClipSize) or 0)
@@ -69,7 +69,7 @@ ArcCW.AutoStats = {
         else
             return string.format(translate("autostat.clipsize"), val), "cons"
         end
-    end},
+    end, pr = 317},
     ["Bipod"] = {"autostat.bipod2", "func", function(wep, val, att)
         if val then
             local recoil = 100 - math.Round((att.Mult_BipodRecoil or (IsValid(wep) and wep.BipodRecoil) or 1) * 100)
@@ -78,7 +78,7 @@ ArcCW.AutoStats = {
         else
             return translate("autostat.nobipod"), "cons"
         end
-    end},
+    end, pr = 314},
 }
 
 local function getsimpleamt(stat)
@@ -154,7 +154,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
             -- show the first stat block (unless NoAutoStats), and all blocks with AutoStats
             if toggletbl.AutoStats or (ti == (toggle or 1) and !toggletbl.NoAutoStats) then
                 local dmgboth = toggletbl.Mult_DamageMin and toggletbl.Mult_Damage and toggletbl.Mult_DamageMin == toggletbl.Mult_Damage
-                for i, stat in pairs(ArcCW.AutoStats) do
+                for i, stat in SortedPairsByMemberValue(ArcCW.AutoStats, "pr", true) do
                     if !toggletbl[i] or toggletbl[i .. "_SkipAS"] then continue end
                     local val = toggletbl[i]
                     --[[]
@@ -188,7 +188,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
 
     local dmgboth = att.Mult_DamageMin and att.Mult_Damage and att.Mult_DamageMin == att.Mult_Damage
 
-    for i, stat in pairs(ArcCW.AutoStats) do
+    for i, stat in SortedPairsByMemberValue(ArcCW.AutoStats, "pr", true) do
         if !att[i] or att[i .. "_SkipAS"] then continue end
 
         -- Legacy support: If "Increased/Decreased magazine capacity" line exists, don't do our autostats version
