@@ -434,7 +434,7 @@ local function ScaleFOVByWidthRatio( fovDegrees, ratio )
 end
 
 function SWEP:QuickFOVix( fov )
-    return ScaleFOVByWidthRatio( fov, (ScrW and ScrW() or 4)/(ScrH and ScrH() or 3)/(4/3) )
+    return ScaleFOVByWidthRatio( fov, (ScrW and ScrW() or 4)/(ScrH and ScrH() or 3)/(16/Lerp(self:GetSightDelta(),9,12)) )
 end
 
 SWEP.LastTranslateFOV = 0
