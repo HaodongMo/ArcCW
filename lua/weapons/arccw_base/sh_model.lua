@@ -994,7 +994,6 @@ function SWEP:GetFromReference(boneid)
     local bpos, bang = ma:GetTranslation(), ma:GetAngles()
 
     bpos, bang = WorldToLocal(pos, ang, bpos, bang)
-    print(bpos, bang)
 
     self.ReferencePosCache[boneid] = {Pos = bpos, Ang = bang}
 
