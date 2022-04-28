@@ -213,6 +213,7 @@ L["autostat.sprintshoot"] = "Shoot while sprinting"
 L["con.beam"] = "Visible laser beam"
 L["con.light"] = "Visible flashlight beam"
 L["con.noscope"] = "No point of aim"
+L["pro.invistracers"] = "Invisible tracers"
 
 -- Incompatibility Menu
 L["incompatible.title"] = "ArcCW: INCOMPATIBLE ADDONS"
