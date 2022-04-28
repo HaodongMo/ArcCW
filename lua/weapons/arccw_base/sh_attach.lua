@@ -1372,11 +1372,12 @@ function SWEP:ToggleSlot(slot, num, silent, back)
 end
 
 function SWEP:AdjustAmmo(old_inf)
+
+    local new_inf = self:HasInfiniteAmmo()
+
     local wpn = weapons.Get(self:GetClass())
     local ammo = self:GetBuff_Override("Override_Ammo", wpn.Primary.Ammo)
     local oldammo = self.OldAmmo or self.Primary.Ammo
-
-    local new_inf = self:HasInfiniteAmmo()
 
     if old_inf and (!new_inf or ammo != oldammo) then
         self:SetClip1(0)
@@ -1490,14 +1491,8 @@ function SWEP:AdjustAtts()
     if !fmt[fmi] then self:SetFireMode(1) end
 
     self:AdjustAmmo(old_inf)
-
-    -- if CLIENT and self:GetOwner():GetViewModel() then
-    --     self:PlayAnimation("idle")
-    -- end
-
-    self.Primary.Ammo = ammo
-    self.OldAmmo = self.Primary.Ammo
 end
+
 
 function SWEP:GetAttachmentMaxHP(slot)
     if !self.Attachments[slot] then return 100 end

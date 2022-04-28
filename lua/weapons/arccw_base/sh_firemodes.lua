@@ -39,8 +39,6 @@ function SWEP:ChangeFiremode(pred)
 
     if !fmt[fmi] then fmi = 1 end
 
-    local old_inf = self:HasInfiniteAmmo()
-
     self:SetFireMode(fmi)
     --timer.Simple(0, function() self:RecalcAllBuffs() end)
     -- Absolutely, totally, completely ENSURE client has changed the value before attempting recalculation
@@ -51,7 +49,6 @@ function SWEP:ChangeFiremode(pred)
         if self:GetFireMode() == fmi then
             self:RecalcAllBuffs()
             self:GetActiveElements(true)
-            self:AdjustAmmo(old_inf)
 
             timer.Remove(id)
         end

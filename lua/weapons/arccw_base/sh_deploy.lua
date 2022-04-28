@@ -81,8 +81,6 @@ function SWEP:Deploy()
 
     if (self.AutoReload or self:GetBuff_Override("Override_AutoReload")) and (self:GetBuff_Override("Override_AutoReload") != false) then
         self:RestoreAmmo()
-    else
-        self:RestoreAmmo(0)
     end
 
     self.LHIKAnimation = nil
