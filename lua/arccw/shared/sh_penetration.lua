@@ -124,8 +124,12 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 
     if !GetConVar("arccw_enable_penetration"):GetBool() then return end
 
+    local factor = 1
     while !skip and penleft > 0 and ArcCW:IsPenetrating(ptr, ptrent) and ptr.Fraction < 1 and ptrent == curr_ent do
-        penleft = penleft - (pentracelen * penmult)
+        penleft = penleft - (pentracelen * penmult) * factor
+
+        -- Prevent extremely long penetrations (such as with glass)
+        factor = factor * 1.05
 
         td.start  = endpos
         td.endpos = endpos + (dir * pentracelen)
