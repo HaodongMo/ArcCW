@@ -160,7 +160,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     local state = self:GetState()
     local sprd = self:GetSprintDelta()
 
-    if state == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint") and !self:GetReloading() and !self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint) then
+    if state == ArcCW.STATE_SPRINT and self:SelectAnimation("idle_sprint") and !self:GetReloading() and !self:CanShootWhileSprint() then
         velocity = 0
     else
         velocity = math.min(velocity:Length(), 400) * Lerp(sprd, 1, 1.25)
@@ -400,7 +400,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local aaaapos = holstered and (hpos or spos) or (spos or hpos)
         local aaaaang = holstered and (hang or sang) or (sang or hang)
 
-        local sd = (holstered and 1) or (!self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint) and sprd) or 0
+        local sd = (holstered and 1) or (!self:CanShootWhileSprint() and sprd) or 0
         sd = math.pow(math.sin(sd * math.pi * 0.5), 2)
 
         local d = math.pow(math.sin(sd * math.pi * 0.5), math.pi)

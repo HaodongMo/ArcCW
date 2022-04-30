@@ -108,7 +108,7 @@ end
 
 function SWEP:ShootUBGL()
     if self:GetNextSecondaryFire() > CurTime() then return end
-    if self:GetState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint) then return false end
+    if self:GetState() == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint() then return false end
 
     self.Primary.Automatic = self:GetBuff_Override("UBGL_Automatic")
 

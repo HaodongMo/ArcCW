@@ -48,7 +48,7 @@ function SWEP:CanPrimaryAttack()
     if self:BarrelHitWall() > 0 then return end
 
     -- Can't shoot while sprinting
-    if self:GetNWState() == ArcCW.STATE_SPRINT and !(self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint)) then return end
+    if self:GetNWState() == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint() then return end
 
     -- Maximum burst shots
     if (self:GetBurstCount() or 0) >= self:GetBurstLength() then return end
@@ -892,4 +892,8 @@ end
 
 function SWEP:SecondaryAttack()
     return self.Melee2 and self:Bash(true)
+end
+
+function SWEP:CanShootWhileSprint()
+    return GetConVar("arccw_mult_shootwhilesprinting"):GetBool() or self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint)
 end

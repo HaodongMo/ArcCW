@@ -22,7 +22,7 @@ function SWEP:ThinkFreeAim()
         local max = self:FreeAimMaxAngle()
 
         local delta = math.min(self:GetSightDelta(),
-                self:GetBuff("ShootWhileSprint") and 1 or (1 - self:GetSprintDelta()),
+                self:CanShootWhileSprint() and 1 or (1 - self:GetSprintDelta()),
                 self:GetState() == ArcCW.STATE_CUSTOMIZE and 0 or 1)
 
         max = max * delta

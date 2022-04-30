@@ -15,7 +15,7 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_sight"
     end
 
-    if self:GetNWState() == ArcCW.STATE_SPRINT and self.Animations[anim .. "_sprint"] and not self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint) then
+    if self:GetNWState() == ArcCW.STATE_SPRINT and self.Animations[anim .. "_sprint"] and not self:CanShootWhileSprint() then
         anim = anim .. "_sprint"
     end
 

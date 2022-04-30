@@ -251,11 +251,6 @@ function SWEP:GetBuff_Override(buff, default)
 
         end
 
-        -- Because fuck me I fucking suck at this
-        if buff == "Override_ShootWhileSprint" and GetConVar("arccw_mult_shootwhilesprinting"):GetBool() then
-            current = true
-        end
-
         if current == nil then
             return default
         else
@@ -340,11 +335,6 @@ function SWEP:GetBuff_Override(buff, default)
 
     if VERIFY_MODIFIED_CACHE and !self.ModifiedCache[buff] and current != nil then
         print("ArcCW: Presumed non-changing buff '" .. buff .. "' is modified (" .. tostring(current) .. ")!")
-    end
-
-    -- Because fuck me I fucking suck at this
-    if buff == "Override_ShootWhileSprint" and GetConVar("arccw_mult_shootwhilesprinting"):GetBool() then
-        current = true
     end
 
     local data = {

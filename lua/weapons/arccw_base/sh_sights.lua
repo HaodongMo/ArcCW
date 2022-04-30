@@ -24,7 +24,7 @@ function SWEP:EnterSprint()
 
     self:SetShouldHoldType()
 
-    local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
+    local s = self:CanShootWhileSprint()
 
     if !s and self:GetNextPrimaryFire() <= ct then
         self:SetNextPrimaryFire(ct)
@@ -54,7 +54,7 @@ function SWEP:ExitSprint()
 
     self:SetShouldHoldType()
 
-    local s = self:GetBuff_Override("Override_ShootWhileSprint") or self.ShootWhileSprint
+    local s = self:CanShootWhileSprint()
 
     if !s and self:GetNextPrimaryFire() <= ct then
         self:SetNextPrimaryFire(ct)
@@ -504,7 +504,7 @@ function SWEP:SetShouldHoldType()
     if self:GetState() == ArcCW.STATE_SIGHTS then
         self:SetHoldType(self:GetBuff_Override("Override_HoldtypeSights") or self.HoldtypeSights)
     elseif self:GetState() == ArcCW.STATE_SPRINT then
-        if (self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint)) then
+        if self:CanShootWhileSprint() then
             self:SetHoldType(self:GetBuff_Override("Override_HoldtypeSprintShoot", self.HoldtypeSprintShoot) or self:GetBuff_Override("Override_HoldtypeActive", self.HoldtypeActive))
         else
             self:SetHoldType(self:GetBuff_Override("Override_HoldtypeHolstered") or self.HoldtypeHolstered)

@@ -26,7 +26,7 @@ function ArcCW.Move(ply, mv, cmd)
     elseif shottime > 0 then
         blocksprint = true
 
-        if wpn:GetBuff("ShootWhileSprint") then
+        if wpn:CanShootWhileSprint() then
             blocksprint = false
         end
     end
@@ -118,7 +118,7 @@ function ArcCW.StartCommand(ply, ucmd)
     local wep = ply:GetActiveWeapon()
     if ply:Alive() and IsValid(wep) and wep.ArcCW and wep:GetBurstCount() > 0
             and ucmd:KeyDown(IN_SPEED) and wep:GetCurrentFiremode().RunawayBurst
-            and !(wep:GetBuff_Override("Override_ShootWhileSprint") or wep.ShootWhileSprint) then
+            and !wep:CanShootWhileSprint() then
         ucmd:SetButtons(ucmd:GetButtons() - IN_SPEED)
     end
 
