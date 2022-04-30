@@ -731,7 +731,7 @@ function SWEP:PreDrawViewModel(vm)
         ArcCW.VMInRT = false
     end
 
-    cam.Start3D(EyePos(), EyeAngles(), self:QuickFOVix(coolFOV), nil, nil, nil, nil, 0.01, 15000)
+    cam.Start3D(EyePos(), EyeAngles(), self:QuickFOVix(coolFOV), nil, nil, nil, nil, 0.1, 1500)
     cam.IgnoreZ(true)
     self:DrawCustomModel(false)
     self:DoLHIK()
