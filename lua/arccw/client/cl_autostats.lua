@@ -25,6 +25,7 @@ ArcCW.AutoStats = {
     ["Mult_RangeMin"]         = { "autostat.rangemin",    "mult", false,           pr = 184 },
     ["Mult_Penetration"]      = { "autostat.penetration", "mult", false,           pr = 213 },
     ["Mult_MuzzleVelocity"]   = { "autostat.muzzlevel",   "mult", false,           pr = 212 },
+    ["Mult_PhysBulletMuzzleVelocity"] = { "autostat.muzzlevel",   "mult", false,   pr = 211 },
     ["Mult_MeleeTime"]        = { "autostat.meleetime",   "mult", true,            pr = 145 },
     ["Mult_MeleeDamage"]      = { "autostat.meleedamage", "mult", false,           pr = 144 },
     ["Add_MeleeRange"]        = { "autostat.meleerange",  false,  false,           pr = 143 },
