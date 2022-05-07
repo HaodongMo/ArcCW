@@ -956,8 +956,9 @@ function SWEP:CustomAmmoDisplay()
 
     if true then
         local ubglammo = self:GetBuff_Override("UBGL_Ammo")
-        if !ubglammo then return end
-        self.AmmoDisplay.SecondaryAmmo = self:Clip2() + self:GetOwner():GetAmmoCount(ubglammo) -- amount of secondary ammo
+        if ubglammo then
+            self.AmmoDisplay.SecondaryAmmo = self:Clip2() + self:GetOwner():GetAmmoCount(ubglammo) -- amount of secondary ammo
+        end
     end
 
     return self.AmmoDisplay -- return the table
