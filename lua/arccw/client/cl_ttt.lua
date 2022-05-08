@@ -220,7 +220,7 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
 
     if !IsValid(client) or !client:IsTerror() or !client:Alive()
     or !IsValid(ent) or tData:GetEntityDistance() > 100 or !ent:IsWeapon()
-    or !ent.ArcCW or ent.Throwable then
+    or !ent.ArcCW or ent.Throwing then
         return
     end
 

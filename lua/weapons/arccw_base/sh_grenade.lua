@@ -49,8 +49,8 @@ function SWEP:Throw()
 
     local mv = 0
 
-    if alt and self:GetBuff("MuzzleVelocityAlt", true) then
-        mv = self:GetBuff("MuzzleVelocityAlt")
+    if alt then
+        mv = self:GetBuff("MuzzleVelocityAlt", true) or self:GetBuff("MuzzleVelocity")
     else
         mv = self:GetBuff("MuzzleVelocity")
         local chg = self:GetBuff("WindupTime")

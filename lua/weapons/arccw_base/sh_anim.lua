@@ -1,7 +1,5 @@
 SWEP.Cam_Offset_Ang = Angle(0, 0, 0)
 
-local noinspect = GetConVar("arccw_noinspect")
-
 function SWEP:SelectAnimation(anim)
     if self:GetNWState() == ArcCW.STATE_SIGHTS and self.Animations[anim .. "_iron"] then
         anim = anim .. "_iron"
@@ -15,7 +13,7 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_sight"
     end
 
-    if self:GetNWState() == ArcCW.STATE_SPRINT and self.Animations[anim .. "_sprint"] and not self:CanShootWhileSprint() then
+    if self:GetNWState() == ArcCW.STATE_SPRINT and self.Animations[anim .. "_sprint"] and !self:CanShootWhileSprint() then
         anim = anim .. "_sprint"
     end
 
