@@ -11,13 +11,16 @@ ArcCW.AttachmentCachedLists = {}
 local shortname = ""
 local genAttCvar = GetConVar("arccw_reloadatts_registerentities")
 
-function ArcCW.LoadAttachmentType(att)
+function ArcCW.LoadAttachmentType(att, name)
+
+    name = name or shortname
+
     if !att.Ignore or GetConVar("arccw_reloadatts_showignored"):GetBool() then
-        ArcCW.AttachmentTable[shortname] = att
-        ArcCW.AttachmentIDTable[ArcCW.NumAttachments] = shortname
+        ArcCW.AttachmentTable[name] = att
+        ArcCW.AttachmentIDTable[ArcCW.NumAttachments] = name
 
         att.Blacklisted = false
-        att.ShortName = shortname
+        att.ShortName = name
 
         if !ArcCW.AttachmentSlotTable[att.Slot] then
             ArcCW.AttachmentSlotTable[att.Slot] = {}
@@ -29,11 +32,11 @@ function ArcCW.LoadAttachmentType(att)
         if genAttCvar:GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free then
             local attent = {}
             attent.Base = "arccw_att_base"
-            attent.Icon = att.Icon
-            attent.PrintName = att.PrintName or shortname
+            attent.IconOverride = att.EntityIcon
+            attent.PrintName = att.AbbrevName or att.PrintName or name
             attent.Spawnable = att.Spawnable or true
             attent.AdminOnly = att.AdminOnly or false
-            attent.Category = "ArcCW - Attachments"
+            attent.Category = att.EntityCategory or "ArcCW - Attachments"
             attent.Model = att.DroppedModel or att.Model or "models/Items/BoxSRounds.mdl"
             attent.GiveAttachments = {
                 [att.ShortName] = 1
@@ -43,7 +46,7 @@ function ArcCW.LoadAttachmentType(att)
                 attent[i] = k
             end
 
-            scripted_ents.Register( attent, "acwatt_" .. shortname )
+            scripted_ents.Register( attent, "acwatt_" .. name )
         end
 
         ArcCW.NumAttachments = ArcCW.NumAttachments + 1
@@ -89,6 +92,7 @@ end
 
 
 local attachments_path = "arccw/shared/attachments/"
+local bulk_path = "arccw/shared/attachments_bulk/"
 
 local function ArcCW_LoadAtt(att_file)
     att = {}
@@ -100,6 +104,7 @@ local function ArcCW_LoadAtt(att_file)
     AddCSLuaFile(att_file)
 
     ArcCW.LoadAttachmentType(att)
+    att = nil -- Do not bleed over attributes from previous attachments
 end
 
 local function ArcCW_LoadFolder(folder)
@@ -129,6 +134,18 @@ local function ArcCW_LoadAtts()
     if folders then
         for _, folder in pairs(folders) do
             ArcCW_LoadFolder(folder)
+        end
+    end
+
+    local bulkfiles = file.Find(bulk_path .. "/*.lua", "LUA")
+    for _, filename in pairs(bulkfiles) do
+        if filename == "default.lua" then continue end
+        local try = pcall(function()
+            include(bulk_path .. filename)
+            AddCSLuaFile(bulk_path .. filename)
+        end)
+        if !try then
+            print("!!!! Bulk attachment file " .. filename .. " has errors!")
         end
     end
 
