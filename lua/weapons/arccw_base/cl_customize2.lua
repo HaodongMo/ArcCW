@@ -1498,7 +1498,7 @@ function SWEP:CreateCustomize2HUD()
         scroll:SetSize(menu3_w - airgap_x, ss * 128 - bottombuffer)
 
         local multiline = {}
-        local desc = translate("desc." .. atttbl.ShortName) or atttbl.Description
+        local desc = translate("desc." .. atttbl.ShortName) or translate(atttbl.Description) or atttbl.Description
 
         multiline = multlinetext(desc, scroll:GetWide() - (ss * 2), "ArcCW_10")
 
