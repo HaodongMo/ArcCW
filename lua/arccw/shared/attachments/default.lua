@@ -648,3 +648,7 @@ att.Mult_FreeAimAngle = nil
 att.Add_FreeAimAngle = nil
 att.Override_NeverFreeAim = nil
 att.Override_AlwaysFreeAim = nil
+
+att.Hook_OnDeploy = function(wep) end
+att.Hook_OnHolster = function(wep) end
+att.Hook_OnHolsterEnd = function(wep) end

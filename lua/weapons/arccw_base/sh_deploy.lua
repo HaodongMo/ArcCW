@@ -102,6 +102,8 @@ function SWEP:Deploy()
 
     -- self:RefreshBGs()
 
+    self:GetBuff_Hook("Hook_OnDeploy")
+
     return true
 end
 
@@ -250,6 +252,7 @@ function SWEP:Holster(wep)
         self:SetHolster_Time(0)
         self:SetHolster_Entity(NULL)
         self:FinishHolster()
+        self:GetBuff_Hook("Hook_OnHolsterEnd")
         return true
     else
         self:SetHolster_Entity(wep)
@@ -281,6 +284,8 @@ function SWEP:Holster(wep)
         end
         self:SetReloading(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         self:SetWeaponOpDelay(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
+
+        self:GetBuff_Hook("Hook_OnHolster")
     end
 end
 
