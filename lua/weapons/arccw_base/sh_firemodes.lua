@@ -39,6 +39,22 @@ function SWEP:ChangeFiremode(pred)
 
     if !fmt[fmi] then fmi = 1 end
 
+    local a = tostring(lastfmi) .. "_to_" .. tostring(fmi)
+
+    if !self.Animations[a] then a = "changefiremode" end
+
+    if self.Animations[a] then
+        if self.Animations[a].Blocking and self:GetNextPrimaryFire() > CurTime() then return end
+        self:PlayAnimation(a, 1, true)
+        if self.Animations[a].Blocking then
+            local t = CurTime() + self:GetAnimKeyTime(a, true)
+            self:SetReloading(t)
+            self:SetNextPrimaryFire(t)
+        end
+    end
+
+    local old_inf = self:HasInfiniteAmmo()
+
     self:SetFireMode(fmi)
     --timer.Simple(0, function() self:RecalcAllBuffs() end)
     -- Absolutely, totally, completely ENSURE client has changed the value before attempting recalculation
@@ -50,6 +66,14 @@ function SWEP:ChangeFiremode(pred)
             self:RecalcAllBuffs()
             self:GetActiveElements(true)
 
+            -- Timers solve everything!
+            timer.Simple(0, function()
+                if !IsValid(self) then return end
+                self:AdjustAmmo(old_inf)
+                if self:GetCurrentFiremode().RestoreAmmo then
+                    self:RestoreAmmo()
+                end
+            end)
             timer.Remove(id)
         end
     end)
@@ -68,21 +92,8 @@ function SWEP:ChangeFiremode(pred)
         end
     end
 
-    local a = tostring(lastfmi) .. "_to_" .. tostring(fmi)
-
     self:SetShouldHoldType()
 
-    --[[if CLIENT then
-        if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
-            self:GetOwner():ChatPrint(self:GetFiremodeName() .. "|" .. self:GetFiremodeBars())
-        end
-    end]]
-
-    if self.Animations[a] then
-        self:PlayAnimation(a)
-    elseif self.Animations.changefiremode then
-        self:PlayAnimation("changefiremode")
-    end
     if self:GetCurrentFiremode().Mode == 0 or self:GetBuff_Hook("Hook_ShouldNotSight") then
         self:ExitSights()
     end

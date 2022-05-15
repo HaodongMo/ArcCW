@@ -213,6 +213,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     end
 
     self:SetNextIdle(CurTime() + ttime)
+
+    return true
 end
 
 function SWEP:PlayIdleAnimation(pred)

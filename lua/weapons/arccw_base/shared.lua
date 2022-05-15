@@ -184,6 +184,7 @@ SWEP.Firemodes = {
     --     AutoBurst = false, -- hold fire to continue firing bursts
     --     PostBurstDelay = 0,
     --     ActivateElements = {}
+    --     RestoreAmmo = false -- switching to this firemode will call RestoreAmmo(). intended to be used alongside Blocking firemode animations
     -- }
 }
 
@@ -666,6 +667,7 @@ SWEP.Animations = {
     --     LastClip1OutTime = 0, -- when should the belt visually replenish on a belt fed
     --     MinProgress = 0, -- how much time in seconds must pass before the animation can be cancelled
     --     ForceEmpty = false, -- Used by empty shotgun reloads that load rounds to force consider the weapon to still be empty.
+    --     Blocking = false, -- for firemode animations only; if true, the animation will block all other actions (like a reload anim)
     -- }
 }
 
