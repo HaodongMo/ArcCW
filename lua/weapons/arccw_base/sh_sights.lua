@@ -96,7 +96,7 @@ function SWEP:EnterSights()
 
     local anim = self:SelectAnimation("enter_sight")
     if anim then
-        self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
+        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, nil, nil, false, true)
     end
 
     self:GetBuff_Hook("Hook_SightToggle", true)
@@ -124,7 +124,7 @@ function SWEP:ExitSights()
 
     local anim = self:SelectAnimation("exit_sight")
     if anim then
-        self:PlayAnimation(anim, self:GetSightTime(), true, nil, nil, nil, false, true)
+        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, nil, nil, false, true)
     end
 
     self:GetBuff_Hook("Hook_SightToggle", false)
@@ -426,11 +426,11 @@ function SWEP:GetActiveSights()
 end
 
 local function ScaleFOVByWidthRatio( fovDegrees, ratio )
-	local halfAngleRadians = fovDegrees * ( 0.5 * math.pi / 180 )
-	local t = math.tan( halfAngleRadians )
-	t = t * ratio
-	local retDegrees = ( 180 / math.pi ) * math.atan( t )
-	return retDegrees * 2
+    local halfAngleRadians = fovDegrees * ( 0.5 * math.pi / 180 )
+    local t = math.tan( halfAngleRadians )
+    t = t * ratio
+    local retDegrees = ( 180 / math.pi ) * math.atan( t )
+    return retDegrees * 2
 end
 
 function SWEP:QuickFOVix( fov )
