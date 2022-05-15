@@ -67,11 +67,15 @@ function SWEP:ChangeFiremode(pred)
             self:GetActiveElements(true)
 
             -- Timers solve everything!
-            timer.Simple(0, function()
+            timer.Simple(0.01, function()
                 if !IsValid(self) then return end
                 self:AdjustAmmo(old_inf)
                 if self:GetCurrentFiremode().RestoreAmmo then
-                    self:RestoreAmmo()
+                    -- No seriously, they really do
+                    timer.Simple(0.01, function()
+                        if !IsValid(self) then return end
+                        self:RestoreAmmo()
+                    end)
                 end
             end)
             timer.Remove(id)
