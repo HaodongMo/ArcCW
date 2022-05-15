@@ -98,7 +98,7 @@ function SWEP:EnterSights()
 
     local anim = self:SelectAnimation("enter_sight")
     if anim then
-        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, nil, nil, false, true)
+        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true)
     end
 
     self:GetBuff_Hook("Hook_SightToggle", true)
@@ -126,7 +126,7 @@ function SWEP:ExitSights()
 
     local anim = self:SelectAnimation("exit_sight")
     if anim then
-        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, nil, nil, false, true)
+        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true)
     end
 
     self:GetBuff_Hook("Hook_SightToggle", false)
