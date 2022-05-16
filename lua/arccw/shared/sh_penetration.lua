@@ -341,6 +341,13 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
         dmg:SetDamage(hit.damage)
     end
 
+    local dmgtable
+    if phys then
+        dmgtable = bullet.Weapon:GetBuff_Override("Override_BodyDamageMults", bullet.Weapon.BodyDamageMults)
+    else
+        dmgtable = wep:GetBuff_Override("Override_BodyDamageMults", wep.BodyDamageMults)
+    end
+
     if dmgtable then
         local hg = tr.HitGroup
         local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
@@ -349,6 +356,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
 
             -- cancelling gmod's stupid default values (but only if we have a multiplier)
             if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
+            print(gam[hg])
         end
     end
 
