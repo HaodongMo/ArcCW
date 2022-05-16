@@ -4,6 +4,8 @@ ArcCW.AmmoEntToArcCW = {
     ["item_ammo_smg1_ttt"] = "arccw_ammo_smg1",
     ["item_ammo_revolver_ttt"] = "arccw_ammo_357",
     ["item_ammo_357_ttt"] = "arccw_ammo_sniper",
+    ["item_box_buckshot_ttt"] = "arccw_ammo_buckshot",
+
     -- HL2
     ["item_ammo_357"] = "arccw_ammo_357",
     ["item_ammo_357_large"] = "arccw_ammo_357_large",
@@ -11,13 +13,13 @@ ArcCW.AmmoEntToArcCW = {
     ["item_ammo_ar2_large"] = "arccw_ammo_ar2_large",
     ["item_ammo_pistol"] = "arccw_ammo_pistol",
     ["item_ammo_pistol_large"] = "arccw_ammo_pistol_large",
-    ["item_box_buckshot_ttt"] = "arccw_ammo_buckshot",
     ["item_ammo_smg1"] = "arccw_ammo_smg1",
     ["item_ammo_smg1_large"] = "arccw_ammo_smg1_large",
     ["item_ammo_smg1_grenade"] = "arccw_ammo_smg1_grenade",
     ["item_ammo_crossbow"] = "arccw_ammo_sniper",
     ["item_box_buckshot"] = "arccw_ammo_buckshot",
     ["item_ammo_ar2_altfire"] = "arccw_ammo_smg1_grenade",
+
     -- HL:S
     ["ammo_357"] = "arccw_ammo_357",
     ["ammo_crossbow"] = "arccw_ammo_sniper",
