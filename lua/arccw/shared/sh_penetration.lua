@@ -356,7 +356,6 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
 
             -- cancelling gmod's stupid default values (but only if we have a multiplier)
             if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
-            print(gam[hg])
         end
     end
 
