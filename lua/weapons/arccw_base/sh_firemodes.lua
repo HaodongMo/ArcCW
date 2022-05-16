@@ -5,7 +5,13 @@ function SWEP:ChangeFiremode(pred)
 
     if table.Count(fmt) == 1 then return end
 
+    if self:GetNextPrimaryFire() > CurTime() then return end
+
     if self:GetGrenadePrimed() then return end
+
+    local check = self:GetBuff_Hook("Hook_ChangeFiremode")
+    if check then return end
+
     local fmi = self:GetFireMode()
     local lastfmi = fmi
 
@@ -44,13 +50,10 @@ function SWEP:ChangeFiremode(pred)
     if !self.Animations[a] then a = "changefiremode" end
 
     if self.Animations[a] then
-        if self.Animations[a].Blocking and self:GetNextPrimaryFire() > CurTime() then return end
-        self:PlayAnimation(a, 1, true)
-        if self.Animations[a].Blocking then
-            local t = CurTime() + self:GetAnimKeyTime(a, true)
-            self:SetReloading(t)
-            self:SetNextPrimaryFire(t)
-        end
+        self:PlayAnimationEZ(a, 1, true)
+        local t = CurTime() + self:GetAnimKeyTime(a, true)
+        self:SetPriorityAnim(t)
+        self:SetNextPrimaryFire(t)
     end
 
     local old_inf = self:HasInfiniteAmmo()

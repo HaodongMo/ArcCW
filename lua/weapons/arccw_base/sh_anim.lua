@@ -41,23 +41,23 @@ end
 SWEP.LastAnimStartTime = 0
 SWEP.LastAnimFinishTime = 0
 
-function SWEP:PlayAnimationEZ(key, mult, ignorereload)
-    return self:PlayAnimation(key, mult, true, 0, false, false, ignorereload, false)
+function SWEP:PlayAnimationEZ(key, mult, priority)
+    return self:PlayAnimation(key, mult, true, 0, false, false, priority, false)
 end
 
-function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorereload, absolute)
+function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priority, absolute)
     mult = mult or 1
     pred = pred or false
     startfrom = startfrom or 0
     tt = tt or false
     --skipholster = skipholster or false Unused
-    ignorereload = ignorereload or false
+    priority = priority or false
     absolute = absolute or false
     if !key then return end
 
-    local ct = CurTime() --pred and CurTime() or UnPredictedCurTime()
+    local ct = CurTime()
 
-    if self:GetReloading() and !ignorereload then return end
+    if self:GetPriorityAnim() and !priority then return end
 
     if game.SinglePlayer() and SERVER and pred then
         net.Start("arccw_sp_anim")
@@ -66,7 +66,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
         net.WriteFloat(startfrom)
         net.WriteBool(tt)
         --net.WriteBool(skipholster) Unused
-        net.WriteBool(ignorereload)
+        net.WriteBool(priority)
         net.Send(self:GetOwner())
     end
 
@@ -115,7 +115,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, ignorer
     if !IsValid(vm) then return end
 
     local seq = anim.Source
-    if anim.RareSource and util.SharedRandom("raresource", 1, anim.RareSourceChance or 100, CurTime()/13) <= 1 then
+    if anim.RareSource and util.SharedRandom("raresource", 1, anim.RareSourceChance or 100, CurTime() / 13) <= 1 then
         seq = anim.RareSource
     end
     seq = self:GetBuff_Hook("Hook_TranslateSequence", seq)

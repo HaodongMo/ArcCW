@@ -232,13 +232,13 @@ function SWEP:ValidateAttachment(attname, attslot, i)
 end
 
 function SWEP:OpenCustomizeHUD()
-    if self:GetReloading() then return end
+    if self:GetPriorityAnim() then return end
     if IsValid(ArcCW.InvHUD) then
         ArcCW.InvHUD:Show()
         -- ArcCW.InvHUD:RequestFocus()
     else
         --if GetConVar("arccw_dev_cust2beta"):GetBool() then self:CreateCustomize2HUD() else self:CreateCustomizeHUD() end
-		self:CreateCustomize2HUD()
+        self:CreateCustomize2HUD()
         gui.SetMousePos(ScrW() / 2, ScrH() / 2)
     end
 
@@ -252,7 +252,7 @@ end
 function SWEP:CloseCustomizeHUD( hide )
     if IsValid(ArcCW.InvHUD) then
         --if !GetConVar("arccw_dev_cust2beta"):GetBool() then
-		if false then
+        if false then
             ArcCW.InvHUD:Hide()
             ArcCW.InvHUD:Clear()
             if vrmod and vrmod.MenuExists( "ArcCW_Customize" ) then

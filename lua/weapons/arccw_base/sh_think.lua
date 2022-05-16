@@ -54,8 +54,11 @@ function SWEP:Think()
         local anim = self:SelectAnimation("cycle")
         anim = self:GetBuff_Hook("Hook_SelectCycleAnimation", anim) or anim
         local mult = self:GetBuff_Mult("Mult_CycleTime")
-        self:PlayAnimation(anim, mult, true, 0, true)
-        self:SetNeedCycle(false)
+        local p = self:PlayAnimation(anim, mult, true, 0, true)
+        if p then
+            self:SetNeedCycle(false)
+            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(anim))
+        end
     end
 
     if self:GetGrenadePrimed() and !(owner:KeyDown(IN_ATTACK) or owner:KeyDown(IN_ATTACK2)) and (!game.SinglePlayer() or SERVER) then

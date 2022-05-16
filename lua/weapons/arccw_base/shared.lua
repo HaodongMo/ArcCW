@@ -128,6 +128,8 @@ SWEP.ReloadInSights_CloseIn = 0.25
 SWEP.ReloadInSights_FOVMult = 0.875
 SWEP.LockSightsInReload = false
 
+SWEP.LockSightsInPriorityAnim = false
+
 SWEP.CanFireUnderwater = false
 
 SWEP.Disposable = false -- when all ammo is expended, the gun will remove itself when holstered
@@ -184,7 +186,7 @@ SWEP.Firemodes = {
     --     AutoBurst = false, -- hold fire to continue firing bursts
     --     PostBurstDelay = 0,
     --     ActivateElements = {}
-    --     RestoreAmmo = false -- switching to this firemode will call RestoreAmmo(). intended to be used alongside Blocking firemode animations
+    --     RestoreAmmo = false -- switching to this firemode will call RestoreAmmo(). intended to be used alongside firemode changing animations
     -- }
 }
 
@@ -667,7 +669,6 @@ SWEP.Animations = {
     --     LastClip1OutTime = 0, -- when should the belt visually replenish on a belt fed
     --     MinProgress = 0, -- how much time in seconds must pass before the animation can be cancelled
     --     ForceEmpty = false, -- Used by empty shotgun reloads that load rounds to force consider the weapon to still be empty.
-    --     Blocking = false, -- for firemode animations only; if true, the animation will block all other actions (like a reload anim)
     -- }
 }
 
@@ -777,6 +778,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Float", 6, "Holster_Time")
     self:NetworkVar("Float", 7, "NWSightDelta")
     self:NetworkVar("Float", 8, "NWSprintDelta")
+    self:NetworkVar("Float", 9, "NWPriorityAnim")
 
     self:NetworkVar("Vector", 0, "BipodPos")
 
@@ -802,7 +804,7 @@ function SWEP:OnRestore()
 end
 
 
-function SWEP:SetReloading( v )
+function SWEP:SetReloading(v)
     if isbool(v) then
         if v then
             self:SetReloadingREAL(math.huge)
@@ -961,4 +963,27 @@ end
 function SWEP:GetGrenadeAlt()
     if !self.Throwing then return false end
     return self:GetNeedCycle()
+end
+
+function SWEP:SetPriorityAnim(v)
+    if isbool(v) then
+        if v then
+            self:SetNWPriorityAnim(math.huge)
+        else
+            self:SetNWPriorityAnim(-math.huge)
+        end
+    elseif isnumber(v) and v > self:GetNWPriorityAnim() then
+        self:SetNWPriorityAnim(v)
+    end
+end
+
+function SWEP:GetPriorityAnim()
+    local decide = self:GetNWPriorityAnim() > CurTime()
+
+    -- Reloading is always a priority animation
+    if !decide then decide = self:GetReloading() end
+
+    self:GetBuff_Hook("Hook_GetPriorityAnim", decide)
+
+    return decide
 end

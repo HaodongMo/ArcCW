@@ -8,8 +8,8 @@ function SWEP:CanPrimaryAttack()
     if IsValid(self:GetHolster_Entity()) then return end
     if self:GetHolster_Time() > 0 then return end
 
-    -- Inoperable
-    if self:GetReloading() then return end
+    -- A priority animation is playing (reloading, cycling, firemode etc)
+    if self:GetPriorityAnim() then return end
 
     -- Inoperable, but internally (burst resetting for example)
     if self:GetWeaponOpDelay() > CurTime() then return end

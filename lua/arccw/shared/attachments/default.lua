@@ -432,6 +432,9 @@ att.Hook_PreReload = function(wep) end
 
 att.Hook_PostReload = function(wep) end
 
+-- return true to prevent firemode change
+att.Hook_ChangeFiremode = function(wep) end
+
 -- return true to ignore current bullets in clip when reloading
 att.Hook_ReloadDumpClip = function(wep) end
 

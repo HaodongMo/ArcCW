@@ -50,7 +50,8 @@ function SWEP:AddHeat(a)
 
         if anim then
             self:PlayAnimation(anim, mult, true, 0, true)
-            self:SetReloading(t)
+            self:SetPriorityAnim(t)
+            self:SetNextPrimaryFire(t)
 
             if self:GetBuff_Override("Override_HeatFix", self.HeatFix) then
                 self:SetTimer(t - CurTime(),
