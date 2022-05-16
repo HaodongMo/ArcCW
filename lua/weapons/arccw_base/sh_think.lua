@@ -57,7 +57,7 @@ function SWEP:Think()
         local p = self:PlayAnimation(anim, mult, true, 0, true)
         if p then
             self:SetNeedCycle(false)
-            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(anim))
+            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(anim, true))
         end
     end
 
