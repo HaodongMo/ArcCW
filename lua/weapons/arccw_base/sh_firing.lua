@@ -801,7 +801,7 @@ function SWEP:GetBurstLength()
             clip = math.huge
         end
     end
-    if clip == 0 then return 1 end
+    --if clip == 0 then return 1 end
 
     local len = self:GetCurrentFiremode().Mode
 

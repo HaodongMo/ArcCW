@@ -231,7 +231,7 @@ function SWEP:Holster(wep)
 
     if CLIENT and self:GetOwner() == LocalPlayer() and ArcCW.InvHUD then ArcCW.InvHUD:Remove() end
 
-    if self:GetBurstCount() > 0 and self:Clip1() > 0 then return false end
+    if self:GetBurstCount() > 0 and self:Clip1() > self:GetBuff("AmmoPerShot") then return false end
 
     if CLIENT and LocalPlayer() != self:GetOwner() then
         return
