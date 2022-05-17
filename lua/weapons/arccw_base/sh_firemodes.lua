@@ -3,14 +3,12 @@ function SWEP:ChangeFiremode(pred)
     local fmt = self:GetBuff_Override("Override_Firemodes", self.Firemodes)
     fmt["BaseClass"] = nil
 
-    if table.Count(fmt) == 1 then return end
-
-    if self:GetNextPrimaryFire() > CurTime() then return end
-
-    if self:GetGrenadePrimed() then return end
-
     local check = self:GetBuff_Hook("Hook_ChangeFiremode")
     if check then return end
+
+    if table.Count(fmt) == 1 then return end
+    if self:GetNextPrimaryFire() > CurTime() then return end
+    if self:GetGrenadePrimed() then return end
 
     local fmi = self:GetFireMode()
     local lastfmi = fmi

@@ -328,6 +328,7 @@ SWEP.AlwaysFreeAim = nil
 -- If Jamming is enabled, a heat meter will gradually build up until it reaches HeatCapacity.
 -- Once that happens, the gun will overheat, playing an animation. If HeatLockout is true, it cannot be fired until heat is 0 again.
 SWEP.Jamming = false
+SWEP.HeatGain = 1 -- heat gained per shot
 SWEP.HeatCapacity = 200 -- rounds that can be fired non-stop before the gun jams, playing the "fix" animation
 SWEP.HeatDissipation = 2 -- rounds' worth of heat lost per second
 SWEP.HeatLockout = false -- overheating means you cannot fire until heat has been fully depleted

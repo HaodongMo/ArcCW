@@ -20,7 +20,7 @@ function SWEP:AddHeat(a)
     local anim = self:SelectAnimation("fix")
     local amount = a or 1
     local t = CurTime() + self:GetAnimKeyTime(anim) * mult
-    self.Heat = heat + amount * GetConVar("arccw_mult_heat"):GetFloat()
+    self.Heat = math.max(0, heat + amount * GetConVar("arccw_mult_heat"):GetFloat())
 
     self.NextHeatDissipateTime = CurTime() + (self:GetBuff("HeatDelayTime"))
     local overheat = self.Heat >= max

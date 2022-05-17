@@ -345,7 +345,7 @@ function SWEP:PrimaryAttack()
 
     self:ApplyAttachmentShootDamage()
 
-    self:AddHeat(1)
+    self:AddHeat(self:GetBuff("HeatGain"))
 
     mal = self:DoMalfunction(true)
     if mal == true then
