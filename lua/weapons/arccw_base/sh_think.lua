@@ -409,18 +409,16 @@ function SWEP:DoTriggerDelay()
         local anim = self:SelectAnimation("untrigger")
         if anim then
             self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
-            --self:SetNextPrimaryFire(CurTime() + self:GetAnimKeyTime(anim))
-        --else
-        --    self:PlayIdleAnimation(true)
         end
         self.LastTriggerTime = 0
         self.LastTriggerDuration = 0
-        return
+        self:GetBuff_Hook("Hook_OnTriggerRelease")
     elseif self:GetNextPrimaryFire() < CurTime() and self.LastTriggerTime == 0 and shouldHold then
         -- We haven't played the animation yet. Pull it!
         local anim = self:SelectAnimation("trigger")
         self:PlayAnimation(anim, self:GetBuff_Mult("Mult_TriggerDelayTime"), true, 0)
         self.LastTriggerTime = CurTime()
         self.LastTriggerDuration = self:GetAnimKeyTime(anim, true) * self:GetBuff_Mult("Mult_TriggerDelayTime")
+        self:GetBuff_Hook("Hook_OnTriggerHeld")
     end
 end
