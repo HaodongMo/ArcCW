@@ -354,9 +354,6 @@ function SWEP:PrimaryAttack()
         self:PlayAnimation(anim, 1, true, 0, true)
     end
 
-    self.LastTriggerTime = -1
-    self.LastTriggerDuration = 0
-
     self:GetBuff_Hook("Hook_PostFireBullets")
 
     if shouldsupp then SuppressHostEvents(nil) end
