@@ -83,8 +83,12 @@ function SWEP:Think()
         end
     end
 
-    if self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) then
-        self:DoTriggerDelay()
+    if ((game.SinglePlayer() and SERVER) or (!game.SinglePlayer() and true)) and self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) then
+        if owner:KeyReleased(IN_ATTACK) and self:GetBuff_Override("Override_TriggerCharge", self.TriggerCharge) and self:GetTriggerDelta(true) >= 1 then
+            self:PrimaryAttack()
+        else
+            self:DoTriggerDelay()
+        end
     end
 
     if self:GetCurrentFiremode().RunawayBurst then
@@ -102,6 +106,7 @@ function SWEP:Think()
     end
 
     if owner:KeyReleased(IN_ATTACK) then
+
         if !self:GetCurrentFiremode().RunawayBurst then
             self:SetBurstCount(0)
         end
@@ -383,17 +388,21 @@ function SWEP:InSprint()
     return true
 end
 
+function SWEP:IsTriggerHeld()
+    return self:GetOwner():KeyDown(IN_ATTACK) and (self:CanShootWhileSprint() or (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT))
+end
+
 SWEP.LastTriggerTime = 0
 SWEP.LastTriggerDuration = 0
-function SWEP:GetTriggerDelta()
-    if self.LastTriggerTime == -1 then return 0 end
+function SWEP:GetTriggerDelta(noheldcheck)
+    if self.LastTriggerTime == -1 or (!noheldcheck and !self:IsTriggerHeld()) then return 0 end
     return math.Clamp((CurTime() - self.LastTriggerTime) / self.LastTriggerDuration, 0, 1)
 end
 
 function SWEP:DoTriggerDelay()
-    local shouldHold = self:GetOwner():KeyDown(IN_ATTACK) and (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT)
+    local shouldHold = self:IsTriggerHeld()
 
-    if self.LastTriggerTime == -1 then
+    if self.LastTriggerTime == -1 or (!self.TriggerPullWhenEmpty and self:Clip1() < self:GetBuff("AmmoPerShot")) then
         if !shouldHold then
             self.LastTriggerTime = 0 -- Good to fire again
             self.LastTriggerDuration = 0
@@ -404,7 +413,7 @@ function SWEP:DoTriggerDelay()
     if self:GetBurstCount() > 0 and self:GetCurrentFiremode().Mode == 1 then
         self.LastTriggerTime = -1 -- Cannot fire again until trigger released
         self.LastTriggerDuration = 0
-    elseif self.LastTriggerTime > 0 and !shouldHold then
+    elseif self:GetNextPrimaryFire() < CurTime() and self.LastTriggerTime > 0 and !shouldHold then
         -- Attack key is released. Stop the animation and clear progress
         local anim = self:SelectAnimation("untrigger")
         if anim then

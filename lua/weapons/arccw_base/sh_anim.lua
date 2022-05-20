@@ -33,6 +33,10 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_jammed"
     end
 
+    if self:GetTriggerDelta() == 1 and self.Animations[anim .. "_trigger"] then
+        anim = anim .. "_trigger"
+    end
+
     if !self.Animations[anim] then return end
 
     return anim

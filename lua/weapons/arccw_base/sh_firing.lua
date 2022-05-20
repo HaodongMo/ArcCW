@@ -65,7 +65,8 @@ function SWEP:CanPrimaryAttack()
     end
 
     -- If we have a trigger delay, make sure its progress is done
-    if self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) and self:GetTriggerDelta() < 1 then
+    if self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) and ((!self:GetBuff_Override("Override_TriggerCharge", self.TriggerCharge) and self:GetTriggerDelta() < 1)
+            or (self:GetBuff_Override("Override_TriggerCharge", self.TriggerCharge) and self:IsTriggerHeld())) then
         return
     end
 
@@ -352,6 +353,9 @@ function SWEP:PrimaryAttack()
         local anim = "fire_jammed"
         self:PlayAnimation(anim, 1, true, 0, true)
     end
+
+    self.LastTriggerTime = -1
+    self.LastTriggerDuration = 0
 
     self:GetBuff_Hook("Hook_PostFireBullets")
 
