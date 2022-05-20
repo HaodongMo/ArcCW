@@ -109,6 +109,8 @@ function SWEP:Think()
 
         if !self:GetCurrentFiremode().RunawayBurst then
             self:SetBurstCount(0)
+            self.LastTriggerTime = -1 -- Cannot fire again until trigger released
+            self.LastTriggerDuration = 0
         end
 
         if self:GetCurrentFiremode().Mode < 0 and !self:GetCurrentFiremode().RunawayBurst then
