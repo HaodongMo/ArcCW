@@ -141,7 +141,7 @@ ArcCW.ClientConVars = {
     ["arccw_dev_benchgun_custom"]     = { def = "" },
 
     ["arccw_dev_removeonclose"]       = { def = 0, desc = "Remove the hud when closing instead of fading out, allowing easy reloading of the hud." },
-    ["arccw_noinspect"]               = { def = 0}
+    ["arccw_noinspect"]               = { def = 0, usri = true }
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do
