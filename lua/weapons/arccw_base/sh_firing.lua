@@ -354,6 +354,11 @@ function SWEP:PrimaryAttack()
         self:PlayAnimation(anim, 1, true, 0, true)
     end
 
+    if self:GetCurrentFiremode().Mode == 1 then
+        self.LastTriggerTime = -1 -- Cannot fire again until trigger released
+        self.LastTriggerDuration = 0
+    end
+
     self:GetBuff_Hook("Hook_PostFireBullets")
 
     if shouldsupp then SuppressHostEvents(nil) end
