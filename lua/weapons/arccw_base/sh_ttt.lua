@@ -118,7 +118,7 @@ function SWEP:TTT_Init()
     timer.Simple(0.1, function()
         if !IsValid(self) then return end
         self:SetClip1(self:GetCapacity() or self.RegularClipSize or self.Primary.ClipSize)
-        self.Primary.DefaultClip = self:GetCapacity()
+        self.Primary.DefaultClip = self.ForceDefaultAmmo or self.ForceDefaultClip or self:GetCapacity()
     end)
 
     if self.Throwing and self.Primary.Ammo and !self.ForceDefaultClip then

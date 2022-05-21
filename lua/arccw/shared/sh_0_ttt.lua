@@ -5,6 +5,17 @@ ArcCW.TTTAmmoToEntity = {
     ["357"] = "item_ammo_357_ttt",
     ["buckshot"] = "item_box_buckshot_ttt"
 }
+--[[
+WEAPON_TYPE_RANDOM = 1
+WEAPON_TYPE_MELEE = 2
+WEAPON_TYPE_NADE = 3
+WEAPON_TYPE_SHOTGUN = 4
+WEAPON_TYPE_HEAVY = 5
+WEAPON_TYPE_SNIPER = 6
+WEAPON_TYPE_PISTOL = 7
+WEAPON_TYPE_SPECIAL = 8
+]]
+
 ArcCW.AmmoToTTT = {
     ["357"] = "AlyxGun",
     ["SniperPenetratedRound"] = "357",
@@ -68,15 +79,29 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
             if wep.Throwing then
                 wep.Slot = 3
                 wep.Kind = WEAPON_NADE
+                wep.spawnType = wep.spawnType or WEAPON_TYPE_NADE
             elseif wep.Slot == 0 then
                 -- melee weapons
                 wep.Slot = 6
                 wep.Kind = WEAPON_MELEE or WEAPON_EQUIP1
+                wep.spawnType = wep.spawnType or WEAPON_TYPE_MELEE
             elseif wep.Slot == 1 then
                 -- sidearms
                 wep.Kind = WEAPON_PISTOL
+                wep.spawnType = wep.spawnType or WEAPON_TYPE_PISTOL
             else
                 -- other weapons are considered primary
+                -- try to determine spawntype if none exists
+                if !wep.spawnType then
+                    if wep.Primary.Ammo == "357" or (wep.Slot == 3 and (wep.Num or 1) == 1) then
+                        wep.spawnType = WEAPON_TYPE_SNIPER
+                    elseif wep.Primary.Ammo == "buckshot" or (wep.Num or 1) > 1 then
+                        wep.spawnType = WEAPON_TYPE_SHOTGUN
+                    else
+                        wep.spawnType = WEAPON_TYPE_HEAVY
+                    end
+                end
+
                 wep.Slot = 2
                 wep.Kind = WEAPON_HEAVY
             end
