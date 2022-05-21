@@ -27,7 +27,7 @@ ArcCW.VolumetricLightY = 256
 ArcCW.VolumetricLightZ = 384
 
 -- Special clip size denoting an bottomless clip
-ArcCW.BottomlessMagicNumber = 878787
+ArcCW.BottomlessMagicNumber = -1
 
 COND_WEAPON_HAS_LOS = 41
 COND_WEAPON_SIGHT_OCCLUDED = 45
