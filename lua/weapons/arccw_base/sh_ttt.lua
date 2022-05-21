@@ -128,3 +128,7 @@ function SWEP:TTT_Init()
         self.Singleton = true
     end
 end
+
+--- TTT2 uses this to populate custom convars in the equip menu
+function SWEP:AddToSettingsMenu(parent)
+end
