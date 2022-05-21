@@ -404,7 +404,8 @@ end
 function SWEP:DoTriggerDelay()
     local shouldHold = self:IsTriggerHeld()
 
-    if self.LastTriggerTime == -1 or (!self.TriggerPullWhenEmpty and self:Clip1() < self:GetBuff("AmmoPerShot")) then
+    local reserve = self:HasBottomlessClip() and self:Ammo1() or self:Clip1()
+    if self.LastTriggerTime == -1 or (!self.TriggerPullWhenEmpty and (reserve < self:GetBuff("AmmoPerShot"))) then
         if !shouldHold then
             self.LastTriggerTime = 0 -- Good to fire again
             self.LastTriggerDuration = 0
