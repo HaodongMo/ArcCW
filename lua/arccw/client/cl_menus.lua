@@ -399,7 +399,7 @@ local NPCsPanel = {
 }
 
 function ArcCW.NetworkConvar(convar, value, p)
-    if !LocalPlayer():IsAdmin() then return end
+    if IsValid(LocalPlayer()) and !LocalPlayer():IsAdmin() then return end
     if (p.TickCreated or 0) == UnPredictedCurTime() then return end
     if value == true or value == false then
         value = value and 1 or 0
