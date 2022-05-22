@@ -122,7 +122,7 @@ function SWEP:InitialDefaultClip()
 
     if self:GetOwner() and self:GetOwner():IsPlayer() then
         if self:HasBottomlessClip() then
-            self:SetClip1(1)
+            self:SetClip1(0)
         end
         if self.ForceDefaultAmmo then
             self:GetOwner():GiveAmmo(self.ForceDefaultAmmo, self.Primary.Ammo)
