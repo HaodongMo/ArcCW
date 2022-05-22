@@ -191,11 +191,12 @@ local function debug_panel(self)
     surface.SetFont("ArcCW_26")
     surface.SetTextColor(255, 255, 255, 255)
 
-    if self:GetReloadingREAL() - CurTime() > 0 then
+    local delay = math.max(self:GetReloadingREAL(), self:GetNWPriorityAnim())
+    if delay - CurTime() > 0 then
         surface.SetTextColor(255, 127, 127, 255)
     end
     surface.SetTextPos(ecksy, 26 * s * 4)
-    surface.DrawText( mr( math.max( self:GetReloadingREAL() - CurTime(), 0 ), 2 ) )
+    surface.DrawText( mr( math.max( delay - CurTime(), 0 ), 2 ) )
     surface.SetTextColor(255, 255, 255, 255)
 
     if self:GetWeaponOpDelay() - CurTime() > 0 then
@@ -277,7 +278,7 @@ local function debug_panel(self)
     end
 
     surface.SetTextPos(ecksy, 26 * s * 4)
-    surface.DrawText("RELOAD DELAY")
+    surface.DrawText("PRIORITY DELAY")
 
     surface.SetTextPos(ecksy, 26 * s * 5)
     surface.DrawText("WEAPON OPERATION DELAY")
