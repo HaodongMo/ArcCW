@@ -21,6 +21,8 @@ SWEP.FuseTime = 3.5
 SWEP.WindupTime = 0.5 -- Time to reach max velocity (does not apply for altfire)
 SWEP.WindupMinimum = 0.25 -- Velocity fraction if released without windup
 
+SWEP.ThrowInertia = nil -- override default throw intertia settings
+
 SWEP.CookPrimFire = true
 SWEP.CookAltFire = true
 
