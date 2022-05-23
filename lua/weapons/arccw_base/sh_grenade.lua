@@ -2,6 +2,8 @@ SWEP.GrenadePrimeTime = 0
 
 function SWEP:PreThrow()
 
+    if self:GetNWState() == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint() then return end
+
     local bot, inf = self:HasBottomlessClip(), self:HasInfiniteAmmo()
     local aps = self:GetBuff("AmmoPerShot")
 

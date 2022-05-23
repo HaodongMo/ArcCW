@@ -23,7 +23,7 @@ function ArcCW.Move(ply, mv, cmd)
         wpn:GetNWState() == ArcCW.STATE_CUSTOMIZE then
         blocksprint = true
         s = s * Lerp( GetConVar("arccw_mult_movespeedads"):GetFloat() * (1-wpn:GetSightDelta()), 1, math.Clamp(wpn:GetBuff("SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) )
-    elseif shottime > 0 then
+    elseif shottime > 0 or wpn:GetGrenadePrimed() then
         blocksprint = true
 
         if wpn:CanShootWhileSprint() then
