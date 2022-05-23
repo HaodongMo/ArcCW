@@ -225,7 +225,6 @@ function SWEP:PlayIdleAnimation(pred)
     local ianim = self:SelectAnimation("idle")
     if self:GetGrenadePrimed() then
         ianim = self:GetGrenadeAlt() and self:SelectAnimation("pre_throw_hold_alt") or self:SelectAnimation("pre_throw_hold")
-        --ianim = self:SelectAnimation("pre_throw_hold")
     end
 
     -- (key, mult, pred, startfrom, tt, skipholster, ignorereload)
@@ -234,10 +233,6 @@ function SWEP:PlayIdleAnimation(pred)
         ianim = "idle_ubgl_empty"
     elseif self:GetBuff_Override("UBGL_BaseAnims") and self:GetInUBGL() and self.Animations.idle_ubgl then
         ianim = "idle_ubgl"
-    elseif (self:Clip1() == 0 or self:GetNeedCycle()) and self.Animations.idle_empty then
-        ianim = ianim or "idle_empty"
-    else
-        ianim = ianim or "idle"
     end
 
     if self.LastAnimKey ~= ianim then
