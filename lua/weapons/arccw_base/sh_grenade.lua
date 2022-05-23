@@ -33,6 +33,11 @@ function SWEP:PreThrow()
     self.isCooked = (!alt and self:GetBuff("CookPrimFire", true)) or (alt and self:GetBuff("CookAltFire", true)) or nil
 
     self:GetBuff_Hook("Hook_PreThrow")
+
+    if self.PullPinTime == 0 then
+        self:Throw()
+        return
+    end
 end
 
 function SWEP:Throw()

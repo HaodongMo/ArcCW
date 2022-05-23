@@ -370,6 +370,11 @@ L["ui.hitgroup.arms"] = "Arms"
 L["ui.hitgroup.legs"] = "Legs"
 L["ui.nonum"] = "You need bullets to kill people, silly." -- num is 0
 
+--2022-05-23
+L["fcg.nade"] = "Grenade"
+L["fcg.nade.abbrev"] = "NADE"
+
+
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]
 Similarly, you can translate attachment and weapon names with ["name.class_name"]
