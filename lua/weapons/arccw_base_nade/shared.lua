@@ -5,6 +5,7 @@ SWEP.Singleton = false -- for grenades, means that weapons ARE ammo; hold one, u
 
 SWEP.NotForNPCs = true
 
+SWEP.Delay = 1
 SWEP.Firemodes = {
     {
         Mode = 1,

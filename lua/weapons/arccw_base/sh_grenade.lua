@@ -115,7 +115,7 @@ function SWEP:Throw()
         self:PlayAnimation("draw")
     end)
 
-    self:SetNextPrimaryFire(CurTime() + 1)
+    self:SetNextPrimaryFire(CurTime() + self:GetFiringDelay())
     self:SetGrenadeAlt(false)
 
     self:GetBuff_Hook("Hook_PostThrow")
