@@ -256,9 +256,9 @@ function SWEP:PrimaryAttack()
             for n = 1, bullet.Num do
                 bullet.Num = 1
 
-                local dispers = self:GetBuff_Override("Override_ShotgunSpreadDispersion") or self.ShotgunSpreadDispersion
+                local dispers = self:GetBuff_Override("Override_ShotgunSpreadDispersion", self.ShotgunSpreadDispersion)
                 local offset  = self:GetShotgunSpreadOffset(n)
-                local calcoff = dispers and (offset * self:GetDispersion() * ArcCW.MOAToAcc / 10) or (offset + extraspread)
+                local calcoff = dispers and (offset * self:GetDispersion() * ArcCW.MOAToAcc / 10) or offset
 
                 local ang = owner:EyeAngles() + self:GetFreeAimOffset()
                 local ang2 = Angle(ang)
