@@ -202,7 +202,6 @@ function SWEP:PrimaryAttack()
         tracernum = 1
         tracer = self:GetBuff_Override("Override_TracerFinal", self.TracerFinal) or self:GetBuff_Override("Override_Tracer", self.Tracer)
     end
-
     local dmgtable = self.BodyDamageMults
     dmgtable = self:GetBuff_Override("Override_BodyDamageMults") or dmgtable
 
@@ -701,6 +700,8 @@ function SWEP:DoEffects(att)
     if !game.SinglePlayer() and !IsFirstTimePredicted() then return end
 
     local ed = EffectData()
+    ed:SetStart(self:GetShootSrc())
+    ed:SetOrigin(self:GetShootSrc())
     ed:SetScale(1)
     ed:SetEntity(self)
     ed:SetAttachment(att or self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1)
