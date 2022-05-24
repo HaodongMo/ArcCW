@@ -22,7 +22,6 @@ function SWEP:ShouldDrawCrosshair()
     if self:GetCurrentFiremode().Mode == 0 then return false end
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return false end
     if self:GetNWState() == ArcCW.STATE_CUSTOMIZE then return false end
-
     return true
 end
 
@@ -33,19 +32,19 @@ local gaA = 0
 local gaD = 0
 
 function SWEP:GetFOVAcc()
-	cam.Start3D()
-		local lool = ( EyePos() + ( EyeAngles():Forward() ) + ( (ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")) * EyeAngles():Up() ) ):ToScreen()
-		local lool2 = ( EyePos() + ( EyeAngles():Forward() ) + ( (self:GetDispersion() * ArcCW.MOAToAcc / 10) * EyeAngles():Up() ) ):ToScreen()
-	cam.End3D()
+    cam.Start3D()
+        local lool = ( EyePos() + ( EyeAngles():Forward() ) + ( (ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")) * EyeAngles():Up() ) ):ToScreen()
+        local lool2 = ( EyePos() + ( EyeAngles():Forward() ) + ( (self:GetDispersion() * ArcCW.MOAToAcc / 10) * EyeAngles():Up() ) ):ToScreen()
+    cam.End3D()
 
-	local gau = 0
-	gau = ( (ScrH()/2) - lool.y )
-	gaA = math.Approach(gaA, gau, (ScrH()/2)*FrameTime())
-	gau = 0
-	gau = ( (ScrH()/2) - lool2.y )
-	gaD = math.Approach(gaD, gau, (ScrH()/2)*FrameTime())
+    local gau = 0
+    gau = ( (ScrH()/2) - lool.y )
+    gaA = math.Approach(gaA, gau, (ScrH()/2)*FrameTime())
+    gau = 0
+    gau = ( (ScrH()/2) - lool2.y )
+    gaD = math.Approach(gaD, gau, (ScrH()/2)*FrameTime())
 
-	return gaA, gaD
+    return gaA, gaD
 end
 
 function SWEP:DoDrawCrosshair(x, y)

@@ -76,7 +76,7 @@ hook.Add("InitPostEntity", "ArcCW_TTT", function()
         -- We have to do this here because TTT2 does a check for .Kind in WeaponEquip,
         -- earlier than Initialize() which assigns .Kind
         if !wep.Kind and !wep.CanBuy then
-            if wep.Throwing then
+            if wep.Throwing or weap.Throwing then
                 wep.Slot = 3
                 wep.Kind = WEAPON_NADE
                 wep.spawnType = wep.spawnType or WEAPON_TYPE_NADE
