@@ -6,11 +6,6 @@ function SWEP:Deploy()
         return
     end
 
-    if self.PreAdjustAtts and (SERVER or game.SinglePlayer()) then
-        self.PreAdjustAtts = false
-        self:AdjustAtts()
-    end
-
     if self.UnReady then
         local sp = game.SinglePlayer()
 
@@ -228,7 +223,7 @@ function SWEP:Initialize()
 
     hook.Run("ArcCW_WeaponInit", self)
 
-    self.PreAdjustAtts = true
+    self:AdjustAtts()
 end
 
 function SWEP:Holster(wep)
