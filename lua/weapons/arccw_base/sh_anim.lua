@@ -33,7 +33,7 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_jammed"
     end
 
-    if self:GetTriggerDelta() == 1 and self.Animations[anim .. "_trigger"] then
+    if self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) and self:IsTriggerHeld() and self.Animations[anim .. "_trigger"] then
         anim = anim .. "_trigger"
     end
 
