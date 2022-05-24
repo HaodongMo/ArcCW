@@ -679,9 +679,9 @@ function SWEP:DrawWorldModel()
         self:DoScopeGlint()
     end
 
-    if !self.CertainAboutAtts then
+    if !self.CertainAboutAtts and IsValid(self:GetOwner()) then
         net.Start("arccw_rqwpnnet")
-        net.WriteEntity(self)
+            net.WriteEntity(self)
         net.SendToServer()
     end
 end
