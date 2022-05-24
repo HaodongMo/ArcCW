@@ -355,7 +355,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos:Add(BEA:Forward() * bpos.y * self.InBipodMult.y)
         target.pos:Add(BEA:Up() * bpos.z * self.InBipodMult.z)
         target.sway = 0.2
-    elseif owner:Crouching() or owner:KeyDown(IN_DUCK) then
+    elseif (owner:Crouching() or owner:KeyDown(IN_DUCK)) and !self:GetReloading() then
         target.down = 0
         target.pos:Set(self:GetBuff("CrouchPos", true) or apos)
         target.ang:Set(self:GetBuff("CrouchAng", true) or aang)
@@ -400,7 +400,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local aaaapos = holstered and (hpos or spos) or (spos or hpos)
         local aaaaang = holstered and (hang or sang) or (sang or hang)
 
-        local sd = (holstered and 1) or (!self:CanShootWhileSprint() and sprd) or 0
+        local sd = (self:GetReloading() and 0) or (holstered and 1) or (!self:CanShootWhileSprint() and sprd) or 0
         sd = math.pow(math.sin(sd * math.pi * 0.5), 2)
 
         local d = math.pow(math.sin(sd * math.pi * 0.5), math.pi)
