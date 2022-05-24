@@ -52,6 +52,8 @@ function SWEP:DoDrawCrosshair(x, y)
     local pos = ply:EyePos()
     local ang = ply:EyeAngles() - self:GetOurViewPunchAngles() + self:GetFreeAimOffset()
 
+    if self:GetBuff_Hook("Hook_PreDrawCrosshair") then return end
+
     local static = GetConVar("arccw_crosshair_static"):GetBool()
 
     local prong_dot = GetConVar("arccw_crosshair_dot"):GetBool()
@@ -255,6 +257,8 @@ function SWEP:DoDrawCrosshair(x, y)
 
         surface.DrawCircle(x-1, y-0, acc, clr.r, clr.g, clr.b, clr.a * delta)
     end
+
+    self:GetBuff_Hook("Hook_PostDrawCrosshair", w2s)
 
     return true
 end
