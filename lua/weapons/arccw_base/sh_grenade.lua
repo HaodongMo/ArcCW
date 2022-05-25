@@ -20,17 +20,18 @@ function SWEP:PreThrow()
         return
     end
 
-    self:SetNextPrimaryFire(CurTime() + self.PullPinTime)
-
     self.GrenadePrimeTime = CurTime()
     local alt = self:GetOwner():KeyDown(IN_ATTACK2)
     self:SetGrenadeAlt(alt)
     self:SetGrenadePrimed(true)
 
     local anim = alt and self:SelectAnimation("pre_throw_alt") or self:SelectAnimation("pre_throw")
-    self:PlayAnimation(anim, 1, false, 0, true)
+    self:PlayAnimation(anim, 1, true, 0, true, nil, true)
 
     self.isCooked = (!alt and self:GetBuff("CookPrimFire", true)) or (alt and self:GetBuff("CookAltFire", true)) or nil
+
+    self:SetNextPrimaryFire(CurTime() + self.PullPinTime)
+    self:SetPriorityAnim(CurTime() + self.PullPinTime)
 
     self:SetShouldHoldType()
 
