@@ -30,10 +30,15 @@ SWEP.CookAltFire = true
 SWEP.ChamberSize = 0
 
 SWEP.HoldtypeHolstered = "normal"
-SWEP.HoldtypeActive = "grenade"
+SWEP.HoldtypeActive = "slam"
+SWEP.HoldtypeSights = "grenade"
+SWEP.HoldtypeCustomize = "slam"
 
 SWEP.Primary.ClipSize = 1
 SWEP.Primary.Ammo = "grenade"
+
+SWEP.AnimShoot = ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE
+SWEP.AnimShootAlt = ACT_HL2MP_GESTURE_RANGE_ATTACK_SLAM
 
 -- By default, grenades with no ammo will be stripped. Set true to prevent
 SWEP.KeepIfEmpty = false

@@ -32,6 +32,8 @@ function SWEP:PreThrow()
 
     self.isCooked = (!alt and self:GetBuff("CookPrimFire", true)) or (alt and self:GetBuff("CookAltFire", true)) or nil
 
+    self:SetShouldHoldType()
+
     self:GetBuff_Hook("Hook_PreThrow")
 
     if self.PullPinTime == 0 then
@@ -51,6 +53,9 @@ function SWEP:Throw()
 
     local anim = alt and self:SelectAnimation("throw_alt") or self:SelectAnimation("throw")
     self:PlayAnimation(anim, 1, false, 0, true)
+
+    local animevent = alt and self:GetBuff_Override("Override_AnimShootAlt", self.AnimShootAlt) or self:GetBuff_Override("Override_AnimShoot", self.AnimShoot)
+    self:GetOwner():DoAnimationEvent(animevent)
 
     local heldtime = CurTime() - self.GrenadePrimeTime
 
@@ -117,6 +122,8 @@ function SWEP:Throw()
 
     self:SetNextPrimaryFire(CurTime() + self:GetFiringDelay())
     self:SetGrenadeAlt(false)
+
+    self:SetShouldHoldType()
 
     self:GetBuff_Hook("Hook_PostThrow")
 end
