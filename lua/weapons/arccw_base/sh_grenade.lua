@@ -76,7 +76,7 @@ function SWEP:Throw()
 
     self:SetTimer(0.25, function()
 
-        local rocket = self:FireRocket(self.ShootEntity, force)
+        local rocket = self:FireRocket(self:GetBuff_Override("Override_ShootEntity", self.ShootEntity), force)
 
         if !rocket then return end
 
