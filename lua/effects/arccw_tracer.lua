@@ -48,7 +48,7 @@ function EFFECT:Init(data)
 
     self.StartPos = start
     self.EndPos = hit
-    self.Color = ArcCW.BulletProfiles[profile + 1] or ArcCW.BulletProfiles[1]
+    self.Color = (ArcCW.BulletProfileDict[ArcCW.BulletProfiles[profile]] or ArcCW.BulletProfileDict["default0"]).color
 
     -- print(profile)
 end
