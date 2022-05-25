@@ -75,32 +75,38 @@ function SWEP:Throw()
 
     local force = mv * ArcCW.HUToM
 
-    self:SetTimer(0.25, function()
+    self:SetTimer(self:GetBuff("ShootEntityDelay"), function()
 
-        local rocket = self:FireRocket(self:GetBuff_Override("Override_ShootEntity", self.ShootEntity), force)
+        local ft = self:GetBuff("FuseTime")
+        local data = {
+            dodefault = true,
+            force = force,
+            shootentity = self:GetBuff_Override("Override_ShootEntity", self.ShootEntity),
+            fusetime = ft and (ft - (isCooked and heldtime or 0)),
+        }
+        local ovr = self:GetBuff_Hook("Hook_Throw", data)
+        if !ovr or ovr.dodefault then
+            local rocket = self:FireRocket(self:GetBuff_Override("Override_ShootEntity", self.ShootEntity), force)
+            if !rocket then return end
 
-        if !rocket then return end
-
-        local ft = self:GetBuff_Override("Override_FuseTime") or self.FuseTime
-
-        if ft then
-            if isCooked then
-                rocket.FuseTime = ft - heldtime
-            else
-                rocket.FuseTime = ft
+            if ft then
+                if isCooked then
+                    rocket.FuseTime = ft - heldtime
+                else
+                    rocket.FuseTime = ft
+                end
             end
+
+            local phys = rocket:GetPhysicsObject()
+
+            local inertia = self:GetBuff_Override("Override_ThrowInertia", self.ThrowInertia)
+            if inertia == nil then inertia = GetConVar("arccw_throwinertia"):GetBool() end
+            if inertia and mv > 100 then
+                phys:AddVelocity(self:GetOwner():GetVelocity())
+            end
+
+            phys:AddAngleVelocity( Vector(0, 750, 0) )
         end
-
-        local phys = rocket:GetPhysicsObject()
-
-        local inertia = self:GetBuff_Override("Override_ThrowInertia", self.ThrowInertia)
-        if inertia == nil then inertia = GetConVar("arccw_throwinertia"):GetBool() end
-        if inertia and mv > 100 then
-            phys:AddVelocity(self:GetOwner():GetVelocity())
-        end
-
-        phys:AddAngleVelocity( Vector(0, 750, 0) )
-
         if !self:HasInfiniteAmmo() then
             local aps = self:GetBuff("AmmoPerShot")
             local a1 = self:Ammo1()
@@ -116,6 +122,7 @@ function SWEP:Throw()
                 return
             end
         end
+
     end)
     local t = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_ThrowTime")
     self:SetPriorityAnim(CurTime() + t)

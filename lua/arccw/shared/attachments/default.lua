@@ -655,3 +655,9 @@ att.Override_AlwaysFreeAim = nil
 att.Hook_OnDeploy = function(wep) end
 att.Hook_OnHolster = function(wep) end
 att.Hook_OnHolsterEnd = function(wep) end
+
+-- bool dodefault - set false to not do default throwing behavior
+-- vector force
+-- string shootentity
+-- number/nil fusetime
+att.Hook_Throw = function(wep, data) end
