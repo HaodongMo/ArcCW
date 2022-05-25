@@ -115,12 +115,17 @@ function SWEP:Throw()
             end
         end
     end)
-    self:SetTimer(self:GetAnimKeyTime(anim), function()
+    local t = self:GetAnimKeyTime(anim)
+    self:SetPriorityAnim(CurTime() + t)
+    self:SetTimer(t, function()
         if !self:IsValid() then return end
-        self:PlayAnimation("draw")
+        local a = self:SelectAnimation("reload") or self:SelectAnimation("draw")
+        self:PlayAnimation(a, self:GetBuff_Mult("Mult_ReloadTime"), true, 0, nil, nil, true)
+        self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(a, true))
     end)
 
     self:SetNextPrimaryFire(CurTime() + self:GetFiringDelay())
+
     self:SetGrenadeAlt(false)
 
     self:SetShouldHoldType()
