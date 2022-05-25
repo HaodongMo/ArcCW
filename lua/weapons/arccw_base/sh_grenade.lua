@@ -25,19 +25,20 @@ function SWEP:PreThrow()
     self:SetGrenadeAlt(alt)
     self:SetGrenadePrimed(true)
 
+    local pulltime = self:GetBuff("PullPinTime")
     local anim = alt and self:SelectAnimation("pre_throw_alt") or self:SelectAnimation("pre_throw")
-    self:PlayAnimation(anim, 1, true, 0, true, nil, true)
+    self:PlayAnimation(anim, self.PullPinTime / pulltime, true, 0, true, nil, true)
 
     self.isCooked = (!alt and self:GetBuff("CookPrimFire", true)) or (alt and self:GetBuff("CookAltFire", true)) or nil
 
-    self:SetNextPrimaryFire(CurTime() + self.PullPinTime)
-    self:SetPriorityAnim(CurTime() + self.PullPinTime)
+    self:SetNextPrimaryFire(CurTime() + pulltime)
+    self:SetPriorityAnim(CurTime() + pulltime)
 
     self:SetShouldHoldType()
 
     self:GetBuff_Hook("Hook_PreThrow")
 
-    if self.PullPinTime == 0 then
+    if pulltime == 0 then
         self:Throw()
         return
     end
@@ -53,7 +54,7 @@ function SWEP:Throw()
     local alt = self:GetGrenadeAlt()
 
     local anim = alt and self:SelectAnimation("throw_alt") or self:SelectAnimation("throw")
-    self:PlayAnimation(anim, 1, false, 0, true)
+    self:PlayAnimation(anim, self:GetBuff_Mult("Mult_ThrowTime"), false, 0, true)
 
     local animevent = alt and self:GetBuff_Override("Override_AnimShootAlt", self.AnimShootAlt) or self:GetBuff_Override("Override_AnimShoot", self.AnimShoot)
     self:GetOwner():DoAnimationEvent(animevent)
@@ -116,13 +117,13 @@ function SWEP:Throw()
             end
         end
     end)
-    local t = self:GetAnimKeyTime(anim)
+    local t = self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_ThrowTime")
     self:SetPriorityAnim(CurTime() + t)
     self:SetTimer(t, function()
         if !self:IsValid() then return end
         local a = self:SelectAnimation("reload") or self:SelectAnimation("draw")
         self:PlayAnimation(a, self:GetBuff_Mult("Mult_ReloadTime"), true, 0, nil, nil, true)
-        self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(a, true))
+        self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(a, true) * self:GetBuff_Mult("Mult_ReloadTime"))
     end)
 
     self:SetNextPrimaryFire(CurTime() + self:GetFiringDelay())
