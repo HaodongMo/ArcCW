@@ -161,7 +161,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         --ping = math.Clamp(ping, 0, 0.5)
 
         -- local latency = util.TimeToTicks((owner:Ping() / 1000) * 0.5)
-        local latency = math.floor(engine.TickCount() - owner:GetCurrentCommand():TickCount()) -- FIXME: this math.floor does nothing
+        local latency = math.floor(engine.TickCount() - owner:GetCurrentCommand():TickCount() - 1) -- FIXME: this math.floor does nothing
         local timestep = engine.TickInterval()
 
         while latency > 0 do
@@ -177,7 +177,6 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
 
     if SERVER then
         -- ArcCW:ProgressPhysBullet(bullet, engine.TickInterval())
-
         ArcCW:SendBullet(bullet, wep:GetOwner())
     end
 end
@@ -214,6 +213,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
         Profile = profile,
         PhysBulletImpact = impact,
         Weapon = weapon,
+        Filter = {weapon:GetOwner()},
     }
 
     if bit.band( util.PointContents( pos ), CONTENTS_WATER ) == CONTENTS_WATER then
@@ -493,7 +493,7 @@ function ArcCW:DrawPhysBullets()
         end
 
         -- Supposed to stop bullets from rendering in your face. May need tweaking
-        if i.Travelled <= 64 then -- i.StartTime >= CurTime() - 0.1 and i.Travelled <= (i.Vel:Length() * 0.01)
+        if i.Travelled <= 4 then -- i.StartTime >= CurTime() - 0.1 and i.Travelled <= (i.Vel:Length() * 0.01)
             continue
         end
 
