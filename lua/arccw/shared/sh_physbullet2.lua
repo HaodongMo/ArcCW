@@ -36,7 +36,8 @@ ArcCW.BulletProfileDict = {
         size = 1,
         tail_length = 0.02, -- as a fraction of the bullet's velocity
         model = "models/weapons/w_bullet.mdl",
-        particle = "myparticle",
+        model_nodraw = false, -- true to not draw
+        particle = "myparticle", -- requires a model path; set to nodraw if you don't wish it to be visible
 
         ThinkBullet = function(bulinfo, bullet) end, -- set bullet.Dead = true to stop processing and delete bullet.
         DrawBullet = function(bulinfo, bullet) end, -- return true to prevent default drawing behavior
@@ -517,14 +518,13 @@ function ArcCW:DrawPhysBullets()
         if bulinfo.model then
             if !IsValid(i.CSModel) then
                 i.CSModel = ClientsideModel(bulinfo.model)
-                i.CSModel:SetNoDraw(true)
+                i.CSModel:SetNoDraw(bulinfo.model_nodraw)
                 if bulinfo.particle then
                     i.CSParticle = CreateParticleSystem(i.CSModel, bulinfo.particle, PATTACH_ABSORIGIN_FOLLOW, 1)
                 end
             end
             i.CSModel:SetPos(rpos)
             i.CSModel:SetAngles(i.Vel:Angle())
-            i.CSModel:DrawModel()
             if i.CSParticle then
                 i.CSParticle:StartEmission()
                 i.CSParticle:SetSortOrigin(IsValid(i.Weapon) and i.Weapon:GetShootSrc() or vector_origin)
