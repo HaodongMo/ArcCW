@@ -31,12 +31,12 @@ ArcCW.BulletProfileDict = {
 --[[]
     ["profile_name"] = {
         color = Color(255, 255, 255),
-        sprite_head = Material("effects/whiteflare"),
-        sprite_tail = Material("effects/smoke_trail"),
+        sprite_head = Material("effects/whiteflare"), -- set false to not draw a sprite, set nil to use default
+        sprite_tail = Material("effects/smoke_trail"), -- ditto
         size = 1,
         tail_length = 0.02, -- as a fraction of the bullet's velocity
-        model = "models/weapons/w_bullet.mdl",
-        model_nodraw = false, -- true to not draw
+        model = "models/weapons/w_bullet.mdl", -- clientside model is not created without this path
+        model_nodraw = false, -- true to not draw model
         particle = "myparticle", -- requires a model path; set to nodraw if you don't wish it to be visible
 
         ThinkBullet = function(bulinfo, bullet) end, -- set bullet.Dead = true to stop processing and delete bullet.
@@ -497,7 +497,7 @@ function ArcCW:DrawPhysBullets()
             continue
         end
 
-        local rpos = i.Pos + i.Vel * FrameTime()
+        local rpos = i.Pos
 
         local col = bulinfo.color
 
