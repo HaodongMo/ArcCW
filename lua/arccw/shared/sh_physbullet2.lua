@@ -201,6 +201,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
 
     local bullet = {
         Pos = pos,
+        StartPos = pos,
         Vel = ang:Forward() * vel,
         VelStart = ang:Forward() * vel,
         Travelled = 0,
@@ -497,20 +498,28 @@ function ArcCW:DrawPhysBullets()
         end
 
         local rpos = i.Pos
+        local origin = i.StartPos
+        local vel = i.Vel - LocalPlayer():GetVelocity()
+        local veldir = vel:GetNormalized()
+        local dampfraction = 1
 
         -- Solve two problems presented by physbullets
         -- 1: they come out of the player's eyes and it looks jarring
         -- 2: they fly too fast and so tracers aren't that noticeable
-        if !i.DampenVelocity then i.DampenVelocity = math.Clamp(math.floor(i.VelStart:Length() ^ 0.75), 512, 4096) end
+        if !i.DampenVelocity then i.DampenVelocity = math.Clamp(math.floor(i.VelStart:Length() ^ 0.6), 512, 4096) end
         if !i.Dead and !i.Imaginary and i.Travelled <= i.DampenVelocity and  i.Weapon:GetOwner() == LocalPlayer() then
             -- Lerp towards the muzzle position, effectively slowing and dragging the bullet back.
             -- Bullet will appear to accelerate suddenly near the threshold, but it should be too fast to notice.
-            rpos = LerpVector((i.Travelled / i.DampenVelocity) ^ 0.5, i.Weapon:GetTracerOrigin(), i.Pos)
+            origin = i.Weapon:GetTracerOrigin()
+            dampfraction = (i.Travelled / i.DampenVelocity) ^ 0.5
+            rpos = LerpVector(dampfraction, origin, i.Pos)
 
             if GetConVar("developer"):GetInt() >= 2 then
+                debugoverlay.Cross(origin, 2, 5, Color(255, 0, 0), true)
                 debugoverlay.Cross(rpos, 8, 5, Color(0, 255, 255), true)
                 debugoverlay.Line(rpos, i.Pos, 5, Color(250, 150, 255), true)
                 debugoverlay.Cross(i.Pos, 4, 5, Color(255, 0, 255), true)
+                debugoverlay.Text(rpos, math.Round(dampfraction, 2), 5)
             end
         end
 
@@ -520,17 +529,25 @@ function ArcCW:DrawPhysBullets()
         local sqrdist = EyePos():DistToSqr(rpos)
         local distgrow = math.log(sqrdist) ^ 0.5
         local size = math.max(0, (bulinfo.size_min or 1) * 0.25 + (bulinfo.size or 1) * distgrow)
-        --local delta = math.max(0.1, sqrdist / 400000000)
-        --size = math.pow(size, Lerp(delta, 1, 2))
+        local headsize = size * math.Clamp(sqrdist / 4000000, 1, 16)
+
+        -- Head is less visible on the sides; it's mostly useful for the shooter and target as tracers aren't very visible from front and back
+        local dot = EyeAngles():Forward():Dot(veldir)
+        dot = math.Clamp(((dot * dot) - 0.5) * 2, 0, 1)
+        headsize = headsize * dot
+        --size = size * math.Clamp(1 - dot, 0.5, 1)
 
         if bulinfo.sprite_head != false then
             render.SetMaterial(bulinfo.sprite_head or head)
-            render.DrawSprite(rpos, size, size, col)
+            render.DrawSprite(rpos, headsize, headsize, col)
         end
 
         if bulinfo.sprite_tracer != false and !GetConVar("arccw_fasttracers"):GetBool() then
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
-            render.DrawBeam(rpos, rpos - i.Vel:GetNormalized() * math.min(i.Vel:Length() * (bulinfo.tail_length or 0.1), 512, i.Travelled * 0.5), size * 0.75, 0, 1, col)
+            local len = math.min(vel:Length() * (bulinfo.tail_length or 0.02), 512, (rpos - origin):Length())
+            local pos2 = rpos - veldir * len
+            render.DrawBeam(rpos, pos2, size * 0.75, 0, 0.5, col)
+            debugoverlay.Line(rpos, pos2, 7, Color(0, 255, 0), true)
         end
 
         if bulinfo.model then
