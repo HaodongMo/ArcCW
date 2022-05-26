@@ -33,7 +33,8 @@ ArcCW.BulletProfileDict = {
         color = Color(255, 255, 255),
         sprite_head = Material("effects/whiteflare"), -- set false to not draw a sprite, set nil to use default
         sprite_tail = Material("effects/smoke_trail"), -- ditto
-        size = 1,
+        size = 1, -- Size growth factor of the physbullet (from distance)
+        size_min = 1, -- Base size of the physbullet
         tail_length = 0.02, -- as a fraction of the bullet's velocity
         model = "models/weapons/w_bullet.mdl", -- clientside model is not created without this path
         model_nodraw = false, -- true to not draw model
@@ -201,6 +202,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
     local bullet = {
         Pos = pos,
         Vel = ang:Forward() * vel,
+        VelStart = ang:Forward() * vel,
         Travelled = 0,
         StartTime = CurTime(),
         Imaginary = false,
@@ -459,6 +461,8 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         end
     end
 
+    bullet.OldPos = oldpos
+
     local MaxDimensions = 16384 * 4
     local WorldDimensions = 16384
 
@@ -492,18 +496,32 @@ function ArcCW:DrawPhysBullets()
             continue
         end
 
-        -- Supposed to stop bullets from rendering in your face. May need tweaking
-        if i.Travelled <= 4 then -- i.StartTime >= CurTime() - 0.1 and i.Travelled <= (i.Vel:Length() * 0.01)
-            continue
-        end
-
         local rpos = i.Pos
+
+        -- Solve two problems presented by physbullets
+        -- 1: they come out of the player's eyes and it looks jarring
+        -- 2: they fly too fast and so tracers aren't that noticeable
+        if !i.DampenVelocity then i.DampenVelocity = math.Clamp(math.floor(i.VelStart:Length() ^ 0.75), 512, 4096) print(i.DampenVelocity) end
+        if !i.Dead and !i.Imaginary and i.Travelled <= i.DampenVelocity and  i.Weapon:GetOwner() == LocalPlayer() then
+            -- Lerp towards the muzzle position, effectively slowing and dragging the bullet back.
+            -- Bullet will appear to accelerate suddenly near the threshold, but it should be too fast to notice.
+            rpos = LerpVector((i.Travelled / i.DampenVelocity) ^ 0.5, i.Weapon:GetTracerOrigin(), i.Pos)
+
+            if GetConVar("developer"):GetInt() >= 2 then
+                debugoverlay.Cross(rpos, 8, 5, Color(0, 255, 255), true)
+                debugoverlay.Line(rpos, i.Pos, 5, Color(250, 150, 255), true)
+                debugoverlay.Cross(i.Pos, 4, 5, Color(255, 0, 255), true)
+            end
+        end
 
         local col = bulinfo.color
 
-        local size = math.max(0, (bulinfo.size or 1) * 0.5 * math.log(EyePos():DistToSqr(rpos) - math.pow(256, 2)))
-        local delta = math.max(0.1, EyePos():DistToSqr(rpos) / math.pow(20000, 2))
-        size = math.pow(size, Lerp(delta, 1, 2))
+        -- TODO: Tracer sizes are still kinda wacky
+        local sqrdist = EyePos():DistToSqr(rpos)
+        local distgrow = math.log(sqrdist) ^ 0.5
+        local size = math.max(0, (bulinfo.size_min or 1) * 0.25 + (bulinfo.size or 1) * distgrow)
+        --local delta = math.max(0.1, sqrdist / 400000000)
+        --size = math.pow(size, Lerp(delta, 1, 2))
 
         if bulinfo.sprite_head != false then
             render.SetMaterial(bulinfo.sprite_head or head)
@@ -512,7 +530,7 @@ function ArcCW:DrawPhysBullets()
 
         if bulinfo.sprite_tracer != false and !GetConVar("arccw_fasttracers"):GetBool() then
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
-            render.DrawBeam(rpos, rpos - i.Vel:GetNormalized() * math.min(i.Vel:Length() * (bulinfo.tail_length or 0.1), 512, i.Travelled - 64), size * 0.75, 0, 1, col)
+            render.DrawBeam(rpos, rpos - i.Vel:GetNormalized() * math.min(i.Vel:Length() * (bulinfo.tail_length or 0.1), 512, i.Travelled * 0.5), size * 0.75, 0, 1, col)
         end
 
         if bulinfo.model then
@@ -525,6 +543,7 @@ function ArcCW:DrawPhysBullets()
             end
             i.CSModel:SetPos(rpos)
             i.CSModel:SetAngles(i.Vel:Angle())
+            i.CSModel:SetVelocity(i.Vel)
             if i.CSParticle then
                 i.CSParticle:StartEmission()
                 i.CSParticle:SetSortOrigin(IsValid(i.Weapon) and i.Weapon:GetShootSrc() or vector_origin)
