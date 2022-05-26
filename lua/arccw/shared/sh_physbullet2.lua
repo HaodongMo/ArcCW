@@ -234,9 +234,11 @@ function ArcCW:DoPhysBullets()
 
     for _, i in pairs(ArcCW.PhysBullets) do
         ArcCW:ProgressPhysBullet(i, deltatime)
-        if !i.Dead then
+        -- On the client, bullets must live for at least one tick so we get to render it
+        -- This prevents invisible tracers up close
+        if !i.Dead or (CLIENT and CurTime() - i.StartTime <= engine.TickInterval()) then
             table.insert(new, i)
-        elseif IsValid(i.CSModel) then
+        elseif CLIENT and IsValid(i.CSModel) then
             i.CSModel:Remove()
             if i.CSParticle then
                 i.CSParticle:StopEmission()
@@ -507,7 +509,7 @@ function ArcCW:DrawPhysBullets()
         -- 1: they come out of the player's eyes and it looks jarring
         -- 2: they fly too fast and so tracers aren't that noticeable
         if !i.DampenVelocity then i.DampenVelocity = math.Clamp(math.floor(i.VelStart:Length() ^ 0.6), 512, 4096) end
-        if !i.Dead and !i.Imaginary and i.Travelled <= i.DampenVelocity and  i.Weapon:GetOwner() == LocalPlayer() then
+        if !i.Imaginary and i.Travelled <= i.DampenVelocity and  i.Weapon:GetOwner() == LocalPlayer() then
             -- Lerp towards the muzzle position, effectively slowing and dragging the bullet back.
             -- Bullet will appear to accelerate suddenly near the threshold, but it should be too fast to notice.
             origin = i.Weapon:GetTracerOrigin()
@@ -546,6 +548,9 @@ function ArcCW:DrawPhysBullets()
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
             local len = math.min(vel:Length() * (bulinfo.tail_length or 0.02), 512, (rpos - origin):Length())
             local pos2 = rpos - veldir * len
+            if CurTime() - i.StartTime <= engine.TickInterval() then
+                pos2 = origin
+            end
             render.DrawBeam(rpos, pos2, size * 0.75, 0, 0.5, col)
             debugoverlay.Line(rpos, pos2, 7, Color(0, 255, 0), true)
         end
