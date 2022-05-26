@@ -232,6 +232,12 @@ function ArcCW:DoPhysBullets()
         ArcCW:ProgressPhysBullet(i, deltatime)
         if !i.Dead then
             table.insert(new, i)
+        elseif IsValid(i.CSModel) then
+            i.CSModel:Remove()
+            if i.CSParticle then
+                i.CSParticle:StopEmission()
+                i.CSParticle = nil
+            end
         end
     end
 
@@ -490,20 +496,39 @@ function ArcCW:DrawPhysBullets()
             continue
         end
 
+        local rpos = i.Pos + i.Vel * FrameTime()
+
         local col = bulinfo.color
 
-        local size = math.max(0, (bulinfo.size or 1) * 0.5 * math.log(EyePos():DistToSqr(i.Pos) - math.pow(256, 2)))
-        local delta = math.max(0.1, EyePos():DistToSqr(i.Pos) / math.pow(20000, 2))
+        local size = math.max(0, (bulinfo.size or 1) * 0.5 * math.log(EyePos():DistToSqr(rpos) - math.pow(256, 2)))
+        local delta = math.max(0.1, EyePos():DistToSqr(rpos) / math.pow(20000, 2))
         size = math.pow(size, Lerp(delta, 1, 2))
 
         if bulinfo.sprite_head != false then
             render.SetMaterial(bulinfo.sprite_head or head)
-            render.DrawSprite(i.Pos, size, size, col)
+            render.DrawSprite(rpos, size, size, col)
         end
 
         if bulinfo.sprite_tracer != false and !GetConVar("arccw_fasttracers"):GetBool() then
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
-            render.DrawBeam(i.Pos, i.Pos - i.Vel:GetNormalized() * math.min(i.Vel:Length() * (bulinfo.tail_length or 0.1), 512, i.Travelled - 64), size * 0.75, 0, 1, col)
+            render.DrawBeam(rpos, rpos - i.Vel:GetNormalized() * math.min(i.Vel:Length() * (bulinfo.tail_length or 0.1), 512, i.Travelled - 64), size * 0.75, 0, 1, col)
+        end
+
+        if bulinfo.model then
+            if !IsValid(i.CSModel) then
+                i.CSModel = ClientsideModel(bulinfo.model)
+                i.CSModel:SetNoDraw(true)
+                if bulinfo.particle then
+                    i.CSParticle = CreateParticleSystem(i.CSModel, bulinfo.particle, PATTACH_ABSORIGIN_FOLLOW, 1)
+                end
+            end
+            i.CSModel:SetPos(rpos)
+            i.CSModel:SetAngles(i.Vel:Angle())
+            i.CSModel:DrawModel()
+            if i.CSParticle then
+                i.CSParticle:StartEmission()
+                i.CSParticle:SetSortOrigin(IsValid(i.Weapon) and i.Weapon:GetShootSrc() or vector_origin)
+            end
         end
     end
     cam.End3D()
