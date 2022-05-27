@@ -218,6 +218,7 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
     local client = LocalPlayer()
     local ent = tData:GetEntity()
 
+
     if !IsValid(client) or !client:IsTerror() or !client:Alive()
     or !IsValid(ent) or tData:GetEntityDistance() > 100 or !ent:IsWeapon()
     or !ent.ArcCW or ent.Throwing then
@@ -230,7 +231,9 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
 
     local pickx = GetConVar("arccw_atts_pickx"):GetInt()
 
-    if ent.Attachments and ent:CountAttachments() > 0 then
+    if !ent.CertainAboutAtts then
+        tData:AddDescriptionLine("??? Attachments")
+    elseif ent.Attachments and ent:CountAttachments() > 0 then
         tData:AddDescriptionLine(tostring(ent:CountAttachments()) .. (pickx > 0 and ("/" .. pickx) or "") .. ArcCW.GetTranslation("ttt.attachments"), nil)
         for i, v in pairs(ent.Attachments) do
             local attName = v.Installed
