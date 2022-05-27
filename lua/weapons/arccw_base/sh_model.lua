@@ -1003,9 +1003,3 @@ function SWEP:GetFromReference(boneid)
 
     return bpos, bang
 end
-
-function SWEP:OwnerChanged()
-    -- WorldModelOffset needs to be changed when the weapon has no owner.
-    self:SetupModel(true)
-    print(self:GetOwner())
-end
