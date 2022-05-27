@@ -551,7 +551,7 @@ function ArcCW:DrawPhysBullets()
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
             local len = math.min(vel:Length() * (bulinfo.tail_length or 0.02), 512, (rpos - i.TracerOrigin):Length())
             local pos2 = rpos - veldir * len
-            if CurTime() - i.StartTime <= engine.TickInterval() then
+            if i.TracerOrigin and CurTime() - i.StartTime <= engine.TickInterval() then
                 pos2 = i.TracerOrigin
             end
             render.DrawBeam(rpos, pos2, size * 0.75, 0, 0.5, col)
