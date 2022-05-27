@@ -66,7 +66,7 @@ function SWEP:Bash(melee2)
             or self:GetState() == ArcCW.STATE_CUSTOMIZE then
         return
     end
-    if self:GetNextPrimaryFire() > CurTime() then return end
+    if self:GetNextPrimaryFire() > CurTime() or self:GetGrenadePrimed() or self:GetPriorityAnim() then return end
 
     if !self.CanBash and !self:GetBuff_Override("Override_CanBash") then return end
 
