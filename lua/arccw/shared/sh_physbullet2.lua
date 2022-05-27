@@ -499,6 +499,7 @@ function ArcCW:DrawPhysBullets()
             continue
         end
 
+        i.VelStart = i.VelStart or i.Vel
         local rpos = i.Pos
         local origin = i.StartPos
         local vel = i.Vel - LocalPlayer():GetVelocity()
