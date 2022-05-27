@@ -277,7 +277,7 @@ function SWEP:SetupModel(wm)
         element.WMBone = "ValveBiped.Bip01_R_Hand"
 
         if self.WorldModelOffset then
-            if !self:GetOwner():IsValid() then
+            if !IsValid(self:GetOwner()) then
                 element.OffsetAng = Angle(0, 0, 0)
                 element.OffsetPos = Vector(0, 0, 0)
             else
@@ -696,7 +696,7 @@ function SWEP:DrawCustomModel(wm,origin,angle)
     local vscale = 1
 
     if wm then
-        if !always and disttoeye >= visibility*2 then return end
+        if !always and disttoeye >= visibility * 2 then return end
 
         if !self.WM then
             self:SetupModel(wm)
@@ -777,8 +777,8 @@ function SWEP:DrawCustomModel(wm,origin,angle)
                 -- vm = self
             end
 
-            if wm then
-                if !always and disttoeye >= visibility then continue end
+            if wm and !always and disttoeye >= visibility then
+                continue
             end
         end
 
@@ -943,10 +943,9 @@ function SWEP:DrawCustomModel(wm,origin,angle)
             k.Model:DrawModel()
         end
 
-        if activeslot then
-            if i != activeslot and ArcCW.Overdraw then
-                k.Model:SetBodygroup(1, 0)
-            end
+        -- FIXME: activeslot is nil?
+        if i != activeslot and ArcCW.Overdraw then
+            k.Model:SetBodygroup(1, 0)
         end
     end
 
@@ -998,4 +997,9 @@ function SWEP:GetFromReference(boneid)
     self.ReferencePosCache[boneid] = {Pos = bpos, Ang = bang}
 
     return bpos, bang
+end
+
+function SWEP:OwnerChanged()
+    -- WorldModelOffset needs to be changed when the weapon has no owner.
+    self:SetupModel(true)
 end

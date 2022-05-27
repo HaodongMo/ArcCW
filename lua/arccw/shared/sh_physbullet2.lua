@@ -201,9 +201,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
 
     local bullet = {
         Pos = pos,
-        StartPos = pos,
         Vel = ang:Forward() * vel,
-        VelStart = ang:Forward() * vel,
         Travelled = 0,
         StartTime = CurTime(),
         Imaginary = false,
@@ -500,8 +498,10 @@ function ArcCW:DrawPhysBullets()
         end
 
         i.VelStart = i.VelStart or i.Vel
+        i.PosStart = i.PosStart or i.Pos
+
         local rpos = i.Pos
-        local origin = i.StartPos
+
         local vel = i.Vel - LocalPlayer():GetVelocity()
         local veldir = vel:GetNormalized()
         local dampfraction = 1
@@ -513,12 +513,14 @@ function ArcCW:DrawPhysBullets()
         if !i.Imaginary and i.Travelled <= i.DampenVelocity and  i.Weapon:GetOwner() == LocalPlayer() then
             -- Lerp towards the muzzle position, effectively slowing and dragging the bullet back.
             -- Bullet will appear to accelerate suddenly near the threshold, but it should be too fast to notice.
-            origin = i.Weapon:GetTracerOrigin()
+            if !i.TracerOrigin then
+                i.TracerOrigin = i.Weapon:GetTracerOrigin() or i.PosStart
+            end
             dampfraction = (i.Travelled / i.DampenVelocity) ^ 0.5
-            rpos = LerpVector(dampfraction, origin, i.Pos)
+            rpos = LerpVector(dampfraction, i.TracerOrigin, i.Pos)
 
             if GetConVar("developer"):GetInt() >= 2 then
-                debugoverlay.Cross(origin, 2, 5, Color(255, 0, 0), true)
+                debugoverlay.Cross(i.TracerOrigin, 2, 5, Color(255, 0, 0), true)
                 debugoverlay.Cross(rpos, 8, 5, Color(0, 255, 255), true)
                 debugoverlay.Line(rpos, i.Pos, 5, Color(250, 150, 255), true)
                 debugoverlay.Cross(i.Pos, 4, 5, Color(255, 0, 255), true)
@@ -547,10 +549,10 @@ function ArcCW:DrawPhysBullets()
 
         if bulinfo.sprite_tracer != false and !GetConVar("arccw_fasttracers"):GetBool() then
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
-            local len = math.min(vel:Length() * (bulinfo.tail_length or 0.02), 512, (rpos - origin):Length())
+            local len = math.min(vel:Length() * (bulinfo.tail_length or 0.02), 512, (rpos - i.TracerOrigin):Length())
             local pos2 = rpos - veldir * len
             if CurTime() - i.StartTime <= engine.TickInterval() then
-                pos2 = origin
+                pos2 = i.TracerOrigin
             end
             render.DrawBeam(rpos, pos2, size * 0.75, 0, 0.5, col)
             debugoverlay.Line(rpos, pos2, 7, Color(0, 255, 0), true)
