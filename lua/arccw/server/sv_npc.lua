@@ -98,66 +98,69 @@ end
 
 hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
     if CLIENT then return end
-    if engine.ActiveGamemode() != "terrortown" and !GetConVar("arccw_npc_replace"):GetBool() then return end
-    if engine.ActiveGamemode() == "terrortown" and !GetConVar("arccw_ttt_replace"):GetBool() then return end
-    timer.Simple(0, function()
-        if !ent:IsValid() then return end
-        if !ent:IsNPC() then return end
-        local cap = ent:CapabilitiesGet()
+    if ent:IsNPC() and GetConVar("arccw_npc_replace"):GetBool() then
+        timer.Simple(0, function()
+            if !ent:IsValid() then return end
+            local cap = ent:CapabilitiesGet()
 
-        if bit.band(cap, CAP_USE_WEAPONS) != CAP_USE_WEAPONS then return end
+            if bit.band(cap, CAP_USE_WEAPONS) != CAP_USE_WEAPONS then return end
 
-        local class
+            local class
 
-        if IsValid(ent:GetActiveWeapon()) then
-            class = ent:GetActiveWeapon():GetClass()
-        end
-
-        if !class then return end
-
-        local wpn
-
-        wpn = ArcCW:GetRandomWeapon(class)
-
-        if wpn then
-            ent:Give(wpn)
-        end
-    end)
-    timer.Simple(0, function()
-        if !ent:IsValid() then return end
-        if !ent:IsWeapon() then return end
-        if ent:GetOwner():IsValid() then return end
-        if ent.ArcCW then
-            if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
-                ent:NPC_SetupAttachments()
-            end
-            return -- Don't randomize ArcCW weapons a second time
-        end
-
-        local class = ent:GetClass()
-
-        local wpn = ArcCW:GetRandomWeapon(class)
-
-        if wpn then
-            local wpnent = ents.Create(wpn)
-            wpnent:SetPos(ent:GetPos())
-            wpnent:SetAngles(ent:GetAngles())
-
-            wpnent:NPC_Initialize()
-
-            wpnent:Spawn()
-
-            if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
-                wpnent:NPC_SetupAttachments()
+            if IsValid(ent:GetActiveWeapon()) then
+                class = ent:GetActiveWeapon():GetClass()
             end
 
-            timer.Simple(0, function()
-                if !ent:IsValid() then return end
-                wpnent:OnDrop(true)
-                ent:Remove()
-            end)
-        end
-    end)
+            if !class then return end
+
+            local wpn
+
+            wpn = ArcCW:GetRandomWeapon(class)
+
+            if wpn then
+                ent:Give(wpn)
+            end
+        end)
+    elseif ent:IsWeapon() then
+        timer.Simple(0, function()
+            if !ent:IsValid() then return end
+            if IsValid(ent:GetOwner()) then return end
+            if ent.ArcCW then
+                --[[]
+                if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
+                    ent:NPC_SetupAttachments()
+                end
+                ]]
+                return -- Don't randomize ArcCW weapons a second time
+            elseif !GetConVar("arccw_ttt_replace"):GetBool() then
+                return
+            end
+
+            local class = ent:GetClass()
+
+            local wpn = ArcCW:GetRandomWeapon(class)
+
+            if wpn then
+                local wpnent = ents.Create(wpn)
+                wpnent:SetPos(ent:GetPos())
+                wpnent:SetAngles(ent:GetAngles())
+
+                wpnent:NPC_Initialize()
+
+                wpnent:Spawn()
+
+                if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
+                    wpnent:NPC_SetupAttachments()
+                end
+
+                timer.Simple(0, function()
+                    if !ent:IsValid() then return end
+                    wpnent:OnDrop(true)
+                    ent:Remove()
+                end)
+            end
+        end)
+    end
 end)
 
 hook.Add("PlayerCanPickupWeapon", "ArcCW_PlayerCanPickupWeapon", function(ply, wep)
