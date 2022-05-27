@@ -291,6 +291,7 @@ net.Receive("arccw_networkatts", function(len, ply)
 end)
 
 net.Receive("arccw_sendattinv", function(len, ply)
+    if !IsValid(LocalPlayer()) then return end -- This might be called before we are valid
     LocalPlayer().ArcCW_AttInv = {}
 
     local count = net.ReadUInt(32)
