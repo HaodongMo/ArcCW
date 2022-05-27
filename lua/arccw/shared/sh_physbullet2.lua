@@ -549,7 +549,7 @@ function ArcCW:DrawPhysBullets()
 
         if bulinfo.sprite_tracer != false and !GetConVar("arccw_fasttracers"):GetBool() then
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
-            local len = math.min(vel:Length() * (bulinfo.tail_length or 0.02), 512, (rpos - i.TracerOrigin):Length())
+            local len = math.min(vel:Length() * (bulinfo.tail_length or 0.02), 512, i.TracerOrigin and (rpos - i.TracerOrigin):Length() or math.huge)
             local pos2 = rpos - veldir * len
             if CurTime() - i.StartTime <= engine.TickInterval() then
                 pos2 = i.TracerOrigin
