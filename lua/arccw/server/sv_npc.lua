@@ -132,7 +132,7 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
                 end
                 ]]
                 return -- Don't randomize ArcCW weapons a second time
-            elseif !GetConVar("arccw_ttt_replace"):GetBool() then
+            elseif engine.ActiveGamemode() == "terrortown" and !GetConVar("arccw_ttt_replace"):GetBool() then
                 return
             end
 
