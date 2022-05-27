@@ -379,7 +379,7 @@ function SWEP:InSprint()
     local curspeed = owner:GetVelocity():Length()
 
     if TTT2 and owner.isSprinting == true then
-        return (owner.sprintProgress or 0) > 0 and owner:KeyDown(IN_SPEED) and curspeed > walkspeed and owner:OnGround()
+        return (owner.sprintProgress or 0) > 0 and owner:KeyDown(IN_SPEED) and !owner:Crouching() and curspeed > walkspeed and owner:OnGround()
     end
 
     if !owner:KeyDown(IN_SPEED) then return false end
