@@ -16,7 +16,7 @@ function SWEP:PreThrow()
 
     if self:GetGrenadePrimed() then return end
 
-    if engine.ActiveGamemode() == "terrortown" and GetRoundState() == ROUND_PREP and GetConVar("ttt_no_nade_throw_during_prep"):GetBool() then
+    if engine.ActiveGamemode() == "terrortown" and GetRoundState and GetRoundState() == ROUND_PREP and GetConVar("ttt_no_nade_throw_during_prep") and GetConVar("ttt_no_nade_throw_during_prep"):GetBool() then
         return
     end
 
