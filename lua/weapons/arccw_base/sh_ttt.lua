@@ -110,7 +110,7 @@ function SWEP:TTT_Init()
         self.Primary.ClipMax = 0
     end
 
-    if GetConVar("arccw_ttt_atts"):GetBool() then
+    if SERVER and GetConVar("arccw_ttt_atts"):GetBool() then
         self:NPC_SetupAttachments()
     end
 
