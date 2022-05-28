@@ -397,7 +397,7 @@ end
 SWEP.LastTriggerTime = 0
 SWEP.LastTriggerDuration = 0
 function SWEP:GetTriggerDelta(noheldcheck)
-    if self.LastTriggerTime == -1 or (!noheldcheck and !self:IsTriggerHeld()) then return 0 end
+    if self.LastTriggerTime <= 0 or (!noheldcheck and !self:IsTriggerHeld()) then return 0 end
     return math.Clamp((CurTime() - self.LastTriggerTime) / self.LastTriggerDuration, 0, 1)
 end
 
@@ -405,7 +405,7 @@ function SWEP:DoTriggerDelay()
     local shouldHold = self:IsTriggerHeld()
 
     local reserve = self:HasBottomlessClip() and self:Ammo1() or self:Clip1()
-    if self.LastTriggerTime == -1 or (!self.TriggerPullWhenEmpty and (reserve < self:GetBuff("AmmoPerShot"))) then
+    if self.LastTriggerTime == -1 or (!self.TriggerPullWhenEmpty and (reserve < self:GetBuff("AmmoPerShot"))) and self:GetNextPrimaryFire() < CurTime() then
         if !shouldHold then
             self.LastTriggerTime = 0 -- Good to fire again
             self.LastTriggerDuration = 0
