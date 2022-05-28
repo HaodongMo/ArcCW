@@ -121,18 +121,17 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
                 ent:Give(wpn)
             end
         end)
-    elseif ent:IsWeapon() then
+    elseif ent:IsWeapon() and ((engine.ActiveGamemode() == "terrortown" and !GetConVar("arccw_ttt_replace"):GetBool()) or (engine.ActiveGamemode() != "terrortown" and GetConVar("arccw_npc_replace"):GetBool())) then
         timer.Simple(0, function()
             if !ent:IsValid() then return end
             if IsValid(ent:GetOwner()) then return end
             if ent.ArcCW then
+                -- Handled by the weapon
                 --[[]
                 if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
                     ent:NPC_SetupAttachments()
                 end
                 ]]
-                return -- Don't randomize ArcCW weapons a second time
-            elseif engine.ActiveGamemode() == "terrortown" and !GetConVar("arccw_ttt_replace"):GetBool() then
                 return
             end
 
