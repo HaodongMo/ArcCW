@@ -46,7 +46,7 @@ function SWEP:DoLunge(melee2)
     local tr = self:GetOwner():GetEyeTrace()
     local tgt = tr.Entity
 
-    if IsValid(tgt) and (tgt:IsPlayer() or tgt:IsNPC()) then
+    if IsValid(tgt) and (tgt:IsPlayer() or tgt:IsNPC() or tgt:IsNextBot()) then
 
         local dist = (tr.HitPos - tr.StartPos):Length()
 
