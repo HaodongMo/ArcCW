@@ -30,7 +30,7 @@ function SWEP:BlurWeapon()
 end
 
 function SWEP:BlurNotWeapon()
-    if !etConVar("arccw_blur"):GetBool() then return end
+    if !GetConVar("arccw_blur"):GetBool() then return end
     render.UpdateRefractTexture()
     DrawToyTown(3, ScrH())
 end
