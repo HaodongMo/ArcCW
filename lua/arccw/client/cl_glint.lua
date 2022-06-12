@@ -13,7 +13,7 @@ hook.Add("PostDrawEffects", "ArcCW_ScopeGlint", function()
     end
 
     cam.Start3D()
-        for _, ply in pairs(players) do
+        for _, ply in ipairs(players) do
             if !IsValid(ply) then continue end
 
             if ply == LocalPlayer() and !ply:ShouldDrawLocalPlayer() then continue end
