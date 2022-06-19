@@ -141,10 +141,12 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
 
     local owner = wep:GetOwner()
 
+    --[[]
     if owner and owner:IsNPC() then
         bullet.DamageMax = bullet.DamageMax * GetConVar("arccw_mult_npcdamage"):GetFloat()
         bullet.DamageMin = bullet.DamageMin * GetConVar("arccw_mult_npcdamage"):GetFloat()
     end
+    ]]
 
     if SERVER and owner and owner:IsPlayer() then
         table.Add(bullet.Filter, ArcCW:GetVehicleFilter(owner) or {})
@@ -209,7 +211,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
         Dead = false,
         Damaged = {},
         Drag = drag,
-        Attacker = ent,
+        Attacker = ent or weapon:GetOwner(),
         Gravity = grav,
         Profile = profile,
         PhysBulletImpact = impact,
@@ -497,8 +499,8 @@ function ArcCW:DrawPhysBullets()
             continue
         end
 
-        i.VelStart = i.VelStart or i.Vel
-        i.PosStart = i.PosStart or i.Pos
+        i.VelStart = i.VelStart or Vector(i.Vel)
+        i.PosStart = i.PosStart or Vector(i.Pos)
 
         local rpos = i.Pos
 
@@ -509,22 +511,27 @@ function ArcCW:DrawPhysBullets()
         -- Solve two problems presented by physbullets
         -- 1: they come out of the player's eyes and it looks jarring
         -- 2: they fly too fast and so tracers aren't that noticeable
-        if !i.DampenVelocity then i.DampenVelocity = math.Clamp(math.floor(i.VelStart:Length() ^ (bulinfo.dampen_factor or 0.5)), 128, 4096) end
-        if !i.Imaginary and i.Travelled <= i.DampenVelocity and i.Weapon:GetOwner() == LocalPlayer() then
-            -- Lerp towards the muzzle position, effectively slowing and dragging the bullet back.
-            -- Bullet will appear to accelerate suddenly near the threshold, but it should be too fast to notice.
-            if !i.TracerOrigin then
-                i.TracerOrigin = i.Weapon:GetTracerOrigin() or i.PosStart
-            end
-            dampfraction = (i.Travelled / i.DampenVelocity) ^ 0.5
-            rpos = LerpVector(dampfraction, i.TracerOrigin, i.Pos)
+        if !i.DampenVelocity then i.DampenVelocity = math.Clamp(math.floor(i.VelStart:Length() ^ (bulinfo.dampen_factor or 0.55)), 128, 4096) end
+        if !i.Imaginary and i.Travelled <= i.DampenVelocity then
+            if i.Weapon:GetOwner() == LocalPlayer() then
+                -- Lerp towards the muzzle position, effectively slowing and dragging the bullet back.
+                -- Bullet will appear to accelerate suddenly near the threshold, but it should be too fast to notice.
+                if !i.TracerOrigin then
+                    i.TracerOrigin = i.Weapon:GetTracerOrigin() or i.PosStart
+                end
+                dampfraction = (i.Travelled / i.DampenVelocity) ^ 0.5
+                rpos = LerpVector(dampfraction, i.TracerOrigin, i.Pos)
 
-            if GetConVar("developer"):GetInt() >= 2 then
-                debugoverlay.Cross(i.TracerOrigin, 2, 5, Color(255, 0, 0), true)
-                debugoverlay.Cross(rpos, 8, 5, Color(0, 255, 255), true)
-                debugoverlay.Line(rpos, i.Pos, 5, Color(250, 150, 255), true)
-                debugoverlay.Cross(i.Pos, 4, 5, Color(255, 0, 255), true)
-                debugoverlay.Text(rpos, math.Round(dampfraction, 2), 5)
+                if GetConVar("developer"):GetInt() >= 2 then
+                    debugoverlay.Cross(i.TracerOrigin, 2, 5, Color(255, 0, 0), true)
+                    debugoverlay.Cross(rpos, 8, 5, Color(0, 255, 255), true)
+                    debugoverlay.Line(rpos, i.Pos, 5, Color(250, 150, 255), true)
+                    debugoverlay.Cross(i.Pos, 4, 5, Color(255, 0, 255), true)
+                    debugoverlay.Text(rpos, math.Round(dampfraction, 2), 5)
+                end
+            else
+                -- don't draw too close to the firing position if we can't lerp, or it will look ugly
+                continue
             end
         end
 
@@ -549,7 +556,7 @@ function ArcCW:DrawPhysBullets()
 
         if bulinfo.sprite_tracer != false and !GetConVar("arccw_fasttracers"):GetBool() then
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
-            local len = math.min(vel:Length() * (bulinfo.tail_length or 0.015), 512, i.TracerOrigin and (rpos - i.TracerOrigin):Length() or math.huge)
+            local len = math.min(vel:Length() * (bulinfo.tail_length or 0.015), 512, (rpos - (i.TracerOrigin or i.PosStart)):Length())
             local pos2 = rpos - veldir * len
             if i.TracerOrigin and CurTime() - i.StartTime <= engine.TickInterval() then
                 pos2 = rpos - (rpos - i.TracerOrigin):GetNormalized() * len

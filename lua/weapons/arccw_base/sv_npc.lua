@@ -151,6 +151,10 @@ function SWEP:NPC_Shoot()
             Src = self:GetShootSrc(),
             Spread = Vector(spread, spread, spread),
             Callback = function(att, tr, dmg)
+                ArcCW:BulletCallback(att, tr, dmg, self)
+            end,
+            --[[]
+            Callback = function(att, tr, dmg)
                 local dist = (tr.HitPos - tr.StartPos):Length() * ArcCW.HUToM
 
                 local pen = self:GetBuff("Penetration")
@@ -194,6 +198,7 @@ function SWEP:NPC_Shoot()
                     tr.Entity:Ignite(1, 32)
                 end
             end
+            ]]
         }
 
         local sp = self:GetBuff_Override("Override_ShotgunSpreadPattern") or self.ShotgunSpreadPattern
