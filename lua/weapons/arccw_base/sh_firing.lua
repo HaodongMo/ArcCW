@@ -447,11 +447,12 @@ function SWEP:GetMuzzleVelocity()
     local vel = self:GetBuff_Override("Override_PhysBulletMuzzleVelocity", self.PhysBulletMuzzleVelocity)
 
     if !vel then
-        vel = math.Clamp(self:GetBuff("Range"), 30, 300) * 8 * self:GetBuff_Mult("Mult_Range")
+        vel = self:GetBuff("Range") * 3.5
 
-        if self.DamageMin > self.Damage then
-            vel = vel * 3
+        if self:GetBuff("DamageMin") > self:GetBuff("Damage") then
+            vel = vel * 2
         end
+        vel = math.Clamp(vel, 200, 1000)
     end
 
     vel = vel / ArcCW.HUToM
