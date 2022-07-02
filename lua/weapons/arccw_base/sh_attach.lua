@@ -39,11 +39,11 @@ SWEP.TickCache_Tick_Mults = {}
 
 SWEP.AttCache_Hooks = {}
 
--- debug: enable/disable experimental modified cache feature
+-- debug: enable/disable modified caching
 local MODIFIED_CACHE = true
 -- print if a variable presumed to never change actually changes (this also happens right after attaching/detaching)
 -- only works if MODIFIED_CACHE is false
-local VERIFY_MODIFIED_CACHE = true
+local VERIFY_MODIFIED_CACHE = false
 
 -- Conditions not listed are are presumed to never change; this is done for optimization purposes
 SWEP.ModifiedCache = {}
@@ -121,10 +121,7 @@ function SWEP:GetBuff(buff, defaultnil, defaultvar)
         result = 1
     end
 
-    local override = self:GetBuff_Override("Override_" .. buff)
-    if override != nil then
-        result = override
-    end
+    result = self:GetBuff_Override("Override_" .. buff, result)
 
     if isnumber(result) then
         result = self:GetBuff_Add("Add_" .. buff) + result
@@ -1090,8 +1087,6 @@ function SWEP:Attach(slot, attname, silent, noadjust)
         return
     end
 
-    if !self:CheckFlags(attslot.ExcludeFlags, attslot.RequireFlags) then return end
-
     local atttbl = ArcCW.AttachmentTable[attname]
 
     if !atttbl then return end
@@ -1389,6 +1384,9 @@ function SWEP:AdjustAtts()
     self:GetActiveElements(true)
     self.ModifiedCache = {}
 
+    -- Tempoarily disable modified cache, since we're building it right now
+    MODIFIED_CACHE = false
+
     for i, k in pairs(self.Attachments) do
         if !k.Installed then continue end
         local ok = true
@@ -1430,6 +1428,8 @@ function SWEP:AdjustAtts()
             self.ModifiedCache[var] = true
         end
     end
+
+    MODIFIED_CACHE = true
 
     if SERVER then
         local cs = self:GetCapacity() + self:GetChamberSize()
