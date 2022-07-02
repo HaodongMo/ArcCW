@@ -79,7 +79,7 @@ function SWEP:Throw()
 
     self:SetTimer(self:GetBuff("ShootEntityDelay"), function()
 
-        local ft = self:GetBuff("FuseTime")
+        local ft = self:GetBuff("FuseTime", true)
         local data = {
             dodefault = true,
             force = force,
@@ -97,6 +97,8 @@ function SWEP:Throw()
                 else
                     rocket.FuseTime = ft
                 end
+            else
+                rocket.FuseTime = math.huge
             end
 
             local phys = rocket:GetPhysicsObject()
