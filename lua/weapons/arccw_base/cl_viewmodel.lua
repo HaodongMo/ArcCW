@@ -373,6 +373,10 @@ function SWEP:GetViewModelPosition(pos, ang)
     target.pos.y = target.pos.y + GetConVar("arccw_vm_forward"):GetFloat()
     target.pos.z = target.pos.z + GetConVar("arccw_vm_up"):GetFloat()
 
+    target.ang.p = target.ang.p + GetConVar("arccw_vm_pitch"):GetFloat()
+    target.ang.y = target.ang.y + GetConVar("arccw_vm_yaw"):GetFloat()
+    target.ang.r = target.ang.r + GetConVar("arccw_vm_roll"):GetFloat()
+
     if state == ArcCW.STATE_CUSTOMIZE then
         target.down = 1
         target.sway = 3
