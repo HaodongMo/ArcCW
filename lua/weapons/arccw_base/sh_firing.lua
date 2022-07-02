@@ -492,18 +492,20 @@ function SWEP:DoPrimaryFire(isent, data)
         if !IsFirstTimePredicted() then return end
 
         if shouldphysical then
-            local tracernum = data.TracerNum or 1
-            local prof
-
-            if tracernum == 0 or clip % tracernum != 0 then
-                prof = 7
+            local tracernum = data.Tracer or 1
+            local phystracer = self:GetBuff_Override("Override_PhysTracerProfile", self.PhysTracerProfile)
+            local lastout = self:GetBuff_Override("Override_TracerFinalMag", self.TracerFinalMag)
+            if lastout >= self:Clip1() then
+                phystracer = self:GetBuff_Override("Override_PhysTracerProfileFinal", self.PhysTracerProfileFinal) or phystracer
+            elseif tracernum == 0 or clip % tracernum != 0 then
+                phystracer = 7
             end
 
             local vel = self:GetMuzzleVelocity()
 
             vel = vel * data.Dir:GetNormalized()
 
-            ArcCW:ShootPhysBullet(self, data.Src, vel, prof)
+            ArcCW:ShootPhysBullet(self, data.Src, vel, phystracer or 1)
         else
             owner:FireBullets(data, true)
         end
