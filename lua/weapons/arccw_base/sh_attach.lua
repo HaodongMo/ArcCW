@@ -1418,12 +1418,14 @@ function SWEP:AdjustAtts()
     end
 
     for _, e in pairs(self.AttachmentElements) do
+        if !istable(e) then continue end
         for var, v in pairs(e) do
             self.ModifiedCache[var] = true
         end
     end
 
     for _, e in pairs(self.Firemodes) do
+        if !istable(e) then continue end
         for var, v in pairs(e) do
             self.ModifiedCache[var] = true
         end
