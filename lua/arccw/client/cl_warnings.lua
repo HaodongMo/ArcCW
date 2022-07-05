@@ -13,6 +13,9 @@ ArcCW.IncompatibleAddons = {
 
     -- Quake/Half Life View bobbing
     ["378401390"] = "Causes most animations to not play properly.",
+
+    -- Thirteen's Physgun Glow
+    ["111249028"] = "Causes LHIK animations to flicker and not work properly."
 }
 
 local t = ArcCW.GetTranslation
