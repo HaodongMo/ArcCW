@@ -59,6 +59,8 @@ SWEP.DamageType = DMG_BULLET
 SWEP.DamageTypeHandled = false -- set to true to have the base not do anything with damage types
 -- this includes: igniting if type has DMG_BURN; adding DMG_AIRBOAT when hitting helicopter; adding DMG_BULLET to DMG_BUCKSHOT
 
+SWEP.Force = nil -- bullet force. set nil to autocalculate
+
 SWEP.ShootEntity = nil -- entity to fire, if any
 SWEP.MuzzleVelocity = 400 -- projectile muzzle velocity in m/s
 SWEP.PhysBulletMuzzleVelocity = nil -- override phys bullet muzzle velocity
@@ -78,8 +80,8 @@ SWEP.BodyDamageMults = nil
 
 SWEP.AlwaysPhysBullet = false
 SWEP.NeverPhysBullet = false
-SWEP.PhysTracerProfile = 0 -- color for phys tracer.
--- there are 8 options:
+SWEP.PhysTracerProfile = 0 -- color for phys tracer. can be a number or a string (see sh_physbullet2.lua)
+-- there are 8 default options:
 -- 0 = normal
 -- 1 = red
 -- 2 = green

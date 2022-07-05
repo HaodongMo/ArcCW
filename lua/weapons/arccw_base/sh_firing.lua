@@ -217,7 +217,7 @@ function SWEP:PrimaryAttack()
     bullet.Num        = num
 
     local sglove = math.ceil(num / 3)
-    bullet.Force      = math.Clamp( ( (50 / sglove) / ( (self:GetBuff("Damage") + self:GetBuff("DamageMin")) / (self:GetBuff("Num") * 2) ) ) * sglove, 1, 3 )
+    bullet.Force      = self:GetBuff("Force", true) or math.Clamp( ( (50 / sglove) / ( (self:GetBuff("Damage") + self:GetBuff("DamageMin")) / (self:GetBuff("Num") * 2) ) ) * sglove, 1, 3 )
                         -- Overperforming weapons get the jerf, underperforming gets boost
     bullet.Distance   = 33000
     -- Setting AmmoType makes the engine look for the tracer effect on the ammo instead of TracerName!
