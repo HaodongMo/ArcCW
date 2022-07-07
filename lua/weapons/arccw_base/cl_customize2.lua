@@ -888,7 +888,7 @@ function SWEP:CreateCustomize2HUD()
 
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
-                local preset_txt = self2.PresetName
+                local preset_txt = self2.PresetName:upper()
 
                 surface.SetFont("ArcCWC2_14")
                 surface.SetTextPos(ss * 4, ss * 0)
