@@ -337,7 +337,6 @@ function SWEP:DrawHUD()
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end
-    if GetConVar("arccw_override_hud_off"):GetBool() then return false end
 
     if self:GetState() != ArcCW.STATE_CUSTOMIZE then
         self:GetBuff_Hook("Hook_DrawHUD")
@@ -719,7 +718,7 @@ function SWEP:DrawHUD()
                 end
             end
         end
-    elseif GetConVar("arccw_hud_minimal"):GetBool() then
+    elseif !GetConVar("arccw_override_hud_off"):GetBool() and GetConVar("arccw_hud_minimal"):GetBool() then
         if fmbars then
             local segcount = string.len( self:GetFiremodeBars() or "-----" )
             local bargap = ScreenScaleMulti(2)
