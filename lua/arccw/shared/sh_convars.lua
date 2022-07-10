@@ -57,6 +57,7 @@ CreateConVar("arccw_mult_movespeedads", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Mu
 CreateConVar("arccw_mult_movespeedfire", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Multiplier for how much weapons should affect your movespeed while firing them.", 0)
 
 CreateConVar("arccw_override_crosshair_off", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Set to true to force everyone's crosshairs off.", 0, 1)
+CreateConVar("arccw_override_hud_off", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Set to true to force everyone's HUDs off.", 0, 1)
 CreateConVar("arccw_override_nearwall", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable barrel length and near-walling.", 0, 1)
 CreateConVar("arccw_override_lunge_off", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Disable melee lunging.", 0, 1)
 

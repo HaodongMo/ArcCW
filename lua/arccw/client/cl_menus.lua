@@ -117,6 +117,7 @@ local ViewmodelPanel = {
 
 local HudPanel = {
     { type = "h", text = "#arccw.clientcfg" },
+    { type = "h", text = "#arccw.hud_svwarning" },
     { type = "b", text = "#arccw.cvar.hud_showhealth", var = "arccw_hud_showhealth" },
     { type = "c", text = "#arccw.cvar.hud_showhealth.desc" },
     { type = "b", text = "#arccw.cvar.hud_showammo", var = "arccw_hud_showammo" },
@@ -218,6 +219,7 @@ local ServerPanel = {
     { type = "o", text = "#arccw.cvar.freeaim", var = "arccw_freeaim", sv = true,
             choices = {[0] = "#arccw.combobox.disabled", [1] = "#arccw.cvar.freeaim.1", [2] = "#arccw.cvar.freeaim.2"}},
     { type = "b", text = "#arccw.cvar.override_crosshair_off", var = "arccw_override_crosshair_off", sv = true },
+    { type = "b", text = "#arccw.cvar.override_hud_off", var = "arccw_override_hud_off", sv = true },
     { type = "b", text = "#arccw.cvar.override_barrellength", var = "arccw_override_nearwall", sv = true },
     { type = "b", text = "#arccw.cvar.doorbust", var = "arccw_doorbust", sv = true },
     { type = "b", text = "#arccw.cvar.override_lunge_off", var = "arccw_override_lunge_off", sv = true },
