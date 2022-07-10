@@ -391,7 +391,7 @@ function SWEP:InSprint()
 end
 
 function SWEP:IsTriggerHeld()
-    return self:GetOwner():KeyDown(IN_ATTACK) and (self:CanShootWhileSprint() or (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT))
+    return self:GetOwner():KeyDown(IN_ATTACK) and (self:CanShootWhileSprint() or (!self.Sprinted or self:GetState() != ArcCW.STATE_SPRINT)) and (self:GetHolster_Time() < CurTime()) and !self:GetPriorityAnim()
 end
 
 SWEP.LastTriggerTime = 0
