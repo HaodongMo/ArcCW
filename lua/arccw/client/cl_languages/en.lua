@@ -315,8 +315,8 @@ L["arccw.cvar.mult_crouchrecoil"]         = "Crouched Recoil"
 L["arccw.cvar.dev_debug"]                 = "Debug Menu"
 L["arccw.cvar.dev_debug.desc"]            = "Disabled by default.\nDraws a debug menu over your screen where you can view certain elements blah blah?"
 
-L["arccw.cvar.attinv_sound"]              = "Menu Toggle Sound"
-L["arccw.cvar.attinv_sound.desc"]         = "Sounds for opening and closing the customization menu.\nIf it's really not your thing."
+L["arccw.cvar.attinv_sound"]              = "Customization Menu Sounds"
+L["arccw.cvar.attinv_sound.desc"]         = "Enable or disable sounds for the customization menu."
 
 -- 2021-3-2
 L["arccw.ammohud"]                        = "\nAmmo HUD" -- Obsoletes "3D2D HUD" since they're basically the same now"
@@ -405,4 +405,6 @@ L["arccw.cvar.dev_alwaysready.desc"] = "Always use the ready animation while dra
 
 L["arccw.cvar.noinspect"] = "Disable inspect animations"
 
-
+-- 2022-07-10
+L["arccw.cvar.override_hud_off"] = "Force Disable HUD"
+L["arccw.hud_svwarning"] = "The HUD can be disabled serverside by a server administrator."

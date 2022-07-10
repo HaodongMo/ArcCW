@@ -337,6 +337,7 @@ function SWEP:DrawHUD()
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end
+    if GetConVar("arccw_override_hud_off"):GetBool() then return false end
 
     if self:GetState() != ArcCW.STATE_CUSTOMIZE then
         self:GetBuff_Hook("Hook_DrawHUD")
