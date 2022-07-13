@@ -95,7 +95,7 @@ local attachments_path = "arccw/shared/attachments/"
 local bulk_path = "arccw/shared/attachments_bulk/"
 
 local function ArcCW_LoadAtt(att_file)
-    att = {}
+    att = {} -- Do not bleed over attributes from previous attachments
     --shortname = string.sub(att_file, 1, -5)
     local s = string.Explode("/", att_file)
     shortname = string.sub(s[#s], 1, -5)
@@ -104,7 +104,7 @@ local function ArcCW_LoadAtt(att_file)
     AddCSLuaFile(att_file)
 
     ArcCW.LoadAttachmentType(att)
-    att = nil -- Do not bleed over attributes from previous attachments
+
 end
 
 local function ArcCW_LoadFolder(folder)
