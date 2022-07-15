@@ -458,7 +458,7 @@ function SWEP:DrawHUD()
                 apan_bg.y = apan_bg.y + ScreenScaleMulti(6)
             end
 
-            if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() then
+            if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() and isstring(data.ammotype) then
                 local wammotype = {
                     x = apan_bg.x + apan_bg.w - airgap,
                     y = apan_bg.y - ScreenScaleMulti(10),
