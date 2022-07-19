@@ -20,9 +20,13 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
         return
     end
 
+    local vm = self:GetOwner():GetViewModel()
+    if !IsValid(vm) then return end
+
     local lhik_model
     local LHIK_GunDriver
     local LHIK_CamDriver
+    local offsetang
 
     local tranim = self:GetBuff_Hook("Hook_LHIK_TranslateAnimation", key)
 
@@ -34,6 +38,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
 
         if self:GetBuff_Stat("LHIK", i) then
             lhik_model = k.VElement.Model
+            offsetang = k.VElement.OffsetAng
 
             if self:GetBuff_Stat("LHIK_GunDriver", i) then
                 LHIK_GunDriver = self:GetBuff_Stat("LHIK_GunDriver", i)
@@ -75,7 +80,9 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
         local att = lhik_model:LookupAttachment(LHIK_CamDriver)
         local ang = lhik_model:GetAttachment(att).Ang
 
+        self.LHIKCamOffsetAng = offsetang
         self.LHIKCamAng = lhik_model:WorldToLocalAngles(ang)
+        self.LHIKCamModel = lhik_model
     end
 
     -- lhik_model:SetCycle(0)
@@ -286,7 +293,7 @@ function SWEP:DoLHIK()
 
         key = tranim or key
 
-        if key and key != "DoNotPlayIdle" then 
+        if key and key != "DoNotPlayIdle" then
             self:DoLHIKAnimation(key, 1)
         end
 

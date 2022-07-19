@@ -532,6 +532,26 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     stopwatch("proc")
 
+    --[[]
+    if gunbone and IsValid(self.Attachments[gbslot].VElement.Model) and self.LHIKGunPos and self.LHIKGunAng then
+        local magnitude = Lerp(sgtd, 0.1, 1)
+        local lhik_model = self.Attachments[gbslot].VElement.Model
+        local att = lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone))
+        local attang = att.Ang
+        local attpos = att.Pos
+        attang = lhik_model:WorldToLocalAngles(attang)
+        attpos = lhik_model:WorldToLocal(attpos)
+        attang:Sub(self.LHIKGunAng)
+        attpos:Sub(self.LHIKGunPos)
+        attang:Mul(magnitude)
+        attpos:Mul(magnitude)
+        --target.ang:Add(attang)
+        --target.pos:Add(attpos)
+    end
+    ]]
+
+    stopwatch("gunbone")
+
     local vmhit = self.ViewModel_Hit
     if vmhit then
         if !vmhit:IsZero() then
@@ -554,24 +574,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     end
 
     stopwatch("vmhit")
-
-    if gunbone and IsValid(self.Attachments[gbslot].VElement.Model) then
-        local magnitude = Lerp(sgtd, 0.1, 1)
-        local lhik_model = self.Attachments[gbslot].VElement.Model
-        local att = lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone))
-        local attang = att.Ang
-        local attpos = att.Pos
-        attang = lhik_model:WorldToLocalAngles(attang)
-        attpos = lhik_model:WorldToLocal(attpos)
-        attang:Sub(self.LHIKGunAng)
-        attpos:Sub(self.LHIKGunPos)
-        attang:Mul(magnitude)
-        attpos:Mul(magnitude)
-        target.ang:Add(attang)
-        target.pos:Add(attpos)
-    end
-
-    stopwatch("gunbone")
 
     local speed = 15 * FT * (game.SinglePlayer() and 1 or 2)
 

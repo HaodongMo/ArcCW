@@ -118,8 +118,8 @@ function SWEP:DoOurViewPunch()
         vpv = vpv - (vpa * springforcemagnitude)
 
         --     // don't wrap around
-        --     player->m_Local.m_vecPunchAngle.Init( 
-        --         clamp(player->m_Local.m_vecPunchAngle->x, -89.f, 89.f ), 
+        --     player->m_Local.m_vecPunchAngle.Init(
+        --         clamp(player->m_Local.m_vecPunchAngle->x, -89.f, 89.f ),
         --         clamp(player->m_Local.m_vecPunchAngle->y, -179.f, 179.f ),
         --         clamp(player->m_Local.m_vecPunchAngle->z, -89.f, 89.f ) );
         -- }
@@ -152,6 +152,20 @@ function SWEP:CoolView(ply, pos, ang, fov)
     local vm = ply:GetViewModel()
     if !IsValid(vm) then return end
     local ftv = FrameTime()
+
+    if self.LHIKCamAng and IsValid(self.LHIKCamModel) then
+        local lhik_model = self.LHIKCamModel
+        local a = lhik_model:GetAttachment(self:GetBuff_Override("LHIK_CamDriver") or 0).Ang
+
+        local diff = lhik_model:WorldToLocalAngles(a) - self.LHIKCamAng
+        ang:Sub(diff)
+        -- ang:RotateAroundAxis(self.LHIKCamOffsetAng:Forward(), diff.p)
+        -- ang:RotateAroundAxis(self.LHIKCamOffsetAng:Right(), diff.y)
+        -- ang:RotateAroundAxis(self.LHIKCamOffsetAng:Up(), diff.r)
+        -- ang.p = ang.p - diff.r
+        -- ang.y = ang.y - diff.y
+        -- ang.r = ang.r + diff.p
+    end
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
 
