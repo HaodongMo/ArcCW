@@ -532,8 +532,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     stopwatch("proc")
 
-    --[[]
-    if gunbone and IsValid(self.Attachments[gbslot].VElement.Model) and self.LHIKGunPos and self.LHIKGunAng then
+    --[[if gunbone and IsValid(self.Attachments[gbslot].VElement.Model) and self.LHIKGunPos and self.LHIKGunAng then
         local magnitude = Lerp(sgtd, 0.1, 1)
         local lhik_model = self.Attachments[gbslot].VElement.Model
         local att = lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone))
@@ -547,8 +546,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         attpos:Mul(magnitude)
         --target.ang:Add(attang)
         --target.pos:Add(attpos)
-    end
-    ]]
+    end]]
 
     stopwatch("gunbone")
 
@@ -594,6 +592,23 @@ function SWEP:GetViewModelPosition(pos, ang)
     local coolsway = GetConVar("arccw_vm_coolsway"):GetBool()
     self.SwayScale = (coolsway and 0) or actual.sway
     self.BobScale = (coolsway and 0) or actual.bob
+	if IsValid(self.LHIKCamModel) and self.LHIKCamModel:GetAttachment(self.LHIKCamModel:LookupAttachment(2)) then -- SHOULD BE THE GUN DRIVER DEFINITION ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
+		local lhik_model = self.LHIKCamModel
+		local att = lhik_model:LookupAttachment(2) -- SHOULD BE THE GUN DRIVER DEFINITION ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
+		local ang22 = lhik_model:GetAttachment(att).Ang
+		local pos22 = lhik_model:GetAttachment(att).Pos
+
+		local aaa = lhik_model:WorldToLocal(pos22)
+		local diff = lhik_model:WorldToLocalAngles(ang22)
+		diff:Sub( Angle( 0, 90, 90 ) )
+		--aaa = Vector( aaa.z, aaa.x, aaa.y )
+		aaa = Vector( aaa.x, aaa.y, aaa.z )
+		diff = Angle( diff.z, diff.y, -diff.x )
+		--print(aaa)
+		--print(diff)
+		pos:Add( aaa )
+		ang:Add( diff )
+	end
 
     if coolsway then
         swayxmult = GetConVar("arccw_vm_sway_zmult"):GetFloat() or 1
@@ -610,6 +625,8 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     local old_r, old_f, old_u = oldang:Right(), oldang:Forward(), oldang:Up()
     pos:Add(math.min(self.RecoilPunchBack, Lerp(sgtd, self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -old_f)
+
+
     ang:RotateAroundAxis(old_r, actual.ang.x)
     ang:RotateAroundAxis(old_u, actual.ang.y)
     ang:RotateAroundAxis(old_f, actual.ang.z)
@@ -630,6 +647,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos:Add(new_r)
     pos:Add(new_f)
     pos:Add(new_u)
+	
     pos.z = pos.z - actual.down
 
     ang:Add(self:GetOurViewPunchAngles() * Lerp(sgtd, 1, -1))
