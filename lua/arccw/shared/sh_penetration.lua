@@ -342,10 +342,12 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
     end
 
     local dmgtable
-    if phys then
+    if phys and IsValid(bullet.Weapon) then
         dmgtable = bullet.Weapon:GetBuff_Override("Override_BodyDamageMults", bullet.Weapon.BodyDamageMults)
-    else
+    elseif IsValid(wep) then
         dmgtable = wep:GetBuff_Override("Override_BodyDamageMults", wep.BodyDamageMults)
+    else
+        dmgtable = bullet.BodyDamageMults
     end
 
     if dmgtable then

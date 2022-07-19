@@ -97,9 +97,10 @@ function ArcCW:SendBullet(bullet, attacker)
     end
 end
 
-function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
-    local pbi = wep:GetBuff_Override("Override_PhysBulletImpact")
-    local num = wep:GetBuff("Num")
+function ArcCW:ShootPhysBullet(wep, pos, vel, prof, ovr)
+    ovr = ovr or {}
+    local pbi = ovr.PhysBulletImpact or wep:GetBuff_Override("Override_PhysBulletImpact")
+    local num = ovr.Num or wep:GetBuff("Num")
 
     if !prof then
         prof = wep:GetBuff_Override("Override_PhysTracerProfile", wep.PhysTracerProfile) or 1
@@ -136,6 +137,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof)
         Dead = false,
         Profile = prof
     }
+    table.Merge(bullet, ovr)
 
     table.Add(bullet.Filter, wep.Shields or {})
 

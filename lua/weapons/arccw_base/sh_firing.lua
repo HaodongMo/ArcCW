@@ -505,7 +505,7 @@ function SWEP:DoPrimaryFire(isent, data)
 
             vel = vel * data.Dir:GetNormalized()
 
-            ArcCW:ShootPhysBullet(self, data.Src, vel, phystracer or 1)
+            ArcCW:ShootPhysBullet(self, data.Src, vel, phystracer or 0)
         else
             owner:FireBullets(data, true)
         end
