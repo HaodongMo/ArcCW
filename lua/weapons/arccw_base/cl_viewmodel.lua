@@ -307,7 +307,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         FT = FT * TargetTick
     end
 
-    local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
+    local vm = LocalPlayer():GetViewModel()
 
     local asight = self:GetActiveSights()
     local state = self:GetState()
@@ -532,23 +532,26 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     stopwatch("proc")
 
-    --[[if gunbone and IsValid(self.Attachments[gbslot].VElement.Model) and self.LHIKGunPos and self.LHIKGunAng then
-        local magnitude = Lerp(sgtd, 0.1, 1)
-        local lhik_model = self.Attachments[gbslot].VElement.Model
-        local att = lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone))
-        local attang = att.Ang
-        local attpos = att.Pos
-        attang = lhik_model:WorldToLocalAngles(attang)
-        attpos = lhik_model:WorldToLocal(attpos)
-        attang:Sub(self.LHIKGunAng)
-        attpos:Sub(self.LHIKGunPos)
-        attang:Mul(magnitude)
-        attpos:Mul(magnitude)
-        --target.ang:Add(attang)
-        --target.pos:Add(attpos)
-    end]]
+    -- local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
+    -- if gunbone and IsValid(self.Attachments[gbslot].VElement.Model) and self.LHIKGunPos and self.LHIKGunAng then
+    --     local magnitude = 1 --Lerp(sgtd, 0.1, 1)
+    --     local lhik_model = self.Attachments[gbslot].VElement.Model
+    --     local att = lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone))
+    --     local attang = att.Ang
+    --     local attpos = att.Pos
+    --     attang = lhik_model:WorldToLocalAngles(attang)
+    --     attpos = lhik_model:WorldToLocal(attpos)
+    --     attang:Sub(self.LHIKGunAng)
+    --     attpos:Sub(self.LHIKGunPos)
+    --     attang:Mul(magnitude)
+    --     attpos:Mul(magnitude)
+    --     --target.ang:Add(attang)
+    --     --target.pos:Add(attpos)
+    --     --debugoverlay.Axis(lhik_model:GetPos() + attpos, att.Ang, 8, FrameTime() * 3, true)
+    --     debugoverlay.Axis(lhik_model:GetPos(), att.Ang, 8, FrameTime() * 3, true)
+    -- end
 
-    stopwatch("gunbone")
+    -- stopwatch("gunbone")
 
     local vmhit = self.ViewModel_Hit
     if vmhit then
@@ -592,23 +595,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     local coolsway = GetConVar("arccw_vm_coolsway"):GetBool()
     self.SwayScale = (coolsway and 0) or actual.sway
     self.BobScale = (coolsway and 0) or actual.bob
-	if IsValid(self.LHIKCamModel) and self.LHIKCamModel:GetAttachment(self.LHIKCamModel:LookupAttachment(2)) then -- SHOULD BE THE GUN DRIVER DEFINITION ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
-		local lhik_model = self.LHIKCamModel
-		local att = lhik_model:LookupAttachment(2) -- SHOULD BE THE GUN DRIVER DEFINITION ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
-		local ang22 = lhik_model:GetAttachment(att).Ang
-		local pos22 = lhik_model:GetAttachment(att).Pos
-
-		local aaa = lhik_model:WorldToLocal(pos22)
-		local diff = lhik_model:WorldToLocalAngles(ang22)
-		diff:Sub( Angle( 0, 90, 90 ) )
-		--aaa = Vector( aaa.z, aaa.x, aaa.y )
-		aaa = Vector( aaa.x, aaa.y, aaa.z )
-		diff = Angle( diff.z, diff.y, -diff.x )
-		--print(aaa)
-		--print(diff)
-		pos:Add( aaa )
-		ang:Add( diff )
-	end
 
     if coolsway then
         swayxmult = GetConVar("arccw_vm_sway_zmult"):GetFloat() or 1
@@ -625,7 +611,6 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     local old_r, old_f, old_u = oldang:Right(), oldang:Forward(), oldang:Up()
     pos:Add(math.min(self.RecoilPunchBack, Lerp(sgtd, self.RecoilPunchBackMaxSights or 1, self.RecoilPunchBackMax)) * -old_f)
-
 
     ang:RotateAroundAxis(old_r, actual.ang.x)
     ang:RotateAroundAxis(old_u, actual.ang.y)
@@ -647,10 +632,72 @@ function SWEP:GetViewModelPosition(pos, ang)
     pos:Add(new_r)
     pos:Add(new_f)
     pos:Add(new_u)
-	
+
     pos.z = pos.z - actual.down
 
     ang:Add(self:GetOurViewPunchAngles() * Lerp(sgtd, 1, -1))
+
+    local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
+    local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
+    if IsValid(lhik_model) and lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone)) then
+
+        -- pos:Set(vector_origin)
+        -- ang:Set(angle_zero)
+
+        local att = lhik_model:LookupAttachment(gunbone)
+        local ang22 = lhik_model:GetAttachment(att).Ang
+        local pos22 = lhik_model:GetAttachment(att).Pos
+
+        local aaa = lhik_model:WorldToLocal(pos22)
+        local diff = lhik_model:WorldToLocalAngles(ang22)
+        diff:Sub( Angle( 0, 90, 90 ) )
+        local r = diff.r
+        diff.r = -diff.p
+        diff.p = r
+
+        --local r_pos, r_ang = Vector(actual.pos), Angle(actual.ang)
+
+        local anchor, anchor_ang = LocalToWorld(self.LHIKGunPosVM, self.LHIKGunAngVM, pos, ang)
+
+        local t_pos, t_ang = ArcCW.RotateAroundPoint(pos, ang, anchor, aaa, diff)
+
+        local mat = Matrix()
+        mat:SetTranslation(pos)
+        mat:SetAngles(ang)
+
+        -- local vmAngMat = Matrix()
+        -- vmAngMat:SetTranslation(Vector(1, 1, 1))
+        -- vmAngMat:SetAngles(diff)
+        -- vmAngMat:Invert()
+
+        mat:Translate(self.LHIKGunPosVM)
+        print((mat:GetTranslation() - pos):Length())
+        debugoverlay.Cross(mat:GetTranslation(), 4, FrameTime() * 1, Color(255, 0, 255), true)
+        mat:Rotate(diff)
+        --mat:Mul(vmAngMat)
+
+        mat:Translate(-self.LHIKGunPosVM)
+        mat:Translate(aaa)
+
+        local l_pos, l_ang = mat:GetTranslation(), mat:GetAngles() --LocalToWorld(mat:GetTranslation(), mat:GetAngles(), pos, ang)
+        -- pos:Set(l_pos)
+        -- ang:Set(l_ang)
+
+        --print(r_pos - oldpos, r_ang - oldang)
+        debugoverlay.Axis(t_pos, t_ang, 2, FrameTime() * 1, true)
+        debugoverlay.Cross(anchor, 8, FrameTime() * 1, color_white, true)
+        debugoverlay.Line(t_pos, anchor, FrameTime(), Color(255, 0, 0), true)
+
+        debugoverlay.Cross(l_pos, 4, FrameTime() * 1, Color(255, 255, 0), true)
+
+        -- pos:Set(t_pos)
+        -- ang:Set(t_ang)
+
+        --ang:Set(l_ang)
+        -- pos:Add( Vector(aaa) )
+        -- ang:Add( Angle(diff.z, diff.y, -diff.x) )
+    end
+
     self.ActualVMData = actual
 
     stopwatch("apply actual")
