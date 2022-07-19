@@ -592,9 +592,9 @@ function SWEP:GetViewModelPosition(pos, ang)
     local coolsway = GetConVar("arccw_vm_coolsway"):GetBool()
     self.SwayScale = (coolsway and 0) or actual.sway
     self.BobScale = (coolsway and 0) or actual.bob
-	if IsValid(self.LHIKCamModel) then
+	if IsValid(self.LHIKCamModel) and self.LHIKCamModel:GetAttachment(self.LHIKCamModel:LookupAttachment(2)) then -- SHOULD BE THE GUN DRIVER DEFINITION ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
 		local lhik_model = self.LHIKCamModel
-		local att = lhik_model:LookupAttachment(1)
+		local att = lhik_model:LookupAttachment(2) -- SHOULD BE THE GUN DRIVER DEFINITION ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! ! !
 		local ang22 = lhik_model:GetAttachment(att).Ang
 		local pos22 = lhik_model:GetAttachment(att).Pos
 
