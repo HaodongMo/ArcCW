@@ -153,9 +153,10 @@ function SWEP:CoolView(ply, pos, ang, fov)
     if !IsValid(vm) then return end
     local ftv = FrameTime()
 
-    if self.LHIKCamAng and IsValid(self.LHIKCamModel) then
+    local lhik_cambone = self:GetBuff_Override("LHIK_CamDriver")
+    if lhik_cambone and IsValid(self.LHIKCamModel) then
         local lhik_model = self.LHIKCamModel
-        local a = lhik_model:GetAttachment(self:GetBuff_Override("LHIK_CamDriver") or 0).Ang
+        local a = lhik_model:GetAttachment(lhik_cambone).Ang
 
         local diff = lhik_model:WorldToLocalAngles(a) - self.LHIKCamAng
         ang:Sub(diff)
