@@ -66,13 +66,15 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
     self.LHIKAnimationTime = time
 
     self.LHIKAnimation_IsIdle = false
+	
+	self.LHIKCamModel = lhik_model
 
     if LHIK_GunDriver then
         local att = lhik_model:LookupAttachment(LHIK_GunDriver)
         local ang = lhik_model:GetAttachment(att).Ang
         local pos = lhik_model:GetAttachment(att).Pos
 
-        self.LHIKGunAng = lhik_model:WorldToLocalAngles(ang)
+        self.LHIKGunAng = lhik_model:WorldToLocalAngles(ang) - Angle(0, 90, 90)
         self.LHIKGunPos = lhik_model:WorldToLocal(pos)
     end
 
@@ -82,7 +84,6 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
 
         self.LHIKCamOffsetAng = offsetang
         self.LHIKCamAng = lhik_model:WorldToLocalAngles(ang)
-        self.LHIKCamModel = lhik_model
     end
 
     -- lhik_model:SetCycle(0)

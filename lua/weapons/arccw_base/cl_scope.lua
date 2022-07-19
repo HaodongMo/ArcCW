@@ -155,16 +155,14 @@ function SWEP:CoolView(ply, pos, ang, fov)
 
     if self.LHIKCamAng and IsValid(self.LHIKCamModel) then
         local lhik_model = self.LHIKCamModel
-        local a = lhik_model:GetAttachment(self:GetBuff_Override("LHIK_CamDriver") or 0).Ang
-
-        local diff = lhik_model:WorldToLocalAngles(a) - self.LHIKCamAng
-        ang:Sub(diff)
-        -- ang:RotateAroundAxis(self.LHIKCamOffsetAng:Forward(), diff.p)
-        -- ang:RotateAroundAxis(self.LHIKCamOffsetAng:Right(), diff.y)
-        -- ang:RotateAroundAxis(self.LHIKCamOffsetAng:Up(), diff.r)
-        -- ang.p = ang.p - diff.r
-        -- ang.y = ang.y - diff.y
-        -- ang.r = ang.r + diff.p
+        local a = lhik_model:GetAttachment(self:GetBuff_Override("LHIK_CamDriver") or 0)
+		if a then
+			a = a.Ang
+			local diff = lhik_model:WorldToLocalAngles(a) - self.LHIKCamAng
+			diff = Angle(diff.z, diff.y, -diff.x)
+			ang:Add(diff)
+		else
+		end
     end
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
