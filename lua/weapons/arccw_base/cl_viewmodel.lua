@@ -639,14 +639,23 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
     local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
-    if IsValid(lhik_model) and lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone)) then
+    if self:GetInUBGL() and IsValid(lhik_model) and lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone)) then
 
         -- pos:Set(vector_origin)
         -- ang:Set(angle_zero)
 
+        --lhik_model:SetupBones()
+        --local att = lhik_model:GetBoneMatrix(lhik_model:LookupBone("root"))
+        --local ang22 = att:GetAngles()
+        --local pos22 = att:GetTranslation()
+
         local att = lhik_model:LookupAttachment(gunbone)
         local ang22 = lhik_model:GetAttachment(att).Ang
         local pos22 = lhik_model:GetAttachment(att).Pos
+
+        --if false then--for i=0, lhik_model:GetBoneCount() do
+        --	print(i, lhik_model:GetBoneName(i))
+        --end
 
         local aaa = lhik_model:WorldToLocal(pos22)
         local diff = lhik_model:WorldToLocalAngles(ang22)
@@ -671,7 +680,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         -- vmAngMat:Invert()
 
         mat:Translate(self.LHIKGunPosVM)
-        print((mat:GetTranslation() - pos):Length())
+        --print((mat:GetTranslation() - pos):Length())
         debugoverlay.Cross(mat:GetTranslation(), 4, FrameTime() * 1, Color(255, 0, 255), true)
         mat:Rotate(diff)
         --mat:Mul(vmAngMat)
@@ -680,8 +689,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         mat:Translate(aaa)
 
         local l_pos, l_ang = mat:GetTranslation(), mat:GetAngles() --LocalToWorld(mat:GetTranslation(), mat:GetAngles(), pos, ang)
-        -- pos:Set(l_pos)
-        -- ang:Set(l_ang)
+        pos:Set(l_pos)
+        ang:Set(l_ang)
 
         --print(r_pos - oldpos, r_ang - oldang)
         debugoverlay.Axis(t_pos, t_ang, 2, FrameTime() * 1, true)
