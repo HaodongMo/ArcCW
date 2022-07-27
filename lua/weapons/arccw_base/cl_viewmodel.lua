@@ -649,6 +649,8 @@ function SWEP:GetViewModelPosition(pos, ang)
         local r = affset.r
         affset.r = -affset.p
         affset.p = -r
+
+        --pos, ang = ArcCW.RotateAroundPoint(pos, ang, lhik_model:GetPos(), offset, affset)
         
         ang:RotateAroundAxis( ang:Right(),		affset.x )
         ang:RotateAroundAxis( ang:Up(),			affset.y )
@@ -657,15 +659,6 @@ function SWEP:GetViewModelPosition(pos, ang)
         pos = pos + offset.y * ang:Forward()
         pos = pos + offset.z * ang:Up()
     elseif false then
-
-        pos:Set(vector_origin)
-        ang:Set(angle_zero)
-
-        --lhik_model:SetupBones()
-        --local att = lhik_model:GetBoneMatrix(lhik_model:LookupBone("root"))
-        --local ang22 = att:GetAngles()
-        --local pos22 = att:GetTranslation()
-
         local att = lhik_anim_model:LookupAttachment(gunbone)
         local ang22 = lhik_anim_model:GetAttachment(att).Ang
         local pos22 = lhik_anim_model:GetAttachment(att).Pos
@@ -677,8 +670,6 @@ function SWEP:GetViewModelPosition(pos, ang)
         diff.r = -diff.p
         diff.p = r
 
-        --local r_pos, r_ang = Vector(actual.pos), Angle(actual.ang)
-
         local anchor, anchor_ang = LocalToWorld(self.LHIKGunPosVM, self.LHIKGunAngVM, pos, ang)
 
         local t_pos, t_ang = ArcCW.RotateAroundPoint(pos, ang, anchor, aaa, diff)
@@ -687,37 +678,16 @@ function SWEP:GetViewModelPosition(pos, ang)
         mat:SetTranslation(pos)
         mat:SetAngles(ang)
 
-        -- local vmAngMat = Matrix()
-        -- vmAngMat:SetTranslation(Vector(1, 1, 1))
-        -- vmAngMat:SetAngles(diff)
-        -- vmAngMat:Invert()
-
         mat:Translate(self.LHIKGunPosVM)
-        --print((mat:GetTranslation() - pos):Length())
         debugoverlay.Cross(mat:GetTranslation(), 4, FrameTime() * 1, Color(255, 0, 255), true)
         mat:Rotate(diff)
-        --mat:Mul(vmAngMat)
 
         mat:Translate(-self.LHIKGunPosVM)
         mat:Translate(aaa)
 
-        local l_pos, l_ang = mat:GetTranslation(), mat:GetAngles() --LocalToWorld(mat:GetTranslation(), mat:GetAngles(), pos, ang)
+        local l_pos, l_ang = mat:GetTranslation(), mat:GetAngles()
         pos:Set(l_pos)
         ang:Set(l_ang)
-
-        --print(r_pos - oldpos, r_ang - oldang)
-        debugoverlay.Axis(t_pos, t_ang, 2, FrameTime() * 1, true)
-        debugoverlay.Cross(anchor, 8, FrameTime() * 1, color_white, true)
-        debugoverlay.Line(t_pos, anchor, FrameTime(), Color(255, 0, 0), true)
-
-        debugoverlay.Cross(l_pos, 4, FrameTime() * 1, Color(255, 255, 0), true)
-
-        -- pos:Set(t_pos)
-        -- ang:Set(t_ang)
-
-        --ang:Set(l_ang)
-        -- pos:Add( Vector(aaa) )
-        -- ang:Add( Angle(diff.z, diff.y, -diff.x) )
     end
 
     self.ActualVMData = actual
