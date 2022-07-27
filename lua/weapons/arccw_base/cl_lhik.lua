@@ -24,6 +24,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
     if !IsValid(vm) then return end
 
     local lhik_model
+    local lhik_anim_model
     local LHIK_GunDriver
     local LHIK_CamDriver
     local offsetang
@@ -38,6 +39,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
 
         if self:GetBuff_Stat("LHIK", i) then
             lhik_model = k.VElement.Model
+            lhik_anim_model = k.GodDriver and k.GodDriver.Model or false
             offsetang = k.VElement.OffsetAng
 
             if self:GetBuff_Stat("LHIK_GunDriver", i) then
@@ -67,24 +69,24 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
 
     self.LHIKAnimation_IsIdle = false
 
-    if LHIK_GunDriver then
-        local att = lhik_model:LookupAttachment(LHIK_GunDriver)
-        local ang = lhik_model:GetAttachment(att).Ang
-        local pos = lhik_model:GetAttachment(att).Pos
+    if lhik_anim_model and LHIK_GunDriver then
+        local att = lhik_anim_model:LookupAttachment(LHIK_GunDriver)
+        local ang = lhik_anim_model:GetAttachment(att).Ang
+        local pos = lhik_anim_model:GetAttachment(att).Pos
 
-        self.LHIKGunAng = lhik_model:WorldToLocalAngles(ang) - Angle(0, 90, 90)
-        self.LHIKGunPos = lhik_model:WorldToLocal(pos)
+        self.LHIKGunAng = lhik_anim_model:WorldToLocalAngles(ang) - Angle(0, 90, 90)
+        self.LHIKGunPos = lhik_anim_model:WorldToLocal(pos)
 
         self.LHIKGunAngVM = vm:WorldToLocalAngles(ang) - Angle(0, 90, 90)
         self.LHIKGunPosVM = vm:WorldToLocal(pos)
     end
 
-    if LHIK_CamDriver then
-        local att = lhik_model:LookupAttachment(LHIK_CamDriver)
-        local ang = lhik_model:GetAttachment(att).Ang
+    if lhik_anim_model and LHIK_CamDriver then
+        local att = lhik_anim_model:LookupAttachment(LHIK_CamDriver)
+        local ang = lhik_anim_model:GetAttachment(att).Ang
 
         self.LHIKCamOffsetAng = offsetang
-        self.LHIKCamAng = lhik_model:WorldToLocalAngles(ang)
+        self.LHIKCamAng = lhik_anim_model:WorldToLocalAngles(ang)
     end
 
     -- lhik_model:SetCycle(0)

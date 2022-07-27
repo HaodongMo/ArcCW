@@ -585,6 +585,56 @@ function SWEP:SetupModel(wm)
         else
             k.HSPElement = nil
         end
+
+		if atttbl.LHIK_GunDriver or atttbl.LHIK_CamDriver then
+			local godmodel = ClientsideModel(atttbl.Model)
+	
+	--		if k.BoneMerge then Get real
+	--			local parent = owner:GetViewModel()
+	
+	--			if wm then
+	--				parent = owner
+	--			end
+	
+	--			godmodel:SetParent(parent)
+	--			godmodel:AddEffects(EF_BONEMERGE)
+	--		else
+				--godmodel:SetParent(self)
+	--		end
+	
+			local godelement = {}
+			godmodel:SetNoDraw(false)
+			godmodel:DrawShadow(false)
+			godmodel:SetPredictable(false)
+			ScaleModel(godmodel, scale)
+			godmodel.Weapon = self
+	
+			godelement.Model = godmodel
+	
+			godelement.WM = wm or false
+			--godelement.Bone = repbone or k.Bone
+			godelement.NoDraw = false
+			godelement.BoneMerge = false
+			godelement.Slot = i
+			--godelement.WMBone = k.WMBone
+	
+			--godelement.ModelOffset = atttbl.ModelOffset
+			--godelement.OffsetAng = element.OffsetAng
+	
+			PrintTable(k)
+			if !wm then
+				k.GodDriver = godelement
+			else
+				--if self.MirrorVMWM then
+				--	godelement.WMBone = k.Bone
+				--end
+			end
+	
+			table.insert(elements, godelement)
+		else
+			k.GodDriver = nil
+		end
+		
     end
 
     if CLIENT then
