@@ -638,7 +638,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     ang:Add(self:GetOurViewPunchAngles() * Lerp(sgtd, 1, -1))
 
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
-    local lhik_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
+    local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
+    local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
     if self:GetInUBGL() and IsValid(lhik_model) and lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone)) then
 
         -- pos:Set(vector_origin)
