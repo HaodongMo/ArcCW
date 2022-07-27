@@ -644,18 +644,19 @@ function SWEP:GetViewModelPosition(pos, ang)
         local att = lhik_anim_model:LookupAttachment(gunbone)
         local offset = lhik_anim_model:GetAttachment(att).Pos
         local affset = lhik_anim_model:GetAttachment(att).Ang
-        
+
         affset:Sub( Angle( 0, 90, 90 ) )
         local r = affset.r
         affset.r = -affset.p
         affset.p = -r
-        
-        ang:RotateAroundAxis( ang:Right(),		affset.x )
-        ang:RotateAroundAxis( ang:Up(),			affset.y )
-        ang:RotateAroundAxis( ang:Forward(),	affset.z )
-        pos = pos + offset.x * ang:Right()
-        pos = pos + offset.y * ang:Forward()
-        pos = pos + offset.z * ang:Up()
+
+        local anchor = Vector(20, 0, 0)
+        local t_pos, t_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
+
+        pos:Set(t_pos)
+        ang:Set(t_ang)
+
+        debugoverlay.Cross(self.Attachments[gbslot].Offset.vpos, 8, FrameTime() * 1, color_white, true)
     elseif false then
 
         pos:Set(vector_origin)

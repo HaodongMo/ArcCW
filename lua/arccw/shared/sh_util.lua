@@ -48,8 +48,15 @@ function ArcCW.RotateAroundPoint2(pos, ang, point, offset, offset_ang)
     mat:Translate(point)
     debugoverlay.Cross(mat:GetTranslation(), 2, 1, Color(255, 0, 255), true)
 
-    mat:Rotate(offset_ang)
+    local rot_mat = Matrix()
+    rot_mat:SetAngles(offset_ang)
+    rot_mat:Invert()
+    mat:Mul(rot_mat)
+
+    --mat:Rotate(offset_ang)
     mat:Translate(-point)
+
+    mat:Translate(offset)
 
     debugoverlay.Cross(mat:GetTranslation(), 1, 1, Color(0, 255, 0), true)
     debugoverlay.Line(mat:GetTranslation(), mat:GetTranslation() + mat:GetAngles():Forward() * 8, 1, Color(0, 255, 0), true)
