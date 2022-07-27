@@ -603,7 +603,7 @@ function SWEP:SetupModel(wm)
 	--		end
 	
 			local godelement = {}
-			godmodel:SetNoDraw(false)
+			godmodel:SetNoDraw(true)
 			godmodel:DrawShadow(false)
 			godmodel:SetPredictable(false)
 			ScaleModel(godmodel, scale)
@@ -613,7 +613,7 @@ function SWEP:SetupModel(wm)
 	
 			godelement.WM = wm or false
 			--godelement.Bone = repbone or k.Bone
-			godelement.NoDraw = false
+			godelement.NoDraw = true
 			godelement.BoneMerge = false
 			godelement.Slot = i
 			--godelement.WMBone = k.WMBone

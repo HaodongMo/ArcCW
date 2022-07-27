@@ -647,23 +647,54 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         affset:Sub( Angle( 0, 90, 90 ) )
         local r = affset.r
-        affset.r = -affset.p
+        affset.r = affset.p
         affset.p = -r
 
-        local anchor = Vector(20, 0, 0)
+        local bp, ba = Vector(), Angle()
+        bp:Set(pos)
+        ba:Set(ang)
+
+        pos:Set(vector_origin)
+        ang:Set(angle_zero)
+
+        local anchor = Vector(18, -3, -3)
+
+        local bonp = vm:GetBoneMatrix( vm:LookupBone( self.Attachments[gbslot].Bone ) )
+        local bona = bonp:GetAngles()
+        local cunt = self.Attachments[gbslot].Offset.vpos
+        anchor:Set( bonp:GetTranslation() )
+
+        local ugg = Vector()
+        ugg = ugg + cunt.x * bona:Right()
+        ugg = ugg + cunt.y * bona:Forward()
+        ugg = ugg + cunt.z * bona:Up()
+        anchor:Add( ugg )
+
         local t_pos, t_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
 
-        pos:Set(t_pos)
-        ang:Set(t_ang)
+        print("-", "-")
+        print("p: ", t_pos)
+        print("a: ", t_ang)
 
-        debugoverlay.Cross(self.Attachments[gbslot].Offset.vpos, 8, FrameTime() * 1, color_white, true)
+        pos:Set(bp)
+        ang:Set(ba)
 
-        -- ang:RotateAroundAxis( ang:Right(),		affset.x )
-        -- ang:RotateAroundAxis( ang:Up(),			affset.y )
-        -- ang:RotateAroundAxis( ang:Forward(),	affset.z )
-        -- pos = pos + offset.x * ang:Right()
-        -- pos = pos + offset.y * ang:Forward()
-        -- pos = pos + offset.z * ang:Up()
+        pos:Add(t_pos)
+        ang:Add(t_ang)
+
+        --pos:Set(t_pos)
+        --ang:Set(t_ang)
+
+        --debugoverlay.Cross(self.Attachments[gbslot].Offset.vpos, 8, FrameTime() * 1, color_white, true)
+
+        --pos:Set(bp)
+        --ang:Set(ba)
+        --ang:RotateAroundAxis( ang:Right(),		affset.x )
+        --ang:RotateAroundAxis( ang:Up(),			affset.y )
+        --ang:RotateAroundAxis( ang:Forward(),	affset.z )
+        --pos = pos + t_pos.x * ang:Right()
+        --pos = pos + t_pos.y * ang:Forward()
+        --pos = pos + t_pos.z * ang:Up()
     elseif false then
         local att = lhik_anim_model:LookupAttachment(gunbone)
         local ang22 = lhik_anim_model:GetAttachment(att).Ang
