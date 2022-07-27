@@ -640,7 +640,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
     local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
     local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
-    if IsValid(lhik_model) and lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone)) then
+    if IsValid(lhik_model) and IsValid(lhik_anim_model) and lhik_model:GetAttachment(lhik_anim_model:LookupAttachment(gunbone)) then
         local att = lhik_anim_model:LookupAttachment(gunbone)
         local offset = lhik_anim_model:GetAttachment(att).Pos
         local affset = lhik_anim_model:GetAttachment(att).Ang
