@@ -621,7 +621,6 @@ function SWEP:SetupModel(wm)
 			--godelement.ModelOffset = atttbl.ModelOffset
 			--godelement.OffsetAng = element.OffsetAng
 	
-			PrintTable(k)
 			if !wm then
 				k.GodDriver = godelement
 			else
