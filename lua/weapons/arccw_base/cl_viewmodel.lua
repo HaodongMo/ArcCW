@@ -640,23 +640,35 @@ function SWEP:GetViewModelPosition(pos, ang)
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
     local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
     local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
-    if self:GetInUBGL() and IsValid(lhik_model) and lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone)) then
+    if IsValid(lhik_model) and lhik_model:GetAttachment(lhik_model:LookupAttachment(gunbone)) then
+        local att = lhik_anim_model:LookupAttachment(gunbone)
+        local offset = lhik_anim_model:GetAttachment(att).Pos
+        local affset = lhik_anim_model:GetAttachment(att).Ang
+        
+        affset:Sub( Angle( 0, 90, 90 ) )
+        local r = affset.r
+        affset.r = -affset.p
+        affset.p = -r
+        
+        ang:RotateAroundAxis( ang:Right(),		affset.x )
+        ang:RotateAroundAxis( ang:Up(),			affset.y )
+        ang:RotateAroundAxis( ang:Forward(),	affset.z )
+        pos = pos + offset.x * ang:Right()
+        pos = pos + offset.y * ang:Forward()
+        pos = pos + offset.z * ang:Up()
+    elseif false then
 
-        -- pos:Set(vector_origin)
-        -- ang:Set(angle_zero)
+        pos:Set(vector_origin)
+        ang:Set(angle_zero)
 
         --lhik_model:SetupBones()
         --local att = lhik_model:GetBoneMatrix(lhik_model:LookupBone("root"))
         --local ang22 = att:GetAngles()
         --local pos22 = att:GetTranslation()
 
-        local att = lhik_model:LookupAttachment(gunbone)
-        local ang22 = lhik_model:GetAttachment(att).Ang
-        local pos22 = lhik_model:GetAttachment(att).Pos
-
-        --if false then--for i=0, lhik_model:GetBoneCount() do
-        --	print(i, lhik_model:GetBoneName(i))
-        --end
+        local att = lhik_anim_model:LookupAttachment(gunbone)
+        local ang22 = lhik_anim_model:GetAttachment(att).Ang
+        local pos22 = lhik_anim_model:GetAttachment(att).Pos
 
         local aaa = lhik_model:WorldToLocal(pos22)
         local diff = lhik_model:WorldToLocalAngles(ang22)

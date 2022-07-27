@@ -165,6 +165,25 @@ function SWEP:CoolView(ply, pos, ang, fov)
         end
     end
 
+	local gunbone, gbslot = self:GetBuff_Override("LHIK_CamDriver")
+    local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
+
+    if IsValid(lhik_anim_model) and lhik_anim_model:GetAttachment(gunbone) then
+        local catang = lhik_anim_model:GetAttachment(gunbone).Ang
+
+        catang:Sub( Angle( 0, 90, 90 ) )
+        catang.y = -catang.y
+        local r = catang.r
+        catang.r = -catang.p
+        catang.p = -r
+        
+        ang:RotateAroundAxis( ang:Right(),		catang.x )
+        ang:RotateAroundAxis( ang:Up(),			catang.y )
+        ang:RotateAroundAxis( ang:Forward(),	catang.z )
+
+        return
+    end
+
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
 
     if att and vm:GetAttachment(att) then

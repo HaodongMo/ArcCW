@@ -60,6 +60,9 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
     if seq == -1 then return false end
 
     lhik_model:ResetSequence(seq)
+    if lhik_anim_model then
+        lhik_anim_model:ResetSequence(seq)
+    end
 
     if !time then time = lhik_model:SequenceDuration(seq) end
 
@@ -112,6 +115,7 @@ end
 function SWEP:DoLHIK()
     local justhide = false
     local lhik_model = nil
+    local lhik_anim_model = nil
     local hide_component = false
     local delta = 1
 
@@ -139,6 +143,9 @@ function SWEP:DoLHIK()
         -- if atttbl.LHIK then
         if self:GetBuff_Stat("LHIK", i) then
             lhik_model = k.VElement.Model
+            if k.GodDriver then
+                lhik_anim_model = k.GodDriver.Model
+            end
         end
     end
 
@@ -195,6 +202,10 @@ function SWEP:DoLHIK()
                 if seq and seq > 0 then
                     lhik_model:SetSequence(seq)
                     lhik_model:SetCycle(delta)
+                    if lhik_anim_model then
+                        lhik_anim_model:SetSequence(seq)
+                        lhik_anim_model:SetCycle(delta)
+                    end
                 end
             end
         end
@@ -290,6 +301,10 @@ function SWEP:DoLHIK()
     if self.LHIKAnimation and cyc < 1 then
         lhik_model:SetSequence(self.LHIKAnimation)
         lhik_model:SetCycle(cyc)
+        if lhik_anim_model then
+            lhik_anim_model:SetSequence(self.LHIKAnimation)
+            lhik_anim_model:SetCycle(cyc)
+        end
     else
         local key = "idle"
 
