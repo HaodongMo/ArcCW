@@ -644,7 +644,6 @@ function SWEP:GetViewModelPosition(pos, ang)
     local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
     local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
     if IsValid(lhik_model) and IsValid(lhik_anim_model) and lhik_model:GetAttachment(lhik_anim_model:LookupAttachment(gunbone)) then
-        if tickco != engine.TickCount() then
             local att = lhik_anim_model:LookupAttachment(gunbone)
             local offset = lhik_anim_model:GetAttachment(att).Pos
             local affset = lhik_anim_model:GetAttachment(att).Ang
@@ -662,15 +661,15 @@ function SWEP:GetViewModelPosition(pos, ang)
             anchor = self.Attachments[gbslot].VMOffsetPos
             anchor = ( vm:GetBoneMatrix( vm:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
 
+        if tickco != engine.TickCount() then
             rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
-
-            pos:Set(rap_pos)
-            ang:Set(rap_ang)
+            rap_pos:Sub(pos)
+            rap_ang:Sub(ang)
             tickco = engine.TickCount()
-        else
-            pos:Set(rap_pos)
-            ang:Set(rap_ang)
         end
+
+            pos:Add(rap_pos)
+            ang:Add(rap_ang)
     end
 
     self.ActualVMData = actual
