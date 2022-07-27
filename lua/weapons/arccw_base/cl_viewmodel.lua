@@ -276,6 +276,9 @@ function SWEP:GetVMPosition(EyePos, EyeAng)
 end
 
 SWEP.TheJ = {posa = Vector(), anga = Angle()}
+local tickco = engine.TickCount()
+local rap_pos = Vector()
+local rap_ang = Angle()
 
 local actual
 local target = {pos = Vector(), ang = Angle()}
@@ -641,90 +644,33 @@ function SWEP:GetViewModelPosition(pos, ang)
     local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
     local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
     if IsValid(lhik_model) and IsValid(lhik_anim_model) and lhik_model:GetAttachment(lhik_anim_model:LookupAttachment(gunbone)) then
-        local att = lhik_anim_model:LookupAttachment(gunbone)
-        local offset = lhik_anim_model:GetAttachment(att).Pos
-        local affset = lhik_anim_model:GetAttachment(att).Ang
+        if tickco != engine.TickCount() then
+            local att = lhik_anim_model:LookupAttachment(gunbone)
+            local offset = lhik_anim_model:GetAttachment(att).Pos
+            local affset = lhik_anim_model:GetAttachment(att).Ang
 
-        affset:Sub( Angle( 0, 90, 90 ) )
-        local r = affset.r
-        affset.r = affset.p
-        affset.p = -r
+            affset:Sub( Angle( 0, 90, 90 ) )
+            local r = affset.r
+            affset.r = affset.p
+            affset.p = -r
 
-        local bp, ba = Vector(), Angle()
-        bp:Set(pos)
-        ba:Set(ang)
+            --pos:Set(vector_origin)
+            --ang:Set(angle_zero)
 
-        pos:Set(vector_origin)
-        ang:Set(angle_zero)
+            local anchor = Vector(18, -3, -3)
+            --PrintTable(self.Attachments[gbslot])
+            anchor = self.Attachments[gbslot].VMOffsetPos
+            anchor = ( vm:GetBoneMatrix( vm:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
 
-        local anchor = Vector(18, -3, -3)
+            rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
 
-        local bonp = vm:GetBoneMatrix( vm:LookupBone( self.Attachments[gbslot].Bone ) )
-        local bona = bonp:GetAngles()
-        local cunt = self.Attachments[gbslot].Offset.vpos
-        anchor:Set( bonp:GetTranslation() )
-
-        local ugg = Vector()
-        ugg = ugg + cunt.x * bona:Right()
-        ugg = ugg + cunt.y * bona:Forward()
-        ugg = ugg + cunt.z * bona:Up()
-        anchor:Add( ugg )
-
-        local t_pos, t_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
-
-        print("-", "-")
-        print("p: ", t_pos)
-        print("a: ", t_ang)
-
-        pos:Set(bp)
-        ang:Set(ba)
-
-        pos:Add(t_pos)
-        ang:Add(t_ang)
-
-        --pos:Set(t_pos)
-        --ang:Set(t_ang)
-
-        --debugoverlay.Cross(self.Attachments[gbslot].Offset.vpos, 8, FrameTime() * 1, color_white, true)
-
-        --pos:Set(bp)
-        --ang:Set(ba)
-        --ang:RotateAroundAxis( ang:Right(),		affset.x )
-        --ang:RotateAroundAxis( ang:Up(),			affset.y )
-        --ang:RotateAroundAxis( ang:Forward(),	affset.z )
-        --pos = pos + t_pos.x * ang:Right()
-        --pos = pos + t_pos.y * ang:Forward()
-        --pos = pos + t_pos.z * ang:Up()
-    elseif false then
-        local att = lhik_anim_model:LookupAttachment(gunbone)
-        local ang22 = lhik_anim_model:GetAttachment(att).Ang
-        local pos22 = lhik_anim_model:GetAttachment(att).Pos
-
-        local aaa = lhik_model:WorldToLocal(pos22)
-        local diff = lhik_model:WorldToLocalAngles(ang22)
-        diff:Sub( Angle( 0, 90, 90 ) )
-        local r = diff.r
-        diff.r = -diff.p
-        diff.p = r
-
-        local anchor, anchor_ang = LocalToWorld(self.LHIKGunPosVM, self.LHIKGunAngVM, pos, ang)
-
-        local t_pos, t_ang = ArcCW.RotateAroundPoint(pos, ang, anchor, aaa, diff)
-
-        local mat = Matrix()
-        mat:SetTranslation(pos)
-        mat:SetAngles(ang)
-
-        mat:Translate(self.LHIKGunPosVM)
-        debugoverlay.Cross(mat:GetTranslation(), 4, FrameTime() * 1, Color(255, 0, 255), true)
-        mat:Rotate(diff)
-
-        mat:Translate(-self.LHIKGunPosVM)
-        mat:Translate(aaa)
-
-        local l_pos, l_ang = mat:GetTranslation(), mat:GetAngles()
-        pos:Set(l_pos)
-        ang:Set(l_ang)
+            pos:Set(rap_pos)
+            ang:Set(rap_ang)
+            tickco = engine.TickCount()
+        else
+            pos:Set(rap_pos)
+            ang:Set(rap_ang)
+        end
     end
 
     self.ActualVMData = actual
