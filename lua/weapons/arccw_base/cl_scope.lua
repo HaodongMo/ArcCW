@@ -153,21 +153,8 @@ function SWEP:CoolView(ply, pos, ang, fov)
     if !IsValid(vm) then return end
     local ftv = FrameTime()
 
-    local lhik_cambone = self:GetBuff_Override("LHIK_CamDriver")
-    if lhik_cambone and IsValid(self.LHIKCamModel) then
-        local lhik_model = self.LHIKCamModel
-        local a = lhik_model:GetAttachment(self:GetBuff_Override("LHIK_CamDriver") or 0)
-        if a then
-            a = a.Ang
-            local diff = lhik_model:WorldToLocalAngles(a) - self.LHIKCamAng
-            diff = Angle(diff.z, diff.y, -diff.x)
-            ang:Add(diff)
-        end
-    end
-
 	local gunbone, gbslot = self:GetBuff_Override("LHIK_CamDriver")
     local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
-
     if IsValid(lhik_anim_model) and lhik_anim_model:GetAttachment(gunbone) then
         local catang = lhik_anim_model:GetAttachment(gunbone).Ang
 
@@ -181,11 +168,9 @@ function SWEP:CoolView(ply, pos, ang, fov)
         ang:RotateAroundAxis( ang:Up(),			catang.y )
         ang:RotateAroundAxis( ang:Forward(),	catang.z )
 
-        return
     end
 
     local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
-
     if att and vm:GetAttachment(att) then
         local attang = vm:GetAttachment(att).Ang
 
