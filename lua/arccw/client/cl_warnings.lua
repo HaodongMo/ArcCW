@@ -197,6 +197,6 @@ hook.Add("InitPostEntity", "ArcCW_CheckContent", function()
             return
         end
     end
-    chat.AddText(Color(255,255,255), "You have installed ArcCW Base but have no content packs installed. Perhaps you want to install the CS+ pack?")
-    chat.AddText(Color(255,255,255), "https://steamcommunity.com/sharedfiles/filedetails/?id=2131058270")
+    chat.AddText(Color(255,255,255), "You have installed the ArcCW base but have no weapons installed. Search the workshop for some!")-- Perhaps you want to install the CS+ pack?")
+    --chat.AddText(Color(255,255,255), "https://steamcommunity.com/sharedfiles/filedetails/?id=2131058270")
 end)
