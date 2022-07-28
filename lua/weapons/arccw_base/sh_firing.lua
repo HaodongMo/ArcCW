@@ -241,8 +241,7 @@ function SWEP:PrimaryAttack()
     if shpatt or shpattov or shootent then
         if shootent then
             projectiledata.ent = shootent
-            projectiledata.vel = self:GetBuff("MuzzleVelocity") * ArcCW.HUToM
-            --(self:GetBuff_Override("Override_MuzzleVelocity") or self.MuzzleVelocity) * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity")
+            projectiledata.vel = self:GetBuff("MuzzleVelocity")
         end
 
         bullet = self:GetBuff_Hook("Hook_FireBullets", bullet)

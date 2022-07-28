@@ -220,7 +220,7 @@ function SWEP:NPC_Shoot()
                 self:DoPrimaryFire(false, btabl)
             end
         elseif se then
-            self:FireRocket(se, self.MuzzleVelocity * ArcCW.HUToM * self:GetBuff_Mult("Mult_MuzzleVelocity"))
+            self:FireRocket(se, self:GetBuff("MuzzleVelocity"))
         else
             self:GetBuff_Hook("Hook_FireBullets", btabl)
 
