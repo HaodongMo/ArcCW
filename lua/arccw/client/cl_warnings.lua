@@ -1,5 +1,11 @@
 ArcCW.IncompatibleAddons = {
-    ["847269692"] = "Causes viewmodel flickering, may crash when customization menu opens",
+    -- My Hands 8.1
+    ["847269692"] = "Causes viewmodel flickering, double viewmodel, may crash when customization menu opens",
+
+    -- My Hands 8
+    ["1890577397"] = "Causes viewmodel flickering, double viewmodel, may crash when customization menu opens",
+
+    -- Quick Weapon Menu
     ["306149085"] = "Makes the customize menu mouse unable to appear.",
 
     -- Neurotec
@@ -16,6 +22,12 @@ ArcCW.IncompatibleAddons = {
 
     -- Thirteen's Physgun Glow
     ["111249028"] = "Causes LHIK animations to flicker and not work properly."
+
+    -- Viewmodel Lagger
+    ["1146104662"] = "Misaligns viewmodel in sights."
+
+    -- Viewmodel Lagger (fixed)
+    ["2566560460"] = "Misaligns viewmodel in sights."
 }
 
 local t = ArcCW.GetTranslation

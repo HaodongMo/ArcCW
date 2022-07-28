@@ -644,22 +644,18 @@ function SWEP:GetViewModelPosition(pos, ang)
     local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
     local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
     if IsValid(lhik_model) and IsValid(lhik_anim_model) and lhik_model:GetAttachment(lhik_anim_model:LookupAttachment(gunbone)) then
-            local att = lhik_anim_model:LookupAttachment(gunbone)
-            local offset = lhik_anim_model:GetAttachment(att).Pos
-            local affset = lhik_anim_model:GetAttachment(att).Ang
+        local att = lhik_anim_model:LookupAttachment(gunbone)
+        local offset = lhik_anim_model:GetAttachment(att).Pos
+        local affset = lhik_anim_model:GetAttachment(att).Ang
 
-            affset:Sub( Angle( 0, 90, 90 ) )
-            local r = affset.r
-            affset.r = affset.p
-            affset.p = -r
+        affset:Sub( Angle( 0, 90, 90 ) )
+        local r = affset.r
+        affset.r = affset.p
+        affset.p = -r
 
-            --pos:Set(vector_origin)
-            --ang:Set(angle_zero)
-
-            local anchor = Vector(18, -3, -3)
-            --PrintTable(self.Attachments[gbslot])
-            anchor = self.Attachments[gbslot].VMOffsetPos
-            anchor = ( vm:GetBoneMatrix( vm:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
+        local anchor = Vector(18, -3, -3)
+        anchor = self.Attachments[gbslot].VMOffsetPos
+        anchor = ( vm:GetBoneMatrix( vm:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
 
         if tickco != engine.TickCount() then
             rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
@@ -668,8 +664,8 @@ function SWEP:GetViewModelPosition(pos, ang)
             tickco = engine.TickCount()
         end
 
-            pos:Add(rap_pos)
-            ang:Add(rap_ang)
+        pos:Add(rap_pos)
+        ang:Add(rap_ang)
     end
 
     self.ActualVMData = actual
