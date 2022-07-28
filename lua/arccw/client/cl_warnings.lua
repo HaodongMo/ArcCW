@@ -21,13 +21,13 @@ ArcCW.IncompatibleAddons = {
     ["378401390"] = "Causes most animations to not play properly.",
 
     -- Thirteen's Physgun Glow
-    ["111249028"] = "Causes LHIK animations to flicker and not work properly."
+    ["111249028"] = "Causes LHIK animations to flicker and not work properly.",
 
     -- Viewmodel Lagger
-    ["1146104662"] = "Misaligns viewmodel in sights."
+    ["1146104662"] = "Misaligns viewmodel in sights.",
 
     -- Viewmodel Lagger (fixed)
-    ["2566560460"] = "Misaligns viewmodel in sights."
+    ["2566560460"] = "Misaligns viewmodel in sights.",
 }
 
 local t = ArcCW.GetTranslation
