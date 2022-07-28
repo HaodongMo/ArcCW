@@ -42,7 +42,7 @@ function SWEP:FireRocket(ent, vel, ang, dontinheritvel)
         rocket.BlastRadius = self:GetBuff("BlastRadius") * r_mul
     end
 
-    local RealVelocity = (!dontinheritvel and self:GetOwner():GetAbsVelocity() or Vector(0, 0, 0)) + ang:Forward() * vel / ArcCW.HUToM
+    local RealVelocity = (!dontinheritvel and self:GetOwner():GetAbsVelocity() or Vector(0, 0, 0)) + ang:Forward() * vel
     rocket.CurVel = RealVelocity -- for non-physical projectiles that move themselves
 
     rocket:Spawn()
