@@ -74,7 +74,7 @@ local function ToggleAtts(wep)
     local sounds = {}
     for k, v in pairs(wep.Attachments) do
         local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
-        if atttbl and atttbl.ToggleStats and not v.ToggleLock then
+        if atttbl and atttbl.ToggleStats and !v.ToggleLock then
             if atttbl.ToggleSound then sounds[atttbl.ToggleSound] = true
             else sounds["weapons/arccw/firemode.wav"] = true end
             wep:ToggleSlot(k, nil, true)

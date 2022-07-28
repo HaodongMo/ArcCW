@@ -104,7 +104,7 @@ function ENT:TTT_CheckForWeapon(ply)
     ]]
 
     -- Why does TTT not iterate over the player's weapons? This is obviously faster
-    for _, wep in pairs(ply:GetWeapons()) do
+    for _, wep in ipairs(ply:GetWeapons()) do
         --if self.CachedWeapons[wep:GetClass()] then return true end
         -- Perform check for overwritten ammo types (attachments) and UBGLs
         if wep.ArcCW and
