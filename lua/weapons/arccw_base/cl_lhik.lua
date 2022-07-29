@@ -64,7 +64,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
         lhik_anim_model:ResetSequence(seq)
     end
 
-    if !time then time = lhik_model:SequenceDuration(seq) end
+    if !time or time < 0 then time = lhik_model:SequenceDuration(seq) end
 
     self.LHIKAnimation = seq
     self.LHIKAnimationStart = UnPredictedCurTime()
@@ -313,7 +313,7 @@ function SWEP:DoLHIK()
         key = tranim or key
 
         if key and key != "DoNotPlayIdle" then
-            self:DoLHIKAnimation(key, 1)
+            self:DoLHIKAnimation(key, -1)
         end
 
         self.LHIKAnimation_IsIdle = true

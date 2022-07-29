@@ -96,7 +96,7 @@ function SWEP:EnterBipod(sp)
     end
 
     if CLIENT and self:GetBuff_Override("LHIK") then
-        self:DoLHIKAnimation("enter", 0.25)
+        self:DoLHIKAnimation("enter")
     end
 
     local bipodang = tr.HitNormal:Cross(self:GetOwner():EyeAngles():Right()):Angle()
@@ -127,7 +127,7 @@ function SWEP:ExitBipod(sp)
     end
 
     if CLIENT and self:GetBuff_Override("LHIK") then
-        self:DoLHIKAnimation("exit", 0.5)
+        self:DoLHIKAnimation("exit")
     end
 
     if game.SinglePlayer() and CLIENT then return end

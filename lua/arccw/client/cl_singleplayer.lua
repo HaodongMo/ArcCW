@@ -23,7 +23,7 @@ end)
 net.Receive("arccw_sp_lhikanim", function(len, ply)
     local wep  = LocalPlayer():GetActiveWeapon()
     local key  = net.ReadString()
-    local time = net.ReadFloat()
+    local time = net.ReadFloat() or -1
 
     if !wep.ArcCW then return end
 

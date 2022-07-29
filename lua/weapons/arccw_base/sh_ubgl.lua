@@ -150,7 +150,7 @@ function SWEP:DoLHIKAnimation(key, time)
     if game.SinglePlayer() then
         net.Start("arccw_sp_lhikanim")
         net.WriteString(key)
-        net.WriteFloat(time)
+        net.WriteFloat(time or -1)
         net.Send(self:GetOwner())
     end
 end
