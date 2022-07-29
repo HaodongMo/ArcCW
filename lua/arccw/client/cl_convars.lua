@@ -114,8 +114,6 @@ ArcCW.ClientConVars = {
     ["arccw_vm_roll"]                 = { def =  0 },
     ["arccw_vm_fov"]                  = { def =  0, usri = true },
     ["arccw_vm_add_ads"]              = { def =  0},
-    ["arccw_vm_sway_sprint"]          = { def =  3 },
-    ["arccw_vm_bob_sprint"]           = { def =  3 },
     ["arccw_vm_coolsway"]             = { def =  1 },
     ["arccw_vm_coolview"]             = { def =  1 },
     ["arccw_vm_coolview_mult"]        = { def =  1 },
@@ -129,9 +127,6 @@ ArcCW.ClientConVars = {
     ["arccw_vm_nearwall"]             = { def =  1 },
 
     ["arccw_toggleads"]               = { def = 0, usri = true },
-    ["arccw_altubglkey"]              = { def = 0, usri = true },
-    ["arccw_altfcgkey"]               = { def = 0, usri = true },
-    ["arccw_altlaserkey"]             = { def = 0, usri = true },
     ["arccw_altbindsonly"]            = { def = 0, usri = true },
     ["arccw_altsafety"]               = { def = 0, usri = true },
     ["arccw_automaticreload"]         = { def = 0, usri = true },

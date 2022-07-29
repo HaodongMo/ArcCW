@@ -20,11 +20,29 @@ function SWEP:SetClipInfo(load)
 end
 
 function SWEP:Reload()
-
     if IsValid(self:GetHolster_Entity()) then return end
     if self:GetHolster_Time() > 0 then return end
 
     if self:GetOwner():IsNPC() then
+        return
+    end
+
+    -- Switch to UBGL
+    if self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
+        if self:GetInUBGL() then
+            --net.Start("arccw_ubgl")
+            --net.WriteBool(false)
+            --net.SendToServer()
+
+            self:DeselectUBGL()
+        else
+            --net.Start("arccw_ubgl")
+            --net.WriteBool(true)
+            --net.SendToServer()
+
+            self:SelectUBGL()
+        end
+
         return
     end
 
@@ -46,9 +64,6 @@ function SWEP:Reload()
     if self:GetOwner():KeyDown(IN_WALK) and Lite3DHUD then
         return
     end
-
-    -- Don't accidently reload when changing firemode
-    if self:GetOwner():GetInfoNum("arccw_altfcgkey", 0) == 1 and self:GetOwner():KeyDown(IN_USE) then return end
 
     if self:GetMalfunctionJam() then
         local r = self:MalfunctionClear()

@@ -105,34 +105,9 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
     local alt
     bind, alt = ArcCW_TranslateBindToEffect(bind)
 
-    if bind == "firemode" and (alt or !GetConVar("arccw_altfcgkey"):GetBool()) and !ply:KeyDown(IN_USE) then
-        if wep:GetBuff_Override("UBGL") and !alt and !GetConVar("arccw_altubglkey"):GetBool() then
-            if lastpressZ >= CurTime() - 0.25 then
-                DoUbgl(wep)
-
-                lastpressZ = 0
-
-                timer.Remove("ArcCW_doubletapZ")
-            else
-                lastpressZ = CurTime()
-
-                timer.Create("ArcCW_doubletapZ", 0.25, 1, function()
-                    if !(IsValid(ply) and IsValid(wep)) then return end
-
-                    if ply:GetActiveWeapon() != wep then return end
-
-                    if wep:GetInUBGL() then return end
-
-                    SendNet("arccw_firemode")
-
-                    wep:ChangeFiremode()
-                end)
-            end
-        else
-            SendNet("arccw_firemode")
-
-            wep:ChangeFiremode()
-        end
+    if bind == "firemode" and (alt or true) and !ply:KeyDown(IN_USE) then
+		SendNet("arccw_firemode")
+		wep:ChangeFiremode()
 
         block = true
     elseif bind == "inv" and !ply:KeyDown(IN_USE) and GetConVar("arccw_enable_customization"):GetInt() > -1 then

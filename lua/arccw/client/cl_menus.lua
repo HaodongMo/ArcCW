@@ -90,8 +90,6 @@ local PerformancePanel = {
 local ViewmodelPanel = {
     { type = "b", text = "#arccw.cvar.vm_coolsway", var = "arccw_vm_coolsway" },
     { type = "b", text = "#arccw.cvar.vm_coolview", var = "arccw_vm_coolview" },
-    { type = "f", text = "#arccw.cvar.vm_sway_sprint", var = "arccw_vm_sway_sprint", min = 0, max = 5 },
-    { type = "f", text = "#arccw.cvar.vm_bob_sprint", var = "arccw_vm_bob_sprint", min = 0, max = 5 },
     { type = "h", text = "" },
     { type = "c", text = "#arccw.cvar.vm_offsetwarn" },
     { type = "f", text = "#arccw.cvar.vm_fov", var = "arccw_vm_fov",         min = -15, max = 15 },
@@ -189,8 +187,6 @@ local CrosshairPanel = {
 local BindsPanel = {
     { type = "h", text = "#arccw.bindhelp" },
     { type = "b", text = "#arccw.cvar.nohl2flash", var = "arccw_nohl2flash" },
-    { type = "b", text = "#arccw.cvar.altfcgkey", var = "arccw_altfcgkey" },
-    { type = "b", text = "#arccw.cvar.altubglkey", var = "arccw_altubglkey" },
     { type = "b", text = "#arccw.cvar.altsafety", var = "arccw_altsafety" },
     { type = "b", text = "#arccw.cvar.altbindsonly", var = "arccw_altbindsonly" },
     { type = "c", text = "#arccw.cvar.altbindsonly.desc" },
@@ -616,8 +612,6 @@ local ViewmodelPresets = {
     ["#preset.default"] = {
         arccw_vm_coolsway             = "1",
         arccw_vm_coolview             = "1",
-        arccw_vm_sway_sprint          = "3",
-        arccw_vm_bob_sprint           = "3",
         arccw_vm_right                = "0",
         arccw_vm_forward              = "0",
         arccw_vm_up                   = "0",

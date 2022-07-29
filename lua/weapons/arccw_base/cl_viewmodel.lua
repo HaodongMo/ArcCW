@@ -605,6 +605,15 @@ function SWEP:GetViewModelPosition(pos, ang)
         swayspeed = GetConVar("arccw_vm_sway_speedmult"):GetFloat() or 1
         lookxmult = GetConVar("arccw_vm_look_xmult"):GetFloat() or 1
         lookymult = GetConVar("arccw_vm_look_ymult"):GetFloat() or 1
+
+        local sd = self:GetSightDelta()
+        lookxmult = Lerp(sd, 0, lookxmult)
+        lookymult = Lerp(sd, 0, lookymult)
+        swayxmult = Lerp(sd, 0, swayxmult)
+        swayymult = Lerp(sd, 0, swayymult)
+        swayzmult = Lerp(sd, 0, swayzmult)
+        swayspeed = Lerp(sd, 0, swayspeed)
+
         stopwatch("before vmposition")
         local npos, nang = self:GetVMPosition(oldpos, oldang)
         pos:Set(npos)

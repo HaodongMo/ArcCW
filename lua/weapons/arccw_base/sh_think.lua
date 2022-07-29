@@ -127,40 +127,13 @@ function SWEP:Think()
         self:Reload()
     end
 
-    if owner:GetInfoNum("arccw_altfcgkey", 0) == 1 and owner:KeyPressed(IN_RELOAD) and owner:KeyDown(IN_USE) then
-        if (lastfiremode or 0) + 0.1 < CurTime() then
-            lastfiremode = CurTime()
-            if CLIENT then
-                net.Start("arccw_firemode")
-                net.SendToServer()
-                self:ChangeFiremode()
-            end
-        end
-    elseif (!(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and (self:GetReloading() or owner:KeyDown(IN_RELOAD))) then
+    if (!(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and (self:GetReloading() or owner:KeyDown(IN_RELOAD))) then
         if !(self:GetBuff_Override("Override_ReloadInSights") or self.ReloadInSights) and self:GetReloading() then
             self:ExitSights()
         end
     end
 
-    if owner:GetInfoNum("arccw_altubglkey", 0) == 1 and self:GetBuff_Override("UBGL") and owner:KeyDown(IN_USE) then
-        if owner:KeyDown(IN_ATTACK2) and CLIENT then
-            if (lastUBGL or 0) + 0.25 > CurTime() then return end
-            lastUBGL = CurTime()
-            if self:GetInUBGL() then
-                net.Start("arccw_ubgl")
-                net.WriteBool(false)
-                net.SendToServer()
-
-                self:DeselectUBGL()
-            else
-                net.Start("arccw_ubgl")
-                net.WriteBool(true)
-                net.SendToServer()
-
-                self:SelectUBGL()
-            end
-        end
-    elseif self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+    if self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
         self:ExitSights()
     else
 
