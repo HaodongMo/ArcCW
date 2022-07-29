@@ -9,7 +9,10 @@ function SWEP:SelectUBGL()
 
     if !IsFirstTimePredicted() then return end
 
-    self:MyEmitSound(self.SelectUBGLSound)
+    if game.SinglePlayer() or (!game.SinglePlayer() and CLIENT) then
+        self:MyEmitSound( self:GetBuff_Override("SelectUBGLSound") or self.SelectUBGLSound )
+    end
+
     self:SetFireMode(1)
 
     if CLIENT then
@@ -42,7 +45,9 @@ function SWEP:DeselectUBGL()
 
     if !IsFirstTimePredicted() then return end
 
-    self:MyEmitSound(self.ExitUBGLSound)
+    if game.SinglePlayer() or (!game.SinglePlayer() and CLIENT) then
+        self:MyEmitSound( self:GetBuff_Override("ExitUBGLSound") or self.ExitUBGLSound )
+    end
 
     if CLIENT then
         if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
