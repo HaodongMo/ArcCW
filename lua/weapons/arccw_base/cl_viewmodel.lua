@@ -276,7 +276,6 @@ function SWEP:GetVMPosition(EyePos, EyeAng)
 end
 
 SWEP.TheJ = {posa = Vector(), anga = Angle()}
-local tickco = engine.TickCount()
 local rap_pos = Vector()
 local rap_ang = Angle()
 
@@ -641,10 +640,10 @@ function SWEP:GetViewModelPosition(pos, ang)
     ang:Add(self:GetOurViewPunchAngles() * Lerp(sgtd, 1, -1))
 
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
-    local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
-    local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
-    local lhik_refl_model = gbslot and self.Attachments[gbslot].ReflectDriver and self.Attachments[gbslot].ReflectDriver.Model
-    if IsValid(lhik_model) and IsValid(lhik_anim_model) and lhik_model:GetAttachment(lhik_anim_model:LookupAttachment(gunbone)) then
+    local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model -- Visual M203 attachment
+    local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model -- M203 anim and camera
+    local lhik_refl_model = gbslot and self.Attachments[gbslot].ReflectDriver and self.Attachments[gbslot].ReflectDriver.Model -- Rifle
+    if IsValid(lhik_model) and IsValid(lhik_anim_model) and IsValid(lhik_refl_model) and lhik_anim_model:GetAttachment(lhik_anim_model:LookupAttachment(gunbone)) then
         local att = lhik_anim_model:LookupAttachment(gunbone)
         local offset = lhik_anim_model:GetAttachment(att).Pos
         local affset = lhik_anim_model:GetAttachment(att).Ang
@@ -657,14 +656,16 @@ function SWEP:GetViewModelPosition(pos, ang)
         local anchor = Vector(18, -3, -3)
         anchor = self.Attachments[gbslot].VMOffsetPos
         if anchor then -- Not ready / deploying
-            anchor = ( lhik_refl_model:GetBoneMatrix( lhik_refl_model:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
+            local looku = lhik_refl_model:LookupBone( self.Attachments[gbslot].Bone )
+            local bonp = lhik_refl_model:GetBonePosition( looku )
+            if bonp == lhik_refl_model:GetPos() then
+                bonp = lhik_refl_model:GetBoneMatrix( looku ):GetTranslation()
+            end
+            anchor = ( bonp + Vector( anchor.z, anchor.y, anchor.x ) )
 
-            --if tickco != engine.TickCount() then
-                rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
-                rap_pos:Sub(pos)
-                rap_ang:Sub(ang)
-                tickco = engine.TickCount()
-            --end
+            rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
+            rap_pos:Sub(pos)
+            rap_ang:Sub(ang)
 
             pos:Add(rap_pos)
             ang:Add(rap_ang)
