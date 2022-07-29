@@ -653,14 +653,15 @@ function SWEP:GetViewModelPosition(pos, ang)
         affset.r = affset.p
         affset.p = -r
 
-        local anchor = Vector(18, -3, -3)
-        anchor = self.Attachments[gbslot].VMOffsetPos
-        if anchor then -- Not ready / deploying
-            local looku = lhik_refl_model:LookupBone( self.Attachments[gbslot].Bone )
-            local bonp = lhik_refl_model:GetBonePosition( looku )
-            if bonp == lhik_refl_model:GetPos() then
-                bonp = lhik_refl_model:GetBoneMatrix( looku ):GetTranslation()
-            end
+        local anchor = self.Attachments[gbslot].VMOffsetPos
+
+        local looku = lhik_refl_model:LookupBone( self.Attachments[gbslot].Bone )
+        local bonp = lhik_refl_model:GetBonePosition( looku )
+        if bonp == lhik_refl_model:GetPos() then
+            bonp = lhik_refl_model:GetBoneMatrix( looku ):GetTranslation()
+        end
+
+        if anchor and bonp then -- Not ready / deploying
             anchor = ( bonp + Vector( anchor.z, anchor.y, anchor.x ) )
 
             rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
