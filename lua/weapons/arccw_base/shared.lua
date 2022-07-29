@@ -792,6 +792,8 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Angle", 2, "LastAimAngle")
 
     self:NetworkVar("Entity", 0, "Holster_Entity")
+
+    self:SetNWSightDelta(1)
 end
 
 function SWEP:OnRestore()
@@ -926,7 +928,7 @@ function SWEP:GetBarrelNearWall()
     return hitwallcache and hitwallcache[1] or 0
 end
 
-SWEP.CL_SightDelta = 0
+SWEP.CL_SightDelta = 1
 function SWEP:SetSightDelta(d)
     if !game.SinglePlayer() and CLIENT then self.CL_SightDelta = d end
     self:SetNWSightDelta(d)

@@ -656,18 +656,17 @@ function SWEP:GetViewModelPosition(pos, ang)
         local anchor = Vector(18, -3, -3)
         anchor = self.Attachments[gbslot].VMOffsetPos
         if anchor then -- Not ready / deploying
-        anchor = ( vm:GetBoneMatrix( vm:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
+            anchor = ( vm:GetBoneMatrix( vm:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
 
-        if tickco != engine.TickCount() then
-            rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
-            rap_pos:Sub(pos)
-            rap_ang:Sub(ang)
-            tickco = engine.TickCount()
+            if game.SinglePlayer() and tickco != UnPredictedCurTime() then
+                rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
+                rap_pos:Sub(pos)
+                rap_ang:Sub(ang)
+            end
+
+            pos:Add(rap_pos)
+            ang:Add(rap_ang)
         end
-
-        pos:Add(rap_pos)
-        ang:Add(rap_ang)
-    end
     end
 
     self.ActualVMData = actual
