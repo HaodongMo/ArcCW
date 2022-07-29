@@ -226,7 +226,7 @@ end
 function SWEP:Breath_Process(EyePos, EyeAng)
     local VMPos, VMAng = self.VMPos, self.VMAng
     local VMPosOffset, VMAngOffset = self.VMPosOffset, self.VMAngOffset
-    self:Breath_Health()
+    -- self:Breath_Health() Snaps around when regenerating
     self:Breath_StateMult()
     VMPosOffset.x = (math.sin(CurTime() * 2 * self.Breath_Rate) * 0.1) * self.Breath_Intensity
     VMPosOffset.y = (math.sin(CurTime() * 2.5 * self.Breath_Rate) * 0.025) * self.Breath_Intensity
@@ -643,7 +643,8 @@ function SWEP:GetViewModelPosition(pos, ang)
     local gunbone, gbslot = self:GetBuff_Override("LHIK_GunDriver")
     local lhik_model = gbslot and self.Attachments[gbslot].VElement and self.Attachments[gbslot].VElement.Model
     local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
-    if game.SinglePlayer() and IsValid(lhik_model) and IsValid(lhik_anim_model) and lhik_model:GetAttachment(lhik_anim_model:LookupAttachment(gunbone)) then
+    local lhik_refl_model = gbslot and self.Attachments[gbslot].ReflectDriver and self.Attachments[gbslot].ReflectDriver.Model
+    if IsValid(lhik_model) and IsValid(lhik_anim_model) and lhik_model:GetAttachment(lhik_anim_model:LookupAttachment(gunbone)) then
         local att = lhik_anim_model:LookupAttachment(gunbone)
         local offset = lhik_anim_model:GetAttachment(att).Pos
         local affset = lhik_anim_model:GetAttachment(att).Ang
@@ -656,14 +657,14 @@ function SWEP:GetViewModelPosition(pos, ang)
         local anchor = Vector(18, -3, -3)
         anchor = self.Attachments[gbslot].VMOffsetPos
         if anchor then -- Not ready / deploying
-            anchor = ( vm:GetBoneMatrix( vm:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
+            anchor = ( lhik_refl_model:GetBoneMatrix( lhik_refl_model:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
 
-            if tickco != engine.TickCount() then
+            --if tickco != engine.TickCount() then
                 rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
                 rap_pos:Sub(pos)
                 rap_ang:Sub(ang)
                 tickco = engine.TickCount()
-            end
+            --end
 
             pos:Add(rap_pos)
             ang:Add(rap_ang)

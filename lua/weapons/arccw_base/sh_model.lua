@@ -587,53 +587,47 @@ function SWEP:SetupModel(wm)
         end
 
 		if atttbl.LHIK_GunDriver or atttbl.LHIK_CamDriver then
-			local godmodel = ClientsideModel(atttbl.Model)
-	
-	--		if k.BoneMerge then Get real
-	--			local parent = owner:GetViewModel()
-	
-	--			if wm then
-	--				parent = owner
-	--			end
-	
-	--			godmodel:SetParent(parent)
-	--			godmodel:AddEffects(EF_BONEMERGE)
-	--		else
-				--godmodel:SetParent(self)
-	--		end
-	
-			local godelement = {}
-			godmodel:SetNoDraw(true)
-			godmodel:DrawShadow(false)
-			godmodel:SetPredictable(false)
-			ScaleModel(godmodel, scale)
-			godmodel.Weapon = self
-	
-			godelement.Model = godmodel
-	
-			godelement.WM = wm or false
-			--godelement.Bone = repbone or k.Bone
-			godelement.NoDraw = true
-			godelement.BoneMerge = false
-			godelement.Slot = i
-			--godelement.WMBone = k.WMBone
-	
-			--godelement.ModelOffset = atttbl.ModelOffset
-			--godelement.OffsetAng = element.OffsetAng
-	
-			if !wm then
-				k.GodDriver = godelement
-			else
-				--if self.MirrorVMWM then
-				--	godelement.WMBone = k.Bone
-				--end
-			end
-	
-			table.insert(elements, godelement)
-		else
-			k.GodDriver = nil
-		end
+			do
+				local godmodel = ClientsideModel(atttbl.Model)
 		
+				local godelement = {}
+				godmodel:SetNoDraw(true)
+				godmodel:DrawShadow(false)
+				godmodel:SetPredictable(false)
+				godmodel.Weapon = self
+		
+				godelement.Model = godmodel
+		
+				godelement.WM = wm or false
+				godelement.NoDraw = true
+				godelement.BoneMerge = false
+				godelement.Slot = i
+				if !wm then
+					k.GodDriver = godelement
+				end
+				table.insert(elements, godelement)
+			end
+
+			do
+				local reflectmodel = ClientsideModel(self.ViewModel)
+		
+				local reflectelement = {}
+				reflectmodel:SetNoDraw(false)
+				reflectmodel:DrawShadow(false)
+				reflectmodel:SetPredictable(false)
+				reflectmodel.Weapon = self
+		
+				reflectelement.Model = reflectmodel
+		
+				reflectelement.WM = wm or false
+				reflectelement.NoDraw = true
+				reflectelement.Slot = i
+				if !wm then
+					k.ReflectDriver = reflectelement
+				end
+				table.insert(elements, reflectelement)
+			end
+		end
     end
 
     if CLIENT then
