@@ -655,8 +655,7 @@ function SWEP:GetViewModelPosition(pos, ang)
 
         local anchor = Vector(18, -3, -3)
         anchor = self.Attachments[gbslot].VMOffsetPos
-        if !anchor then -- abandon
-        else
+        if anchor then -- Not ready / deploying
         anchor = ( vm:GetBoneMatrix( vm:LookupBone(self.Attachments[gbslot].Bone) ):GetTranslation() + Vector( anchor.z, anchor.y, anchor.x ) )
 
         if tickco != engine.TickCount() then
