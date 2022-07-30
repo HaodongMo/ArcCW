@@ -3,6 +3,8 @@ function SWEP:TableRandom(table)
 end
 
 function SWEP:MyEmitSound(fsound, level, pitch, vol, chan, useWorld)
+    if !fsound then return end
+
     fsound = self:GetBuff_Hook("Hook_TranslateSound", fsound) or fsound
 
     if istable(fsound) then fsound = self:TableRandom(fsound) end

@@ -84,16 +84,17 @@ function SWEP:ChangeFiremode(pred)
     end)
 
     if lastfmi != fmi then
+        local snd = self:GetBuff_Override("Override_FiremodeSound", self.FiremodeSound)
         if SERVER then
             if pred then
                 SuppressHostEvents(self:GetOwner())
             end
-            self:MyEmitSound(self.FiremodeSound, 75, 100, 1, CHAN_ITEM + 2)
+            self:MyEmitSound(snd, 75, 100, 1, CHAN_ITEM + 2)
             if pred then
                 SuppressHostEvents(NULL)
             end
         else
-           self:MyEmitSound(self.FiremodeSound, 75, 100, 1, CHAN_ITEM + 2)
+           self:MyEmitSound(snd, 75, 100, 1, CHAN_ITEM + 2)
         end
     end
 

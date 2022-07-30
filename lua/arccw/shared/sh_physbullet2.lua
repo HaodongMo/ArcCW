@@ -515,7 +515,7 @@ function ArcCW:DrawPhysBullets()
         -- 2: they fly too fast and so tracers aren't that noticeable
         if !i.DampenVelocity then i.DampenVelocity = math.Clamp(math.floor(i.VelStart:Length() ^ (bulinfo.dampen_factor or 0.55)), 128, 4096) end
         if !i.Imaginary and i.Travelled <= i.DampenVelocity then
-            if i.Weapon:GetOwner() == LocalPlayer() then
+            if IsValid(i.Weapon) and i.Weapon:GetOwner() == LocalPlayer() then
                 -- Lerp towards the muzzle position, effectively slowing and dragging the bullet back.
                 -- Bullet will appear to accelerate suddenly near the threshold, but it should be too fast to notice.
                 if !i.TracerOrigin then
