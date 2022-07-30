@@ -187,9 +187,11 @@ function SWEP:SetupModel(wm)
                 end
             end
 
-            ArcCW.VM_OverDraw = true
-            v:DrawModel()
-            ArcCW.VM_OverDraw = false
+            if !self.HideViewmodel then
+                ArcCW.VM_OverDraw = true
+                v:DrawModel()
+                ArcCW.VM_OverDraw = false
+            end
         end
     end
 

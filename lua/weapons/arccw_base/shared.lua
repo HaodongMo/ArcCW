@@ -24,7 +24,7 @@ SWEP.WorldModel = ""
 
 SWEP.MirrorVMWM = nil -- Copy the viewmodel, along with all its attachments, to the worldmodel. Super convenient!
 SWEP.MirrorWorldModel = nil -- Use this to set the mirrored viewmodel to a different model, without any floating speedloaders or cartridges you may have. Needs MirrorVMWM
-
+SWEP.HideViewmodel = nil
 --[[SWEP.WorldModelOffset = {
     pos = Vector(0, 0, 0),
     ang = Angle(0, 0, 0),
