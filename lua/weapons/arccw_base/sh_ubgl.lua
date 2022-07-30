@@ -16,9 +16,9 @@ function SWEP:SelectUBGL()
     self:SetFireMode(1)
 
     if CLIENT then
-        if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
-            self:GetOwner():ChatPrint("Selected " .. self:GetBuff_Override("UBGL_PrintName") or "UBGL")
-        end
+        -- if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
+        --     self:GetOwner():ChatPrint("Selected " .. self:GetBuff_Override("UBGL_PrintName") or "UBGL")
+        -- end
         if !self:GetLHIKAnim() then
             self:DoLHIKAnimation("enter")
         end
@@ -50,9 +50,9 @@ function SWEP:DeselectUBGL()
     end
 
     if CLIENT then
-        if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
-            self:GetOwner():ChatPrint("Deselected " .. self:GetBuff_Override("UBGL_PrintName") or "UBGL")
-        end
+        -- if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
+        --     self:GetOwner():ChatPrint("Deselected " .. self:GetBuff_Override("UBGL_PrintName") or "UBGL")
+        -- end
         if !self:GetLHIKAnim() then
             self:DoLHIKAnimation("exit")
         end
