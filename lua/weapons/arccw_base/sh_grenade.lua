@@ -88,7 +88,7 @@ function SWEP:Throw()
         }
         local ovr = self:GetBuff_Hook("Hook_Throw", data)
         if !ovr or ovr.dodefault then
-            local rocket = self:FireRocket(self:GetBuff_Override("Override_ShootEntity", self.ShootEntity), force)
+            local rocket = self:FireRocket(self:GetBuff_Override("Override_ShootEntity", self.ShootEntity), force / ArcCW.HUToM)
             if !rocket then return end
 
             if ft then
