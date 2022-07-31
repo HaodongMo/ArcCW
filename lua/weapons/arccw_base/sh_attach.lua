@@ -1459,20 +1459,22 @@ function SWEP:AdjustAtts()
         end
     end
 
-    if self:GetBuff_Override("UBGL_Capacity") then
-        self.Secondary.ClipSize = self:GetBuff_Override("UBGL_Capacity")
-        if GetConVar("arccw_atts_ubglautoload"):GetBool() then
-            self:SetClip2(self:GetBuff_Override("UBGL_Capacity"))
+    local ubgl_ammo = self:GetBuff_Override("UBGL_Ammo")
+    local ubgl_clip = self:GetBuff_Override("UBGL_Capacity")
+
+    if ubgl_clip then
+        self.Secondary.ClipSize = ubgl_clip
+        if self:GetOwner():IsPlayer() and GetConVar("arccw_atts_ubglautoload"):GetBool() and ubgl_ammo then
+            local amt = math.min(ubgl_clip - self:Clip2(), self:GetOwner():GetAmmoCount(ubgl_ammo))
+            self:SetClip2(self:Clip2() + amt)
+            self:GetOwner():RemoveAmmo(amt, ubgl_ammo)
         end
     else
         self.Secondary.ClipSize = -1
     end
 
-    if self:GetBuff_Override("UBGL_Ammo") then
-        self.Secondary.Ammo = self:GetBuff_Override("UBGL_Ammo")
-    else
-        self.Secondary.Ammo = "none"
-    end
+    self.Secondary.Ammo = ubgl_ammo or "none"
+
 
     self:RebuildSubSlots()
 
