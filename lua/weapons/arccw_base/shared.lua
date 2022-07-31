@@ -59,6 +59,8 @@ SWEP.DamageType = DMG_BULLET
 SWEP.DamageTypeHandled = false -- set to true to have the base not do anything with damage types
 -- this includes: igniting if type has DMG_BURN; adding DMG_AIRBOAT when hitting helicopter; adding DMG_BULLET to DMG_BUCKSHOT
 
+SWEP.Distance = nil -- Maximum distance of the bullet (does not affect physbullets)
+
 SWEP.Force = nil -- bullet force. set nil to autocalculate
 
 SWEP.ShootEntity = nil -- entity to fire, if any
