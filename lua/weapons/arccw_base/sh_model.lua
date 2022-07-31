@@ -410,7 +410,7 @@ function SWEP:SetupModel(wm)
         element.Bone = repbone or k.Bone
         element.NoDraw = atttbl.NoDraw or false
         element.BoneMerge = k.BoneMerge or false
-        element.Bodygroups = self:GetBuff_Stat("ModelBodygroups", k)
+        element.Bodygroups = self:GetBuff_Stat("ModelBodygroups", i)
         element.DrawFunc = atttbl.DrawFunc
         element.Slot = i
         element.ModelOffset = atttbl.ModelOffset or Vector(0, 0, 0)
