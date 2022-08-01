@@ -7,21 +7,16 @@ function SWEP:SelectUBGL()
 
     self:SetInUBGL(true)
 
-    if !IsFirstTimePredicted() then return end
-
-    if game.SinglePlayer() or (!game.SinglePlayer() and CLIENT) then
-        self:MyEmitSound( self:GetBuff_Override("SelectUBGLSound") or self.SelectUBGLSound )
-    end
-
     self:SetFireMode(1)
 
-    if CLIENT then
+    if CLIENT and (game.SinglePlayer() or (!game.SinglePlayer() and IsFirstTimePredicted())) then
         -- if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
         --     self:GetOwner():ChatPrint("Selected " .. self:GetBuff_Override("UBGL_PrintName") or "UBGL")
         -- end
         if !self:GetLHIKAnim() then
             self:DoLHIKAnimation("enter")
         end
+        self:MyEmitSound( self:GetBuff_Override("SelectUBGLSound") or self.SelectUBGLSound )
     end
 
     if self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.enter_ubgl_empty and self:Clip2() == 0 then
@@ -43,19 +38,14 @@ function SWEP:DeselectUBGL()
 
     self:SetInUBGL(false)
 
-    if !IsFirstTimePredicted() then return end
-
-    if game.SinglePlayer() or (!game.SinglePlayer() and CLIENT) then
-        self:MyEmitSound( self:GetBuff_Override("ExitUBGLSound") or self.ExitUBGLSound )
-    end
-
-    if CLIENT then
+    if CLIENT and (game.SinglePlayer() or (!game.SinglePlayer() and IsFirstTimePredicted())) then
         -- if !ArcCW:ShouldDrawHUDElement("CHudAmmo") then
         --     self:GetOwner():ChatPrint("Deselected " .. self:GetBuff_Override("UBGL_PrintName") or "UBGL")
         -- end
-        if !self:GetLHIKAnim() then
+        if !self:GetLHIKAnim() and bong then
             self:DoLHIKAnimation("exit")
         end
+        self:MyEmitSound( self:GetBuff_Override("ExitUBGLSound") or self.ExitUBGLSound )
     end
 
     if self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.exit_ubgl_empty and self:Clip2() == 0 then
