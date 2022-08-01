@@ -48,6 +48,47 @@ function SWEP:LoadPreset(filename)
         --if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end
     end
 
+    -- ???
+    self.Attachments.BaseClass = nil
+
+    net.Start("arccw_applypreset")
+    net.WriteEntity(self)
+    for k, v in pairs(self.Attachments) do
+        local att = presetTbl[k]
+
+        local split = att and string.Split(att, ",")
+        local sc = table.Count(split or {})
+
+        local slidepos = 0.5
+        local mag = -1
+
+        if att and sc == 3 then
+            att = split[1]
+            slidepos = tonumber(split[2])
+            mag = tonumber(split[3])
+        end
+
+        print(k, att)
+
+        if !ArcCW.AttachmentTable[att] then
+            net.WriteUInt(0, ArcCW.AttachmentBits)
+            continue
+        end
+
+        net.WriteUInt(ArcCW.AttachmentTable[att].ID, ArcCW.AttachmentBits)
+        net.WriteBool(slidepos != 0.5)
+
+        if slidepos != 0.5 then
+            net.WriteFloat(slidepos)
+        end
+
+        if mag != -1 then
+            self.SightMagnifications[i] = mag
+        end
+    end
+    net.SendToServer()
+
+    --[[]
     for i = 1, table.Count(self.Attachments) do
         local att = presetTbl[i]
         if !att then continue end
@@ -74,11 +115,11 @@ function SWEP:LoadPreset(filename)
 
         if att == self.Attachments[i].Installed then continue end
 
-        self:Detach(i, true)
+        self:Detach(i, true, true)
 
         if !ArcCW.AttachmentTable[att] then continue end
 
-        self:Attach(i, att, true)
+        self:Attach(i, att, true, true)
 
         if slidepos != 0.5 then
             self.Attachments[i].SlidePos = slidepos
@@ -91,9 +132,10 @@ function SWEP:LoadPreset(filename)
 
     self:SendAllDetails()
 
-    f:Close()
-
     self:SavePreset()
+    ]]
+
+    f:Close()
 end
 
 function SWEP:SavePreset(filename)

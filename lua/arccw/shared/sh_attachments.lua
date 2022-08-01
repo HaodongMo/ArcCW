@@ -469,6 +469,50 @@ net.Receive("arccw_asktodrop", function(len, ply)
     ArcCW:PlayerSendAttInv(ply)
 end)
 
+if SERVER then
+    net.Receive("arccw_applypreset", function(len, ply)
+        local wpn = net.ReadEntity()
+
+        if wpn:GetOwner() != ply or !wpn.ArcCW then return end
+
+        for k, v in SortedPairs(wpn.Attachments) do
+            local attid = net.ReadUInt(ArcCW.AttachmentBits)
+            v.Installed = ArcCW.AttachmentIDTable[attid]
+
+            print(k, ArcCW.AttachmentIDTable[attid])
+
+            if attid == 0 then continue end
+
+            if net.ReadBool() then
+                v.SlidePos = net.ReadFloat()
+            end
+        end
+
+        wpn:AdjustAtts()
+
+        if ply.ArcCW_Sandbox_FirstSpawn then
+            -- Curiously, RestoreAmmo has a sync delay only in singleplayer
+            ply.ArcCW_Sandbox_FirstSpawn = nil
+            wpn:RestoreAmmo()
+        end
+
+        wpn:NetworkWeapon()
+        wpn:SetupModel(false)
+        wpn:SetupModel(true)
+
+        net.Start("arccw_applypreset")
+            net.WriteEntity(wpn)
+        net.Send(ply)
+
+    end)
+else
+    net.Receive("arccw_applypreset", function()
+        local wpn = net.ReadEntity()
+        if !IsValid(wpn) then return end
+        wpn:SavePreset("autosave")
+    end)
+end
+
 function ArcCW:PlayerSendAttInv(ply)
     if GetConVar("arccw_attinv_free"):GetBool() then return end
 

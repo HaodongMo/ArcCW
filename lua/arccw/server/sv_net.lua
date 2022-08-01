@@ -27,6 +27,8 @@ util.AddNetworkString("arccw_reloadatts")
 util.AddNetworkString("arccw_sendbullet")
 util.AddNetworkString("arccw_sendconvar")
 
+util.AddNetworkString("arccw_applypreset")
+
 util.AddNetworkString("arccw_ttt_bodyattinfo")
 
 util.AddNetworkString("arccw_networksound")

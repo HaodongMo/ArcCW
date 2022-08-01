@@ -80,7 +80,7 @@ function SWEP:Deploy()
         self.UnReady = false
     end
 
-    if (self.AutoReload or self:GetBuff_Override("Override_AutoReload")) and (self:GetBuff_Override("Override_AutoReload") != false) then
+    if self:GetBuff_Override("Override_AutoReload", self.AutoReload) then
         self:RestoreAmmo()
     end
 
