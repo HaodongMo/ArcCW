@@ -792,8 +792,6 @@ function SWEP:PreDrawViewModel(vm)
     self:DrawCustomModel(false)
     self:DoLHIK()
 
-    self.ViewBobAngPos = vm:GetAttachment(self.ProceduralViewBobAttachment or self.MuzzleEffectAttachment or 1)
-
     if !ArcCW.Overdraw then
         self:DoLaser(false, true)
     end
