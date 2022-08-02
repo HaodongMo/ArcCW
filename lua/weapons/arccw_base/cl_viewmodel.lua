@@ -366,8 +366,11 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos:Set(self:GetBuff("ReloadPos", true) or apos)
         target.ang:Set(self:GetBuff("ReloadAng", true) or aang)
     else
-        target.pos:Set(LerpVector(cdelta, apos, self:GetBuff("CrouchPos", true) or apos))
-        target.ang:Set(LerpAngle(cdelta, aang, self:GetBuff("CrouchAng", true) or aang))
+        local cpos, cang = self:GetBuff("CrouchPos", true) or apos, self:GetBuff("CrouchAng", true) or aang
+        target.pos:Set(apos)
+        target.ang:Set(aang)
+        LerpMod(target.pos, cpos, cdelta)
+        LerpMod(target.ang, cang, cdelta, true)
     end
     if (owner:Crouching() or owner:KeyDown(IN_DUCK)) then target.down = 0 end
 
@@ -408,7 +411,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local aaaapos = holstered and (hpos or spos) or (spos or hpos)
         local aaaaang = holstered and (hang or sang) or (sang or hang)
 
-        local sd = (self:GetReloading() and 0) or (self:IsProne() and math.Clamp(owner:GetVelocity():Length()/prone.Config.MoveSpeed, 0, 1)) or (holstered and 1) or (!self:CanShootWhileSprint() and sprd) or 0
+        local sd = (self:GetReloading() and 0) or (self:IsProne() and math.Clamp(owner:GetVelocity():Length() / prone.Config.MoveSpeed, 0, 1)) or (holstered and 1) or (!self:CanShootWhileSprint() and sprd) or 0
         sd = math.pow(math.sin(sd * math.pi * 0.5), 2)
 
         local d = math.pow(math.sin(sd * math.pi * 0.5), math.pi)
