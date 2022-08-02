@@ -611,9 +611,6 @@ SWEP.Attachments = {}
 -- which sequence to derive the sight autosolver from.
 SWEP.AutosolveSourceSeq = "idle"
 
--- set to true to always use GetBonePosition, may fix flickering attachments on fucked up guns
-SWEP.BoneCompatibilityMode = nil
-
 -- Disclaimer: LHIK is *actually* a type of forward kinematics.
 -- If you prefer, LHIK can stand for "Left Hand Individual Kinematics" or some shit
 
