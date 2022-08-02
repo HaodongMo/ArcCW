@@ -855,8 +855,9 @@ function SWEP:DrawCustomModel(wm, origin, angle)
 
             if !boneindex then continue end
 
-            --[[]
-            if wm then
+            -- For models with funky parenting setups (see M9K Tavor), GetBoneMatrix inexplicably fails
+            -- Weird since these functions are supposed to be identical but ok
+            if wm or self.BoneCompatibilityMode then
                 bpos, bang = vm:GetBonePosition(boneindex)
             else
                 local bonemat = vm:GetBoneMatrix(boneindex)
@@ -866,10 +867,6 @@ function SWEP:DrawCustomModel(wm, origin, angle)
                     bang = bonemat:GetAngles()
                 end
             end
-            ]]
-            -- For models with funky parenting setups (see M9K Tavor), GetBoneMatrix inexplicably fails
-            -- Weird since these functions are supposed to be identical but ok
-            bpos, bang = vm:GetBonePosition(boneindex)
 
             if custompos and (!self.MirrorVMWM or (self.MirrorVMWM and k.Model:GetModel() == self.ViewModel) ) then
                 bpos = origin
