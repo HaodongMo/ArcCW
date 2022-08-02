@@ -170,6 +170,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     local FT = scrunkly() --FrameTime()
     local sightedmult = (state == ArcCW.STATE_SIGHTS and 0.25) or 1
     local sprintmult = (state == ArcCW.STATE_SPRINT and 2) or 1
+    local pronemult = (self:IsProne() and 10) or 1
     local onground = self:GetOwner():OnGround()
     self.StepBob = self.StepBob + (velocity * 0.00015 + (math.pow(delta, 0.01) * 0.03)) * swayspeed * FT * 300
 
@@ -191,8 +192,8 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
         end
 
         VMPosOffset.x = (math.sin(self.StepBob) * velocity * (0.000375 + sextra.x) * sightedmult * swayxmult) * self.StepRandomX
-        VMPosOffset.y = (math.sin(self.StepBob * 0.5) * velocity * (0.0005 + sextra.y) * sightedmult * sprintmult * swayymult) * self.StepRandomY
-        VMPosOffset.z = math.sin(self.StepBob * 0.75) * velocity * (0.002 + sextra.z) * sightedmult * swayzmult
+        VMPosOffset.y = (math.sin(self.StepBob * 0.5) * velocity * (0.0005 + sextra.y) * sightedmult * sprintmult * pronemult * swayymult) * self.StepRandomY
+        VMPosOffset.z = math.sin(self.StepBob * 0.75) * velocity * (0.002 + sextra.z) * sightedmult * pronemult * swayzmult
     end
 
     VMPosOffset_Lerp.x = Lerp(32 * FT, VMPosOffset_Lerp.x, VMPosOffset.x)
@@ -304,6 +305,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     local FT = scrunkly()
     local CT = CurTime()
     local TargetTick = (1 / FT) / 66.66
+    local cdelta = math.Clamp(math.ease.InOutSine((owner:GetViewOffset().z - owner:GetCurrentViewOffset().z) / (owner:GetViewOffset().z - owner:GetViewOffsetDucked().z)),0,1)
 
     if TargetTick < 1 then
         FT = FT * TargetTick
@@ -357,17 +359,17 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos:Add(BEA:Forward() * bpos.y * self.InBipodMult.y)
         target.pos:Add(BEA:Up() * bpos.z * self.InBipodMult.z)
         target.sway = 0.2
-    elseif (owner:Crouching() or owner:KeyDown(IN_DUCK)) and !self:GetReloading() then
-        target.down = 0
-        target.pos:Set(self:GetBuff("CrouchPos", true) or apos)
-        target.ang:Set(self:GetBuff("CrouchAng", true) or aang)
+    -- elseif (owner:Crouching() or owner:KeyDown(IN_DUCK)) and !self:GetReloading() then
+        -- target.pos:Set(self:GetBuff("CrouchPos", true) or apos)
+        -- target.ang:Set(self:GetBuff("CrouchAng", true) or aang)
     elseif self:GetReloading() then
         target.pos:Set(self:GetBuff("ReloadPos", true) or apos)
         target.ang:Set(self:GetBuff("ReloadAng", true) or aang)
     else
-        target.pos:Set(apos)
-        target.ang:Set(aang)
+        target.pos:Set(LerpVector(cdelta, apos, self:GetBuff("CrouchPos", true) or apos))
+        target.ang:Set(LerpAngle(cdelta, aang, self:GetBuff("CrouchAng", true) or aang))
     end
+    if (owner:Crouching() or owner:KeyDown(IN_DUCK)) then target.down = 0 end
 
     stopwatch("reload, crouch, bipod")
 
@@ -406,7 +408,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local aaaapos = holstered and (hpos or spos) or (spos or hpos)
         local aaaaang = holstered and (hang or sang) or (sang or hang)
 
-        local sd = (self:GetReloading() and 0) or (holstered and 1) or (!self:CanShootWhileSprint() and sprd) or 0
+        local sd = (self:GetReloading() and 0) or (self:IsProne() and math.Clamp(owner:GetVelocity():Length()/prone.Config.MoveSpeed, 0, 1)) or (holstered and 1) or (!self:CanShootWhileSprint() and sprd) or 0
         sd = math.pow(math.sin(sd * math.pi * 0.5), 2)
 
         local d = math.pow(math.sin(sd * math.pi * 0.5), math.pi)
