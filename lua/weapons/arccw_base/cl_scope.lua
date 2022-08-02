@@ -153,7 +153,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
     if !IsValid(vm) then return end
     local ftv = FrameTime()
 
-	local gunbone, gbslot = self:GetBuff_Override("LHIK_CamDriver")
+    local gunbone, gbslot = self:GetBuff_Override("LHIK_CamDriver")
     local lhik_anim_model = gbslot and self.Attachments[gbslot].GodDriver and self.Attachments[gbslot].GodDriver.Model
     if IsValid(lhik_anim_model) and lhik_anim_model:GetAttachment(gunbone) then
         local catang = lhik_anim_model:GetAttachment(gunbone).Ang
@@ -163,7 +163,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
         local r = catang.r
         catang.r = -catang.p
         catang.p = -r
-        
+
         ang:RotateAroundAxis( ang:Right(),		catang.x )
         ang:RotateAroundAxis( ang:Up(),			catang.y )
         ang:RotateAroundAxis( ang:Forward(),	catang.z )
@@ -197,7 +197,9 @@ function SWEP:CoolView(ply, pos, ang, fov)
     targint = math.min(targint, 1-math.pow( vm:GetCycle(), 2 ) )
     progress = Lerp(ftv * 15, progress, targint)
 
-    local angpos = vm:GetAttachment(self.ProceduralViewBobAttachment or self.MuzzleEffectAttachment or 1)
+    -- "This will return improper values for viewmodels if used in GM:CalcView."
+    -- Someone does not read the FUCKING WIKI
+    local angpos = self.ViewBobAngPos --vm:GetAttachment(self.ProceduralViewBobAttachment or self.MuzzleEffectAttachment or 1)
 
     if angpos and self:GetReloading() then
         mzang_fixed = vm:WorldToLocalAngles(angpos.Ang)
