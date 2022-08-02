@@ -475,6 +475,7 @@ if SERVER then
 
         if wpn:GetOwner() != ply or !wpn.ArcCW then return end
 
+        wpn.Attachments.BaseClass = nil -- AGHHHHHHHHHH
         for k, v in SortedPairs(wpn.Attachments) do
             local attid = net.ReadUInt(ArcCW.GetBitNecessity())
             v.Installed = ArcCW.AttachmentIDTable[attid]
