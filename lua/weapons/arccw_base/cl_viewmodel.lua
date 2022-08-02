@@ -343,6 +343,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     }
 
     local apos, aang = self:GetBuff_Override("Override_ActivePos", self.ActivePos), self:GetBuff_Override("Override_ActiveAng", self.ActiveAng)
+    local cpos, cang = self:GetBuff("CrouchPos", true) or apos, self:GetBuff("CrouchAng", true) or aang
     target.down = 1
     target.sway = 2
     target.bob = 2
@@ -366,7 +367,6 @@ function SWEP:GetViewModelPosition(pos, ang)
         target.pos:Set(self:GetBuff("ReloadPos", true) or apos)
         target.ang:Set(self:GetBuff("ReloadAng", true) or aang)
     else
-        local cpos, cang = self:GetBuff("CrouchPos", true) or apos, self:GetBuff("CrouchAng", true) or aang
         target.pos:Set(apos)
         target.ang:Set(aang)
         LerpMod(target.pos, cpos, cdelta)
