@@ -68,14 +68,12 @@ function SWEP:LoadPreset(filename)
             mag = tonumber(split[3])
         end
 
-        print(k, att)
-
         if !ArcCW.AttachmentTable[att] then
-            net.WriteUInt(0, ArcCW.AttachmentBits)
+            net.WriteUInt(0, ArcCW.GetBitNecessity())
             continue
         end
 
-        net.WriteUInt(ArcCW.AttachmentTable[att].ID, ArcCW.AttachmentBits)
+        net.WriteUInt(ArcCW.AttachmentTable[att].ID, ArcCW.GetBitNecessity())
         net.WriteBool(slidepos != 0.5)
 
         if slidepos != 0.5 then

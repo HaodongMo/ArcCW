@@ -479,8 +479,6 @@ if SERVER then
             local attid = net.ReadUInt(ArcCW.AttachmentBits)
             v.Installed = ArcCW.AttachmentIDTable[attid]
 
-            print(k, ArcCW.AttachmentIDTable[attid])
-
             if attid == 0 then continue end
 
             if net.ReadBool() then

@@ -298,12 +298,13 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
 end
 
 function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
+
     local wep = phys and bullet.Weapon or bullet
     local hitpos, hitnormal = tr.HitPos, tr.HitNormal
     local trent = tr.Entity
 
     local dist = (phys and bullet.Travelled or (hitpos - tr.StartPos):Length() ) * ArcCW.HUToM
-    local pen  = phys and bullet.Penleft or wep:GetBuff("Penetration")
+    local pen  = IsValid(wep) and bullet.Penleft or wep:GetBuff("Penetration")
 
     if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
         debugoverlay.Cross(hitpos, 1, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
@@ -315,9 +316,9 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
         mul = mul * math.Rand(1 - randfactor, 1 + randfactor)
     end
 
-    local delta = phys and math.Clamp(bullet.Travelled / (bullet.Range / ArcCW.HUToM), 0, 1) or wep:GetRangeFraction(dist)
-    local calc_damage = (phys and Lerp(delta, bullet.DamageMax, bullet.DamageMin) or wep:GetDamage(dist, true)) * mul
-    local dmgtyp = phys and bullet.DamageType or (IsValid(wep) and wep:GetBuff_Override("Override_DamageType", wep.DamageType)) or DMG_BULLET
+    local delta = !IsValid(wep) and math.Clamp(bullet.Travelled / (bullet.Range / ArcCW.HUToM), 0, 1) or wep:GetRangeFraction(dist)
+    local calc_damage = (!IsValid(wep) and Lerp(delta, bullet.DamageMax, bullet.DamageMin) or wep:GetDamage(dist, true)) * mul
+    local dmgtyp = !IsValid(wep)  and bullet.DamageType or wep:GetBuff_Override("Override_DamageType", wep.DamageType) or DMG_BULLET
 
     local hit   = {}
     hit.att     = att
@@ -334,7 +335,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
         if !hit then return end
     end
 
-    if phys and bullet.Damaged[tr.Entity:EntIndex()] then
+    if bullet.Damaged and bullet.Damaged[tr.Entity:EntIndex()] then
         dmg:SetDamage(0)
     else
         dmg:SetDamageType(hit.dmgtype)
