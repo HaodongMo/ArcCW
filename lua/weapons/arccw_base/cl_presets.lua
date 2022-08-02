@@ -81,7 +81,7 @@ function SWEP:LoadPreset(filename)
         end
 
         if mag != -1 then
-            self.SightMagnifications[i] = mag
+            self.SightMagnifications[k] = mag
         end
     end
     net.SendToServer()
