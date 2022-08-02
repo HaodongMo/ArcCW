@@ -197,9 +197,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
     targint = math.min(targint, 1-math.pow( vm:GetCycle(), 2 ) )
     progress = Lerp(ftv * 15, progress, targint)
 
-    -- "This will return improper values for viewmodels if used in GM:CalcView."
-    -- Someone does not read the FUCKING WIKI
-    local angpos = self.ViewBobAngPos --vm:GetAttachment(self.ProceduralViewBobAttachment or self.MuzzleEffectAttachment or 1)
+    local angpos = vm:GetAttachment(self.ProceduralViewBobAttachment or self.MuzzleEffectAttachment or 1)
 
     if angpos and self:GetReloading() then
         mzang_fixed = vm:WorldToLocalAngles(angpos.Ang)
