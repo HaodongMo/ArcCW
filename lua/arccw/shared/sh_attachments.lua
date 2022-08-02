@@ -476,7 +476,7 @@ if SERVER then
         if wpn:GetOwner() != ply or !wpn.ArcCW then return end
 
         for k, v in SortedPairs(wpn.Attachments) do
-            local attid = net.ReadUInt(ArcCW.AttachmentBits)
+            local attid = net.ReadUInt(ArcCW.GetBitNecessity())
             v.Installed = ArcCW.AttachmentIDTable[attid]
 
             if attid == 0 then continue end
