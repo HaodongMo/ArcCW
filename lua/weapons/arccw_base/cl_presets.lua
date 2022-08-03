@@ -18,8 +18,6 @@ function SWEP:GetPresets()
 
     files = table.Add(files, file.Find(ArcCW.PresetPath .. self:GetPresetBase() .. "/*.json", "DATA"))
 
-    PrintTable(files)
-
     return files
 end
 
@@ -79,9 +77,6 @@ function SWEP:LoadPreset(presetname)
                 ToggleNum = nil, -- not implemented in legacy preset
             }
         end
-
-        PrintTable(presetTbl)
-
         f:Close()
     end
 
@@ -105,9 +100,9 @@ function SWEP:LoadPreset(presetname)
         end
 
         if ArcCW.AttachmentTable[att].ToggleStats != nil then
-            net.WriteUInt(presetTbl[k].ToggleNum, 8)
+            net.WriteUInt(presetTbl[k].ToggleNum or 1, 8)
         end
-        v.ToggleNum = presetTbl[k].ToggleNum
+        v.ToggleNum = presetTbl[k].ToggleNum or 1
 
         -- not networked
         self.SightMagnifications[k] = presetTbl[k].SightMagnifications
