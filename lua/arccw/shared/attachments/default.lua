@@ -324,6 +324,10 @@ att.Hook_NameChange = function(wep, name) end
 -- {vm = vm, eles = ae}
 att.Hook_ModifyBodygroups = function(wep, data) end
 
+-- modify the attachment however you like; only called for the particular attachment
+-- {vm = vm, element = VElement / WElement, slottbl = slottbl, wm = false/true}
+att.Hook_ModifyAttBodygroups = function(wep, data) end
+
 -- allows you to return a shotgun spread offset
 -- {n = int number, ang = angle offset}
 att.Hook_ShotgunSpreadOffset = function(wep, data) end
