@@ -105,8 +105,7 @@ function SWEP:LoadPreset(presetname)
             net.WriteFloat(presetTbl[k].SlidePos)
         end
 
-        net.WriteBool(presetTbl[k].ToggleNum)
-        if presetTbl[k].ToggleNum then
+        if ArcCW.AttachmentTable[att].ToggleStats != nil then
             net.WriteUInt(presetTbl[k].ToggleNum, 8)
         end
         v.ToggleNum = presetTbl[k].ToggleNum

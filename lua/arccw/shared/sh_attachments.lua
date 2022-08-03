@@ -496,8 +496,8 @@ if SERVER then
                 v.SlidePos = 0.5
             end
 
-            if net.ReadBool() then
-                v.ToggleNum = math.Clamp(net.ReadUInt(8), 1, #atttbl.ToggleStats or 1)
+            if atttbl.ToggleStats then
+                v.ToggleNum = math.Clamp(net.ReadUInt(8), 1, #atttbl.ToggleStats)
             else
                 v.ToggleNum = 1
             end
