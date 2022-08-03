@@ -1054,10 +1054,10 @@ function SWEP:RefreshBGs()
 
             local func = self:GetBuff_Stat("Hook_ModifyAttBodygroups", slot)
             if func and v.VElement and IsValid(v.VElement.Model) then
-                func(wep, {vm = vm, element = v.VElement, slottbl = v, wm = false})
+                func(self, {vm = vm, element = v.VElement, slottbl = v, wm = false})
             end
             if func and v.WElement and IsValid(v.WElement.Model)  then
-                func(wep, {vm = self.WMModel, element = v.WElement, slottbl = v, wm = true})
+                func(self, {vm = self.WMModel, element = v.WElement, slottbl = v, wm = true})
             end
         end
     end
