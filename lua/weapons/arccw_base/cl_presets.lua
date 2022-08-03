@@ -91,7 +91,6 @@ function SWEP:LoadPreset(presetname)
     net.WriteEntity(self)
     for k, v in pairs(self.Attachments) do
         local att = (presetTbl[k] or {}).Installed
-        print(k, att)
 
         if !att or !ArcCW.AttachmentTable[att] then
             net.WriteUInt(0, ArcCW.GetBitNecessity())
