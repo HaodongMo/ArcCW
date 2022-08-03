@@ -370,9 +370,13 @@ L["ui.hitgroup.arms"] = "Arms"
 L["ui.hitgroup.legs"] = "Legs"
 L["ui.nonum"] = "You need bullets to kill people, silly." -- num is 0
 
---2022-05-23
+-- 2022-05-23
 L["fcg.nade"] = "Grenade"
 L["fcg.nade.abbrev"] = "NADE"
+
+-- 2022-08-03
+L["attslot.magazine"] = "Magazine"
+L["attslot.magazine.default"] = "Standard Magazine"
 
 
 --[[]

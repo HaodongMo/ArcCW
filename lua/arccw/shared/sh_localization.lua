@@ -66,6 +66,7 @@ ArcCW.StringToLang = {
     ["standard stock"] = "attslot.stock.default",
     ["no stock"] = "attslot.stock.none",
     ["standard fcg"] = "attslot.fcg.default",
+    ["standard magazine"] = "attslot.magazine.default",
 }
 
 -- Helper function for getting the overwrite or default language
