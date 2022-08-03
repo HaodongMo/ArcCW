@@ -482,8 +482,15 @@ if SERVER then
 
             if attid == 0 then continue end
 
+            local atttbl = ArcCW.AttachmentTable[v.Installed]
+
             if net.ReadBool() then
                 v.SlidePos = net.ReadFloat()
+                v.SlidePos = atttbl.MountPositionOverride or v.SlidePos
+            end
+
+            if atttbl.ToggleStats then
+                v.ToggleNum = 1
             end
         end
 
