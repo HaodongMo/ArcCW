@@ -475,21 +475,30 @@ if SERVER then
 
         if wpn:GetOwner() != ply or !wpn.ArcCW then return end
 
+        for k, v in pairs(wpn.Attachments) do
+            wpn:Detach(k, true, true)
+        end
+
         wpn.Attachments.BaseClass = nil -- AGHHHHHHHHHH
         for k, v in SortedPairs(wpn.Attachments) do
             local attid = net.ReadUInt(ArcCW.GetBitNecessity())
-            v.Installed = ArcCW.AttachmentIDTable[attid]
 
-            if attid == 0 then continue end
+            local attname = ArcCW.AttachmentIDTable[attid or 0] or ""
+            local atttbl = ArcCW.AttachmentTable[attname]
+            if !atttbl then continue end
 
-            local atttbl = ArcCW.AttachmentTable[v.Installed]
+            wpn:Attach(k, attname, true, true)
 
             if net.ReadBool() then
                 v.SlidePos = net.ReadFloat()
                 v.SlidePos = atttbl.MountPositionOverride or v.SlidePos
+            else
+                v.SlidePos = 0.5
             end
 
-            if atttbl.ToggleStats then
+            if net.ReadBool() then
+                v.ToggleNum = math.Clamp(net.ReadUInt(8), 1, #atttbl.ToggleStats or 1)
+            else
                 v.ToggleNum = 1
             end
         end

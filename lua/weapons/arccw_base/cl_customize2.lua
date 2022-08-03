@@ -845,10 +845,11 @@ function SWEP:CreateCustomize2HUD()
         preset = self:GetPresets()
 
         for i, k in pairs(preset) do
-            if k == "autosave.txt" then continue end
+            if string.StripExtension(k) == "autosave" then continue end
             local load_btn = vgui.Create("DButton", presetpanel)
             load_btn:SetText("")
-            load_btn.PresetName = string.sub(k, 1, -5)
+            load_btn.PresetName = string.StripExtension(k)
+            load_btn.PresetFile = k
             load_btn:SetSize(menu1_w, smallbuttonheight)
             load_btn:DockMargin(0, smallgap, 0, 0)
             load_btn:Dock(TOP)
@@ -857,8 +858,7 @@ function SWEP:CreateCustomize2HUD()
                     self.LastPresetName = self2.PresetName
                     self:LoadPreset(self2.PresetName)
                 else
-                    local filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. self2.PresetName .. ".txt"
-                    file.Delete(filename)
+                    file.Delete(ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. self2.PresetFile)
                     self2:Remove()
                     surface.PlaySound("weapons/arccw/uninstall.wav")
                 end

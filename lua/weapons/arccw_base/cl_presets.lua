@@ -16,73 +16,103 @@ function SWEP:GetPresets()
 
     local files = file.Find(path, "DATA")
 
+    files = table.Add(files, file.Find(ArcCW.PresetPath .. self:GetPresetBase() .. "/*.json", "DATA"))
+
+    PrintTable(files)
+
     return files
 end
 
-function SWEP:LoadPreset(filename)
-    filename = filename or "autosave"
-    if filename == "autosave" then
+function SWEP:LoadPreset(presetname)
+    presetname = presetname or "autosave"
+    if presetname == "autosave" then
         if self:GetNWBool("ArcCW_DisableAutosave", false) then return end
         if !GetConVar("arccw_autosave"):GetBool() then return end
     end
 
-    if filename != "autosave" then
+    if presetname != "autosave" then
         surface.PlaySound("weapons/arccw/install.wav")
-    end
-
-    filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. filename .. ".txt"
-
-    if !file.Exists(filename, "DATA") then return end
-
-    local f = file.Open(filename, "r", "DATA")
-    if !f then return end
-
-    local presetTbl = {}
-
-    -- Pre-check all preset attachmnts and ensure we own them
-    for i = 1, table.Count(self.Attachments) do
-        local line = f:ReadLine()
-        if !line then continue end
-        presetTbl[i] = string.Trim(line, "\n")
-        -- Do not attempt to recreate a preset if it's not possible
-        --if ArcCW:PlayerGetAtts(self:GetOwner(), presetTbl[i]) == 0 then return end
     end
 
     -- ???
     self.Attachments.BaseClass = nil
 
+    local presetTbl
+
+
+    -- New behavior
+    local filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. presetname .. ".json"
+    if file.Exists(filename, "DATA") then
+        presetTbl = util.JSONToTable(file.Read(filename))
+        if presetTbl and presetTbl != {} then
+            for i = 1, table.Count(self.Attachments) do
+                local ok = true
+
+                if !presetTbl[i] or !ArcCW.AttachmentTable[presetTbl[i].Installed or ""] then
+                    ok = false
+                end
+
+                if !ok then
+                    presetTbl[i] = nil
+                end
+            end
+        end
+    end
+
+    -- Legacy behavior
+    filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. presetname .. ".txt"
+    if presetTbl == nil and file.Exists(filename, "DATA") then
+        local f = file.Open(filename, "r", "DATA")
+        if !f then return end
+
+        presetTbl = {}
+
+        for i = 1, table.Count(self.Attachments) do
+            local line = f:ReadLine()
+            if !line then continue end
+            local split = string.Split(string.Trim(line, "\n"), ",")
+            if !ArcCW.AttachmentTable[split[1]] then continue end
+            presetTbl[i] = {
+                Installed = split[1],
+                SlidePos = split[2] and tonumber(split[2]),
+                SightMagnifications = split[3] and tonumber(split[3]),
+                ToggleNum = nil, -- not implemented in legacy preset
+            }
+        end
+
+        PrintTable(presetTbl)
+
+        f:Close()
+    end
+
+    if !presetTbl then return end
+
     net.Start("arccw_applypreset")
     net.WriteEntity(self)
     for k, v in pairs(self.Attachments) do
-        local att = presetTbl[k]
+        local att = (presetTbl[k] or {}).Installed
+        print(k, att)
 
-        local split = att and string.Split(att, ",")
-        local sc = table.Count(split or {})
-
-        local slidepos = 0.5
-        local mag = -1
-
-        if att and sc == 3 then
-            att = split[1]
-            slidepos = tonumber(split[2])
-            mag = tonumber(split[3])
-        end
-
-        if !ArcCW.AttachmentTable[att] then
+        if !att or !ArcCW.AttachmentTable[att] then
             net.WriteUInt(0, ArcCW.GetBitNecessity())
             continue
         end
 
         net.WriteUInt(ArcCW.AttachmentTable[att].ID, ArcCW.GetBitNecessity())
-        net.WriteBool(slidepos != 0.5)
 
-        if slidepos != 0.5 then
-            net.WriteFloat(slidepos)
+        net.WriteBool(presetTbl[k].SlidePos)
+        if presetTbl[k].SlidePos then
+            net.WriteFloat(presetTbl[k].SlidePos)
         end
 
-        if mag != -1 then
-            self.SightMagnifications[k] = mag
+        net.WriteBool(presetTbl[k].ToggleNum)
+        if presetTbl[k].ToggleNum then
+            net.WriteUInt(presetTbl[k].ToggleNum, 8)
         end
+        v.ToggleNum = presetTbl[k].ToggleNum
+
+        -- not networked
+        self.SightMagnifications[k] = presetTbl[k].SightMagnifications
     end
     net.SendToServer()
 
@@ -132,14 +162,35 @@ function SWEP:LoadPreset(filename)
 
     self:SavePreset()
     ]]
-
-    f:Close()
 end
 
-function SWEP:SavePreset(filename)
-    filename = filename or "autosave"
-    if filename == "autosave" and !GetConVar("arccw_attinv_free"):GetBool() then return end
+function SWEP:SavePreset(presetname)
+    presetname = presetname or "autosave"
+    if presetname == "autosave" and !GetConVar("arccw_attinv_free"):GetBool() then return end
 
+    local presetTbl = {}
+    for i, k in pairs(self.Attachments) do
+        if k.Installed then
+            presetTbl[i] = {
+                Installed = k.Installed,
+                SlidePos = k.SlidePos,
+                SightMagnifications = self.SightMagnifications[i],
+                ToggleNum = k.ToggleNum
+            }
+        end
+    end
+
+    filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. presetname .. ".json"
+    file.CreateDir(ArcCW.PresetPath .. self:GetPresetBase())
+    file.Write(filename, util.TableToJSON(presetTbl))
+
+    local legacy_filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. presetname .. ".txt"
+    if file.Exists(legacy_filename, "DATA") then
+        file.Delete(legacy_filename)
+    end
+
+    -- Legacy presets
+    --[[]
     local str = ""
     for i, k in pairs(self.Attachments) do
         if k.Installed then
@@ -156,6 +207,7 @@ function SWEP:SavePreset(filename)
 
     file.CreateDir(ArcCW.PresetPath .. self:GetPresetBase())
     file.Write(filename, str)
+    ]]
 end
 
 function SWEP:CreatePresetSave()
@@ -320,14 +372,15 @@ function SWEP:CreatePresetMenu()
     local c = 0
 
     for i, k in pairs(self:GetPresets()) do
-        if k == "autosave.txt" then continue end
+        if string.StripExtension(k) == "autosave" then continue end
         local preset = vgui.Create("DButton", presetsmenu)
         preset:SetSize(ScreenScaleMulti(254), ScreenScaleMulti(14))
         preset:SetText("")
         preset:Dock(TOP)
         preset:DockMargin( 0, 0, 0, ScreenScaleMulti(2) )
 
-        preset.PresetName = string.sub(k, 1, -5)
+        preset.PresetName = string.StripExtension(k) --string.sub(k, 1, -5)
+        preset.PresetFile = k
 
         preset.OnMousePressed = function(spaa, kc)
             self.LastPresetName = spaa.PresetName
@@ -361,7 +414,7 @@ function SWEP:CreatePresetMenu()
         close:Dock(RIGHT)
 
         close.OnMousePressed = function(spaa, kc)
-            local filename = ArcCW.PresetPath .. self:GetPresetBase() .. "/" .. k
+            local filename = spaa.PresetFile
             file.Delete(filename)
             preset:Remove()
         end
