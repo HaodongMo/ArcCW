@@ -89,16 +89,18 @@ function SWEP:GetHUDData()
         data.ammo = "-"
     end
 
-    if self:GetInUBGL() then
-        data.clip = self:Clip2()
-        local ubglammo = self:GetBuff_Override("UBGL_Ammo")
+    if self:GetBuff_Override("UBGL") then
+        data.clip2 = self:Clip2()
 
+        local ubglammo = self:GetBuff_Override("UBGL_Ammo")
         if ubglammo then
-            data.ammo = tostring(self:GetOwner():GetAmmoCount(ubglammo))
+            data.ammo2 = tostring(self:GetOwner():GetAmmoCount(ubglammo))
         end
 
-        data.plus = nil
-    else
+        data.plus2 = nil
+    end
+
+    do
         if infammo then
             data.ammo = btmless and data.ammo or "-"
             data.clip = self.Throwing and "∞" or data.clip
