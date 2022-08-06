@@ -172,13 +172,16 @@ local function RangeText(range)
     return metres, hu
 end
 
+local shot_limit = 12
+local max_shots = 8
+
 local function shotstokill(mult, dmgmin, dmgmax, mran, sran)
 
     -- for i, return range where i * damage == 100
     -- return -1 if can't kill with i shots, math.huge if can kill at any range
     local result = {}
 
-    for i = 1, 7 do
+    for i = 1, shot_limit do
         local req_damage = math.ceil(100 / mult / i) -- target damage to kill in i shots
         if req_damage > dmgmin and req_damage > dmgmax then
             -- cannot reach target damage ever
@@ -2123,7 +2126,7 @@ function SWEP:CreateCustomize2HUD()
             end
         end
 
-        local stk_min, stk_max, stk_count = 1, 7, 7
+        local stk_min, stk_max, stk_count = 1, shot_limit, shot_limit
         local stk_num = self:GetBuff("Num")
 
         local rangegraph = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
@@ -2209,10 +2212,13 @@ function SWEP:CreateCustomize2HUD()
                     local m_legs = math.min((our[HITGROUP_LEFTLEG] or 1) / (gam[HITGROUP_LEFTLEG] or 1), (our[HITGROUP_RIGHTLEG] or 1) / (gam[HITGROUP_RIGHTLEG] or 1))
                     table.insert(self.Infos_Breakpoints, {"ui.hitgroup.legs", shotstokill(m_legs, dmgmin, dmgmax, mran, sran)})
 
+                    stk_num = self:GetBuff("Num")
+                    local max = max_shots * (stk_num > 1 and 0.5 or 1)
+
                     -- Trim table values that are all -1 or math.huge on either end
-                    stk_min, stk_max = 1, 7
+                    stk_min, stk_max = 1, 1 + max_shots
                     local stk_min_n, stk_min_y = true, true
-                    for i = 1, 7 do
+                    for i = 1, shot_limit do
                         if stk_min_y or stk_min_n then
                             stk_min = i
                         else
@@ -2224,12 +2230,15 @@ function SWEP:CreateCustomize2HUD()
                             elseif stk_min_y and self.Infos_Breakpoints[j][2][i] != math.huge then
                                 stk_min_y = false
                             end
-                            if !stk_min_y and !stk_min_n then break end
+                            if !stk_min_y and !stk_min_n then
+                                stk_min = math.Clamp(shot_limit, 1, math.max(1, i - 1))
+                                break
+                            end
                         end
                     end
 
                     local stk_max_n, stk_max_y = true, true
-                    for i = 7, 1, -1 do
+                    for i = shot_limit, 1, -1 do
                         if stk_max_y or stk_max_n then
                             stk_max = i
                         else
@@ -2241,16 +2250,23 @@ function SWEP:CreateCustomize2HUD()
                             elseif stk_max_y and self.Infos_Breakpoints[j][2][i] != math.huge then
                                 stk_max_y = false
                             end
-                            if !stk_max_y and !stk_max_n then break end
+                            if !stk_max_y and !stk_max_n then
+                                stk_max = math.Clamp(i + 1, 1, shot_limit)
+                                break
+                            end
                         end
                     end
 
                     stk_count = stk_max - stk_min + 1
-                    stk_num = self:GetBuff("Num")
+                    if stk_count > max then
+                        stk_max = stk_min + max - 1
+                        stk_count = max
+                    end
 
-                    --print(dmgmax .. "-" .. dmgmin .. "DMG; range " .. mran .. "/" .. sran)
-                    --print("table size: " .. stk_min .. "-" .. stk_max)
-                    --PrintTable(self.Infos_Breakpoints)
+
+                    print(dmgmax .. "-" .. dmgmin .. "DMG; range " .. mran .. "/" .. sran)
+                    print("table range: " .. stk_min .. " - " .. stk_max .. " (" .. stk_count .. ")")
+                    PrintTable(self.Infos_Breakpoints)
                 end
 
                 local header_w = ss * 48
