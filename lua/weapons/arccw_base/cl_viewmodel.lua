@@ -666,6 +666,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local r = affset.r
         affset.r = affset.p
         affset.p = -r
+        affset.y = -affset.y
 
         local anchor = self.Attachments[gbslot].VMOffsetPos
 
