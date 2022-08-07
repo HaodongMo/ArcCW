@@ -590,45 +590,46 @@ function SWEP:SetupModel(wm)
 
         -- These shouldn't be created in WM.
         -- These shouldn't be created in WM.
+        -- BUT THEY ARE!!
         if atttbl.LHIK_GunDriver or atttbl.LHIK_CamDriver then
-			local godmodel = ClientsideModel(atttbl.Model)
-	
-			local godelement = {}
-			godmodel:SetNoDraw(false)
-			godmodel:DrawShadow(false)
-			godmodel:SetPredictable(false)
-			godmodel.Weapon = self
-	
-			godelement.Model = godmodel
-	
-			godelement.WM = wm or false
-			godelement.NoDraw = true
-			godelement.BoneMerge = false
-			godelement.Slot = i
-			if !wm then
-				k.GodDriver = godelement
-			end
-			table.insert(elements, godelement)
+            local godmodel = ClientsideModel(atttbl.Model)
+    
+            local godelement = {}
+            godmodel:SetNoDraw(true)
+            godmodel:DrawShadow(false)
+            godmodel:SetPredictable(false)
+            godmodel.Weapon = self
+    
+            godelement.Model = godmodel
+    
+            godelement.WM = wm or false
+            godelement.NoDraw = true
+            godelement.BoneMerge = false
+            godelement.Slot = i
+            if !wm then
+                k.GodDriver = godelement
+            end
+            table.insert(elements, godelement)
         end
 
         if atttbl.LHIK_GunDriver then
-			local reflectmodel = ClientsideModel(self.ViewModel)
-	
-			local reflectelement = {}
-			reflectmodel:SetNoDraw(false)
-			reflectmodel:DrawShadow(false)
-			reflectmodel:SetPredictable(false)
-			reflectmodel.Weapon = self
-	
-			reflectelement.Model = reflectmodel
-	
-			reflectelement.WM = wm or false
-			reflectelement.NoDraw = true
-			reflectelement.Slot = i
-			if !wm then
-				k.ReflectDriver = reflectelement
-			end
-			table.insert(elements, reflectelement)
+            local reflectmodel = ClientsideModel(self.ViewModel)
+    
+            local reflectelement = {}
+            reflectmodel:SetNoDraw(true)
+            reflectmodel:DrawShadow(false)
+            reflectmodel:SetPredictable(false)
+            reflectmodel.Weapon = self
+    
+            reflectelement.Model = reflectmodel
+    
+            reflectelement.WM = wm or false
+            reflectelement.NoDraw = true
+            reflectelement.Slot = i
+            if !wm then
+                k.ReflectDriver = reflectelement
+            end
+            table.insert(elements, reflectelement)
         end
     end
 
