@@ -607,6 +607,7 @@ function SWEP:SetupModel(wm)
             godelement.BoneMerge = false
             godelement.Slot = i
             if !wm then
+                -- godmodel:SetNoDraw(false)
                 k.GodDriver = godelement
             end
             table.insert(elements, godelement)
@@ -627,6 +628,7 @@ function SWEP:SetupModel(wm)
             reflectelement.NoDraw = true
             reflectelement.Slot = i
             if !wm then
+                -- reflectmodel:SetNoDraw(false)
                 k.ReflectDriver = reflectelement
             end
             table.insert(elements, reflectelement)
