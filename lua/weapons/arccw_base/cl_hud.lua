@@ -57,6 +57,9 @@ local vhp = 0
 local varmor = 0
 local vclip = 0
 local vreserve = 0
+local vclip2 = 0
+local vreserve2 = 0
+local vubgl = 0
 local lastwpn = ""
 local lastinfo = {ammo = 0, clip = 0, firemode = "", plus = 0}
 local lastinfotime = 0
@@ -68,6 +71,7 @@ function SWEP:GetHUDData()
         bars = self:GetFiremodeBars(),
         mode = self:GetFiremodeName(),
         ammotype = self.Primary.Ammo,
+        ammotype2 = self.Secondary.Ammo,
         heat_enabled        = self:HeatEnabled(),
         heat_name           = translate("ui.heat"),
         heat_level          = self:GetHeat(),
@@ -81,6 +85,8 @@ function SWEP:GetHUDData()
     end
 
     local infammo, btmless = self:HasInfiniteAmmo(), self:HasBottomlessClip()
+    data.infammo = infammo
+    data.btmless = btmless
 
     if self.PrimaryBash or self:Clip1() == -1 or self:GetCapacity() == 0 or self.Primary.ClipSize == -1 then
         data.clip = "-"
@@ -90,14 +96,17 @@ function SWEP:GetHUDData()
     end
 
     if self:GetBuff_Override("UBGL") then
-        data.clip2 = self:Clip2()
+        data.clip2 = math.Round(vclip2 or self:Clip2())
 
         local ubglammo = self:GetBuff_Override("UBGL_Ammo")
         if ubglammo then
-            data.ammo2 = tostring(self:GetOwner():GetAmmoCount(ubglammo))
+            data.ammo2 = tostring(math.Round(vreserve2 or self:GetOwner():GetAmmoCount(ubglammo)))
         end
 
-        data.plus2 = nil
+        if data.clip2 > self:GetBuff_Override("UBGL_Capacity") then
+            data.plus2 = (data.clip2 - self:GetBuff_Override("UBGL_Capacity"))
+            data.clip2 = self:GetBuff_Override("UBGL_Capacity")
+        end
     end
 
     do
@@ -132,6 +141,7 @@ local t_states = {
 
 local mr = math.Round
 local bird = Material("arccw/hud/really cool bird.png", "mips smooth")
+local statlocked = Material("arccw/hud/locked_32.png", "mips smooth")
 
 local bar_fill = Material("arccw/hud/fmbar_filled.png",           "mips smooth")
 local bar_outl = Material("arccw/hud/fmbar_outlined.png",         "mips smooth")
@@ -377,6 +387,9 @@ function SWEP:DrawHUD()
             ammo = data.ammo,
             clip = data.clip,
             plus = data.plus or "0", -- data.plus is nil when it doesnt exist
+            ammo2 = data.ammo2,
+            clip2 = data.clip2,
+            plus2 = data.plus2 or "0", -- data.plus is nil when it doesnt exist
             ammotype = data.ammotype,
             firemode = data.mode,
             heat = data.heat_level,
@@ -387,6 +400,8 @@ function SWEP:DrawHUD()
         if GetConVar("arccw_hud_3dfun_lite"):GetBool() then
             curInfo.clip = nil
             curInfo.plus = nil
+            curInfo.clip2 = nil
+            curInfo.plus2 = nil
             curInfo.heat = nil
         end
         for i, v in pairs(curInfo) do
@@ -397,7 +412,6 @@ function SWEP:DrawHUD()
             end
         end
         local qss = ScreenScaleMulti(24)
-        local items = 0
         local correct_y = 28
         local correct_x = 0
         if !GetConVar("arccw_hud_3dfun"):GetBool() then
@@ -460,26 +474,11 @@ function SWEP:DrawHUD()
                 apan_bg.y = apan_bg.y + ScreenScaleMulti(6)
             end
 
-            if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() and isstring(data.ammotype) then
-                local wammotype = {
-                    x = apan_bg.x + apan_bg.w - airgap,
-                    y = apan_bg.y - ScreenScaleMulti(10),
-                    text = language.GetPhrase(data.ammotype .. "_ammo"),
-                    font = "ArcCW_8",
-                    col = col2,
-                    align = 1,
-                    shadow = true,
-                    alpha = alpha,
-                }
-                if !GetConVar("arccw_hud_3dfun"):GetBool() and data.heat_enabled then
-                    wammotype.y = apan_bg.y - ScreenScaleMulti(16 + 4)
-                end
-                MyDrawText(wammotype)
-            end
-
+            local corny = 22 * math.ease.OutSine(math.sin(vubgl * math.pi)) * (self:GetInUBGL() and -1 or 1)
+            local ngap = 22 * vubgl
             local wammo = {
-                x = apan_bg.x + apan_bg.w - airgap,
-                y = apan_bg.y - ScreenScaleMulti(4),
+                x = apan_bg.x + apan_bg.w - airgap + ScreenScaleMulti(corny),
+                y = apan_bg.y - ScreenScaleMulti(4) - ScreenScaleMulti(ngap),
                 text = tostring(data.clip),
                 font = "ArcCW_26",
                 col = col2,
@@ -496,9 +495,9 @@ function SWEP:DrawHUD()
 
             if tostring(data.clip) != "-" then
                 MyDrawText(wammo)
+                wammo.w, wammo.h = surface.GetTextSize(wammo.text)
             end
             surface.SetFont("ArcCW_26")
-            wammo.w, wammo.h = surface.GetTextSize(wammo.text)
 
             if data.plus and !self:HasBottomlessClip() then
                 local wplus = {
@@ -514,11 +513,104 @@ function SWEP:DrawHUD()
                 MyDrawText(wplus)
             end
 
+            local wreserve = {
+                x = wammo.x - wammo.w - ScreenScaleMulti(4),
+                y = apan_bg.y + ScreenScaleMulti(10) - ScreenScaleMulti(ngap),
+                text = tostring(data.ammo) .. " /",
+                font = "ArcCW_12",
+                col = col2,
+                align = 1,
+                yalign = 2,
+                shadow = true,
+                alpha = alpha,
+            }
+
+            if tonumber(data.ammo) and tonumber(data.clip) and tonumber(data.clip) >= self:GetCapacity() then
+                wreserve.text = tostring(data.ammo) .. " |"
+            end
+
+            if self:GetPrimaryAmmoType() <= 0 then
+                wreserve.text = "!"
+            end
+
+            if self.PrimaryBash then
+                wreserve.text = ""
+            end
+
+            local drew = false
             if tostring(data.ammo) != "-" then
+                drew = true
+                MyDrawText(wreserve)
+                surface.SetFont("ArcCW_12")
+                wreserve.w, wreserve.h = surface.GetTextSize(wreserve.text)
+            end
+
+            if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() and isstring(data.ammotype) then
+                local wammotype = {
+                    x = wammo.x - wammo.w - ScreenScaleMulti(3),
+                    y = wammo.y + (wammo.h/2),
+                    text = language.GetPhrase(data.ammotype .. "_ammo"),
+                    font = "ArcCW_8",
+                    col = col2,
+                    align = 1,
+                    yalign = 2,
+                    shadow = true,
+                    alpha = alpha,
+                }
+
+                if drew then
+                    wammotype.x = wreserve.x - wreserve.w - ScreenScaleMulti(3)
+                    wammotype.y = wreserve.y-- + (wreserve.h/2)
+                end
+
+                MyDrawText(wammotype)
+            end
+
+            --ubgl
+            if self:GetBuff_Override("UBGL") then
+                local ugap = 22 * (1-vubgl)
+    
+                local wammo = {
+                    x = apan_bg.x + apan_bg.w - airgap + ScreenScaleMulti(corny*-1),
+                    y = apan_bg.y - ScreenScaleMulti(4) - ScreenScaleMulti(ugap),
+                    text = tostring(data.clip2),
+                    font = "ArcCW_26",
+                    col = col2,
+                    align = 1,
+                    shadow = true,
+                    alpha = alpha,
+                }
+    
+                wammo.col = col2
+    
+                if data.clip2 == 0 then
+                    wammo.col = col3
+                end
+    
+                if tostring(data.clip2) != "-" then
+                    MyDrawText(wammo)
+                end
+                surface.SetFont("ArcCW_26")
+                wammo.w, wammo.h = surface.GetTextSize(wammo.text)
+    
+                if data.plus2 and !self:HasBottomlessClip() then
+                    local wplus = {
+                        x = wammo.x,
+                        y = wammo.y,
+                        text = "+" .. tostring(data.plus2),
+                        font = "ArcCW_16",
+                        col = col2,
+                        shadow = true,
+                        alpha = alpha,
+                    }
+    
+                    MyDrawText(wplus)
+                end
+    
                 local wreserve = {
                     x = wammo.x - wammo.w - ScreenScaleMulti(4),
-                    y = apan_bg.y + ScreenScaleMulti(10),
-                    text = tostring(data.ammo) .. " /",
+                    y = apan_bg.y + ScreenScaleMulti(10) - ScreenScaleMulti(ugap),
+                    text = tostring(data.ammo2) .. " /",
                     font = "ArcCW_12",
                     col = col2,
                     align = 1,
@@ -527,25 +619,47 @@ function SWEP:DrawHUD()
                     alpha = alpha,
                 }
 
-                if tonumber(data.ammo) and tonumber(data.clip) and tonumber(data.clip) >= self:GetCapacity() and !self:GetInUBGL() then
-                    wreserve.text = tostring(data.ammo) .. " |"
+                if tonumber(data.ammo2) and tonumber(data.clip2) and tonumber(data.clip2) >= self:GetBuff_Override("UBGL_Capacity") then
+                    wreserve.text = tostring(data.ammo2) .. " |"
                 end
 
-                if self:GetPrimaryAmmoType() <= 0 then
+                if self:GetSecondaryAmmoType() <= 0 then
                     wreserve.text = "!"
                 end
 
-                if self.PrimaryBash then
-                    wreserve.text = ""
+                local drew = false
+                if tostring(data.ammo2) != "-" then
+                    drew = true
+                    MyDrawText(wreserve)
+                    surface.SetFont("ArcCW_12")
+                    wreserve.w, wreserve.h = surface.GetTextSize(wreserve.text)
                 end
 
-                MyDrawText(wreserve)
-                wreserve.w, wreserve.h = surface.GetTextSize(wreserve.text)
+                if GetConVar("arccw_hud_3dfun_ammotype"):GetBool() and isstring(data.ammotype) then
+                    local wammotype = {
+                        x = wammo.x - wammo.w - ScreenScaleMulti(3),
+                        y = wammo.y + (wammo.h/2),
+                        text = language.GetPhrase(data.ammotype2 .. "_ammo"),
+                        font = "ArcCW_8",
+                        col = col2,
+                        align = 1,
+                        yalign = 2,
+                        shadow = true,
+                        alpha = alpha,
+                    }
+    
+                    if drew then
+                        wammotype.x = wreserve.x - wreserve.w - ScreenScaleMulti(3)
+                        wammotype.y = wreserve.y
+                    end
+    
+                    MyDrawText(wammotype)
+                end
             end
 
             local wmode = {
                 x = apan_bg.x + apan_bg.w - airgap,
-                y = wammo.y + wammo.h + ScreenScaleMulti(6),
+                y = apan_bg.y + ScreenScaleMulti(28),
                 font = "ArcCW_12",
                 text = data.mode,
                 col = col2,
@@ -623,23 +737,6 @@ function SWEP:DrawHUD()
 
                 MyDrawText(wheat)
             end
-            if self:GetInUBGL() then
-                local size = ScreenScaleMulti(32)
-                local awesomematerial = self:GetBuff_Override("UBGL_Icon", ubgl_mat)
-                local whatsthecolor = self:GetInUBGL() and  Color(255, 255, 255, alpha) or
-                                                    Color(255, 255, 255, 0)
-                local bar = {
-                    w = size,
-                    h = size,
-                    x = apan_bg.x + apan_bg.w - airgap + ScreenScaleMulti(0 + correct_x) - size + qss * items,
-                    y = wmode.y + ScreenScaleMulti(correct_y),
-                }
-                surface.SetDrawColor( whatsthecolor )
-                surface.SetMaterial( awesomematerial )
-                surface.DrawTexturedRect( bar.x, bar.y, bar.w, bar.h )
-                items = items + 1
-            end
-
             if self:CanBipod() or self:GetInBipod() then
                 local size = ScreenScaleMulti(32)
                 local awesomematerial = self:GetBuff_Override("Bipod_Icon", bipod_mat)
@@ -648,8 +745,8 @@ function SWEP:DrawHUD()
                 local bar = {
                     w = size,
                     h = size,
-                    x = apan_bg.x + apan_bg.w - airgap - ScreenScaleMulti(32 + correct_x) + qss * items,
-                    y = wmode.y + ScreenScaleMulti(correct_y),
+                    x = (ScrW()/2) - (size/2),
+                    y = ScrH() - CopeY() - ScreenScaleMulti(40),
                 }
                 surface.SetDrawColor( whatsthecolor )
                 surface.SetMaterial( awesomematerial )
@@ -659,8 +756,9 @@ function SWEP:DrawHUD()
 
                 local bip = {
                     shadow = true,
-                    x = apan_bg.x + apan_bg.w - airgap - ScreenScaleMulti(32 + correct_x) + qss * items,
-                    y = wmode.y + ScreenScaleMulti(correct_y),
+                    x = bar.x + (bar.w/2),
+                    y = bar.y - ScreenScaleMulti(12),
+                    align = 2,
                     font = "ArcCW_12",
                     text = txt,
                     col = whatsthecolor,
@@ -668,7 +766,94 @@ function SWEP:DrawHUD()
                 }
 
                 MyDrawText(bip)
-                items = items + 1
+            end
+
+            if false then
+            local items = {
+            }
+            --[[
+            {
+                Icon = "",
+                Locked = false,
+                Selected = 1,
+                Toggles = {
+                    [1] = "",
+                    [2] = "",
+                    [3] = "",
+                }
+            }
+            ]]
+            
+            for k, v in pairs(wep.Attachments) do
+                local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
+                if atttbl and atttbl.ToggleStats then-- and !v.ToggleLock then
+                    --print(atttbl.PrintName)
+                    local item = {
+                        Icon = atttbl.Icon,
+                        Locked = v.ToggleLock,
+                        Selected = v.ToggleNum,
+                        Toggles = {}
+                    }
+                    for i, h in ipairs(atttbl.ToggleStats) do
+                        table.insert(item.Toggles, h.PrintName)
+                        --print("\t" .. (v.ToggleNum == i and "> " or "") .. atttbl.ToggleStats[i].PrintName .. (v.ToggleNum == i and " <" or ""))
+                    end
+                    table.insert(items, item)
+                end
+            end
+
+            for i=1, 0 do
+                table.insert(items, {
+                    Icon = Material("Test"),
+                    Locked = false,
+                    Selected = i,
+                    Toggles = {
+                        "Test",
+                        "Test",
+                        "Test",
+                        "Test",
+                        "Test",
+                    }
+                })
+            end
+
+            do
+                local size = ScreenScaleMulti(28)
+                local lock = ScreenScaleMulti(7)
+                local shiit = 1.5
+                local gaap = ScreenScaleMulti(7) -- 32 / 8
+                if #items == 1 then
+                    gaap = 0
+                    shiit = 1
+                end
+                for index, item in ipairs(items) do
+                    surface.SetMaterial(item.Icon)
+                    surface.SetDrawColor(color_white)
+
+                    local px, py = (ScrW()/2) - ((size*shiit)*(index-(#items*0.5))) + gaap, (ScrH()-CopeY()-(size*1.25))
+                    surface.DrawTexturedRect(px, py, size, size)
+
+                    if item.Locked then
+                        surface.SetMaterial(statlocked)
+                        surface.DrawTexturedRect(px + (size/2) - (lock/2), py + size - (lock/2), lock, lock)
+                    end
+
+                    for tdex, tinfo in ipairs(item.Toggles) do
+                        local infor = {
+                            x = px + (size*0.5),
+                            y = py - (#item.Toggles * ScreenScaleMulti(8)) + (tdex * ScreenScaleMulti(8)),
+                            font = "ArcCW_8",
+                            text = tinfo,
+                            col = col2,
+                            align = 2,
+                            yalign = 1,
+                            shadow = true,
+                            alpha = alpha * (tdex == item.Selected and 1 or 0.25),
+                        }
+                        MyDrawText(infor)
+                    end
+                end
+            end
             end
 
             if fmbars then
@@ -932,9 +1117,28 @@ function SWEP:DrawHUD()
     vclip = math.Approach(vclip, self:Clip1(), FrameTime() * 30 * clipdiff)
     vreserve = math.Approach(vreserve, self:Ammo1(), FrameTime() * 30 * reservediff)
 
+    do
+        local clipdiff = math.abs(vclip2 - self:Clip2())
+        local reservediff = math.abs(vreserve2 - self:Ammo2())
+
+        if clipdiff == 1 then
+            vclip2 = self:Clip2()
+        elseif self:Clip2() == ArcCW.BottomlessMagicNumber then
+            clipdiff = 0
+        end
+
+        vclip2 = math.Approach(vclip2, self:Clip2(), FrameTime() * 30 * clipdiff)
+        vreserve2 = math.Approach(vreserve2, self:Ammo2(), FrameTime() * 30 * reservediff)
+    end
+
+    vubgl = math.Approach(vubgl, (self:GetInUBGL() and 1 or 0), (FrameTime() / 0.3) )
+
     if lastwpn != self then
         vclip = self:Clip1()
         vreserve = self:Ammo1()
+        vclip2 = self:Clip2()
+        vreserve2 = self:Ammo2()
+        vubgl = 0
         vhp = self:GetOwner():Health()
         varmor = self:GetOwner():Armor()
     end
