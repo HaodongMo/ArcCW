@@ -169,7 +169,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     local delta = math.abs(self.StepBob * 2 / stepend - 1)
     local FT = scrunkly() --FrameTime()
     local sightedmult = (state == ArcCW.STATE_SIGHTS and 0.25) or 1
-    local sprintmult = (state == ArcCW.STATE_SPRINT and 2) or 1
+    local sprintmult = (state == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint() and 2) or 1
     local pronemult = (self:IsProne() and 10) or 1
     local onground = self:GetOwner():OnGround()
     self.StepBob = self.StepBob + (velocity * 0.00015 + (math.pow(delta, 0.01) * 0.03)) * swayspeed * FT * 300
@@ -187,7 +187,7 @@ function SWEP:Step_Process(EyePos, EyeAng, velocity)
     if onground then
         -- oh no it says sex tra
         local sextra = vector_origin
-        if (state == ArcCW.STATE_SPRINT and !self:SelectAnimation("idle_sprint")) or true then
+        if (state == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint() and !self:SelectAnimation("idle_sprint")) or true then
             sextra = LerpVector(sprd, vector_origin, sextra_vec)
         end
 
@@ -318,12 +318,12 @@ function SWEP:GetViewModelPosition(pos, ang)
     local sgtd = self:GetSightDelta()
     local sprd = self:GetSprintDelta()
 
-    local sprinted = self.Sprinted or state == ArcCW.STATE_SPRINT
+    local sprinted = self.Sprinted or state == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint()
     local sighted = self.Sighted or state == ArcCW.STATE_SIGHTS
     local holstered = self:GetCurrentFiremode().Mode == 0
 
     if game.SinglePlayer() then
-        sprinted = state == ArcCW.STATE_SPRINT
+        sprinted = state == ArcCW.STATE_SPRINT and !self:CanShootWhileSprint()
         sighted = state == ArcCW.STATE_SIGHTS
     end
 
