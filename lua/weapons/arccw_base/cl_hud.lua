@@ -836,7 +836,7 @@ function SWEP:DrawHUD()
                     shiit = 1
                 end
                 for index, item in ipairs(items) do
-                    surface.SetMaterial(item.Icon)
+                    surface.SetMaterial(item.Icon or bird)
                     surface.SetDrawColor(color_white)
 
                     local px, py = (ScrW()/2) - ((size*shiit)*(index-(#items*0.5))) + gaap, (ScrH()-CopeY()-(size*1.25))
