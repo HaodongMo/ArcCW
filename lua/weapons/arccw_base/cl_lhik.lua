@@ -60,7 +60,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
     if seq == -1 then return false end
 
     lhik_model:ResetSequence(seq)
-    if lhik_anim_model then
+    if IsValid(lhik_anim_model) then
         lhik_anim_model:ResetSequence(seq)
     end
 
@@ -72,7 +72,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
 
     self.LHIKAnimation_IsIdle = false
 
-    if lhik_anim_model and LHIK_GunDriver then
+    if IsValid(lhik_anim_model) and LHIK_GunDriver then
         local att = lhik_anim_model:LookupAttachment(LHIK_GunDriver)
         local ang = lhik_anim_model:GetAttachment(att).Ang
         local pos = lhik_anim_model:GetAttachment(att).Pos
@@ -84,7 +84,7 @@ function SWEP:DoLHIKAnimation(key, time, spbitch)
         self.LHIKGunPosVM = vm:WorldToLocal(pos)
     end
 
-    if lhik_anim_model and LHIK_CamDriver then
+    if IsValid(lhik_anim_model) and LHIK_CamDriver then
         local att = lhik_anim_model:LookupAttachment(LHIK_CamDriver)
         local ang = lhik_anim_model:GetAttachment(att).Ang
 
@@ -301,7 +301,7 @@ function SWEP:DoLHIK()
     if self.LHIKAnimation and cyc < 1 then
         lhik_model:SetSequence(self.LHIKAnimation)
         lhik_model:SetCycle(cyc)
-        if lhik_anim_model then
+        if IsValid(lhik_anim_model) then
             lhik_anim_model:SetSequence(self.LHIKAnimation)
             lhik_anim_model:SetCycle(cyc)
         end
