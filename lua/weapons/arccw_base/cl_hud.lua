@@ -18,12 +18,13 @@ end
 local function MyDrawText(tbl)
     local x = tbl.x
     local y = tbl.y
+    local dontbust = Color(tbl.col.r, tbl.col.g, tbl.col.b, tbl.col.a)
     surface.SetFont(tbl.font)
 
     if tbl.alpha then
-        tbl.col.a = tbl.alpha
+        dontbust.a = tbl.alpha
     else
-        tbl.col.a = 255
+        dontbust.a = 255
     end
 
     if tbl.align or tbl.yalign then
@@ -47,7 +48,7 @@ local function MyDrawText(tbl)
         surface.DrawText(tbl.text)
     end
 
-    surface.SetTextColor(tbl.col)
+    surface.SetTextColor(dontbust)
     surface.SetTextPos(x, y)
     surface.SetFont(tbl.font)
     surface.DrawText(tbl.text)
@@ -722,6 +723,9 @@ function SWEP:DrawHUD()
                 if fmbars then
                     wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
                 end
+                if true then
+                    wheat.y = wheat.y - ScreenScaleMulti(24)
+                end
 
                 local wheat_shad = {
                     x = wheat.x,
@@ -768,7 +772,7 @@ function SWEP:DrawHUD()
                 MyDrawText(bip)
             end
 
-            if false then
+            if true then
             local items = {
             }
             --[[
