@@ -539,6 +539,7 @@ function SWEP:DrawHUD()
             end
 
             local drew = false
+            local ungl = false
             if tostring(data.ammo) != "-" then
                 drew = true
                 MyDrawText(wreserve)
@@ -569,6 +570,7 @@ function SWEP:DrawHUD()
 
             --ubgl
             if self:GetBuff_Override("UBGL") then
+                ungl = true
                 local ugap = 22 * (1-vubgl)
     
                 local wammo = {
@@ -690,6 +692,9 @@ function SWEP:DrawHUD()
                 if fmbars then
                     wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
                 end
+                if ungl then
+                    wheat.y = wheat.y - ScreenScaleMulti(24)
+                end
 
                 local wheat_shad = {
                     x = wheat.x,
@@ -723,7 +728,7 @@ function SWEP:DrawHUD()
                 if fmbars then
                     wheat.y = wmode.y + ScreenScaleMulti(16) * ( !GetConVar("arccw_hud_3dfun"):GetBool() and -2.5 or 0.8 )
                 end
-                if true then
+                if ungl then
                     wheat.y = wheat.y - ScreenScaleMulti(24)
                 end
 
@@ -772,7 +777,7 @@ function SWEP:DrawHUD()
                 MyDrawText(bip)
             end
 
-            if true then
+            if GetConVar("arccw_hud_togglestats") and GetConVar("arccw_hud_togglestats"):GetBool() then
             local items = {
             }
             --[[
