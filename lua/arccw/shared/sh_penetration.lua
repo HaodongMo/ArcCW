@@ -304,7 +304,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
     local trent = tr.Entity
 
     local dist = (phys and bullet.Travelled or (hitpos - tr.StartPos):Length() ) * ArcCW.HUToM
-    local pen  = IsValid(wep) and bullet.Penleft or wep:GetBuff("Penetration")
+    local pen  = IsValid(wep) and wep:GetBuff("Penetration") or bullet.Penleft
 
     if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
         debugoverlay.Cross(hitpos, 1, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
