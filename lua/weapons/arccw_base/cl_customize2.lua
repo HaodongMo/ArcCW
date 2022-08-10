@@ -2707,7 +2707,7 @@ function SWEP:CreateCustomize2HUD()
             if self.PrimaryBash then
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
 
-                local txt = "No Data"
+                local txt = translate("ui.nodata")
 
                 surface.SetTextColor(col_fg)
                 surface.SetFont("ArcCWC2_24")
