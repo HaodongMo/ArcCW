@@ -27,6 +27,10 @@ function SWEP:Reload()
         return
     end
 
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        return
+    end
+
     -- Switch to UBGL
     if self:GetBuff_Override("UBGL") and self:GetOwner():KeyDown(IN_USE) then
         if self:GetInUBGL() then

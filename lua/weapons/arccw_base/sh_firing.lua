@@ -8,11 +8,31 @@ function SWEP:CanPrimaryAttack()
     if IsValid(self:GetHolster_Entity()) then return end
     if self:GetHolster_Time() > 0 then return end
 
+    -- Coostimzing
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
+        if CLIENT and ArcCW.Inv_Hidden then
+            ArcCW.Inv_Hidden = false
+            gui.EnableScreenClicker(true)
+        elseif game.SinglePlayer() then
+            -- Kind of ugly hack: in SP this is only called serverside so we ask client to do the same check
+            self:CallOnClient("CanPrimaryAttack")
+        end
+        return
+    end
+
     -- A priority animation is playing (reloading, cycling, firemode etc)
     if self:GetPriorityAnim() then return end
 
     -- Inoperable, but internally (burst resetting for example)
     if self:GetWeaponOpDelay() > CurTime() then return end
+
+    -- Safety's on, dipshit
+    if self:GetCurrentFiremode().Mode == 0 then
+        self:ChangeFiremode(false)
+        self:SetNextPrimaryFire(CurTime())
+        self.Primary.Automatic = false
+        return
+    end
 
     -- If we are an NPC, do our own little methods
     if owner:IsNPC() then self:NPC_Shoot() return end
@@ -25,18 +45,6 @@ function SWEP:CanPrimaryAttack()
 
     -- Gun is locked from heat.
     if self:GetHeatLocked() then return end
-
-    -- Coostimzing
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE then
-        if CLIENT and ArcCW.Inv_Hidden then
-            ArcCW.Inv_Hidden = false
-            gui.EnableScreenClicker(true)
-        elseif game.SinglePlayer() then
-            -- Kind of ugly hack: in SP this is only called serverside so we ask client to do the same check
-            self:CallOnClient("CanPrimaryAttack")
-        end
-        return
-    end
 
     -- Attempting a bash
     if self:GetState() != ArcCW.STATE_SIGHTS and owner:KeyDown(IN_USE) or self.PrimaryBash then self:Bash() return end
@@ -55,14 +63,6 @@ function SWEP:CanPrimaryAttack()
 
     -- We need to cycle
     if self:GetNeedCycle() then return end
-
-    -- Safety's on, dipshit
-    if self:GetCurrentFiremode().Mode == 0 then
-        self:ChangeFiremode(false)
-        self:SetNextPrimaryFire(CurTime())
-        self.Primary.Automatic = false
-        return
-    end
 
     -- If we have a trigger delay, make sure its progress is done
     if self:GetBuff_Override("Override_TriggerDelay", self.TriggerDelay) and ((!self:GetBuff_Override("Override_TriggerCharge", self.TriggerCharge) and self:GetTriggerDelta() < 1)
