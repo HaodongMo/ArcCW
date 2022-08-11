@@ -119,7 +119,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     if !IsValid(vm) then return end
 
     local seq = anim.Source
-    if anim.RareSource and util.SharedRandom("raresource", 1, anim.RareSourceChance or 100, CurTime() / 13) <= 1 then
+    if anim.RareSource and util.SharedRandom("raresource", 0, anim.RareSourceChance or 100, CurTime() / 13) <= 1 then
         seq = anim.RareSource
     end
     seq = self:GetBuff_Hook("Hook_TranslateSequence", seq)
