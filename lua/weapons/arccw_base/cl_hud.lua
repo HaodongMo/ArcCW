@@ -494,10 +494,11 @@ function SWEP:DrawHUD()
                 wammo.col = col3
             end
 
-            if tostring(data.clip) != "-" then
+            if tostring(data.clip) == "-" then
+                wammo.text = ""
+            end
                 MyDrawText(wammo)
                 wammo.w, wammo.h = surface.GetTextSize(wammo.text)
-            end
             surface.SetFont("ArcCW_26")
 
             if data.plus and !self:HasBottomlessClip() then
