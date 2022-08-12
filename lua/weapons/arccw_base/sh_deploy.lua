@@ -171,11 +171,14 @@ function SWEP:Initialize()
         if LocalPlayer().ArcCW_IncompatibilityCheck != true and game.SinglePlayer() then
             LocalPlayer().ArcCW_IncompatibilityCheck = true
 
-            if hook.GetTable().PreDrawViewModel.DisplayDistancePlaneLS or hook.GetTable().PreDrawViewModel.DisplayDistancePlane then -- vtools lua breaks arccw with stupid return in vm hook, ya dont need it if you going to play with guns
-                LocalPlayer():ChatPrint("[ArcCW] WARNING: Light sprayer/Scenic dispenser tool detected (Possibly from VTools pack), known for creating lot of errors - their functionality was disabled to keep ArcCW guns working.")
+            local predrawvmhooks = hook.GetTable().PreDrawViewModel
+            if predrawvmhooks then -- vtools lua breaks arccw with stupid return in vm hook, ya dont need it if you going to play with guns
+                if predrawvmhooks.DisplayDistancePlaneLS or predrawvmhooks.DisplayDistancePlane then 
+                    LocalPlayer():ChatPrint("[ArcCW] WARNING: Light sprayer/Scenic dispenser tool detected (Possibly from VTools pack), known for creating lot of errors - their functionality was disabled to keep ArcCW guns working.")
 
-                hook.Remove("PreDrawViewModel", "DisplayDistancePlane")
-                hook.Remove("PreDrawViewModel", "DisplayDistancePlaneLS")
+                    hook.Remove("PreDrawViewModel", "DisplayDistancePlane")
+                    hook.Remove("PreDrawViewModel", "DisplayDistancePlaneLS")
+                end
             end
 
             local incompatList = {}
