@@ -793,7 +793,7 @@ function SWEP:DrawHUD()
             }
             ]]
             
-            for k, v in pairs(wep.Attachments) do
+            for k, v in pairs(self.Attachments) do
                 local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
                 if atttbl and atttbl.ToggleStats then-- and !v.ToggleLock then
                     --print(atttbl.PrintName)
