@@ -362,7 +362,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
         end
     end
 
-    if att:IsNPC() then
+    if IsValid(att) and att:IsNPC() then
         dmg:ScaleDamage(wep:GetBuff_Mult("Mult_DamageNPC") or 1)
     end
 
@@ -424,7 +424,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
 
     -- INCONSISTENCY: For physbullet, the entire bullet is copied; hitscan bullets reset some attributes in SWEP:DoPenetration (most notably damage)
     -- For now, we just reset some changes as a temporary workaround
-    if phys then
+    if !IsValid(wep) then
         bullet.Damage = calc_damage
         bullet.DamageType = dmgtyp
         ArcCW:DoPenetration(tr, hit.damage, bullet, bullet.Penleft, true, bullet.Damaged)
