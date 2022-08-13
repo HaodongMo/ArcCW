@@ -362,6 +362,10 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
         end
     end
 
+    if att:IsNPC() then
+        dmg:ScaleDamage(wep:GetBuff_Mult("Mult_DamageNPC") or 1)
+    end
+
     local effect = phys and bullet.ImpactEffect or (IsValid(wep) and wep:GetBuff_Override("Override_ImpactEffect", wep.ImpactEffect))
     local decal  = phys and bullet.ImpactDecal or (IsValid(wep) and wep:GetBuff_Override("Override_ImpactDecal", wep.ImpactDecal))
 
