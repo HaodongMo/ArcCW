@@ -20,11 +20,14 @@ function SWEP:SelectUBGL()
     end
 
     if self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.enter_ubgl_empty and self:Clip2() == 0 then
-        self:PlayAnimation("enter_ubgl_empty", 1, false, 0, true)
+        self:PlayAnimation("enter_ubgl_empty", 1, true)
         self:SetNextSecondaryFire(CurTime() + self:GetAnimKeyTime("enter_ubgl_empty"))
     elseif self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.enter_ubgl then
-        self:PlayAnimation("enter_ubgl", 1, false, 0, true)
+        self:PlayAnimation("enter_ubgl", 1, true)
         self:SetNextSecondaryFire(CurTime() + self:GetAnimKeyTime("enter_ubgl"))
+    else
+        self:PlayAnimationEZ("idle", 1, false)
+        self:SetNextSecondaryFire(CurTime() + 0.1)
     end
 
     self:GetBuff_Hook("Hook_OnSelectUBGL")
@@ -49,9 +52,12 @@ function SWEP:DeselectUBGL()
     end
 
     if self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.exit_ubgl_empty and self:Clip2() == 0 then
-        self:PlayAnimation("exit_ubgl_empty", 1, false, 0, true)
+        self:PlayAnimation("exit_ubgl_empty", 1, true)
     elseif self:GetBuff_Override("UBGL_BaseAnims") and self.Animations.exit_ubgl then
-        self:PlayAnimation("exit_ubgl", 1, false, 0, true)
+        self:PlayAnimation("exit_ubgl", 1, true)
+    else
+        self:PlayAnimationEZ("idle", 1, false)
+        self:SetNextSecondaryFire(CurTime() + 0.1)
     end
 
     self:GetBuff_Hook("Hook_OnDeselectUBGL")
