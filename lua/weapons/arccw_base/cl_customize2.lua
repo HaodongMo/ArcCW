@@ -2014,7 +2014,7 @@ function SWEP:CreateCustomize2HUD()
                 local shootent = self:GetBuff("ShootEntity", true)
 
                 if !self.PrimaryBash and !shootent then
-                    local pen  = self:GetBuff("Penetration")
+                    local pen = math.Round( self:GetBuff("Penetration") )
                     table.insert(self.Infos_Stats, {
                         title = translate("trivia.penetration"),
                         value = pen,
