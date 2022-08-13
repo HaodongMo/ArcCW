@@ -2028,7 +2028,7 @@ function SWEP:CreateCustomize2HUD()
                 if !self.PrimaryBash and !self.Throwing then
                     table.insert(self.Infos_Stats, {
                         title = translate("trivia.noise"),
-                        value = math.Round(noise, 1),
+                        value = math.Round(noise),
                         unit = translate("unit.db"),
                     })
                 end
