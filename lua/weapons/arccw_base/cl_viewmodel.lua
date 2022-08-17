@@ -755,6 +755,9 @@ function SWEP:ShouldCheapScope()
     if !self:GetConVar("arccw_cheapscopes"):GetBool() then return end
 end
 
+local POSTVMDONE = nil
+local POSTVMDONE_TIME = 0
+
 local lst2 = SysTime()
 function SWEP:PreDrawViewModel(vm)
     if ArcCW.VM_OverDraw then return end
@@ -804,9 +807,18 @@ function SWEP:PreDrawViewModel(vm)
     if !ArcCW.Overdraw then
         self:DoLaser(false, true)
     end
+
+    -- patrol
+    if POSTVMDONE == false and POSTVMDONE_TIME <= CurTime() then
+        POSTVMDONE_TIME = CurTime() + 1
+        print( "[ArcCW] Warning: PostDrawViewModel failed response!! cam.End3D errors may be inbound!! You may have an addon conflict!!")
+        print( "[ArcCW] Follow the troubleshooting guide at https://github.com/HaodongMo/ArcCW/wiki/Help-&-Troubleshooting#camend3d-errors")
+    end
+    POSTVMDONE = false
 end
 
 function SWEP:PostDrawViewModel()
+    POSTVMDONE = true
     if ArcCW.VM_OverDraw then return end
     render.SetBlend(1)
     cam.End3D()
