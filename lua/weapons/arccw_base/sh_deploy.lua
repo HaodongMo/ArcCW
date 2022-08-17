@@ -171,22 +171,23 @@ function SWEP:Initialize()
         if LocalPlayer().ArcCW_IncompatibilityCheck != true and game.SinglePlayer() then
             LocalPlayer().ArcCW_IncompatibilityCheck = true
 
-            local predrawvmhooks = hook.GetTable().PreDrawViewModel
-            if predrawvmhooks then -- vtools lua breaks arccw with stupid return in vm hook, ya dont need it if you going to play with guns
-                if predrawvmhooks.DisplayDistancePlaneLS or predrawvmhooks.DisplayDistancePlane then 
-                    LocalPlayer():ChatPrint("[ArcCW] WARNING: Light sprayer/Scenic dispenser tool detected (Possibly from VTools pack), known for creating lot of errors - their functionality was disabled to keep ArcCW guns working.")
-
-                    hook.Remove("PreDrawViewModel", "DisplayDistancePlane")
-                    hook.Remove("PreDrawViewModel", "DisplayDistancePlaneLS")
-                end
-            end
-
             local incompatList = {}
             local addons = engine.GetAddons()
             for _, addon in pairs(addons) do
                 if ArcCW.IncompatibleAddons[tostring(addon.wsid)] and addon.mounted then
                     incompatList[tostring(addon.wsid)] = addon
                 end
+            end
+
+            local predrawvmhooks = hook.GetTable().PreDrawViewModel
+            if predrawvmhooks and (predrawvmhooks.DisplayDistancePlaneLS or predrawvmhooks.DisplayDistancePlane) then -- vtools lua breaks arccw with stupid return in vm hook, ya dont need it if you going to play with guns
+                hook.Remove("PreDrawViewModel", "DisplayDistancePlane")
+                hook.Remove("PreDrawViewModel", "DisplayDistancePlaneLS")
+                incompatList["DisplayDistancePlane"] = {
+                    title = "Light Sprayer / Scenic Dispenser tool",
+                    wsid = "DisplayDistancePlane",
+                    nourl = true,
+                }
             end
             local shouldDo = true
             -- If never show again is on, verify we have no new addons
@@ -200,6 +201,8 @@ function SWEP:Initialize()
             end
             if shouldDo and table.Count(incompatList) > 0 then
                 ArcCW.MakeIncompatibleWindow(incompatList)
+            elseif table.Count(incompatList) > 0 then
+                print("ArcCW ignored " .. table.Count(incompatList) .. " incompatible addons. If things break, it's your fault.")
             end
         end
     end
