@@ -80,7 +80,7 @@ ArcCW.AutoStats = {
             return translate("autostat.nobipod"), "cons"
         end
     end, pr = 314},
-    ["UBGL"] = { "autostat.ubgl",  "override", "infos",        pr = 950 },
+    ["UBGL"] = { "autostat.ubgl",  "override", false,        pr = 950 },
     ["UBGL_Ammo"] = {"autostat.ammotypeubgl", "func", function(wep, val, att)
         -- have to use the weapons table here because Primary.Ammo *is* modified when attachments are used
         if !IsValid(wep) then return end
@@ -206,7 +206,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
         if hasmaginfo and i == "Override_ClipSize" then continue end
 
         if i == "UBGL" then 
-			tbl_ins(pros, translate("autostat.ubgl2"))
+			tbl_ins(infos, translate("autostat.ubgl2"))
 		end
 
         local txt, typ = stattext(wep, att, i, att[i], dmgboth)
