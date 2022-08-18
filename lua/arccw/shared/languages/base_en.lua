@@ -204,9 +204,9 @@ L["ttt.ammo"] = "Ammo: " -- Used in TTT2 TargetID
 
 -- Shit that used to be in CS+ why
 L["info.togglesight"] = "Double press +USE to toggle sights"
-L["info.toggleubgl"] = "Double press +ZOOM to toggle underbarrel"
-L["pro.ubgl"] = "Selectable underbarrel launcher"
-L["pro.ubsg"] = "Selectable underbarrel shotgun"
+L["info.toggleubgl"] = "Double press +ZOOM to toggle underbarrel" -- deprecated
+L["pro.ubgl"] = "Selectable underbarrel launcher" -- deprecaated
+L["pro.ubsg"] = "Selectable underbarrel shotgun" -- deprecaated
 L["con.obstruction"] = "May obstruct sights"
 L["autostat.underwater"] = "Shoot underwater"
 L["autostat.sprintshoot"] = "Shoot while sprinting"
