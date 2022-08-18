@@ -4,6 +4,8 @@ function SWEP:SelectUBGL()
     if self:GetReloading() then return end
     if self:GetNextPrimaryFire() > CurTime() then return end
     if self:GetNextSecondaryFire() > CurTime() then return end
+    if self:GetUBGLDebounce() then return end
+    self:SetUBGLDebounce( true )
 
     self:SetInUBGL(true)
 
@@ -38,6 +40,8 @@ function SWEP:DeselectUBGL()
     if self:GetReloading() then return end
     if self:GetNextPrimaryFire() > CurTime() then return end
     if self:GetNextSecondaryFire() > CurTime() then return end
+    if self:GetUBGLDebounce() then return end
+    self:SetUBGLDebounce( true )
 
     self:SetInUBGL(false)
 

@@ -302,6 +302,10 @@ function SWEP:Think()
         self:SetNextIdle(0)
         self:PlayIdleAnimation(true)
     end
+
+    if self:GetUBGLDebounce() and !self:GetOwner():KeyDown(IN_RELOAD) then
+        self:SetUBGLDebounce( false )
+    end
 end
 
 local lst = SysTime()

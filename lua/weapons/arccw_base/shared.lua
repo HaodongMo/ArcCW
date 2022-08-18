@@ -775,6 +775,7 @@ function SWEP:SetupDataTables()
     self:NetworkVar("Bool", 4, "InCustomize")
     self:NetworkVar("Bool", 5, "GrenadePrimed")
     self:NetworkVar("Bool", 6, "NWMalfunctionJam")
+    self:NetworkVar("Bool", 7, "UBGLDebounce")
 
     self:NetworkVar("Float", 0, "Heat")
     self:NetworkVar("Float", 1, "WeaponOpDelay")
