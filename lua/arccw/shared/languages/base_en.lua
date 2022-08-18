@@ -378,6 +378,11 @@ L["fcg.nade.abbrev"] = "NADE"
 L["attslot.magazine"] = "Magazine"
 L["attslot.magazine.default"] = "Standard Magazine"
 
+-- 2022-08-17
+L["autostat.ubgl"] = "Selectable underbarrel weapon"
+L["autostat.ubgl2"] = "Press your USE key and RELOAD key together to activate underbarrel weapon"
+L["autostat.ammotypeubgl"] = "Underbarrel weapon uses %s"
+
 
 --[[]
 You can translate the trivia of any arbitrary weapon or attachment by adding the phrase ["desc.class_name"]

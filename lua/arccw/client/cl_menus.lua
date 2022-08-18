@@ -364,6 +364,32 @@ local MultsPanel = {
     { type = "f", text = "#arccw.cvar.mult_sway",            var = "arccw_mult_sway", min = 0, max = 10, sv = true },
 }
 
+local HelpPanel = {
+    { type = "h",       text = "Links to the ArcCW online wiki." },
+
+    { type = "url",     text = "Checking for Addon Conflicts",
+                        url = "https://github.com/HaodongMo/ArcCW/wiki/Help-&-Troubleshooting#checking-for-addon-conflicts", },
+    { type = "c",       text = "Check for addon conflicts that may be causing issues with ArcCW weapons." },
+
+    { type = "url",     text = "Cheap Scopes",
+                        url = "https://github.com/HaodongMo/ArcCW/wiki/Help-&-Troubleshooting#cheap-scopes", },
+    { type = "c",       text = "'Why are my scopes so blurry?'" },
+
+    { type = "url",     text = "Underbarrel Weapons",
+                        url = "https://github.com/HaodongMo/ArcCW/wiki/Help-&-Troubleshooting#underbarrel-weapons", },
+    { type = "c",       text = "'Why aren't my underbarrels weapons working?'" },
+    { type = "c",       text = "'How do I use my underbarrel weapons?'" },
+
+    { type = "url",     text = "Free Attachments",
+                        url = "https://github.com/HaodongMo/ArcCW/wiki/Help-&-Troubleshooting#free-attachments", },
+    { type = "c",       text = "'Why are my attachments red?'" },
+
+    { type = "url",     text = "cam.End3D errors",
+                        url = "https://github.com/HaodongMo/ArcCW/wiki/Help-&-Troubleshooting#camend3d-errors", },
+    { type = "c",       text = "'Warning: Calling cam.End3D because someone forgot to!'" },
+
+}
+
 local MultPresets = {
     ["#preset.default"] = { -- this needs fills
         arccw_mult_damage                   = "1",
@@ -437,6 +463,7 @@ function ArcCW.GeneratePanelElements(panel, table)
             p:AddItem( ctrl ) return ctrl
         end,
         ["p"] = function(p, d) local b = p:Button(d.text) b.DoClick = d.func return b end,
+        ["url"] = function(p, d) local b = p:Button(d.text) b.DoClick = function() gui.OpenURL(d.url) end return b end,
         ["t"] = function(p, d) return p:TextEntry(d.text, d.var) end,
         ["o"] = function(p, d) local cb = p:ComboBox(d.text, d.var) for k, v in pairs(d.choices) do cb:AddChoice(v, k) end return cb end,
         ["d"] = function(p, d)
@@ -709,21 +736,26 @@ function ArcCW_Options_Scopes(panel)
     ArcCW.GeneratePanelElements(panel, ScopesPanel)
 end
 
+function ArcCW_Options_Help(panel)
+    ArcCW.GeneratePanelElements(panel, HelpPanel)
+end
+
 ArcCW.ClientMenus = {
-    ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client", func = ArcCW_Options_Client, tbl = ClientPanel },
-    ["ArcCW_Options_Bullet"]    = { text = "#arccw.menus.bullet", func = ArcCW_Options_Bullet, tbl = BulletPanel },
-    ["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf", func = ArcCW_Options_Perf, tbl = PerformancePanel },
-    ["ArcCW_Options_Viewmodel"] = { text = "#arccw.menus.vmodel", func = ArcCW_Options_Viewmodel, tbl = ViewmodelPanel },
-    ["ArcCW_Options_HUD"]       = { text = "#arccw.menus.hud",    func = ArcCW_Options_HUD, tbl = HudPanel },
-    ["ArcCW_Options_Crosshair"] = { text = "#arccw.menus.xhair",  func = ArcCW_Options_Crosshair, tbl = CrosshairPanel },
-    ["ArcCW_Options_Server"]    = { text = "#arccw.menus.server", func = ArcCW_Options_Server, tbl = ServerPanel },
-    ["ArcCW_Options_Ammo"]      = { text = "#arccw.menus.ammo",   func = ArcCW_Options_Ammo, tbl = AmmoPanel },
-    ["ArcCW_Options_Atts"]      = { text = "#arccw.menus.atts",   func = ArcCW_Options_Atts, tbl = AttsPanel },
-    ["ArcCW_Options_Mults"]     = { text = "#arccw.menus.mults",  func = ArcCW_Options_Mults, tbl = MultsPanel },
-    ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",   func = ArcCW_Options_Dev, tbl = DevPanel },
-    ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",   func = ArcCW_Options_NPC, tbl = NPCsPanel },
-    ["ArcCW_Options_Binds"]    = { text = "#arccw.menus.binds", func = ArcCW_Options_Binds, tbl = BindsPanel },
-    ["ArcCW_Options_Scopes"]    = { text = "#arccw.menus.scopes", func = ArcCW_Options_Scopes, tbl = ScopesPanel },
+    ["ArcCW_Options_Client"]    = { text = "#arccw.menus.client",    func = ArcCW_Options_Client,    tbl = ClientPanel },
+    ["ArcCW_Options_Help"]      = { text = "Help & Troubleshooting", func = ArcCW_Options_Help,      tbl = HelpPanel },
+    ["ArcCW_Options_Bullet"]    = { text = "#arccw.menus.bullet",    func = ArcCW_Options_Bullet,    tbl = BulletPanel },
+    ["ArcCW_Options_Perf"]      = { text = "#arccw.menus.perf",      func = ArcCW_Options_Perf,      tbl = PerformancePanel },
+    ["ArcCW_Options_Viewmodel"] = { text = "#arccw.menus.vmodel",    func = ArcCW_Options_Viewmodel, tbl = ViewmodelPanel },
+    ["ArcCW_Options_HUD"]       = { text = "#arccw.menus.hud",       func = ArcCW_Options_HUD,       tbl = HudPanel },
+    ["ArcCW_Options_Crosshair"] = { text = "#arccw.menus.xhair",     func = ArcCW_Options_Crosshair, tbl = CrosshairPanel },
+    ["ArcCW_Options_Server"]    = { text = "#arccw.menus.server",    func = ArcCW_Options_Server,    tbl = ServerPanel },
+    ["ArcCW_Options_Ammo"]      = { text = "#arccw.menus.ammo",      func = ArcCW_Options_Ammo,      tbl = AmmoPanel },
+    ["ArcCW_Options_Atts"]      = { text = "#arccw.menus.atts",      func = ArcCW_Options_Atts,      tbl = AttsPanel },
+    ["ArcCW_Options_Mults"]     = { text = "#arccw.menus.mults",     func = ArcCW_Options_Mults,     tbl = MultsPanel },
+    ["ArcCW_Options_Dev"]       = { text = "#arccw.menus.dev",       func = ArcCW_Options_Dev,       tbl = DevPanel },
+    ["ArcCW_Options_NPC"]       = { text = "#arccw.menus.npcs",      func = ArcCW_Options_NPC,       tbl = NPCsPanel },
+    ["ArcCW_Options_Binds"]     = { text = "#arccw.menus.binds",     func = ArcCW_Options_Binds,     tbl = BindsPanel },
+    ["ArcCW_Options_Scopes"]    = { text = "#arccw.menus.scopes",    func = ArcCW_Options_Scopes,    tbl = ScopesPanel },
 }
 
 hook.Add("PopulateToolMenu", "ArcCW_Options", function()

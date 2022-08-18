@@ -80,6 +80,12 @@ ArcCW.AutoStats = {
             return translate("autostat.nobipod"), "cons"
         end
     end, pr = 314},
+    ["UBGL"] = { "autostat.ubgl",  "override", "infos",        pr = 950 },
+    ["UBGL_Ammo"] = {"autostat.ammotypeubgl", "func", function(wep, val, att)
+        -- have to use the weapons table here because Primary.Ammo *is* modified when attachments are used
+        if !IsValid(wep) then return end
+        return string.format(translate("autostat.ammotypeubgl"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
+    end, pr = 949},
 }
 
 local function getsimpleamt(stat)
@@ -105,6 +111,10 @@ local function stattext(wep, att, i, k, dmgboth)
     end
 
     local tcon, tpro = eval and "cons" or "pros", eval and "pros" or "cons"
+
+    if stat[3] == "infos" then
+        tcon = "infos"
+    end
 
     if stat[2] == "mult" and k != 1 then
         local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
@@ -194,6 +204,10 @@ function ArcCW:GetProsCons(wep, att, toggle)
 
         -- Legacy support: If "Increased/Decreased magazine capacity" line exists, don't do our autostats version
         if hasmaginfo and i == "Override_ClipSize" then continue end
+
+        if i == "UBGL" then 
+			tbl_ins(pros, translate("autostat.ubgl2"))
+		end
 
         local txt, typ = stattext(wep, att, i, att[i], dmgboth)
         if !txt then continue end
