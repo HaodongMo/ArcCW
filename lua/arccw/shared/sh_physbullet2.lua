@@ -593,4 +593,7 @@ hook.Add("PostCleanupMap", "ArcCW_CleanPhysBullets", function()
     ArcCW.PhysBullets = {}
 end)
 
-hook.Run("ArcCW_InitBulletProfiles")
+-- Can't run now or files after this in load order cannot add them properly
+hook.Add("InitPostEntity", "ArcCW_AddPhysBullets", function()
+    hook.Run("ArcCW_InitBulletProfiles")
+end)
