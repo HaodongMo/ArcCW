@@ -9,9 +9,10 @@ function ArcCW.DoorBust(ent, vel)
     ent:Fire("Open", "", 0)
     ent:Fire("SetSpeed", oldSpeed, 0.3)
 
-    if string.find(ent:GetClass(), "prop_door*") and ent:GetPhysicsObject():IsValid() and cvar == 1 then
+    if ent:GetPhysicsObject():IsValid() and cvar == 1 then
 
         -- Don't remove the door, that's a silly thing to do
+        ent.ArcCW_DoorOldPos = ent:GetPos()
         ent:SetNoDraw(true)
         ent:SetNotSolid(true)
 
@@ -23,6 +24,8 @@ function ArcCW.DoorBust(ent, vel)
         prop:SetSkin(ent:GetSkin())
         prop:Spawn()
         prop:GetPhysicsObject():SetVelocity(vel)
+
+        ent:SetPos(ent:GetPos() - Vector(0, 0, 10000))
 
         -- Make it not collide with players after a bit cause that's annoying
         timer.Create("ArcCW_DoorBust_" .. prop:EntIndex(), 2, 1, function()
@@ -38,6 +41,8 @@ function ArcCW.DoorBust(ent, vel)
                 ent:SetNoDraw(false)
                 ent:SetNotSolid(false)
                 ent.ArcCW_DoorBusted = false
+                ent:SetPos(ent.ArcCW_DoorOldPos)
+                ent.ArcCW_DoorOldPos = nil
             end
         end)
     else
