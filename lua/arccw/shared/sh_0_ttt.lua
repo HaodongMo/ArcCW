@@ -52,7 +52,7 @@ CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Automatical
 CreateConVar("arccw_ttt_customizemode", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "If set to 1, disallow customization on ArcCW weapons. If set to 2, players can customize during setup and postgame. If set to 3, only T and Ds can customize.", 0, 3)
 CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
 
-hook.Add("InitPostEntity", "ArcCW_TTT", function()
+hook.Add("OnGamemodeLoaded", "ArcCW_TTT", function()
     for i, wep in pairs(weapons.GetList()) do
         local weap = weapons.Get(wep.ClassName)
         if weap then
