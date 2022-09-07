@@ -201,7 +201,7 @@ function SWEP:Initialize()
             end
             if shouldDo and not table.IsEmpty(incompatList) then
                 ArcCW.MakeIncompatibleWindow(incompatList)
-            elseif table.Count(incompatList) > 0 then
+            elseif not table.IsEmpty(incompatList) then
                 print("ArcCW ignored " .. table.Count(incompatList) .. " incompatible addons. If things break, it's your fault.")
             end
         end
