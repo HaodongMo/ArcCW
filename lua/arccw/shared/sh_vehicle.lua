@@ -53,7 +53,7 @@ end
 function ArcCW:GetVehicleFireTrace(ply, src, dir)
     if !GetConVar("arccw_driveby"):GetBool() then return src end
     local tbl = ArcCW:GetVehicleFilter(ply)
-    if table.Count(tbl) == 0 then return src end
+    if table.IsEmpty(tbl) then return src end
 
     -- Make some traces from the outside to find a good spot
     local trace_dist = {256, 128, 64}
