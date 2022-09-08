@@ -199,9 +199,9 @@ function SWEP:Initialize()
                 end
                 if shouldDo then file.Delete("arccw_incompatible.txt") end
             end
-            if shouldDo and not table.IsEmpty(incompatList) then
+            if shouldDo and !table.IsEmpty(incompatList) then
                 ArcCW.MakeIncompatibleWindow(incompatList)
-            elseif not table.IsEmpty(incompatList) then
+            elseif !table.IsEmpty(incompatList) then
                 print("ArcCW ignored " .. table.Count(incompatList) .. " incompatible addons. If things break, it's your fault.")
             end
         end
