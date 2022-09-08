@@ -70,7 +70,7 @@ local function ArcCW_SendBlacklist(ply)
             ArcCW.AttachmentBlacklistTable = util.JSONToTable(file.Read("arccw_blacklist.txt") or "") or {}
             local curcount = table.Count(ArcCW.AttachmentBlacklistTable)
             VerifyBlacklist()
-            print("Loaded " .. table.Count(ArcCW.AttachmentBlacklistTable) .. " active (" .. curcount .. " total) blacklisted ArcCW attachments.")
+            print("Loaded " .. curcount .. " active (" .. curcount .. " total) blacklisted ArcCW attachments.")
         end
         if ArcCW.AttachmentBlacklistTable and player.GetCount() > 0 then
             timer.Simple(0, function()

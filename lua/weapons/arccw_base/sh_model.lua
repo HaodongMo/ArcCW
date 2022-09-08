@@ -710,7 +710,7 @@ end
 
 function SWEP:KillModel(models)
     if !models then return end
-    if table.Count(models) == 0 then return end
+    if table.IsEmpty(models) then return end
 
     for _, i in pairs(models) do
         if !isentity(i.Model) then continue end

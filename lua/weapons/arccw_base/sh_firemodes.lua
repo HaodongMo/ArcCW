@@ -5,8 +5,8 @@ function SWEP:ChangeFiremode(pred)
 
     local check = self:GetBuff_Hook("Hook_ChangeFiremode")
     if check then return end
-
-    if table.Count(fmt) == 1 then return end
+    local count = table.Count(fmt)
+    if count == 1 then return end
     if self:GetNextPrimaryFire() > CurTime() then return end
     if self:GetGrenadePrimed() then return end
 
@@ -15,14 +15,14 @@ function SWEP:ChangeFiremode(pred)
 
     fmi = fmi + 1
 
-    if fmi > table.Count(fmt) then
+    if fmi > count then
        fmi = 1
     end
 
     local altsafety = SERVER and (self:GetOwner():GetInfo("arccw_altsafety") == "1") or CLIENT and (GetConVar("arccw_altsafety"):GetBool())
     if altsafety and !self:GetOwner():KeyDown(IN_WALK) and fmt[fmi] and fmt[fmi].Mode == 0 then
         -- Skip safety when walk key is not down
-        fmi = (fmi + 1 > table.Count(fmt)) and 1 or (fmi + 1)
+        fmi = (fmi + 1 > count) and 1 or (fmi + 1)
     elseif altsafety and self:GetOwner():KeyDown(IN_WALK) then
         if fmt[lastfmi] and fmt[lastfmi].Mode == 0 then
             -- Find the first non-safety firemode

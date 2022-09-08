@@ -36,7 +36,7 @@ hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
     -- Attachment Info
     local mode = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
     local attTbl = ArcCW.TTT_AttInfo[raw.eidx]
-    if attTbl and table.Count(attTbl) > 0 and (mode == 2 or (mode == 1 and raw.detective_search)) then
+    if attTbl and !table.IsEmpty(attTbl) and (mode == 2 or (mode == 1 and raw.detective_search)) then
         local finalTbl = {
             img    = "arccw/ttticons/arccw_dropattinfo.png",
             p = 10.5, -- Right after the murder weapon
