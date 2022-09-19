@@ -42,10 +42,6 @@ function ArcCW.LoadAttachmentType(att, name)
                 [att.ShortName] = 1
             }
 
-            for i, k in pairs(att) do
-                attent[i] = k
-            end
-
             scripted_ents.Register( attent, "acwatt_" .. name )
         end
 
