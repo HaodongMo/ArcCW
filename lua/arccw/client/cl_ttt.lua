@@ -352,7 +352,12 @@ function ArcCW.TTT2_LoadClientLangs()
         local exp = string.Explode("_", string.lower(string.Replace(v, ".lua", "")))
 
         local lang = exp[#exp]
-        lang = ttt_langtranslate[lang] or lang
+        lang = ttt_langtranslate[lang] or LANG.GetNameFromAlias(lang)
+
+        -- cannot add to languages that do not exist
+        if !LANG.IsLanguage(lang) then
+            continue
+        end
 
         include("arccw/client/cl_languages/" .. v)
         for phrase, str in pairs(L) do
