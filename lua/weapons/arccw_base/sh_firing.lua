@@ -556,6 +556,7 @@ end
 function SWEP:GetShootSrc()
     local owner = self:GetOwner()
 
+    if !IsValid(owner) then return self:GetPos() end
     if owner:IsNPC() then return owner:GetShootPos() end
 
     local dir    = owner:EyeAngles()
