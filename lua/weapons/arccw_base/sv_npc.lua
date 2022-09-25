@@ -224,7 +224,22 @@ function SWEP:NPC_Shoot()
         else
             self:GetBuff_Hook("Hook_FireBullets", btabl)
 
-            self:DoPrimaryFire(false, btabl)
+            for n = 1, btabl.Num do
+                btabl.Num = 1
+
+                local dispers = self:GetBuff_Override("Override_ShotgunSpreadDispersion", self.ShotgunSpreadDispersion)
+                local offset  = self:GetShotgunSpreadOffset(n)
+                local calcoff = dispers and (offset * self:GetDispersion() * ArcCW.MOAToAcc / 10) or offset
+
+                local ang = self:GetOwner():GetAimVector():Angle()
+                -- ang:RotateAroundAxis(ang:Right(), -1 * calcoff.p)
+                -- ang:RotateAroundAxis(ang:Up(), calcoff.y)
+                -- ang:RotateAroundAxis(ang:Forward(), calcoff.r)
+
+                btabl.Dir = ang:Forward()
+
+                self:DoPrimaryFire(false, btabl)
+            end
         end
     end
 
