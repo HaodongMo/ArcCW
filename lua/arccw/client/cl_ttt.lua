@@ -330,9 +330,6 @@ function ArcCW.TTT2_PopulateSettings(parent, title, tbl)
             option.TickCreated = UnPredictedCurTime()
             for k, v in pairs(data.choices) do
                 option:AddChoice(v, k)
-                if k == tonumber(cvar:GetDefault()) then
-                    option:ChooseOptionId(k)
-                end
             end
         end
     end
