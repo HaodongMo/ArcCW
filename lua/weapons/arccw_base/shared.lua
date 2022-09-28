@@ -877,7 +877,7 @@ function SWEP:BarrelHitWall()
         hitwallcache = {0, CurTime()}
     end
 
-    if !hitwallcache or hitwallcache[1] ~= CurTime() then
+    if !hitwallcache or hitwallcache[2] ~= CurTime() then
 
         local offset = self:GetBuff("BarrelOffsetHip")
 
