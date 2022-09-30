@@ -2264,9 +2264,11 @@ function SWEP:CreateCustomize2HUD()
                     end
 
 
-                    print(dmgmax .. "-" .. dmgmin .. "DMG; range " .. mran .. "/" .. sran)
-                    print("table range: " .. stk_min .. " - " .. stk_max .. " (" .. stk_count .. ")")
-                    PrintTable(self.Infos_Breakpoints)
+                    if GetConVar("developer"):GetInt() > 0 then
+                        print(dmgmax .. "-" .. dmgmin .. "DMG; range " .. mran .. "/" .. sran)
+                        print("table range: " .. stk_min .. " - " .. stk_max .. " (" .. stk_count .. ")")
+                        PrintTable(self.Infos_Breakpoints)
+                    end
                 end
 
                 local header_w = ss * 48
