@@ -120,6 +120,7 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof, ovr)
         ImpactDecal = wep:GetBuff_Override("Override_ImpactDecal", wep.ImpactDecal),
         PhysBulletImpact = pbi == nil and true or pbi,
         Gravity = wep:GetBuff("PhysBulletGravity"),
+        HullSize = wep:GetBuff("HullSize"),
         Num = num,
         Pos = pos,
         Vel = vel,
@@ -315,23 +316,36 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
             attacker:LagCompensation(true)
         end
 
-        local tr = util.TraceLine({
-            start = oldpos,
-            endpos = newpos,
-            filter = bullet.Filter,
-            mask = MASK_SHOT
-        })
+        local tr
+        if bullet.HullSize then
+            local bb = Vector(bullet.HullSize / 2, bullet.HullSize / 2, bullet.HullSize / 2)
+            tr = util.TraceHull({
+                start = oldpos,
+                endpos = newpos,
+                filter = bullet.Filter,
+                mask = MASK_SHOT,
+                mins = -bb,
+                maxs = bb,
+            })
+            if GetConVar("arccw_dev_shootinfo"):GetInt() > 0 then
+                debugoverlay.Line(oldpos, tr.HitPos, 5, SERVER and Color(100,100,255) or Color(255,200,100), true)
+                debugoverlay.Box(tr.HitPos, -bb, bb, 5, SERVER and Color(100,100,255,0) or Color(255,200,100,0))
+            end
+        else
+            tr = util.TraceLine({
+                start = oldpos,
+                endpos = newpos,
+                filter = bullet.Filter,
+                mask = MASK_SHOT
+            })
+            if GetConVar("arccw_dev_shootinfo"):GetInt() > 0 then
+                debugoverlay.Line(oldpos, tr.HitPos, 5, SERVER and Color(100,100,255) or Color(255,200,100), true)
+                debugoverlay.Cross(tr.HitPos, 16, 0.05, SERVER and Color(100,100,255) or Color(255,200,100), true)
+            end
+        end
 
         if attacker:IsPlayer() then
             attacker:LagCompensation(false)
-        end
-
-        if SERVER then
-            debugoverlay.Line(oldpos, tr.HitPos, 5, Color(100,100,255), true)
-            debugoverlay.Cross(tr.HitPos, 16, 0.05, Color(100, 100, 255), true)
-        else
-            debugoverlay.Line(oldpos, tr.HitPos, 5, Color(255,200,100), true)
-            debugoverlay.Cross(tr.HitPos, 16, 0.05, Color(255, 200, 100), true)
         end
 
         if tr.HitSky then
@@ -383,6 +397,9 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 end
                 if bullet.PhysBulletHit then
                     bullet:PhysBulletHit(bullet, tr)
+                end
+                if bulinfo.PhysBulletHit then
+                    bulinfo:PhysBulletHit(bullet, tr)
                 end
                 return
             elseif SERVER then
