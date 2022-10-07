@@ -34,10 +34,7 @@ function SWEP:EnterSprint()
 
     local anim = self:SelectAnimation("enter_sprint")
     if anim and !s and self:GetNextSecondaryFire() <= ct then
-        self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
-        --self:SetReloading(ct + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
-    --elseif !anim and !s then -- Not needed because ExitSprint handles it properly
-        --self:SetReloading(ct + self:GetSprintTime())
+        self:PlayAnimation(anim, self:GetBuff("SightTime") / self:GetAnimKeyTime(anim, true), true, nil, false, nil, false, false)
     end
 end
 
@@ -59,7 +56,7 @@ function SWEP:ExitSprint()
     local s = self:CanShootWhileSprint()
 
     if !s and self:GetNextPrimaryFire() <= ct then
-        self:SetNextPrimaryFire(ct)
+        self:SetNextPrimaryFire(ct + self:GetSprintTime() * delta)
     end
 
     if self:GetOwner():KeyDown(IN_ATTACK2) then
@@ -67,13 +64,8 @@ function SWEP:ExitSprint()
     end
 
     local anim = self:SelectAnimation("exit_sprint")
-    if anim and !s and self:GetNextSecondaryFire() <= ct then
-        local p = self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true, nil, false, nil, false, false)
-        if p then
-            self:SetPriorityAnim(ct + self:GetAnimKeyTime(anim) * self:GetBuff_Mult("Mult_SightTime"))
-        end
-    elseif !anim and !s then
-        self:SetPriorityAnim(UnPredictedCurTime() + self:GetSprintTime() * delta)
+    if anim and !s then -- and self:GetNextSecondaryFire() <= ct
+        self:PlayAnimation(anim, self:GetBuff("SightTime") / self:GetAnimKeyTime(anim, true), true, nil, false, nil, false, false)
     end
 end
 

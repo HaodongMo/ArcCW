@@ -360,9 +360,17 @@ function SWEP:InSprint()
     end
 
     if !owner:KeyDown(IN_SPEED) then return false end
-    if curspeed < Lerp(0.5, walkspeed, sprintspeed) then return false end
     if !owner:OnGround() then return false end
     if owner:Crouching() then return false end
+    if curspeed < Lerp(0.5, walkspeed, sprintspeed) then
+        -- provide some grace time so changing directions won't immediately exit sprint
+        self.LastExitSprintCheck = self.LastExitSprintCheck or CurTime()
+        if self.LastExitSprintCheck < CurTime() - 0.25 then
+            return false
+        end
+    else
+        self.LastExitSprintCheck = nil
+    end
 
     return true
 end
