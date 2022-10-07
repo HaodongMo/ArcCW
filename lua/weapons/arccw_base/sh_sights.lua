@@ -102,8 +102,6 @@ function SWEP:EnterSights()
     local anim = self:SelectAnimation("enter_sight")
     if anim then
         self:PlayAnimation(anim, 1 * self:GetBuff_Mult("Mult_SightTime"), true)
-    else
-        self:PlayIdleAnimation()
     end
 
     self:GetBuff_Hook("Hook_SightToggle", true)
