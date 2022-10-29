@@ -78,7 +78,7 @@ local function DoShell(wep, data)
     util.Effect(data.e, ed)
 end
 
-function SWEP:PlaySoundTable(soundtable, mult, start)
+function SWEP:PlaySoundTable(soundtable, mult, start, key)
     --if CLIENT and game.SinglePlayer() then return end
 
     local owner = self:GetOwner()
@@ -121,8 +121,10 @@ function SWEP:PlaySoundTable(soundtable, mult, start)
                     continue
                 end
             else
-                self.EventTable[i][jhon] = v
-                --print(CurTime(), "Clean at " .. i)
+                self.EventTable[i][jhon] = table.Copy(v)
+                self.EventTable[i][jhon].StartTime = CurTime()
+                self.EventTable[i][jhon].AnimKey = key
+                -- print(CurTime(), "Clean at " .. i)
             end
         end
     end

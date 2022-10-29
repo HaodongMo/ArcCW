@@ -20,6 +20,9 @@ function SWEP:Think()
     for i, v in ipairs(self.EventTable) do
         for ed, bz in pairs(v) do
             if ed <= CurTime() then
+                if bz.AnimKey and (bz.AnimKey != self.LastAnimKey or bz.StartTime != self.LastAnimStartTime) then
+                    continue
+                end
                 self:PlayEvent(bz)
                 self.EventTable[i][ed] = nil
                 --print(CurTime(), "Event completed at " .. i, ed)

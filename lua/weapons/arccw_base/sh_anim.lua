@@ -198,7 +198,7 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
     if !(game.SinglePlayer() and CLIENT) then
         -- self.EventTable = {}
         if game.SinglePlayer() or (!game.SinglePlayer() and IsFirstTimePredicted()) then
-            self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom)
+            self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom, key)
         end
     end
 
