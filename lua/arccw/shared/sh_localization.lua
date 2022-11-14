@@ -241,6 +241,8 @@ hook.Add("PreGamemodeLoaded", "ArcCW_Lang", function()
 end)
 
 concommand.Add("arccw_reloadlangs", function(ply)
+    if SERVER and game.SinglePlayer() == false and IsValid(ply) and ply:IsSuperAdmin() == false then return end
+
     ArcCW.LoadLanguages()
     if SERVER and game.SinglePlayer() then
         net.Start("arccw_sp_reloadlangs")
