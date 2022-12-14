@@ -20,6 +20,8 @@ local col_fg_tr = Color(255, 255, 255, 100)
 local col_shadow = Color(0, 0, 0, 255)
 local col_button = Color(0, 0, 0, 175)
 local col_button_hv = Color(75, 75, 75, 175)
+local col_mayomustard = Color(255, 255, 127)
+local mayoicons = false
 
 local col_block = Color(50, 0, 0, 175)
 local col_block_txt = Color(175, 10, 10, 255)
@@ -382,6 +384,7 @@ function SWEP:CreateCustomize2HUD()
                 -- This'll completely screw up on multiplayer games and sometimes even singleplayer
         end
         col_fg = Color(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 255))
+        col_mayomustard = Color(255, 255, 127, Lerp(ArcCW.Inv_Fade, 0, 255))
         col_fg_tr = Color(255, 255, 255, Lerp(ArcCW.Inv_Fade, 0, 125))
         col_shadow = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 255))
         col_button = Color(0, 0, 0, Lerp(ArcCW.Inv_Fade, 0, 175))
@@ -740,7 +743,7 @@ function SWEP:CreateCustomize2HUD()
                     txt = translate("name." .. self2.att) or atttbl.PrintName
                 end
 
-                surface.SetTextColor(col2)
+                surface.SetTextColor(atttbl.Ignore and col_mayomustard or col2)
                 surface.SetTextPos(icon_h + ss * 4, ss * 2)
                 surface.SetFont("ArcCWC2_12")
 
@@ -749,7 +752,7 @@ function SWEP:CreateCustomize2HUD()
                 local icon = atttbl.Icon
                 if !icon or icon:IsError() then icon = bird end
 
-                surface.SetDrawColor(col2)
+                surface.SetDrawColor(atttbl.Ignore and mayoicons and col_mayomustard or col2)
                 surface.SetMaterial(icon)
                 surface.DrawTexturedRect(ss * 2, 0, icon_h, icon_h)
             end
@@ -1078,7 +1081,7 @@ function SWEP:CreateCustomize2HUD()
                     txt = translate("name." .. self2.att) or atttbl.PrintName
                 end
 
-                surface.SetTextColor(col2)
+                surface.SetTextColor(atttbl.Ignore and col_mayomustard or col2)
                 surface.SetTextPos(icon_h + ss * 4, ss * 2)
                 surface.SetFont("ArcCWC2_12")
 
@@ -1087,7 +1090,7 @@ function SWEP:CreateCustomize2HUD()
                 local icon = atttbl.Icon
                 if !icon or icon:IsError() then icon = bird end
 
-                surface.SetDrawColor(col2)
+                surface.SetDrawColor(atttbl.Ignore and mayoicons and col_mayomustard or col2)
                 surface.SetMaterial(icon)
                 surface.DrawTexturedRect(ss * 2, 0, icon_h, icon_h)
             end
@@ -1194,12 +1197,12 @@ function SWEP:CreateCustomize2HUD()
 
                 local slot_txt = try_translate(slot.PrintName)
 
-                surface.SetDrawColor(col2)
+                surface.SetDrawColor((atttbl and atttbl.Ignore and mayoicons and col_mayomustard) or col2)
                 local icon_h = h
                 surface.SetMaterial(att_icon)
                 surface.DrawTexturedRect(w - icon_h - ss * 2, 0, icon_h, icon_h)
 
-                surface.SetTextColor(col2)
+                surface.SetTextColor((atttbl and atttbl.Ignore and col_mayomustard) or col2)
                 surface.SetFont("ArcCWC2_10")
                 surface.SetTextPos(ss * 6, ss * 4)
                 DrawTextRot(self2, slot_txt, 0, 0, ss * 6, ss * 4, w - icon_h - ss * 4)

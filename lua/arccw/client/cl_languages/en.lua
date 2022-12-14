@@ -281,7 +281,7 @@ L["arccw.cvar.mult_defaultammo"]          = "Default Ammo"
 
 -- 2021-01-18
 L["arccw.cvar.dev_showignored"]           = "Load Ignored Atts"
-L["arccw.cvar.dev_showignored.desc"]      = "Disabled by default.\nLoad attachments that have att.Ignore set to true. These attachments may be broken or unimplemented."
+L["arccw.cvar.dev_showignored.desc"]      = "Disabled by default.\nLoad attachments that have att.Ignore set to true. These attachments may be broken or unimplemented.\nThey will be highlighted in light yellow."
 L["arccw.cvar.aimassist"]                 = "Enable Aim Assist"
 L["arccw.cvar.aimassist.desc"]            = "Allow players to snap their view to NPCs and players near their aim."
 L["arccw.cvar.aimassist_cl.desc"]         = "Snap your view to nearby NPCs and players. Only usable if enabled serverside!"
