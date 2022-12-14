@@ -508,10 +508,6 @@ SWEP.RejectAttachments = {
     -- ["optic_docter"] = true -- stop this attachment from being usable on this gun
 }
 
-SWEP.AttachmentOverrides = {
-    -- ["optic_docter"] = {} -- allows you to overwrite atttbl values
-}
-
 SWEP.TTT_DoNotAttachOnBuy = false -- don't give all attachments when bought
 
 SWEP.Attachments = {}
