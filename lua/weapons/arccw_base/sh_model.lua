@@ -724,7 +724,7 @@ function SWEP:DrawCustomModel(wm, origin, angle)
     local disttoeye = self:GetPos():DistToSqr(EyePos())
     local visibility = math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
     local always = false
-    if GetConVar("arccw_visibility"):GetInt() < 0 then
+    if GetConVar("arccw_visibility"):GetInt() < 0 or self:GetOwner() == LocalPlayer() then
         always = true
     end
     local models = self.VM
