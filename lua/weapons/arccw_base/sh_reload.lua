@@ -256,15 +256,15 @@ function SWEP:GetVisualBullets()
     local h = self:GetBuff_Hook("Hook_GetVisualBullets")
     if h then return h end
 
-	local _clip = self:Clip1()
-	local _ammo = self:Ammo1()
+    local _clip = self:Clip1()
+    local _ammo = self:Ammo1()
 
-	if self:HasInfiniteAmmo() then
-		_ammo = math.huge
-	end
-	if self:HasBottomlessClip() then
-		_clip = _ammo
-	end
+    if self:HasInfiniteAmmo() then
+        _ammo = math.huge
+    end
+    if self:HasBottomlessClip() then
+        _clip = _ammo
+    end
 
     if self.LastClipOutTime > CurTime() then
         return self.LastClip1_B or _clip

@@ -60,12 +60,12 @@ function SWEP:Deploy()
             self:PlayAnimation(r_anim, 1, true, 0, false)
             prd = self.Animations[r_anim].ProcDraw
 
-            self:SetReloading(CurTime() + ( prd and 0.5 or self:GetAnimKeyTime(r_anim, true) ) )
+            self:SetPriorityAnim(CurTime() + ( prd and 0.5 or self:GetAnimKeyTime(r_anim, true) ) )
         elseif self.Animations[d_anim] then
             self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false)
             prd = self.Animations[d_anim].ProcDraw
 
-            self:SetReloading(CurTime() + ( prd and 0.5 or (self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime")) ) )
+            self:SetPriorityAnim(CurTime() + ( prd and 0.5 or (self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime")) ) )
         end
 
         if prd or (!self.Animations[r_anim] and !self.Animations[d_anim]) then
@@ -297,7 +297,7 @@ function SWEP:Holster(wep)
             self:ProceduralHolster()
             self:SetHolster_Time(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         end
-        self:SetReloading(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
+        self:SetPriorityAnim(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
         self:SetWeaponOpDelay(CurTime() + time * self:GetBuff_Mult("Mult_DrawTime"))
 
         self:GetBuff_Hook("Hook_OnHolster")
