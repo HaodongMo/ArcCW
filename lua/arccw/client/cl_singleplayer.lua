@@ -123,6 +123,7 @@ end)
 local lastwpn = nil
 
 hook.Add("Think", "ArcCW_FixDeploy", function()
+    if !game.SinglePlayer() then return end
     local wep = LocalPlayer():GetActiveWeapon()
 
     if wep.ArcCW and wep != lastwpn then wep:Deploy() end

@@ -31,6 +31,7 @@ function SWEP:Deploy()
     self:SetShouldHoldType()
 
     self:SetReloading(false)
+    self:SetPriorityAnim(false)
     self:SetState(0)
     self:SetInUBGL(false)
     self:SetMagUpCount(0)
@@ -83,8 +84,6 @@ function SWEP:Deploy()
     if self:GetBuff_Override("Override_AutoReload", self.AutoReload) then
         self:RestoreAmmo()
     end
-
-    self.LHIKAnimation = nil
 
     timer.Simple(0, function()
         if IsValid(self) then self:SetupModel(false) end
