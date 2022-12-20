@@ -777,18 +777,12 @@ function SWEP:PreDrawViewModel(vm)
 
     local asight = self:GetActiveSights()
 
-    if asight then
-        if self:GetSightDelta() < 1 and asight.Holosight then
-            ArcCW:DrawPhysBullets()
-        end
-
-        if GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic then
-            self:FormCheapScope()
-        end
-
-        if self:GetSightDelta() < 1 and asight.ScopeTexture then
-            self:FormCheapScope()
-        end
+    if asight and ((GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic)
+            or (self:GetSightDelta() < 1 and asight.ScopeTexture)) then
+        -- Necessary to call here since physbullets are not drawn until PreDrawEffects; cheap scope implementation will not allow them to be visible
+        -- Introduces a bug when we try to call GetAttachment on the viewmodel in DrawPhysBullets here, so set a workaround variable to not call it
+        ArcCW:DrawPhysBullets(true)
+        self:FormCheapScope()
     end
 
     local coolFOV = self.CurrentViewModelFOV or self.ViewModelFOV
