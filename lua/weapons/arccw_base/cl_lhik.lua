@@ -113,6 +113,8 @@ function SWEP:GetLHIKAnim()
 end
 
 function SWEP:DoLHIK()
+    if !IsValid(self:GetOwner()) then return end
+
     local justhide = false
     local lhik_model = nil
     local lhik_anim_model = nil
