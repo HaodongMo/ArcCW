@@ -8,6 +8,9 @@ function SWEP:CanPrimaryAttack()
     if IsValid(self:GetHolster_Entity()) then return end
     if self:GetHolster_Time() > 0 then return end
 
+    -- Disabled (currently used only by deploy)
+    if self:GetState() == ArcCW.STATE_DISABLE then return end
+
     -- Coostimzing
     if self:GetState() == ArcCW.STATE_CUSTOMIZE then
         if CLIENT and ArcCW.Inv_Hidden then

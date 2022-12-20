@@ -32,7 +32,6 @@ function SWEP:Deploy()
 
     self:SetReloading(false)
     self:SetPriorityAnim(false)
-    self:SetState(0)
     self:SetInUBGL(false)
     self:SetMagUpCount(0)
     self:SetMagUpIn(0)
@@ -44,14 +43,14 @@ function SWEP:Deploy()
     self:SetLastAimAngle(ang0)
 
     self.LHIKAnimation = nil
+    self.CrosshairDelta = 0
 
     self:SetBurstCount(0)
 
     self:WepSwitchCleanup()
     if game.SinglePlayer() then self:CallOnClient("WepSwitchCleanup") end
-    -- Don't play anim if in vehicle. This can be caused by HL2 level changes
 
-    if !self:GetOwner():InVehicle() then
+    if !self:GetOwner():InVehicle() then -- Don't play anim if in vehicle. This can be caused by HL2 level changes
         local prd = false
 
         local r_anim = self:SelectAnimation("ready")
@@ -61,18 +60,20 @@ function SWEP:Deploy()
             self:PlayAnimation(r_anim, 1, true, 0, false)
             prd = self.Animations[r_anim].ProcDraw
 
-            self:SetPriorityAnim(CurTime() + ( prd and 0.5 or self:GetAnimKeyTime(r_anim, true) ) )
+            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true) )
         elseif self.Animations[d_anim] then
             self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false)
             prd = self.Animations[d_anim].ProcDraw
 
-            self:SetPriorityAnim(CurTime() + ( prd and 0.5 or (self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime")) ) )
+            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime"))
         end
 
         if prd or (!self.Animations[r_anim] and !self.Animations[d_anim]) then
             self:ProceduralDraw()
         end
     end
+
+    self:SetState(ArcCW.STATE_DISABLE)
 
     if self.UnReady then
         if SERVER then

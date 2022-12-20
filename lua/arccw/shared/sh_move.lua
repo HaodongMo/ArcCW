@@ -123,13 +123,9 @@ function ArcCW.StartCommand(ply, ucmd)
     end
 
     -- Holster code
-    if IsValid(wep) and wep.ArcCW then
-        if wep:GetHolster_Time() != 0 and wep:GetHolster_Time() <= CurTime() then
-            if IsValid(wep:GetHolster_Entity()) then
-                wep:SetHolster_Time(-math.huge)
-                ucmd:SelectWeapon(wep:GetHolster_Entity())
-            end
-        end
+    if IsValid(wep) and wep.ArcCW and wep:GetHolster_Time() != 0 and wep:GetHolster_Time() <= CurTime() and IsValid(wep:GetHolster_Entity()) then
+        wep:SetHolster_Time(-math.huge)
+        ucmd:SelectWeapon(wep:GetHolster_Entity())
     end
 
 

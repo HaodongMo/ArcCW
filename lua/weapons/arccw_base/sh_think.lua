@@ -17,6 +17,10 @@ function SWEP:Think()
 
     if !IsValid(owner) or owner:IsNPC() then return end
 
+    if self:GetState() == ArcCW.STATE_DISABLE and !self:GetPriorityAnim() then
+        self:SetState(ArcCW.STATE_IDLE)
+    end
+
     for i, v in ipairs(self.EventTable) do
         for ed, bz in pairs(v) do
             if ed <= CurTime() then

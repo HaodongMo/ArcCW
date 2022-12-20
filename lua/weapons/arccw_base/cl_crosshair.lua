@@ -1,4 +1,3 @@
-local delta = 0
 local size = 0
 local clump_inner = Material("arccw/hud/clump_inner.png", "mips smooth")
 local clump_outer = Material("arccw/hud/clump_outer.png", "mips smooth")
@@ -22,6 +21,7 @@ function SWEP:ShouldDrawCrosshair()
     if self:GetCurrentFiremode().Mode == 0 then return false end
     if self:GetBuff_Hook("Hook_ShouldNotFire") then return false end
     if self:GetNWState() == ArcCW.STATE_CUSTOMIZE then return false end
+    if self:GetNWState() == ArcCW.STATE_DISABLE then return false end
     return true
 end
 
@@ -146,9 +146,9 @@ function SWEP:DoDrawCrosshair(x, y)
     local st = self:GetSightTime() / 2
 
     if self:ShouldDrawCrosshair() then
-        delta = math.Approach(delta, 1, FrameTime() * 1 / st)
+        self.CrosshairDelta = math.Approach(self.CrosshairDelta or 0, 1, FrameTime() * 1 / st)
     else
-        delta = math.Approach(delta, 0, FrameTime() * 1 / st)
+        self.CrosshairDelta = math.Approach(self.CrosshairDelta or 0, 0, FrameTime() * 1 / st)
     end
 
     if GetConVar("arccw_crosshair_equip"):GetBool() and (self:GetBuff("ShootEntity", true) or self.PrimaryBash) then
@@ -158,17 +158,17 @@ function SWEP:DoDrawCrosshair(x, y)
     end
 
     if prong_dot then
-        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * self.CrosshairDelta)
         surface.DrawRect(x - p_w2 / 2, y - p_w2 / 2, p_w2, p_w2)
 
-        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
+        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * self.CrosshairDelta)
         surface.DrawRect(x - p_w / 2, y - p_w / 2, p_w, p_w)
     end
 
 
     size = math.Approach(size, gap, FrameTime() * 32 * gap)
     gap = size
-    if !static then gap = gap * delta end
+    if !static then gap = gap * self.CrosshairDelta end
     gap = math.max(4, gap)
 
     local num = self:GetBuff("Num")
@@ -186,7 +186,7 @@ function SWEP:DoDrawCrosshair(x, y)
         local dy = gap * math.sin(rad) + prong * math.sin(rad) / 2
         surface.SetMaterial(square_mat)
         -- Shade
-        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * self.CrosshairDelta)
         if prong_left and prong_top then
             surface.DrawTexturedRectRotated(x - dx, y - dy, prong2, p_w2, -angle)
             surface.DrawTexturedRectRotated(x + dx, y - dy, prong2, p_w2, angle)
@@ -200,7 +200,7 @@ function SWEP:DoDrawCrosshair(x, y)
             surface.DrawRect(x - p_w2 / 2, y + gap - prong_out / 2, p_w2, prong2)
         end
         -- Fill
-        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
+        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * self.CrosshairDelta)
         if prong_left and prong_top then
             surface.DrawTexturedRectRotated(x - dx, y - dy, prong, p_w, -angle)
             surface.DrawTexturedRectRotated(x + dx, y - dy, prong, p_w, angle)
@@ -215,7 +215,7 @@ function SWEP:DoDrawCrosshair(x, y)
         end
     else
         -- Shade
-        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+        surface.SetDrawColor(outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * self.CrosshairDelta)
         if prong_left then
             surface.DrawRect(x - gap - prong2 + prong_out / 2, y - p_w2 / 2, prong2, p_w2)
         end
@@ -229,7 +229,7 @@ function SWEP:DoDrawCrosshair(x, y)
             surface.DrawRect(x - p_w2 / 2, y + gap - prong_out / 2, p_w2, prong2)
         end
         -- Fill
-        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * delta)
+        surface.SetDrawColor(clr.r, clr.g, clr.b, clr.a * self.CrosshairDelta)
         if prong_left then
             surface.DrawRect(x - gap - prong, y - p_w / 2, prong, p_w)
         end
@@ -250,12 +250,12 @@ function SWEP:DoDrawCrosshair(x, y)
             surface.SetMaterial(clump_outer)
 
             for i=1, prong_out do
-                surface.DrawCircle(x-1, y-0, acc + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+                surface.DrawCircle(x-1, y-0, acc + math.ceil(i*0.5) * (i % 2 == 1 and 1 or -1), outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * self.CrosshairDelta)
             end
-            surface.DrawCircle(x-1, y-0, acc, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * delta)
+            surface.DrawCircle(x-1, y-0, acc, outlineClr.r, outlineClr.g, outlineClr.b, outlineClr.a * self.CrosshairDelta)
         end
 
-        surface.DrawCircle(x-1, y-0, acc, clr.r, clr.g, clr.b, clr.a * delta)
+        surface.DrawCircle(x-1, y-0, acc, clr.r, clr.g, clr.b, clr.a * self.CrosshairDelta)
     end
 
     self:GetBuff_Hook("Hook_PostDrawCrosshair", w2s)
