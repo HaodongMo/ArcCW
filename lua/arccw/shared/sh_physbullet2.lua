@@ -226,6 +226,10 @@ net.Receive("arccw_sendbullet", function(len, ply)
         bullet.Underwater = true
     end
 
+    -- Calling GetAttachment here does not break LHIK... But it does give an incorrect position
+    -- Fortunately it can be translated back into viewmodel projection
+    bullet.TracerOrigin = ArcCW.FormatViewModelAttachment(weapon.CurrentViewModelFOV, weapon:GetTracerOrigin())
+
     table.insert(ArcCW.PhysBullets, bullet)
 end)
 
@@ -500,7 +504,7 @@ end
 local head = Material("particle/fire")
 local tracer = Material("effects/smoke_trail")
 
-function ArcCW:DrawPhysBullets(overdraw)
+function ArcCW:DrawPhysBullets()
     cam.Start3D()
     for _, i in pairs(ArcCW.PhysBullets) do
 
@@ -535,11 +539,9 @@ function ArcCW:DrawPhysBullets(overdraw)
             if IsValid(i.Weapon) and i.Weapon:GetOwner() == LocalPlayer() then
                 -- Lerp towards the muzzle position, effectively slowing and dragging the bullet back.
                 -- Bullet will appear to accelerate suddenly near the threshold, but it should be too fast to notice.
-                if !i.TracerOrigin and !overdraw then
-                    i.TracerOrigin = i.Weapon:GetTracerOrigin() or i.PosStart
-                end
+
                 dampfraction = (i.Travelled / i.DampenVelocity) ^ 0.5
-                rpos = LerpVector(dampfraction, overdraw and i.PosStart or i.TracerOrigin, i.Pos)
+                rpos = LerpVector(dampfraction, i.TracerOrigin, i.Pos)
 
                 if GetConVar("developer"):GetInt() >= 2 then
                     debugoverlay.Cross(i.TracerOrigin, 2, 5, Color(255, 0, 0), true)
