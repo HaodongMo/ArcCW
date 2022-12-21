@@ -305,7 +305,7 @@ local DevPanel = {
 
 local ScopesPanel = {
     { type = "h", text = "#arccw.clientcfg" },
-    
+
     { type = "b", text = "#arccw.cvar.cheapscopes", var = "arccw_cheapscopes" },
     { type = "c", text = "#arccw.cvar.cheapscopesv2.desc" },
     { type = "f", text = "#arccw.cvar.cheapscopesv2_ratio", var = "arccw_cheapscopesv2_ratio", min = 0, max = 1},
@@ -317,7 +317,7 @@ local ScopesPanel = {
     { type = "b", text = "#arccw.cvar.thermalpp", var = "arccw_thermalpp" },
     { type = "b", text = "#arccw.cvar.scopepp_refract", var = "arccw_scopepp_refract" },
     { type = "f", text = "#arccw.cvar.scopepp_refract_ratio", var = "arccw_scopepp_refract_ratio", min = -1, max = 2 },
-    
+
     { type = "m", text = "#arccw.cvar.scope_clr", r = "arccw_scope_r", g = "arccw_scope_g", b = "arccw_scope_b" },
 }
 

@@ -672,7 +672,7 @@ function SWEP:GetTracerOrigin()
     local muzz = self:GetMuzzleDevice(wm)
 
     if muzz and muzz:IsValid() then
-        local posang = muzz:GetAttachment(1)
+        local posang = muzz:GetAttachment(self:GetBuff_Override("Override_MuzzleEffectAttachment", self.MuzzleEffectAttachment) or 1)
         if !posang then return muzz:GetPos() end
         local pos = posang.Pos
 

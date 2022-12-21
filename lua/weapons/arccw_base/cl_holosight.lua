@@ -474,6 +474,11 @@ function SWEP:FormRTScope()
         rtangles = EyeAngles()
         rtpos = EyePos()
         rtdrawvm = false
+
+        -- HACK HACK HACK HACK HACK
+        -- If we do not draw the viewmodel in RT scope, calling GetAttachment on the vm seems to break LHIK.
+        -- So... just draw it! The results gets drawn over again so it doesn't affect the outcome
+        render.RenderView({drawviewmodel = true}) -- ?????
     end
 
     local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
@@ -491,9 +496,9 @@ function SWEP:FormRTScope()
 
     if ScrH() > ScrW() then rtsize = ScrW() end
 
-    local rtres = asight.ForceLowRes and ScrH()*0.6 or ScrH() -- we can emit low res lcd displays for scopes
+    local rtres = asight.ForceLowRes and ScrH() * 0.6 or ScrH() -- we can emit low res lcd displays for scopes
 
-    rtmat = GetRenderTarget("arccw_rtmat"..rtres, rtres, rtres, false)
+    rtmat = GetRenderTarget("arccw_rtmat" .. rtres, rtres, rtres, false)
 
     render.PushRenderTarget(rtmat, 0, 0, rtsize, rtsize)
 
