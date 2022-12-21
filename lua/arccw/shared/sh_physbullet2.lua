@@ -582,7 +582,7 @@ function ArcCW:DrawPhysBullets()
             if i.TracerOrigin and CurTime() - i.StartTime <= engine.TickInterval() then
                 pos2 = rpos - (rpos - i.TracerOrigin):GetNormalized() * len
             end
-            render.DrawBeam(rpos, pos2, size * 0.75, 0, 0.5, col)
+            render.DrawBeam(rpos, pos2, size * 0.25, 0, 0.5, col)
             debugoverlay.Line(rpos, pos2, 7, Color(0, 255, 0), true)
         end
 
