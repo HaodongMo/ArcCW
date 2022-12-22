@@ -451,6 +451,7 @@ function SWEP:TranslateFOV(fov)
 
     local app_vm = self.ViewModelFOV + self:GetOwner():GetInfoNum("arccw_vm_fov", 0)
     if CLIENT then
+        if self:GetInBipod() then app_vm = LocalPlayer():GetFOV() end
         app_vm = app_vm * (LocalPlayer():GetFOV()/GetConVar("fov_desired"):GetInt())
     end
 
