@@ -249,6 +249,7 @@ function SWEP:NPC_Shoot()
         self:DoShellEject()
     end
 
+    --[[]
     local ss = self.ShootSound
 
     if self:GetBuff_Override("Silencer") then
@@ -281,6 +282,9 @@ function SWEP:NPC_Shoot()
     if ss then
         self:MyEmitSound(ss, svol, spitch, 1, CHAN_WEAPON)
     end
+    ]]
+
+    self:DoShootSound()
 
     self:SetClip1(self:Clip1() - 1)
 
