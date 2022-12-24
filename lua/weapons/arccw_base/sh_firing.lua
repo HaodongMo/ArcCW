@@ -342,7 +342,7 @@ function SWEP:PrimaryAttack()
         local fireanim = self:GetBuff_Hook("Hook_SelectFireAnimation") or self:SelectAnimation("fire")
         local firedelay = self.Animations[fireanim].MinProgress or 0
         self:SetNeedCycle(true)
-        self:SetWeaponOpDelay(CurTime() + firedelay)
+        self:SetWeaponOpDelay(CurTime() + (firedelay * self:GetBuff_Mult("Mult_CycleTime")))
         self:SetNextPrimaryFire(CurTime() + 0.1)
     end
 
