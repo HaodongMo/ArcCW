@@ -396,7 +396,11 @@ function SWEP:GetBuff_Mult(buff)
         end
 
         if ArcCW.ConVar_BuffMults[buff] then
-            mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+            if buff == "Mult_CycleTime" then
+                mult = mult / GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+            else
+                mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+            end
         end
 
         return mult
@@ -441,7 +445,11 @@ function SWEP:GetBuff_Mult(buff)
     end
 
     if ArcCW.ConVar_BuffMults[buff] then
-        mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+        if buff == "Mult_CycleTime" then
+            mult = mult / GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+        else
+            mult = mult * GetConVar(ArcCW.ConVar_BuffMults[buff]):GetFloat()
+        end
     end
 
     local data = {
