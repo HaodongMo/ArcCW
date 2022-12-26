@@ -462,22 +462,24 @@ function SWEP:FormRTScope()
 
     local rtangles, rtpos, rtdrawvm
 
-    if GetConVar("arccw_drawbarrel"):GetBool() and GetConVar("arccw_vm_coolsway"):GetBool() and asight.Slot and asight.Slot == 1 then -- slot check to ignore integrated
-        rtangles = self.VMAng - self.VMAngOffset - (self:GetOurViewPunchAngles() * mag * 0.1)
-        rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z * 10
-        rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y * 10
+    if self:GetState() == ArcCW.STATE_SIGHTS then
+        if GetConVar("arccw_drawbarrel"):GetBool() and GetConVar("arccw_vm_coolsway"):GetBool() and asight.Slot and asight.Slot == 1 then -- slot check to ignore integrated
+            rtangles = self.VMAng - self.VMAngOffset - (self:GetOurViewPunchAngles() * mag * 0.1)
+            rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z * 10
+            rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y * 10
 
-        rtpos = self.VMPos + self.VMAng:Forward() * (asight.EVPos.y + 7 + (asight.ScopeMagnificationMax and asight.ScopeMagnificationMax / 3 or asight.HolosightData.HolosightMagnification / 3)) -- eh
-        rtdrawvm = true
-    else
-        rtangles = EyeAngles()
-        rtpos = EyePos()
-        rtdrawvm = false
+            rtpos = self.VMPos + self.VMAng:Forward() * (asight.EVPos.y + 7 + (asight.ScopeMagnificationMax and asight.ScopeMagnificationMax / 3 or asight.HolosightData.HolosightMagnification / 3)) -- eh
+            rtdrawvm = true
+        else
+            rtangles = EyeAngles()
+            rtpos = EyePos()
+            rtdrawvm = false
 
-        -- HACK HACK HACK HACK HACK
-        -- If we do not draw the viewmodel in RT scope, calling GetAttachment on the vm seems to break LHIK.
-        -- So... just draw it! The results gets drawn over again so it doesn't affect the outcome
-        render.RenderView({drawviewmodel = true}) -- ?????
+            -- HACK HACK HACK HACK HACK
+            -- If we do not draw the viewmodel in RT scope, calling GetAttachment on the vm seems to break LHIK.
+            -- So... just draw it! The results gets drawn over again so it doesn't affect the outcome
+            render.RenderView({drawviewmodel = true}) -- ?????
+        end
     end
 
     local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
