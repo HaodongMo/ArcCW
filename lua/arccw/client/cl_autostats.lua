@@ -4,7 +4,7 @@ local tbl_ins = tbl.insert
 local tostr   = tostring
 local translate = ArcCW.GetTranslation
 
--- ["buff"] = {"desc", string mode (mult, add, override, func), bool lowerbetter or function(val)}
+-- ["buff"] = {"desc", string mode (mult, add, override, func), bool lowerbetter or function(val), number placeinlist, bool flipsigns }
 
 ArcCW.AutoStats = {
     -- Attachments
@@ -46,7 +46,7 @@ ArcCW.AutoStats = {
     ["Mult_ReloadTime"]       = { "autostat.reloadtime",  "mult", true,            pr = 125 },
     ["Add_BarrelLength"]      = { "autostat.barrellength","add",  true,            pr = 15 },
     ["Mult_DrawTime"]         = { "autostat.drawtime",    "mult", true,            pr = 14 },
-    ["Mult_SightTime"]        = { "autostat.sighttime",   "mult", true,            pr = 335 },
+    ["Mult_SightTime"]        = { "autostat.sighttime",   "mult", true,            pr = 335, flipsigns = true },
     ["Mult_CycleTime"]        = { "autostat.cycletime",   "mult", true,            pr = 334 },
     ["Mult_Sway"]             = { "autostat.sway",        "mult",  true,           pr = 353 },
     ["Mult_HeatCapacity"]     = { "autostat.heatcap",     "mult", false,           pr = 10 },
@@ -96,7 +96,7 @@ local function getsimpleamt(stat)
     end
 end
 
-local function stattext(wep, att, i, k, dmgboth)
+local function stattext(wep, att, i, k, dmgboth, flipsigns)
     if !ArcCW.AutoStats[i] then return end
     if i == "Mult_DamageMin" and dmgboth then return end
 
@@ -117,11 +117,11 @@ local function stattext(wep, att, i, k, dmgboth)
     end
 
     if stat[2] == "mult" and k != 1 then
-        local sign, percent = k > 1 and "+" or "-", k > 1 and (k - 1) or (1 - k)
+        local sign, percent = k > 1 and (flipsigns and "-" or "+") or (flipsigns and "+" or "-"), k > 1 and (k - 1) or (1 - k)
         txt = simple and getsimpleamt(k) or sign .. tostr(math.Round(percent * 100, 2)) .. "% "
         return txt .. str, k > 1 and tcon or tpro
     elseif stat[2] == "add" and k != 0 then
-        local sign, state = k > 0 and "+" or "-", k > 0 and k or -k
+        local sign, state = k > 0 and (flipsigns and "-" or "+") or (flipsigns and "+" or "-"), k > 0 and k or -k
         txt = simple and "+ " or sign .. tostr(state) .. " "
         return txt .. str, k > 0 and tcon or tpro
     elseif stat[2] == "override" and k == true then
@@ -180,7 +180,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
                     end
                     ]]
 
-                    local txt, typ = stattext(wep, toggletbl, i, val, dmgboth)
+                    local txt, typ = stattext(wep, toggletbl, i, val, dmgboth, ArcCW.AutoStats[i].flipsigns )
                     if !txt then continue end
 
                     local prefix = (stat[2] == "override" and k == true) and "" or ("[" .. (toggletbl.AutoStatName or toggletbl.PrintName or ti) .. "] ")
@@ -209,7 +209,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
 			tbl_ins(infos, translate("autostat.ubgl2"))
 		end
 
-        local txt, typ = stattext(wep, att, i, att[i], dmgboth)
+        local txt, typ = stattext(wep, att, i, att[i], dmgboth, ArcCW.AutoStats[i].flipsigns )
         if !txt then continue end
 
         if typ == "pros" then
