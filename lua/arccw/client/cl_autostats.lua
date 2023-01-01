@@ -4,7 +4,7 @@ local tbl_ins = tbl.insert
 local tostr   = tostring
 local translate = ArcCW.GetTranslation
 
--- ["buff"] = {"desc", string mode (mult, add, override, func), bool lowerbetter or function(val), number placeinlist, bool flipsigns }
+-- ["buff"] = {"desc", string mode (mult, add, override, func), bool lowerbetter or function(val), number priority, bool flipsigns }
 
 ArcCW.AutoStats = {
     -- Attachments
@@ -44,7 +44,7 @@ ArcCW.AutoStats = {
     ["Mult_SightedMoveSpeed"] = { "autostat.sightspeed",  "mult", false,           pr = 103 },
     ["Mult_ShootSpeedMult"]   = { "autostat.shootspeed",  "mult", false,           pr = 102 },
     ["Mult_ReloadTime"]       = { "autostat.reloadtime",  "mult", true,            pr = 125 },
-    ["Add_BarrelLength"]      = { "autostat.barrellength","add",  true,            pr = 15 },
+    ["Add_BarrelLength"]      = { "autostat.barrellength","add",  true,            pr = 915 },
     ["Mult_DrawTime"]         = { "autostat.drawtime",    "mult", true,            pr = 14 },
     ["Mult_SightTime"]        = { "autostat.sighttime",   "mult", true,            pr = 335, flipsigns = true },
     ["Mult_CycleTime"]        = { "autostat.cycletime",   "mult", true,            pr = 334 },
