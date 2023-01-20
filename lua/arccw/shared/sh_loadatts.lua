@@ -32,7 +32,9 @@ function ArcCW.LoadAttachmentType(att, name)
         if genAttCvar:GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free then
             local attent = {}
             attent.Base = "arccw_att_base"
-            attent.IconOverride = att.EntityIcon
+            if att.Icon then
+                attent.IconOverride = string.Replace( att.Icon:GetTexture( "$basetexture" ):GetName() .. ".png", "0001010", "" )
+            end
             attent.PrintName = att.AbbrevName or att.PrintName or name
             attent.Spawnable = att.Spawnable or true
             attent.AdminOnly = att.AdminOnly or false
@@ -106,13 +108,15 @@ end
 local function ArcCW_LoadFolder(folder)
     folder = folder and (attachments_path .. folder .. "/") or attachments_path
     for k, v in pairs(file.Find(folder .. "*", "LUA")) do
-        if !pcall(function() ArcCW_LoadAtt(folder .. v) end) then
-            print("!!!! Attachment " .. v .. " has errors!")
+        local yaya, yoyo = pcall(function() ArcCW_LoadAtt(folder .. v) end)
+        if !yaya then
+            --print("!!!! Attachment " .. v .. " has errors!")
             -- Create a stub attachment to prevent customization UI freaking out
             ArcCW.AttachmentTable[shortname] = {
                 PrintName = shortname or "ERROR",
                 Description = "This attachment failed to load!\nIts file path is: " .. v
             }
+            print( yoyo )
         end
     end
 end
