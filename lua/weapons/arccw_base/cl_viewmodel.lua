@@ -282,6 +282,9 @@ local rap_ang = Angle()
 
 local actual
 local target = {pos = Vector(), ang = Angle()}
+
+local GunDriverFix = Angle( 0, 90, 90 )
+
 function SWEP:GetViewModelPosition(pos, ang)
     if GetConVar("arccw_dev_benchgun"):GetBool() then
         if GetConVar("arccw_dev_benchgun_custom"):GetString() then
@@ -662,7 +665,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         local offset = lhik_anim_model:GetAttachment(att).Pos
         local affset = lhik_anim_model:GetAttachment(att).Ang
 
-        affset:Sub( Angle( 0, 90, 90 ) )
+        affset:Sub( GunDriverFix )
         local r = affset.r
         affset.r = affset.p
         affset.p = -r
