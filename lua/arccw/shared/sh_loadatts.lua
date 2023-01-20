@@ -110,13 +110,12 @@ local function ArcCW_LoadFolder(folder)
     for k, v in pairs(file.Find(folder .. "*", "LUA")) do
         local yaya, yoyo = pcall(function() ArcCW_LoadAtt(folder .. v) end)
         if !yaya then
-            --print("!!!! Attachment " .. v .. " has errors!")
+            print( "!!!! Attachment " .. v .. " has errors!", yoyo )
             -- Create a stub attachment to prevent customization UI freaking out
             ArcCW.AttachmentTable[shortname] = {
                 PrintName = shortname or "ERROR",
                 Description = "This attachment failed to load!\nIts file path is: " .. v
             }
-            print( yoyo )
         end
     end
 end
