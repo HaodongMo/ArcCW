@@ -35,7 +35,7 @@ function ArcCW.LoadAttachmentType(att, name)
             if att.Icon then
                 attent.IconOverride = string.Replace( att.Icon:GetTexture( "$basetexture" ):GetName() .. ".png", "0001010", "" )
             end
-            attent.PrintName = att.AbbrevName or att.PrintName or name
+            attent.PrintName = att.PrintName or name
             attent.Spawnable = att.Spawnable or true
             attent.AdminOnly = att.AdminOnly or false
             attent.Category = att.EntityCategory or "ArcCW - Attachments"
