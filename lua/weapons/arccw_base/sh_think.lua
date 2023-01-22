@@ -140,7 +140,10 @@ function SWEP:Think()
         end
     end
 
+
     if self:GetBuff_Hook("Hook_ShouldNotSight") and (self.Sighted or self:GetState() == ArcCW.STATE_SIGHTS) then
+        self:ExitSights()
+    elseif self:GetHolster_Time() > 0 then
         self:ExitSights()
     else
 
