@@ -106,14 +106,11 @@ concommand.Add("arccw_listvmbgs", function()
     for i = 1, #alist do
         local alistsm = alist[i].submodels
         local active = vm:GetBodygroup(alist[i].id)
-        MsgC(clr_b, i, " --- ")
-        MsgC(color_white, "\tid: ", alist[i].id, "\n     [")
-        MsgC(clr_r, "\tname: ", alist[i].name, "\n")
-        MsgC(clr_r, "\tnum: ", alist[i].num, "\n")
+        MsgC(clr_b, alist[i].id, " -- [")
+        MsgC(clr_r, "\t", alist[i].name, "\n")
         if alistsm then
-            MsgC(clr_r, "\tsubmodels:\n")
             for j = 0, #alistsm do
-                MsgC(active == j and color_white or clr_b, "\t" .. j, " --- ")
+                MsgC(active == j and color_white or clr_b, "\t" .. j, " - ")
                 MsgC(active == j and color_white or clr_r, alistsm[j], "\n")
             end
         end
