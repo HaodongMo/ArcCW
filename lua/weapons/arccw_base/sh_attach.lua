@@ -722,6 +722,8 @@ end
 function SWEP:GetWeaponFlags()
     local flags = {}
 
+    if self.DefaultFlags then table.Add(flags, self.DefaultFlags) end
+
     for id, i in pairs(self.Attachments) do
         if !i.Installed then
             if i.DefaultFlags then

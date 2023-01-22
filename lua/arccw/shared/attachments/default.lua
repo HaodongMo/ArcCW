@@ -407,6 +407,8 @@ att.Hook_LHIK_TranslateAnimation = function(wep, anim) end
 -- anim is string
 att.Hook_SelectBashAnim = function(wep, anim) end
 
+att.Hook_SelectFixAnim = function(wep, anim) end
+
 att.Hook_PreBash = function(wep) end
 
 -- data = {tr = tr, dmg = dmg}

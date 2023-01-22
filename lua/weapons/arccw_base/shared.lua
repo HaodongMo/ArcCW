@@ -602,7 +602,8 @@ SWEP.Attachments = {}
 -- use SWEP/wep.Hook_SelectInsertAnimation to change the shotgun reload insert animation
 -- use SWEP/wep.Hook_SelectFireAnimation to change the fire animation
 -- use SWEP/wep.Hook_SelectCycleAnimation to change the cycle/pump animation
--- use SWEP/wep.Hook_SelectBashAnimation to change the bash animation
+-- use SWEP/wep.Hook_SelectBashAnim to change the bash animation
+-- use SWEP/wep.Hook_SelectJamAnim to change the jam animation
 
 -- which sequence to derive the sight autosolver from.
 SWEP.AutosolveSourceSeq = "idle"

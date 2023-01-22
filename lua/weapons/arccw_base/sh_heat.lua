@@ -18,6 +18,7 @@ function SWEP:AddHeat(a)
     local mult = 1 * self:GetBuff_Mult("Mult_FixTime")
     local heat = self:GetHeat()
     local anim = self:SelectAnimation("fix")
+    anim = self:GetBuff_Hook("Hook_SelectFixAnim", anim) or anim
     local amount = a or 1
     local t = CurTime() + self:GetAnimKeyTime(anim) * mult
     self.Heat = math.max(0, heat + amount * GetConVar("arccw_mult_heat"):GetFloat())
@@ -98,7 +99,10 @@ end
 
 function SWEP:GetMalfunctionAnimation()
     local anim = self:SelectAnimation("unjam")
-    if !self.Animations[anim] then anim = self:SelectAnimation("fix") end
+    if !self.Animations[anim] then
+        anim = self:SelectAnimation("fix")
+        anim = self:GetBuff_Hook("Hook_SelectFixAnim", anim) or anim
+    end
     if !self.Animations[anim] then anim = self:SelectAnimation("cycle") end
     if !self.Animations[anim] then anim = nil end
     return anim
