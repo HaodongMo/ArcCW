@@ -413,7 +413,7 @@ function SWEP:SetupModel(wm)
         element.Bodygroups = self:GetBuff_Stat("ModelBodygroups", i)
         element.DrawFunc = atttbl.DrawFunc
         element.Slot = i
-        element.ModelOffset = atttbl.ModelOffset or Vector(0, 0, 0)
+        element.ModelOffset = self:GetBuff_Stat("ModelOffset", i) or Vector(0, 0, 0)
 
         if wm then
             element.OffsetAng = Angle()
