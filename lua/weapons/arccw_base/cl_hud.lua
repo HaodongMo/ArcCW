@@ -201,6 +201,11 @@ local function debug_panel(self)
         surface.SetTextPos(ecksy, 26 * s * 2.66)
         surface.DrawText("not a mag fed one, at least...")
     end
+    surface.SetTextPos(ecksy + (s*36*3), 26 * s * 3)
+    if self:GetReloadingREAL() - CurTime() > 0 then
+        surface.SetTextColor(255, 127, 127, 255)
+    end
+    surface.DrawText( mr( math.max( self:GetReloadingREAL() - CurTime(), 0 ), 2) )
     surface.SetFont("ArcCW_26")
     surface.SetTextColor(255, 255, 255, 255)
 
@@ -289,6 +294,9 @@ local function debug_panel(self)
         surface.SetTextPos(ecksy- s * 36, s * 26 * 3.33)
         surface.DrawText("MAG LOAD")
     end
+
+    surface.SetTextPos(ecksy- s * (36 * -2), s * 26 * 3.33)
+    surface.DrawText("RELOAD TIME")
 
     surface.SetTextPos(ecksy, 26 * s * 4)
     surface.DrawText("PRIORITY DELAY")
