@@ -31,10 +31,10 @@ local cr_shad = Color( 0, 0, 0, 127 )
 local gaA = 0
 local gaD = 0
 
-function SWEP:GetFOVAcc()
+function SWEP:GetFOVAcc( acc, disp )
     cam.Start3D()
-        local lool = ( EyePos() + ( EyeAngles():Forward() ) + ( (ArcCW.MOAToAcc * self:GetBuff("AccuracyMOA")) * EyeAngles():Up() ) ):ToScreen()
-        local lool2 = ( EyePos() + ( EyeAngles():Forward() ) + ( (self:GetDispersion() * ArcCW.MOAToAcc / 10) * EyeAngles():Up() ) ):ToScreen()
+        local lool = ( EyePos() + ( EyeAngles():Forward() ) + ( ( ArcCW.MOAToAcc * (acc or self:GetBuff("AccuracyMOA")) ) * EyeAngles():Up() ) ):ToScreen()
+        local lool2 = ( EyePos() + ( EyeAngles():Forward() ) + ( ( (disp or self:GetDispersion()) * ArcCW.MOAToAcc / 10 ) * EyeAngles():Up() ) ):ToScreen()
     cam.End3D()
 
     local gau = 0
@@ -94,7 +94,7 @@ function SWEP:DoDrawCrosshair(x, y)
             GetConVar("arccw_crosshair_outline_b"):GetInt(),
             GetConVar("arccw_crosshair_outline_a"):GetInt())
 
-    local gA, gD = self:GetFOVAcc()
+    local gA, gD = self:GetFOVAcc( self:GetBuff("AccuracyMOA"), self:GetDispersion() )
     local gap = (static and 8 or gD) * GetConVar("arccw_crosshair_gap"):GetFloat()
 
     gap = gap + ( ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1) )
