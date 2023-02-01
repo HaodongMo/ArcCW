@@ -108,7 +108,7 @@ function ArcCW:SlotAcceptsAtt(slot, wep, att)
 
     if atttbl.Hidden or atttbl.Blacklisted or ArcCW.AttachmentBlacklistTable[att] then return false end
 
-    local Owner = wep:GetOwner()
+    local Owner = wep.GetOwner and wep:GetOwner()
     if (atttbl.NotForNPC or atttbl.NotForNPCs) and Owner and Owner:IsNPC() then
         return false
     end
