@@ -308,7 +308,7 @@ function SWEP:DrawFlashlightsVM()
             pos = owner:EyePos()
             ang = owner:EyeAngles()
         else
-            local att = model:LookupAttachment(k.bone or "laser")
+            local att = model:LookupAttachment(k.Bone or "laser")
 
             att = att == 0 and model:LookupAttachment("muzzle") or att
 
