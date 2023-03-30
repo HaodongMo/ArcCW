@@ -198,7 +198,7 @@ function SWEP:DrawFlashlightsWM()
         if !k.WElement then continue end
         local model = k.WElement.Model
         if !IsValid(model) then return end
-        
+
         local pos, ang, dir
 
         if !model then
@@ -297,14 +297,16 @@ function SWEP:DrawFlashlightsVM()
         self:CreateFlashlightsVM()
     end
 
+    local owner = self:GetOwner()
+
     for i, k in pairs(self.Flashlights) do
         local model = (self.Attachments[k.att].VElement or {}).Model
 
         local pos, ang
 
         if !model then
-            pos = self:GetOwner():EyePos()
-            ang = self:GetOwner():EyeAngles()
+            pos = owner:EyePos()
+            ang = owner:EyeAngles()
         else
             local att = model:LookupAttachment(k.bone or "laser")
 
@@ -320,15 +322,15 @@ function SWEP:DrawFlashlightsVM()
         end
 
         local tr = util.TraceLine({
-            start = self:GetOwner():EyePos(),
-            endpos = self:GetOwner():EyePos() - ang:Right() * 128,
+            start = owner:EyePos(),
+            endpos = owner:EyePos() - ang:Right() * 128,
             mask = MASK_OPAQUE,
             filter = LocalPlayer(),
         })
         if tr.Fraction < 1 then -- We need to push the flashlight back
             local tr2 = util.TraceLine({
-                start = self:GetOwner():EyePos(),
-                endpos = self:GetOwner():EyePos() + ang:Right() * 128,
+                start = owner:EyePos(),
+                endpos = owner:EyePos() + ang:Right() * 128,
                 mask = MASK_OPAQUE,
                 filter = LocalPlayer(),
             })
