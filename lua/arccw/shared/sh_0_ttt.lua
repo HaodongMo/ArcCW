@@ -107,27 +107,30 @@ hook.Add("OnGamemodeLoaded", "ArcCW_TTT", function()
             end
         end
 
-        local class = wep.ClassName
-        local path = "arccw/weaponicons/" .. class
-        local path2 = "arccw/ttticons/" .. class .. ".png"
-        local path3 = "vgui/ttt/" .. class
-        local path4 = "entities/" .. class .. ".png"
+        -- Only set wep.Icon if it isn't already defined
+        if !isstring(wep.Icon) or Material(wep.Icon):IsError() then
+            local class = wep.ClassName
+            local path = "arccw/weaponicons/" .. class
+            local path2 = "arccw/ttticons/" .. class .. ".png"
+            local path3 = "vgui/ttt/" .. class
+            local path4 = "entities/" .. class .. ".png"
 
-        if !Material(path2):IsError() then
-            -- TTT icon (png)
-            wep.Icon = path2
-        elseif !Material(path3):IsError() then
-            -- TTT icon (vtf)
-            wep.Icon = path3
-        elseif !Material(path4):IsError() then
-            -- Entity spawn icon
-            wep.Icon = path4
-        elseif !Material(path):IsError() then
-            -- Kill icon
-            wep.Icon = path
-        else
-            -- fallback: display _something_
-            wep.Icon = "arccw/hud/arccw_bird.png"
+            if !Material(path2):IsError() then
+                -- TTT icon (png)
+                wep.Icon = path2
+            elseif !Material(path3):IsError() then
+                -- TTT icon (vtf)
+                wep.Icon = path3
+            elseif !Material(path4):IsError() then
+                -- Entity spawn icon
+                wep.Icon = path4
+            elseif !Material(path):IsError() then
+                -- Kill icon
+                wep.Icon = path
+            else
+                -- fallback: display _something_
+                wep.Icon = "arccw/hud/arccw_bird.png"
+            end
         end
 
     end
