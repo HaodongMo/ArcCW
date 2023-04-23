@@ -308,6 +308,9 @@ function SWEP:GetVisualClip()
     -- end
 
     local reserve = self:Ammo1()
+    if self:HasInfiniteAmmo() then
+        reserve = math.huge
+    end
     local chamber = math.Clamp(self:Clip1(), 0, self:GetChamberSize())
     local abouttoload = math.Clamp(self:GetCapacity() + chamber, 0, reserve + self:Clip1())
 
