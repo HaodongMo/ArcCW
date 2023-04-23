@@ -154,7 +154,7 @@ function SWEP:DoMalfunction(post)
     local ret = self:GetBuff_Hook("Hook_Malfunction", count, true)
     if ret != nil then return ret end
 
-    if self:Clip1() <= 1 then return false end
+    -- if self:Clip1() <= 1 then return false end -- Don't fucking
 
     --print(mean, var, count, self.NextMalfunction)
     if count >= self.NextMalfunction + mean then
