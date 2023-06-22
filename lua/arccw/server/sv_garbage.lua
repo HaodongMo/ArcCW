@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 ArcCW.ShieldPropPile    = {} -- { {Model = NULL, Weapon = NULL} }
 
 local function SV_ArcCW_CollectGarbage()

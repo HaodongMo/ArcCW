@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 hook.Add("EntityTakeDamage", "ArcCW_DoAttDMG", function(ent, dmg)
     if !ent:IsPlayer() then return end
 

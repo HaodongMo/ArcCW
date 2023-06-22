@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 function ArcCW.DoorBust(ent, vel)
     local cvar = GetConVar("arccw_doorbust"):GetInt()
     local t = GetConVar("arccw_doorbust_time"):GetFloat()

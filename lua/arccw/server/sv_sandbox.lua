@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 -- We have to do a timer because there is no "PlayerGivenSWEP" or similar
 hook.Add("PlayerGiveSWEP", "ArcCW_Autoload", function(ply, class, tbl)
     local weptbl = weapons.Get(class)

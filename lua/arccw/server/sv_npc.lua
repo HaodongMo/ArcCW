@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 ArcCW.RandomWeaponCache = {}
 
 hook.Add("PlayerSpawnedNPC", "ArcCW_PlayerSpawnedNPC", function( ply, ent )

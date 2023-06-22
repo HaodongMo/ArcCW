@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 ArcCW.NPCsCache = ArcCW.NPCsCache or {}
 local npcs = ArcCW.NPCsCache
 

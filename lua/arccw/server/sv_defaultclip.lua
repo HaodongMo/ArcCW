@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 hook.Add("OnEntityCreated", "ArcCW_DefaultClip", function(ent)
     if !ent.ArcCW then return end
 

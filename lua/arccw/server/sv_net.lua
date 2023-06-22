@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 if game.SinglePlayer() then
 
 util.AddNetworkString("arccw_sp_lhikanim")

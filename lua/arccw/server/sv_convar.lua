@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 net.Receive("arccw_sendconvar", function(len, ply)
     local command = net.ReadString()
 

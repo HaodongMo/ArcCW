@@ -1,3 +1,5 @@
+if CLIENT then return end
+
 hook.Add( "PlayerGiveSWEP", "ArcCW_YearLimiter", function( ply, class, swep )
     local wep = weapons.Get(class)
 

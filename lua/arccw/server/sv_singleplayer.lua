@@ -1,4 +1,4 @@
-if game.SinglePlayer() then
+if CLIENT or !game.SinglePlayer() then return end
 
 hook.Add("EntityTakeDamage", "ArcCW_ETD", function(npc, dmg)
     timer.Simple(0, function()
@@ -10,5 +10,3 @@ hook.Add("EntityTakeDamage", "ArcCW_ETD", function(npc, dmg)
         end
     end)
 end)
-
-end
