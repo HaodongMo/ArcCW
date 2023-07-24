@@ -36,7 +36,7 @@ function ArcCW:AddGrenadeAmmo()
     if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
         for i, k in pairs(weapons.GetList()) do
             local class = k.ClassName
-            if !weapons.IsBasedOn(class, "arccw_base") then return end
+            if !string.find(class, "arccw") then continue end
             local wpntbl = weapons.Get(class)
 
             if (wpntbl.Throwing or wpntbl.Disposable) and !wpntbl.Singleton and !wpntbl.DoNotEquipmentAmmo then
