@@ -289,7 +289,7 @@ if CLIENT then
         local ent = net.ReadEntity()
         local aseq = net.ReadUInt(16)
         local starttime = net.ReadFloat()
-        if ent ~= LocalPlayer() then
+        if IsValid(ent) && ent ~= LocalPlayer() then
             ent:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, starttime, true )
         end
     end)
