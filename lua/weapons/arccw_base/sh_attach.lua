@@ -1528,7 +1528,6 @@ function SWEP:AdjustAtts()
     self:AdjustAmmo(old_inf)
 end
 
-
 function SWEP:GetAttachmentMaxHP(slot)
     if !self.Attachments[slot] then return 100 end
     if !self.Attachments[slot].Installed then return 100 end
@@ -1748,4 +1747,9 @@ function SWEP:AddSubSlot(i, attname)
             self.Attachments[index].SubAtts = {}
         end
     end
+end
+
+function SWEP:OnReloaded()
+    self:RecalcAllBuffs()
+    self:SetupActiveSights()
 end

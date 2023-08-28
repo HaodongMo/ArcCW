@@ -47,6 +47,13 @@ function SWEP:GetFOVAcc( acc, disp )
     return gaA, gaD
 end
 
+function SWEP:DrawDevCrosshair(x, y)
+    surface.SetDrawColor(255, 50, 50, 255)
+
+    surface.DrawLine(x, y - 256, x, y + 256)
+    surface.DrawLine(x - 256, y, x + 256, y)
+end
+
 function SWEP:DoDrawCrosshair(x, y)
     local ply = LocalPlayer()
     local pos = ply:EyePos()
@@ -142,6 +149,10 @@ function SWEP:DoDrawCrosshair(x, y)
 
     sp.x = w2s.x sp.y = w2s.y
     x, y = sp.x, sp.y
+
+    if GetConVar("arccw_dev_crosshair"):GetBool() and LocalPlayer():IsAdmin() then
+        self:DrawDevCrosshair(x, y)
+    end
 
     local st = self:GetSightTime() / 2
 
