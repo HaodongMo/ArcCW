@@ -12,7 +12,7 @@ local shortname = ""
 local genAttCvar = GetConVar("arccw_reloadatts_registerentities")
 
 function ArcCW.LoadAttachmentType(att, name)
-
+    if name == "" then return end
     name = name or shortname
 
     if !att.Ignore or GetConVar("arccw_reloadatts_showignored"):GetBool() then

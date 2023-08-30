@@ -287,7 +287,6 @@ ArcCW.Inv_ShownAtt = nil
 ArcCW.Inv_Hidden = false
 
 function SWEP:CreateCustomize2HUD()
-
     local cvar_reloadincust = GetConVar("arccw_reloadincust")
     local cvar_cust_sounds = GetConVar("arccw_cust_sounds")
     local cvar_darkunowned = GetConVar("arccw_attinv_darkunowned")

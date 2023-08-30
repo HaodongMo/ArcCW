@@ -50,6 +50,7 @@ local noinspect = GetConVar("arccw_noinspect")
 function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
     if self:GetReloading() then ic = false end
+    if self:GetState() == ArcCW.STATE_DISABLE then return end
 
     noinspect = noinspect or GetConVar("arccw_noinspect")
     if ic then
