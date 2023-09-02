@@ -704,6 +704,9 @@ function SWEP:CheckFlags(reject, need)
     reject = reject or {}
     need = need or {}
 
+    if !istable(reject) then reject = {reject} end
+    if !istable(need) then need = {need} end
+
     for _, i in pairs(reject) do
         if table.HasValue(flags, i) then
             return false
