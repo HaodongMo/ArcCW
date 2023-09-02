@@ -36,7 +36,7 @@ local col_unowned_txt = col_block_txt
 local ss, rss, thicc
 
 local function ScreenScaleMulti(input)
-    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+    return ScreenScale(input) * ArcCW.ConVars["hud_size"]:GetFloat()
 end
 
 local function LerpColor(d, col1, col2)
@@ -240,9 +240,9 @@ local function headpaintfunc(self2, w, h)
 end
 
 function SWEP:ShowInventoryButton()
-    if GetConVar("arccw_attinv_free"):GetBool() then return false end
-    --if GetConVar("arccw_attinv_lockmode"):GetBool() then return false end
-    if !GetConVar("arccw_enable_dropping"):GetBool() then return false end
+    if ArcCW.ConVars["attinv_free"]:GetBool() then return false end
+    --if ArcCW.ConVars["attinv_lockmode"]:GetBool() then return false end
+    if !ArcCW.ConVars["enable_dropping"]:GetBool() then return false end
 
     return true
 end
@@ -287,11 +287,11 @@ ArcCW.Inv_ShownAtt = nil
 ArcCW.Inv_Hidden = false
 
 function SWEP:CreateCustomize2HUD()
-    local cvar_reloadincust = GetConVar("arccw_reloadincust")
-    local cvar_cust_sounds = GetConVar("arccw_cust_sounds")
-    local cvar_darkunowned = GetConVar("arccw_attinv_darkunowned")
-    local cvar_lockmode = GetConVar("arccw_attinv_lockmode")
-    local cvar_truenames = GetConVar("arccw_truenames")
+    local cvar_reloadincust = ArcCW.ConVars["reloadincust"]
+    local cvar_cust_sounds = ArcCW.ConVars["cust_sounds"]
+    local cvar_darkunowned = ArcCW.ConVars["attinv_darkunowned"]
+    local cvar_lockmode = ArcCW.ConVars["attinv_lockmode"]
+    local cvar_truenames = ArcCW.ConVars["truenames"]
 
     if cvar_darkunowned:GetBool() then
         col_unowned = Color(0, 0, 0, 150)
@@ -312,8 +312,8 @@ function SWEP:CreateCustomize2HUD()
 
     ArcCW.InvHUD = vgui.Create("DFrame")
 
-    local scrwmult = GetConVar("arccw_hud_deadzone_x"):GetFloat() * scrw
-    local scrhmult = GetConVar("arccw_hud_deadzone_y"):GetFloat() * scrh
+    local scrwmult = ArcCW.ConVars["hud_deadzone_x"]:GetFloat() * scrw
+    local scrhmult = ArcCW.ConVars["hud_deadzone_y"]:GetFloat() * scrh
 
     ss = ArcCW.AugmentedScreenScale(1)
     rss = ss -- REAL SCREEN SCALE
@@ -429,7 +429,7 @@ function SWEP:CreateCustomize2HUD()
         gui.EnableScreenClicker(false)
     end
 
-    if GetConVar("arccw_attinv_onlyinspect"):GetBool() then
+    if ArcCW.ConVars["attinv_onlyinspect"]:GetBool() then
         return
     end
 
@@ -974,7 +974,7 @@ function SWEP:CreateCustomize2HUD()
                 -- self.Inv_SelectedSlot = self2.attindex
                 -- ArcCW.InvHUD_FormAttachmentSelect()
                 -- self:DetachAllMergeSlots(self2.attslot, true)
-                --if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
+                --if ArcCW.ConVars["enable_customization"]:GetInt() < 0 then return end
                 if ArcCW:PlayerCanAttach(LocalPlayer(), self, self2.att, self2.attslot, false) then
                     if self2.att == "" then
                         self2:DoRightClick()
@@ -2187,7 +2187,7 @@ function SWEP:CreateCustomize2HUD()
 
                     local our = self:GetBuff_Override("Override_BodyDamageMults", self.BodyDamageMults)
                     local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
-                    if our and GetConVar("arccw_bodydamagemult_cancel"):GetBool() then
+                    if our and ArcCW.ConVars["bodydamagemult_cancel"]:GetBool() then
                         gam = {}
                     elseif !our then
                         our = {}
@@ -2926,7 +2926,7 @@ function SWEP:CreateCustomize2HUD()
 
     function ArcCW.InvHUD_FormGamemodeFunctions()
         if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-        if !GetConVar("arccw_attinv_gamemodebuttons"):GetBool() then return end
+        if !ArcCW.ConVars["attinv_gamemodebuttons"]:GetBool() then return end
 
         local shoulddrawtitle = false
         local function paint_gmbutton(self2, w, h)

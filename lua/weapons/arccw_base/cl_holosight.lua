@@ -68,7 +68,7 @@ local thermal = Material("models/debug/debugwhite")
 local colormod = Material("pp/colour")
 local coldtime = 30
 
-local additionalFOVconvar = GetConVar("arccw_vm_add_ads")
+local additionalFOVconvar = ArcCW.ConVars["vm_add_ads"]
 
 local matRefract = Material("pp/arccw/refract_rt")
 local matRefract_cheap = Material("pp/arccw/refract_cs") -- cheap scopes stretches square overlays so i need to make it 16x9
@@ -251,7 +251,7 @@ function SWEP:FormThermalImaging(tex)
             })
         end
 
-        if GetConVar("arccw_thermalpp"):GetBool() and GetConVar("arccw_scopepp"):GetBool() then
+        if ArcCW.ConVars["thermalpp"]:GetBool() and ArcCW.ConVars["scopepp"]:GetBool() then
             -- chromatic abberation
 
             render.CopyRenderTargetToTexture(render.GetScreenEffectTexture())
@@ -291,7 +291,7 @@ function SWEP:FormThermalImaging(tex)
 
     cam.End3D()
 
-    if GetConVar("arccw_thermalpp"):GetBool() then
+    if ArcCW.ConVars["thermalpp"]:GetBool() then
         if !render.SupportsPixelShaders_2_0() then return end
 
         DrawSharpen(0.3,0.9)
@@ -363,9 +363,9 @@ function SWEP:FormPP(tex)
 
     if asight.Thermal then return end -- eyah
 
-    local cs = GetConVar("arccw_cheapscopes"):GetBool()
-    local refract = GetConVar("arccw_scopepp_refract"):GetBool()
-    local pp = GetConVar("arccw_scopepp"):GetBool()
+    local cs = ArcCW.ConVars["cheapscopes"]:GetBool()
+    local refract = ArcCW.ConVars["scopepp_refract"]:GetBool()
+    local pp = ArcCW.ConVars["scopepp"]:GetBool()
 
 
     if refract or pp then
@@ -390,7 +390,7 @@ function SWEP:FormPP(tex)
 
         if refract then
             local addads = math.Clamp(additionalFOVconvar:GetFloat(), -2, 14)
-            local refractratio = GetConVar("arccw_scopepp_refract_ratio"):GetFloat() or 0
+            local refractratio = ArcCW.ConVars["scopepp_refract_ratio"]:GetFloat() or 0
             local refractamount = (-0.6 + addads / 30) * refractratio
             local refractmat = cs and matRefract_cheap or matRefract
 
@@ -463,7 +463,7 @@ function SWEP:FormRTScope()
     local rtangles, rtpos, rtdrawvm
 
     if self:GetState() == ArcCW.STATE_SIGHTS then
-        if GetConVar("arccw_drawbarrel"):GetBool() and GetConVar("arccw_vm_coolsway"):GetBool() and asight.Slot and asight.Slot == 1 then -- slot check to ignore integrated
+        if ArcCW.ConVars["drawbarrel"]:GetBool() and ArcCW.ConVars["vm_coolsway"]:GetBool() and asight.Slot and asight.Slot == 1 then -- slot check to ignore integrated
             rtangles = self.VMAng - self.VMAngOffset - (self:GetOurViewPunchAngles() * mag * 0.1)
             rtangles.x = rtangles.x - self.VMPosOffset_Lerp.z * 10
             rtangles.y = rtangles.y + self.VMPosOffset_Lerp.y * 10
@@ -540,7 +540,7 @@ end
 -- local fpsdelay = CurTime()
 
 hook.Add("RenderScene", "ArcCW", function()
-    if GetConVar("arccw_cheapscopes"):GetBool() then return end
+    if ArcCW.ConVars["cheapscopes"]:GetBool() then return end
 
     local wpn = LocalPlayer():GetActiveWeapon()
 
@@ -572,7 +572,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
     if !hs then return end
 
-    if delta != 0 and GetConVar("arccw_scopepp"):GetBool() then
+    if delta != 0 and ArcCW.ConVars["scopepp"]:GetBool() then
         pp_ca_r:SetVector("$color2", Vector(1-delta, 0, 0))
         pp_ca_g:SetVector("$color2", Vector(0, 1-delta, 0))
         pp_ca_b:SetVector("$color2", Vector(0, 0, 1-delta))
@@ -582,9 +582,9 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     local hsc = Color(255, 255, 255) -- putting here global or white local SOMEHOW FUCKS IT EVEN GLOBAL BEING FUCKED WTF I HATE
 
     if hs.Colorable then
-        hsc.r = GetConVar("arccw_scope_r"):GetInt()
-        hsc.g = GetConVar("arccw_scope_g"):GetInt()
-        hsc.b = GetConVar("arccw_scope_b"):GetInt()
+        hsc.r = ArcCW.ConVars["scope_r"]:GetInt()
+        hsc.g = ArcCW.ConVars["scope_g"]:GetInt()
+        hsc.b = ArcCW.ConVars["scope_b"]:GetInt()
     else
         hsc = hs.HolosightColor or hsc
     end
@@ -632,7 +632,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
     if hsmag and hsmag > 1 and delta < 1 and asight.NVScope then
         local screen = rtmat
 
-        if GetConVar("arccw_cheapscopes"):GetBool() then
+        if ArcCW.ConVars["cheapscopes"]:GetBool() then
             screen = rtmat_cheap
         end
 
@@ -781,7 +781,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
             render.SetToneMappingScaleLinear(Vector(1,1,1)) -- hdr fix
         end
 
-        if GetConVar("arccw_cheapscopes"):GetBool() then
+        if ArcCW.ConVars["cheapscopes"]:GetBool() then
 
             screen = rtmat_cheap
 
@@ -908,7 +908,7 @@ function SWEP:DrawHolosight(hs, hsm, hsp, asight)
 
         cam.IgnoreZ(true)
 
-        if GetConVar("arccw_glare"):GetBool() then
+        if ArcCW.ConVars["glare"]:GetBool() then
             render.SetBlend(delta + 0.1)
         else
             render.SetBlend(delta)

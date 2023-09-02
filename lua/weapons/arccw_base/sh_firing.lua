@@ -149,7 +149,7 @@ function SWEP:PrimaryAttack()
 
     self:GetBuff_Hook("Hook_PreFireBullets")
 
-    local desync = GetConVar("arccw_desync"):GetBool()
+    local desync = ArcCW.ConVars["desync"]:GetBool()
     local desyncnum = (desync and math.random()) or 0
     math.randomseed(math.Round(util.SharedRandom(self:GetBurstCount(), -1337, 1337, !game.SinglePlayer() and self:GetOwner():GetCurrentCommand():CommandNumber() or CurTime()) * (self:EntIndex() % 30241)) + desyncnum)
 
@@ -163,7 +163,7 @@ function SWEP:PrimaryAttack()
 
     self:ApplyRandomSpread(dir, disp)
 
-    if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 3 and disp > 0 then
+    if (CLIENT or game.SinglePlayer()) and ArcCW.ConVars["dev_shootinfo"]:GetInt() >= 3 and disp > 0 then
         local dev_tr = util.TraceLine({
             start = src,
             endpos = src + owner:GetAimVector() * 33000,
@@ -418,7 +418,7 @@ function SWEP:DoShootSound(sndoverride, dsndoverride, voloverride, pitchoverride
     local volume = self.ShootVol
     local pitch  = self.ShootPitch * math.Rand(1 - spv, 1 + spv) * self:GetBuff_Mult("Mult_ShootPitch")
 
-    local v = GetConVar("arccw_weakensounds"):GetFloat()
+    local v = ArcCW.ConVars["weakensounds"]:GetFloat()
 
     volume = volume - v
 
@@ -461,7 +461,7 @@ function SWEP:GetMuzzleVelocity()
 
     vel = vel * self:GetBuff_Mult("Mult_PhysBulletMuzzleVelocity")
 
-    vel = vel * GetConVar("arccw_bullet_velocity"):GetFloat()
+    vel = vel * ArcCW.ConVars["bullet_velocity"]:GetFloat()
 
     return vel
 end
@@ -477,7 +477,7 @@ function SWEP:DoPrimaryFire(isent, data)
     end
     local owner = self:GetOwner()
 
-    local shouldphysical = GetConVar("arccw_bullet_enable"):GetBool()
+    local shouldphysical = ArcCW.ConVars["bullet_enable"]:GetBool()
 
     if self.AlwaysPhysBullet or self:GetBuff_Override("Override_AlwaysPhysBullet") then
         shouldphysical = true
@@ -643,11 +643,11 @@ function SWEP:GetDispersion()
 
     if self:InBipod() then hip = hip * (self.BipodDispersion * self:GetBuff_Mult("Mult_BipodDispersion")) end
 
-    if GetConVar("arccw_mult_crouchdisp"):GetFloat() != 1 and owner:OnGround() and owner:Crouching() then
-        hip = hip * GetConVar("arccw_mult_crouchdisp"):GetFloat()
+    if ArcCW.ConVars["mult_crouchdisp"]:GetFloat() != 1 and owner:OnGround() and owner:Crouching() then
+        hip = hip * ArcCW.ConVars["mult_crouchdisp"]:GetFloat()
     end
 
-    if GetConVar("arccw_freeaim"):GetInt() == 1 and !sights then
+    if ArcCW.ConVars["freeaim"]:GetInt() == 1 and !sights then
         hip = hip ^ 0.9
     end
 
@@ -774,8 +774,8 @@ function SWEP:DoRecoil()
 
     if recoiltbl and recoiltbl[self:GetBurstCount()] then rmul = rmul * recoiltbl[self:GetBurstCount()] end
 
-    if GetConVar("arccw_mult_crouchrecoil"):GetFloat() != 1 and self:GetOwner():OnGround() and self:GetOwner():Crouching() then
-        rmul = rmul * GetConVar("arccw_mult_crouchrecoil"):GetFloat()
+    if ArcCW.ConVars["mult_crouchrecoil"]:GetFloat() != 1 and self:GetOwner():OnGround() and self:GetOwner():Crouching() then
+        rmul = rmul * ArcCW.ConVars["mult_crouchrecoil"]:GetFloat()
     end
 
     local punch = Angle()
@@ -909,5 +909,5 @@ function SWEP:SecondaryAttack()
 end
 
 function SWEP:CanShootWhileSprint()
-    return GetConVar("arccw_mult_shootwhilesprinting"):GetBool() or self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint)
+    return ArcCW.ConVars["mult_shootwhilesprinting"]:GetBool() or self:GetBuff_Override("Override_ShootWhileSprint", self.ShootWhileSprint)
 end

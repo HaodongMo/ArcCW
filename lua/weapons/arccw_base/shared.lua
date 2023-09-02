@@ -869,7 +869,7 @@ local hitwallcache
 function SWEP:BarrelHitWall()
 
     local len = self:GetBuff("BarrelLength")
-    if len == 0 or !GetConVar("arccw_override_nearwall"):GetBool()
+    if len == 0 or !ArcCW.ConVars["override_nearwall"]:GetBool()
             or (vrmod and vrmod.IsPlayerInVR(self:GetOwner()))
             or (self:GetOwner():IsPlayer() and self:GetOwner():InVehicle()) then
         hitwallcache = {0, CurTime()}

@@ -101,7 +101,7 @@ local function stattext(wep, att, i, k, dmgboth, flipsigns)
     if i == "Mult_DamageMin" and dmgboth then return end
 
     local stat = ArcCW.AutoStats[i]
-    local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
+    local simple = ArcCW.ConVars["attinv_simpleproscons"]:GetBool()
 
     local txt = ""
     local str, eval = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
@@ -205,7 +205,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
         -- Legacy support: If "Increased/Decreased magazine capacity" line exists, don't do our autostats version
         if hasmaginfo and i == "Override_ClipSize" then continue end
 
-        if i == "UBGL" then 
+        if i == "UBGL" then
 			tbl_ins(infos, translate("autostat.ubgl2"))
 		end
 

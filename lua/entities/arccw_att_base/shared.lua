@@ -48,14 +48,14 @@ end
 function ENT:Use(activator, caller)
     if !caller:IsPlayer() then return end
 
-    if GetConVar("arccw_attinv_free"):GetBool() then return end
+    if ArcCW.ConVars["attinv_free"]:GetBool() then return end
 
     local take = false
 
     for i, k in pairs(self.GiveAttachments) do
         if i == "BaseClass" then continue end
 
-        if GetConVar("arccw_attinv_lockmode"):GetBool() then
+        if ArcCW.ConVars["attinv_lockmode"]:GetBool() then
             if ArcCW:PlayerGetAtts(caller, i) > 0 then
                 continue
             end

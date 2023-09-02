@@ -145,7 +145,7 @@ ArcCW.ClientConVars = {
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do
-    CreateClientConVar(name, data.def, true, data.usri or false, data.desc, data.min, data.max)
+    ArcCW.ConVars[string.sub(name, 7)] = CreateClientConVar(name, data.def, true, data.usri or false, data.desc, data.min, data.max)
 end
 
 -- CreateClientConVar("arccw_quicknade", KEY_G)

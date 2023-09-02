@@ -1,6 +1,6 @@
 -- returns a table of entities to ignore (the player's vehicle)
 function ArcCW:GetVehicleFilter(ply)
-    if !GetConVar("arccw_driveby"):GetBool() or !IsValid(ply) or !ply:IsPlayer() then return {} end
+    if !ArcCW.ConVars["driveby"]:GetBool() or !IsValid(ply) or !ply:IsPlayer() then return {} end
 
     local tbl = {}
     local veh = ply:GetVehicle()
@@ -51,7 +51,7 @@ end
 -- returns a new source to fire from, this should be moved right outside the vehicle
 -- since we can't ignore multiple entities in FireBullets, this is the only solution
 function ArcCW:GetVehicleFireTrace(ply, src, dir)
-    if !GetConVar("arccw_driveby"):GetBool() then return src end
+    if !ArcCW.ConVars["driveby"]:GetBool() then return src end
     local tbl = ArcCW:GetVehicleFilter(ply)
     if table.IsEmpty(tbl) then return src end
 

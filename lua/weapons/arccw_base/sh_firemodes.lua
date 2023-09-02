@@ -19,7 +19,7 @@ function SWEP:ChangeFiremode(pred)
        fmi = 1
     end
 
-    local altsafety = SERVER and (self:GetOwner():GetInfo("arccw_altsafety") == "1") or CLIENT and (GetConVar("arccw_altsafety"):GetBool())
+    local altsafety = SERVER and (self:GetOwner():GetInfo("arccw_altsafety") == "1") or CLIENT and (ArcCW.ConVars["altsafety"]:GetBool())
     if altsafety and !self:GetOwner():KeyDown(IN_WALK) and fmt[fmi] and fmt[fmi].Mode == 0 then
         -- Skip safety when walk key is not down
         fmi = (fmi + 1 > count) and 1 or (fmi + 1)
@@ -120,7 +120,7 @@ end
 function SWEP:GetFiremodeName()
     if self:GetBuff_Hook("Hook_FiremodeName") then return self:GetBuff_Hook("Hook_FiremodeName") end
 
-    local abbrev = GetConVar("arccw_hud_fcgabbrev"):GetBool() and ".abbrev" or ""
+    local abbrev = ArcCW.ConVars["hud_fcgabbrev"]:GetBool() and ".abbrev" or ""
 
     if self:GetInUBGL() then
         return self:GetBuff_Override("UBGL_PrintName") and self:GetBuff_Override("UBGL_PrintName") or ArcCW.GetTranslation("fcg.ubgl" .. abbrev)

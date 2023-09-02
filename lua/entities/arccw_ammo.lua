@@ -37,8 +37,8 @@ ENT.ResistanceMult = {
 
 function ENT:Initialize()
     self:SetModel(self.Model)
-    self:SetHealth(math.max(math.ceil(self.MaxHealth * GetConVar("arccw_mult_ammohealth"):GetFloat()), 1))
-    self.AmmoCount = math.max(math.ceil(self.AmmoCount * GetConVar("arccw_mult_ammoamount"):GetFloat(), 1))
+    self:SetHealth(math.max(math.ceil(self.MaxHealth * ArcCW.ConVars["mult_ammohealth"]:GetFloat()), 1))
+    self.AmmoCount = math.max(math.ceil(self.AmmoCount * ArcCW.ConVars["mult_ammoamount"]:GetFloat(), 1))
     self.MaxAmmoCount = self.AmmoCount
 
     if engine.ActiveGamemode() == "terrortown" and ArcCW.TTTReplaceTable then
@@ -49,7 +49,7 @@ function ENT:Initialize()
         self:SetModelScale(self.Scale)
     end
 
-    if self:SkinCount() > 1 and math.random() <= GetConVar("arccw_ammo_rareskin"):GetFloat() then
+    if self:SkinCount() > 1 and math.random() <= ArcCW.ConVars["ammo_rareskin"]:GetFloat() then
         self:SetSkin(math.random(1, self:SkinCount() - 1))
     end
 
@@ -63,7 +63,7 @@ function ENT:Initialize()
         self:PhysWake()
 
         self:SetTrigger(true) -- Enables Touch() to be called even when not colliding
-        if GetConVar("arccw_ammo_largetrigger"):GetBool() then
+        if ArcCW.ConVars["ammo_largetrigger"]:GetBool() then
             self:UseTriggerBounds(true, 24)
         end
     end
@@ -200,7 +200,7 @@ if SERVER then
 
 
     function ENT:Touch(ply)
-        if !ply:IsPlayer() or !GetConVar("arccw_ammo_autopickup"):GetBool() then return end
+        if !ply:IsPlayer() or !ArcCW.ConVars["ammo_autopickup"]:GetBool() then return end
         self:ApplyAmmo(ply)
     end
 
@@ -222,9 +222,9 @@ if SERVER then
 
             self.USED = true
 
-            local cvar = GetConVar("arccw_ammo_detonationmode"):GetInt()
+            local cvar = ArcCW.ConVars["ammo_detonationmode"]:GetInt()
 
-            if cvar == -1 or (!GetConVar("arccw_ammo_chaindet"):GetBool() and dmginfo:GetInflictor().ArcCW_Ammo) or self.DetonationDamage <= 0 then
+            if cvar == -1 or (!ArcCW.ConVars["ammo_chaindet"]:GetBool() and dmginfo:GetInflictor().ArcCW_Ammo) or self.DetonationDamage <= 0 then
                 -- Go quietly
                 local e = EffectData()
                 e:SetOrigin(self:GetPos())
@@ -261,7 +261,7 @@ if SERVER then
     -- Do it during the hook so that hit damage numbers show up properly (yes, I am _that_ pedantic)
     hook.Add("EntityTakeDamage", "ArcCW_Ammo", function(ent, dmginfo)
         if ent.ArcCW_Ammo then
-            if GetConVar("arccw_mult_ammohealth"):GetFloat() < 0 then
+            if ArcCW.ConVars["mult_ammohealth"]:GetFloat() < 0 then
                 dmginfo:ScaleDamage(0)
             elseif ent.ResistanceMult then
                 -- Only apply one multiplier, and prioritize larger ones

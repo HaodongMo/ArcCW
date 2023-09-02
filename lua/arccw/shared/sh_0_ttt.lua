@@ -46,12 +46,6 @@ ArcCW.TTTReplaceTable = {
 
 if engine.ActiveGamemode() != "terrortown" then return end
 
-CreateConVar("arccw_ttt_replace", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Use custom code to forcefully replace TTT weapons with ArcCW ones.", 0, 1)
-CreateConVar("arccw_ttt_ammo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Replace TTT ammo with ArcCW ones, takes precedence over the default convar.", 0, 1)
-CreateConVar("arccw_ttt_atts", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Automatically set up ArcCW weapons with an attachment loadout.", 0, 1)
-CreateConVar("arccw_ttt_customizemode", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "If set to 1, disallow customization on ArcCW weapons. If set to 2, players can customize during setup and postgame. If set to 3, only T and Ds can customize.", 0, 3)
-CreateConVar("arccw_ttt_bodyattinfo", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Whether a corpse contains info on the attachments of the murder weapon. 1 means detective only and 2 means everyone.", 0, 2)
-
 hook.Add("OnGamemodeLoaded", "ArcCW_TTT", function()
     for i, wep in pairs(weapons.GetList()) do
         local weap = weapons.Get(wep.ClassName)
@@ -151,7 +145,7 @@ end)
 hook.Add("DoPlayerDeath", "ArcCW_DetectiveSeeAtts", function(ply, attacker, dmginfo)
     local wep = util.WeaponFromDamage(dmginfo)
     timer.Simple(0, function()
-        if GetConVar("arccw_ttt_bodyattinfo"):GetInt() > 0 and ply.server_ragdoll and IsValid(wep) and wep:IsWeapon() and wep.ArcCW and wep.Attachments then
+        if ArcCW.ConVars["ttt_bodyattinfo"]:GetInt() > 0 and ply.server_ragdoll and IsValid(wep) and wep:IsWeapon() and wep.ArcCW and wep.Attachments then
             net.Start("arccw_ttt_bodyattinfo")
                 net.WriteEntity(ply.server_ragdoll)
                 net.WriteUInt(table.Count(wep.Attachments), 8)

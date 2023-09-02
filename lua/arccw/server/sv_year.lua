@@ -13,9 +13,9 @@ function ArcCW:WithinYearLimit(wep)
     if !wep then return true end
     if !wep.ArcCW then return true end
 
-    if !GetConVar("arccw_limityear_enable"):GetBool() then return true end
+    if !ArcCW.ConVars["limityear_enable"]:GetBool() then return true end
 
-    local year = GetConVar("arccw_limityear"):GetInt()
+    local year = ArcCW.ConVars["limityear"]:GetInt()
 
     if !wep.Trivia_Year then return true end
     if !isnumber(wep.Trivia_Year) then return true end

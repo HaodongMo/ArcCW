@@ -1,7 +1,7 @@
 local dofmat = Material("pp/dof")
 
 function SWEP:BlurWeapon()
-    if !GetConVar("arccw_blur"):GetBool() then return end
+    if !ArcCW.ConVars["blur"]:GetBool() then return end
     local delta = self:GetSightDelta()
     if delta >= 1 then return end
     local vm = self:GetOwner():GetViewModel()
@@ -30,13 +30,13 @@ function SWEP:BlurWeapon()
 end
 
 function SWEP:BlurNotWeapon()
-    if !GetConVar("arccw_blur"):GetBool() then return end
+    if !ArcCW.ConVars["blur"]:GetBool() then return end
     render.UpdateRefractTexture()
     DrawToyTown(3, ScrH())
 end
 
 function SWEP:DoToyTown()
-    if !GetConVar("arccw_blur_toytown"):GetBool() then return end
+    if !ArcCW.ConVars["blur_toytown"]:GetBool() then return end
     render.UpdateRefractTexture()
     DrawToyTown(3, ScrH() * 0.4 * (1 - self:GetSightDelta()))
 end

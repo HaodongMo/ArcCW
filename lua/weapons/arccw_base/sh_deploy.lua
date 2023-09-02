@@ -1,5 +1,5 @@
 local ang0 = Angle(0, 0, 0)
-local dev_alwaysready = GetConVar("arccw_dev_alwaysready")
+local dev_alwaysready = ArcCW.ConVars["dev_alwaysready"]
 
 function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
@@ -128,7 +128,7 @@ function SWEP:InitialDefaultClip()
         if self.ForceDefaultAmmo then
             self:GetOwner():GiveAmmo(self.ForceDefaultAmmo, self.Primary.Ammo)
         elseif engine.ActiveGamemode() != "terrortown" then
-            self:GetOwner():GiveAmmo(self:GetCapacity() * GetConVar("arccw_mult_defaultammo"):GetInt(), self.Primary.Ammo)
+            self:GetOwner():GiveAmmo(self:GetCapacity() * ArcCW.ConVars["mult_defaultammo"]:GetInt(), self.Primary.Ammo)
         end
     end
 end
@@ -167,7 +167,7 @@ function SWEP:Initialize()
             end
         end
 
-        -- Check for incompatibile addons once 
+        -- Check for incompatibile addons once
         if LocalPlayer().ArcCW_IncompatibilityCheck != true and game.SinglePlayer() then
             LocalPlayer().ArcCW_IncompatibilityCheck = true
 
@@ -207,7 +207,7 @@ function SWEP:Initialize()
         end
     end
 
-    if GetConVar("arccw_equipmentsingleton"):GetBool() and self.Throwing then
+    if ArcCW.ConVars["equipmentsingleton"]:GetBool() and self.Throwing then
         self.Singleton = true
         self.Primary.ClipSize = -1
         self.Primary.Ammo = ""

@@ -30,7 +30,7 @@ function EFFECT:Init(data)
         mdl = ent.WMModel or ent
     end
 
-    if owner != LocalPlayer() and !GetConVar("arccw_shelleffects"):GetBool() then self:Remove() return end
+    if owner != LocalPlayer() and !ArcCW.ConVars["shelleffects"]:GetBool() then self:Remove() return end
     if !IsValid(mdl) then self:Remove() return end
     if !mdl:GetAttachment(att) then self:Remove() return end
 
@@ -44,7 +44,7 @@ function EFFECT:Init(data)
 
     local dir = ang:Up()
 
-    local st = GetConVar("arccw_shelltime"):GetFloat()
+    local st = ArcCW.ConVars["shelltime"]:GetFloat()
 
     if ent then
         self.Model = ent:GetBuff_Override("Override_ShellModel") or ent.ShellModel

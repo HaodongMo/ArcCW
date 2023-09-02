@@ -9,13 +9,13 @@ ArcCW.GenerateAttEntities = true
 ArcCW.AttachmentCachedLists = {}
 
 local shortname = ""
-local genAttCvar = GetConVar("arccw_reloadatts_registerentities")
+local genAttCvar = ArcCW.ConVars["reloadatts_registerentities"]
 
 function ArcCW.LoadAttachmentType(att, name)
     if name == "" then return end
     name = name or shortname
 
-    if !att.Ignore or GetConVar("arccw_reloadatts_showignored"):GetBool() then
+    if !att.Ignore or ArcCW.ConVars["reloadatts_showignored"]:GetBool() then
         ArcCW.AttachmentTable[name] = att
         ArcCW.AttachmentIDTable[ArcCW.NumAttachments] = name
 
@@ -261,7 +261,7 @@ elseif SERVER then
 end
 
 hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()
-    if GetConVar("arccw_reloadatts_mapcleanup"):GetBool() then ArcCW_LoadAtts() end
+    if ArcCW.ConVars["reloadatts_mapcleanup"]:GetBool() then ArcCW_LoadAtts() end
 end)
 
 ArcCW_LoadAtts()

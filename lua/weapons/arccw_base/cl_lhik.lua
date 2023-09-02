@@ -125,7 +125,7 @@ function SWEP:DoLHIK()
 
     local vm = self:GetOwner():GetViewModel()
 
-    if !GetConVar("arccw_reloadincust"):GetBool() and !self.NoHideLeftHandInCustomization and !self:GetBuff_Override("Override_NoHideLeftHandInCustomization") then
+    if !ArcCW.ConVars["reloadincust"]:GetBool() and !self.NoHideLeftHandInCustomization and !self:GetBuff_Override("Override_NoHideLeftHandInCustomization") then
         if self:GetState() == ArcCW.STATE_CUSTOMIZE then
             self.Customize_Hide = math.Approach(self.Customize_Hide, 1, FrameTime() / 0.25)
         else

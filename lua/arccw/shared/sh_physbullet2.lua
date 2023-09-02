@@ -146,8 +146,8 @@ function ArcCW:ShootPhysBullet(wep, pos, vel, prof, ovr)
 
     --[[]
     if owner and owner:IsNPC() then
-        bullet.DamageMax = bullet.DamageMax * GetConVar("arccw_mult_npcdamage"):GetFloat()
-        bullet.DamageMin = bullet.DamageMin * GetConVar("arccw_mult_npcdamage"):GetFloat()
+        bullet.DamageMax = bullet.DamageMax * ArcCW.ConVars["mult_npcdamage"]:GetFloat()
+        bullet.DamageMin = bullet.DamageMin * ArcCW.ConVars["mult_npcdamage"]:GetFloat()
     end
     ]]
 
@@ -263,8 +263,8 @@ local function indim(vec, maxdim)
     end
 end
 
-local ArcCW_BulletGravity = GetConVar("arccw_bullet_gravity")
-local ArcCW_BulletDrag = GetConVar("arccw_bullet_drag")
+local ArcCW_BulletGravity = ArcCW.ConVars["bullet_gravity"]
+local ArcCW_BulletDrag = ArcCW.ConVars["bullet_drag"]
 function ArcCW:ProgressPhysBullet(bullet, timestep)
     if bullet.Dead then return end
 
@@ -308,7 +308,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         bullet.Vel = newvel
         bullet.Travelled = bullet.Travelled + spd
 
-        if CLIENT and !GetConVar("arccw_bullet_imaginary"):GetBool() then
+        if CLIENT and !ArcCW.ConVars["bullet_imaginary"]:GetBool() then
             bullet.Dead = true
         end
     else
@@ -327,7 +327,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 mins = -bb,
                 maxs = bb,
             })
-            if GetConVar("arccw_dev_shootinfo"):GetInt() > 0 then
+            if ArcCW.ConVars["dev_shootinfo"]:GetInt() > 0 then
                 debugoverlay.Line(oldpos, tr.HitPos, 5, SERVER and Color(100,100,255) or Color(255,200,100), true)
                 debugoverlay.Box(tr.HitPos, -bb, bb, 5, SERVER and Color(100,100,255,0) or Color(255,200,100,0))
             end
@@ -338,7 +338,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
                 filter = bullet.Filter,
                 mask = MASK_SHOT
             })
-            if GetConVar("arccw_dev_shootinfo"):GetInt() > 0 then
+            if ArcCW.ConVars["dev_shootinfo"]:GetInt() > 0 then
                 debugoverlay.Line(oldpos, tr.HitPos, 5, SERVER and Color(100,100,255) or Color(255,200,100), true)
                 debugoverlay.Cross(tr.HitPos, 16, 0.05, SERVER and Color(100,100,255) or Color(255,200,100), true)
             end
@@ -349,7 +349,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
         end
 
         if tr.HitSky then
-            if CLIENT and GetConVar("arccw_bullet_imaginary"):GetBool() then
+            if CLIENT and ArcCW.ConVars["bullet_imaginary"]:GetBool() then
                 bullet.Imaginary = true
             else
                 bullet.Dead = true
@@ -488,7 +488,7 @@ function ArcCW:ProgressPhysBullet(bullet, timestep)
     local MaxDimensions = 16384 * 4
     local WorldDimensions = 16384
 
-    if bullet.StartTime <= (CurTime() - GetConVar("arccw_bullet_lifetime"):GetFloat()) then
+    if bullet.StartTime <= (CurTime() - ArcCW.ConVars["bullet_lifetime"]:GetFloat()) then
         bullet.Dead = true
     elseif !indim(bullet.Pos, MaxDimensions) then
         bullet.Dead = true
@@ -575,7 +575,7 @@ function ArcCW:DrawPhysBullets()
             render.DrawSprite(rpos, headsize, headsize, col)
         end
 
-        if bulinfo.sprite_tracer != false and !GetConVar("arccw_fasttracers"):GetBool() then
+        if bulinfo.sprite_tracer != false and !ArcCW.ConVars["fasttracers"]:GetBool() then
             render.SetMaterial(bulinfo.sprite_tracer or tracer)
             local len = math.min(vel:Length() * (bulinfo.tail_length or 0.015), 512, (rpos - (i.TracerOrigin or i.PosStart)):Length())
             local pos2 = rpos - veldir * len

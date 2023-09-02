@@ -37,7 +37,7 @@ function SWEP:CanBackstab(melee2, ent)
 end
 
 function SWEP:DoLunge(melee2)
-    if GetConVar("arccw_override_lunge_off"):GetBool() then return end
+    if ArcCW.ConVars["override_lunge_off"]:GetBool() then return end
     local var = self:GetBuff_Override("Override_Lunge", self.Lunge)
     if var == false or var == nil and self.PrimaryBash then return end
     if !self:GetOwner():IsPlayer() or self:GetOwner():Crouching() then return end

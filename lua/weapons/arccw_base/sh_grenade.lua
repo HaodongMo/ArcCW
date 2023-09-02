@@ -104,7 +104,7 @@ function SWEP:Throw()
             local phys = rocket:GetPhysicsObject()
 
             local inertia = self:GetBuff_Override("Override_ThrowInertia", self.ThrowInertia)
-            if inertia == nil then inertia = GetConVar("arccw_throwinertia"):GetBool() end
+            if inertia == nil then inertia = ArcCW.ConVars["throwinertia"]:GetBool() end
             if inertia and mv > 100 then
                 phys:AddVelocity(self:GetOwner():GetVelocity())
             end
@@ -152,7 +152,7 @@ function SWEP:GrenadeDrop(doammo)
     if IsValid(rocket) then
         local phys = rocket:GetPhysicsObject()
 
-        if GetConVar("arccw_throwinertia"):GetBool() then
+        if ArcCW.ConVars["throwinertia"]:GetBool() then
             phys:AddVelocity(self:GetOwner():GetVelocity())
         end
 

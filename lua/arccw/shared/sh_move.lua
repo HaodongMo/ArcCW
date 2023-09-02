@@ -6,7 +6,7 @@ function ArcCW.Move(ply, mv, cmd)
 
     local s = 1
 
-    local sm = Lerp( GetConVar("arccw_mult_movespeed"):GetFloat(), 1, math.Clamp(wpn.SpeedMult * wpn:GetBuff_Mult("Mult_SpeedMult") * wpn:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) )
+    local sm = Lerp( ArcCW.ConVars["mult_movespeed"]:GetFloat(), 1, math.Clamp(wpn.SpeedMult * wpn:GetBuff_Mult("Mult_SpeedMult") * wpn:GetBuff_Mult("Mult_MoveSpeed"), 0, 1) )
 
     -- look, basically I made a bit of an oopsy and uh this is the best way to fix that
     s = s * sm
@@ -22,7 +22,7 @@ function ArcCW.Move(ply, mv, cmd)
     if wpn:GetNWState() == ArcCW.STATE_SIGHTS or wpn:GetTriggerDelta() > 0 or
         wpn:GetNWState() == ArcCW.STATE_CUSTOMIZE then
         blocksprint = true
-        s = s * Lerp( GetConVar("arccw_mult_movespeedads"):GetFloat() * (1-wpn:GetSightDelta()), 1, math.Clamp(wpn:GetBuff("SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) )
+        s = s * Lerp( ArcCW.ConVars["mult_movespeedads"]:GetFloat() * (1-wpn:GetSightDelta()), 1, math.Clamp(wpn:GetBuff("SightedSpeedMult") * wpn:GetBuff_Mult("Mult_SightedMoveSpeed"), 0, 1) )
     elseif shottime > 0 or wpn:GetGrenadePrimed() then
         blocksprint = true
 
@@ -48,7 +48,7 @@ function ArcCW.Move(ply, mv, cmd)
         local aftershottime = -shottime / delay
         shotdelta = math.Clamp(1 - aftershottime, 0, 1)
     end
-    local shootmove = Lerp( GetConVar("arccw_mult_movespeedfire"):GetFloat(), 1, math.Clamp(wpn:GetBuff("ShootSpeedMult"), 0.0001, 1) )
+    local shootmove = Lerp( ArcCW.ConVars["mult_movespeedfire"]:GetFloat(), 1, math.Clamp(wpn:GetBuff("ShootSpeedMult"), 0.0001, 1) )
     s = s * Lerp(shotdelta, 1, shootmove)
 
     mv:SetMaxSpeed(basespd * s)
@@ -131,11 +131,11 @@ function ArcCW.StartCommand(ply, ucmd)
 
     -- Aim assist
     if CLIENT and IsValid(wep) and wep.ArcCW
-            and (wep:GetBuff("AimAssist", true) or (GetConVar("arccw_aimassist"):GetBool() and ply:GetInfoNum("arccw_aimassist_cl", 0) == 1))  then
-        local cone = wep:GetBuff("AimAssist", true) and wep:GetBuff("AimAssist_Cone") or GetConVar("arccw_aimassist_cone"):GetFloat()
-        local dist = wep:GetBuff("AimAssist", true) and wep:GetBuff("AimAssist_Distance") or GetConVar("arccw_aimassist_distance"):GetFloat()
-        local inte = wep:GetBuff("AimAssist", true) and wep:GetBuff("AimAssist_Intensity") or GetConVar("arccw_aimassist_intensity"):GetFloat()
-        local head = wep:GetBuff("AimAssist", true) and wep:GetBuff("AimAssist_Head") or GetConVar("arccw_aimassist_head"):GetBool()
+            and (wep:GetBuff("AimAssist", true) or (ArcCW.ConVars["aimassist"]:GetBool() and ply:GetInfoNum("arccw_aimassist_cl", 0) == 1))  then
+        local cone = wep:GetBuff("AimAssist", true) and wep:GetBuff("AimAssist_Cone") or ArcCW.ConVars["aimassist_cone"]:GetFloat()
+        local dist = wep:GetBuff("AimAssist", true) and wep:GetBuff("AimAssist_Distance") or ArcCW.ConVars["aimassist_distance"]:GetFloat()
+        local inte = wep:GetBuff("AimAssist", true) and wep:GetBuff("AimAssist_Intensity") or ArcCW.ConVars["aimassist_intensity"]:GetFloat()
+        local head = wep:GetBuff("AimAssist", true) and wep:GetBuff("AimAssist_Head") or ArcCW.ConVars["aimassist_head"]:GetBool()
 
         -- Check if current target is beyond tracking cone
         local tgt = ply.ArcCW_AATarget

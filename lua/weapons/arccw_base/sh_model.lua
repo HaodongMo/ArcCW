@@ -13,15 +13,15 @@ function SWEP:AddElement(elementname, wm)
 
     if !self:CheckFlags(e.ExcludeFlags, e.RequireFlags) then return end
 
-    if GetConVar("arccw_truenames"):GetBool() and e.TrueNameChange then
+    if ArcCW.ConVars["truenames"]:GetBool() and e.TrueNameChange then
         self.PrintName = e.TrueNameChange
-    elseif GetConVar("arccw_truenames"):GetBool() and e.NameChange then
+    elseif ArcCW.ConVars["truenames"]:GetBool() and e.NameChange then
         self.PrintName = e.NameChange
     end
 
-    if !GetConVar("arccw_truenames"):GetBool() and e.NameChange then
+    if !ArcCW.ConVars["truenames"]:GetBool() and e.NameChange then
         self.PrintName = e.NameChange
-    elseif !GetConVar("arccw_truenames"):GetBool() and e.TrueNameChange then
+    elseif !ArcCW.ConVars["truenames"]:GetBool() and e.TrueNameChange then
         self.PrintName = e.TrueNameChange
     end
 
@@ -330,7 +330,7 @@ function SWEP:SetupModel(wm)
             suffix = suffix .. atttbl.AddSuffix
         end
 
-        if CLIENT and !GetConVar("arccw_att_showothers"):GetBool() and LocalPlayer() != owner then
+        if CLIENT and !ArcCW.ConVars["att_showothers"]:GetBool() and LocalPlayer() != owner then
             continue
         end
 
@@ -593,15 +593,15 @@ function SWEP:SetupModel(wm)
         -- BUT THEY ARE!!
         if atttbl.LHIK_GunDriver or atttbl.LHIK_CamDriver then
             local godmodel = ClientsideModel(atttbl.Model)
-    
+
             local godelement = {}
             godmodel:SetNoDraw(true)
             godmodel:DrawShadow(false)
             godmodel:SetPredictable(false)
             godmodel.Weapon = self
-    
+
             godelement.Model = godmodel
-    
+
             godelement.WM = wm or false
             godelement.NoDraw = true
             godelement.BoneMerge = false
@@ -615,15 +615,15 @@ function SWEP:SetupModel(wm)
 
         if atttbl.LHIK_GunDriver then
             local reflectmodel = ClientsideModel(self.ViewModel)
-    
+
             local reflectelement = {}
             reflectmodel:SetNoDraw(true)
             reflectmodel:DrawShadow(false)
             reflectmodel:SetPredictable(false)
             reflectmodel.Weapon = self
-    
+
             reflectelement.Model = reflectmodel
-    
+
             reflectelement.WM = wm or false
             reflectelement.NoDraw = true
             reflectelement.Slot = i
@@ -722,9 +722,9 @@ function SWEP:DrawCustomModel(wm, origin, angle)
     if ArcCW.VM_OverDraw then return end
     local owner = self:GetOwner()
     local disttoeye = self:GetPos():DistToSqr(EyePos())
-    local visibility = math.pow(GetConVar("arccw_visibility"):GetInt(), 2)
+    local visibility = math.pow(ArcCW.ConVars["visibility"]:GetInt(), 2)
     local always = false
-    if GetConVar("arccw_visibility"):GetInt() < 0 or self:GetOwner() == LocalPlayer() then
+    if ArcCW.ConVars["visibility"]:GetInt() < 0 or self:GetOwner() == LocalPlayer() then
         always = true
     end
     local models = self.VM

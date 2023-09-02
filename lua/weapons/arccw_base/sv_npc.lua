@@ -55,11 +55,11 @@ function SWEP:AssignRandomAttToSlot(slot)
 end
 
 function SWEP:NPC_SetupAttachments()
-    if self:GetOwner():IsNPC() and !GetConVar("arccw_npc_atts"):GetBool() then return end
+    if self:GetOwner():IsNPC() and !ArcCW.ConVars["npc_atts"]:GetBool() then return end
 
     local pick = self:GetPickX()
 
-    local chance = 25 * GetConVar("arccw_mult_attchance"):GetFloat()
+    local chance = 25 * ArcCW.ConVars["mult_attchance"]:GetFloat()
     local chancestep = 0
 
     if pick > 0 then

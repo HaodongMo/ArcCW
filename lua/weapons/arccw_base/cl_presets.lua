@@ -4,7 +4,7 @@
 
 
 local function ScreenScaleMulti(input)
-    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+    return ScreenScale(input) * ArcCW.ConVars["hud_size"]:GetFloat()
 end
 
 function SWEP:GetPresetBase()
@@ -25,7 +25,7 @@ function SWEP:LoadPreset(presetname)
     presetname = presetname or "autosave"
     if presetname == "autosave" then
         if self:GetNWBool("ArcCW_DisableAutosave", false) then return end
-        if !GetConVar("arccw_autosave"):GetBool() then return end
+        if !ArcCW.ConVars["autosave"]:GetBool() then return end
     end
 
     if presetname != "autosave" then
@@ -159,7 +159,7 @@ end
 
 function SWEP:SavePreset(presetname)
     presetname = presetname or "autosave"
-    if presetname == "autosave" and !GetConVar("arccw_attinv_free"):GetBool() then return end
+    if presetname == "autosave" and !ArcCW.ConVars["attinv_free"]:GetBool() then return end
 
     local presetTbl = {}
     for i, k in pairs(self.Attachments) do
