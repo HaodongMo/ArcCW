@@ -1,7 +1,7 @@
 if engine.ActiveGamemode() != "terrortown" then return end
 
-CreateClientConVar("arccw_ttt_inforoundstart", "1", true, false, "Whether to show ArcCW config every round.")
-CreateClientConVar("arccw_ttt_rolecrosshair", "1", true, false, "Whether to color your crosshair according to your role.")
+ArcCW.ConVars["ttt_inforoundstart"] = CreateClientConVar("arccw_ttt_inforoundstart", "1", true, false, "Whether to show ArcCW config every round.")
+ArcCW.ConVars["ttt_rolecrosshair"] = CreateClientConVar("arccw_ttt_rolecrosshair", "1", true, false, "Whether to color your crosshair according to your role.")
 
 ArcCW.TTT_AttInfo = ArcCW.TTT_AttInfo or {}
 
