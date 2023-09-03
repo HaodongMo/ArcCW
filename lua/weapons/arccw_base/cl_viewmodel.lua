@@ -683,7 +683,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         if anchor and bonp then -- Not ready / deploying
             anchor = ( bonp + ( (bona:Forward()*anchor.x) + (bona:Right()*anchor.y) + (bona:Up()*anchor.z) ) )
 
-			debugoverlay.Axis(anchor, angle_zero, 4, FrameTime(), true)
+            debugoverlay.Axis(anchor, angle_zero, 4, FrameTime(), true)
 
             rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
             rap_pos:Sub(pos)
@@ -749,8 +749,8 @@ function SWEP:DrawWorldModel()
     if !self.CertainAboutAtts and !self.AttReqSent and !IsValid(self:GetOwner()) then
         self.AttReqSent = true
         -- print(self, "network weapon from cl_viewmodel")
-        debugoverlay.Cross(self:GetPos(), 8, 10, color_white, true)
-        debugoverlay.EntityTextAtPosition(self:GetPos(), 1, tostring(self) .. " requesting networking data", 10, color_white)
+        -- debugoverlay.Cross(self:GetPos(), 8, 10, color_white, true)
+        -- debugoverlay.EntityTextAtPosition(self:GetPos(), 1, tostring(self) .. " requesting networking data", 10, color_white)
         net.Start("arccw_rqwpnnet")
             net.WriteEntity(self)
         net.SendToServer()
