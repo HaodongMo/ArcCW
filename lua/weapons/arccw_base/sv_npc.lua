@@ -29,11 +29,6 @@ function SWEP:NPC_Initialize()
     self:SetNextPrimaryFire(CurTime())
     self:SetNextSecondaryFire(CurTime() + 30)
     self:GetOwner():NextThink(CurTime())
-
-    if self.PreAdjustAtts then
-        self.PreAdjustAtts = false
-        self:AdjustAtts()
-    end
 end
 
 function SWEP:AssignRandomAttToSlot(slot)
@@ -109,6 +104,7 @@ function SWEP:NPC_SetupAttachments()
     end
 
     self:AdjustAtts()
+    self:RefreshBGs()
 
     timer.Simple(0.25, function()
         if !IsValid(self) then return end

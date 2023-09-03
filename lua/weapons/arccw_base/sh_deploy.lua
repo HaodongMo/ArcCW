@@ -139,11 +139,7 @@ function SWEP:InitialDefaultClip()
 end
 
 function SWEP:Initialize()
-    if (!IsValid(self:GetOwner()) or self:GetOwner():IsNPC()) and self:IsValid() and self.NPC_Initialize and SERVER then
-        self:NPC_Initialize()
-    end
-
-    if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
+    if SERVER and game.SinglePlayer() and IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
         self:CallOnClient("Initialize")
     end
 
@@ -242,7 +238,12 @@ function SWEP:Initialize()
 
     hook.Run("ArcCW_WeaponInit", self)
 
-    self:AdjustAtts()
+    if (!IsValid(self:GetOwner()) or self:GetOwner():IsNPC()) and self:IsValid() and self.NPC_Initialize then
+        self:NPC_Initialize()
+    else
+        self:AdjustAtts()
+        self:RefreshBGs()
+    end
 end
 
 function SWEP:Holster(wep)

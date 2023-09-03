@@ -1050,12 +1050,12 @@ function SWEP:RefreshBGs()
             end
         end
 
-
-
         if SERVER then
             self:SetupShields()
         end
     end
+
+    local tpmdl = self.WMModel or self
 
     if IsValid(vm) then
         for i = 0, (vm:GetNumBodyGroups()) do
@@ -1063,20 +1063,25 @@ function SWEP:RefreshBGs()
                 vm:SetBodygroup(i, self.Bodygroups[i])
             end
         end
-
         self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae, wm = false})
-        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae, wm = true})
+    end
 
-        for slot, v in pairs(self.Attachments) do
-            if !v.Installed then continue end
+    for i = 0, (tpmdl:GetNumBodyGroups()) do
+        if self.Bodygroups[i] then
+            tpmdl:SetBodygroup(i, self.Bodygroups[i])
+        end
+    end
+    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = tpmdl, eles = ae, wm = true})
 
-            local func = self:GetBuff_Stat("Hook_ModifyAttBodygroups", slot)
-            if func and v.VElement and IsValid(v.VElement.Model) then
-                func(self, {vm = vm, element = v.VElement, slottbl = v, wm = false})
-            end
-            if func and v.WElement and IsValid(v.WElement.Model)  then
-                func(self, {vm = self.WMModel, element = v.WElement, slottbl = v, wm = true})
-            end
+    for slot, v in pairs(self.Attachments) do
+        if !v.Installed then continue end
+
+        local func = self:GetBuff_Stat("Hook_ModifyAttBodygroups", slot)
+        if func and v.VElement and IsValid(v.VElement.Model) and IsValid(vm) then
+            func(self, {vm = vm, element = v.VElement, slottbl = v, wm = false})
+        end
+        if func and v.WElement and IsValid(v.WElement.Model)  then
+            func(self, {vm = tpmdl, element = v.WElement, slottbl = v, wm = true})
         end
     end
 end
