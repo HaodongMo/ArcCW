@@ -150,9 +150,9 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
 
                 wpnent:Spawn()
 
-                if engine.ActiveGamemode() == "terrortown" and ArcCW.ConVars["ttt_atts"]:GetBool() then
-                    wpnent:NPC_SetupAttachments()
-                end
+                -- if engine.ActiveGamemode() == "terrortown" and ArcCW.ConVars["ttt_atts"]:GetBool() then
+                --     wpnent:NPC_SetupAttachments()
+                -- end
 
                 timer.Simple(0, function()
                     if !ent:IsValid() then return end

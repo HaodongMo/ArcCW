@@ -746,9 +746,11 @@ function SWEP:DrawWorldModel()
         self:DoScopeGlint()
     end
 
-    if !self.CertainAboutAtts and !self.AttReqSent and IsValid(self:GetOwner()) then
+    if !self.CertainAboutAtts and !self.AttReqSent and !IsValid(self:GetOwner()) then
         self.AttReqSent = true
-        print(self, "network weapon from cl_viewmodel")
+        -- print(self, "network weapon from cl_viewmodel")
+        debugoverlay.Cross(self:GetPos(), 8, 10, color_white, true)
+        debugoverlay.EntityTextAtPosition(self:GetPos(), 1, tostring(self) .. " requesting networking data", 10, color_white)
         net.Start("arccw_rqwpnnet")
             net.WriteEntity(self)
         net.SendToServer()
