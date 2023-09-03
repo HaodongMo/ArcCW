@@ -164,25 +164,28 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
     end
 end)
 
-hook.Add("PlayerCanPickupWeapon", "ArcCW_PlayerCanPickupWeapon", function(ply, wep)
-    if !wep.ArcCW then return end
-    if !ply:HasWeapon(wep:GetClass()) then return end
+-- This hook steals attachments from dropped weapons when a player walks over.
+-- Disabled cause this is called CONSTANTLY when player is over a weapon, causing massive network lag.
+-- Also it's just weird and hard to understand.
+-- hook.Add("PlayerCanPickupWeapon", "ArcCW_PlayerCanPickupWeapon", function(ply, wep)
+--     if !wep.ArcCW then return end
+--     if !ply:HasWeapon(wep:GetClass()) then return end
 
-    if wep.Singleton then return false end
+--     if wep.Singleton then return false end
 
-    if !ArcCW.EnableCustomization or ArcCW.ConVars["enable_customization"]:GetInt() < 0 or ArcCW.ConVars["attinv_free"]:GetBool() then return end
+--     if !ArcCW.EnableCustomization or ArcCW.ConVars["enable_customization"]:GetInt() < 0 or ArcCW.ConVars["attinv_free"]:GetBool() then return end
 
-    for _, i in pairs(wep.Attachments) do
-        if i.Installed then
-            ArcCW:PlayerGiveAtt(ply, i.Installed)
-        end
+--     for _, i in pairs(wep.Attachments) do
+--         if i.Installed then
+--             ArcCW:PlayerGiveAtt(ply, i.Installed)
+--         end
 
-        i.Installed = nil
-    end
+--         i.Installed = nil
+--     end
 
-    ArcCW:PlayerSendAttInv(ply)
-    wep:NetworkWeapon()
-end)
+--     ArcCW:PlayerSendAttInv(ply)
+--     wep:NetworkWeapon()
+-- end)
 
 hook.Add("onDarkRPWeaponDropped", "ArcCW_DarkRP", function(ply, spawned_weapon, wep)
     if wep.ArcCW and wep.Attachments then

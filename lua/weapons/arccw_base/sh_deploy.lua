@@ -93,9 +93,13 @@ function SWEP:Deploy()
     if SERVER then
         self:SetupShields()
         -- Networking the weapon at this time is too early - entity is not yet valid on client
+        -- Also not a good idea because networking many weapons will cause mass lag (e.g. TTT round setup)
         -- Instead, make client send a request when it is valid there
         --self:NetworkWeapon()
-    elseif CLIENT and !self.CertainAboutAtts then
+    elseif CLIENT and !self.CertainAboutAtts and IsValid(self:GetOwner()) then
+        -- If client is aware of this weapon and it's not on the ground, ask for attachment info
+        -- If it is not on a player, delay networking until it is rendered (in cl_viewmodel)
+        print(self, "network weapon from sh_deploy")
         net.Start("arccw_rqwpnnet")
             net.WriteEntity(self)
         net.SendToServer()

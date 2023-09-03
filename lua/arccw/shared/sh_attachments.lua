@@ -365,7 +365,7 @@ net.Receive("arccw_rqwpnnet", function(len, ply)
     if !wpn.ArcCW then return end
 
     wpn:RecalcAllBuffs()
-    wpn:NetworkWeapon()
+    wpn:NetworkWeapon(ply)
 end)
 
 net.Receive("arccw_slidepos", function(len, ply)

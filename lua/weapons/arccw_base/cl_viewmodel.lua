@@ -748,6 +748,7 @@ function SWEP:DrawWorldModel()
 
     if !self.CertainAboutAtts and !self.AttReqSent and IsValid(self:GetOwner()) then
         self.AttReqSent = true
+        print(self, "network weapon from cl_viewmodel")
         net.Start("arccw_rqwpnnet")
             net.WriteEntity(self)
         net.SendToServer()
