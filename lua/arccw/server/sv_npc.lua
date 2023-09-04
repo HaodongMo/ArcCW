@@ -127,15 +127,7 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
         timer.Simple(0, function()
             if !ent:IsValid() then return end
             if IsValid(ent:GetOwner()) then return end
-            if ent.ArcCW then
-                -- Handled by the weapon
-                --[[]
-                if engine.ActiveGamemode() == "terrortown" and ArcCW.ConVars["ttt_atts"]:GetBool() then
-                    ent:NPC_SetupAttachments()
-                end
-                ]]
-                return
-            end
+            if ent.ArcCW then return end
 
             local class = ent:GetClass()
 
@@ -149,10 +141,6 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
                 wpnent:NPC_Initialize()
 
                 wpnent:Spawn()
-
-                -- if engine.ActiveGamemode() == "terrortown" and ArcCW.ConVars["ttt_atts"]:GetBool() then
-                --     wpnent:NPC_SetupAttachments()
-                -- end
 
                 timer.Simple(0, function()
                     if !ent:IsValid() then return end
@@ -200,10 +188,19 @@ hook.Add("onDarkRPWeaponDropped", "ArcCW_DarkRP", function(ply, spawned_weapon, 
 end)
 
 hook.Add("PlayerGiveSWEP", "ArcCW_SpawnRandomAttachments", function(ply, class, tbl)
-    if tbl.ArcCW and ArcCW.ConVars["atts_spawnrand"]:GetBool() then
-        timer.Simple(0, function()
-            if IsValid(ply) and IsValid(ply:GetWeapon(class)) then
-                ply:GetWeapon(class):NPC_SetupAttachments()
+    if weapons.IsBasedOn(class, "arccw_base") and ArcCW.ConVars["atts_spawnrand"]:GetBool() then
+        -- We can't get the weapon entity here - it's spawned after the hook call.
+        -- Mark the player to disable autosave tempoarily if we're spawning random attachments.
+        ply.ArcCW_Sandbox_RandomAtts = true
+        timer.Simple(0.0001, function()
+            local wpn = ply:GetWeapon(class)
+            if IsValid(ply) and IsValid(wpn) then
+                wpn:NPC_SetupAttachments()
+
+                if ply.ArcCW_Sandbox_FirstSpawn then
+                    wpn:RestoreAmmo()
+                    ply.ArcCW_Sandbox_FirstSpawn = nil
+                end
             end
         end)
     end

@@ -473,6 +473,10 @@ if SERVER then
         local wpn = net.ReadEntity()
 
         if wpn:GetOwner() != ply or !wpn.ArcCW then return end
+        if ply.ArcCW_DisableAutosave or ply.ArcCW_Sandbox_RandomAtts then
+            ply.ArcCW_Sandbox_RandomAtts = nil
+            return
+        end
 
         for k, v in pairs(wpn.Attachments) do
             wpn:Detach(k, true, true)
@@ -503,6 +507,7 @@ if SERVER then
         end
 
         wpn:AdjustAtts()
+        wpn:RefreshBGs()
 
         if ply.ArcCW_Sandbox_FirstSpawn then
             -- Curiously, RestoreAmmo has a sync delay only in singleplayer
@@ -517,7 +522,6 @@ if SERVER then
         net.Start("arccw_applypreset")
             net.WriteEntity(wpn)
         net.Send(ply)
-
     end)
 else
     net.Receive("arccw_applypreset", function()

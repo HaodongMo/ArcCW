@@ -106,10 +106,16 @@ function SWEP:NPC_SetupAttachments()
     self:AdjustAtts()
     self:RefreshBGs()
 
-    timer.Simple(0.25, function()
-        if !IsValid(self) then return end
+    if self:GetOwner():IsNPC() then
+        timer.Simple(0.1, function()
+            if !IsValid(self) then return end
+            self:NetworkWeapon()
+        end)
+    else
         self:NetworkWeapon()
-    end)
+        self:SetupModel(false)
+        self:SetupModel(true)
+    end
 end
 
 function SWEP:NPC_Shoot()

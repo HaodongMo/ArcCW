@@ -1055,7 +1055,7 @@ function SWEP:RefreshBGs()
         end
     end
 
-    local tpmdl = self.WMModel or self
+    local tpmdl = IsValid(self.WMModel) and self.WMModel or self
 
     if IsValid(vm) then
         for i = 0, (vm:GetNumBodyGroups()) do
