@@ -38,11 +38,11 @@ function SWEP:GetFOVAcc( acc, disp )
     cam.End3D()
 
     local gau = 0
-    gau = ( (ScrH()/2) - lool.y )
-    gaA = math.Approach(gaA, gau, (ScrH()/2)*FrameTime())
+    gau = ( (ScrH() / 2) - lool.y )
+    gaA = math.Approach(gaA, gau, (ScrH() / 2) * FrameTime())
     gau = 0
-    gau = ( (ScrH()/2) - lool2.y )
-    gaD = math.Approach(gaD, gau, (ScrH()/2)*FrameTime())
+    gau = ( (ScrH() / 2) - lool2.y )
+    gaD = math.Approach(gaD, gau, (ScrH() / 2) * FrameTime())
 
     return gaA, gaD
 end
@@ -52,6 +52,17 @@ function SWEP:DrawDevCrosshair(x, y)
 
     surface.DrawLine(x, y - 256, x, y + 256)
     surface.DrawLine(x - 256, y, x + 256, y)
+
+    local gA, gD = self:GetFOVAcc( self:GetBuff("AccuracyMOA"), self:GetDispersion() )
+    surface.DrawCircle(x, y, gA + gD, 255, 255, 255, 155)
+    surface.DrawCircle(x, y, gA, 255, 255, 0, 55)
+
+    local dist = self:GetOwner():GetEyeTrace().HitPos:Distance(self:GetOwner():GetShootPos()) * ArcCW.HUToM
+
+    local dmg = math.floor(self:GetDamage(dist))
+    draw.SimpleTextOutlined(dmg .. " damage", "ArcCW_24_Unscaled", x + 256, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 1, Color(0, 0, 0))
+    draw.SimpleTextOutlined(math.Round(dist, 1) .. "m", "ArcCW_24_Unscaled", x + 256, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0))
+
 end
 
 function SWEP:DoDrawCrosshair(x, y)
