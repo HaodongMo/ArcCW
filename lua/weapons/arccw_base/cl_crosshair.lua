@@ -113,7 +113,7 @@ function SWEP:DoDrawCrosshair(x, y)
             ArcCW.ConVars["crosshair_outline_a"]:GetInt())
 
     local gA, gD = self:GetFOVAcc( self:GetBuff("AccuracyMOA"), self:GetDispersion() )
-    local gap = (static and 8 or gD) * ArcCW.ConVars["crosshair_gap"]:GetFloat()
+    local gap = (static and 8 or gA + gD) * ArcCW.ConVars["crosshair_gap"]:GetFloat()
 
     gap = gap + ( ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1) )
 
