@@ -57,6 +57,8 @@ ArcCW.AutoStats = {
     ["Add_ClipSize"]          = { "autostat.clipsize.mod",    "add", false,         pr = 315 },
     ["Mult_ClipSize"]         = { "autostat.clipsize.mod",    "mult", false,        pr = 314 },
 
+    ["Mult_TriggerDelayTime"] = { "autostat.triggerdelay",    "mult", true,        pr = 200 },
+
     ["Override_Ammo"] = {"autostat.ammotype", "func", function(wep, val, att)
         -- have to use the weapons table here because Primary.Ammo *is* modified when attachments are used
         if !IsValid(wep) or !weapons.Get(wep:GetClass()) or weapons.Get(wep:GetClass()).Primary.Ammo == val then return end
