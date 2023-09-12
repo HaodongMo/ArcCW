@@ -673,6 +673,7 @@ SWEP.Animations = {
     --     LastClip1OutTime = 0, -- when should the belt visually replenish on a belt fed
     --     MinProgress = 0, -- how much time in seconds must pass before the animation can be cancelled
     --     ForceEmpty = false, -- Used by empty shotgun reloads that load rounds to force consider the weapon to still be empty.
+    --     NoCamReset = false, -- Don't set the first frame of the sequence as starting angles. Enable if camera appears to snap at start of animations.
     -- }
 }
 

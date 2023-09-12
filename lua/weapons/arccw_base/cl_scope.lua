@@ -170,18 +170,11 @@ function SWEP:CoolView(ply, pos, ang, fov)
 
     end
 
-    local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
-    if att and vm:GetAttachment(att) then
-        local attang = vm:GetAttachment(att).Ang
-
-        attang = vm:WorldToLocalAngles(attang)
-
-        attang = attang - self.Cam_Offset_Ang
-
-        -- attang = vm:LocalToWorldAngles(attang)
-
-        ang:Set(ang + attang)
-
+    local att = self:GetBuff_Override("Override_CamAttachment", self.CamAttachment) or -1
+    if vm:GetAttachment(att) then
+        local attang = vm:WorldToLocalAngles(vm:GetAttachment(att).Ang)
+        attang:Sub(self.Cam_Offset_Ang)
+        ang:Add(attang)
         return
     end
 

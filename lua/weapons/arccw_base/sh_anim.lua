@@ -211,8 +211,8 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         self.LastAnimKey = key
     end
 
-    local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment -- why is this here if we just... do cool stuff elsewhere?
-    if att and vm:GetAttachment(att) then
+    local att = self:GetBuff_Override("Override_CamAttachment", self.CamAttachment)
+    if !anim.NoCamReset and att and vm:GetAttachment(att) then
         local ang = vm:GetAttachment(att).Ang
         ang = vm:WorldToLocalAngles(ang)
         self.Cam_Offset_Ang = Angle(ang)
