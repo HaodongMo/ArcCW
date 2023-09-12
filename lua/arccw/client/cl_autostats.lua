@@ -88,6 +88,14 @@ ArcCW.AutoStats = {
         if !IsValid(wep) then return end
         return string.format(translate("autostat.ammotypeubgl"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
     end, pr = 949},
+
+    ["Add_AccuracyMOA"] = { "autostat.precision",   "func",  function(wep, val, att)
+        if val > 0 then
+            return "+" .. math.Round(val, 2) .. " " .. translate("unit.moa") .. " " .. translate("autostat.precision"), "cons"
+        else
+            return "-" .. math.Round(val, 2) .. " " .. translate("unit.moa") .. " " .. translate("autostat.precision"), "pros"
+        end
+    end, pr = 187 },
 }
 
 local function getsimpleamt(stat)
