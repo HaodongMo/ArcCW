@@ -96,6 +96,7 @@ function SWEP:Deploy()
         -- Also not a good idea because networking many weapons will cause mass lag (e.g. TTT round setup)
         -- Instead, make client send a request when it is valid there
         --self:NetworkWeapon()
+        self:GetOwner():SetSaveValue("m_flNextAttack", 0) -- the magic fix-it-all solution for custom deploy problems including sounds
     elseif CLIENT and !self.CertainAboutAtts and !self.AttReqSent and IsValid(self:GetOwner()) then
         -- If client is aware of this weapon and it's not on the ground, ask for attachment info
         -- If it is not on a player, delay networking until it is rendered (in cl_viewmodel)
