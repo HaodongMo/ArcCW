@@ -53,15 +53,22 @@ function SWEP:DrawDevCrosshair(x, y)
     surface.DrawLine(x, y - 256, x, y + 256)
     surface.DrawLine(x - 256, y, x + 256, y)
 
+
     local gA, gD = self:GetFOVAcc( self:GetBuff("AccuracyMOA"), self:GetDispersion() )
     surface.DrawCircle(x, y, gA + gD, 255, 255, 255, 155)
     surface.DrawCircle(x, y, gA, 255, 255, 0, 55)
 
+    draw.SimpleTextOutlined(math.Round(self:GetDispersion(), 1) .. " MOA", "ArcCW_24_Unscaled", x - gA - gD - 16, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 1, Color(0, 0, 0))
+    draw.SimpleTextOutlined(math.Round(self:GetBuff("AccuracyMOA"), 1) .. " MOA", "ArcCW_24_Unscaled", x - gA - gD - 16, y, Color(255, 255, 0), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0))
+
+
     local dist = self:GetOwner():GetEyeTrace().HitPos:Distance(self:GetOwner():GetShootPos()) * ArcCW.HUToM
+    local rf = self:GetRangeFraction(dist)
 
     local dmg = math.floor(self:GetDamage(dist))
     draw.SimpleTextOutlined(dmg .. " damage", "ArcCW_24_Unscaled", x + 256, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 1, Color(0, 0, 0))
-    draw.SimpleTextOutlined(math.Round(dist, 1) .. "m", "ArcCW_24_Unscaled", x + 256, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0))
+    draw.SimpleTextOutlined(math.Round(dist, 1) .. "m", "ArcCW_24_Unscaled", x + 256 - 64, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0))
+    draw.SimpleTextOutlined(math.Round(rf * 100) .. "%", "ArcCW_24_Unscaled", x + 256, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0))
 
 end
 
