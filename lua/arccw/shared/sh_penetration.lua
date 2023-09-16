@@ -66,9 +66,11 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
     local hitpos, startpos = tr.HitPos, tr.StartPos
     local dir    = (hitpos - startpos):GetNormalized()
 
-    if CLIENT then
-        return
-    end
+    -- Added in e5adb54: "temporarily disable visual pen bullet until a solution is found"
+    -- i don't remember the issue though
+    -- if CLIENT then
+    --     return
+    -- end
 
     if tr.HitSky then return end
 
