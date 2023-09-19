@@ -75,8 +75,10 @@ function SWEP:Deploy()
 
     self:SetState(ArcCW.STATE_DISABLE)
 
-    if SERVER and self.UnReady then
-        self:InitialDefaultClip()
+    if (SERVER or game.SinglePlayer()) and self.UnReady then
+        if SERVER then
+            self:InitialDefaultClip()
+        end
         self.UnReady = false
     end
 
