@@ -19,6 +19,10 @@ function SWEP:Think()
 
     if self:GetState() == ArcCW.STATE_DISABLE and !self:GetPriorityAnim() then
         self:SetState(ArcCW.STATE_IDLE)
+
+        if CLIENT and self.UnReady then
+            self.UnReady = false
+        end
     end
 
     for i, v in ipairs(self.EventTable) do

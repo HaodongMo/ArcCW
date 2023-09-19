@@ -61,26 +61,11 @@ function SWEP:Deploy()
             prd = self.Animations[r_anim].ProcDraw
 
             self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true) )
-
-            -- UGLY HACK: Deploy() can sometimes be called on a deploy without IsFirstTimePredicted() ever being true?!
-            -- Occurs when weapon is spawned and switched too immediately or switching from another ArcCW gun
-            -- This will cause sound tables to fail - it only plays on first prediction.
-            -- So... just do it here I guess. Timing will be a bit off but it's better than nothing
-            if CLIENT and !game.SinglePlayer() and self.Animations[r_anim].SoundTable then
-                self.EventTable = {}
-                self:PlaySoundTable(self.Animations[r_anim].SoundTable, 1, 0, r_anim)
-            end
         elseif self.Animations[d_anim] then
             self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false)
             prd = self.Animations[d_anim].ProcDraw
 
             self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(d_anim, true) * self:GetBuff_Mult("Mult_DrawTime"))
-
-            -- UGLY HACK: Same as above
-            if CLIENT and !game.SinglePlayer() and self.Animations[d_anim].SoundTable then
-                self.EventTable = {}
-                self:PlaySoundTable(self.Animations[d_anim].SoundTable, 1, 0, d_anim)
-            end
         end
 
         if prd or (!self.Animations[r_anim] and !self.Animations[d_anim]) then
@@ -90,10 +75,8 @@ function SWEP:Deploy()
 
     self:SetState(ArcCW.STATE_DISABLE)
 
-    if self.UnReady then
-        if SERVER then
-            self:InitialDefaultClip()
-        end
+    if SERVER and self.UnReady then
+        self:InitialDefaultClip()
         self.UnReady = false
     end
 
