@@ -92,9 +92,9 @@ function SWEP:WasBought(buyer)
 end
 
 function SWEP:TTT_PostAttachments()
-    self.IsSilent = self:GetBuff_Override("Suppressor")
+    self.IsSilent = self:GetBuff_Override("Silencer")
 
-    if !self.IsSilent and self:GetBuff("ShootVol") <= 90 then
+    if !self.IsSilent then
         self.IsSilent = true
     end
 end
