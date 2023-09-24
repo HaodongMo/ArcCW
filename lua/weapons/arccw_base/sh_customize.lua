@@ -45,14 +45,14 @@ local function DrawTextRot(span, txt, x, y, tx, ty, maxw, only)
     end
 end
 
-local noinspect = ArcCW.ConVars["noinspect"]
 
 function SWEP:ToggleCustomizeHUD(ic)
     if ic and self:GetState() == ArcCW.STATE_SPRINT then return end
     if self:GetReloading() then ic = false end
     if self:GetState() == ArcCW.STATE_DISABLE then return end
 
-    noinspect = noinspect or ArcCW.ConVars["noinspect"]
+    local noinspect = (CLIENT and ArcCW.ConVars["noinspect"]:GetBool()) or (SERVER and self:GetOwner():GetInfoNum("arccw_noinspect", 0) > 0)
+
     if ic then
         if (self:GetNextPrimaryFire() + 0.1) >= CurTime() then return end
 
@@ -60,7 +60,7 @@ function SWEP:ToggleCustomizeHUD(ic)
         self:ExitSights()
         self:SetShouldHoldType()
         self:ExitBipod()
-        if noinspect and !noinspect:GetBool() then
+        if !noinspect then
             self:PlayAnimation(self:SelectAnimation("enter_inspect"), nil, true, nil, nil, true, false)
         end
 
@@ -73,7 +73,7 @@ function SWEP:ToggleCustomizeHUD(ic)
         self.Sprinted = false
         self:SetShouldHoldType()
 
-        if noinspect and !noinspect:GetBool() then
+        if !noinspect then
             self:PlayAnimation(self:SelectAnimation("exit_inspect"), nil, true, nil, nil, true, false)
         end
 
