@@ -1,4 +1,4 @@
-SWEP.Cam_Offset_Ang = Angle(0, 0, 0)
+SWEP.Cam_Offset_Ang = nil --Angle(0, 0, 0)
 
 function SWEP:SelectAnimation(anim)
     if self:GetNWState() == ArcCW.STATE_SIGHTS and self.Animations[anim .. "_iron"] then
@@ -208,8 +208,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         self.LastAnimKey = key
     end
 
+    -- Grabs the current angle of the cam attachment bone and use it as the common offset for all cambone changes.
+    -- Problem: If this animation interrupted a previous animation with cambone movement,
+    -- it will start with an incorrect offset and snap at the end.
+    -- Therefore this now only ever sets it once.
     local att = self:GetBuff_Override("Override_CamAttachment", self.CamAttachment)
-    if !anim.NoCamReset and att and vm:GetAttachment(att) then
+    if att and vm:GetAttachment(att) and (anim.ForceCamReset or self.Cam_Offset_Ang == nil) then
         local ang = vm:GetAttachment(att).Ang
         ang = vm:WorldToLocalAngles(ang)
         self.Cam_Offset_Ang = Angle(ang)

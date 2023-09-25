@@ -170,8 +170,9 @@ function SWEP:CoolView(ply, pos, ang, fov)
 
     end
 
+    -- Cam_Offset_Ang might not always be assigned properly. Try not to use it if it's nil, or it'll tilt the player's view.
     local att = self:GetBuff_Override("Override_CamAttachment", self.CamAttachment) or -1
-    if vm:GetAttachment(att) then
+    if vm:GetAttachment(att) and self.Cam_Offset_Ang then
         local attang = vm:WorldToLocalAngles(vm:GetAttachment(att).Ang)
         attang:Sub(self.Cam_Offset_Ang)
         ang:Add(attang)
