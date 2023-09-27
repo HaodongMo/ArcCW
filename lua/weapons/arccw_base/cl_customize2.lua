@@ -2594,6 +2594,8 @@ function SWEP:CreateCustomize2HUD()
             end
 
             if !drawndmg then
+                surface.SetTextColor(col_fg)
+
                 local dmg = tostring(math.Round(dmgmax))
                 surface.SetTextPos(ss * 2, ss * 1)
                 surface.DrawText(dmg)
