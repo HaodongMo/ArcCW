@@ -56,6 +56,10 @@ function SWEP:Deploy()
         local r_anim = self:SelectAnimation("ready")
         local d_anim = self:SelectAnimation("draw")
 
+        if (CLIENT and !game.SinglePlayer() and LocalPlayer():IsListenServerHost()) then
+            self.ReadySoundTableHack = true
+        end
+
         if self.Animations[r_anim] and ( dev_alwaysready:GetBool() or self.UnReady ) then
             self:PlayAnimation(r_anim, 1, true, 0, false)
             prd = self.Animations[r_anim].ProcDraw
