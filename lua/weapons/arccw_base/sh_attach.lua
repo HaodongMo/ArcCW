@@ -681,7 +681,7 @@ end
 
 function SWEP:GetTracerOrigin()
     local ow = self:GetOwner()
-    local wm = !ow:GetViewModel():IsValid() or ow:ShouldDrawLocalPlayer()
+    local wm = !ow:IsPlayer() or !ow:GetViewModel():IsValid() or ow:ShouldDrawLocalPlayer()
     local muzz = self:GetMuzzleDevice(wm)
 
     if muzz and muzz:IsValid() then
