@@ -64,7 +64,11 @@ function SWEP:Deploy()
             self:PlayAnimation(r_anim, 1, true, 0, false)
             prd = self.Animations[r_anim].ProcDraw
 
-            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true) )
+            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true))
+
+            if CLIENT then
+                self:SetTimer(self:GetAnimKeyTime(r_anim, true), function() self.UnReady = false end, "UnReady")
+            end
         elseif self.Animations[d_anim] then
             self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false)
             prd = self.Animations[d_anim].ProcDraw
