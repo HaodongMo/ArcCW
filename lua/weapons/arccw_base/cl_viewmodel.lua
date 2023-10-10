@@ -712,29 +712,70 @@ function SWEP:ShouldCheapWorldModel()
     return !ArcCW.ConVars["att_showothers"]:GetBool()
 end
 
+local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
+local iw = 32
+
 function SWEP:DrawWorldModel()
-    -- 512^2
-    if !IsValid(self:GetOwner()) and !TTT2 and GetConVar("arccw_2d3d"):GetBool() and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then
+    local cvar2d3d = ArcCW.ConVars["2d3d"]:GetInt()
+    if !IsValid(self:GetOwner()) and !TTT2
+            and (cvar2d3d == 2 or (cvar2d3d == 1 and LocalPlayer():GetEyeTrace().Entity == self))
+            and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then -- 512^2
         local ang = LocalPlayer():EyeAngles()
         ang:RotateAroundAxis(ang:Forward(), 180)
         ang:RotateAroundAxis(ang:Right(), 90)
         ang:RotateAroundAxis(ang:Up(), 90)
         cam.Start3D2D(self:WorldSpaceCenter() + Vector(0, 0, 16), ang, 0.1)
+
         srf.SetFont("ArcCW_32_Unscaled")
         local w = srf.GetTextSize(self.PrintName)
+        srf.SetTextPos(-w / 2 + 2, 2)
+        srf.SetTextColor(0, 0, 0, 150)
+        srf.DrawText(self.PrintName)
         srf.SetTextPos(-w / 2, 0)
         srf.SetTextColor(255, 255, 255, 255)
         srf.DrawText(self.PrintName)
-        srf.SetFont("ArcCW_24_Unscaled")
-        local count = self:CountAttachments()
 
-        if count > 0 then
-            local t = tostring(count) .. " Attachments"
-            w = srf.GetTextSize(t)
-            srf.SetTextPos(-w / 2, 32)
-            srf.SetTextColor(255, 255, 255, 255)
-            srf.DrawText(t)
+        local icons = {}
+        for i, slot in pairs(self.Attachments or {}) do
+            if slot.Installed then
+                local atttbl = ArcCW.AttachmentTable[slot.Installed]
+                if !atttbl then continue end
+                local icon = atttbl.Icon
+                if !icon or icon:IsError() then icon = bird end
+                table.insert(icons, icon)
+            end
         end
+
+        local ind = math.min(6, #icons)
+
+        surface.SetDrawColor(255, 255, 255)
+        for i = 1, ind do
+            if i == 6 and #icons > 6 then
+                local str = "+" .. (#icons - ind)
+                local strw = srf.GetTextSize(str)
+                srf.SetTextPos(-ind * iw / 2 + (i - 1) * iw + 2 + strw / 2, iw + 14)
+                srf.SetTextColor(0, 0, 0, 150)
+                srf.DrawText(str)
+                srf.SetTextPos(-ind * iw / 2 + (i - 1) * iw + strw / 2, iw + 12)
+                srf.SetTextColor(255, 255, 255, 255)
+                srf.DrawText(str)
+            else
+                local icon = icons[i]
+                surface.SetMaterial(icon)
+                surface.DrawTexturedRect(-ind * iw / 2 + (i - 1) * iw, iw + 12, iw, iw)
+            end
+        end
+
+        -- srf.SetFont("ArcCW_24_Unscaled")
+        -- local count = self:CountAttachments()
+
+        -- if count > 0 then
+        --     local t = tostring(count) .. " Attachments"
+        --     w = srf.GetTextSize(t)
+        --     srf.SetTextPos(-w / 2, 32)
+        --     srf.SetTextColor(255, 255, 255, 255)
+        --     srf.DrawText(t)
+        -- end
 
         cam.End3D2D()
     end

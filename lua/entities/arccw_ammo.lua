@@ -279,7 +279,8 @@ elseif CLIENT then
     function ENT:Draw()
         self:DrawModel()
 
-        if !GetConVar("arccw_2d3d"):GetBool() then return end
+        local cvar2d3d = ArcCW.ConVars["2d3d"]:GetInt()
+        if cvar2d3d == 0 or (cvar2d3d == 1 and LocalPlayer():GetEyeTrace().Entity != self) then return end
 
         if (EyePos() - self:GetPos()):LengthSqr() <= 262144 then -- 512^2
             local ang = LocalPlayer():EyeAngles()
@@ -293,6 +294,10 @@ elseif CLIENT then
 
                 local w = surface.GetTextSize(self.PrintName)
 
+                surface.SetTextPos(-w / 2 + 2, 2)
+                surface.SetTextColor(0, 0, 0, 150)
+                surface.DrawText(self.PrintName)
+
                 surface.SetTextPos(-w / 2, 0)
                 surface.SetTextColor(255, 255, 255, 255)
                 surface.DrawText(self.PrintName)
@@ -300,6 +305,12 @@ elseif CLIENT then
                 local ammo = self:GetNWInt("truecount", -1) != -1 and self:GetNWInt("truecount", -1) or self.AmmoCount
                 if ammo then
                     w = surface.GetTextSize("×" .. ammo)
+
+                    surface.SetTextColor(0, 0, 0, 150)
+                    surface.SetTextPos(-w / 2 + 2, 27)
+                    surface.DrawText("×" .. ammo)
+
+                    surface.SetTextColor(255, 255, 255, 255)
                     surface.SetTextPos(-w / 2, 25)
                     surface.DrawText("×" .. ammo)
                 end

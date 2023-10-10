@@ -73,7 +73,7 @@ ArcCW.ClientConVars = {
     ["arccw_fastmuzzles"]             = { def =  0 },
     ["arccw_fasttracers"]             = { def =  0 },
 
-    ["arccw_2d3d"]                    = { def =  1 },
+    ["arccw_2d3d"]                    = { def =  1, min = 0, max = 2},
 
     ["arccw_hud_3dfun"]               = { def =  0, usri = true },
     ["arccw_hud_3dfun_lite"]          = { def =  0 },
