@@ -123,7 +123,7 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
                 ent:Give(wpn)
             end
         end)
-    elseif ent:IsWeapon() and ((engine.ActiveGamemode() == "terrortown" and !ArcCW.ConVars["ttt_replace"]:GetBool()) or (engine.ActiveGamemode() != "terrortown" and ArcCW.ConVars["npc_replace"]:GetBool())) then
+    elseif ent:IsWeapon() and ((engine.ActiveGamemode() == "terrortown" and ArcCW.ConVars["ttt_replace"]:GetBool()) or (engine.ActiveGamemode() != "terrortown" and ArcCW.ConVars["npc_replace"]:GetBool())) then
         timer.Simple(0, function()
             if !ent:IsValid() then return end
             if IsValid(ent:GetOwner()) then return end

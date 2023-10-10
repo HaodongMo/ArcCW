@@ -396,9 +396,10 @@ function SWEP:OnDrop()
         self.Primary.DefaultClip = 1
     end
 
-    if engine.ActiveGamemode() == "terrortown" then
-        self.UnReady = true
-    else
-        self.UnReady = false
-    end
+    self.UnReady = false
+    -- if engine.ActiveGamemode() == "terrortown" then
+    --     self.UnReady = true
+    -- else
+    --     self.UnReady = false
+    -- end
 end
