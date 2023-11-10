@@ -357,6 +357,11 @@ function SWEP:DrawHUD()
         debug_panel(self)
     end
 
+    if ArcCW.ConVars["dev_benchgun"]:GetBool() then
+        draw.SimpleTextOutlined("BENCHGUN ENABLED", "ArcCW_26", ScrW() / 2, ScreenScaleMulti(4), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2, Color(0, 0, 0))
+        draw.SimpleTextOutlined("VIEWMODEL POSITION MOVED", "ArcCW_16", ScrW() / 2, ScreenScaleMulti(30), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2, Color(0, 0, 0))
+    end
+
     if !GetConVar("cl_drawhud"):GetBool() then return false end
 
     if self:GetState() != ArcCW.STATE_CUSTOMIZE then
