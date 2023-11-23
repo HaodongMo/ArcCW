@@ -1293,12 +1293,11 @@ function SWEP:Detach(slot, silent, noadjust, nocheck)
 
         local ammo = atttbl.UBGL_Ammo or "smg1_grenade"
 
-        if SERVER then
+        if SERVER and IsValid(self:GetOwner()) then
             self:GetOwner():GiveAmmo(clip, ammo, true)
         end
 
         self:SetClip2(0)
-
         self:DeselectUBGL()
     end
 

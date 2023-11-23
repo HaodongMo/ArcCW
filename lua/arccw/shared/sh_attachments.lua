@@ -4,6 +4,9 @@ function ArcCW:PlayerCanAttach(ply, wep, attname, slot, detach)
     -- The global variable takes priority over everything
     if !ArcCW.EnableCustomization then return false end
 
+    -- Attach and Detach require a player (usually the owner)
+    if !IsValid(ply) then return false end
+
     -- Spectators taking off your attachments is funny, but also cursed
     if wep:GetOwner() != ply then return false end
 
