@@ -765,3 +765,24 @@ hook.Add("PopulateToolMenu", "ArcCW_Options", function()
         spawnmenu.AddToolMenuOption("Options", "ArcCW", menu, data.text, "", "", data.func)
     end
 end)
+
+-- As of 2023-11-12, this feature is only available on dev branch.
+-- Won't break anything on release branch though.
+list.Set("ContentCategoryIcons", "ArcCW - Ammo", "arccw/icon_16.png")
+list.Set("ContentCategoryIcons", "ArcCW - Attachments", "arccw/icon_16.png")
+
+-- Give all categories with ArcCW weapons our icon unless one is already set
+local first_populate = true
+hook.Add("PopulateWeapons", "ArcCW_ContentCategoryIcons", function()
+    if !first_populate then return end
+    for i, wep in pairs(weapons.GetList()) do
+        local weap = weapons.Get(wep.ClassName)
+        if weap and weap.ArcCW then
+            local cat = weap.Category
+            if cat and !list.HasEntry("ContentCategoryIcons", cat) then
+                list.Set("ContentCategoryIcons", cat, "arccw/icon_16.png")
+            end
+        end
+    end
+    first_populate = false
+end)

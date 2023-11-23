@@ -44,6 +44,10 @@ function ArcCW.LoadAttachmentType(att, name)
                 [att.ShortName] = 1
             }
 
+            if att.EntityCategory and !list.HasEntry("ContentCategoryIcons", att.EntityCategory) then
+                list.Set("ContentCategoryIcons", att.EntityCategory, "arccw/icon_16.png")
+            end
+
             scripted_ents.Register( attent, "acwatt_" .. name )
         end
 
