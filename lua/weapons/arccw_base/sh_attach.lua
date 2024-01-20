@@ -681,8 +681,13 @@ end
 
 function SWEP:GetTracerOrigin()
     local ow = self:GetOwner()
-    local wm = !ow:IsPlayer() or !ow:GetViewModel():IsValid() or ow:ShouldDrawLocalPlayer()
-    local muzz = self:GetMuzzleDevice(wm)
+    local wm = nil
+    local muzz = nil
+
+    if !ow:IsNPC() and !ow:IsNextBot() and ow:IsValid() then
+        wm = !ow:GetViewModel():IsValid() or ow:ShouldDrawLocalPlayer()
+        muzz = self:GetMuzzleDevice(wm)
+    end
 
     if muzz and muzz:IsValid() then
         local posang = muzz:GetAttachment(self:GetBuff_Override("Override_MuzzleEffectAttachment", self.MuzzleEffectAttachment) or 1)
