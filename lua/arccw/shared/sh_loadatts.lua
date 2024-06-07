@@ -32,7 +32,7 @@ function ArcCW.LoadAttachmentType(att, name)
         if genAttCvar:GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free then
             local attent = {}
             attent.Base = "arccw_att_base"
-            if att.Icon then
+            if CLIENT and att.Icon then
                 attent.IconOverride = string.Replace( att.Icon:GetTexture( "$basetexture" ):GetName() .. ".png", "0001010", "" )
             end
             attent.PrintName = att.PrintName or name
