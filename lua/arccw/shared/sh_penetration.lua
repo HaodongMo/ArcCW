@@ -375,9 +375,9 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
     if IsValid(wep) and !wep:GetBuff_Override("Override_DamageTypeHandled", wep.DamageTypeHandled) then
         local _, maxrng = wep:GetMinMaxRange()
         -- ignite target
-        if dmg:IsDamageType(DMG_BURN) and hit.range <= maxrng then
-            dmg:SetDamageType(dmg:GetDamageType() - DMG_BURN)
-
+        if dmg:IsDamageType(DMG_BURN) and maxrng <= hit.range then
+            dmg:SetDamageType(DMG_BULLET)
+        else
             effect = "arccw_incendiaryround"
             decal  = "FadingScorch"
 
