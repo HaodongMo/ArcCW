@@ -3,11 +3,11 @@ local m_rand   = mth.Rand
 local m_lerp   = Lerp
 
 local function draw_debug()
-    return (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 2
+    return (CLIENT or game.SinglePlayer()) and ArcCW.ConVars["dev_shootinfo"]:GetInt() >= 2
 end
 
 function ArcCW:GetRicochetChance(penleft, tr)
-    if !GetConVar("arccw_enable_ricochet"):GetBool() then return 0 end
+    if !ArcCW.ConVars["enable_ricochet"]:GetBool() then return 0 end
     local degree = tr.HitNormal:Dot((tr.StartPos - tr.HitPos):GetNormalized())
 
     local ricmult = ArcCW.PenTable[tr.MatType] or 1
@@ -17,7 +17,7 @@ function ArcCW:GetRicochetChance(penleft, tr)
 
     local c = Lerp(degree, math.min(penleft * ricmult * 2, 45), 0)
 
-    -- c = c * GetConVar("arccw_ricochet_mult"):GetFloat()
+    -- c = c * ArcCW.ConVars["ricochet_mult"]:GetFloat()
 
     -- c = 100
 
@@ -66,9 +66,11 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
     local hitpos, startpos = tr.HitPos, tr.StartPos
     local dir    = (hitpos - startpos):GetNormalized()
 
-    if CLIENT then
-        return
-    end
+    -- Added in e5adb54: "temporarily disable visual pen bullet until a solution is found"
+    -- i don't remember the issue though
+    -- if CLIENT then
+    --     return
+    -- end
 
     if tr.HitSky then return end
 
@@ -122,7 +124,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
         skip = true
     end
 
-    if !GetConVar("arccw_enable_penetration"):GetBool() then return end
+    if !ArcCW.ConVars["enable_penetration"]:GetBool() then return end
 
     local factor = 1
     while !skip and penleft > 0 and ArcCW:IsPenetrating(ptr, ptrent) and ptr.Fraction < 1 and ptrent == curr_ent do
@@ -260,7 +262,7 @@ function ArcCW:DoPenetration(tr, damage, bullet, penleft, physical, alreadypenne
                     debugoverlay.Cross(e, 3, 10, alreadypenned[btr.Entity:EntIndex()] and Color(0, 128, 255) or Color(255, 128, 0), true)
                     debugoverlay.Text(e, math.Round(penleft, 1) .. "mm", 10)
                 end
-                if (CLIENT or game.SinglePlayer()) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 and IsValid(btr.Entity) and !alreadypenned[btr.Entity:EntIndex()] then
+                if (CLIENT or game.SinglePlayer()) and ArcCW.ConVars["dev_shootinfo"]:GetInt() >= 1 and IsValid(btr.Entity) and !alreadypenned[btr.Entity:EntIndex()] then
                     local str = string.format("%ddmg/%dm(%d%%)", math.floor(bullet.Weapon:GetDamage(dist)), dist, math.Round((1 - bullet.Weapon:GetRangeFraction(dist)) * 100))
                     debugoverlay.Text(btr.Entity:WorldSpaceCenter(), str, 5)
                 end
@@ -306,7 +308,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
     local dist = (phys and bullet.Travelled or (hitpos - tr.StartPos):Length() ) * ArcCW.HUToM
     local pen  = IsValid(wep) and wep:GetBuff("Penetration") or bullet.Penleft
 
-    if GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
+    if ArcCW.ConVars["dev_shootinfo"]:GetInt() >= 1 then
         debugoverlay.Cross(hitpos, 1, 5, SERVER and Color(255, 0, 0) or Color(0, 0, 255), true)
     end
 
@@ -358,7 +360,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
             dmg:ScaleDamage(dmgtable[hg])
 
             -- cancelling gmod's stupid default values (but only if we have a multiplier)
-            if GetConVar("arccw_bodydamagemult_cancel"):GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
+            if ArcCW.ConVars["bodydamagemult_cancel"]:GetBool() and gam[hg] then dmg:ScaleDamage(gam[hg]) end
         end
     end
 
@@ -443,7 +445,7 @@ function ArcCW:BulletCallback(att, tr, dmg, bullet, phys)
         util.Decal(decal, tr.StartPos, hitpos - (hitnormal * 16), wep:GetOwner())
     end
 
-    if (CLIENT or game.SinglePlayer()) and (!phys or SERVER) and GetConVar("arccw_dev_shootinfo"):GetInt() >= 1 then
+    if (CLIENT or game.SinglePlayer()) and (!phys or SERVER) and ArcCW.ConVars["dev_shootinfo"]:GetInt() >= 1 then
         local str = string.format("%ddmg/%dm(%d%%)", math.floor(dmg:GetDamage()), dist, math.Round((1 - delta) * 100))
         debugoverlay.Text(hitpos, str, 10)
         print(str)

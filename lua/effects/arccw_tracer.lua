@@ -21,7 +21,7 @@ function EFFECT:Init(data)
     local speed = data:GetScale()
     local start = (wep.GetTracerOrigin and wep:GetTracerOrigin()) or data:GetStart()
 
-    if GetConVar("arccw_fasttracers"):GetBool() then
+    if ArcCW.ConVars["fasttracers"]:GetBool() then
             local fx = EffectData()
             fx:SetOrigin(hit)
             fx:SetEntity(wep)

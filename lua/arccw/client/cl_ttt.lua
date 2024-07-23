@@ -1,7 +1,7 @@
 if engine.ActiveGamemode() != "terrortown" then return end
 
-CreateClientConVar("arccw_ttt_inforoundstart", "1", true, false, "Whether to show ArcCW config every round.")
-CreateClientConVar("arccw_ttt_rolecrosshair", "1", true, false, "Whether to color your crosshair according to your role.")
+ArcCW.ConVars["ttt_inforoundstart"] = CreateClientConVar("arccw_ttt_inforoundstart", "1", true, false, "Whether to show ArcCW config every round.")
+ArcCW.ConVars["ttt_rolecrosshair"] = CreateClientConVar("arccw_ttt_rolecrosshair", "1", true, false, "Whether to color your crosshair according to your role.")
 
 ArcCW.TTT_AttInfo = ArcCW.TTT_AttInfo or {}
 
@@ -34,7 +34,7 @@ end)
 hook.Add("TTTBodySearchPopulate", "ArcCW_PopulateHUD", function(processed, raw)
 
     -- Attachment Info
-    local mode = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
+    local mode = ArcCW.ConVars["ttt_bodyattinfo"]:GetInt()
     local attTbl = ArcCW.TTT_AttInfo[raw.eidx]
     if attTbl and !table.IsEmpty(attTbl) and (mode == 2 or (mode == 1 and raw.detective_search)) then
         local finalTbl = {
@@ -113,17 +113,17 @@ local function CreateInfoBox(t)
     label:SetFont("ArcCW_12")
     label:SetText(ArcCW.GetTranslation("ttt.roundinfo"))
 
-    if GetConVar("arccw_ttt_replace"):GetBool() then
+    if ArcCW.ConVars["ttt_replace"]:GetBool() then
         AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.replace"))
     end
 
-    local cmode_str = "ttt.roundinfo.cmode" .. GetConVar("arccw_ttt_customizemode"):GetInt()
+    local cmode_str = "ttt.roundinfo.cmode" .. ArcCW.ConVars["ttt_customizemode"]:GetInt()
     AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.cmode") .. " " .. ArcCW.GetTranslation(cmode_str))
 
     local att_str = ""
-    local att_cvar = GetConVar("arccw_attinv_free"):GetBool()
-    local att_cvar2 = GetConVar("arccw_attinv_lockmode"):GetBool()
-    local att_cvar3 = GetConVar("arccw_attinv_loseondie"):GetBool()
+    local att_cvar = ArcCW.ConVars["attinv_free"]:GetBool()
+    local att_cvar2 = ArcCW.ConVars["attinv_lockmode"]:GetBool()
+    local att_cvar3 = ArcCW.ConVars["attinv_loseondie"]:GetBool()
     if att_cvar then
         att_str = "ttt.roundinfo.free"
     elseif att_cvar2 then
@@ -137,18 +137,18 @@ local function CreateInfoBox(t)
     elseif !att_cvar and !att_cvar2 and att_cvar3 == 2 then
         att_str = att_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.drop")
     end
-    if GetConVar("arccw_atts_pickx"):GetInt() > 0 then
-        att_str = att_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.pickx") .. " " .. GetConVar("arccw_atts_pickx"):GetInt()
+    if ArcCW.ConVars["atts_pickx"]:GetInt() > 0 then
+        att_str = att_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.pickx") .. " " .. ArcCW.ConVars["atts_pickx"]:GetInt()
     end
     AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.attmode") .. " " .. att_str)
 
-    local binfo_cvar = GetConVar("arccw_ttt_bodyattinfo"):GetInt()
+    local binfo_cvar = ArcCW.ConVars["ttt_bodyattinfo"]:GetInt()
     AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.bmode") .. " " .. ArcCW.GetTranslation("ttt.roundinfo.bmode" .. binfo_cvar))
 
-    if GetConVar("arccw_ammo_replace"):GetBool() and GetConVar("arccw_mult_ammohealth"):GetFloat() > 0 then
-        local ainfo_cvar = GetConVar("arccw_ammo_detonationmode"):GetInt()
+    if ArcCW.ConVars["ammo_replace"]:GetBool() and ArcCW.ConVars["mult_ammohealth"]:GetFloat() > 0 then
+        local ainfo_cvar = ArcCW.ConVars["ammo_detonationmode"]:GetInt()
         local ainfo_str = ArcCW.GetTranslation("ttt.roundinfo.amode" .. ainfo_cvar)
-        if GetConVar("arccw_ammo_chaindet"):GetBool() then
+        if ArcCW.ConVars["ammo_chaindet"]:GetBool() then
             ainfo_str = ainfo_str .. ", " .. ArcCW.GetTranslation("ttt.roundinfo.achain")
         end
         AddLine(infoBox, ArcCW.GetTranslation("ttt.roundinfo.amode") .. " " .. ainfo_str)
@@ -165,7 +165,7 @@ end, nil, "Shows a panel detailing current ArcCW settings.")
 
 local turnoff = true
 hook.Add("TTTPrepareRound", "ArcCW_TTT_Info", function()
-    if GetConVar("arccw_ttt_inforoundstart"):GetBool() then
+    if ArcCW.ConVars["ttt_inforoundstart"]:GetBool() then
         CreateInfoBox(15)
         if turnoff then
             turnoff = false
@@ -229,7 +229,7 @@ hook.Add("TTTRenderEntityInfo", "ArcCW_TTT2_Weapons", function(tData)
         tData:AddDescriptionLine()
     end
 
-    local pickx = GetConVar("arccw_atts_pickx"):GetInt()
+    local pickx = ArcCW.ConVars["atts_pickx"]:GetInt()
 
     if !ent.CertainAboutAtts then
         tData:AddDescriptionLine("??? Attachments")

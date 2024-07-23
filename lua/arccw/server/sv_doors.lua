@@ -1,8 +1,8 @@
 if CLIENT then return end
 
 function ArcCW.DoorBust(ent, vel)
-    local cvar = GetConVar("arccw_doorbust"):GetInt()
-    local t = GetConVar("arccw_doorbust_time"):GetFloat()
+    local cvar = ArcCW.ConVars["doorbust"]:GetInt()
+    local t = ArcCW.ConVars["doorbust_time"]:GetFloat()
     if cvar == 0 or ent.ArcCW_DoorBusted then return end
     ent.ArcCW_DoorBusted = true
 
@@ -57,7 +57,7 @@ function ArcCW.DoorBust(ent, vel)
 end
 
 function ArcCW.TryBustDoor(ent, dmginfo)
-    if GetConVar("arccw_doorbust"):GetInt() == 0 or !IsValid(ent) or !string.find(ent:GetClass(), "door") then return end
+    if ArcCW.ConVars["doorbust"]:GetInt() == 0 or !IsValid(ent) or !string.find(ent:GetClass(), "door") then return end
     local wep = IsValid(dmginfo:GetAttacker()) and ((dmginfo:GetInflictor():IsWeapon() and dmginfo:GetInflictor()) or dmginfo:GetAttacker():GetActiveWeapon())
     if !wep or !wep:IsWeapon() or !wep.ArcCW or !dmginfo:IsDamageType(DMG_BUCKSHOT) then return end
     if ent:GetNoDraw() or ent.ArcCW_NoBust or ent.ArcCW_DoorBusted then return end
@@ -67,7 +67,7 @@ function ArcCW.TryBustDoor(ent, dmginfo)
 
     -- Magic number: 119.506 is the size of door01_left
     -- The bigger the door is, the harder it is to bust
-    local threshold = GetConVar("arccw_doorbust_threshold"):GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
+    local threshold = ArcCW.ConVars["doorbust_threshold"]:GetInt() * math.pow((ent:OBBMaxs() - ent:OBBMins()):Length() / 119.506, 2)
 
     -- Because shotgun damage is done per pellet, we must count them together
     if ent.ArcCW_BustCurTime and (ent.ArcCW_BustCurTime + 0.1 < CurTime()) then

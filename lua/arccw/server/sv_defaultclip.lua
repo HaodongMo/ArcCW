@@ -3,7 +3,7 @@ if CLIENT then return end
 hook.Add("OnEntityCreated", "ArcCW_DefaultClip", function(ent)
     if !ent.ArcCW then return end
 
-    if GetConVar("arccw_mult_startunloaded"):GetBool() then
+    if ArcCW.ConVars["mult_startunloaded"]:GetBool() then
         ent.Primary.DefaultClip = 0
     elseif ent.ForceDefaultClip then
         ent.Primary.DefaultClip = ent.ForceDefaultClip

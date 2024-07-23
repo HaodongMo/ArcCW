@@ -1,5 +1,5 @@
 local ang0 = Angle(0, 0, 0)
-local dev_alwaysready = GetConVar("arccw_dev_alwaysready")
+local dev_alwaysready = ArcCW.ConVars["dev_alwaysready"]
 
 function SWEP:Deploy()
     if !IsValid(self:GetOwner()) or self:GetOwner():IsNPC() then
@@ -56,11 +56,19 @@ function SWEP:Deploy()
         local r_anim = self:SelectAnimation("ready")
         local d_anim = self:SelectAnimation("draw")
 
+        if (CLIENT and !game.SinglePlayer() and LocalPlayer():IsListenServerHost()) then
+            self.ReadySoundTableHack = true
+        end
+
         if self.Animations[r_anim] and ( dev_alwaysready:GetBool() or self.UnReady ) then
             self:PlayAnimation(r_anim, 1, true, 0, false)
             prd = self.Animations[r_anim].ProcDraw
 
-            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true) )
+            self:SetPriorityAnim(CurTime() + self:GetAnimKeyTime(r_anim, true))
+
+            if CLIENT then
+                self:SetTimer(self:GetAnimKeyTime(r_anim, true), function() self.UnReady = false end, "UnReady")
+            end
         elseif self.Animations[d_anim] then
             self:PlayAnimation(d_anim, self:GetBuff_Mult("Mult_DrawTime"), true, 0, false)
             prd = self.Animations[d_anim].ProcDraw
@@ -75,7 +83,7 @@ function SWEP:Deploy()
 
     self:SetState(ArcCW.STATE_DISABLE)
 
-    if self.UnReady then
+    if (SERVER or game.SinglePlayer()) and self.UnReady then
         if SERVER then
             self:InitialDefaultClip()
         end
@@ -93,9 +101,15 @@ function SWEP:Deploy()
     if SERVER then
         self:SetupShields()
         -- Networking the weapon at this time is too early - entity is not yet valid on client
+        -- Also not a good idea because networking many weapons will cause mass lag (e.g. TTT round setup)
         -- Instead, make client send a request when it is valid there
         --self:NetworkWeapon()
-    elseif CLIENT and !self.CertainAboutAtts then
+        self:GetOwner():SetSaveValue("m_flNextAttack", 0) -- the magic fix-it-all solution for custom deploy problems including sounds
+    elseif CLIENT and !self.CertainAboutAtts and !self.AttReqSent and IsValid(self:GetOwner()) then
+        -- If client is aware of this weapon and it's not on the ground, ask for attachment info
+        -- If it is not on a player, delay networking until it is rendered (in cl_viewmodel)
+        -- print(self, "network weapon from sh_deploy")
+        self.AttReqSent = true
         net.Start("arccw_rqwpnnet")
             net.WriteEntity(self)
         net.SendToServer()
@@ -128,17 +142,13 @@ function SWEP:InitialDefaultClip()
         if self.ForceDefaultAmmo then
             self:GetOwner():GiveAmmo(self.ForceDefaultAmmo, self.Primary.Ammo)
         elseif engine.ActiveGamemode() != "terrortown" then
-            self:GetOwner():GiveAmmo(self:GetCapacity() * GetConVar("arccw_mult_defaultammo"):GetInt(), self.Primary.Ammo)
+            self:GetOwner():GiveAmmo(self:GetCapacity() * ArcCW.ConVars["mult_defaultammo"]:GetInt(), self.Primary.Ammo)
         end
     end
 end
 
 function SWEP:Initialize()
-    if (!IsValid(self:GetOwner()) or self:GetOwner():IsNPC()) and self:IsValid() and self.NPC_Initialize and SERVER then
-        self:NPC_Initialize()
-    end
-
-    if game.SinglePlayer() and self:GetOwner():IsValid() and SERVER then
+    if SERVER and game.SinglePlayer() and IsValid(self:GetOwner()) and self:GetOwner():IsPlayer() then
         self:CallOnClient("Initialize")
     end
 
@@ -167,7 +177,7 @@ function SWEP:Initialize()
             end
         end
 
-        -- Check for incompatibile addons once 
+        -- Check for incompatibile addons once
         if LocalPlayer().ArcCW_IncompatibilityCheck != true and game.SinglePlayer() then
             LocalPlayer().ArcCW_IncompatibilityCheck = true
 
@@ -207,7 +217,7 @@ function SWEP:Initialize()
         end
     end
 
-    if GetConVar("arccw_equipmentsingleton"):GetBool() and self.Throwing then
+    if ArcCW.ConVars["equipmentsingleton"]:GetBool() and self.Throwing then
         self.Singleton = true
         self.Primary.ClipSize = -1
         self.Primary.Ammo = ""
@@ -237,7 +247,12 @@ function SWEP:Initialize()
 
     hook.Run("ArcCW_WeaponInit", self)
 
-    self:AdjustAtts()
+    if (!IsValid(self:GetOwner()) or self:GetOwner():IsNPC()) and self:IsValid() and self.NPC_Initialize then
+        self:NPC_Initialize()
+    else
+        self:AdjustAtts()
+        self:RefreshBGs()
+    end
 end
 
 function SWEP:Holster(wep)
@@ -261,6 +276,8 @@ function SWEP:Holster(wep)
 
     if wep == self then self:Deploy() return false end
     if self:GetHolster_Time() > CurTime() then return false end
+
+    self.UnReady = false
 
     -- Props deploy to NULL, finish holster on NULL too
     if (self:GetHolster_Time() != 0 and self:GetHolster_Time() <= CurTime()) or !IsValid(wep) then
@@ -360,7 +377,7 @@ function SWEP:ProceduralHolster()
 end
 
 function SWEP:WepSwitchCleanup()
-    table.Empty(self.EventTable)
+    -- table.Empty(self.EventTable)
     self.InProcDraw = false
     self.InProcHolster = false
 end

@@ -21,7 +21,7 @@ function SWEP:AddHeat(a)
     anim = self:GetBuff_Hook("Hook_SelectFixAnim", anim) or anim
     local amount = a or 1
     local t = CurTime() + self:GetAnimKeyTime(anim) * mult
-    self.Heat = math.max(0, heat + amount * GetConVar("arccw_mult_heat"):GetFloat())
+    self.Heat = math.max(0, heat + amount * ArcCW.ConVars["mult_heat"]:GetFloat())
 
     self.NextHeatDissipateTime = CurTime() + (self:GetBuff("HeatDelayTime"))
     local overheat = self.Heat >= max
@@ -93,7 +93,7 @@ function SWEP:HeatEnabled()
 end
 
 function SWEP:MalfunctionEnabled()
-    local cvar = GetConVar("arccw_malfunction"):GetInt()
+    local cvar = ArcCW.ConVars["malfunction"]:GetInt()
     return cvar == 2 or (cvar == 1 and self:GetBuff_Override("Override_Malfunction", self.Malfunction))
 end
 
@@ -141,7 +141,7 @@ function SWEP:DoMalfunction(post)
         self.MalfunctionMean = mm
     end
 
-    local cvar = math.max(GetConVar("arccw_mult_malfunction"):GetFloat(), 0.00000001)
+    local cvar = math.max(ArcCW.ConVars["mult_malfunction"]:GetFloat(), 0.00000001)
     local mean = self:GetBuff("MalfunctionMean") / cvar
     local var = mean * math.Clamp(self:GetBuff("MalfunctionVariance") * math.max(1, math.sqrt(cvar)), 0, 1)
     local count = (self.ShotsSinceMalfunction or 0)

@@ -125,7 +125,7 @@ function SWEP:DrawLaser(laser, model, color, world)
     beamdir = world and (-ang:Right()) or beamdir
 
     if behav and !world then
-        -- local cheap = GetConVar("arccw_cheapscopes"):GetBool()
+        -- local cheap = ArcCW.ConVars["cheapscopes"]:GetBool()
         local punch = self:GetOurViewPunchAngles()
 
         ang = EyeAngles() - punch + self:GetFreeAimOffset()

@@ -1,7 +1,7 @@
 function SWEP:AdjustMouseSensitivity()
     if self:GetState() != ArcCW.STATE_SIGHTS then return end
 
-    local threshold = GetConVar("arccw_adjustsensthreshold"):GetFloat()
+    local threshold = ArcCW.ConVars["adjustsensthreshold"]:GetFloat()
 
     local irons = self:GetActiveSights() or {}
 
@@ -170,18 +170,12 @@ function SWEP:CoolView(ply, pos, ang, fov)
 
     end
 
-    local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment
-    if att and vm:GetAttachment(att) then
-        local attang = vm:GetAttachment(att).Ang
-
-        attang = vm:WorldToLocalAngles(attang)
-
-        attang = attang - self.Cam_Offset_Ang
-
-        -- attang = vm:LocalToWorldAngles(attang)
-
-        ang:Set(ang + attang)
-
+    -- Cam_Offset_Ang might not always be assigned properly. Try not to use it if it's nil, or it'll tilt the player's view.
+    local att = self:GetBuff_Override("Override_CamAttachment", self.CamAttachment) or -1
+    if vm:GetAttachment(att) and self.Cam_Offset_Ang then
+        local attang = vm:WorldToLocalAngles(vm:GetAttachment(att).Ang)
+        attang:Sub(self.Cam_Offset_Ang)
+        ang:Add(attang)
         return
     end
 
@@ -229,7 +223,7 @@ function SWEP:CoolView(ply, pos, ang, fov)
     self.ProceduralViewOffset.y = math.Approach(self.ProceduralViewOffset.y, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.y)
     self.ProceduralViewOffset.r = math.Approach(self.ProceduralViewOffset.r, 0, (1 - progress) * ftv * -self.ProceduralViewOffset.r)
     mzang_fixed_last = mzang_fixed
-    local ints = 3 * GetConVar("arccw_vm_coolview_mult"):GetFloat() * -viewbobintensity
+    local ints = 3 * ArcCW.ConVars["vm_coolview_mult"]:GetFloat() * -viewbobintensity
     ang:RotateAroundAxis(ang:Right(), Lerp(progress, 0, -self.ProceduralViewOffset.p) * ints)
     ang:RotateAroundAxis(ang:Up(), Lerp(progress, 0, self.ProceduralViewOffset.y / 2) * ints)
     ang:RotateAroundAxis(ang:Forward(), Lerp(progress, 0, self.ProceduralViewOffset.r / 3) * ints)
@@ -240,11 +234,11 @@ end
 function SWEP:CalcView(ply, pos, ang, fov)
     if !CLIENT then return end
 
-    if GetConVar("arccw_vm_coolview"):GetBool() then
+    if ArcCW.ConVars["vm_coolview"]:GetBool() then
         self:CoolView(ply, pos, ang, fov)
     end
 
-    if GetConVar("arccw_shake"):GetBool() and !engine.IsRecordingDemo() then
+    if ArcCW.ConVars["shake"]:GetBool() and !engine.IsRecordingDemo() then
         local de = (0.2 + (self:GetSightDelta()*0.8))
         ang = ang + (AngleRand() * self.RecoilAmount * 0.006 * de)
     end

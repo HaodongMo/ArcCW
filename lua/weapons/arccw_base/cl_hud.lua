@@ -1,17 +1,17 @@
 local translate = ArcCW.GetTranslation
 
 local function ScreenScaleMulti(input)
-    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+    return ScreenScale(input) * ArcCW.ConVars["hud_size"]:GetFloat()
 end
 
 local cvar_deadzonex, cvar_deadzoney
 local function CopeX()
-    if !cvar_deadzonex then cvar_deadzonex = GetConVar("arccw_hud_deadzone_x") end
+    if !cvar_deadzonex then cvar_deadzonex = ArcCW.ConVars["hud_deadzone_x"] end
     return cvar_deadzonex:GetFloat() * ScrW() / 2
 end
 
 local function CopeY()
-    if !cvar_deadzoney then cvar_deadzoney = GetConVar("arccw_hud_deadzone_y") end
+    if !cvar_deadzoney then cvar_deadzoney = ArcCW.ConVars["hud_deadzone_y"] end
     return cvar_deadzoney:GetFloat() * ScrH() / 2
 end
 
@@ -353,8 +353,13 @@ local function debug_panel(self)
 end
 
 function SWEP:DrawHUD()
-    if GetConVar("arccw_dev_debug"):GetBool() then
+    if ArcCW.ConVars["dev_debug"]:GetBool() then
         debug_panel(self)
+    end
+
+    if ArcCW.ConVars["dev_benchgun"]:GetBool() then
+        draw.SimpleTextOutlined("BENCHGUN ENABLED", "ArcCW_26", ScrW() / 2, ScreenScaleMulti(4), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2, Color(0, 0, 0))
+        draw.SimpleTextOutlined("VIEWMODEL POSITION MOVED", "ArcCW_16", ScrW() / 2, ScreenScaleMulti(30), color_white, TEXT_ALIGN_CENTER, TEXT_ALIGN_TOP, 2, Color(0, 0, 0))
     end
 
     if !GetConVar("cl_drawhud"):GetBool() then return false end
@@ -384,7 +389,7 @@ function SWEP:DrawHUD()
 
     local muzz = self:GetBuff_Override("Override_MuzzleEffectAttachment") or self.MuzzleEffectAttachment or 1
 
-    local fmbars = GetConVar("arccw_hud_fcgbars"):GetBool() and string.len( self:GetFiremodeBars() or "-----" ) != 0
+    local fmbars = ArcCW.ConVars["hud_fcgbars"]:GetBool() and string.len( self:GetFiremodeBars() or "-----" ) != 0
 
     if ArcCW:ShouldDrawHUDElement("CHudAmmo") then
         local decaytime = GetConVar("arccw_hud_3dfun_decaytime"):GetFloat()
@@ -581,7 +586,7 @@ function SWEP:DrawHUD()
             if self:GetBuff_Override("UBGL") then
                 ungl = true
                 local ugap = 22 * (1-vubgl)
-    
+
                 local wammo = {
                     x = apan_bg.x + apan_bg.w - airgap + ScreenScaleMulti(corny*-1),
                     y = apan_bg.y - ScreenScaleMulti(4) - ScreenScaleMulti(ugap),
@@ -592,19 +597,19 @@ function SWEP:DrawHUD()
                     shadow = true,
                     alpha = alpha,
                 }
-    
+
                 wammo.col = col2
-    
+
                 if data.clip2 == 0 then
                     wammo.col = col3
                 end
-    
+
                 if tostring(data.clip2) != "-" then
                     MyDrawText(wammo)
                 end
                 surface.SetFont("ArcCW_26")
                 wammo.w, wammo.h = surface.GetTextSize(wammo.text)
-    
+
                 if data.plus2 and !self:HasBottomlessClip() then
                     local wplus = {
                         x = wammo.x,
@@ -615,10 +620,10 @@ function SWEP:DrawHUD()
                         shadow = true,
                         alpha = alpha,
                     }
-    
+
                     MyDrawText(wplus)
                 end
-    
+
                 local wreserve = {
                     x = wammo.x - wammo.w - ScreenScaleMulti(4),
                     y = apan_bg.y + ScreenScaleMulti(10) - ScreenScaleMulti(ugap),
@@ -659,12 +664,12 @@ function SWEP:DrawHUD()
                         shadow = true,
                         alpha = alpha,
                     }
-    
+
                     if drew then
                         wammotype.x = wreserve.x - wreserve.w - ScreenScaleMulti(3)
                         wammotype.y = wreserve.y
                     end
-    
+
                     MyDrawText(wammotype)
                 end
             end
@@ -786,7 +791,7 @@ function SWEP:DrawHUD()
                 MyDrawText(bip)
             end
 
-            if GetConVar("arccw_hud_togglestats") and GetConVar("arccw_hud_togglestats"):GetBool() then
+            if ArcCW.ConVars["hud_togglestats"] and ArcCW.ConVars["hud_togglestats"]:GetBool() then
             local items = {
             }
             --[[
@@ -801,7 +806,7 @@ function SWEP:DrawHUD()
                 }
             }
             ]]
-            
+
             for k, v in pairs(self.Attachments) do
                 local atttbl = v.Installed and ArcCW.AttachmentTable[v.Installed]
                 if atttbl and atttbl.ToggleStats then-- and !v.ToggleLock then
@@ -923,7 +928,7 @@ function SWEP:DrawHUD()
                 end
             end
         end
-    elseif !GetConVar("arccw_override_hud_off"):GetBool() and GetConVar("arccw_hud_minimal"):GetBool() then
+    elseif !ArcCW.ConVars["override_hud_off"]:GetBool() and ArcCW.ConVars["hud_minimal"]:GetBool() then
         if fmbars then
             local segcount = string.len( self:GetFiremodeBars() or "-----" )
             local bargap = ScreenScaleMulti(2)

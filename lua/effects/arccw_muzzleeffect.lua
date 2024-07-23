@@ -15,7 +15,7 @@ function EFFECT:Init(data)
         muzzle = wpn:GetBuff_Override("UBGL_MuzzleEffect") or muzzle
     end
 
-    if GetConVar("arccw_fastmuzzles"):GetBool() then
+    if ArcCW.ConVars["fastmuzzles"]:GetBool() then
         muzzle = wpn.FastMuzzleEffect or "CS_MuzzleFlash"
 
         gmmuzzle = true
@@ -30,14 +30,14 @@ function EFFECT:Init(data)
     local att = data:GetAttachment() or 1
 
     local wm = false
-	
-	local Owner = wpn:GetOwner()
+
+    local Owner = wpn:GetOwner()
     if (LocalPlayer():ShouldDrawLocalPlayer() or Owner != LocalPlayer()) and !wpn.AlwaysWM then
         wm = true
         att = 1
     end
 
-    if Owner != LocalPlayer() and !GetConVar("arccw_muzzleeffects"):GetBool() then
+    if Owner != LocalPlayer() and !ArcCW.ConVars["muzzleeffects"]:GetBool() then
         return
     end
 
@@ -76,7 +76,7 @@ function EFFECT:Init(data)
 
     if !pos then return end
 
-    if !GetConVar("arccw_fastmuzzles"):GetBool() and !wpn.NoFlash
+    if !ArcCW.ConVars["fastmuzzles"]:GetBool() and !wpn.NoFlash
             and !wpn:GetBuff_Override("Silencer")
             and !wpn:GetBuff_Override("FlashHider") then
         local light = DynamicLight(self:EntIndex())

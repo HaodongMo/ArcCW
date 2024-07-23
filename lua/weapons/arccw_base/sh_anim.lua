@@ -1,4 +1,4 @@
-SWEP.Cam_Offset_Ang = Angle(0, 0, 0)
+SWEP.Cam_Offset_Ang = nil --Angle(0, 0, 0)
 
 function SWEP:SelectAnimation(anim)
     if self:GetNWState() == ArcCW.STATE_SIGHTS and self.Animations[anim .. "_iron"] then
@@ -21,7 +21,7 @@ function SWEP:SelectAnimation(anim)
         anim = anim .. "_bipod"
     end
 
-    if self:GetState() == ArcCW.STATE_CUSTOMIZE and self.Animations[anim .. "_inspect"] and ((CLIENT and !GetConVar("arccw_noinspect"):GetBool()) or (SERVER and self:GetOwner():GetInfoNum("arccw_noinspect", 0))) then
+    if self:GetState() == ArcCW.STATE_CUSTOMIZE and self.Animations[anim .. "_inspect"] and ((CLIENT and !ArcCW.ConVars["noinspect"]:GetBool()) or (SERVER and self:GetOwner():GetInfoNum("arccw_noinspect", 0))) then
         anim = anim .. "_inspect"
     end
 
@@ -195,11 +195,9 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         end
     end
 
-    if !(game.SinglePlayer() and CLIENT) then
-        -- self.EventTable = {}
-        if game.SinglePlayer() or (!game.SinglePlayer() and IsFirstTimePredicted()) then
-            self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom, key)
-        end
+    if !(game.SinglePlayer() and CLIENT) and (game.SinglePlayer() or IsFirstTimePredicted() or self.ReadySoundTableHack) then
+        self:PlaySoundTable(anim.SoundTable or {}, 1 / mult, startfrom, key)
+        self.ReadySoundTableHack = nil
     end
 
     if seq then
@@ -211,8 +209,12 @@ function SWEP:PlayAnimation(key, mult, pred, startfrom, tt, skipholster, priorit
         self.LastAnimKey = key
     end
 
-    local att = self:GetBuff_Override("Override_CamAttachment") or self.CamAttachment -- why is this here if we just... do cool stuff elsewhere?
-    if att and vm:GetAttachment(att) then
+    -- Grabs the current angle of the cam attachment bone and use it as the common offset for all cambone changes.
+    -- Problem: If this animation interrupted a previous animation with cambone movement,
+    -- it will start with an incorrect offset and snap at the end.
+    -- Therefore this now only ever sets it once.
+    local att = self:GetBuff_Override("Override_CamAttachment", self.CamAttachment)
+    if att and vm:GetAttachment(att) and (anim.ForceCamReset or self.Cam_Offset_Ang == nil) then
         local ang = vm:GetAttachment(att).Ang
         ang = vm:WorldToLocalAngles(ang)
         self.Cam_Offset_Ang = Angle(ang)
@@ -289,7 +291,7 @@ if CLIENT then
         local ent = net.ReadEntity()
         local aseq = net.ReadUInt(16)
         local starttime = net.ReadFloat()
-        if ent ~= LocalPlayer() then
+        if IsValid(ent) and ent ~= LocalPlayer() and ent:IsPlayer() then
             ent:AddVCDSequenceToGestureSlot( GESTURE_SLOT_ATTACK_AND_RELOAD, aseq, starttime, true )
         end
     end)

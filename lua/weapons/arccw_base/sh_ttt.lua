@@ -86,15 +86,15 @@ function SWEP:WasBought(buyer)
     for i, k in pairs(self.Attachments) do
         k.RandomChance = 100
     end
-    if GetConVar("arccw_ttt_atts"):GetBool() then
-        self:NPC_SetupAttachments()
-    end
+    -- if ArcCW.ConVars["ttt_atts"]:GetBool() then
+    --     self:NPC_SetupAttachments()
+    -- end
 end
 
 function SWEP:TTT_PostAttachments()
-    self.IsSilent = self:GetBuff_Override("Suppressor")
+    self.IsSilent = self:GetBuff_Override("Silencer")
 
-    if !self.IsSilent and self:GetBuff("ShootVol") <= 90 then
+    if !self.IsSilent then
         self.IsSilent = true
     end
 end
@@ -110,8 +110,13 @@ function SWEP:TTT_Init()
         self.Primary.ClipMax = 0
     end
 
-    if SERVER and GetConVar("arccw_ttt_atts"):GetBool() then
-        self:NPC_SetupAttachments()
+    if ArcCW.ConVars["ttt_atts"]:GetBool() then
+        if SERVER then
+            self:NPC_SetupAttachments()
+        end
+    elseif !IsValid(self:GetOwner()) then
+        -- If attachments aren't randomized, client will not need to ask for att info.
+        self.CertainAboutAtts = true
     end
 
     if self.ForgetDefaultBehavior then return end

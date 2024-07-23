@@ -6,8 +6,8 @@ local aimtr = {}
 local square_mat = Material("color")
 
 function SWEP:ShouldDrawCrosshair()
-    if GetConVar("arccw_override_crosshair_off"):GetBool() then return false end
-    if !GetConVar("arccw_crosshair"):GetBool() then return false end
+    if ArcCW.ConVars["override_crosshair_off"]:GetBool() then return false end
+    if !ArcCW.ConVars["crosshair"]:GetBool() then return false end
     if self:GetReloading() then return false end
     if self:BarrelHitWall() > 0 then return false end
     local asight = self:GetActiveSights()
@@ -38,13 +38,38 @@ function SWEP:GetFOVAcc( acc, disp )
     cam.End3D()
 
     local gau = 0
-    gau = ( (ScrH()/2) - lool.y )
-    gaA = math.Approach(gaA, gau, (ScrH()/2)*FrameTime())
+    gau = ( (ScrH() / 2) - lool.y )
+    gaA = math.Approach(gaA, gau, (ScrH() / 2) * FrameTime())
     gau = 0
-    gau = ( (ScrH()/2) - lool2.y )
-    gaD = math.Approach(gaD, gau, (ScrH()/2)*FrameTime())
+    gau = ( (ScrH() / 2) - lool2.y )
+    gaD = math.Approach(gaD, gau, (ScrH() / 2) * FrameTime())
 
     return gaA, gaD
+end
+
+function SWEP:DrawDevCrosshair(x, y)
+    surface.SetDrawColor(255, 50, 50, 255)
+
+    surface.DrawLine(x, y - 256, x, y + 256)
+    surface.DrawLine(x - 256, y, x + 256, y)
+
+
+    local gA, gD = self:GetFOVAcc( self:GetBuff("AccuracyMOA"), self:GetDispersion() )
+    surface.DrawCircle(x, y, gA + gD, 255, 255, 255, 155)
+    surface.DrawCircle(x, y, gA, 255, 255, 0, 55)
+
+    draw.SimpleTextOutlined(math.Round(self:GetDispersion(), 1) .. " MOA", "ArcCW_24_Unscaled", x - gA - gD - 16, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 1, Color(0, 0, 0))
+    draw.SimpleTextOutlined(math.Round(self:GetBuff("AccuracyMOA"), 1) .. " MOA", "ArcCW_24_Unscaled", x - gA - gD - 16, y, Color(255, 255, 0), TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0))
+
+
+    local dist = self:GetOwner():GetEyeTrace().HitPos:Distance(self:GetOwner():GetShootPos()) * ArcCW.HUToM
+    local rf = self:GetRangeFraction(dist)
+
+    local dmg = math.floor(self:GetDamage(dist))
+    draw.SimpleTextOutlined(dmg .. " damage", "ArcCW_24_Unscaled", x + 256, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_BOTTOM, 1, Color(0, 0, 0))
+    draw.SimpleTextOutlined(math.Round(dist, 1) .. "m", "ArcCW_24_Unscaled", x + 256 - 64, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0))
+    draw.SimpleTextOutlined(math.Round(rf * 100) .. "%", "ArcCW_24_Unscaled", x + 256, y, color_white, TEXT_ALIGN_RIGHT, TEXT_ALIGN_TOP, 1, Color(0, 0, 0))
+
 end
 
 function SWEP:DoDrawCrosshair(x, y)
@@ -54,23 +79,23 @@ function SWEP:DoDrawCrosshair(x, y)
 
     if self:GetBuff_Hook("Hook_PreDrawCrosshair") then return end
 
-    local static = GetConVar("arccw_crosshair_static"):GetBool()
+    local static = ArcCW.ConVars["crosshair_static"]:GetBool()
 
-    local prong_dot = GetConVar("arccw_crosshair_dot"):GetBool()
-    local prong_top = GetConVar("arccw_crosshair_prong_top"):GetBool()
-    local prong_left = GetConVar("arccw_crosshair_prong_left"):GetBool()
-    local prong_right = GetConVar("arccw_crosshair_prong_right"):GetBool()
-    local prong_down = GetConVar("arccw_crosshair_prong_bottom"):GetBool()
+    local prong_dot = ArcCW.ConVars["crosshair_dot"]:GetBool()
+    local prong_top = ArcCW.ConVars["crosshair_prong_top"]:GetBool()
+    local prong_left = ArcCW.ConVars["crosshair_prong_left"]:GetBool()
+    local prong_right = ArcCW.ConVars["crosshair_prong_right"]:GetBool()
+    local prong_down = ArcCW.ConVars["crosshair_prong_bottom"]:GetBool()
 
-    local prong_len = GetConVar("arccw_crosshair_length"):GetFloat()
-    local prong_wid = GetConVar("arccw_crosshair_thickness"):GetFloat()
-    local prong_out = GetConVar("arccw_crosshair_outline"):GetInt()
-    local prong_tilt = GetConVar("arccw_crosshair_tilt"):GetBool()
+    local prong_len = ArcCW.ConVars["crosshair_length"]:GetFloat()
+    local prong_wid = ArcCW.ConVars["crosshair_thickness"]:GetFloat()
+    local prong_out = ArcCW.ConVars["crosshair_outline"]:GetInt()
+    local prong_tilt = ArcCW.ConVars["crosshair_tilt"]:GetBool()
 
-    local clr = Color(GetConVar("arccw_crosshair_clr_r"):GetInt(),
-            GetConVar("arccw_crosshair_clr_g"):GetInt(),
-            GetConVar("arccw_crosshair_clr_b"):GetInt())
-    if GetConVar("arccw_ttt_rolecrosshair") and GetConVar("arccw_ttt_rolecrosshair"):GetBool() then
+    local clr = Color(ArcCW.ConVars["crosshair_clr_r"]:GetInt(),
+            ArcCW.ConVars["crosshair_clr_g"]:GetInt(),
+            ArcCW.ConVars["crosshair_clr_b"]:GetInt())
+    if ArcCW.ConVars["ttt_rolecrosshair"] and ArcCW.ConVars["ttt_rolecrosshair"]:GetBool() then
         if GetRoundState() == ROUND_PREP or GetRoundState() == ROUND_POST then
             clr = Color(255, 255, 255)
         elseif ply.GetRoleColor and ply:GetRoleColor() then
@@ -83,19 +108,19 @@ function SWEP:DoDrawCrosshair(x, y)
             clr = Color(50, 255, 50)
         end
     end
-    if GetConVar("arccw_crosshair_aa"):GetBool() and ply.ArcCW_AATarget != nil and GetConVar("arccw_aimassist"):GetBool() and GetConVar("arccw_aimassist_cl"):GetBool() then
+    if ArcCW.ConVars["crosshair_aa"]:GetBool() and ply.ArcCW_AATarget != nil and ArcCW.ConVars["aimassist"]:GetBool() and ArcCW.ConVars["aimassist_cl"]:GetBool() then
             -- whooie
         clr = Color(255, 0, 0)
     end
-    clr.a = GetConVar("arccw_crosshair_clr_a"):GetInt()
+    clr.a = ArcCW.ConVars["crosshair_clr_a"]:GetInt()
 
-    local outlineClr = Color(GetConVar("arccw_crosshair_outline_r"):GetInt(),
-            GetConVar("arccw_crosshair_outline_g"):GetInt(),
-            GetConVar("arccw_crosshair_outline_b"):GetInt(),
-            GetConVar("arccw_crosshair_outline_a"):GetInt())
+    local outlineClr = Color(ArcCW.ConVars["crosshair_outline_r"]:GetInt(),
+            ArcCW.ConVars["crosshair_outline_g"]:GetInt(),
+            ArcCW.ConVars["crosshair_outline_b"]:GetInt(),
+            ArcCW.ConVars["crosshair_outline_a"]:GetInt())
 
     local gA, gD = self:GetFOVAcc( self:GetBuff("AccuracyMOA"), self:GetDispersion() )
-    local gap = (static and 8 or gD) * GetConVar("arccw_crosshair_gap"):GetFloat()
+    local gap = (static and 8 or gA + gD) * ArcCW.ConVars["crosshair_gap"]:GetFloat()
 
     gap = gap + ( ScreenScale(8) * math.Clamp(self.RecoilAmount, 0, 1) )
 
@@ -120,7 +145,7 @@ function SWEP:DoDrawCrosshair(x, y)
     sp = (pos + (ang:Forward() * 3200)):ToScreen()
     cam.End3D()
 
-    if GetConVar("arccw_crosshair_trueaim"):GetBool() then
+    if ArcCW.ConVars["crosshair_trueaim"]:GetBool() then
         aimtr.start = self:GetShootSrc()
     else
         aimtr.start = pos
@@ -143,6 +168,10 @@ function SWEP:DoDrawCrosshair(x, y)
     sp.x = w2s.x sp.y = w2s.y
     x, y = sp.x, sp.y
 
+    if ArcCW.ConVars["dev_crosshair"]:GetBool() and LocalPlayer():IsAdmin() then
+        self:DrawDevCrosshair(x, y)
+    end
+
     local st = self:GetSightTime() / 2
 
     if self:ShouldDrawCrosshair() then
@@ -151,7 +180,7 @@ function SWEP:DoDrawCrosshair(x, y)
         self.CrosshairDelta = math.Approach(self.CrosshairDelta or 0, 0, FrameTime() * 1 / st)
     end
 
-    if GetConVar("arccw_crosshair_equip"):GetBool() and (self:GetBuff("ShootEntity", true) or self.PrimaryBash) then
+    if ArcCW.ConVars["crosshair_equip"]:GetBool() and (self:GetBuff("ShootEntity", true) or self.PrimaryBash) then
         prong = ScreenScale(prong_wid)
         p_w = ScreenScale(prong_wid)
         p_w2 = p_w + prong_out
@@ -172,7 +201,7 @@ function SWEP:DoDrawCrosshair(x, y)
     gap = math.max(4, gap)
 
     local num = self:GetBuff("Num")
-    if GetConVar("arccw_crosshair_shotgun"):GetBool() and num > 1 then
+    if ArcCW.ConVars["crosshair_shotgun"]:GetBool() and num > 1 then
         prong = ScreenScale(prong_wid)
         p_w = ScreenScale(prong_len)
         p_w2 = p_w + prong_out
@@ -244,9 +273,9 @@ function SWEP:DoDrawCrosshair(x, y)
         end
     end
 
-    if GetConVar("arccw_crosshair_clump"):GetBool() and (GetConVar("arccw_crosshair_clump_always"):GetBool() or num > 1) then
+    if ArcCW.ConVars["crosshair_clump"]:GetBool() and (ArcCW.ConVars["crosshair_clump_always"]:GetBool() or num > 1) then
         local acc = math.max(1, gA)
-        if GetConVar("arccw_crosshair_clump_outline"):GetBool() then
+        if ArcCW.ConVars["crosshair_clump_outline"]:GetBool() then
             surface.SetMaterial(clump_outer)
 
             for i=1, prong_out do

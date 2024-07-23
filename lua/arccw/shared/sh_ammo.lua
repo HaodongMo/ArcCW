@@ -33,7 +33,7 @@ ArcCW.AmmoEntToArcCW = {
 }
 
 function ArcCW:AddGrenadeAmmo()
-    if GetConVar("arccw_equipmentammo"):GetBool() and !GetConVar("arccw_equipmentsingleton"):GetBool() then
+    if ArcCW.ConVars["equipmentammo"]:GetBool() and !ArcCW.ConVars["equipmentsingleton"]:GetBool() then
         for i, k in pairs(weapons.GetList()) do
             local class = k.ClassName
             local wpntbl = weapons.Get(class)
@@ -66,8 +66,8 @@ hook.Add("Initialize", "ArcCW_AddGrenadeAmmo", ArcCW.AddGrenadeAmmo)
 
 if SERVER then
     hook.Add( "OnEntityCreated", "ArcCW_AmmoReplacement", function(ent)
-        if ((engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_ammo"):GetBool()) or
-            (engine.ActiveGamemode() != "terrortown" and GetConVar("arccw_ammo_replace"):GetBool()))
+        if ((engine.ActiveGamemode() == "terrortown" and ArcCW.ConVars["ttt_ammo"]:GetBool()) or
+            (engine.ActiveGamemode() != "terrortown" and ArcCW.ConVars["ammo_replace"]:GetBool()))
                 and ArcCW.AmmoEntToArcCW[ent:GetClass()] then
             timer.Simple(0, function()
                 if !IsValid(ent) then return end

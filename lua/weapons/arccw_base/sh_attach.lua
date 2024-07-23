@@ -681,8 +681,13 @@ end
 
 function SWEP:GetTracerOrigin()
     local ow = self:GetOwner()
-    local wm = !ow:GetViewModel():IsValid() or ow:ShouldDrawLocalPlayer()
-    local muzz = self:GetMuzzleDevice(wm)
+    local wm = nil
+    local muzz = nil
+
+    if !ow:IsNPC() and !ow:IsNextBot() and ow:IsValid() then
+        wm = !ow:GetViewModel():IsValid() or ow:ShouldDrawLocalPlayer()
+        muzz = self:GetMuzzleDevice(wm)
+    end
 
     if muzz and muzz:IsValid() then
         local posang = muzz:GetAttachment(self:GetBuff_Override("Override_MuzzleEffectAttachment", self.MuzzleEffectAttachment) or 1)
@@ -703,6 +708,9 @@ function SWEP:CheckFlags(reject, need)
 
     reject = reject or {}
     need = need or {}
+
+    if !istable(reject) then reject = {reject} end
+    if !istable(need) then need = {need} end
 
     for _, i in pairs(reject) do
         if table.HasValue(flags, i) then
@@ -787,8 +795,8 @@ function SWEP:NetworkWeapon(sendto)
     if sendto then
         net.Send(sendto)
     else
-        net.SendPVS(self:GetPos())
-        --net.Broadcast()
+        -- net.SendPVS(self:GetPos())
+        net.Broadcast()
     end
 end
 
@@ -1047,12 +1055,12 @@ function SWEP:RefreshBGs()
             end
         end
 
-
-
         if SERVER then
             self:SetupShields()
         end
     end
+
+    local tpmdl = IsValid(self.WMModel) and self.WMModel or self
 
     if IsValid(vm) then
         for i = 0, (vm:GetNumBodyGroups()) do
@@ -1060,26 +1068,31 @@ function SWEP:RefreshBGs()
                 vm:SetBodygroup(i, self.Bodygroups[i])
             end
         end
-
         self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = vm, eles = ae, wm = false})
-        self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = self.WMModel or self, eles = ae, wm = true})
+    end
 
-        for slot, v in pairs(self.Attachments) do
-            if !v.Installed then continue end
+    for i = 0, (tpmdl:GetNumBodyGroups()) do
+        if self.Bodygroups[i] then
+            tpmdl:SetBodygroup(i, self.Bodygroups[i])
+        end
+    end
+    self:GetBuff_Hook("Hook_ModifyBodygroups", {vm = tpmdl, eles = ae, wm = true})
 
-            local func = self:GetBuff_Stat("Hook_ModifyAttBodygroups", slot)
-            if func and v.VElement and IsValid(v.VElement.Model) then
-                func(self, {vm = vm, element = v.VElement, slottbl = v, wm = false})
-            end
-            if func and v.WElement and IsValid(v.WElement.Model)  then
-                func(self, {vm = self.WMModel, element = v.WElement, slottbl = v, wm = true})
-            end
+    for slot, v in pairs(self.Attachments) do
+        if !v.Installed then continue end
+
+        local func = self:GetBuff_Stat("Hook_ModifyAttBodygroups", slot)
+        if func and v.VElement and IsValid(v.VElement.Model) and IsValid(vm) then
+            func(self, {vm = vm, element = v.VElement, slottbl = v, wm = false})
+        end
+        if func and v.WElement and IsValid(v.WElement.Model)  then
+            func(self, {vm = tpmdl, element = v.WElement, slottbl = v, wm = true})
         end
     end
 end
 
 function SWEP:GetPickX()
-    return GetConVar("arccw_atts_pickx"):GetInt()
+    return ArcCW.ConVars["atts_pickx"]:GetInt()
 end
 
 function SWEP:Attach(slot, attname, silent, noadjust)
@@ -1236,7 +1249,7 @@ function SWEP:Attach(slot, attname, silent, noadjust)
     if atttbl.UBGL then
         local ubgl_ammo = self:GetBuff_Override("UBGL_Ammo")
         local ubgl_clip = self:GetBuff_Override("UBGL_Capacity")
-        if self:GetOwner():IsPlayer() and GetConVar("arccw_atts_ubglautoload"):GetBool() and ubgl_ammo then
+        if self:GetOwner():IsPlayer() and ArcCW.ConVars["atts_ubglautoload"]:GetBool() and ubgl_ammo then
             local amt = math.min(ubgl_clip - self:Clip2(), self:GetOwner():GetAmmoCount(ubgl_ammo))
             self:SetClip2(self:Clip2() + amt)
             self:GetOwner():RemoveAmmo(amt, ubgl_ammo)
@@ -1285,12 +1298,11 @@ function SWEP:Detach(slot, silent, noadjust, nocheck)
 
         local ammo = atttbl.UBGL_Ammo or "smg1_grenade"
 
-        if SERVER then
+        if SERVER and IsValid(self:GetOwner()) then
             self:GetOwner():GiveAmmo(clip, ammo, true)
         end
 
         self:SetClip2(0)
-
         self:DeselectUBGL()
     end
 
@@ -1505,7 +1517,7 @@ function SWEP:AdjustAtts()
     --[[]
     if ubgl_clip then
         self.Secondary.ClipSize = ubgl_clip
-        if self:GetOwner():IsPlayer() and GetConVar("arccw_atts_ubglautoload"):GetBool() and ubgl_ammo then
+        if self:GetOwner():IsPlayer() and ArcCW.ConVars["atts_ubglautoload"]:GetBool() and ubgl_ammo then
             local amt = math.min(ubgl_clip - self:Clip2(), self:GetOwner():GetAmmoCount(ubgl_ammo))
             self:SetClip2(self:Clip2() + amt)
             self:GetOwner():RemoveAmmo(amt, ubgl_ammo)
@@ -1527,7 +1539,6 @@ function SWEP:AdjustAtts()
 
     self:AdjustAmmo(old_inf)
 end
-
 
 function SWEP:GetAttachmentMaxHP(slot)
     if !self.Attachments[slot] then return 100 end
@@ -1748,4 +1759,9 @@ function SWEP:AddSubSlot(i, attname)
             self.Attachments[index].SubAtts = {}
         end
     end
+end
+
+function SWEP:OnReloaded()
+    self:RecalcAllBuffs()
+    self:SetupActiveSights()
 end

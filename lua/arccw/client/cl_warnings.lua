@@ -36,7 +36,7 @@ ArcCW.IncompatibleAddons = {
 local t = ArcCW.GetTranslation
 
 local function ScreenScaleMulti(input)
-    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+    return ScreenScale(input) * ArcCW.ConVars["hud_size"]:GetFloat()
 end
 
 function ArcCW.MakeIncompatibleWindow(tbl)

@@ -100,7 +100,7 @@ end
 
 hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
     if CLIENT then return end
-    if ent:IsNPC() and GetConVar("arccw_npc_replace"):GetBool() then
+    if ent:IsNPC() and ArcCW.ConVars["npc_replace"]:GetBool() then
         timer.Simple(0, function()
             if !ent:IsValid() then return end
             local cap = ent:CapabilitiesGet()
@@ -123,19 +123,11 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
                 ent:Give(wpn)
             end
         end)
-    elseif ent:IsWeapon() and ((engine.ActiveGamemode() == "terrortown" and !GetConVar("arccw_ttt_replace"):GetBool()) or (engine.ActiveGamemode() != "terrortown" and GetConVar("arccw_npc_replace"):GetBool())) then
+    elseif ent:IsWeapon() and ((engine.ActiveGamemode() == "terrortown" and ArcCW.ConVars["ttt_replace"]:GetBool()) or (engine.ActiveGamemode() != "terrortown" and ArcCW.ConVars["npc_replace"]:GetBool())) then
         timer.Simple(0, function()
             if !ent:IsValid() then return end
             if IsValid(ent:GetOwner()) then return end
-            if ent.ArcCW then
-                -- Handled by the weapon
-                --[[]
-                if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
-                    ent:NPC_SetupAttachments()
-                end
-                ]]
-                return
-            end
+            if ent.ArcCW then return end
 
             local class = ent:GetClass()
 
@@ -150,10 +142,6 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
 
                 wpnent:Spawn()
 
-                if engine.ActiveGamemode() == "terrortown" and GetConVar("arccw_ttt_atts"):GetBool() then
-                    wpnent:NPC_SetupAttachments()
-                end
-
                 timer.Simple(0, function()
                     if !ent:IsValid() then return end
                     wpnent:OnDrop(true)
@@ -164,25 +152,28 @@ hook.Add( "OnEntityCreated", "ArcCW_NPCWeaponReplacement", function(ent)
     end
 end)
 
-hook.Add("PlayerCanPickupWeapon", "ArcCW_PlayerCanPickupWeapon", function(ply, wep)
-    if !wep.ArcCW then return end
-    if !ply:HasWeapon(wep:GetClass()) then return end
+-- This hook steals attachments from dropped weapons when a player walks over.
+-- Disabled cause this is called CONSTANTLY when player is over a weapon, causing massive network lag.
+-- Also it's just weird and hard to understand.
+-- hook.Add("PlayerCanPickupWeapon", "ArcCW_PlayerCanPickupWeapon", function(ply, wep)
+--     if !wep.ArcCW then return end
+--     if !ply:HasWeapon(wep:GetClass()) then return end
 
-    if wep.Singleton then return false end
+--     if wep.Singleton then return false end
 
-    if !ArcCW.EnableCustomization or GetConVar("arccw_enable_customization"):GetInt() < 0 or GetConVar("arccw_attinv_free"):GetBool() then return end
+--     if !ArcCW.EnableCustomization or ArcCW.ConVars["enable_customization"]:GetInt() < 0 or ArcCW.ConVars["attinv_free"]:GetBool() then return end
 
-    for _, i in pairs(wep.Attachments) do
-        if i.Installed then
-            ArcCW:PlayerGiveAtt(ply, i.Installed)
-        end
+--     for _, i in pairs(wep.Attachments) do
+--         if i.Installed then
+--             ArcCW:PlayerGiveAtt(ply, i.Installed)
+--         end
 
-        i.Installed = nil
-    end
+--         i.Installed = nil
+--     end
 
-    ArcCW:PlayerSendAttInv(ply)
-    wep:NetworkWeapon()
-end)
+--     ArcCW:PlayerSendAttInv(ply)
+--     wep:NetworkWeapon()
+-- end)
 
 hook.Add("onDarkRPWeaponDropped", "ArcCW_DarkRP", function(ply, spawned_weapon, wep)
     if wep.ArcCW and wep.Attachments then
@@ -197,17 +188,26 @@ hook.Add("onDarkRPWeaponDropped", "ArcCW_DarkRP", function(ply, spawned_weapon, 
 end)
 
 hook.Add("PlayerGiveSWEP", "ArcCW_SpawnRandomAttachments", function(ply, class, tbl)
-    if tbl.ArcCW and GetConVar("arccw_atts_spawnrand"):GetBool() then
-        timer.Simple(0, function()
-            if IsValid(ply) and IsValid(ply:GetWeapon(class)) then
-                ply:GetWeapon(class):NPC_SetupAttachments()
+    if weapons.IsBasedOn(class, "arccw_base") and ArcCW.ConVars["atts_spawnrand"]:GetBool() then
+        -- We can't get the weapon entity here - it's spawned after the hook call.
+        -- Mark the player to disable autosave tempoarily if we're spawning random attachments.
+        ply.ArcCW_Sandbox_RandomAtts = true
+        timer.Simple(0.0001, function()
+            local wpn = ply:GetWeapon(class)
+            if IsValid(ply) and IsValid(wpn) then
+                wpn:NPC_SetupAttachments()
+
+                if ply.ArcCW_Sandbox_FirstSpawn then
+                    wpn:RestoreAmmo()
+                    ply.ArcCW_Sandbox_FirstSpawn = nil
+                end
             end
         end)
     end
 end)
 
 hook.Add("PlayerSpawnedSWEP", "ArcCW_SpawnRandomAttachments", function(ply, wep)
-    if wep.ArcCW and GetConVar("arccw_atts_spawnrand"):GetBool() then
+    if wep.ArcCW and ArcCW.ConVars["atts_spawnrand"]:GetBool() then
         wep:NPC_SetupAttachments()
     end
 end)

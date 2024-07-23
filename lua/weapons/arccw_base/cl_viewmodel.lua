@@ -286,9 +286,9 @@ local target = {pos = Vector(), ang = Angle()}
 local GunDriverFix = Angle( 0, 90, 90 )
 
 function SWEP:GetViewModelPosition(pos, ang)
-    if GetConVar("arccw_dev_benchgun"):GetBool() then
-        if GetConVar("arccw_dev_benchgun_custom"):GetString() then
-            local bgc = GetConVar("arccw_dev_benchgun_custom"):GetString()
+    if ArcCW.ConVars["dev_benchgun"]:GetBool() then
+        if ArcCW.ConVars["dev_benchgun_custom"]:GetString() then
+            local bgc = ArcCW.ConVars["dev_benchgun_custom"]:GetString()
             if string.Left(bgc, 6) != "setpos" then return vector_origin, angle_zero end
 
             bgc = string.TrimLeft(bgc, "setpos ")
@@ -379,13 +379,13 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     stopwatch("reload, crouch, bipod")
 
-    target.pos.x = target.pos.x + GetConVar("arccw_vm_right"):GetFloat()
-    target.pos.y = target.pos.y + GetConVar("arccw_vm_forward"):GetFloat()
-    target.pos.z = target.pos.z + GetConVar("arccw_vm_up"):GetFloat()
+    target.pos.x = target.pos.x + ArcCW.ConVars["vm_right"]:GetFloat()
+    target.pos.y = target.pos.y + ArcCW.ConVars["vm_forward"]:GetFloat()
+    target.pos.z = target.pos.z + ArcCW.ConVars["vm_up"]:GetFloat()
 
-    target.ang.p = target.ang.p + GetConVar("arccw_vm_pitch"):GetFloat()
-    target.ang.y = target.ang.y + GetConVar("arccw_vm_yaw"):GetFloat()
-    target.ang.r = target.ang.r + GetConVar("arccw_vm_roll"):GetFloat()
+    target.ang.p = target.ang.p + ArcCW.ConVars["vm_pitch"]:GetFloat()
+    target.ang.y = target.ang.y + ArcCW.ConVars["vm_yaw"]:GetFloat()
+    target.ang.r = target.ang.r + ArcCW.ConVars["vm_roll"]:GetFloat()
 
     if state == ArcCW.STATE_CUSTOMIZE then
         target.down = 1
@@ -479,7 +479,7 @@ function SWEP:GetViewModelPosition(pos, ang)
     stopwatch("sight")
 
     local deg = self:GetBarrelNearWall()
-    if deg > 0 and GetConVar("arccw_vm_nearwall"):GetBool() then
+    if deg > 0 and ArcCW.ConVars["vm_nearwall"]:GetBool() then
         LerpMod(target.pos, hpos, deg)
         LerpMod(target.ang, hang, deg)
         target.down = 2 * math.max(sgtd, 0.5)
@@ -580,7 +580,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         vmhit.z = m_appor(vmhit.z, 0, FT * spd)
     end
 
-    if GetConVar("arccw_shakevm"):GetBool() and !engine.IsRecordingDemo() then
+    if ArcCW.ConVars["shakevm"]:GetBool() and !engine.IsRecordingDemo() then
         target.pos:Add(VectorRand() * self.RecoilAmount * 0.2 * self.RecoilVMShake)
     end
 
@@ -602,17 +602,17 @@ function SWEP:GetViewModelPosition(pos, ang)
 
     stopwatch("actual -> target")
 
-    local coolsway = GetConVar("arccw_vm_coolsway"):GetBool()
+    local coolsway = ArcCW.ConVars["vm_coolsway"]:GetBool()
     self.SwayScale = (coolsway and 0) or actual.sway
     self.BobScale = (coolsway and 0) or actual.bob
 
     if coolsway then
-        swayxmult = GetConVar("arccw_vm_sway_zmult"):GetFloat() or 1
-        swayymult = GetConVar("arccw_vm_sway_xmult"):GetFloat() or 1
-        swayzmult = GetConVar("arccw_vm_sway_ymult"):GetFloat() or 1
-        swayspeed = GetConVar("arccw_vm_sway_speedmult"):GetFloat() or 1
-        lookxmult = GetConVar("arccw_vm_look_xmult"):GetFloat() or 1
-        lookymult = GetConVar("arccw_vm_look_ymult"):GetFloat() or 1
+        swayxmult = ArcCW.ConVars["vm_sway_zmult"]:GetFloat() or 1
+        swayymult = ArcCW.ConVars["vm_sway_xmult"]:GetFloat() or 1
+        swayzmult = ArcCW.ConVars["vm_sway_ymult"]:GetFloat() or 1
+        swayspeed = ArcCW.ConVars["vm_sway_speedmult"]:GetFloat() or 1
+        lookxmult = ArcCW.ConVars["vm_look_xmult"]:GetFloat() or 1
+        lookymult = ArcCW.ConVars["vm_look_ymult"]:GetFloat() or 1
 
         local sd = self:GetSightDelta()
         lookxmult = Lerp(sd, 0, lookxmult)
@@ -683,7 +683,7 @@ function SWEP:GetViewModelPosition(pos, ang)
         if anchor and bonp then -- Not ready / deploying
             anchor = ( bonp + ( (bona:Forward()*anchor.x) + (bona:Right()*anchor.y) + (bona:Up()*anchor.z) ) )
 
-			debugoverlay.Axis(anchor, angle_zero, 4, FrameTime(), true)
+            debugoverlay.Axis(anchor, angle_zero, 4, FrameTime(), true)
 
             rap_pos, rap_ang = ArcCW.RotateAroundPoint2(pos, ang, anchor, offset, affset)
             rap_pos:Sub(pos)
@@ -707,34 +707,75 @@ end
 function SWEP:ShouldCheapWorldModel()
     local lp = LocalPlayer()
     if lp:GetObserverMode() == OBS_MODE_IN_EYE and lp:GetObserverTarget() == self:GetOwner() then return true end
-    if !IsValid(self:GetOwner()) and !GetConVar("arccw_att_showground"):GetBool() then return true end
+    if !IsValid(self:GetOwner()) and !ArcCW.ConVars["att_showground"]:GetBool() then return true end
 
-    return !GetConVar("arccw_att_showothers"):GetBool()
+    return !ArcCW.ConVars["att_showothers"]:GetBool()
 end
 
+local bird = Material("arccw/hud/arccw_bird.png", "mips smooth")
+local iw = 32
+
 function SWEP:DrawWorldModel()
-    -- 512^2
-    if !IsValid(self:GetOwner()) and !TTT2 and GetConVar("arccw_2d3d"):GetBool() and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then
+    local cvar2d3d = ArcCW.ConVars["2d3d"]:GetInt()
+    if !IsValid(self:GetOwner()) and !TTT2
+            and (cvar2d3d == 2 or (cvar2d3d == 1 and LocalPlayer():GetEyeTrace().Entity == self))
+            and (EyePos() - self:WorldSpaceCenter()):LengthSqr() <= 262144 then -- 512^2
         local ang = LocalPlayer():EyeAngles()
         ang:RotateAroundAxis(ang:Forward(), 180)
         ang:RotateAroundAxis(ang:Right(), 90)
         ang:RotateAroundAxis(ang:Up(), 90)
         cam.Start3D2D(self:WorldSpaceCenter() + Vector(0, 0, 16), ang, 0.1)
+
         srf.SetFont("ArcCW_32_Unscaled")
         local w = srf.GetTextSize(self.PrintName)
+        srf.SetTextPos(-w / 2 + 2, 2)
+        srf.SetTextColor(0, 0, 0, 150)
+        srf.DrawText(self.PrintName)
         srf.SetTextPos(-w / 2, 0)
         srf.SetTextColor(255, 255, 255, 255)
         srf.DrawText(self.PrintName)
-        srf.SetFont("ArcCW_24_Unscaled")
-        local count = self:CountAttachments()
 
-        if count > 0 then
-            local t = tostring(count) .. " Attachments"
-            w = srf.GetTextSize(t)
-            srf.SetTextPos(-w / 2, 32)
-            srf.SetTextColor(255, 255, 255, 255)
-            srf.DrawText(t)
+        local icons = {}
+        for i, slot in pairs(self.Attachments or {}) do
+            if slot.Installed then
+                local atttbl = ArcCW.AttachmentTable[slot.Installed]
+                if !atttbl then continue end
+                local icon = atttbl.Icon
+                if !icon or icon:IsError() then icon = bird end
+                table.insert(icons, icon)
+            end
         end
+
+        local ind = math.min(6, #icons)
+
+        surface.SetDrawColor(255, 255, 255)
+        for i = 1, ind do
+            if i == 6 and #icons > 6 then
+                local str = "+" .. (#icons - ind)
+                local strw = srf.GetTextSize(str)
+                srf.SetTextPos(-ind * iw / 2 + (i - 1) * iw + 2 + strw / 2, iw + 14)
+                srf.SetTextColor(0, 0, 0, 150)
+                srf.DrawText(str)
+                srf.SetTextPos(-ind * iw / 2 + (i - 1) * iw + strw / 2, iw + 12)
+                srf.SetTextColor(255, 255, 255, 255)
+                srf.DrawText(str)
+            else
+                local icon = icons[i]
+                surface.SetMaterial(icon)
+                surface.DrawTexturedRect(-ind * iw / 2 + (i - 1) * iw, iw + 12, iw, iw)
+            end
+        end
+
+        -- srf.SetFont("ArcCW_24_Unscaled")
+        -- local count = self:CountAttachments()
+
+        -- if count > 0 then
+        --     local t = tostring(count) .. " Attachments"
+        --     w = srf.GetTextSize(t)
+        --     srf.SetTextPos(-w / 2, 32)
+        --     srf.SetTextColor(255, 255, 255, 255)
+        --     srf.DrawText(t)
+        -- end
 
         cam.End3D2D()
     end
@@ -746,8 +787,11 @@ function SWEP:DrawWorldModel()
         self:DoScopeGlint()
     end
 
-    if !self.CertainAboutAtts and !self.AttReqSent and IsValid(self:GetOwner()) then
+    if !self.CertainAboutAtts and !self.AttReqSent and !IsValid(self:GetOwner()) then
         self.AttReqSent = true
+        -- print(self, "network weapon from cl_viewmodel")
+        -- debugoverlay.Cross(self:GetPos(), 8, 10, color_white, true)
+        -- debugoverlay.EntityTextAtPosition(self:GetPos(), 1, tostring(self) .. " requesting networking data", 10, color_white)
         net.Start("arccw_rqwpnnet")
             net.WriteEntity(self)
         net.SendToServer()
@@ -755,7 +799,7 @@ function SWEP:DrawWorldModel()
 end
 
 function SWEP:ShouldCheapScope()
-    if !self:GetConVar("arccw_cheapscopes"):GetBool() then return end
+    if !ArcCW.ConVars["cheapscopes"]:GetBool() then return end
 end
 
 local POSTVMDONE = nil
@@ -770,17 +814,17 @@ function SWEP:PreDrawViewModel(vm)
         self:BlurNotWeapon()
     end
 
-    if GetConVar("arccw_cheapscopesautoconfig"):GetBool() then
+    if ArcCW.ConVars["cheapscopesautoconfig"]:GetBool() then
         local fps = 1 / (SysTime() - lst2)
         lst2 = SysTime()
         local lowfps = fps <= 45
-        GetConVar("arccw_cheapscopes"):SetBool(lowfps)
-        GetConVar("arccw_cheapscopesautoconfig"):SetBool(false)
+        ArcCW.ConVars["cheapscopes"]:SetBool(lowfps)
+        ArcCW.ConVars["cheapscopesautoconfig"]:SetBool(false)
     end
 
     local asight = self:GetActiveSights()
 
-    if asight and ((GetConVar("arccw_cheapscopes"):GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic)
+    if asight and ((ArcCW.ConVars["cheapscopes"]:GetBool() and self:GetSightDelta() < 1 and asight.MagnifiedOptic)
             or (self:GetSightDelta() < 1 and asight.ScopeTexture)) then
         -- Necessary to call here since physbullets are not drawn until PreDrawEffects; cheap scope implementation will not allow them to be visible
         -- Introduces a bug when we try to call GetAttachment on the viewmodel in DrawPhysBullets here, so set a workaround variable to not call it
@@ -792,7 +836,7 @@ function SWEP:PreDrawViewModel(vm)
 
     if ArcCW.VMInRT then
         local mag = asight.ScopeMagnification
-        coolFOV = self.ViewModelFOV - mag * 4 - (GetConVar("arccw_vm_add_ads"):GetFloat() * 3 or 0)
+        coolFOV = self.ViewModelFOV - mag * 4 - (ArcCW.ConVars["vm_add_ads"]:GetFloat() * 3 or 0)
         ArcCW.VMInRT = false
     end
 

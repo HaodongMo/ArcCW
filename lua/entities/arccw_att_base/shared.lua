@@ -48,14 +48,14 @@ end
 function ENT:Use(activator, caller)
     if !caller:IsPlayer() then return end
 
-    if GetConVar("arccw_attinv_free"):GetBool() then return end
+    if ArcCW.ConVars["attinv_free"]:GetBool() then return end
 
     local take = false
 
     for i, k in pairs(self.GiveAttachments) do
         if i == "BaseClass" then continue end
 
-        if GetConVar("arccw_attinv_lockmode"):GetBool() then
+        if ArcCW.ConVars["attinv_lockmode"]:GetBool() then
             if ArcCW:PlayerGetAtts(caller, i) > 0 then
                 continue
             end
@@ -79,18 +79,17 @@ end
 else
 
 local defaulticon = Material("arccw/hud/atts/default.png")
-
+local iw = 64
 
 function ENT:DrawTranslucent()
-
     self:Draw()
-
 end
 
 function ENT:Draw()
     self:DrawModel()
 
-    if !GetConVar("arccw_2d3d"):GetBool() then return end
+    local cvar2d3d = ArcCW.ConVars["2d3d"]:GetInt()
+    if cvar2d3d == 0 or (cvar2d3d == 1 and LocalPlayer():GetEyeTrace().Entity != self) then return end
 
     if self.PrintName == "Base Dropped Attachment" and self:GetNWInt("attid", -1) != -1 then
         local att = ArcCW.AttachmentIDTable[self:GetNWInt("attid", -1)]
@@ -116,15 +115,16 @@ function ENT:Draw()
             surface.SetFont("ArcCW_32_Unscaled")
 
             local w = surface.GetTextSize(self.PrintName)
-
+            surface.SetTextPos(-w / 2 + 2, 2)
+            surface.SetTextColor(0, 0, 0, 150)
+            surface.DrawText(self.PrintName)
             surface.SetTextPos(-w / 2, 0)
             surface.SetTextColor(255, 255, 255, 255)
             surface.DrawText(self.PrintName)
 
             surface.SetDrawColor(255, 255, 255)
             surface.SetMaterial(self.Icon or defaulticon)
-            local iw = 64
-            surface.DrawTexturedRect(-iw / 2, -iw - 8, iw, iw)
+            surface.DrawTexturedRect(-iw / 2, iw / 2, iw, iw)
         cam.End3D2D()
     end
 end

@@ -673,6 +673,7 @@ SWEP.Animations = {
     --     LastClip1OutTime = 0, -- when should the belt visually replenish on a belt fed
     --     MinProgress = 0, -- how much time in seconds must pass before the animation can be cancelled
     --     ForceEmpty = false, -- Used by empty shotgun reloads that load rounds to force consider the weapon to still be empty.
+    --     ForceCamReset = false, -- Use the first frame of the sequence as starting angles for the cambone.
     -- }
 }
 
@@ -869,7 +870,7 @@ local hitwallcache
 function SWEP:BarrelHitWall()
 
     local len = self:GetBuff("BarrelLength")
-    if len == 0 or !GetConVar("arccw_override_nearwall"):GetBool()
+    if len == 0 or !ArcCW.ConVars["override_nearwall"]:GetBool()
             or (vrmod and vrmod.IsPlayerInVR(self:GetOwner()))
             or (self:GetOwner():IsPlayer() and self:GetOwner():InVehicle()) then
         hitwallcache = {0, CurTime()}

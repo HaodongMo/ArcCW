@@ -29,11 +29,6 @@ function SWEP:NPC_Initialize()
     self:SetNextPrimaryFire(CurTime())
     self:SetNextSecondaryFire(CurTime() + 30)
     self:GetOwner():NextThink(CurTime())
-
-    if self.PreAdjustAtts then
-        self.PreAdjustAtts = false
-        self:AdjustAtts()
-    end
 end
 
 function SWEP:AssignRandomAttToSlot(slot)
@@ -55,11 +50,11 @@ function SWEP:AssignRandomAttToSlot(slot)
 end
 
 function SWEP:NPC_SetupAttachments()
-    if self:GetOwner():IsNPC() and !GetConVar("arccw_npc_atts"):GetBool() then return end
+    if self:GetOwner():IsNPC() and !ArcCW.ConVars["npc_atts"]:GetBool() then return end
 
     local pick = self:GetPickX()
 
-    local chance = 25 * GetConVar("arccw_mult_attchance"):GetFloat()
+    local chance = 25 * ArcCW.ConVars["mult_attchance"]:GetFloat()
     local chancestep = 0
 
     if pick > 0 then
@@ -109,11 +104,18 @@ function SWEP:NPC_SetupAttachments()
     end
 
     self:AdjustAtts()
+    self:RefreshBGs()
 
-    timer.Simple(0.25, function()
-        if !IsValid(self) then return end
+    if self:GetOwner():IsNPC() then
+        timer.Simple(0.1, function()
+            if !IsValid(self) then return end
+            self:NetworkWeapon()
+        end)
+    else
         self:NetworkWeapon()
-    end)
+        self:SetupModel(false)
+        self:SetupModel(true)
+    end
 end
 
 function SWEP:NPC_Shoot()
@@ -394,9 +396,10 @@ function SWEP:OnDrop()
         self.Primary.DefaultClip = 1
     end
 
-    if engine.ActiveGamemode() == "terrortown" then
-        self.UnReady = true
-    else
-        self.UnReady = false
-    end
+    self.UnReady = false
+    -- if engine.ActiveGamemode() == "terrortown" then
+    --     self.UnReady = true
+    -- else
+    --     self.UnReady = false
+    -- end
 end

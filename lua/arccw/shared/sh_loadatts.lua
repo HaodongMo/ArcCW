@@ -9,13 +9,13 @@ ArcCW.GenerateAttEntities = true
 ArcCW.AttachmentCachedLists = {}
 
 local shortname = ""
-local genAttCvar = GetConVar("arccw_reloadatts_registerentities")
+local genAttCvar = ArcCW.ConVars["reloadatts_registerentities"]
 
 function ArcCW.LoadAttachmentType(att, name)
-
+    if name == "" then return end
     name = name or shortname
 
-    if !att.Ignore or GetConVar("arccw_reloadatts_showignored"):GetBool() then
+    if !att.Ignore or ArcCW.ConVars["reloadatts_showignored"]:GetBool() then
         ArcCW.AttachmentTable[name] = att
         ArcCW.AttachmentIDTable[ArcCW.NumAttachments] = name
 
@@ -32,7 +32,7 @@ function ArcCW.LoadAttachmentType(att, name)
         if genAttCvar:GetBool() and !att.DoNotRegister and !att.InvAtt and !att.Free then
             local attent = {}
             attent.Base = "arccw_att_base"
-            if att.Icon then
+            if CLIENT and att.Icon then
                 attent.IconOverride = string.Replace( att.Icon:GetTexture( "$basetexture" ):GetName() .. ".png", "0001010", "" )
             end
             attent.PrintName = att.PrintName or name
@@ -43,6 +43,10 @@ function ArcCW.LoadAttachmentType(att, name)
             attent.GiveAttachments = {
                 [att.ShortName] = 1
             }
+
+            if att.EntityCategory and !list.HasEntry("ContentCategoryIcons", att.EntityCategory) then
+                list.Set("ContentCategoryIcons", att.EntityCategory, "arccw/icon_16.png")
+            end
 
             scripted_ents.Register( attent, "acwatt_" .. name )
         end
@@ -261,7 +265,7 @@ elseif SERVER then
 end
 
 hook.Add("PostCleanupMap", "ArcCW_ReloadAttsDebug", function()
-    if GetConVar("arccw_reloadatts_mapcleanup"):GetBool() then ArcCW_LoadAtts() end
+    if ArcCW.ConVars["reloadatts_mapcleanup"]:GetBool() then ArcCW_LoadAtts() end
 end)
 
 ArcCW_LoadAtts()

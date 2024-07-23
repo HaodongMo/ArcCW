@@ -36,7 +36,7 @@ local col_unowned_txt = col_block_txt
 local ss, rss, thicc
 
 local function ScreenScaleMulti(input)
-    return ScreenScale(input) * GetConVar("arccw_hud_size"):GetFloat()
+    return ScreenScale(input) * ArcCW.ConVars["hud_size"]:GetFloat()
 end
 
 local function LerpColor(d, col1, col2)
@@ -240,9 +240,9 @@ local function headpaintfunc(self2, w, h)
 end
 
 function SWEP:ShowInventoryButton()
-    if GetConVar("arccw_attinv_free"):GetBool() then return false end
-    --if GetConVar("arccw_attinv_lockmode"):GetBool() then return false end
-    if !GetConVar("arccw_enable_dropping"):GetBool() then return false end
+    if ArcCW.ConVars["attinv_free"]:GetBool() then return false end
+    --if ArcCW.ConVars["attinv_lockmode"]:GetBool() then return false end
+    if !ArcCW.ConVars["enable_dropping"]:GetBool() then return false end
 
     return true
 end
@@ -287,12 +287,11 @@ ArcCW.Inv_ShownAtt = nil
 ArcCW.Inv_Hidden = false
 
 function SWEP:CreateCustomize2HUD()
-
-    local cvar_reloadincust = GetConVar("arccw_reloadincust")
-    local cvar_cust_sounds = GetConVar("arccw_cust_sounds")
-    local cvar_darkunowned = GetConVar("arccw_attinv_darkunowned")
-    local cvar_lockmode = GetConVar("arccw_attinv_lockmode")
-    local cvar_truenames = GetConVar("arccw_truenames")
+    local cvar_reloadincust = ArcCW.ConVars["reloadincust"]
+    local cvar_cust_sounds = ArcCW.ConVars["cust_sounds"]
+    local cvar_darkunowned = ArcCW.ConVars["attinv_darkunowned"]
+    local cvar_lockmode = ArcCW.ConVars["attinv_lockmode"]
+    local cvar_truenames = ArcCW.ConVars["truenames"]
 
     if cvar_darkunowned:GetBool() then
         col_unowned = Color(0, 0, 0, 150)
@@ -313,8 +312,8 @@ function SWEP:CreateCustomize2HUD()
 
     ArcCW.InvHUD = vgui.Create("DFrame")
 
-    local scrwmult = GetConVar("arccw_hud_deadzone_x"):GetFloat() * scrw
-    local scrhmult = GetConVar("arccw_hud_deadzone_y"):GetFloat() * scrh
+    local scrwmult = ArcCW.ConVars["hud_deadzone_x"]:GetFloat() * scrw
+    local scrhmult = ArcCW.ConVars["hud_deadzone_y"]:GetFloat() * scrh
 
     ss = ArcCW.AugmentedScreenScale(1)
     rss = ss -- REAL SCREEN SCALE
@@ -430,7 +429,7 @@ function SWEP:CreateCustomize2HUD()
         gui.EnableScreenClicker(false)
     end
 
-    if GetConVar("arccw_attinv_onlyinspect"):GetBool() then
+    if ArcCW.ConVars["attinv_onlyinspect"]:GetBool() then
         return
     end
 
@@ -975,7 +974,7 @@ function SWEP:CreateCustomize2HUD()
                 -- self.Inv_SelectedSlot = self2.attindex
                 -- ArcCW.InvHUD_FormAttachmentSelect()
                 -- self:DetachAllMergeSlots(self2.attslot, true)
-                --if GetConVar("arccw_enable_customization"):GetInt() < 0 then return end
+                --if ArcCW.ConVars["enable_customization"]:GetInt() < 0 then return end
                 if ArcCW:PlayerCanAttach(LocalPlayer(), self, self2.att, self2.attslot, false) then
                     if self2.att == "" then
                         self2:DoRightClick()
@@ -2131,6 +2130,7 @@ function SWEP:CreateCustomize2HUD()
 
         local stk_min, stk_max, stk_count = 1, shot_limit, shot_limit
         local stk_num = self:GetBuff("Num")
+        local dmgt = tostring("DMG")
 
         local rangegraph = vgui.Create("DButton", ArcCW.InvHUD_Menu3)
         rangegraph:SetSize(ss * 200, ss * 110)
@@ -2188,7 +2188,7 @@ function SWEP:CreateCustomize2HUD()
 
                     local our = self:GetBuff_Override("Override_BodyDamageMults", self.BodyDamageMults)
                     local gam = ArcCW.LimbCompensation[engine.ActiveGamemode()] or ArcCW.LimbCompensation[1]
-                    if our and GetConVar("arccw_bodydamagemult_cancel"):GetBool() then
+                    if our and ArcCW.ConVars["bodydamagemult_cancel"]:GetBool() then
                         gam = {}
                     elseif !our then
                         our = {}
@@ -2501,7 +2501,6 @@ function SWEP:CreateCustomize2HUD()
                     surface.SetTextPos(x_2, h - rss * 10)
                     surface.DrawText(hu_2)
 
-                    local dmgt = tostring("DMG")
                     local twt = surface.GetTextSize(dmgt)
 
                     if wmin < tw then
@@ -2530,7 +2529,6 @@ function SWEP:CreateCustomize2HUD()
                     surface.SetTextPos(w - ss * 2 - w_hu, h - rss * 10)
                     surface.DrawText(hu_3)
 
-                    local dmgt = tostring("DMG")
                     local twt = surface.GetTextSize(dmgt)
                     surface.SetTextPos(w - ss * 2 - twt, ss * 8)
                     surface.DrawText(dmgt)
@@ -2549,21 +2547,62 @@ function SWEP:CreateCustomize2HUD()
                     surface.SetTextPos(x_3, h - rss * 10)
                     surface.DrawText(hu_3)
 
-                    local dmgt = tostring("DMG")
                     local twt = surface.GetTextSize(dmgt)
                     surface.SetTextPos(x_3 - (twt / 2), ss * 8)
                     surface.DrawText(dmgt)
                 end
+
+
+                if sran != mran and self2:IsHovered() then
+                    local mouse_x, _ = self2:ScreenToLocal(input.GetCursorPos())
+                    local mouse_frac = math.Clamp((mouse_x - x_2) / (x_3 - x_2), 0, 1)
+
+                    if mouse_frac > 0 and mouse_frac < 1 then
+                        local mouse_range = mran + mouse_frac * (sran - mran)
+                        local mouse_dmg = math.Round(self:GetDamage(mouse_range))
+                        local y_slope = Lerp(mouse_frac, y_2, y_3)
+
+                        surface.SetDrawColor(col_vline)
+                        surface.DrawLine(mouse_x, 0, mouse_x, h)
+
+                        local mouse_text1 = tostring(mouse_dmg)
+                        local mouse_text_w, _ = surface.GetTextSize(mouse_text1)
+                        local nudge = -mouse_text_w * 0.5
+                        local side_margin = ss * 12
+                        local a = 255
+                        if mouse_x - x_2 <= side_margin then
+                            local f = (1 - (mouse_x - x_2) / side_margin)
+                            a = Lerp(f, 255, 0)
+                        elseif x_3 - mouse_x <= side_margin then
+                            local f = (1 - (x_3 - mouse_x) / side_margin)
+                            a = Lerp(f, 255, 25)
+                        end
+                        surface.SetTextColor(255, 255, 255, a)
+                        surface.SetTextPos(mouse_x + nudge, y_slope - ss * 12)
+                        surface.DrawText(mouse_text1)
+
+                        local m_mouse, hu_mouse = RangeText(mouse_range)
+                        local w_m, _ = surface.GetTextSize(m_mouse)
+                        local w_hu, _ = surface.GetTextSize(hu_mouse)
+                        surface.SetTextPos(mouse_x - w_m * 0.5, y_slope + rss * 5)
+                        surface.DrawText(m_mouse)
+                        surface.SetTextPos(mouse_x - w_hu * 0.5, y_slope + rss * 11)
+                        surface.DrawText(hu_mouse)
+
+                    end
+                end
             end
 
             if !drawndmg then
+                surface.SetTextColor(col_fg)
+
                 local dmg = tostring(math.Round(dmgmax))
                 surface.SetTextPos(ss * 2, ss * 1)
                 surface.DrawText(dmg)
 
-                local dmgt = tostring("DMG")
                 surface.SetTextPos(ss * 2, ss * 8)
                 surface.DrawText(dmgt)
+
             end
         end
     end
@@ -2927,7 +2966,7 @@ function SWEP:CreateCustomize2HUD()
 
     function ArcCW.InvHUD_FormGamemodeFunctions()
         if !IsValid(ArcCW.InvHUD) or !IsValid(self) then return end
-        if !GetConVar("arccw_attinv_gamemodebuttons"):GetBool() then return end
+        if !ArcCW.ConVars["attinv_gamemodebuttons"]:GetBool() then return end
 
         local shoulddrawtitle = false
         local function paint_gmbutton(self2, w, h)

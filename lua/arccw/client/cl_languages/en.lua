@@ -75,8 +75,8 @@ L["arccw.cvar.glare.desc"]                = "Glare visible on your scope lens wh
 L["arccw.cvar.shake"]                     = "Screen Shake"
 L["arccw.cvar.shakevm"]                   = "Viewmodel Shake"
 L["arccw.cvar.shake_info"]                = "Aggressive snap when you shoot a weapon."
-L["arccw.cvar.2d3d"]                      = "Floating Help Text"
-L["arccw.cvar.2d3d_info"]                 = "Text that floats over dropped weapons."
+L["arccw.cvar.2d3d"]                      = "Draw Help Text"
+L["arccw.cvar.2d3d_info"]                 = "Draw name of weapons, ammo and attachments on the ground."
 L["arccw.cvar.attinv_hideunowned"]        = "Hide Unowned Attachments"
 L["arccw.cvar.attinv_darkunowned"]        = "Grey Out Unowned Attachments"
 L["arccw.cvar.attinv_onlyinspect"]        = "Hide Customization UI"
@@ -408,3 +408,7 @@ L["arccw.cvar.noinspect"] = "Disable inspect animations"
 -- 2022-07-10
 L["arccw.cvar.override_hud_off"] = "Force Disable HUD"
 L["arccw.hud_svwarning"] = "The HUD can be disabled serverside by a server administrator."
+
+-- 2023-10-10
+L["arccw.cvar.2d3d.1"]  = "1 - When Pointed At"
+L["arccw.cvar.2d3d.2"]  = "2 - Always"

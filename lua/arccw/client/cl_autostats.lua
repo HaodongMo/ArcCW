@@ -57,6 +57,8 @@ ArcCW.AutoStats = {
     ["Add_ClipSize"]          = { "autostat.clipsize.mod",    "add", false,         pr = 315 },
     ["Mult_ClipSize"]         = { "autostat.clipsize.mod",    "mult", false,        pr = 314 },
 
+    ["Mult_TriggerDelayTime"] = { "autostat.triggerdelay",    "mult", true,        pr = 200 },
+
     ["Override_Ammo"] = {"autostat.ammotype", "func", function(wep, val, att)
         -- have to use the weapons table here because Primary.Ammo *is* modified when attachments are used
         if !IsValid(wep) or !weapons.Get(wep:GetClass()) or weapons.Get(wep:GetClass()).Primary.Ammo == val then return end
@@ -86,6 +88,14 @@ ArcCW.AutoStats = {
         if !IsValid(wep) then return end
         return string.format(translate("autostat.ammotypeubgl"), string.lower(ArcCW.TranslateAmmo(val))), "infos"
     end, pr = 949},
+
+    ["Add_AccuracyMOA"] = { "autostat.precision",   "func",  function(wep, val, att)
+        if val > 0 then
+            return "+" .. math.Round(val, 2) .. " " .. translate("unit.moa") .. " " .. translate("autostat.precision"), "cons"
+        else
+            return "-" .. math.Round(val, 2) .. " " .. translate("unit.moa") .. " " .. translate("autostat.precision"), "pros"
+        end
+    end, pr = 187 },
 }
 
 local function getsimpleamt(stat)
@@ -101,7 +111,7 @@ local function stattext(wep, att, i, k, dmgboth, flipsigns)
     if i == "Mult_DamageMin" and dmgboth then return end
 
     local stat = ArcCW.AutoStats[i]
-    local simple = GetConVar("arccw_attinv_simpleproscons"):GetBool()
+    local simple = ArcCW.ConVars["attinv_simpleproscons"]:GetBool()
 
     local txt = ""
     local str, eval = ArcCW.GetTranslation(stat[1]) or stat[1], stat[3]
@@ -205,7 +215,7 @@ function ArcCW:GetProsCons(wep, att, toggle)
         -- Legacy support: If "Increased/Decreased magazine capacity" line exists, don't do our autostats version
         if hasmaginfo and i == "Override_ClipSize" then continue end
 
-        if i == "UBGL" then 
+        if i == "UBGL" then
 			tbl_ins(infos, translate("autostat.ubgl2"))
 		end
 

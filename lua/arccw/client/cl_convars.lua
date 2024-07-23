@@ -6,6 +6,7 @@
     min  - minimum value
     max  - maximum value
     usri - userinfo
+    save - whether to save (default true)
 ]]
 
 ArcCW.ClientConVars = {
@@ -72,7 +73,7 @@ ArcCW.ClientConVars = {
     ["arccw_fastmuzzles"]             = { def =  0 },
     ["arccw_fasttracers"]             = { def =  0 },
 
-    ["arccw_2d3d"]                    = { def =  1 },
+    ["arccw_2d3d"]                    = { def =  1, min = 0, max = 2},
 
     ["arccw_hud_3dfun"]               = { def =  0, usri = true },
     ["arccw_hud_3dfun_lite"]          = { def =  0 },
@@ -135,15 +136,17 @@ ArcCW.ClientConVars = {
 
     ["arccw_aimassist_cl"]            = { def = 0, usri = true },
 
-    ["arccw_dev_benchgun"]            = { def = 0 },
-    ["arccw_dev_benchgun_custom"]     = { def = "" },
+    ["arccw_dev_benchgun"]            = { def = 0, save = false },
+    ["arccw_dev_benchgun_custom"]     = { def = "", save = false },
 
-    ["arccw_dev_removeonclose"]       = { def = 0, desc = "Remove the hud when closing instead of fading out, allowing easy reloading of the hud." },
-    ["arccw_noinspect"]               = { def = 0, usri = true }
+    ["arccw_dev_removeonclose"]       = { def = 0, desc = "Remove the hud when closing instead of fading out, allowing easy reloading of the hud.", save = false },
+    ["arccw_noinspect"]               = { def = 0, usri = true },
+
+    ["arccw_dev_crosshair"]           = { def = 0, save = false },
 }
 
 for name, data in pairs(ArcCW.ClientConVars) do
-    CreateClientConVar(name, data.def, true, data.usri or false, data.desc, data.min, data.max)
+    ArcCW.ConVars[string.sub(name, 7)] = CreateClientConVar(name, data.def, data.save == nil and true or data.save, data.usri or false, data.desc, data.min, data.max)
 end
 
 -- CreateClientConVar("arccw_quicknade", KEY_G)
