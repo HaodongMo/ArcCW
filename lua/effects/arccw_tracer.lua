@@ -10,6 +10,7 @@ EFFECT.Speed = 15000
 local head = Material("effects/whiteflare")
 local tracer = Material("arccw/tracer")
 local smoke = Material("trails/smoke")
+local smoker, smoked = Color(155, 155, 155, 155), Color(155, 155, 155, 0)
 
 function EFFECT:Init(data)
 
@@ -75,7 +76,7 @@ function EFFECT:Render()
     local size = math.Clamp(math.log(EyePos():DistToSqr(endpos) - math.pow(256, 2)), 0, math.huge)
 
     local col = self.Color --LerpColor(d, self.Color, Color(0, 0, 0, 0))
-    local col2 = LerpColor(d2, Color(155, 155, 155, 155), Color(0, 0, 0, 0))
+    local col2 = LerpColor(d2, smoker, smoked)
 
     local vel = self.Dir * self.Speed - LocalPlayer():GetVelocity()
     local dot = math.abs(EyeAngles():Forward():Dot(vel:GetNormalized()))
