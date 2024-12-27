@@ -669,10 +669,15 @@ function SWEP:GetMuzzleDevice(wm)
     if self:GetInUBGL() then
         local _, slot = self:GetBuff_Override("UBGL")
 
+        local muzz2 = nil
+        if IsValid(self.Attachments) then
+            muzz2 = (self.Attachments[slot].WMuzzleDeviceElement or {}).Model
+        end
+
         if wm then
-            muzz = (self.Attachments[slot].WMuzzleDeviceElement or {}).Model or muzz
+            muzz = muzz2 or muzz
         else
-            muzz = (self.Attachments[slot].VMuzzleDeviceElement or {}).Model or muzz
+            muzz = muzz2 or muzz
         end
     end
 

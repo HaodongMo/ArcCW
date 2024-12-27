@@ -3,6 +3,7 @@ function EFFECT:Init(data)
     local wpn = data:GetEntity()
 
     if !IsValid(wpn) then return end
+    if !wpn.ArcCW then return end
 
     local muzzle = wpn.MuzzleEffect
     local overridemuzzle = wpn:GetBuff_Override("Override_MuzzleEffect")

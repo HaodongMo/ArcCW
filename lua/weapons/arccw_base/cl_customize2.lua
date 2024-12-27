@@ -614,9 +614,11 @@ function SWEP:CreateCustomize2HUD()
             self2.AlreadySet = true
         end
 
-        local scroll = self2:GetScroll()
+        if IsValid(self.Inv_Scroll) then
+            local scroll = self2:GetScroll()
 
-        self.Inv_Scroll[self.Inv_SelectedSlot or 0] = scroll
+            self.Inv_Scroll[self.Inv_SelectedSlot or 0] = scroll
+        end
     end
 
     scroll_2.btnUp.Paint = function(span, w, h)
@@ -1450,7 +1452,7 @@ function SWEP:CreateCustomize2HUD()
 
                 local txt = (translate("ui.toggle"))
                 local catttbl = ArcCW.AttachmentTable[att]
-                if catttbl and catttbl.ToggleStats[self.Attachments[slot].ToggleNum]
+                if catttbl and IsValid(self.Attachments) and catttbl.ToggleStats[self.Attachments[slot].ToggleNum]
                         and catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName then
                     txt = try_translate(catttbl.ToggleStats[self.Attachments[slot].ToggleNum].PrintName)
                 end
@@ -1492,7 +1494,11 @@ function SWEP:CreateCustomize2HUD()
 
                 draw.RoundedBox(cornerrad, 0, 0, w, h, col)
                 surface.SetDrawColor(col2.r, col2.g, col2.b)
-                surface.SetMaterial(self.Attachments[slot].ToggleLock and iconlock or iconunlock)
+                if IsValid(self.Attachments) then
+                    surface.SetMaterial(self.Attachments[slot].ToggleLock and iconlock or iconunlock)
+                else
+                    surface.SetMaterial(iconunlock)
+                end
                 surface.DrawTexturedRect(4, 4, w - 8, h - 8)
             end
 

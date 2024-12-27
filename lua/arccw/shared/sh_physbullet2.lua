@@ -202,6 +202,8 @@ net.Receive("arccw_sendbullet", function(len, ply)
 
     if game.SinglePlayer() then
         ent = net.ReadEntity()
+    else
+        ent = weapon:GetOwner()
     end
 
     local bullet = {
@@ -214,7 +216,7 @@ net.Receive("arccw_sendbullet", function(len, ply)
         Dead = false,
         Damaged = {},
         Drag = drag,
-        Attacker = ent or weapon:GetOwner(),
+        Attacker = ent,
         Gravity = grav,
         Profile = profile,
         PhysBulletImpact = impact,
