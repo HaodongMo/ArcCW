@@ -50,7 +50,7 @@ function SWEP:CanPrimaryAttack()
     if self:GetHeatLocked() then return end
 
     -- Attempting a bash
-    if self:GetState() != ArcCW.STATE_SIGHTS and owner:KeyDown(IN_USE) or self.PrimaryBash then self:Bash() return end
+    if self:GetState() != ArcCW.STATE_SIGHTS and (owner:KeyDown(IN_USE) or owner:KeyDown(IN_BULLRUSH)) or self.PrimaryBash then self:Bash() return end
 
     -- Throwing weapon
     if self.Throwing then self:PreThrow() return end
