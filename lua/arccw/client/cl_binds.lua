@@ -12,6 +12,8 @@ ArcCW.KEY_TOGGLEUBGL      = "arccw_toggle_ubgl"
 ArcCW.KEY_TOGGLEATT       = "arccw_toggle_att"
 ArcCW.KEY_MELEE           = "arccw_melee"
 
+ArcCW.IN_MELEE            = false
+
 ArcCW.BindToEffect = {
     [ArcCW.KEY_FIREMODE]    = "firemode",
     [ArcCW.KEY_ZOOMIN]      = "zoomin",
@@ -146,7 +148,9 @@ local function ArcCW_PlayerBindPress(ply, bind, pressed)
     end
 
     if bind == "melee" and wep:GetState() != ArcCW.STATE_SIGHTS then
-        wep:Bash()
+        ArcCW.IN_MELEE = true
+        timer.Simple(0, function() ArcCW.IN_MELEE = false end)
+        block = true
     end
 
     if block then return true end
@@ -196,3 +200,10 @@ end
 
 --     return false
 -- end
+
+hook.Add("StartCommand", "ArcCW_StartCommand_Melee", function(ply, ucmd)
+    if ArcCW.IN_MELEE then
+        ucmd:AddKey(IN_BULLRUSH)
+        ucmd:AddKey(IN_ATTACK)
+    end
+end)
