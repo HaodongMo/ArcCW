@@ -3,6 +3,7 @@ ArcCW.AttachmentTable = {}
 ArcCW.AttachmentIDTable = {}
 ArcCW.AttachmentSlotTable = {}
 ArcCW.AttachmentBlacklistTable = {}
+ArcCW.ModelToPrecacheList = {}
 ArcCW.NumAttachments = 1
 ArcCW.GenerateAttEntities = true
 
@@ -43,6 +44,10 @@ function ArcCW.LoadAttachmentType(att, name)
             attent.GiveAttachments = {
                 [att.ShortName] = 1
             }
+
+            if !ArcCW.ModelToPrecacheList[attent.Model] then
+                table.insert(ArcCW.ModelToPrecacheList, attent.Model)
+            end
 
             if att.EntityCategory and !list.HasEntry("ContentCategoryIcons", att.EntityCategory) then
                 list.Set("ContentCategoryIcons", att.EntityCategory, "arccw/icon_16.png")
@@ -92,7 +97,6 @@ local function ArcCW_SendBlacklist(ply)
     end
 end
 
-
 local attachments_path = "arccw/shared/attachments/"
 local bulk_path = "arccw/shared/attachments_bulk/"
 
@@ -106,7 +110,6 @@ local function ArcCW_LoadAtt(att_file)
     AddCSLuaFile(att_file)
 
     ArcCW.LoadAttachmentType(att)
-
 end
 
 local function ArcCW_LoadFolder(folder)

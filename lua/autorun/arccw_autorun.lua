@@ -19,8 +19,7 @@ for _, v in pairs(file.Find("arccw/client/*", "LUA")) do
     end
 end
 
--- TODO: Remove SP check after upcoming June 2023 update
-if SERVER or game.SinglePlayer() then
+if SERVER then
     for _, v in pairs(file.Find("arccw/server/*", "LUA")) do
         include("arccw/server/" .. v)
     end
@@ -40,8 +39,7 @@ for _, v in pairs(file.Find("arccw/mods/client/*", "LUA")) do
     end
 end
 
--- TODO: Remove SP check after upcoming June 2023 update
-if SERVER or game.SinglePlayer() then
+if SERVER then
     for _, v in pairs(file.Find("arccw/mods/server/*", "LUA")) do
         include("arccw/mods/server/" .. v)
     end

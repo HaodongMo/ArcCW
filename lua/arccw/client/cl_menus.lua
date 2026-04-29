@@ -87,6 +87,9 @@ local PerformancePanel = {
     { type = "b", text = "#arccw.cvar.bullet_imaginary", var = "arccw_bullet_imaginary" },
     { type = "c", text = "#arccw.cvar.bullet_imaginary.desc" },
     { type = "f", text = "#arccw.cvar.shelltime", var = "arccw_shelltime", min = 0, max = 180 },
+    { type = "b", text = "#arccw.cvar.precache_allsounds", var = "arccw_precache_allsounds_onstartup" },
+    { type = "b", text = "#arccw.cvar.precache_wepmodels", var = "arccw_precache_wepmodels_onstartup" },
+    { type = "b", text = "#arccw.cvar.precache_attsmodels", var = "arccw_precache_attsmodels_onstartup" },
 }
 
 local ViewmodelPanel = {
