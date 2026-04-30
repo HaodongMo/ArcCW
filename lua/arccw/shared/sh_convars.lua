@@ -104,6 +104,8 @@ ArcCW.ConVars["attinv_giveonspawn"] = CreateConVar("arccw_attinv_giveonspawn", 0
 ArcCW.ConVars["reloadincust"] = CreateConVar("arccw_reloadincust", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Allow players to reload when customizing.", 0, 1)
 ArcCW.ConVars["freeaim"] = CreateConVar("arccw_freeaim", 0, FCVAR_ARCHIVE + FCVAR_REPLICATED, "", 0, 2)
 
+ArcCW.ConVars["aimpunch"] = CreateConVar("arccw_aimpunch", 1, FCVAR_ARCHIVE + FCVAR_REPLICATED, "Enable aimpunch: jostling the point of aim when taking damage.", 0, 1)
+
 -- developer stuff
 ArcCW.ConVars["reloadatts_mapcleanup"] = CreateConVar("arccw_reloadatts_mapcleanup", 0, 0, "Whether to reload ArcCW attachments on admin clean up.")
 ArcCW.ConVars["reloadatts_registerentities"] = CreateConVar("arccw_reloadatts_registerentities", 1, 0, "Register attachment entities. This may increase time to reload attachments.")

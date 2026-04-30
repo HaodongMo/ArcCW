@@ -68,7 +68,13 @@ function SWEP:OurViewPunch(angle)
 end
 
 function SWEP:GetOurViewPunchAngles()
-    local a = self:GetOwner():GetViewPunchAngles()
+    local a = Angle(ang0)
+    if ArcCW.ConVars["aimpunch"]:GetBool() then
+        local viewpunch = self:GetOwner():GetViewPunchAngles()
+        if viewpunch then
+            a = viewpunch
+        end
+    end
     for i = 1, 3 do a[i] = a[i] + self.ViewPunchAngle[i] * 10 end
     return a
 end
